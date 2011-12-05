@@ -18,10 +18,10 @@
 
 // ==UserScript==
 // @name Wiki Monkey
-// @namespace wikimonkey
+// @namespace https://github.com/kynikos/wiki-monkey
 // @description Perform automatic actions when editing wiki pages
-// @version 1.1.0
-// @icon http://www.dariogiovannetti.com/files/wiki-monkey.png
+// @version 1.1.1
+// @icon http://github.com/downloads/kynikos/wiki-monkey/wiki-monkey.png
 // @match http://*.wikipedia.org/*
 // @match https://wiki.archlinux.org/*
 // ==/UserScript==
