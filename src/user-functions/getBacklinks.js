@@ -1,6 +1,6 @@
 function UF_getBacklinks() {
-    parser = new DOMParser();
-    xml = parser.parseFromString(getBacklinks(), "text/xml");
+    var parser = new DOMParser();
+    var xml = parser.parseFromString(getBacklinks(), "text/xml");
     var bls = new Array();
     var L = xml.getElementsByTagName('bl');
     for (var i = 0; i < L.length; i++) {

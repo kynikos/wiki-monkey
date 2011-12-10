@@ -3,7 +3,7 @@
 // @namespace https://github.com/kynikos/wiki-monkey
 // @require https://raw.github.com/kynikos/wiki-monkey/master/src/wikiMonkeyCore.js
 // @description Perform automatic actions when editing wiki pages
-// @version 1.2.0
+// @version 1.3.0
 // @icon http://github.com/downloads/kynikos/wiki-monkey/wiki-monkey.png
 // @match http://*.wikipedia.org/*
 // @match https://wiki.archlinux.org/*

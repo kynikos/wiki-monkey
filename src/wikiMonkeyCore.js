@@ -32,23 +32,65 @@ function _getQueryString() {
 // Get query string parameters only once
 var querystring = _getQueryString();
 
-var xmlhttp;
+/*
+ * WARNING!!!
+ * ALWAYS PUSH TO THIS ARRAY: NEVER POP, SORT, REVERSE OR CHANGE THE INDEXES IN
+ * ANY WAY
+ * COROLLARY (KNOWN BUG): This causes a minor memory leak (elements cannot be
+ * removed)
+ */
+var xmlhttp = new Array();
 
-function _sendAsyncRequest(url, cfunc) {
-    xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function() {
-        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+function _sendGetAsyncRequest(url, cfunc) {
+    var L = xmlhttp.push(new XMLHttpRequest());
+    var id = L - 1;
+    var xh = xmlhttp[id];
+    xh.onreadystatechange = function() {
+        if (xh.readyState == 4 && xh.status == 200) {
             cfunc();
         }
     };
-    xmlhttp.open("GET", url, true);
-    xmlhttp.send();
+    xh.open("GET", url, true);
+    xh.send();
+    return id;
 }
 
-function _sendSyncRequest(url) {
-    xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("GET", url, false);
-    xmlhttp.send();
+function _sendGetSyncRequest(url) {
+    var L = xmlhttp.push(new XMLHttpRequest());
+    var id = L - 1;
+    var xh = xmlhttp[id];
+    xh.open("GET", url, false);
+    xh.send();
+    return id;
+}
+
+function _sendPostAsyncRequest(url, cfunc, string, header, headervalue) {
+    var L = xmlhttp.push(new XMLHttpRequest());
+    var id = L - 1;
+    var xh = xmlhttp[id];
+    xh.onreadystatechange = function() {
+        if (xh.readyState == 4 && xh.status == 200) {
+            cfunc();
+        }
+    };
+    xh.open("POST", url, true);
+    if (header && headervalue) {
+        xh.setRequestHeader(header, headervalue);
+    }
+    xh.send(string);
+    return id;
+}
+
+function _sendPostSyncRequest(url, string, header, headervalue) {
+    var L = xmlhttp.push(new XMLHttpRequest());
+    var id = L - 1;
+    var xh = xmlhttp[id];
+    xh.open("POST", url, false);
+    if (header && headervalue) {
+        xh.setRequestHeader(header, headervalue);
+    }
+    xh.send(string);
+    return id;
 }
 
 function getTitle() {
@@ -80,8 +122,8 @@ function appendToSummary(text) {
 }
 
 function getBacklinks() {
-    _sendSyncRequest("api.php?action=query&list=backlinks&bltitle=" + getTitle() + "&format=xml");
-    return xmlhttp.responseText;
+    var id = _sendGetSyncRequest("api.php?action=query&list=backlinks&bltitle=" + getTitle() + "&format=xml");
+    return xmlhttp[id].responseText;
 }
 
 function main(functions) {
