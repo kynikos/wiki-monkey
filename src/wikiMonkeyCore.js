@@ -41,7 +41,7 @@ var querystring = _getQueryString();
  */
 var xmlhttp = new Array();
 
-function _sendGetAsyncRequest(url, cfunc) {
+function sendGetAsyncRequest(url, cfunc) {
     var L = xmlhttp.push(new XMLHttpRequest());
     var id = L - 1;
     var xh = xmlhttp[id];
@@ -55,7 +55,7 @@ function _sendGetAsyncRequest(url, cfunc) {
     return id;
 }
 
-function _sendGetSyncRequest(url) {
+function sendGetSyncRequest(url) {
     var L = xmlhttp.push(new XMLHttpRequest());
     var id = L - 1;
     var xh = xmlhttp[id];
@@ -64,7 +64,7 @@ function _sendGetSyncRequest(url) {
     return id;
 }
 
-function _sendPostAsyncRequest(url, cfunc, string, header, headervalue) {
+function sendPostAsyncRequest(url, cfunc, string, header, headervalue) {
     var L = xmlhttp.push(new XMLHttpRequest());
     var id = L - 1;
     var xh = xmlhttp[id];
@@ -81,7 +81,7 @@ function _sendPostAsyncRequest(url, cfunc, string, header, headervalue) {
     return id;
 }
 
-function _sendPostSyncRequest(url, string, header, headervalue) {
+function sendPostSyncRequest(url, string, header, headervalue) {
     var L = xmlhttp.push(new XMLHttpRequest());
     var id = L - 1;
     var xh = xmlhttp[id];
@@ -91,6 +91,22 @@ function _sendPostSyncRequest(url, string, header, headervalue) {
     }
     xh.send(string);
     return id;
+}
+
+function callAPIGet(params) {
+    var id = sendGetSyncRequest("api.php?format=xml&" + params.join('&'));
+    var parser = new DOMParser();
+    return parser.parseFromString(xmlhttp[id].responseText, "text/xml");
+}
+
+function callAPIPost(params) {
+    var id = sendPostSyncRequest("api.php", "format=xml&" + params.join('&'), "Content-type", "application/x-www-form-urlencoded");
+    var parser = new DOMParser();
+    return parser.parseFromString(xmlhttp[id].responseText, "text/xml");
+}
+
+function getURIParameter(name) {
+    return querystring[name];
 }
 
 function getTitle() {
@@ -110,33 +126,82 @@ function writeSource(text) {
 }
 
 function readSummary() {
-    return document.getElementById('wpSummary').innerHTML;
+    return document.getElementById('wpSummary').getAttribute("value");
 }
 
 function writeSummary(text) {
-    document.getElementById('wpSummary').innerHTML = text;
+    document.getElementById('wpSummary').setAttribute("value", text);
 }
 
 function appendToSummary(text) {
-    document.getElementById('wpSummary').innerHTML += text;
+    document.getElementById('wpSummary').setAttribute("value", readSummary() + text);
 }
 
-function getBacklinks() {
-    var id = _sendGetSyncRequest("api.php?action=query&list=backlinks&bltitle=" + getTitle() + "&format=xml");
-    return xmlhttp[id].responseText;
+function create_buttons(page, functions) {
+    var container = document.createElement('div');
+    
+    var ball = document.createElement('input');
+    ball.setAttribute('type', 'button');
+    ball.setAttribute('value', 'Execute all');
+    
+    var par, brow, button;
+    
+    for each (var row in functions[page]) {
+        par = document.createElement('p');
+        
+        brow = document.createElement('input');
+        brow.setAttribute('type', 'button');
+        brow.setAttribute('value', 'Execute row');
+            
+        brow.style.marginRight = '0.67em';
+            
+        par.style.margin = '0.67em 0';
+        
+        par.appendChild(brow);
+        
+        for each (var f in row) {
+            button = document.createElement('input');
+            button.setAttribute('type', 'button');
+            button.setAttribute('value', f[1]);
+            
+            button.addEventListener("click", f[0], false);
+            brow.addEventListener("click", f[0], false);
+            ball.addEventListener("click", f[0], false);
+            
+            par.appendChild(button);
+            
+            if (f[2]) {
+                input = document.createElement('input');
+                input.setAttribute('type', 'text');
+                
+                par.appendChild(input);
+                
+                input.style.marginRight = '0.33em';
+            }
+            else {
+                button.style.marginRight = '0.33em';
+            }
+        }
+        container.appendChild(par);
+    }
+    par = document.createElement('p');
+            
+    par.style.margin = '0.67em 0';
+    
+    par.appendChild(ball);
+    container.appendChild(par);
+    
+    return container;
 }
 
 function main(functions) {
+    
     if (document.getElementById('editform')) {
-        var bcorrect = document.createElement('input');
-        bcorrect.setAttribute('type', 'button');
-        bcorrect.setAttribute('value', 'Correct source');
-        bcorrect.style.marginRight = '0.33em';
-        for each (var f in functions) {
-            bcorrect.addEventListener("click", f, false);
-        }
-        
-        var buttons = document.getElementById('wpSave').parentNode;
-        buttons.insertBefore(bcorrect, buttons.getElementsByTagName('span')[0]);
+        var container = create_buttons(0, functions);
+        document.getElementById('wpSummaryLabel').parentNode.parentNode.insertBefore(container, document.getElementById('wpSummaryLabel').parentNode.nextSibling);
+    }
+    else if (document.getElementById('mw-diff-otitle1')) {
+        var container = create_buttons(1, functions);
+        document.getElementById('bodyContent').getElementsByTagName('h2')[0].parentNode.insertBefore(container, document.getElementById('bodyContent').getElementsByTagName('h2')[0]);
     }
 }

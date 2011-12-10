@@ -1,6 +1,6 @@
 function UF_getBacklinks() {
-    var parser = new DOMParser();
-    var xml = parser.parseFromString(getBacklinks(), "text/xml");
+    var xml = callAPIGet(["action=query", "list=backlinks",
+                          "bltitle=" + ecodeURIComponent(getTitle())]);
     var bls = new Array();
     var L = xml.getElementsByTagName('bl');
     for (var i = 0; i < L.length; i++) {
