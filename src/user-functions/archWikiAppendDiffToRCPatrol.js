@@ -2,10 +2,28 @@ function UF_archWikiAppendDiffToRCPatrol() {
     var article = "User:Kynikos/RC_Patrol";
     var summary = "[[User:Kynikos/Wiki Monkey|Wiki Monkey]]: add diff";
     
+    var title = getTitle();
     var diff = getURIParameter('diff');
-    var xml = callAPIGet(["action=query", "prop=revisions",
-                               "revids=" + diff, "rvprop=timestamp"]);
-    var enddate = xml.getElementsByTagName('rev')[0].getAttribute('timestamp');
+    var oldid = getURIParameter('oldid');
+    var xml, enddate;
+    switch (diff) {
+        case 'next':
+            xml = callAPIGet(["action=query", "prop=revisions",
+                              "titles=" + title, "rvlimit=2",
+                              "rvprop=timestamp", "rvdir=newer",
+                              "rvstartid=" + oldid]);
+            enddate = xml.getElementsByTagName('rev')[1].getAttribute('timestamp');
+            break;
+        case 'prev':
+            xml = callAPIGet(["action=query", "prop=revisions",
+                              "revids=" + oldid, "rvprop=timestamp"]);
+            enddate = xml.getElementsByTagName('rev')[0].getAttribute('timestamp');
+            break;
+        default:
+            xml = callAPIGet(["action=query", "prop=revisions",
+                              "revids=" + diff, "rvprop=timestamp"]);
+            enddate = xml.getElementsByTagName('rev')[0].getAttribute('timestamp');
+    }
     
     var notes = this.nextSibling.value;
     
