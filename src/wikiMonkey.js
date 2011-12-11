@@ -20,10 +20,10 @@
  * this structure:
  * 
  * [
- *     Level 1: this level separates the functions by the page they apply to.
- *     The first sub-array (index 0) contains the functions related to edit
- *     pages; the second sub-array (index 1) contains the functions related to
- *     diff pages.
+ *     Level 1: this level separates the functions according to the page they
+ *     apply to. The first sub-array (index 0) contains the functions related
+ *     to edit pages; the second sub-array (index 1) contains the functions
+ *     related to diff pages.
  *     [
  *         Level 2: this level separates the various rows of buttons that will
  *         be created.

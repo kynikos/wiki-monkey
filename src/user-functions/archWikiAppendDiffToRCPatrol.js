@@ -17,7 +17,14 @@ function UF_archWikiAppendDiffToRCPatrol() {
     var rev = xml.getElementsByTagName('rev')[0];
     var edittoken = page.getAttribute('edittoken');
     var timestamp = rev.getAttribute('timestamp');
-    var source = rev.firstChild.nodeValue;
+    
+    var source = "";
+    // Firefox and other browsers split long text into multiple text nodes
+    for each (var child in rev.childNodes) {
+        if (child.nodeType == 3) {
+            source += child.nodeValue;
+        }
+    }
     
     var endtable = source.lastIndexOf('|}');
     var part1 = source.substring(0, endtable);
