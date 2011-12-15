@@ -198,10 +198,14 @@ function main(functions) {
     
     if (document.getElementById('editform')) {
         var container = create_buttons(0, functions);
-        document.getElementById('wpSummaryLabel').parentNode.parentNode.insertBefore(container, document.getElementById('wpSummaryLabel').parentNode.nextSibling);
+        document.getElementById('wpSummaryLabel'
+            ).parentNode.parentNode.insertBefore(container,
+            document.getElementById('wpSummaryLabel').parentNode.nextSibling);
     }
     else if (document.getElementById('mw-diff-otitle1')) {
         var container = create_buttons(1, functions);
-        document.getElementById('bodyContent').getElementsByTagName('h2')[0].parentNode.insertBefore(container, document.getElementById('bodyContent').getElementsByTagName('h2')[0]);
+        document.getElementById('bodyContent'
+            ).getElementsByTagName('h2')[0].parentNode.insertBefore(container,
+            document.getElementById('bodyContent').getElementsByTagName('h2')[0]);
     }
 }
