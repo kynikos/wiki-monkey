@@ -1,8 +1,7 @@
 function UF_archWikiNewTemplates() {
     var s = readSource();
     
-    var re1 = /\{\{ *(?:[Cc]odeline|[Ff]ilename) *\|(.+?)\}\}/g;
-    var re2 = /\{\{ *[Cc]li *\|(((?!\{\{).\n*)+?)\}\}/g;
+    var re1 = /\{\{ *(?:[Cc]odeline|[Ff]ilename) *\|/g;
     
     var re3 = /\{\{ *[Ff]ile\s*\|(?: *(?:name|1) *\=)?(\n*(?:(?!\{\{|\||&lt;[Nn][Oo][Ww][Ii][Kk][Ii]&gt;|\=).\n*)+?)\|(?: *(?:content|2) *\=)?(\n*(?:(?!\{\{|\=).\n*)*?)\}\}/g;
     var re4 = /\{\{ *[Ff]ile\s*\|(?: *(?:name|1) *\=)?(\n*(?:(?!\{\{|\||&lt;[Nn][Oo][Ww][Ii][Kk][Ii]&gt;|\=).\n*)+?)\|(?: *(?:content|2) *\=)?(\n*(?:(?!\{\{).\n*)*?)\}\}/g;
@@ -20,13 +19,13 @@ function UF_archWikiNewTemplates() {
     var re15 = /&lt;tt&gt;(((?!&lt;(tt|nowiki)&gt;)[^\|\n])*?((?!&lt;(tt|nowiki)&gt;)[^\|\}\n]))&lt;\/tt&gt;/ig;
     var re16 = /&lt;tt&gt;(((?!&lt;(tt|nowiki)&gt;)[^\n])+?)&lt;\/tt&gt;/ig;
     
-    var re17 = /\{\{ *[Pp]ackage Official *\|(.+?)\}\}/g;
-    var re18 = /\{\{ *[Pp]ackage AUR *\|(.+?)\}\}/g;
+    var re17 = /\{\{ *[Pp]ackage Official *\|/g;
+    var re18 = /\{\{ *[Pp]ackage AUR *\|/g;
     
-    s = s.replace(re1, '{{ic|$1}}');
-    s = s.replace(re2, '{{bc|$1}}');
+    s = s.replace(re1, '{{ic|');
     
     s = s.replace(re3, '{{hc|$1|$2}}');
+    // Note the {{hc|1=$1|$2}} case is impossible
     s = s.replace(re4, '{{hc|$1|2=$2}}'); // Must come after re3
     s = s.replace(re5, '{{hc|1=$1|2=$2}}'); // Must come after re4
     
@@ -42,21 +41,20 @@ function UF_archWikiNewTemplates() {
     s = s.replace(re15, '{{ic|1=$1}}'); // Must come after re14
     s = s.replace(re16, '{{ic|<nowiki>$1</nowiki>}}'); // Must come after re15
     
-    s = s.replace(re17, '{{Pkg|$1}}');
-    s = s.replace(re18, '{{AUR|$1}}');
+    s = s.replace(re17, '{{Pkg|');
+    s = s.replace(re18, '{{AUR|');
     
     writeSource(s);
     
     var tests = new Array();
     tests[0] = s.match(/\{\{ *[Cc]odeline/g);
     tests[1] = s.match(/\{\{ *[Ff]ilename/g);
-    tests[2] = s.match(/\{\{ *[Cc]li/g);
-    tests[3] = s.match(/\{\{ *[Ff]ile(?!name)/g);
-    tests[4] = s.match(/&lt;pre/ig);
-    tests[5] = s.match(/&lt;code/ig);
-    tests[6] = s.match(/&lt;tt/ig);
-    tests[7] = s.match(/\{\{ *[Pp]ackage Official/g);
-    tests[8] = s.match(/\{\{ *[Pp]ackage AUR/g);
+    tests[2] = s.match(/\{\{ *[Ff]ile(?!name)/g);
+    tests[3] = s.match(/&lt;pre/ig);
+    tests[4] = s.match(/&lt;code/ig);
+    tests[5] = s.match(/&lt;tt/ig);
+    tests[6] = s.match(/\{\{ *[Pp]ackage Official/g);
+    tests[7] = s.match(/\{\{ *[Pp]ackage AUR/g);
         
     var ab = false;
     for each (var test in tests) { 
@@ -70,13 +68,12 @@ function UF_archWikiNewTemplates() {
         alert('Migration to new templates:\n' +
               ((tests[0]) ? (tests[0].length + ' Codeline instances\n') : '') +
               ((tests[1]) ? (tests[1].length + ' Filename instances\n') : '') +
-              ((tests[2]) ? (tests[2].length + ' Cli instances\n') : '') +
-              ((tests[3]) ? (tests[3].length + ' File instances\n') : '') +
-              ((tests[4]) ? (tests[4].length + ' <pre> instances\n') : '') +
-              ((tests[5]) ? (tests[5].length + ' <code> instances\n') : '') +
-              ((tests[6]) ? (tests[6].length + ' <tt> instances\n') : '') +
-              ((tests[7]) ? (tests[7].length + ' Package Official instances\n') : '') +
-              ((tests[8]) ? (tests[8].length + ' Package AUR instances\n') : '') +
+              ((tests[2]) ? (tests[2].length + ' File instances\n') : '') +
+              ((tests[3]) ? (tests[3].length + ' <pre> instances\n') : '') +
+              ((tests[4]) ? (tests[4].length + ' <code> instances\n') : '') +
+              ((tests[5]) ? (tests[5].length + ' <tt> instances\n') : '') +
+              ((tests[6]) ? (tests[6].length + ' Package Official instances\n') : '') +
+              ((tests[7]) ? (tests[7].length + ' Package AUR instances\n') : '') +
               'require manual intervention.');
     }
 }
