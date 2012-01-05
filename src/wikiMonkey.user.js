@@ -2,7 +2,7 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @description Perform automatic actions when editing wiki pages
-// @version 1.4.0
+// @version 1.4.1
 // @icon http://github.com/downloads/kynikos/wiki-monkey/wiki-monkey.png
 // @match http://*.wikipedia.org/*
 // @match https://wiki.archlinux.org/*
