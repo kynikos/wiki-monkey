@@ -36,14 +36,7 @@ function UF_archWikiAppendDiffToRCPatrol() {
     var edittoken = page.getAttribute('edittoken');
     var timestamp = rev.getAttribute('timestamp');
     
-    var source = "";
-    // Firefox and other browsers split long text into multiple text nodes
-    for each (var child in rev.childNodes) {
-        if (child.nodeType == 3) {
-            source += child.nodeValue;
-        }
-    }
-    
+    var source = getLongTextNode(rev);
     var endtable = source.lastIndexOf('|}');
     var part1 = source.substring(0, endtable);
     var part2 = source.substring(endtable);

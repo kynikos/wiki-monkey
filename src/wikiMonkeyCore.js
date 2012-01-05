@@ -137,6 +137,17 @@ function appendToSummary(text) {
     document.getElementById('wpSummary').setAttribute("value", readSummary() + text);
 }
 
+function getLongTextNode(element) {
+    // Firefox and other browsers split long text into multiple text nodes
+    var text = "";
+    for each (var child in element.childNodes) {
+        if (child.nodeType == 3) {
+            text += child.nodeValue;
+        }
+    }
+    return text;
+}
+
 function create_buttons(page, functions) {
     var container = document.createElement('div');
     
