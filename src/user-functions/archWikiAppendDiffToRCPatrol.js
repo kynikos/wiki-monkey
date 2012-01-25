@@ -1,5 +1,4 @@
-function UF_archWikiAppendDiffToRCPatrol() {
-    var article = "User:Kynikos/RC_Patrol";
+function UF_archWikiAppendDiffToRCPatrol(fname, article) {
     var summary = "[[User:Kynikos/Wiki Monkey|Wiki Monkey]]: add diff";
     
     var title = getTitle();
@@ -25,7 +24,7 @@ function UF_archWikiAppendDiffToRCPatrol() {
             enddate = xml.getElementsByTagName('rev')[0].getAttribute('timestamp');
     }
     
-    var notes = this.nextSibling.value;
+    var notes = document.getElementById(fname).value;
     
     xml = callAPIGet(["action=query", "prop=info|revisions",
                       "rvprop=content", "intoken=edit",

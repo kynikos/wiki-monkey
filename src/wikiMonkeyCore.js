@@ -173,17 +173,31 @@ function create_buttons(page, functions) {
         for each (var f in row) {
             button = document.createElement('input');
             button.setAttribute('type', 'button');
-            button.setAttribute('value', f[1]);
+            button.setAttribute('value', f[2]);
             
-            button.addEventListener("click", f[0], false);
-            brow.addEventListener("click", f[0], false);
-            ball.addEventListener("click", f[0], false);
+            button.addEventListener("click", (function(fname, arg) {
+                return function() {
+                	// window[string] doesn't work
+                    eval("UF_" + fname)(fname, arg);
+                }
+            })(f[0], f[1]), false);
+            brow.addEventListener("click", (function(fname, arg) {
+                return function() {
+                    eval("UF_" + fname)(fname, arg);
+                }
+            })(f[0], f[1]), false);
+            ball.addEventListener("click", (function(fname, arg) {
+                return function() {
+                    eval("UF_" + fname)(fname, arg);
+                }
+            })(f[0], f[1]), false);
             
             par.appendChild(button);
             
-            if (f[2]) {
+            if (f[3]) {
                 input = document.createElement('input');
                 input.setAttribute('type', 'text');
+                input.id = f[0];
                 
                 par.appendChild(input);
                 

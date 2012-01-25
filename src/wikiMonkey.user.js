@@ -34,11 +34,14 @@
  *             Level 3: this level separates the various functions in a row.
  *             [
  *                 Level 4: this level defines the button for a function: its
- *                 first element is the function name, while the second element
- *                 is the text displayed on the button; a third optional
- *                 boolean value can be used to create a text input field next
- *                 to the button, which should be accessed from the user
- *                 function with "this.nextSibling.value".
+ *                 first element is the function name (as a string) without the
+ *                 UF_ prefix, that will also be passed to the function as the
+ *                 first argument; the second element is the second, custom
+ *                 argument that will be passed to the function; the third
+ *                 element is the text displayed on the button; the fourth
+ *                 optional boolean value can be used to create a text input
+ *                 field next to the button, which will get an id equal to the
+ *                 first argument (the function name without prefix).
  *             ]
  *         ]
  *     ]
@@ -51,13 +54,14 @@
 main([
     [
         [
-            [UF_archWikiNewTemplates, "Update templates"],
-            [UF_multipleLineBreaks, "Multiple line breaks"]
+            ["archWikiNewTemplates", null, "Update templates"],
+            ["multipleLineBreaks", null, "Multiple line breaks"]
         ]
     ],
     [
         [
-            [UF_archWikiAppendDiffToRCPatrol, "Append to patrol list", true]
+            ["archWikiAppendDiffToRCPatrol", "User:Kynikos/RC_Patrol",
+             "Append to patrol list", true]
         ]
     ]
 ]);
