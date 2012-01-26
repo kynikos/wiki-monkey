@@ -105,6 +105,14 @@ var WM = new function () {
         return queryString[name];
     };
     
+    // Can't use an IIFE here because this.callAPIGet wouldn't be accessible
+    var userName = this.callAPIGet(["action=query", "meta=userinfo"]
+                    ).getElementsByTagName('userinfo')[0].getAttribute('name');
+    
+    this.getUserName = function () {
+        return userName;
+    };
+    
     this.getTitle = function () {
         return queryString['title'];
     };

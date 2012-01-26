@@ -23,8 +23,8 @@ WM.main(
         [
             ["ArchWikiAppendDiffToRCPatrol", "Append to patrol list",
              ["ArchWikiAppendDiffToRCPatrol-input",
-              "User:Kynikos/RC_Patrol",
-              "[[User:Kynikos/Wiki Monkey|Wiki Monkey]]: add diff"]]
+              "User:" + WM.getUserName() + "/RC_Patrol",
+              "[[User:" + WM.getUserName() + "/Wiki Monkey|Wiki Monkey]]: add diff"]]
         ]
     ]
 );
