@@ -1,6 +1,13 @@
-[DRAFT]
 * Make sure to be on the development branch
-* Create a temporary branch [...]
-* Change @version to next release in wikiMonkey.user.js
-* Switch @require scripts to master branch in wikiMonkey.user.js
-* Delete the user functions in development
+* Create a temporary branch named after the version to be released
+* Checkout the new branch
+* Delete the incomplete modules folder
+* Edit WikiMonkey.user.js:
+  - Change @version to the next version number
+  - Switch @require scripts to the temporary new version branch
+* Commit and push to the remote repository
+* Install the temporary version and check that everything works correctly
+
+* Edit WikiMonkey.user.js:
+  - Switch @require scripts to the master branch
+* Update documentation/wiki
