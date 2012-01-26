@@ -1,5 +1,6 @@
-Wiki Monkey is a Greasemonkey script that helps editing wiki pages by letting
-you create Javascript functions to automate repetitive operations. 
+Wiki Monkey is a Greasemonkey script that helps editing wiki pages by providing
+Javascript functions to automate repetitive operations, and a high-level API to
+let you create even more functions. 
 
 License: GPLv3 (see LICENSE).
 
