@@ -7,7 +7,12 @@
   - Switch @require scripts to the temporary new version branch
 * Commit and push to the remote repository
 * Install the temporary version and check that everything works correctly
-
 * Edit WikiMonkey.user.js:
   - Switch @require scripts to the master branch
+* Commit
+* Checkout the master branch and merge the temporary branch into the master
+  branch (assess the possibility of a rebase)
+* Tag the release commit with the new version number
+* Delete the temporary branch
+* Push to the remote repository
 * Update documentation/wiki
