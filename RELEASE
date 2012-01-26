@@ -1,2 +1,6 @@
+[DRAFT]
+* Make sure to be on the development branch
+* Create a temporary branch [...]
 * Change @version to next release in wikiMonkey.user.js
 * Switch @require scripts to master branch in wikiMonkey.user.js
+* Delete the user functions in development
