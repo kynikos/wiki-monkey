@@ -9,6 +9,7 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/WikiMonkeyCore.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/user-functions/ArchWikiAppendDiffToRCPatrol.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/user-functions/ArchWikiNewTemplates.js
+// @require https://raw.github.com/kynikos/wiki-monkey/development/src/user-functions/ExpandContractions.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/user-functions/MultipleLineBreaks.js
 // ==/UserScript==
 
@@ -16,6 +17,7 @@ WM.main(
     [
         [
             ["ArchWikiNewTemplates", "Update templates", null],
+            ["ExpandContractions", "Expand contractions", null],
             ["MultipleLineBreaks", "Multiple line breaks", null]
         ]
     ],
