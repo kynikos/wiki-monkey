@@ -151,8 +151,52 @@ var WM = new function () {
         }
         return text;
     };
+    
+    var appendToLog = function (text, color) {
+        var tstamp = document.createElement('pre');
+        tstamp.style.cssFloat = "left";
+        tstamp.style.width = "5em";
+        tstamp.style.margin = "0";
+        tstamp.style.border = "none";
+        tstamp.style.padding = "0";
+        tstamp.style.fontSize = "0.9em";
+        tstamp.style.color = '#eee';
+        tstamp.style.backgroundColor = "transparent";
+        var now = new Date();
+        tstamp.innerHTML = now.toLocaleTimeString();
+        
+        var msg = document.createElement('pre');
+        msg.style.margin = "0 0 0.5em 5em";
+        msg.style.border = "none";
+        msg.style.padding = "0";
+        msg.style.color = (color) ? color : "#eee";
+        msg.style.backgroundColor = "transparent";
+        msg.innerHTML = text;
+        
+        var line = document.createElement('div');
+        line.appendChild(tstamp);
+        line.appendChild(msg);
+        
+        document.getElementById('WikiMonkeyLog').appendChild(line);
+    };
+    
+    this.logDebug = function (text) {
+        appendToLog(text, 'cyan');
+    };
+    
+    this.logInfo = function (text) {
+        appendToLog(text);
+    };
+    
+    this.logWarning = function (text) {
+        appendToLog(text, 'gold');
+    };
+    
+    this.logError = function (text) {
+        appendToLog(text, 'red');
+    };
 
-    var makeUI = function (functions) {
+    var makeButtons = function (functions) {
         var divContainer = document.createElement('div');
         
         var buttonAll = document.createElement('input');
@@ -207,18 +251,39 @@ var WM = new function () {
         return divContainer;
     };
     
+    var makeLogArea = function () {
+        log = document.createElement('div');
+        log.id = 'WikiMonkeyLog';
+        log.style.height = '10em';
+        log.style.border = '2px solid #07b';
+        log.style.padding = '0.5em';
+        log.style.overflow = 'scroll';
+        log.style.resize = 'vertical';
+        log.style.backgroundColor = '#111';
+        
+        return log;
+    };
+    
     this.main = function (editFunctions, diffFunctions) {
         if (document.getElementById('editform')) {
-            var container = makeUI(editFunctions);
-            document.getElementById('wpSummaryLabel'
-                ).parentNode.parentNode.insertBefore(container,
-                document.getElementById('wpSummaryLabel').parentNode.nextSibling);
+            var baseNode = document.getElementById('wpSummaryLabel').parentNode.parentNode;
+            var nextNode = document.getElementById('wpSummaryLabel').parentNode.nextSibling;
+            
+            var buttons = makeButtons(editFunctions);
+            baseNode.insertBefore(buttons, nextNode);
+            
+            var log = makeLogArea(editFunctions);
+            baseNode.insertBefore(log, nextNode);
         }
         else if (document.getElementById('mw-diff-otitle1')) {
-            var container = makeUI(diffFunctions);
-            document.getElementById('bodyContent'
-                ).getElementsByTagName('h2')[0].parentNode.insertBefore(container,
-                document.getElementById('bodyContent').getElementsByTagName('h2')[0]);
+            var baseNode = document.getElementById('bodyContent').getElementsByTagName('h2')[0].parentNode;
+            var nextNode = document.getElementById('bodyContent').getElementsByTagName('h2')[0];
+            
+            var buttons = makeButtons(diffFunctions);
+            baseNode.insertBefore(buttons, nextNode);
+            
+            var log = makeLogArea(diffFunctions);
+            baseNode.insertBefore(log, nextNode);
         }
     };
 };

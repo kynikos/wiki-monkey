@@ -40,8 +40,8 @@ var ArchWikiAppendDiffToRCPatrol = new function () {
         var notes = document.getElementById(inputId).value;
         
         xml = WM.callAPIGet(["action=query", "prop=info|revisions",
-                          "rvprop=content", "intoken=edit",
-                          "titles=" + encodeURIComponent(article)]);
+                             "rvprop=content", "intoken=edit",
+                             "titles=" + encodeURIComponent(article)]);
         
         var page = xml.getElementsByTagName('page')[0];
         var rev = xml.getElementsByTagName('rev')[0];
@@ -56,17 +56,17 @@ var ArchWikiAppendDiffToRCPatrol = new function () {
                       "]\n|" + enddate + "\n|" + notes + "\n" + part2;
         
         xml = WM.callAPIPost(["action=edit", "bot=1",
-                           "title=" + encodeURIComponent(article),
-                           "summary=" + encodeURIComponent(summary),
-                           "text=" + encodeURIComponent(newtext),
-                           "basetimestamp=" + timestamp,
-                           "token=" + encodeURIComponent(edittoken)]);
+                              "title=" + encodeURIComponent(article),
+                              "summary=" + encodeURIComponent(summary),
+                              "text=" + encodeURIComponent(newtext),
+                              "basetimestamp=" + timestamp,
+                              "token=" + encodeURIComponent(edittoken)]);
         
         if (xml.getElementsByTagName('edit')[0].getAttribute('result') == 'Success') {
-            alert('Diff correctly appended.');
+            WM.logInfo('Diff correctly appended to ' + article);
         }
         else {
-            alert('Error! The diff has not been appended.');
+            WM.logError('The diff has not been appended!');
         }
     };
 };

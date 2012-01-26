@@ -1,6 +1,7 @@
 var ArchWikiNewTemplates = new function () {
     this.main = function (args) {
         var s = WM.readSource();
+        var original = s;
         
         var re1 = /\{\{ *(?:[Cc]odeline|[Ff]ilename) *\|/g;
         
@@ -38,33 +39,24 @@ var ArchWikiNewTemplates = new function () {
         
         WM.writeSource(s);
         
-        var tests = new Array();
-        tests[0] = s.match(/\{\{ *[Cc]odeline/g);
-        tests[1] = s.match(/\{\{ *[Ff]ilename/g);
-        tests[2] = s.match(/&lt;pre/ig);
-        tests[3] = s.match(/&lt;code/ig);
-        tests[4] = s.match(/&lt;tt/ig);
-        tests[5] = s.match(/\{\{ *[Pp]ackage Official/g);
-        tests[6] = s.match(/\{\{ *[Pp]ackage AUR/g);
-            
-        var ab = false;
-        for each (var test in tests) { 
-            if (test) {
-                ab = true;
-                break;
-            }
+        if (s != original) {
+            WM.logInfo("Updated deprecated templates and HTML tags");
         }
         
-        if (ab) {
-            alert('Migration to new templates:\n' +
-                  ((tests[0]) ? (tests[0].length + ' Codeline instances\n') : '') +
-                  ((tests[1]) ? (tests[1].length + ' Filename instances\n') : '') +
-                  ((tests[2]) ? (tests[2].length + ' <pre> instances\n') : '') +
-                  ((tests[3]) ? (tests[3].length + ' <code> instances\n') : '') +
-                  ((tests[4]) ? (tests[4].length + ' <tt> instances\n') : '') +
-                  ((tests[5]) ? (tests[5].length + ' Package Official instances\n') : '') +
-                  ((tests[6]) ? (tests[6].length + ' Package AUR instances\n') : '') +
-                  'require manual intervention.');
+        var tests = [
+            ['Codeline', s.match(/\{\{ *[Cc]odeline/g)],
+            ['Filename', s.match(/\{\{ *[Ff]ilename/g)],
+            ['&lt;pre>', s.match(/&lt;pre/ig)],
+            ['&lt;code>', s.match(/&lt;code/ig)],
+            ['&lt;tt>', s.match(/&lt;tt/ig)],
+            ['Package Official', s.match(/\{\{ *[Pp]ackage Official/g)],
+            ['Package AUR', s.match(/\{\{ *[Pp]ackage AUR/g)]
+        ]
+        
+        for each (var test in tests) { 
+            if (test[1]) {
+                WM.logWarning(test[1].length + ' ' + test[0] + ' instances require manual intervention');
+            }
         }
     };
 };
