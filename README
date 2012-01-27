@@ -1,8 +1,8 @@
-Wiki Monkey is a Greasemonkey script that helps editing wiki pages by providing
-Javascript functions to automate repetitive operations, and a high-level API to
-let you create even more functions. 
+Wiki Monkey is a Scriptish script that helps editing wiki pages by providing
+some Javascript functions to automatize repetitive operations, or letting you
+create new functions exploiting its high-level API. 
 
 License: GPLv3 (see LICENSE).
 
-Currently the documentation is at
+Currently the documentation is located at
 https://wiki.archlinux.org/index.php/User:Kynikos/Wiki_Monkey
