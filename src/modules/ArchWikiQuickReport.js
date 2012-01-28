@@ -1,4 +1,4 @@
-var ArchWikiAppendDiffToRCPatrol = new function () {
+var ArchWikiQuickReport = new function () {
     this.makeUI = function (args) {
         var id = args[0];
                 
