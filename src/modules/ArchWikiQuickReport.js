@@ -14,6 +14,8 @@ var ArchWikiQuickReport = new function () {
         var article = args[1];
         var summary = args[2];
         
+        WM.logInfo('Appending diff to ' + article + "...");
+        
         var title = WM.getTitle();
         var diff = WM.getURIParameter('diff');
         var oldid = WM.getURIParameter('oldid');
