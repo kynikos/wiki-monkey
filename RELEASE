@@ -2,9 +2,10 @@
 * Create a temporary branch named after the version to be released
 * Checkout the new branch
 * Delete the incomplete modules folder
-* Edit WikiMonkey.user.js:
-  - Change @version to the next version number
+* Edit WikiMonkey.user.js and WikiMonkey.meta.js:
+  - Change @id and @version to the next version number
   - Switch @require scripts to the temporary new version branch
+  - Switch @updateURL to the master branch
 * Commit and push to the remote repository
 * Install the temporary version and check that everything works correctly
 * Edit WikiMonkey.user.js:

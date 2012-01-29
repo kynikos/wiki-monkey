@@ -1,9 +1,15 @@
 // ==UserScript==
+// @id wiki-monkey-development
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
+// @author Dario Giovannetti <dev@dariogiovannetti.com>
+// @version development-201201292144
 // @description Perform automatic actions when editing wiki pages
-// @version development
+// @website https://github.com/kynikos/wiki-monkey
+// @supportURL https://github.com/kynikos/wiki-monkey/issues
+// @updateURL https://raw.github.com/kynikos/wiki-monkey/development/src/WikiMonkey.meta.js
 // @icon http://github.com/downloads/kynikos/wiki-monkey/wiki-monkey.png
+// @icon64 http://github.com/downloads/kynikos/wiki-monkey/wiki-monkey-64.png
 // @match http://*.wikipedia.org/*
 // @match https://wiki.archlinux.org/*
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/WikiMonkeyCore.js
