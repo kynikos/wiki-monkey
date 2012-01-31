@@ -3,7 +3,7 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.com>
-// @version development-201201292144
+// @version development
 // @description Perform automatic actions when editing wiki pages
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
@@ -33,6 +33,12 @@ WM.main(
              ["ArchWikiQuickReport-input",
               "User:" + WM.getUserName() + "/RC_Patrol",
               "[[User:" + WM.getUserName() + "/Wiki Monkey|Wiki Monkey]]: add diff"]]
+        ],
+        [
+            ["ArchWikiQuickReport", "Remind discussion",
+             ["ArchWikiQuickReport-discussions-input",
+              "User:" + WM.getUserName() + "/Discussions",
+              "[[User:" + WM.getUserName() + "/Wiki Monkey|Wiki Monkey]]: add discussiuon"]]
         ]
     ]
 );
