@@ -195,6 +195,18 @@ var WM = new function () {
     this.logError = function (text) {
         appendToLog(text, 'red');
     };
+    
+    var editorUI = [];
+    
+    this.setEditorUI = function(rows) {
+        editorUI = rows;
+    }
+    
+    var diffUI = [];
+    
+    this.setDiffUI = function(rows) {
+        diffUI = rows;
+    }
 
     var makeButtons = function (functions) {
         var divContainer = document.createElement('div');
@@ -264,26 +276,21 @@ var WM = new function () {
         return log;
     };
     
-    this.main = function (editFunctions, diffFunctions) {
+    this.main = function () {
+        var baseNode, nextNode, UI;
+        
         if (document.getElementById('editform')) {
-            var baseNode = document.getElementById('wpSummaryLabel').parentNode.parentNode;
-            var nextNode = document.getElementById('wpSummaryLabel').parentNode.nextSibling;
-            
-            var buttons = makeButtons(editFunctions);
-            baseNode.insertBefore(buttons, nextNode);
-            
-            var log = makeLogArea(editFunctions);
-            baseNode.insertBefore(log, nextNode);
+            baseNode = document.getElementById('wpSummaryLabel').parentNode.parentNode;
+            nextNode = document.getElementById('wpSummaryLabel').parentNode.nextSibling;
+            UI = editorUI;
         }
         else if (document.getElementById('mw-diff-otitle1')) {
-            var baseNode = document.getElementById('bodyContent').getElementsByTagName('h2')[0].parentNode;
-            var nextNode = document.getElementById('bodyContent').getElementsByTagName('h2')[0];
-            
-            var buttons = makeButtons(diffFunctions);
-            baseNode.insertBefore(buttons, nextNode);
-            
-            var log = makeLogArea(diffFunctions);
-            baseNode.insertBefore(log, nextNode);
+            baseNode = document.getElementById('bodyContent').getElementsByTagName('h2')[0].parentNode;
+            nextNode = document.getElementById('bodyContent').getElementsByTagName('h2')[0];
+            UI = diffUI;
         }
+        
+        baseNode.insertBefore(makeButtons(UI), nextNode);
+        baseNode.insertBefore(makeLogArea(), nextNode);
     };
 };

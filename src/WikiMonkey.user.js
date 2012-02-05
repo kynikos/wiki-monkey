@@ -19,26 +19,27 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/MultipleLineBreaks.js
 // ==/UserScript==
 
-WM.main(
+WM.setEditorUI([
     [
-        [
-            ["ArchWikiNewTemplates", "Update templates", null],
-            ["ExpandContractions", "Expand contractions", null],
-            ["MultipleLineBreaks", "Multiple line breaks", null]
-        ]
+        ["ArchWikiNewTemplates", "Update templates", null],
+        ["ExpandContractions", "Expand contractions", null],
+        ["MultipleLineBreaks", "Multiple line breaks", null]
+    ]
+])
+
+WM.setDiffUI([
+    [
+        ["ArchWikiQuickReport", "Quick report",
+         ["ArchWikiQuickReport-input",
+          "User:" + WM.getUserName() + "/RC_Patrol",
+          "[[User:" + WM.getUserName() + "/Wiki Monkey|Wiki Monkey]]: add diff"]]
     ],
     [
-        [
-            ["ArchWikiQuickReport", "Quick report",
-             ["ArchWikiQuickReport-input",
-              "User:" + WM.getUserName() + "/RC_Patrol",
-              "[[User:" + WM.getUserName() + "/Wiki Monkey|Wiki Monkey]]: add diff"]]
-        ],
-        [
-            ["ArchWikiQuickReport", "Remind discussion",
-             ["ArchWikiQuickReport-discussions-input",
-              "User:" + WM.getUserName() + "/Discussions",
-              "[[User:" + WM.getUserName() + "/Wiki Monkey|Wiki Monkey]]: add discussiuon"]]
-        ]
+        ["ArchWikiQuickReport", "Remind discussion",
+         ["ArchWikiQuickReport-discussions-input",
+          "User:" + WM.getUserName() + "/Discussions",
+          "[[User:" + WM.getUserName() + "/Wiki Monkey|Wiki Monkey]]: add discussiuon"]]
     ]
-);
+])
+
+WM.main()
