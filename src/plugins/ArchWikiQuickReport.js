@@ -3,11 +3,10 @@ WM.Plugins.ArchWikiQuickReport = new function () {
         var id = args[0];
         
         var select = document.createElement('select');
-        var values = ["&lt;TYPE&gt;", "content", "style"];
-        for (var val in values) {
+        for each (var value in ["&lt;TYPE&gt;", "content", "style"]) {
             option = document.createElement('option');
-            option.setAttribute('value', values[val]);
-            option.innerHTML = values[val];
+            option.setAttribute('value', value);
+            option.innerHTML = value;
             select.appendChild(option);
         }
         select.id = "ArchWikiQuickReport-select-" + id;
