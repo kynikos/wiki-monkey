@@ -48,20 +48,6 @@ var WM = new function () {
     this.Plugins = {};
     
     this.main = function () {
-        var baseNode, nextNode, UI;
-        
-        if (document.getElementById('editform')) {
-            baseNode = document.getElementById('wpSummaryLabel').parentNode.parentNode;
-            nextNode = document.getElementById('wpSummaryLabel').parentNode.nextSibling;
-            UI = this.UI.getEditor();
-        }
-        else if (document.getElementById('mw-diff-otitle1')) {
-            baseNode = document.getElementById('bodyContent').getElementsByTagName('h2')[0].parentNode;
-            nextNode = document.getElementById('bodyContent').getElementsByTagName('h2')[0];
-            UI = this.UI.getDiff();
-        }
-        
-        baseNode.insertBefore(this.UI.makeButtons(UI), nextNode);
-        baseNode.insertBefore(this.Log.makeLogArea(), nextNode);
+        this.UI.makeUI();
     };
 };

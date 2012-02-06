@@ -116,4 +116,27 @@ WM.UI = new function () {
         
         return divContainer;
     };
+    
+    this.makeUI = function () {
+        var baseNode, nextNode, UI;
+        
+        if (document.getElementById('editform')) {
+            baseNode = document.getElementById('wpSummaryLabel').parentNode.parentNode;
+            nextNode = document.getElementById('wpSummaryLabel').parentNode.nextSibling;
+            UI = this.getEditor();
+        }
+        else if (document.getElementById('mw-diff-otitle1')) {
+            baseNode = document.getElementById('bodyContent').getElementsByTagName('h2')[0].parentNode;
+            nextNode = document.getElementById('bodyContent').getElementsByTagName('h2')[0];
+            UI = this.getDiff();
+        }
+        
+        var main = document.createElement('fieldset');
+        var legend = document.createElement('legend');
+        legend.innerHTML = 'Wiki Monkey';
+        main.appendChild(legend);
+        main.appendChild(this.makeButtons(UI));
+        main.appendChild(WM.Log.makeLogArea());
+        baseNode.insertBefore(main, nextNode);
+    };
 };
