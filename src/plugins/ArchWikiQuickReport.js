@@ -1,48 +1,46 @@
 WM.Plugins.ArchWikiQuickReport = new function () {
     this.makeUI = function (args) {
         var id = args[0];
-                
-        input = document.createElement('input');
+        
+        var select = document.createElement('select');
+        var values = ["<TYPE>", "content", "style"];
+        for (var val in values) {
+            option = document.createElement('option');
+            option.setAttribute('value', values[val]);
+            option.innerHTML = values[val];
+            select.appendChild(option);
+        }
+        select.id = "ArchWikiQuickReport-select-" + id;
+        
+        var input = document.createElement('input');
         input.setAttribute('type', 'text');
-        input.id = id;
-       
-        return input;
+        input.id = "ArchWikiQuickReport-input-" + id;
+        
+        var span = document.createElement('span');
+        span.appendChild(select);
+        span.appendChild(input);
+        
+        return span;
     };
     
     this.main = function (args) {
-        var inputId = args[0];
+        var id = args[0];
         var article = args[1];
         var summary = args[2];
         
         WM.Log.logInfo('Appending diff to ' + article + "...");
         
         var title = WM.getURIParameter('title');
-        var diff = WM.getURIParameter('diff');
-        var oldid = WM.getURIParameter('oldid');
-        var xml, enddate;
-        switch (diff) {
-            case 'next':
-                xml = WM.MW.callAPIGet(["action=query", "prop=revisions",
-                                  "titles=" + title, "rvlimit=2",
-                                  "rvprop=timestamp", "rvdir=newer",
-                                  "rvstartid=" + oldid]);
-                enddate = xml.getElementsByTagName('rev')[1].getAttribute('timestamp');
-                break;
-            case 'prev':
-                xml = WM.MW.callAPIGet(["action=query", "prop=revisions",
-                                  "revids=" + oldid, "rvprop=timestamp"]);
-                enddate = xml.getElementsByTagName('rev')[0].getAttribute('timestamp');
-                break;
-            default:
-                xml = WM.MW.callAPIGet(["action=query", "prop=revisions",
-                                  "revids=" + diff, "rvprop=timestamp"]);
-                enddate = xml.getElementsByTagName('rev')[0].getAttribute('timestamp');
+        var enddate = WM.Diff.getEndTimestamp();
+        var select = document.getElementById("ArchWikiQuickReport-select-" + id);
+        var type = select.options[select.selectedIndex].value;
+        var notes = document.getElementById("ArchWikiQuickReport-input-" + id).value;
+        
+        if (type != 'content' && type != 'style') {
+            WM.Log.logError('Select a valid report type');
         }
-        
-        var notes = document.getElementById(inputId).value;
-        
-        if (WM.Tables.appendRow(article, null, ["[" + location.href + " " +
-                                        title + "]", enddate, notes], summary))
+        else if (WM.Tables.appendRow(article, null, ["[" + location.href +
+                            " " + title + "]", enddate, type, notes], summary))
         {
             WM.Log.logInfo('Diff correctly appended to ' + article);
         }
