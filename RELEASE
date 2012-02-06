@@ -1,7 +1,7 @@
 * Make sure to be on the development branch
 * Create a temporary branch named after the version to be released
 * Checkout the new branch
-* Delete the incomplete modules folder
+* Delete the incomplete plugins folder
 * Edit WikiMonkey.user.js and WikiMonkey.meta.js:
   - Change @id and @version to the next version number
   - Switch @require scripts to the temporary new version branch

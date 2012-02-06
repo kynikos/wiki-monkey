@@ -1,6 +1,6 @@
-var ArchWikiNewTemplates = new function () {
+WM.Plugins.ArchWikiNewTemplates = new function () {
     this.main = function (args) {
-        var s = WM.readSource();
+        var s = WM.Editor.readSource();
         var original = s;
         
         var re1 = /\{\{ *(?:[Cc]odeline|[Ff]ilename) *\|/g;
@@ -37,10 +37,10 @@ var ArchWikiNewTemplates = new function () {
         s = s.replace(re17, '{{Pkg|');
         s = s.replace(re18, '{{AUR|');
         
-        WM.writeSource(s);
+        WM.Editor.writeSource(s);
         
         if (s != original) {
-            WM.logInfo("Updated deprecated templates and HTML tags");
+            WM.Log.logInfo("Updated deprecated templates and HTML tags");
         }
         
         var tests = [
@@ -55,7 +55,7 @@ var ArchWikiNewTemplates = new function () {
         
         for each (var test in tests) { 
             if (test[1]) {
-                WM.logWarning(test[1].length + ' ' + test[0] + ' instances require manual intervention');
+                WM.Log.logWarning(test[1].length + ' ' + test[0] + ' instances require manual intervention');
             }
         }
     };
