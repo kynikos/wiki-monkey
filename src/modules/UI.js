@@ -45,6 +45,7 @@ WM.UI = new function () {
         var buttonAll = document.createElement('input');
         buttonAll.setAttribute('type', 'button');
         buttonAll.setAttribute('value', 'Execute all');
+        buttonAll.style.fontWeight = "bold";
         
         var buttonsN, divRow, buttonRow, divFunction, buttonFunction, makeUI;
         var rowsN = 0; 
@@ -54,6 +55,7 @@ WM.UI = new function () {
             buttonRow.setAttribute('type', 'button');
             buttonRow.setAttribute('value', 'Execute row');
             buttonRow.style.marginRight = '0.67em';
+            buttonRow.style.fontWeight = "bold";
             
             divRow = document.createElement('div');
             divRow.style.margin = '0.67em 0';
@@ -91,13 +93,7 @@ WM.UI = new function () {
             }
             divContainer.appendChild(divRow);
             
-            if (buttonsN > 1) {
-                buttonRow.style.backgroundColor = "#08c";
-                buttonRow.style.borderColor = "blue";
-                buttonRow.style.color = "white";
-                buttonRow.style.fontWeight = "bold";
-            }
-            else {
+            if (buttonsN <= 1) {
                 buttonRow.disabled = true;
             }
             
@@ -106,10 +102,6 @@ WM.UI = new function () {
         divRow = document.createElement('div');
         divRow.style.margin = '0.67em 0';
         if (rowsN > 1) {
-            buttonAll.style.backgroundColor = "#08c";
-            buttonAll.style.borderColor = "blue";
-            buttonAll.style.color = "white";
-            buttonAll.style.fontWeight = "bold";
             divRow.appendChild(buttonAll);
         }
         divContainer.appendChild(divRow);
