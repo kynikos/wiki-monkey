@@ -42,7 +42,7 @@ WM.MW = new function () {
     };
     
     // Incomplete ****************************************************************
-    this.getBacklinks = function (args) {
+    var getBacklinks = function (args) {
         var xml = this.callAPIGet(["action=query", "list=backlinks",
                                  "bltitle=" + ecodeURIComponent(WM.Editor.getTitle())]);
         var bls = new Array();

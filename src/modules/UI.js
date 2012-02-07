@@ -25,8 +25,8 @@ WM.UI = new function () {
         editor = rows;
     }
     
-    this.getEditor = function(rows) {
-        return editor;
+    var getEditor = function(rows) {
+        return makeButtons(editor);
     }
     
     var diff = [];
@@ -35,11 +35,21 @@ WM.UI = new function () {
         diff = rows;
     }
     
-    this.getDiff = function(rows) {
-        return diff;
+    var getDiff = function(rows) {
+        return makeButtons(diff);
+    }
+    
+    var whatLinksHere = [];
+    
+    this.setWhatLinksHere = function(rows) {
+        whatLinksHere = rows;
+    }
+    
+    var getWhatLinksHere = function(rows) {
+        return makeBot(whatLinksHere);
     }
 
-    this.makeButtons = function (functions) {
+    var makeButtons = function (functions) {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyButtons';
         
@@ -112,18 +122,32 @@ WM.UI = new function () {
         return divContainer;
     };
     
+    var makeBot = function (functions) {
+        var divContainer = document.createElement('div');
+        divContainer.id = 'WikiMonkeyBot';
+        
+        GM_addStyle("#WikiMonkeyBot {}");
+        
+        return divContainer;
+    };
+    
     this.makeUI = function () {
         var baseNode, nextNode, UI;
         
         if (document.getElementById('editform')) {
             baseNode = document.getElementById('wpSummaryLabel').parentNode.parentNode;
             nextNode = document.getElementById('wpSummaryLabel').parentNode.nextSibling;
-            UI = this.getEditor();
+            UI = getEditor();
         }
         else if (document.getElementById('mw-diff-otitle1')) {
-            baseNode = document.getElementById('bodyContent').getElementsByTagName('h2')[0].parentNode;
             nextNode = document.getElementById('bodyContent').getElementsByTagName('h2')[0];
-            UI = this.getDiff();
+            baseNode = nextNode.parentNode;
+            UI = getDiff();
+        }
+        else if (document.getElementById('mw-whatlinkshere-list')) {
+            baseNode = document.getElementById('bodyContent')
+            nextNode = baseNode.getElementsByTagName('form')[0].nextSibling;
+            UI = getWhatLinksHere();
         }
         
         var main = document.createElement('fieldset');
@@ -134,7 +158,7 @@ WM.UI = new function () {
         var legend = document.createElement('legend');
         legend.innerHTML = 'Wiki Monkey';
         main.appendChild(legend);
-        
+
         var help = document.createElement('p');
         help.id = 'WikiMonkeyHelp';
         var helpln = document.createElement('a');
@@ -143,7 +167,7 @@ WM.UI = new function () {
         help.appendChild(helpln);
         main.appendChild(help);
         
-        main.appendChild(this.makeButtons(UI));
+        main.appendChild(UI);
         main.appendChild(WM.Log.makeLogArea());
         baseNode.insertBefore(main, nextNode);
     };

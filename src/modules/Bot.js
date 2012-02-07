@@ -20,7 +20,7 @@
 
 WM.Bot = new function () {
     // Incomplete ****************************************************************
-    this.demo = function (args) {
+    var demo = function (args) {
         // Remember a value
         GM_setValue('foo' + 'bar');
         
