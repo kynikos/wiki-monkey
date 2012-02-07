@@ -1,31 +1,31 @@
 // ==UserScript==
-// @id wiki-monkey-dev
+// @id wiki-monkey
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.com>
-// @version 1dev
+// @version 1.6.0
 // @description Perform automatic actions when editing wiki pages
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/development/src/WikiMonkey.meta.js
+// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/WikiMonkey.meta.js
 // @icon http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey.png
 // @icon64 http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey-64.png
 // @match http://*.wikipedia.org/*
 // @match https://wiki.archlinux.org/*
-// @require https://raw.github.com/kynikos/wiki-monkey/development/src/Core.js
-// @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Bot.js
-// @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Diff.js
-// @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Editor.js
-// @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/HTTP.js
-// @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Log.js
-// @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/MW.js
-// @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Tables.js
-// @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/UI.js
-// @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiNewTemplates.js
-// @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiQuickReport.js
-// @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiSaveTalk.js
-// @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ExpandContractions.js
-// @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/MultipleLineBreaks.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.6.0/src/Core.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.6.0/src/modules/Bot.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.6.0/src/modules/Diff.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.6.0/src/modules/Editor.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.6.0/src/modules/HTTP.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.6.0/src/modules/Log.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.6.0/src/modules/MW.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.6.0/src/modules/Tables.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.6.0/src/modules/UI.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.6.0/src/plugins/ArchWikiNewTemplates.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.6.0/src/plugins/ArchWikiQuickReport.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.6.0/src/plugins/ArchWikiSaveTalk.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.6.0/src/plugins/ExpandContractions.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.6.0/src/plugins/MultipleLineBreaks.js
 // ==/UserScript==
 
 WM.UI.setEditor([
