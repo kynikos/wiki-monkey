@@ -41,11 +41,16 @@ WM.UI = new function () {
 
     this.makeButtons = function (functions) {
         var divContainer = document.createElement('div');
+        divContainer.id = 'WikiMonkeyButtons';
+        
+        GM_addStyle("#WikiMonkeyButtons input.shortcut {font-weight:bold; margin-right:0.67em;} " +
+                    "#WikiMonkeyButtons div.row {margin-bottom:0.67em;} " +
+                    "#WikiMonkeyButtons div.pluginUI {display:inline-block; margin-right:0.33em;}");
         
         var buttonAll = document.createElement('input');
         buttonAll.setAttribute('type', 'button');
         buttonAll.setAttribute('value', 'Execute all');
-        buttonAll.style.fontWeight = "bold";
+        buttonAll.className = "shortcut";
         
         var buttonsN, divRow, buttonRow, divFunction, buttonFunction, makeUI;
         var rowsN = 0; 
@@ -54,11 +59,10 @@ WM.UI = new function () {
             buttonRow = document.createElement('input');
             buttonRow.setAttribute('type', 'button');
             buttonRow.setAttribute('value', 'Execute row');
-            buttonRow.style.marginRight = '0.67em';
-            buttonRow.style.fontWeight = "bold";
+            buttonRow.className = "shortcut";
             
             divRow = document.createElement('div');
-            divRow.style.margin = '0.67em 0';
+            divRow.className = "row";
             divRow.appendChild(buttonRow);
             
             buttonsN = 0;
@@ -78,8 +82,7 @@ WM.UI = new function () {
                 };
                 
                 divFunction = document.createElement('div');
-                divFunction.style.display = 'inline-block';
-                divFunction.style.marginRight = '0.33em';
+                divFunction.className = 'pluginUI';
                 divFunction.appendChild(buttonFunction);
                 
                 makeUI = eval("WM.Plugins." + f[0] + ".makeUI");
@@ -100,7 +103,7 @@ WM.UI = new function () {
             rowsN++;
         }
         divRow = document.createElement('div');
-        divRow.style.margin = '0.67em 0';
+        divRow.className = 'row';
         if (rowsN > 1) {
             divRow.appendChild(buttonAll);
         }
@@ -124,6 +127,7 @@ WM.UI = new function () {
         }
         
         var main = document.createElement('fieldset');
+        main.id = 'WikiMonkey';
         var legend = document.createElement('legend');
         legend.innerHTML = 'Wiki Monkey';
         main.appendChild(legend);

@@ -20,37 +20,29 @@
 
 WM.Log = new function () {
     this.makeLogArea = function () {
+        GM_addStyle("#WikiMonkeyLog {height:10em; border:2px solid #07b; padding:0.5em; overflow:auto; resize:vertical; background-color:#111;} " +
+                    "#WikiMonkeyLog pre.timestamp {float:left; width:5em; margin:0; border:none; padding:0; font-size:0.9em; color:#eee; background-color:transparent;} " +
+                    "#WikiMonkeyLog pre.message {margin:0 0 0.5em 5em; border:none; padding:0; color:#eee; background-color:transparent;} " +
+                    "#WikiMonkeyLog pre.mdebug {color:cyan;} " +
+                    // The .warning and .error classes are already used by
+                    // MediaWiki, without associating them with an id and a tag
+                    "#WikiMonkeyLog pre.mwarning {color:gold;} " +
+                    "#WikiMonkeyLog pre.merror {color:red;}");
+        
         log = document.createElement('div');
         log.id = 'WikiMonkeyLog';
-        log.style.height = '10em';
-        log.style.border = '2px solid #07b';
-        log.style.padding = '0.5em';
-        log.style.overflow = 'auto';
-        log.style.resize = 'vertical';
-        log.style.backgroundColor = '#111';
         
         return log;
     };
     
-    var appendToLog = function (text, color) {
+    var appendMessage = function (text, type) {
         var tstamp = document.createElement('pre');
-        tstamp.style.cssFloat = "left";
-        tstamp.style.width = "5em";
-        tstamp.style.margin = "0";
-        tstamp.style.border = "none";
-        tstamp.style.padding = "0";
-        tstamp.style.fontSize = "0.9em";
-        tstamp.style.color = '#eee';
-        tstamp.style.backgroundColor = "transparent";
+        tstamp.className = 'timestamp';
         var now = new Date();
         tstamp.innerHTML = now.toLocaleTimeString();
         
         var msg = document.createElement('pre');
-        msg.style.margin = "0 0 0.5em 5em";
-        msg.style.border = "none";
-        msg.style.padding = "0";
-        msg.style.color = (color) ? color : "#eee";
-        msg.style.backgroundColor = "transparent";
+        msg.className = 'message' + ((type) ? " " + type : "");
         msg.innerHTML = text;
         
         var line = document.createElement('div');
@@ -61,18 +53,18 @@ WM.Log = new function () {
     };
     
     this.logDebug = function (text) {
-        appendToLog(text, 'cyan');
+        appendMessage(text, 'mdebug');
     };
     
     this.logInfo = function (text) {
-        appendToLog(text);
+        appendMessage(text);
     };
     
     this.logWarning = function (text) {
-        appendToLog(text, 'gold');
+        appendMessage(text, 'mwarning');
     };
     
     this.logError = function (text) {
-        appendToLog(text, 'red');
+        appendMessage(text, 'merror');
     };
 };
