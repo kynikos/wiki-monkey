@@ -1,4 +1,3 @@
 // ==UserScript==
-// @id wiki-monkey-development
-// @version 201202070050
+// @version dev-1
 // ==/UserScript==
