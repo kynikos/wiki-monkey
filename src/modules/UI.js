@@ -128,9 +128,21 @@ WM.UI = new function () {
         
         var main = document.createElement('fieldset');
         main.id = 'WikiMonkey';
+        
+        GM_addStyle("#WikiMonkeyHelp {float:right; position:relative; top:-1.2em; left:0.4em;}");
+        
         var legend = document.createElement('legend');
         legend.innerHTML = 'Wiki Monkey';
         main.appendChild(legend);
+        
+        var help = document.createElement('p');
+        help.id = 'WikiMonkeyHelp';
+        var helpln = document.createElement('a');
+        helpln.href = 'index.php/User:Kynikos/Wiki_Monkey'
+        helpln.innerHTML = 'help';
+        help.appendChild(helpln);
+        main.appendChild(help);
+        
         main.appendChild(this.makeButtons(UI));
         main.appendChild(WM.Log.makeLogArea());
         baseNode.insertBefore(main, nextNode);
