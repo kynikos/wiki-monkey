@@ -25,7 +25,7 @@ WM.Log = new function () {
         log.style.height = '10em';
         log.style.border = '2px solid #07b';
         log.style.padding = '0.5em';
-        log.style.overflow = 'scroll';
+        log.style.overflow = 'auto';
         log.style.resize = 'vertical';
         log.style.backgroundColor = '#111';
         
