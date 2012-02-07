@@ -1,6 +1,6 @@
-var ExpandContractions = new function () {
+WM.Plugins.ExpandContractions = new function () {
     this.main = function (args) {
-        var s = WM.readSource();
+        var s = WM.Editor.readSource();
         var original = s;
         
         // Note that 's and 'd are ambiguous
@@ -10,10 +10,10 @@ var ExpandContractions = new function () {
         s = s.replace(/(is|are|have|has|do|does)n't/ig, '$1 not');
         s = s.replace(/can't/ig, 'cannot');
         
-        WM.writeSource(s);
+        WM.Editor.writeSource(s);
         
         if (s != original) {
-            WM.logInfo("Expanded contractions");
+            WM.Log.logInfo("Expanded contractions");
         }
     };
 };

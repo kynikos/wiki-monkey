@@ -1,18 +1,22 @@
 * Make sure to be on the development branch
 * Create a temporary branch named after the version to be released
 * Checkout the new branch
-* Delete the incomplete modules folder
 * Edit WikiMonkey.user.js:
   - Change @version to the next version number
+  - Change @id to stable id
   - Switch @require scripts to the temporary new version branch
+  - Switch @updateURL to the master branch (NOT the temporary branch!)
+* Edit WikiMonkey.meta.js:
+  - Change @version to the next version number (must be identical to the value
+    in WikiMonkey.user.js)
 * Commit and push to the remote repository
 * Install the temporary version and check that everything works correctly
-* Edit WikiMonkey.user.js:
-  - Switch @require scripts to the master branch
-* Commit
 * Checkout the master branch and merge the temporary branch into the master
   branch (assess the possibility of a rebase)
-* Tag the release commit with the new version number
-* Delete the temporary branch
+* Delete the temporary branch both locally and remotely
+  ("git push origin :tmpbranch" or "git push origin :refs/heads/tmpbranch")
+* Tag the release commit with the new version number (the @require scripts
+  will continue working this way)
 * Push to the remote repository
-* Update documentation/wiki
+* Checkout the development branch
+* Update documentation
