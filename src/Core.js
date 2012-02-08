@@ -34,6 +34,10 @@ var WM = new function () {
         return queryString[name];
     };
     
+    this.getBaseURL = function () {
+        return (location.protocol + "//" + location.hostname + "/");
+    };
+    
     this.getLongTextNode = function (element) {
         // Firefox and other browsers split long text into multiple text nodes
         var text = "";

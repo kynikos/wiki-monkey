@@ -19,7 +19,7 @@
  */
 
 WM.Diff = new function () {
-    this.getEndTimestamp = function() {
+    this.getEndTimestamp = function () {
         var title = WM.getURIParameter('title');
         var diff = WM.getURIParameter('diff');
         var oldid = WM.getURIParameter('oldid');

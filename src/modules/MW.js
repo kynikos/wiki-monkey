@@ -20,13 +20,13 @@
 
 WM.MW = new function () {
     this.callAPIGet = function (params) {
-        var id = WM.HTTP.sendGetSyncRequest("api.php?format=xml&" + params.join('&'));
+        var id = WM.HTTP.sendGetSyncRequest(WM.getBaseURL() + "api.php?format=xml&" + params.join('&'));
         var parser = new DOMParser();
         return parser.parseFromString(WM.HTTP.getResponseText(id), "text/xml");
     };
     
     this.callAPIPost = function (params) {
-        var id = WM.HTTP.sendPostSyncRequest("api.php", "format=xml&" + params.join('&'), "Content-type", "application/x-www-form-urlencoded");
+        var id = WM.HTTP.sendPostSyncRequest(WM.getBaseURL() + "api.php", "format=xml&" + params.join('&'), "Content-type", "application/x-www-form-urlencoded");
         var parser = new DOMParser();
         return parser.parseFromString(WM.HTTP.getResponseText(id), "text/xml");
     };
