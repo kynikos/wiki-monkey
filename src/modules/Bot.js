@@ -19,7 +19,49 @@
  */
 
 WM.Bot = new function () {
-    this.makeUI = function (listBase) {
+    this.makeUI = function (functions, listBase) {
+        var divContainer = document.createElement('div');
+        divContainer.id = 'WikiMonkeyBot';
+        
+        GM_addStyle("#WikiMonkeyBot {}");  // ************************************
+        
+        var selectFunctions = document.createElement('select');
+        
+        for each (var f in functions) {
+            option = document.createElement('option');
+            option.innerHTML = f[1];
+            selectFunctions.appendChild(option);
+        }
+        
+        selectFunctions.addEventListener("change", (function (fns) {
+            return function () {
+                var select = document.getElementById('WikiMonkeyBot').getElementsByTagName('select')[0];
+                var id = select.selectedIndex;
+                var UI = document.getElementById('WikiMonkeyBotFunctionUI');
+                var makeUI = eval("WM.Plugins." + fns[id][0] + ".makeUI");
+                if (makeUI instanceof Function) {
+                    UI.replaceChild(makeUI(fns[id][2]), UI.firstChild);
+                }
+            }
+        })(functions), false);
+        
+        divContainer.appendChild(selectFunctions);
+        
+        var divFunction = document.createElement('div');
+        divFunction.id = "WikiMonkeyBotFunctionUI";
+        divContainer.appendChild(divFunction);
+        
+        var makeUI = eval("WM.Plugins." + functions[0][0] + ".makeUI");
+        if (makeUI instanceof Function) {
+            divFunction.appendChild(makeUI(functions[0][2]));
+        }
+        
+        divContainer.appendChild(makeConfUI(listBase));
+        
+        return divContainer;
+    };
+    
+    var makeConfUI = function (listBase) {
         var bot = document.createElement('div');
         bot.id = 'WikiMonkeyBotConf';
         

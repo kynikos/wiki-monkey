@@ -23,145 +23,18 @@ WM.UI = new function () {
     
     this.setEditor = function(rows) {
         editor = rows;
-    }
-    
-    var getEditor = function(rows) {
-        return makeButtons(editor);
-    }
+    };
     
     var diff = [];
     
     this.setDiff = function(rows) {
         diff = rows;
-    }
-    
-    var getDiff = function(rows) {
-        return makeButtons(diff);
-    }
+    };
     
     var whatLinksHere = [];
     
     this.setWhatLinksHere = function(rows) {
         whatLinksHere = rows;
-    }
-    
-    var getWhatLinksHere = function(rows) {
-        return makeBot(whatLinksHere, document.getElementById('mw-whatlinkshere-list'));
-    }
-
-    var makeButtons = function (functions) {
-        var divContainer = document.createElement('div');
-        divContainer.id = 'WikiMonkeyButtons';
-        
-        GM_addStyle("#WikiMonkeyButtons input.shortcut {font-weight:bold; margin-right:0.67em;} " +
-                    "#WikiMonkeyButtons div.row {margin-bottom:0.67em;} " +
-                    "#WikiMonkeyButtons div.pluginUI {display:inline-block; margin-right:0.33em;}");
-        
-        var buttonAll = document.createElement('input');
-        buttonAll.setAttribute('type', 'button');
-        buttonAll.setAttribute('value', 'Execute all');
-        buttonAll.className = "shortcut";
-        
-        var buttonsN, divRow, buttonRow, divFunction, buttonFunction, makeUI;
-        var rowsN = 0;
-        
-        for each (var row in functions) {
-            buttonRow = document.createElement('input');
-            buttonRow.setAttribute('type', 'button');
-            buttonRow.setAttribute('value', 'Execute row');
-            buttonRow.className = "shortcut";
-            
-            divRow = document.createElement('div');
-            divRow.className = "row";
-            divRow.appendChild(buttonRow);
-            
-            buttonsN = 0;
-            
-            for each (var f in row) {
-                buttonFunction = document.createElement('input');
-                buttonFunction.setAttribute('type', 'button');
-                buttonFunction.setAttribute('value', f[1]);
-                
-                for each (var button in [buttonFunction, buttonRow, buttonAll]) {
-                    button.addEventListener("click", (function (fn, arg) {
-                        return function () {
-                            // window[string] doesn't work
-                            eval("WM.Plugins." + fn + ".main")(arg);
-                        }
-                    })(f[0], f[2]), false);
-                };
-                
-                divFunction = document.createElement('div');
-                divFunction.className = 'pluginUI';
-                divFunction.appendChild(buttonFunction);
-                
-                makeUI = eval("WM.Plugins." + f[0] + ".makeUI");
-                if (makeUI instanceof Function) {
-                    divFunction.appendChild(makeUI(f[2]));
-                }
-                
-                divRow.appendChild(divFunction);
-                
-                buttonsN++;
-            }
-            divContainer.appendChild(divRow);
-            
-            if (buttonsN <= 1) {
-                buttonRow.disabled = true;
-            }
-            
-            rowsN++;
-        }
-        divRow = document.createElement('div');
-        divRow.className = 'row';
-        if (rowsN > 1) {
-            divRow.appendChild(buttonAll);
-        }
-        divContainer.appendChild(divRow);
-        
-        return divContainer;
-    };
-    
-    var makeBot = function (functions, listBase) {
-        var divContainer = document.createElement('div');
-        divContainer.id = 'WikiMonkeyBot';
-        
-        GM_addStyle("#WikiMonkeyBot {}");  // ************************************
-        
-        var selectFunctions = document.createElement('select');
-        
-        for each (var f in functions) {
-            option = document.createElement('option');
-            option.innerHTML = f[1];
-            selectFunctions.appendChild(option);
-        }
-        
-        selectFunctions.addEventListener("change", (function (fns) {
-            return function () {
-                var select = document.getElementById('WikiMonkeyBot').getElementsByTagName('select')[0];
-                var id = select.selectedIndex;
-                var UI = document.getElementById('WikiMonkeyBotFunctionUI');
-                var makeUI = eval("WM.Plugins." + fns[id][0] + ".makeUI");
-                if (makeUI instanceof Function) {
-                    UI.replaceChild(makeUI(fns[id][2]), UI.firstChild);
-                }
-            }
-        })(functions), false);
-        
-        divContainer.appendChild(selectFunctions);
-        
-        var divFunction = document.createElement('div');
-        divFunction.id = "WikiMonkeyBotFunctionUI";
-        divContainer.appendChild(divFunction);
-        
-        var makeUI = eval("WM.Plugins." + functions[0][0] + ".makeUI");
-        if (makeUI instanceof Function) {
-            divFunction.appendChild(makeUI(functions[0][2]));
-        }
-        
-        divContainer.appendChild(WM.Bot.makeUI(listBase));
-        
-        return divContainer;
     };
     
     this.makeUI = function () {
@@ -170,17 +43,17 @@ WM.UI = new function () {
         if (document.getElementById('editform')) {
             baseNode = document.getElementById('wpSummaryLabel').parentNode.parentNode;
             nextNode = document.getElementById('wpSummaryLabel').parentNode.nextSibling;
-            UI = getEditor();
+            UI = WM.Editor.makeUI(editor);
         }
         else if (document.getElementById('mw-diff-otitle1')) {
             nextNode = document.getElementById('bodyContent').getElementsByTagName('h2')[0];
             baseNode = nextNode.parentNode;
-            UI = getDiff();
+            UI = WM.Editor.makeUI(diff);
         }
         else if (document.getElementById('mw-whatlinkshere-list')) {
             baseNode = document.getElementById('bodyContent')
             nextNode = baseNode.getElementsByTagName('form')[0].nextSibling;
-            UI = getWhatLinksHere();
+            UI = WM.Bot.makeUI(whatLinksHere, document.getElementById('mw-whatlinkshere-list'));
         }
         
         var main = document.createElement('fieldset');
