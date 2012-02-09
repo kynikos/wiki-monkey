@@ -177,6 +177,20 @@ WM.Bot = new function () {
         }
     };
     
+    // Stop bot ******************************************************************
+    
+    // Guide: Each article in the list will be evaluated with ********************
+    // each row in the text area, as regular expressions. ************************
+    // If a line starts with "!" and the article matches, ************************
+    // it will be excluded. For a literal "!" at the beginning *******************
+    // of the line, escape it with "\\". The evaluations are *********************
+    // made in a cascading way, so between two conflicting ***********************
+    // rules the last one prevails. **********************************************
+    
+    // Disable other bots ********************************************************
+    // Force start ***************************************************************
+    // Warning banner in position:fixed? *****************************************
+    
     var canProcessPage = function (title) {
         var rules = document.getElementById('WikiMonkeyBotFilter').value.split('\n');
         var inverse = document.getElementById('WikiMonkeyBotInverse').checked;
@@ -235,29 +249,22 @@ WM.Bot = new function () {
         (enable) ? this.enableStartBot() : this.disableStartBot('No pages selected, reset and preview the filter');
     };
     
-    // Guide: Each article in the list will be evaluated with ********************
-    // each row in the text area, as regular expressions. ************************
-    // If a line starts with "!" and the article matches, ************************
-    // it will be excluded. For a literal "!" at the beginning *******************
-    // of the line, escape it with "\\". The evaluations are *********************
-    // made in a cascading way, so between two conflicting ***********************
-    // rules the last one prevails. **********************************************
-    
     this.startAutomatic = function (items) {
         WM.Log.logInfo('Starting bot...');
         this.disableStartBot('Bot is running...');
         this.disableControls();
-        // Disable other bots ****************************************************
-        // Force start? **********************************************************
-        // Warning banner in position:fixed? *************************************
         this.processItem(items, 0);
     };
     
     this.processItem = function (items, index) {
-        // TODO: set different values whether the user is a bot or not ***********
-        // TODO: also set a limit for the number of articles to be ***************
-        // processed by non-bots? ************************************************
-        var interval = 1000;  // *************************************************
+        var interval;
+        if (WM.MW.isUserBot()) {
+            interval = 10000;
+        }
+        else {
+            interval = 120000;
+        }
+        
         if (items[index]) {
             var link = items[index].getElementsByTagName('a')[0];
             var title = link.title;

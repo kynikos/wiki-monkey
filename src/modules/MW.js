@@ -31,13 +31,27 @@ WM.MW = new function () {
         return parser.parseFromString(WM.HTTP.getResponseText(id), "text/xml");
     };
     
-    var userName;
+    // Never use this attribute directly, always use getUserInfo!!!
+    var userInfo;
+    
+    this.getUserInfo = function () {
+        if (!userInfo) {
+            userInfo = this.callAPIGet(["action=query", "meta=userinfo", "uiprop=groups"]);
+        }
+        return userInfo;
+    };
     
     this.getUserName = function () {
-        if (!userName) {
-            userName = this.callAPIGet(["action=query", "meta=userinfo"]
-                    ).getElementsByTagName('userinfo')[0].getAttribute('name');
+        return this.getUserInfo().getElementsByTagName('userinfo')[0].getAttribute('name');
+    };
+    
+    this.isUserBot = function () {
+        var groups = this.getUserInfo().getElementsByTagName('groups')[0].getElementsByTagName('g');
+        for each (var g in groups) {
+            if (g == 'bot') {
+                return true;
+            }
         }
-        return userName;
+        return false;
     };
 };
