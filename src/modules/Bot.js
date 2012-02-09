@@ -23,9 +23,24 @@ WM.Bot = new function () {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyBot';
         
-        GM_addStyle("#WikiMonkeyBot {}");  // ************************************
+        GM_addStyle("#WikiMonkeyBotSelection {min-width:67%; margin-bottom:1em;} " +
+                    "#WikiMonkeyBotFilter {height:6em; resize:vertical;} " +
+                    "#WikiMonkeyBotStart {margin-right:0.33em; margin-bottom:1em; font-weight:bold;} " +
+                    "a.WikiMonkeyBotSelected {background-color:#faa; padding:0.2em 0.4em;} " +
+                    "a.WikiMonkeyBotProcessing {background-color:#ff8; padding:0.2em 0.4em;} " +
+                    "a.WikiMonkeyBotProcessed {background-color:#afa; padding:0.2em 0.4em;}");
+        
+        divContainer.appendChild(makeFunctionUI(functions));
+        divContainer.appendChild(makeConfUI(listBase));
+        
+        return divContainer;
+    };
+    
+    var makeFunctionUI = function (functions) {
+        var divContainer = document.createElement('div');
         
         var selectFunctions = document.createElement('select');
+        selectFunctions.id = 'WikiMonkeyBotSelection';
         
         for each (var f in functions) {
             option = document.createElement('option');
@@ -37,7 +52,7 @@ WM.Bot = new function () {
             return function () {
                 var select = document.getElementById('WikiMonkeyBot').getElementsByTagName('select')[0];
                 var id = select.selectedIndex;
-                var UI = document.getElementById('WikiMonkeyBotFunctionUI');
+                var UI = document.getElementById('WikiMonkeyBotFunction');
                 var makeUI = eval("WM.Plugins." + fns[id][0] + ".makeUI");
                 if (makeUI instanceof Function) {
                     UI.replaceChild(makeUI(fns[id][2]), UI.firstChild);
@@ -45,53 +60,50 @@ WM.Bot = new function () {
             }
         })(functions), false);
         
-        divContainer.appendChild(selectFunctions);
-        
         var divFunction = document.createElement('div');
-        divFunction.id = "WikiMonkeyBotFunctionUI";
-        divContainer.appendChild(divFunction);
+        divFunction.id = "WikiMonkeyBotFunction";
         
         var makeUI = eval("WM.Plugins." + functions[0][0] + ".makeUI");
         if (makeUI instanceof Function) {
             divFunction.appendChild(makeUI(functions[0][2]));
         }
         
-        divContainer.appendChild(makeConfUI(listBase));
+        divContainer.appendChild(selectFunctions);
+        divContainer.appendChild(divFunction);
         
         return divContainer;
     };
     
     var makeConfUI = function (listBase) {
         var bot = document.createElement('div');
-        bot.id = 'WikiMonkeyBotConf';
         
-        GM_addStyle("#WikiMonkeyBotFilter {height:6em; resize:vertical;} " +
-                    "a.WikiMonkeyBotSelected {background-color:#faa; padding:0.2em 0.4em;} " +
-                    "a.WikiMonkeyBotProcessing {background-color:#ff8; padding:0.2em 0.4em;} " +
-                    "a.WikiMonkeyBotProcessed {background-color:#afa; padding:0.2em 0.4em;}");
+        var fieldset = document.createElement('fieldset');
         
-        var instructions = document.createElement('p');
-        instructions.innerHTML = 'Filter: each article in the list will be evaluated with each row in the text area, as regular expressions. If a line starts with "!" and the article matches, it will be excluded. For a literal "!" at the beginning of the line, escape it with "\\". The evaluations are made in a cascading way, so between two conflicting rules the last one prevails.';
-        bot.appendChild(instructions);
+        var legend = document.createElement('legend');
+        legend.innerHTML = 'Filter';
         
         var filter = document.createElement('textarea');
         filter.id = 'WikiMonkeyBotFilter';
-        // Disable bot onchange? *************************************************
-        bot.appendChild(filter);
-        
-        var inversetag = document.createElement('p');
-        inversetag.innerHTML = 'Inverse selection';
-        var inverse = document.createElement('input');
-        inverse.setAttribute('type', 'checkbox');
-        inverse.id = 'WikiMonkeyBotInverse';
-        inversetag.appendChild(inverse);
-        bot.appendChild(inversetag);
-        
-        var items = listBase.getElementsByTagName('li');
         
         var preview = document.createElement('input');
-        preview.setAttribute('type', 'button');
-        preview.setAttribute('value', 'Preview filter');
+        preview.id = 'WikiMonkeyBotPreview';
+        preview.type = 'button';
+        preview.value = 'Preview';
+        
+        var inverse = document.createElement('input');
+        inverse.type = 'checkbox';
+        inverse.id = 'WikiMonkeyBotInverse';
+        
+        for each (var elem in [filter, inverse]) {
+            elem.addEventListener("change", function () {
+                WM.Bot.disableStartBot('Filters have changed, preview the selection');
+            }, false);
+        }
+        
+        var inversetag = document.createElement('span');
+        inversetag.innerHTML = 'Inverse';
+        
+        var items = listBase.getElementsByTagName('li');
         
         preview.addEventListener("click", (function (lis) {
             return function () {
@@ -99,11 +111,16 @@ WM.Bot = new function () {
             }
         })(items), false);
         
-        bot.appendChild(preview);
+        fieldset.appendChild(legend);
+        fieldset.appendChild(filter);
+        fieldset.appendChild(preview);
+        fieldset.appendChild(inverse);
+        fieldset.appendChild(inversetag);
         
         var start = document.createElement('input');
-        start.setAttribute('type', 'button');
-        start.setAttribute('value', 'Start bot');
+        start.type = 'button';
+        start.value = 'Start bot';
+        start.id = 'WikiMonkeyBotStart';
         
         start.addEventListener("click", (function (lis) {
             return function () {
@@ -111,30 +128,88 @@ WM.Bot = new function () {
             }
         })(items), false);
         
-        //start.disabled = true;  // ***********************************************
+        start.disabled = true;
+        
+        var startMsg = document.createElement('span');
+        startMsg.innerHTML = 'Set and preview the filter first';
+        startMsg.id = 'WikiMonkeyBotStartMsg';
+        
+        bot.appendChild(fieldset);
         bot.appendChild(start);
+        bot.appendChild(startMsg);
         
         return bot;
+    };
+    
+    this.enableStartBot = function () {
+        document.getElementById('WikiMonkeyBotStartMsg').innerHTML = '';
+        document.getElementById('WikiMonkeyBotStart').disabled = false;
+    };
+    
+    this.disableStartBot = function (message) {
+        document.getElementById('WikiMonkeyBotStartMsg').innerHTML = message;
+        document.getElementById('WikiMonkeyBotStart').disabled = true;
+    };
+    
+    var disabledControls = [];
+    
+    this.disableControls = function () {
+        document.getElementById('WikiMonkeyBotSelection').disabled = true;
+        disabledControls.push(document.getElementById('WikiMonkeyBotSelection'));
+        
+        var baseNodes = [document.getElementById('WikiMonkeyBotFunction'),
+                     document.getElementById('WikiMonkeyBotFilter').parentNode]
+        for each (var base in baseNodes) {
+            for each (var tag in ['input', 'select', 'textarea']) {
+                for each (var elem in base.getElementsByTagName(tag)) {
+                    if (!elem.disabled) {
+                        elem.disabled = true;
+                        disabledControls.push(elem);
+                    }
+                } 
+            }
+        }
+    };
+    
+    this.reEnableControls = function () {
+        for each (var elem in disabledControls) {
+            elem.disabled = false;
+        }
     };
     
     var canProcessPage = function (title) {
         var rules = document.getElementById('WikiMonkeyBotFilter').value.split('\n');
         var inverse = document.getElementById('WikiMonkeyBotInverse').checked;
+        var error = false;
         var response = (inverse) ? true : false;
         var firstSlash, lastSlash, pattern, modifiers, regexp, test, negative;
         for each (rule in rules) {
-            // Do not process the empty string (rough validation)
             if (rule) {
                 firstSlash = rule.indexOf('/');
                 lastSlash = rule.lastIndexOf('/');
-                pattern = rule.substring(firstSlash + 1, lastSlash);
-                modifiers = rule.substring(lastSlash + 1);
-                regexp = new RegExp(pattern, modifiers);
-                test = regexp.test(title);
-                negative = rule.charAt(0) == '!';
-                if (!negative != !test) {
-                    response = (inverse) ? false : true;
-                    break;
+                if (firstSlash > -1 && lastSlash > -1 && firstSlash != lastSlash) {
+                    pattern = rule.substring(firstSlash + 1, lastSlash);
+                    modifiers = rule.substring(lastSlash + 1);
+                    negative = rule.charAt(0) == '!';
+                    if (modifiers.match(/^(g?i?|ig)$/)) {
+                        regexp = new RegExp(pattern, modifiers);
+                        test = regexp.test(title);
+                        if (!negative != !test) {
+                            response = (inverse) ? false : true;
+                            break;
+                        }
+                    }
+                    else {
+                        error = true;
+                    }
+                }
+                else {
+                    error = true;
+                }
+                
+                if (error) {
+                    WM.Log.logError('Invalid regexp: ' + rule);
+                    return false;
                 }
             }
         }
@@ -143,18 +218,35 @@ WM.Bot = new function () {
     
     this.previewFilter = function (items) {
         WM.Log.logInfo('Updating filter preview, please wait...');
-        // Disable bot ***********************************************************
+        this.disableStartBot('Updating filter preview...');
+        var enable = false;
         var link;
         for each (var item in items) {
             link = item.getElementsByTagName('a')[0];
-            item.getElementsByTagName('a')[0].className = (canProcessPage(link.title)) ? 'WikiMonkeyBotSelected' : "";
+            if (canProcessPage(link.title)) {
+                link.className = 'WikiMonkeyBotSelected';
+                enable = true;
+            }
+            else {
+                link.className = '';
+            }
         }
         WM.Log.logInfo('Preview updated');
+        (enable) ? this.enableStartBot() : this.disableStartBot('No pages selected, reset and preview the filter');
     };
+    
+    // Guide: Each article in the list will be evaluated with ********************
+    // each row in the text area, as regular expressions. ************************
+    // If a line starts with "!" and the article matches, ************************
+    // it will be excluded. For a literal "!" at the beginning *******************
+    // of the line, escape it with "\\". The evaluations are *********************
+    // made in a cascading way, so between two conflicting ***********************
+    // rules the last one prevails. **********************************************
     
     this.startAutomatic = function (items) {
         WM.Log.logInfo('Starting bot...');
-        // Disable preview *******************************************************
+        this.disableStartBot('Bot is running...');
+        this.disableControls();
         // Disable other bots ****************************************************
         // Force start? **********************************************************
         // Warning banner in position:fixed? *************************************
@@ -162,17 +254,24 @@ WM.Bot = new function () {
     };
     
     this.processItem = function (items, index) {
+        // TODO: set different values whether the user is a bot or not ***********
+        // TODO: also set a limit for the number of articles to be ***************
+        // processed by non-bots? ************************************************
         var interval = 1000;  // *************************************************
         if (items[index]) {
             var link = items[index].getElementsByTagName('a')[0];
             var title = link.title;
             if (canProcessPage(title)) {
-                WM.Log.logDebug('Wait ' + (interval / 1000) + ' seconds...');  // **************************************
+                WM.Log.logInfo('Waiting ' + (interval / 1000) + ' seconds...');
                 setTimeout((function (lis, id, ln, article) {
                     return function () {
                         ln.className = "WikiMonkeyBotProcessing";
-                        WM.Log.logDebug(article);  // **************************************
+                        WM.Log.logInfo("Processing " + article + "...");
+                        // TODO **************************************************
+                        WM.Log.logDebug("PROCESS THE ARTICLE");  // **************
+                        // What to do on failure? retry, skip, stop... ***********
                         ln.className = "WikiMonkeyBotProcessed";
+                        WM.Log.logInfo(article + " processed");
                         // Do not increment directly in the function's call!
                         id++;
                         WM.Bot.processItem(lis, id);
@@ -191,8 +290,9 @@ WM.Bot = new function () {
     };
     
     this.endAutomatic = function () {
-        // ***********************************************************************
         WM.Log.logInfo('Bot operations completed (check the log for warnings or errors)');
+        this.disableStartBot('Bot operations completed, reset and preview the filter');
+        this.reEnableControls();
     };
     
     // Incomplete ****************************************************************
