@@ -40,16 +40,4 @@ WM.MW = new function () {
         }
         return userName;
     };
-    
-    // Incomplete ****************************************************************
-    var getBacklinks = function (args) {
-        var xml = this.callAPIGet(["action=query", "list=backlinks",
-                                 "bltitle=" + ecodeURIComponent(WM.Editor.getTitle())]);
-        var bls = new Array();
-        var L = xml.getElementsByTagName('bl');
-        for (var i = 0; i < L.length; i++) {
-            bls.push(L[i].getAttribute('title'));
-        }
-        alert(bls);
-    };
 };

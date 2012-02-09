@@ -46,7 +46,7 @@ WM.UI = new function () {
     }
     
     var getWhatLinksHere = function(rows) {
-        return makeBot(whatLinksHere);
+        return makeBot(whatLinksHere, document.getElementById('mw-whatlinkshere-list'));
     }
 
     var makeButtons = function (functions) {
@@ -63,7 +63,7 @@ WM.UI = new function () {
         buttonAll.className = "shortcut";
         
         var buttonsN, divRow, buttonRow, divFunction, buttonFunction, makeUI;
-        var rowsN = 0; 
+        var rowsN = 0;
         
         for each (var row in functions) {
             buttonRow = document.createElement('input');
@@ -122,11 +122,44 @@ WM.UI = new function () {
         return divContainer;
     };
     
-    var makeBot = function (functions) {
+    var makeBot = function (functions, listBase) {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyBot';
         
-        GM_addStyle("#WikiMonkeyBot {}");
+        GM_addStyle("#WikiMonkeyBot {}");  // ************************************
+        
+        var selectFunctions = document.createElement('select');
+        
+        for each (var f in functions) {
+            option = document.createElement('option');
+            option.innerHTML = f[1];
+            selectFunctions.appendChild(option);
+        }
+        
+        selectFunctions.addEventListener("change", (function (fns) {
+            return function () {
+                var select = document.getElementById('WikiMonkeyBot').getElementsByTagName('select')[0];
+                var id = select.selectedIndex;
+                var UI = document.getElementById('WikiMonkeyBotFunctionUI');
+                var makeUI = eval("WM.Plugins." + fns[id][0] + ".makeUI");
+                if (makeUI instanceof Function) {
+                    UI.replaceChild(makeUI(fns[id][2]), UI.firstChild);
+                }
+            }
+        })(functions), false);
+        
+        divContainer.appendChild(selectFunctions);
+        
+        var divFunction = document.createElement('div');
+        divFunction.id = "WikiMonkeyBotFunctionUI";
+        divContainer.appendChild(divFunction);
+        
+        var makeUI = eval("WM.Plugins." + functions[0][0] + ".makeUI");
+        if (makeUI instanceof Function) {
+            divFunction.appendChild(makeUI(functions[0][2]));
+        }
+        
+        divContainer.appendChild(WM.Bot.makeUI(listBase));
         
         return divContainer;
     };
