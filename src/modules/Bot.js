@@ -25,7 +25,7 @@ WM.Bot = new function () {
         
         GM_addStyle("#WikiMonkeyBotSelection {min-width:67%; margin-bottom:1em;} " +
                     "#WikiMonkeyBotFilter {height:6em; resize:vertical;} " +
-                    "#WikiMonkeyBotStart {margin-right:0.33em; margin-bottom:1em; font-weight:bold;} " +
+                    "#WikiMonkeyBotStart, #WikiMonkeyBotStop {margin-right:0.33em; margin-bottom:1em; font-weight:bold;} " +
                     "a.WikiMonkeyBotSelected {background-color:#faa; padding:0.2em 0.4em;} " +
                     "a.WikiMonkeyBotProcessing {background-color:#ff8; padding:0.2em 0.4em;} " +
                     "a.WikiMonkeyBotProcessed {background-color:#afa; padding:0.2em 0.4em;}");
@@ -160,14 +160,15 @@ WM.Bot = new function () {
         stop.addEventListener("click", (function (id) {
             return function () {
                 clearTimeout(id);
+                // run disableStopBot() here, not in endAutomatic()
+                WM.Bot.disableStopBot();
                 WM.Bot.endAutomatic();
                 WM.Log.logInfo('Bot stopped manually');
             }
         })(stopId), false);
         
         var start = document.getElementById('WikiMonkeyBotStart');
-        // BUG!!! ****************************************************************
-        start.parentNode.insertBefore(start, stop);
+        start.parentNode.insertBefore(stop, start);
         start.style.display = 'none';
     };
     
@@ -180,6 +181,7 @@ WM.Bot = new function () {
     var disabledControls = [];
     
     this.disableControls = function () {
+        // Includere tutto in un fieldset nascosto e disabilitare quello? ********
         document.getElementById('WikiMonkeyBotSelection').disabled = true;
         disabledControls.push(document.getElementById('WikiMonkeyBotSelection'));
         
@@ -287,7 +289,7 @@ WM.Bot = new function () {
             interval = 10000;
         }
         else {
-            interval = 120000;
+            interval = 1000; // 120000; *******************************************
         }
         
         if (items[index]) {
@@ -297,7 +299,7 @@ WM.Bot = new function () {
                 WM.Log.logInfo('Waiting ' + (interval / 1000) + ' seconds...');
                 var stopId = setTimeout((function (lis, id, ln, article) {
                     return function () {
-                        this.disableStopBot();
+                        WM.Bot.disableStopBot();
                         ln.className = "WikiMonkeyBotProcessing";
                         WM.Log.logInfo("Processing " + article + "...");
                         // TODO **************************************************
