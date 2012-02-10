@@ -185,8 +185,10 @@ WM.Bot = new function () {
     var disabledControls = [];
     
     this.disableControls = function () {
-        // Includere tutto in un fieldset nascosto e disabilitare quello? ********
-        document.getElementById('WikiMonkeyBotSelection').disabled = true;
+        this.setEnableControls(true);
+        
+        //This was the code for doing this previously
+        /*document.getElementById('WikiMonkeyBotSelection').disabled = true;
         disabledControls.push(document.getElementById('WikiMonkeyBotSelection'));
         
         var baseNodes = [document.getElementById('WikiMonkeyBotFunction'),
@@ -200,26 +202,24 @@ WM.Bot = new function () {
                     }
                 } 
             }
-        }
+        }*/
     };
     
     this.reEnableControls = function () {
-        for each (var elem in disabledControls) {
+        this.setEnableControls(false);
+        
+        //This was the code for doing this previously
+        /*for each (var elem in disabledControls) {
             elem.disabled = false;
-        }
+        }*/
     };
     
-    // Guide: Each article in the list will be evaluated with ********************
-    // each row in the text area, as regular expressions. ************************
-    // If a line starts with "!" and the article matches, ************************
-    // it will be excluded. For a literal "!" at the beginning *******************
-    // of the line, escape it with "\\". The evaluations are *********************
-    // made in a cascading way, so between two conflicting ***********************
-    // rules the last one prevails. **********************************************
-    
-    // Disable other bots ********************************************************
-    // Force start ***************************************************************
-    // Warning banner in position:fixed? *****************************************
+    this.setEnableControls = function (flag) {
+        for each (var elem in document.getElementById('WikiMonkeyBot').getElementsByTagName('fieldset')) {
+            // HTML5-compliant
+            elem.disabled = flag;
+        }
+    };
     
     var canProcessPage = function (title) {
         var rules = document.getElementById('WikiMonkeyBotFilter').value.split('\n');
