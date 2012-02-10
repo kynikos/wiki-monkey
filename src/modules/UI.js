@@ -59,7 +59,9 @@ WM.UI = new function () {
         var main = document.createElement('fieldset');
         main.id = 'WikiMonkey';
         
-        GM_addStyle("#WikiMonkeyHelp {float:right; position:relative; top:-1.2em; left:0.4em;}");
+        GM_addStyle("#WikiMonkey {position:relative;} " +
+                    "#WikiMonkey fieldset {margin:0 0 1em 0;} " +
+                    "#WikiMonkeyHelp {position:absolute; top:1em; right:0.6em;}");
         
         var legend = document.createElement('legend');
         legend.innerHTML = 'Wiki Monkey';

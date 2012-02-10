@@ -37,7 +37,10 @@ WM.Bot = new function () {
     };
     
     var makeFunctionUI = function (functions) {
-        var divContainer = document.createElement('div');
+        var fieldset = document.createElement('fieldset');
+        
+        var legend = document.createElement('legend');
+        legend.innerHTML = 'Function';
         
         var selectFunctions = document.createElement('select');
         selectFunctions.id = 'WikiMonkeyBotSelection';
@@ -68,10 +71,11 @@ WM.Bot = new function () {
             divFunction.appendChild(makeUI(functions[0][2]));
         }
         
-        divContainer.appendChild(selectFunctions);
-        divContainer.appendChild(divFunction);
+        fieldset.appendChild(legend);
+        fieldset.appendChild(selectFunctions);
+        fieldset.appendChild(divFunction);
         
-        return divContainer;
+        return fieldset;
     };
     
     var makeConfUI = function (listBase) {
