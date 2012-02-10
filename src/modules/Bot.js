@@ -150,9 +150,24 @@ WM.Bot = new function () {
         startMsg.innerHTML = 'Set and preview the filter first';
         startMsg.id = 'WikiMonkeyBotStartMsg';
         
+        var forceStart = document.createElement('span');
+        forceStart.id = 'WikiMonkeyBotForceStart';
+        
+        var forceStartCB = document.createElement('input');
+        forceStartCB.type = 'checkbox';
+        forceStartCB.disabled = true;
+        
+        var forceStartLabel = document.createElement('span');
+        forceStartLabel.innerHTML = 'Force start, stopping the currently running bot';
+        
+        forceStart.style.display = "none";
+        forceStart.appendChild(forceStartCB);
+        forceStart.appendChild(forceStartLabel);
+        
         bot.appendChild(fieldset);
         bot.appendChild(start);
         bot.appendChild(startMsg);
+        bot.appendChild(forceStart);
         
         return bot;
     };
@@ -178,7 +193,7 @@ WM.Bot = new function () {
                 clearTimeout(id);
                 // run disableStopBot() here, not in endAutomatic()
                 WM.Bot.disableStopBot();
-                WM.Bot.endAutomatic();
+                WM.Bot.endAutomatic(true);
                 WM.Log.logInfo('Bot stopped manually');
             }
         })(stopId), false);
@@ -231,6 +246,23 @@ WM.Bot = new function () {
             // HTML5-compliant
             elem.disabled = flag;
         }
+    };
+    
+    this.enableForceStart = function () {
+        var force = document.getElementById('WikiMonkeyBotForceStart');
+        force.getElementsByTagName('input')[0].disabled = false;
+        force.style.display = 'inline';
+    };
+    
+    this.disableForceStart = function () {
+        var force = document.getElementById('WikiMonkeyBotForceStart');
+        force.getElementsByTagName('input')[0].checked = false;
+        force.getElementsByTagName('input')[0].disabled = true;
+        force.style.display = 'none';
+    };
+    
+    this.canForceStart = function () {
+        return document.getElementById('WikiMonkeyBotForceStart').getElementsByTagName('input')[0].checked;
     };
     
     var canProcessPage = function (title) {
@@ -292,11 +324,45 @@ WM.Bot = new function () {
         (enable) ? this.enableStartBot() : this.disableStartBot('No pages selected, reset and preview the filter');
     };
     
+    // GM_setValue can only store strings, bool and 32-bit integers (no 64-bit)
+    this.botToken = "0";
+    
+    this.setBotToken = function () {
+        var date = new Date();
+        var token = date.getTime() + "";
+        this.botToken = token;
+        GM_setValue('BotToken', token);
+    };
+    
+    this.resetBotToken = function (reset) {
+        this.botToken = "0";
+        if (reset) {
+            GM_setValue('BotToken', "0");
+        }
+    };
+    
+    this.getBotToken = function () {
+        return this.botToken;
+    };
+    
+    this.checkOtherBotsRunning = function () {
+        GMValue = GM_getValue('BotToken', "0");
+        return (GMValue != "0") && (GMValue != this.getBotToken());
+    };
+    
     this.startAutomatic = function (items) {
-        WM.Log.logInfo('Starting bot...');
-        this.disableStartBot('Bot is running...');
-        this.disableControls();
-        this.processItem(items, 0);
+        if (this.checkOtherBotsRunning() && !this.canForceStart()) {
+            WM.Log.logError('Another bot is running, aborting...');
+            this.enableForceStart();
+        }
+        else {
+            this.disableForceStart();
+            this.setBotToken();
+            WM.Log.logInfo('Starting bot...');
+            this.disableStartBot('Bot is running...');
+            this.disableControls();
+            this.processItem(items, 0);
+        }
     };
     
     this.processItem = function (items, index) {
@@ -308,44 +374,51 @@ WM.Bot = new function () {
             interval = 120000;
         }
         
-        if (items[index]) {
-            var link = items[index].getElementsByTagName('a')[0];
-            var title = link.title;
-            if (canProcessPage(title)) {
-                WM.Log.logInfo('Waiting ' + (interval / 1000) + ' seconds...');
-                var stopId = setTimeout((function (lis, id, ln, article) {
-                    return function () {
-                        WM.Bot.disableStopBot();
-                        ln.className = "WikiMonkeyBotProcessing";
-                        WM.Log.logInfo("Processing " + article + "...");
-                        if (WM.Bot.selectedFunction(article) === true) {
-                            ln.className = "WikiMonkeyBotProcessed";
-                            WM.Log.logInfo(article + " processed");
-                            // Do not increment directly in the function's call!
-                            id++;
-                            WM.Bot.processItem(lis, id);
-                        }
-                        else {
-                            ln.className = "WikiMonkeyBotFailed";
-                            WM.Log.logError("Error processing " + article + ", stopping the bot");
-                            WM.Bot.endAutomatic();
-                        }
-                    };
-                })(items, index, link, title), interval);
-                this.enableStopBot(stopId);
+        if (!this.checkOtherBotsRunning()) {
+            if (items[index]) {
+                var link = items[index].getElementsByTagName('a')[0];
+                var title = link.title;
+                if (canProcessPage(title)) {
+                    WM.Log.logInfo('Waiting ' + (interval / 1000) + ' seconds...');
+                    var stopId = setTimeout((function (lis, id, ln, article) {
+                        return function () {
+                            WM.Bot.disableStopBot();
+                            ln.className = "WikiMonkeyBotProcessing";
+                            WM.Log.logInfo("Processing " + article + "...");
+                            if (WM.Bot.selectedFunction(article) === true) {
+                                ln.className = "WikiMonkeyBotProcessed";
+                                WM.Log.logInfo(article + " processed");
+                                // Do not increment directly in the function's call!
+                                id++;
+                                WM.Bot.processItem(lis, id);
+                            }
+                            else {
+                                ln.className = "WikiMonkeyBotFailed";
+                                WM.Log.logError("Error processing " + article + ", stopping the bot");
+                                WM.Bot.endAutomatic(true);
+                            }
+                        };
+                    })(items, index, link, title), interval);
+                    this.enableStopBot(stopId);
+                }
+                else {
+                    // Do not increment directly in the function's call!
+                    index++;
+                    WM.Bot.processItem(items, index);
+                }
             }
             else {
-                // Do not increment directly in the function's call!
-                index++;
-                WM.Bot.processItem(items, index);
+                this.endAutomatic(true);
             }
         }
         else {
-            this.endAutomatic();
+            WM.Log.logError('Another bot has been force-started, stopping...');
+            this.endAutomatic(false);
         }
     };
     
-    this.endAutomatic = function () {
+    this.endAutomatic = function (reset) {
+        this.resetBotToken(reset);
         WM.Log.logInfo('Bot operations completed (check the log for warnings or errors)');
         this.disableStartBot('Bot operations completed, reset and preview the filter');
         this.reEnableControls();
