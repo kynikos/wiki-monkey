@@ -41,7 +41,7 @@ WM.Plugins.SimpleReplace = new function () {
     
     this.mainAuto = function (args, title) {
         // ***********************************************************************
-        WM.Log.logDebug("PROCESS THE ARTICLE");  // ******************************
+        WM.Log.logDebug("SIMPLE REPLACE <" + args[0] + ">: " + title);  // ******************************
     };
     
     this.main = function (args) {

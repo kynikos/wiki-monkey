@@ -60,6 +60,9 @@ WM.Bot = new function () {
                 if (makeUI instanceof Function) {
                     UI.replaceChild(makeUI(fns[id][2]), UI.firstChild);
                 }
+                WM.Bot.selectedFunction = function (title) {
+                    eval("WM.Plugins." + fns[id][0] + ".mainAuto")(fns[id][2], title);
+                };
             }
         })(functions), false);
         
@@ -69,6 +72,10 @@ WM.Bot = new function () {
         var makeUI = eval("WM.Plugins." + functions[0][0] + ".makeUI");
         if (makeUI instanceof Function) {
             divFunction.appendChild(makeUI(functions[0][2]));
+            // Don't use "this.selectedFunction", use "WM.Bot.selectedFunction"
+            WM.Bot.selectedFunction = function (title) {
+                eval("WM.Plugins." + functions[0][0] + ".mainAuto")(functions[0][2], title);
+            };
         }
         
         fieldset.appendChild(legend);
@@ -77,6 +84,8 @@ WM.Bot = new function () {
         
         return fieldset;
     };
+    
+    this.selectedFunction = function () {};
     
     var makeConfUI = function (listBase) {
         var bot = document.createElement('div');
@@ -306,7 +315,7 @@ WM.Bot = new function () {
                         WM.Bot.disableStopBot();
                         ln.className = "WikiMonkeyBotProcessing";
                         WM.Log.logInfo("Processing " + article + "...");
-                        // TODO **************************************************
+                        WM.Bot.selectedFunction(article);
                         // What to do on failure? retry, skip, stop... ***********
                         ln.className = "WikiMonkeyBotProcessed";
                         WM.Log.logInfo(article + " processed");
