@@ -28,7 +28,8 @@ WM.Bot = new function () {
                     "#WikiMonkeyBotStart, #WikiMonkeyBotStop {margin-right:0.33em; margin-bottom:1em; font-weight:bold;} " +
                     "a.WikiMonkeyBotSelected {background-color:#faa; padding:0.2em 0.4em;} " +
                     "a.WikiMonkeyBotProcessing {background-color:#ff8; padding:0.2em 0.4em;} " +
-                    "a.WikiMonkeyBotProcessed {background-color:#afa; padding:0.2em 0.4em;}");
+                    "a.WikiMonkeyBotProcessed {background-color:#afa; padding:0.2em 0.4em;} " +
+                    "a.WikiMonkeyBotFailed {background-color:orangered; padding:0.2em 0.4em;}");
         
         divContainer.appendChild(makeFunctionUI(functions));
         divContainer.appendChild(makeConfUI(listBase));
@@ -56,12 +57,13 @@ WM.Bot = new function () {
                 var select = document.getElementById('WikiMonkeyBot').getElementsByTagName('select')[0];
                 var id = select.selectedIndex;
                 var UI = document.getElementById('WikiMonkeyBotFunction');
+                // [1] Note that this must also be executed immediately, see [2]
                 var makeUI = eval("WM.Plugins." + fns[id][0] + ".makeUI");
                 if (makeUI instanceof Function) {
                     UI.replaceChild(makeUI(fns[id][2]), UI.firstChild);
                 }
                 WM.Bot.selectedFunction = function (title) {
-                    eval("WM.Plugins." + fns[id][0] + ".mainAuto")(fns[id][2], title);
+                    return eval("WM.Plugins." + fns[id][0] + ".mainAuto")(fns[id][2], title);
                 };
             }
         })(functions), false);
@@ -69,14 +71,15 @@ WM.Bot = new function () {
         var divFunction = document.createElement('div');
         divFunction.id = "WikiMonkeyBotFunction";
         
+        // [2] Note that this is also executed onchange, see [1]
         var makeUI = eval("WM.Plugins." + functions[0][0] + ".makeUI");
         if (makeUI instanceof Function) {
             divFunction.appendChild(makeUI(functions[0][2]));
-            // Don't use "this.selectedFunction", use "WM.Bot.selectedFunction"
-            WM.Bot.selectedFunction = function (title) {
-                eval("WM.Plugins." + functions[0][0] + ".mainAuto")(functions[0][2], title);
-            };
         }
+        // Don't use "this.selectedFunction", use "WM.Bot.selectedFunction"
+        WM.Bot.selectedFunction = function (title) {
+            return eval("WM.Plugins." + functions[0][0] + ".mainAuto")(functions[0][2], title);
+        };
         
         fieldset.appendChild(legend);
         fieldset.appendChild(selectFunctions);
@@ -302,7 +305,7 @@ WM.Bot = new function () {
             interval = 10000;
         }
         else {
-            interval = 1000; // 120000; *******************************************
+            interval = 120000;
         }
         
         if (items[index]) {
@@ -315,13 +318,18 @@ WM.Bot = new function () {
                         WM.Bot.disableStopBot();
                         ln.className = "WikiMonkeyBotProcessing";
                         WM.Log.logInfo("Processing " + article + "...");
-                        WM.Bot.selectedFunction(article);
-                        // What to do on failure? retry, skip, stop... ***********
-                        ln.className = "WikiMonkeyBotProcessed";
-                        WM.Log.logInfo(article + " processed");
-                        // Do not increment directly in the function's call!
-                        id++;
-                        WM.Bot.processItem(lis, id);
+                        if (WM.Bot.selectedFunction(article) === true) {
+                            ln.className = "WikiMonkeyBotProcessed";
+                            WM.Log.logInfo(article + " processed");
+                            // Do not increment directly in the function's call!
+                            id++;
+                            WM.Bot.processItem(lis, id);
+                        }
+                        else {
+                            ln.className = "WikiMonkeyBotFailed";
+                            WM.Log.logError("Error processing " + article + ", stopping the bot");
+                            WM.Bot.endAutomatic();
+                        }
                     };
                 })(items, index, link, title), interval);
                 this.enableStopBot(stopId);
