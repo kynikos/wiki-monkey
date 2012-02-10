@@ -151,6 +151,32 @@ WM.Bot = new function () {
         document.getElementById('WikiMonkeyBotStart').disabled = true;
     };
     
+    this.enableStopBot = function (stopId) {
+        var stop = document.createElement('input');
+        stop.type = 'button';
+        stop.value = 'Stop bot';
+        stop.id = 'WikiMonkeyBotStop';
+        
+        stop.addEventListener("click", (function (id) {
+            return function () {
+                clearTimeout(id);
+                WM.Bot.endAutomatic();
+                WM.Log.logInfo('Bot stopped manually');
+            }
+        })(stopId), false);
+        
+        var start = document.getElementById('WikiMonkeyBotStart');
+        // BUG!!! ****************************************************************
+        start.parentNode.insertBefore(start, stop);
+        start.style.display = 'none';
+    };
+    
+    this.disableStopBot = function () {
+        var stop = document.getElementById('WikiMonkeyBotStop');
+        stop.parentNode.removeChild(stop);
+        document.getElementById('WikiMonkeyBotStart').style.display = 'inline';
+    };
+    
     var disabledControls = [];
     
     this.disableControls = function () {
@@ -176,8 +202,6 @@ WM.Bot = new function () {
             elem.disabled = false;
         }
     };
-    
-    // Stop bot ******************************************************************
     
     // Guide: Each article in the list will be evaluated with ********************
     // each row in the text area, as regular expressions. ************************
@@ -271,8 +295,9 @@ WM.Bot = new function () {
             var title = link.title;
             if (canProcessPage(title)) {
                 WM.Log.logInfo('Waiting ' + (interval / 1000) + ' seconds...');
-                setTimeout((function (lis, id, ln, article) {
+                var stopId = setTimeout((function (lis, id, ln, article) {
                     return function () {
+                        this.disableStopBot();
                         ln.className = "WikiMonkeyBotProcessing";
                         WM.Log.logInfo("Processing " + article + "...");
                         // TODO **************************************************
@@ -285,6 +310,7 @@ WM.Bot = new function () {
                         WM.Bot.processItem(lis, id);
                     };
                 })(items, index, link, title), interval);
+                this.enableStopBot(stopId);
             }
             else {
                 // Do not increment directly in the function's call!
