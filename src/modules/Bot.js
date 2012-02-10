@@ -24,7 +24,7 @@ WM.Bot = new function () {
         divContainer.id = 'WikiMonkeyBot';
         
         GM_addStyle("#WikiMonkeyBotSelection {width:100%; margin-bottom:1em;} " +
-                    "#WikiMonkeyBotFilter {height:6em; resize:vertical;} " +
+                    "#WikiMonkeyBotFilter {height:6em; margin-bottom:1em; resize:vertical;} " +
                     "#WikiMonkeyBotStart, #WikiMonkeyBotStop {margin-right:0.33em; margin-bottom:1em; font-weight:bold;} " +
                     "a.WikiMonkeyBotSelected {background-color:#faa; padding:0.2em 0.4em;} " +
                     "a.WikiMonkeyBotProcessing {background-color:#ff8; padding:0.2em 0.4em;} " +
