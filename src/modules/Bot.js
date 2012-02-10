@@ -23,7 +23,7 @@ WM.Bot = new function () {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyBot';
         
-        GM_addStyle("#WikiMonkeyBotSelection {min-width:67%; margin-bottom:1em;} " +
+        GM_addStyle("#WikiMonkeyBotSelection {width:100%; margin-bottom:1em;} " +
                     "#WikiMonkeyBotFilter {height:6em; resize:vertical;} " +
                     "#WikiMonkeyBotStart, #WikiMonkeyBotStop {margin-right:0.33em; margin-bottom:1em; font-weight:bold;} " +
                     "a.WikiMonkeyBotSelected {background-color:#faa; padding:0.2em 0.4em;} " +
@@ -307,7 +307,6 @@ WM.Bot = new function () {
                         ln.className = "WikiMonkeyBotProcessing";
                         WM.Log.logInfo("Processing " + article + "...");
                         // TODO **************************************************
-                        WM.Log.logDebug("PROCESS THE ARTICLE");  // **************
                         // What to do on failure? retry, skip, stop... ***********
                         ln.className = "WikiMonkeyBotProcessed";
                         WM.Log.logInfo(article + " processed");

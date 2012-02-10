@@ -3,7 +3,7 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.com>
-// @version 4dev
+// @version 5dev
 // @description Perform automatic actions when editing wiki pages
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
@@ -26,6 +26,7 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiSaveTalk.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ExpandContractions.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/MultipleLineBreaks.js
+// @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/SimpleReplace.js
 // ==/UserScript==
 
 WM.UI.setEditor([
@@ -48,9 +49,7 @@ WM.UI.setDiff([
 ])
 
 WM.UI.setWhatLinksHere([
-    [
-        []
-    ]
+    ["SimpleReplace", "Simple RegExp substitution", ["1"]]
 ])
 
 WM.main()
