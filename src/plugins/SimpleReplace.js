@@ -61,11 +61,47 @@ WM.Plugins.SimpleReplace = new function () {
     };
     
     this.mainAuto = function (args, title) {
-        // ***********************************************************************
-        WM.Log.logDebug("SIMPLE REPLACE <" + args[0] + ">: " + title);  // ******************************
+        var id = args[0];
+        
+        xml = WM.MW.callAPIGet(["action=query", "prop=info|revisions",
+                                "rvprop=content", "intoken=edit",
+                                "titles=" + encodeURIComponent(title)]);
+        
+        var page = xml.getElementsByTagName('page')[0];
+        var rev = xml.getElementsByTagName('rev')[0];
+        var edittoken = page.getAttribute('edittoken');
+        var timestamp = rev.getAttribute('timestamp');
+        
+        var source = WM.getLongTextNode(rev);
+        var original = source;
+        
+        var pattern = document.getElementById("WikiMonkey-SimpleReplace-RegExp-" + id).value;
+        var ignoreCase = document.getElementById("WikiMonkey-SimpleReplace-IgnoreCase-" + id).checked;
+        var newString = document.getElementById("WikiMonkey-SimpleReplace-NewString-" + id).value;
+        
+        var regexp = new RegExp(pattern, "g" + ((ignoreCase) ? "i" : ""));
+        
+        var newtext = source.replace(regexp, newString);
+        
+        if (newtext != original) {
+            var summary = document.getElementById("WikiMonkey-SimpleReplace-Summary-" + id).value;
+            
+            xml = WM.MW.callAPIPost(["action=edit", "bot=1",
+                                     "title=" + encodeURIComponent(title),
+                                     "summary=" + encodeURIComponent(summary),
+                                     "text=" + encodeURIComponent(newtext),
+                                     "basetimestamp=" + timestamp,
+                                     "token=" + encodeURIComponent(edittoken)]);
+            
+            var edit = xml.getElementsByTagName('edit')[0];
+            return (edit && edit.getAttribute('result') == 'Success') ? true : false;
+        }
+        else {
+            return true;
+        }
     };
     
     this.main = function (args) {
-        // ***********************************************************************
+        // TODO ******************************************************************
     };
 };
