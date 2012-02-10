@@ -210,7 +210,8 @@ WM.Bot = new function () {
                         test = regexp.test(title);
                         if (!negative != !test) {
                             response = (inverse) ? false : true;
-                            break;
+                            // Do not break, so that if among the rules there's
+                            // an invalid regexp the function returns false
                         }
                     }
                     else {
