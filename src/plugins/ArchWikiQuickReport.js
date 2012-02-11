@@ -38,13 +38,36 @@ WM.Plugins.ArchWikiQuickReport = new function () {
         if (type != 'content' && type != 'style') {
             WM.Log.logError('Select a valid report type');
         }
-        else if (WM.Tables.appendRow(article, null, ["[" + location.href +
-                            " " + title + "]", enddate, type, notes], summary))
-        {
-            WM.Log.logInfo('Diff correctly appended to ' + article);
-        }
         else {
-            WM.Log.logError('The diff has not been appended!');
+            var res = WM.MW.callAPIGet(["action=query", "prop=info|revisions",
+                                        "rvprop=content|timestamp", "intoken=edit",
+                                        "titles=" + encodeURIComponent(article)]);
+            var pages = res.query.pages;
+            
+            var pageid;
+            for each (pageid in pages) {
+                break;
+            }
+            
+            var edittoken = pageid.edittoken;
+            var timestamp = pageid.revisions[0].timestamp;
+            var source = pageid.revisions[0]["*"];
+            
+            var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", enddate, type, notes]);
+            
+            res = WM.MW.callAPIPost(["action=edit", "bot=1",
+                                     "title=" + encodeURIComponent(article),
+                                     "summary=" + encodeURIComponent(summary),
+                                     "text=" + encodeURIComponent(newtext),
+                                     "basetimestamp=" + timestamp,
+                                     "token=" + encodeURIComponent(edittoken)]);
+            
+            if (res.edit && res.edit.result == 'Success') {
+                WM.Log.logInfo('Diff correctly appended to ' + article);
+            }
+            else {
+                WM.Log.logError('The diff has not been appended!');
+            }
         }
     };
 };

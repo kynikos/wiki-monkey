@@ -19,37 +19,13 @@
  */
 
 WM.Tables = new function () {
-    this.appendRow = function (title, mark, values, summary) {
-        var res = WM.MW.callAPIGet(["action=query", "prop=info|revisions",
-                                    "rvprop=content|timestamp", "intoken=edit",
-                                    "titles=" + encodeURIComponent(title)]);
-        var pages = res.query.pages;
-        
-        var pageid;
-        for each (pageid in pages) {
-            break;
-        }
-        
-        var edittoken = pageid.edittoken;
-        var timestamp = pageid.revisions[0].timestamp;
-        var source = pageid.revisions[0]["*"];
-        
+    this.appendRow = function (source, mark, values) {
         var lastId = source.lastIndexOf('|}&lt;!--' + mark);
         var endtable = (lastId > -1) ? lastId : source.lastIndexOf('|}');
         
         var part1 = source.substring(0, endtable);
         var part2 = source.substring(endtable);
         
-        var newtext = part1 + "|-\n|" + values.join("\n|") + "\n" + part2;
-        
-        res = WM.MW.callAPIPost(["action=edit", "bot=1",
-                                 "title=" + encodeURIComponent(title),
-                                 "summary=" + encodeURIComponent(summary),
-                                 "text=" + encodeURIComponent(newtext),
-                                 "basetimestamp=" + timestamp,
-                                 "token=" + encodeURIComponent(edittoken)]);
-        
-        var edit = res.edit;
-        return (edit && edit.result == 'Success') ? true : false;
+        return part1 + "|-\n|" + values.join("\n|") + "\n" + part2;
     };
 };
