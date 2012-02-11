@@ -41,7 +41,7 @@ WM.Bot = new function () {
         var fieldset = document.createElement('fieldset');
         
         var legend = document.createElement('legend');
-        legend.innerHTML = 'Function';
+        legend.innerHTML = 'Plugin';
         
         var selectFunctions = document.createElement('select');
         selectFunctions.id = 'WikiMonkeyBotSelection';
