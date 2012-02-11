@@ -47,6 +47,6 @@ WM.UI.setDiff([
     ]
 ])
 
-WM.UI.setWhatLinksHere([])
+WM.UI.setWhatLinksHere(null)
 
 WM.main()

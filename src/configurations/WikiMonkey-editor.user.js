@@ -34,8 +34,8 @@ WM.UI.setEditor([
     ]
 ])
 
-WM.UI.setDiff([[]])
+WM.UI.setDiff(null)
 
-WM.UI.setWhatLinksHere([])
+WM.UI.setWhatLinksHere(null)
 
 WM.main()
