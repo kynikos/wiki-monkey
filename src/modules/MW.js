@@ -20,15 +20,13 @@
 
 WM.MW = new function () {
     this.callAPIGet = function (params) {
-        var id = WM.HTTP.sendGetSyncRequest(WM.getBaseURL() + "api.php?format=xml&" + params.join('&'));
-        var parser = new DOMParser();
-        return parser.parseFromString(WM.HTTP.getResponseText(id), "text/xml");
+        var id = WM.HTTP.sendGetSyncRequest(WM.getBaseURL() + "api.php?format=json&" + params.join('&'));
+        return JSON.parse(WM.HTTP.getResponseText(id));
     };
     
     this.callAPIPost = function (params) {
-        var id = WM.HTTP.sendPostSyncRequest(WM.getBaseURL() + "api.php", "format=xml&" + params.join('&'), "Content-type", "application/x-www-form-urlencoded");
-        var parser = new DOMParser();
-        return parser.parseFromString(WM.HTTP.getResponseText(id), "text/xml");
+        var id = WM.HTTP.sendPostSyncRequest(WM.getBaseURL() + "api.php", "format=json&" + params.join('&'), "Content-type", "application/x-www-form-urlencoded");
+        return JSON.parse(WM.HTTP.getResponseText(id));
     };
     
     // Never use this attribute directly, always use getUserInfo!!!
@@ -42,11 +40,11 @@ WM.MW = new function () {
     };
     
     this.getUserName = function () {
-        return this.getUserInfo().getElementsByTagName('userinfo')[0].getAttribute('name');
+        return this.getUserInfo().query.userinfo.name;
     };
     
     this.isUserBot = function () {
-        var groups = this.getUserInfo().getElementsByTagName('groups')[0].getElementsByTagName('g');
+        var groups = this.getUserInfo().query.userinfo.groups;
         for each (var g in groups) {
             if (g == 'bot') {
                 return true;

@@ -39,6 +39,8 @@ var WM = new function () {
     };
     
     this.getLongTextNode = function (element) {
+        // DEPRECATED, no longer used anywhere: delete?
+        
         // Firefox and other browsers split long text into multiple text nodes
         var text = "";
         for each (var child in element.childNodes) {

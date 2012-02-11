@@ -20,16 +20,19 @@
 
 WM.Tables = new function () {
     this.appendRow = function (title, mark, values, summary) {
-        xml = WM.MW.callAPIGet(["action=query", "prop=info|revisions",
-                                "rvprop=content", "intoken=edit",
-                                "titles=" + encodeURIComponent(title)]);
+        var res = WM.MW.callAPIGet(["action=query", "prop=info|revisions",
+                                    "rvprop=content|timestamp", "intoken=edit",
+                                    "titles=" + encodeURIComponent(title)]);
+        var pages = res.query.pages;
         
-        var page = xml.getElementsByTagName('page')[0];
-        var rev = xml.getElementsByTagName('rev')[0];
-        var edittoken = page.getAttribute('edittoken');
-        var timestamp = rev.getAttribute('timestamp');
+        var pageid;
+        for each (pageid in pages) {
+            break;
+        }
         
-        var source = WM.getLongTextNode(rev);
+        var edittoken = pageid.edittoken;
+        var timestamp = pageid.revisions[0].timestamp;
+        var source = pageid.revisions[0]["*"];
         
         var lastId = source.lastIndexOf('|}&lt;!--' + mark);
         var endtable = (lastId > -1) ? lastId : source.lastIndexOf('|}');
@@ -39,14 +42,14 @@ WM.Tables = new function () {
         
         var newtext = part1 + "|-\n|" + values.join("\n|") + "\n" + part2;
         
-        xml = WM.MW.callAPIPost(["action=edit", "bot=1",
-                              "title=" + encodeURIComponent(title),
-                              "summary=" + encodeURIComponent(summary),
-                              "text=" + encodeURIComponent(newtext),
-                              "basetimestamp=" + timestamp,
-                              "token=" + encodeURIComponent(edittoken)]);
+        res = WM.MW.callAPIPost(["action=edit", "bot=1",
+                                 "title=" + encodeURIComponent(title),
+                                 "summary=" + encodeURIComponent(summary),
+                                 "text=" + encodeURIComponent(newtext),
+                                 "basetimestamp=" + timestamp,
+                                 "token=" + encodeURIComponent(edittoken)]);
         
-        var edit = xml.getElementsByTagName('edit')[0];
-        return (edit && edit.getAttribute('result') == 'Success') ? true : false;
+        var edit = res.edit;
+        return (edit && edit.result == 'Success') ? true : false;
     };
 };

@@ -63,16 +63,20 @@ WM.Plugins.SimpleReplace = new function () {
     this.mainAuto = function (args, title) {
         var id = args[0];
         
-        xml = WM.MW.callAPIGet(["action=query", "prop=info|revisions",
-                                "rvprop=content", "intoken=edit",
+        var res = WM.MW.callAPIGet(["action=query", "prop=info|revisions",
+                                "rvprop=content|timestamp", "intoken=edit",
                                 "titles=" + encodeURIComponent(title)]);
+        var pages = res.query.pages;
         
-        var page = xml.getElementsByTagName('page')[0];
-        var rev = xml.getElementsByTagName('rev')[0];
-        var edittoken = page.getAttribute('edittoken');
-        var timestamp = rev.getAttribute('timestamp');
+        var pageid;
+        for each (pageid in pages) {
+            break;
+        }
         
-        var source = WM.getLongTextNode(rev);
+        var edittoken = pageid.edittoken;
+        var timestamp = pageid.revisions[0].timestamp;
+        var source = pageid.revisions[0]["*"];
+        
         var original = source;
         
         var pattern = document.getElementById("WikiMonkey-SimpleReplace-RegExp-" + id).value;
@@ -86,15 +90,15 @@ WM.Plugins.SimpleReplace = new function () {
         if (newtext != original) {
             var summary = document.getElementById("WikiMonkey-SimpleReplace-Summary-" + id).value;
             
-            xml = WM.MW.callAPIPost(["action=edit", "bot=1",
+            res = WM.MW.callAPIPost(["action=edit", "bot=1",
                                      "title=" + encodeURIComponent(title),
                                      "summary=" + encodeURIComponent(summary),
                                      "text=" + encodeURIComponent(newtext),
                                      "basetimestamp=" + timestamp,
                                      "token=" + encodeURIComponent(edittoken)]);
-            
-            var edit = xml.getElementsByTagName('edit')[0];
-            return (edit && edit.getAttribute('result') == 'Success') ? true : false;
+        
+            var edit = res.edit;
+            return (edit && edit.result == 'Success') ? true : false;
         }
         else {
             return true;

@@ -23,27 +23,38 @@ WM.Diff = new function () {
         var title = WM.getURIParameter('title');
         var diff = WM.getURIParameter('diff');
         var oldid = WM.getURIParameter('oldid');
-        var xml, enddate;
+        var res, pages, enddate;
         
         switch (diff) {
             case 'next':
-                xml = WM.MW.callAPIGet(["action=query", "prop=revisions",
+                res = WM.MW.callAPIGet(["action=query", "prop=revisions",
                                   "titles=" + title, "rvlimit=2",
                                   "rvprop=timestamp", "rvdir=newer",
                                   "rvstartid=" + oldid]);
-                enddate = xml.getElementsByTagName('rev')[1].getAttribute('timestamp');
+                pages = res.query.pages;
+                for each (var pageid in pages) {
+                    enddate = pageid.revisions[1].timestamp;
+                    break;
+                }
                 break;
             case 'prev':
-                xml = WM.MW.callAPIGet(["action=query", "prop=revisions",
+                res = WM.MW.callAPIGet(["action=query", "prop=revisions",
                                   "revids=" + oldid, "rvprop=timestamp"]);
-                enddate = xml.getElementsByTagName('rev')[0].getAttribute('timestamp');
+                pages = res.query.pages;
+                for each (var pageid in pages) {
+                    enddate = pageid.revisions[0].timestamp;
+                    break;
+                }
                 break;
             default:
-                xml = WM.MW.callAPIGet(["action=query", "prop=revisions",
+                res = WM.MW.callAPIGet(["action=query", "prop=revisions",
                                   "revids=" + diff, "rvprop=timestamp"]);
-                enddate = xml.getElementsByTagName('rev')[0].getAttribute('timestamp');
+                pages = res.query.pages;
+                for each (var pageid in pages) {
+                    enddate = pageid.revisions[0].timestamp;
+                    break;
+                }
         }
-        
         return enddate;
     };
 };
