@@ -20,13 +20,21 @@
 
 WM.MW = new function () {
     this.callAPIGet = function (params) {
-        var id = WM.HTTP.sendGetSyncRequest(WM.getBaseURL() + "api.php?format=json&" + params.join('&'));
+        var id = WM.HTTP.sendGetSyncRequest(WM.getBaseURL() + "api.php?format=json" + joinParams(params));
         return JSON.parse(WM.HTTP.getResponseText(id));
     };
     
     this.callAPIPost = function (params) {
-        var id = WM.HTTP.sendPostSyncRequest(WM.getBaseURL() + "api.php", "format=json&" + params.join('&'), "Content-type", "application/x-www-form-urlencoded");
+        var id = WM.HTTP.sendPostSyncRequest(WM.getBaseURL() + "api.php", "format=json" + joinParams(params), "Content-type", "application/x-www-form-urlencoded");
         return JSON.parse(WM.HTTP.getResponseText(id));
+    };
+    
+    var joinParams = function (params) {
+        var string = "";
+        for (var key in params) {
+            string += ("&" + key + "=" + params[key]);
+        }
+        return string;
     };
     
     // Never use this attribute directly, always use getUserInfo!!!
@@ -34,7 +42,9 @@ WM.MW = new function () {
     
     this.getUserInfo = function () {
         if (!userInfo) {
-            userInfo = this.callAPIGet(["action=query", "meta=userinfo", "uiprop=groups"]);
+            userInfo = this.callAPIGet({action: "query",
+                                        meta: "userinfo",
+                                        uiprop: "groups"});
         }
         return userInfo;
     };

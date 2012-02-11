@@ -8,9 +8,11 @@ WM.Plugins.ArchWikiSaveTalk = new function () {
         var title = WM.getURIParameter('title');
         var enddate = WM.Diff.getEndTimestamp();
         
-        var res = WM.MW.callAPIGet(["action=query", "prop=info|revisions",
-                                    "rvprop=content|timestamp", "intoken=edit",
-                                    "titles=" + encodeURIComponent(article)]);
+        var res = WM.MW.callAPIGet({action: "query",
+                                    prop: "info|revisions",
+                                    rvprop: "content|timestamp",
+                                    intoken: "edit",
+                                    titles: encodeURIComponent(article)});
         var pages = res.query.pages;
         
         var pageid;
@@ -24,12 +26,13 @@ WM.Plugins.ArchWikiSaveTalk = new function () {
         
         var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", enddate]);
         
-        res = WM.MW.callAPIPost(["action=edit", "bot=1",
-                                 "title=" + encodeURIComponent(article),
-                                 "summary=" + encodeURIComponent(summary),
-                                 "text=" + encodeURIComponent(newtext),
-                                 "basetimestamp=" + timestamp,
-                                 "token=" + encodeURIComponent(edittoken)]);
+        res = WM.MW.callAPIPost({action: "edit",
+                                 bot: "1",
+                                 title: encodeURIComponent(article),
+                                 summary: encodeURIComponent(summary),
+                                 text: encodeURIComponent(newtext),
+                                 basetimestamp: timestamp,
+                                 token: encodeURIComponent(edittoken)});
         
         if (res.edit && res.edit.result == 'Success') {
             WM.Log.logInfo('Diff correctly appended to ' + article);

@@ -63,9 +63,11 @@ WM.Plugins.SimpleReplace = new function () {
     this.mainAuto = function (args, title) {
         var id = args[0];
         
-        var res = WM.MW.callAPIGet(["action=query", "prop=info|revisions",
-                                "rvprop=content|timestamp", "intoken=edit",
-                                "titles=" + encodeURIComponent(title)]);
+        var res = WM.MW.callAPIGet({action: "query",
+                                    prop: "info|revisions",
+                                    rvprop: "content|timestamp",
+                                    intoken: "edit",
+                                    titles: encodeURIComponent(title)});
         var pages = res.query.pages;
         
         var pageid;
@@ -90,12 +92,13 @@ WM.Plugins.SimpleReplace = new function () {
         if (newtext != original) {
             var summary = document.getElementById("WikiMonkey-SimpleReplace-Summary-" + id).value;
             
-            res = WM.MW.callAPIPost(["action=edit", "bot=1",
-                                     "title=" + encodeURIComponent(title),
-                                     "summary=" + encodeURIComponent(summary),
-                                     "text=" + encodeURIComponent(newtext),
-                                     "basetimestamp=" + timestamp,
-                                     "token=" + encodeURIComponent(edittoken)]);
+            res = WM.MW.callAPIPost({action: "edit",
+                                     bot: "1",
+                                     title: encodeURIComponent(title),
+                                     summary: encodeURIComponent(summary),
+                                     text: encodeURIComponent(newtext),
+                                     basetimestamp: timestamp,
+                                     token: encodeURIComponent(edittoken)});
         
             var edit = res.edit;
             return (edit && edit.result == 'Success') ? true : false;

@@ -27,10 +27,13 @@ WM.Diff = new function () {
         
         switch (diff) {
             case 'next':
-                res = WM.MW.callAPIGet(["action=query", "prop=revisions",
-                                  "titles=" + title, "rvlimit=2",
-                                  "rvprop=timestamp", "rvdir=newer",
-                                  "rvstartid=" + oldid]);
+                res = WM.MW.callAPIGet({action: "query",
+                                        prop: "revisions",
+                                        titles: title,
+                                        rvlimit: "2",
+                                        rvprop: "timestamp",
+                                        rvdir: "newer",
+                                        rvstartid: oldid});
                 pages = res.query.pages;
                 for each (var pageid in pages) {
                     enddate = pageid.revisions[1].timestamp;
@@ -38,8 +41,10 @@ WM.Diff = new function () {
                 }
                 break;
             case 'prev':
-                res = WM.MW.callAPIGet(["action=query", "prop=revisions",
-                                  "revids=" + oldid, "rvprop=timestamp"]);
+                res = WM.MW.callAPIGet({action: "query",
+                                        prop: "revisions",
+                                        revids: oldid,
+                                        rvprop: "timestamp"});
                 pages = res.query.pages;
                 for each (var pageid in pages) {
                     enddate = pageid.revisions[0].timestamp;
@@ -47,8 +52,10 @@ WM.Diff = new function () {
                 }
                 break;
             default:
-                res = WM.MW.callAPIGet(["action=query", "prop=revisions",
-                                  "revids=" + diff, "rvprop=timestamp"]);
+                res = WM.MW.callAPIGet({action: "query",
+                                        prop: "revisions",
+                                        revids: diff,
+                                        rvprop: "timestamp"});
                 pages = res.query.pages;
                 for each (var pageid in pages) {
                     enddate = pageid.revisions[0].timestamp;
