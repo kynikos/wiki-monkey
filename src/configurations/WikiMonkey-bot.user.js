@@ -12,7 +12,7 @@
 // @icon64 http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey-64.png
 // @match http://*.wikipedia.org/*
 // @match https://wiki.archlinux.org/*
-// @require https://raw.github.com/kynikos/wiki-monkey/development/src/Core.js
+// @require https://raw.github.com/kynikos/wiki-monkey/development/src/WikiMonkey.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Bot.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Diff.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Editor.js
