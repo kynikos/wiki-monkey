@@ -1,6 +1,10 @@
-Wiki Monkey is a Scriptish script that helps editing wiki pages by providing
-some Javascript functions to automatize repetitive operations, or letting you
-create new functions exploiting its high-level API. 
+Wiki Monkey is a bot for MediaWiki applications that can be used directly from
+the wiki pages in the browser. It also provides manual-editing aid functions,
+and can be easily extended through the creation of plugins, exploiting its
+high-level API.
+
+Wiki Monkey is written in JavaScript and is run as a Scriptish script in the
+Mozilla Firefox browser.
 
 License: GPLv3 (see LICENSE).
 
