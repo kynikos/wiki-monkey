@@ -3,7 +3,7 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.com>
-// @version 6dev
+// @version 6bot-dev
 // @description Perform automatic actions when editing wiki pages
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
