@@ -20,6 +20,9 @@
 
 WM.Log = new function () {
     this.makeLogArea = function () {
+        log = document.createElement('div');
+        log.id = 'WikiMonkeyLog';
+        
         GM_addStyle("#WikiMonkeyLog {height:10em; border:2px solid #07b; padding:0.5em; overflow:auto; resize:vertical; background-color:#111;} " +
                     "#WikiMonkeyLog pre.timestamp {float:left; width:5em; margin:0; border:none; padding:0; font-size:0.9em; color:#eee; background-color:transparent;} " +
                     "#WikiMonkeyLog pre.message {margin:0 0 0.5em 5em; border:none; padding:0; color:#eee; background-color:transparent;} " +
@@ -28,9 +31,6 @@ WM.Log = new function () {
                     // MediaWiki, without associating them with an id and a tag
                     "#WikiMonkeyLog pre.mwarning {color:gold;} " +
                     "#WikiMonkeyLog pre.merror {color:red;}");
-        
-        log = document.createElement('div');
-        log.id = 'WikiMonkeyLog';
         
         return log;
     };
@@ -43,7 +43,9 @@ WM.Log = new function () {
         
         var msg = document.createElement('pre');
         msg.className = 'message' + ((type) ? " " + type : "");
-        msg.innerHTML = text;
+        // Do not allow the empty string, otherwise the resulting html element
+        // may not be rendered by the browser
+        msg.innerHTML = (text) ? text : " ";
         
         var line = document.createElement('div');
         line.appendChild(tstamp);

@@ -20,36 +20,46 @@
 
 WM.MW = new function () {
     this.callAPIGet = function (params) {
-        var id = WM.HTTP.sendGetSyncRequest("api.php?format=xml&" + params.join('&'));
-        var parser = new DOMParser();
-        return parser.parseFromString(WM.HTTP.getResponseText(id), "text/xml");
+        var id = WM.HTTP.sendGetSyncRequest(WM.getBaseURL() + "api.php?format=json" + joinParams(params));
+        return JSON.parse(WM.HTTP.getResponseText(id));
     };
     
     this.callAPIPost = function (params) {
-        var id = WM.HTTP.sendPostSyncRequest("api.php", "format=xml&" + params.join('&'), "Content-type", "application/x-www-form-urlencoded");
-        var parser = new DOMParser();
-        return parser.parseFromString(WM.HTTP.getResponseText(id), "text/xml");
+        var id = WM.HTTP.sendPostSyncRequest(WM.getBaseURL() + "api.php", "format=json" + joinParams(params), "Content-type", "application/x-www-form-urlencoded");
+        return JSON.parse(WM.HTTP.getResponseText(id));
     };
     
-    var userName;
+    var joinParams = function (params) {
+        var string = "";
+        for (var key in params) {
+            string += ("&" + key + "=" + params[key]);
+        }
+        return string;
+    };
+    
+    // Never use this attribute directly, always use getUserInfo!!!
+    var userInfo;
+    
+    this.getUserInfo = function () {
+        if (!userInfo) {
+            userInfo = this.callAPIGet({action: "query",
+                                        meta: "userinfo",
+                                        uiprop: "groups"});
+        }
+        return userInfo;
+    };
     
     this.getUserName = function () {
-        if (!userName) {
-            userName = this.callAPIGet(["action=query", "meta=userinfo"]
-                    ).getElementsByTagName('userinfo')[0].getAttribute('name');
-        }
-        return userName;
+        return this.getUserInfo().query.userinfo.name;
     };
     
-    // Incomplete ****************************************************************
-    this.getBacklinks = function (args) {
-        var xml = this.callAPIGet(["action=query", "list=backlinks",
-                                 "bltitle=" + ecodeURIComponent(WM.Editor.getTitle())]);
-        var bls = new Array();
-        var L = xml.getElementsByTagName('bl');
-        for (var i = 0; i < L.length; i++) {
-            bls.push(L[i].getAttribute('title'));
+    this.isUserBot = function () {
+        var groups = this.getUserInfo().query.userinfo.groups;
+        for each (var g in groups) {
+            if (g == 'bot') {
+                return true;
+            }
         }
-        alert(bls);
+        return false;
     };
 };
