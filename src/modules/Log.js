@@ -51,7 +51,15 @@ WM.Log = new function () {
         line.appendChild(tstamp);
         line.appendChild(msg);
         
-        document.getElementById('WikiMonkeyLog').appendChild(line);
+        var log = document.getElementById('WikiMonkeyLog');
+        
+        test = log.scrollTop + log.clientHeight == log.scrollHeight;
+        
+        log.appendChild(line);
+        
+        if (test) {
+            log.scrollTop = log.scrollHeight - log.clientHeight;
+        }
     };
     
     this.logDebug = function (text) {
