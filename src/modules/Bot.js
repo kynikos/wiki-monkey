@@ -62,6 +62,11 @@ WM.Bot = new function () {
                 if (makeUI instanceof Function) {
                     UI.replaceChild(makeUI(fns[id][2]), UI.firstChild);
                 }
+                else {
+                    // Don't removeChild, otherwise if another plugin with
+                    // interface is selected, replaceChild won't work
+                    UI.replaceChild(document.createElement('div'), UI.firstChild);
+                }
                 WM.Bot.selectedFunction = function (title) {
                     return eval("WM.Plugins." + fns[id][0] + ".mainAuto")(fns[id][2], title);
                 };
@@ -75,6 +80,9 @@ WM.Bot = new function () {
         var makeUI = eval("WM.Plugins." + functions[0][0] + ".makeUI");
         if (makeUI instanceof Function) {
             divFunction.appendChild(makeUI(functions[0][2]));
+        }
+        else {
+            divFunction.appendChild(document.createElement('div'));
         }
         // Don't use "this.selectedFunction", use "WM.Bot.selectedFunction"
         WM.Bot.selectedFunction = function (title) {
