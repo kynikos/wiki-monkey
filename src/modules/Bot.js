@@ -62,6 +62,11 @@ WM.Bot = new function () {
                 if (makeUI instanceof Function) {
                     UI.replaceChild(makeUI(fns[id][2]), UI.firstChild);
                 }
+                else {
+                    // Don't removeChild, otherwise if another plugin with
+                    // interface is selected, replaceChild won't work
+                    UI.replaceChild(document.createElement('div'), UI.firstChild);
+                }
                 WM.Bot.selectedFunction = function (title) {
                     return eval("WM.Plugins." + fns[id][0] + ".mainAuto")(fns[id][2], title);
                 };
@@ -75,6 +80,9 @@ WM.Bot = new function () {
         var makeUI = eval("WM.Plugins." + functions[0][0] + ".makeUI");
         if (makeUI instanceof Function) {
             divFunction.appendChild(makeUI(functions[0][2]));
+        }
+        else {
+            divFunction.appendChild(document.createElement('div'));
         }
         // Don't use "this.selectedFunction", use "WM.Bot.selectedFunction"
         WM.Bot.selectedFunction = function (title) {
@@ -209,7 +217,8 @@ WM.Bot = new function () {
         document.getElementById('WikiMonkeyBotStart').style.display = 'inline';
     };
     
-    var disabledControls = [];
+    //This attribute was used with the previous method for disabling controls
+    //var disabledControls = [];
     
     this.disableControls = function () {
         this.setEnableControls(true);
@@ -221,7 +230,7 @@ WM.Bot = new function () {
         var baseNodes = [document.getElementById('WikiMonkeyBotFunction'),
                      document.getElementById('WikiMonkeyBotFilter').parentNode]
         for each (var base in baseNodes) {
-            for each (var tag in ['input', 'select', 'textarea']) {
+            for each (var tag in ['input', 'button', 'select', 'textarea']) {
                 for each (var elem in base.getElementsByTagName(tag)) {
                     if (!elem.disabled) {
                         elem.disabled = true;

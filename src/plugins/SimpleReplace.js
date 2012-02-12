@@ -79,8 +79,6 @@ WM.Plugins.SimpleReplace = new function () {
         var timestamp = pageid.revisions[0].timestamp;
         var source = pageid.revisions[0]["*"];
         
-        var original = source;
-        
         var pattern = document.getElementById("WikiMonkey-SimpleReplace-RegExp-" + id).value;
         var ignoreCase = document.getElementById("WikiMonkey-SimpleReplace-IgnoreCase-" + id).checked;
         var newString = document.getElementById("WikiMonkey-SimpleReplace-NewString-" + id).value;
@@ -89,7 +87,7 @@ WM.Plugins.SimpleReplace = new function () {
         
         var newtext = source.replace(regexp, newString);
         
-        if (newtext != original) {
+        if (newtext != source) {
             var summary = document.getElementById("WikiMonkey-SimpleReplace-Summary-" + id).value;
             
             res = WM.MW.callAPIPost({action: "edit",
@@ -100,8 +98,7 @@ WM.Plugins.SimpleReplace = new function () {
                                      basetimestamp: timestamp,
                                      token: encodeURIComponent(edittoken)});
         
-            var edit = res.edit;
-            return (edit && edit.result == 'Success') ? true : false;
+            return (res.edit && res.edit.result == 'Success') ? true : false;
         }
         else {
             return true;
