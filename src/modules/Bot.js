@@ -217,7 +217,8 @@ WM.Bot = new function () {
         document.getElementById('WikiMonkeyBotStart').style.display = 'inline';
     };
     
-    var disabledControls = [];
+    //This attribute was used with the previous method for disabling controls
+    //var disabledControls = [];
     
     this.disableControls = function () {
         this.setEnableControls(true);
@@ -229,7 +230,7 @@ WM.Bot = new function () {
         var baseNodes = [document.getElementById('WikiMonkeyBotFunction'),
                      document.getElementById('WikiMonkeyBotFilter').parentNode]
         for each (var base in baseNodes) {
-            for each (var tag in ['input', 'select', 'textarea']) {
+            for each (var tag in ['input', 'button', 'select', 'textarea']) {
                 for each (var elem in base.getElementsByTagName(tag)) {
                     if (!elem.disabled) {
                         elem.disabled = true;
