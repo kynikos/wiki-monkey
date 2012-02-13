@@ -3,8 +3,6 @@ WM.Plugins.ArchWikiNewTemplates = new function () {
         var s = WM.Editor.readSource();
         var original = s;
         
-        var re1 = /\{\{ *(?:[Cc]odeline|[Ff]ilename) *\|/g;
-        
         var re8 = /&lt;pre&gt;(((?!&lt;(pre|nowiki)&gt;)[^\=\|])*?((?!&lt;(pre|nowiki)&gt;)[^\=\|\}]))&lt;\/pre&gt;/ig;
         var re9 = /&lt;pre&gt;(((?!&lt;(pre|nowiki)&gt;)[^\|])*?((?!&lt;(pre|nowiki)&gt;)[^\|\}]))&lt;\/pre&gt;/ig;
         var re10 = /&lt;pre&gt;(\n*((?!&lt;(pre|nowiki)&gt;).\n*)+?)&lt;\/pre&gt;/ig;
@@ -19,8 +17,6 @@ WM.Plugins.ArchWikiNewTemplates = new function () {
         
         var re17 = /\{\{ *[Pp]ackage Official *\|/g;
         var re18 = /\{\{ *[Pp]ackage AUR *\|/g;
-        
-        s = s.replace(re1, '{{ic|');
         
         s = s.replace(re8, '{{bc|$1}}');
         s = s.replace(re9, '{{bc|1=$1}}'); // Must come after re8
@@ -44,8 +40,6 @@ WM.Plugins.ArchWikiNewTemplates = new function () {
         }
         
         var tests = [
-            ['Codeline', s.match(/\{\{ *[Cc]odeline/g)],
-            ['Filename', s.match(/\{\{ *[Ff]ilename/g)],
             ['&lt;pre>', s.match(/&lt;pre/ig)],
             ['&lt;code>', s.match(/&lt;code/ig)],
             ['&lt;tt>', s.match(/&lt;tt/ig)],
