@@ -277,37 +277,27 @@ WM.Bot = new function () {
     var canProcessPage = function (title) {
         var rules = document.getElementById('WikiMonkeyBotFilter').value.split('\n');
         var inverse = document.getElementById('WikiMonkeyBotInverse').checked;
-        var error = false;
         var response = (inverse) ? true : false;
         var firstSlash, lastSlash, pattern, modifiers, regexp, test, negative;
         for each (rule in rules) {
             if (rule) {
                 firstSlash = rule.indexOf('/');
                 lastSlash = rule.lastIndexOf('/');
-                if (firstSlash > -1 && lastSlash > -1 && firstSlash != lastSlash) {
-                    pattern = rule.substring(firstSlash + 1, lastSlash);
-                    modifiers = rule.substring(lastSlash + 1);
-                    negative = rule.charAt(0) == '!';
-                    if (modifiers.match(/^(g?i?|ig)$/)) {
-                        regexp = new RegExp(pattern, modifiers);
-                        test = regexp.test(title);
-                        if (!negative != !test) {
-                            response = (inverse) ? false : true;
-                            // Do not break, so that if among the rules there's
-                            // an invalid regexp the function returns false
-                        }
-                    }
-                    else {
-                        error = true;
-                    }
+                pattern = rule.substring(firstSlash + 1, lastSlash);
+                modifiers = rule.substring(lastSlash + 1);
+                negative = rule.charAt(0) == '!';
+                try {
+                    regexp = new RegExp(pattern, modifiers);
                 }
-                else {
-                    error = true;
+                catch (exc) {
+                    WM.Log.logError('Invalid regexp: ' + exc);
+                    break;
                 }
-                
-                if (error) {
-                    WM.Log.logError('Invalid regexp: ' + rule);
-                    return false;
+                test = regexp.test(title);
+                if (!negative != !test) {
+                    response = (inverse) ? false : true;
+                    // Do not break, so that if among the rules there's
+                    // an invalid regexp the function returns false
                 }
             }
         }
