@@ -31,7 +31,7 @@
 
 WM.UI.setEditor([
     [
-        ["ArchWikiNewTemplates", "Update templates", null],
+        ["ArchWikiNewTemplates", "Use code templates", null],
         ["ExpandContractions", "Expand contractions", null],
         ["MultipleLineBreaks", "Multiple line breaks", null]
     ]
