@@ -83,6 +83,9 @@ WM.Plugins.UpdateCategoryTree = new function () {
     };
     
     var updateToC = function (toc, root, summary, minInterval) {
+        var startMark = "START AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK";
+        var endMark = "END AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK";
+        
         WM.Log.logInfo('Updating ' + toc + "...");
         
         var res = WM.MW.callAPIGet({action: "query",
@@ -104,32 +107,39 @@ WM.Plugins.UpdateCategoryTree = new function () {
         var now = new Date();
         var msTimestamp = Date.parse(timestamp);
         if (now.getTime() - msTimestamp >= minInterval) {
-            var tree = recurse("", root, null, {});
+            var start = source.indexOf(startMark + '--&gt;');
+            var end = source.lastIndexOf('&lt;!--' + endMark);
             
-            alert(tree);  // *********************************************************
-            
-            // Inserire il testo in un punto preciso della pagina ********************
-            
-            var newtext = source;  // ************************************************
-            
-            if (newtext != source) {
-                /*res = WM.MW.callAPIPost({action: "edit",
-                                         bot: "1",
-                                         title: encodeURIComponent(toc),
-                                         summary: encodeURIComponent(summary),
-                                         text: encodeURIComponent(newtext),
-                                         basetimestamp: timestamp,
-                                         token: encodeURIComponent(edittoken)});
-                */
-                if (res.edit && res.edit.result == 'Success') {
-                    WM.Log.logInfo(toc + ' correctly updated');
+            if (start > -1 && end > -1) {
+                var part1 = source.substring(0, start);
+                var part2 = source.substring(end);
+                
+                var tree = recurse("", root, null, {});
+                
+                var newtext = part1 + tree + part2;
+                
+                if (newtext != source) {
+                    res = WM.MW.callAPIPost({action: "edit",
+                                             bot: "1",
+                                             title: encodeURIComponent(toc),
+                                             summary: encodeURIComponent(summary),
+                                             text: encodeURIComponent(newtext),
+                                             basetimestamp: timestamp,
+                                             token: encodeURIComponent(edittoken)});
+                    
+                    if (res.edit && res.edit.result == 'Success') {
+                        WM.Log.logInfo(toc + ' correctly updated');
+                    }
+                    else {
+                        WM.Log.logError(toc + ' has not been updated!');
+                    }
                 }
                 else {
-                    WM.Log.logError(toc + ' has not been updated!');
+                    WM.Log.logInfo(toc + ' is already up to date');
                 }
             }
             else {
-                WM.Log.logInfo(toc + ' is already up to date');
+                WM.Log.logError("Cannot find insertion marks in " + toc);
             }
         }
         else {
