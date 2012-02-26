@@ -3,7 +3,7 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.com>
-// @version 7dev-editor
+// @version 8dev-editor
 // @description Perform automatic actions when editing wiki pages
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
@@ -40,5 +40,7 @@ WM.UI.setEditor([
 WM.UI.setDiff(null)
 
 WM.UI.setWhatLinksHere(null)
+
+WM.UI.setSpecial(null)
 
 WM.main()

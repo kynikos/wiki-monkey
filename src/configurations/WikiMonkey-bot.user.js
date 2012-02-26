@@ -3,7 +3,7 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.com>
-// @version 7dev-bot
+// @version 8dev-bot
 // @description Perform automatic actions when editing wiki pages
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
@@ -27,6 +27,7 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ExpandContractions.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/MultipleLineBreaks.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/SimpleReplace.js
+// @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/UpdateCategoryTree.js
 // ==/UserScript==
 
 WM.UI.setEditor([
@@ -53,6 +54,13 @@ WM.UI.setDiff([
 
 WM.UI.setWhatLinksHere([
     ["SimpleReplace", "Simple RegExp substitution", ["1"]]
+])
+
+WM.UI.setSpecial([
+    [
+        ["UpdateCategoryTree", "Update main ToC",
+         [{"Table_of_Contents": "Category:English"}, "automatic update"]]
+    ]
 ])
 
 WM.main()
