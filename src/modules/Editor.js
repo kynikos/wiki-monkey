@@ -20,11 +20,11 @@
 
 WM.Editor = new function () {
     this.getTitle = function () {
-        return queryString['title'];
+        return WM.getURIParameter('title');
     };
     
     this.isSection = function () {
-        return (queryString['section']) ? true : false;
+        return (WM.getURIParameter('section')) ? true : false;
     };
     
     this.readSource = function () {
