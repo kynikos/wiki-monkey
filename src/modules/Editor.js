@@ -24,27 +24,35 @@ WM.Editor = new function () {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyButtons';
         
-        GM_addStyle("#WikiMonkeyButtons input.shortcut {font-weight:bold; margin-right:0.67em;} " +
+        GM_addStyle("#WikiMonkeyButtons div.shortcut {position:absolute;} " +
+                    "#WikiMonkeyButtons div.shortcut > input, #WikiMonkeyButtonAll {font-weight:bold;} " +
                     "#WikiMonkeyButtons div.row {margin-bottom:0.67em;} " +
+                    "#WikiMonkeyButtons div.plugins {margin-left:9em;} " +
                     "#WikiMonkeyButtons div.pluginUI {display:inline-block; margin-right:0.33em;}");
         
         var buttonAll = document.createElement('input');
         buttonAll.setAttribute('type', 'button');
         buttonAll.setAttribute('value', 'Execute all');
-        buttonAll.className = "shortcut";
+        buttonAll.id = "WikiMonkeyButtonAll";
         
-        var buttonsN, divRow, buttonRow, divFunction, buttonFunction, makeUI;
+        var buttonsN, divRow, pRow, buttonRow, divPlugins, divFunction, buttonFunction, makeUI;
         var rowsN = 0;
         
         for each (var row in functions) {
             buttonRow = document.createElement('input');
             buttonRow.setAttribute('type', 'button');
             buttonRow.setAttribute('value', 'Execute row');
-            buttonRow.className = "shortcut";
+            
+            pRow = document.createElement('div');
+            pRow.className = "shortcut";
+            pRow.appendChild(buttonRow);
+            
+            divPlugins = document.createElement('div');
+            divPlugins.className = "plugins";
             
             divRow = document.createElement('div');
             divRow.className = "row";
-            divRow.appendChild(buttonRow);
+            divRow.appendChild(pRow);
             
             buttonsN = 0;
             
@@ -71,10 +79,12 @@ WM.Editor = new function () {
                     divFunction.appendChild(makeUI(f[2]));
                 }
                 
-                divRow.appendChild(divFunction);
+                divPlugins.appendChild(divFunction);
                 
                 buttonsN++;
             }
+            
+            divRow.appendChild(divPlugins);
             divContainer.appendChild(divRow);
             
             if (buttonsN <= 1) {
@@ -83,12 +93,13 @@ WM.Editor = new function () {
             
             rowsN++;
         }
-        divRow = document.createElement('div');
-        divRow.className = 'row';
+        
         if (rowsN > 1) {
+            divRow = document.createElement('div');
+            divRow.className = "row";
             divRow.appendChild(buttonAll);
+            divContainer.appendChild(divRow);
         }
-        divContainer.appendChild(divRow);
         
         return divContainer;
     };

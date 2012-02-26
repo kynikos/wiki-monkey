@@ -34,6 +34,9 @@ WM.UI.setEditor([
         ["ArchWikiNewTemplates", "Use code templates", null],
         ["ExpandContractions", "Expand contractions", null],
         ["MultipleLineBreaks", "Multiple line breaks", null]
+    ],
+    [
+        ["SimpleReplace", "RegExp substitution", ["1"]]
     ]
 ])
 
