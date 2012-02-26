@@ -74,15 +74,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
         return pageid.categoryinfo;
     };
     
-    this.main = function (args) {
-        var tocs = args[0];
-        var summary = args[1];
-        
-        var select = document.getElementById("UpdateCategoryTree-select");
-        var option = select.options[select.selectedIndex];
-        var toc = option.innerHTML;
-        var root = option.value;
-        
+    var updateToC = function (toc, root, summary, minInterval) {
         WM.Log.logInfo('Updating ' + toc + "...");
         
         var res = WM.MW.callAPIGet({action: "query",
@@ -101,35 +93,61 @@ WM.Plugins.UpdateCategoryTree = new function () {
         var timestamp = pageid.revisions[0].timestamp;
         var source = pageid.revisions[0]["*"];
         
-        // Controllare la data dell'ultimo aggiornamento ed **********************
-        // evitare di farlo se è troppo recente
-        
-        var tree = recurse("", root, null, {});
-        
-        alert(tree);  // *********************************************************
-        
-        // Inserire il testo in un punto preciso della pagina ********************
-        
-        var newtext = source;  // ************************************************
-        
-        if (newtext != source) {
-            /*res = WM.MW.callAPIPost({action: "edit",
-                                     bot: "1",
-                                     title: encodeURIComponent(toc),
-                                     summary: encodeURIComponent(summary),
-                                     text: encodeURIComponent(newtext),
-                                     basetimestamp: timestamp,
-                                     token: encodeURIComponent(edittoken)});
-            */
-            if (res.edit && res.edit.result == 'Success') {
-                WM.Log.logInfo(toc + ' correctly updated');
+        var now = new Date();
+        var msTimestamp = Date.parse(timestamp);
+        if (now.getTime() - msTimestamp >= minInterval) {
+            var tree = recurse("", root, null, {});
+            
+            alert(tree);  // *********************************************************
+            
+            // Inserire il testo in un punto preciso della pagina ********************
+            
+            var newtext = source;  // ************************************************
+            
+            if (newtext != source) {
+                /*res = WM.MW.callAPIPost({action: "edit",
+                                         bot: "1",
+                                         title: encodeURIComponent(toc),
+                                         summary: encodeURIComponent(summary),
+                                         text: encodeURIComponent(newtext),
+                                         basetimestamp: timestamp,
+                                         token: encodeURIComponent(edittoken)});
+                */
+                if (res.edit && res.edit.result == 'Success') {
+                    WM.Log.logInfo(toc + ' correctly updated');
+                }
+                else {
+                    WM.Log.logError(toc + ' has not been updated!');
+                }
             }
             else {
-                WM.Log.logError(toc + ' has not been updated!');
+                WM.Log.logInfo(toc + ' is already up to date');
             }
         }
         else {
-            WM.Log.logInfo(toc + ' is already up to date');
+            WM.Log.logWarning(toc + ' has been updated too recently');
         }
+    };
+    
+    this.main = function (args) {
+        var tocs = args[0];
+        var summary = args[1];
+        
+        var minInterval;
+        if (WM.MW.isUserBot()) {
+            minInterval = 60000;
+        }
+        else {
+            minInterval = 86400000;
+        }
+        
+        var select = document.getElementById("UpdateCategoryTree-select");
+        var option = select.options[select.selectedIndex];
+        var toc = option.innerHTML;
+        var root = option.value;
+        
+        // Update all languages **************************************************
+        
+        updateToC(toc, root, summary, minInterval);
     };
 };
