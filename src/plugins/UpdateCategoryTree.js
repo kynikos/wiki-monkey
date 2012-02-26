@@ -3,18 +3,25 @@ WM.Plugins.UpdateCategoryTree = new function () {
         var tocs = args[0];
         
         var select = document.createElement('select');
+        var option;
         for (var key in tocs) {
             option = document.createElement('option');
             option.value = tocs[key];
             option.innerHTML = key;
             select.appendChild(option);
         }
+        option = document.createElement('option');
+        option.value = 'ALL';
+        option.innerHTML = 'UPDATE ALL';
+        select.appendChild(option);
         select.id = "UpdateCategoryTree-select";
         
         return select;
     };
     
     var recurse = function (indent, base, cmcontinue, ancestors) {
+        WM.Log.logInfo("Processing " + base + "...");
+        
         var text = "";
         
         var query = {action: "query",
@@ -27,7 +34,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
             query.cmcontinue = cmcontinue;
         }
         else {
-            text = indent  + "[[:" + base + "|" + base.substr(9) + "]] (" + getCategoryInfo(base).pages + ")\n";
+            var info = getCategoryInfo(base);
+            text = indent  + "[[:" + base + "|" + base.substr(9) + "]] (" + ((info) ? info.pages : 0) + ")\n";
         }
         
         var res = WM.MW.callAPIGet(query);
@@ -146,8 +154,13 @@ WM.Plugins.UpdateCategoryTree = new function () {
         var toc = option.innerHTML;
         var root = option.value;
         
-        // Update all languages **************************************************
-        
-        updateToC(toc, root, summary, minInterval);
+        if (root == 'ALL') {
+            for (var key in tocs) {
+                updateToC(key, tocs[key], summary, minInterval);
+            }
+        }
+        else {
+            updateToC(toc, root, summary, minInterval);
+        }
     };
 };
