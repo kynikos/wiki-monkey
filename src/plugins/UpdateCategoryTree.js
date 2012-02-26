@@ -51,7 +51,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
             
             // Protect from category loops
             if (ancestors[cat]) {
-                text = subIndent  + "'''LOOP:''' [[:" + cat + "|" + cat.substr(9) + "]]\n";
+                text += subIndent  + "'''LOOP:''' [[:" + cat + "|" + cat.substr(9) + "]]\n";
                 WM.Log.logWarning("Loop: " + base + " and " + cat + " are reciprocal ancestors");
             }
             else {
@@ -107,8 +107,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
         var now = new Date();
         var msTimestamp = Date.parse(timestamp);
         if (now.getTime() - msTimestamp >= minInterval) {
-            var start = source.indexOf(startMark + '--&gt;');
-            var end = source.lastIndexOf('&lt;!--' + endMark);
+            var start = source.indexOf(startMark + '-->') + startMark.length + 3;
+            var end = source.lastIndexOf('<!--' + endMark);
             
             if (start > -1 && end > -1) {
                 var part1 = source.substring(0, start);
@@ -116,7 +116,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
                 
                 var tree = recurse("", root, null, {});
                 
-                var newtext = part1 + tree + part2;
+                var newtext = part1 + "\n" + tree + part2;
                 
                 if (newtext != source) {
                     res = WM.MW.callAPIPost({action: "edit",
