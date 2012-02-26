@@ -14,7 +14,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
         return select;
     };
     
-    var recurse = function (indent, base, cmcontinue) {
+    var recurse = function (indent, base, cmcontinue, ancestors) {
         var text = "";
         
         var query = {action: "query",
@@ -27,28 +27,49 @@ WM.Plugins.UpdateCategoryTree = new function () {
             query.cmcontinue = cmcontinue;
         }
         else {
-            text = indent  + "[[:" + base + "]]\n";
+            text = indent  + "[[:" + base + "]] (" + getCategoryInfo(base).pages + ")\n";
         }
         
         var res = WM.MW.callAPIGet(query);
         var subCats = res.query.categorymembers;
-        var cat, subIndent;
+        var cat, subIndent, subAncestors;
         
         for each (var subCat in subCats) {
             cat = subCat.title;
             subIndent = indent + "#";
-            text += recurse(subIndent, cat, null);
+            
+            // Protect from category loops
+            if (ancestors[cat]) {
+                text = subIndent  + "'''LOOP:''' [[:" + cat + "]]\n";
+                WM.Log.logWarning("Loop: " + base + " and " + cat + " are reciprocal ancestors");
+            }
+            else {
+                subAncestors = ancestors;
+                subAncestors[base] = true;
+                text += recurse(subIndent, cat, null, subAncestors);
+            }
         }
         
         if (res["query-continue"]) {
             cmcontinue = res["query-continue"].categorymembers.cmcontinue;
-            text += recurse(indent, base, cmcontinue);
+            text += recurse(indent, base, cmcontinue, ancestors);
         }
         
-        // Protect from loops ****************************************************
-        // Show number of articles ***********************************************
-        
         return text
+    };
+    
+    var getCategoryInfo = function (name) {
+        var res = WM.MW.callAPIGet({action: "query",
+                                    prop: "categoryinfo",
+                                    titles: encodeURIComponent(name)});
+        var pages = res.query.pages;
+        
+        var pageid;
+        for each (pageid in pages) {
+            break;
+        }
+        
+        return pageid.categoryinfo;
     };
     
     this.main = function (args) {
@@ -61,15 +82,6 @@ WM.Plugins.UpdateCategoryTree = new function () {
         var root = option.value;
         
         WM.Log.logInfo('Updating ' + toc + "...");
-        
-        // Controllare la data dell'ultimo aggiornamento ed **********************
-        // evitare di farlo se è troppo recente
-        
-        var newtext = recurse("", root, null);
-        
-        alert(newtext);  // ******************************************************
-        
-        // Inserire il testo in un punto preciso della pagina ********************
         
         var res = WM.MW.callAPIGet({action: "query",
                                     prop: "info|revisions",
@@ -86,6 +98,17 @@ WM.Plugins.UpdateCategoryTree = new function () {
         var edittoken = pageid.edittoken;
         var timestamp = pageid.revisions[0].timestamp;
         var source = pageid.revisions[0]["*"];
+        
+        // Controllare la data dell'ultimo aggiornamento ed **********************
+        // evitare di farlo se è troppo recente
+        
+        var tree = recurse("", root, null, {});
+        
+        alert(tree);  // *********************************************************
+        
+        // Inserire il testo in un punto preciso della pagina ********************
+        
+        var newtext = source;  // ************************************************
         
         if (newtext != source) {
             /*res = WM.MW.callAPIPost({action: "edit",
