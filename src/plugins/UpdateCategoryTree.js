@@ -27,7 +27,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
             query.cmcontinue = cmcontinue;
         }
         else {
-            text = indent  + "[[:" + base + "]] (" + getCategoryInfo(base).pages + ")\n";
+            text = indent  + "[[:" + base + "|" + base.substr(9) + "]] (" + getCategoryInfo(base).pages + ")\n";
         }
         
         var res = WM.MW.callAPIGet(query);
@@ -38,13 +38,15 @@ WM.Plugins.UpdateCategoryTree = new function () {
             cat = subCat.title;
             subIndent = indent + "#";
             
+            // Make a copy of the object, not a new reference
+            subAncestors = JSON.parse(JSON.stringify(ancestors));
+            
             // Protect from category loops
             if (ancestors[cat]) {
-                text = subIndent  + "'''LOOP:''' [[:" + cat + "]]\n";
+                text = subIndent  + "'''LOOP:''' [[:" + cat + "|" + cat.substr(9) + "]]\n";
                 WM.Log.logWarning("Loop: " + base + " and " + cat + " are reciprocal ancestors");
             }
             else {
-                subAncestors = ancestors;
                 subAncestors[base] = true;
                 text += recurse(subIndent, cat, null, subAncestors);
             }
