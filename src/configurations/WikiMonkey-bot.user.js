@@ -3,7 +3,7 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.com>
-// @version 8dev-bot
+// @version 9dev-bot
 // @description Perform automatic actions when editing wiki pages
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
@@ -14,6 +14,7 @@
 // @match https://wiki.archlinux.org/*
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/WikiMonkey.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Bot.js
+// @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Cat.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Diff.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Editor.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/HTTP.js
