@@ -19,85 +19,68 @@
  */
 
 WM.Cat = new function () {
-    this.getTree = function (indent, base, cmcontinue, ancestors) {
-        WM.Log.logInfo("Processing " + base + "...");
+    this.getTree = function (base) {
+        var tree = {};
+        tree[base] = walk(base, {});
+        // return {base: walk(base, {})}; doesn't work
+        return tree;
+    };
+    
+    var walk = function (base, ancestors) {
+        WM.Log.logInfo("Walking " + base + "...");
         
-        var text = "";
+        var subCats = WM.Cat.getSubCategories(base);
         
+        var tree = {};
+        var cat, subAncestors;
+        
+        for each (var subCat in subCats) {
+            cat = subCat.title;
+            
+            // Protect from category loops
+            if (ancestors[cat]) {
+                tree[cat] = "loop";
+            }
+            else {
+                // Create a copy of the object, not just a new reference
+                subAncestors = JSON.parse(JSON.stringify(ancestors));
+                
+                subAncestors[base] = true;
+                
+                tree[cat] = walk(cat, subAncestors);
+            }
+        }
+        
+        return tree;
+    };
+    
+    this.getSubCategories = function (parent) {
+        return getMembers(parent, "subcat", null);
+    };
+    
+    var getMembers = function (name, cmtype, cmcontinue) {
         var query = {action: "query",
                      list: "categorymembers",
-                     cmtitle: encodeURIComponent(base),
-                     cmtype: "subcat",
+                     cmtitle: encodeURIComponent(name),
+                     cmtype: cmtype,
                      cmlimit: 5000};
         
         if (cmcontinue) {
             query.cmcontinue = cmcontinue;
         }
-        else {
-            var info = getCategoryInfo(base);
-            var parents = getParentCategories(base);
-            text = indent  + "[[:" + base + "|" + base.substr(9) + "]] ";
-            text += "(" + ((info) ? info.pages : 0) + ") ";
-            if (parents.length > 1) {
-                outer_loop:
-                for each (var par in parents) {
-                    for (var anc in ancestors) {
-                        if (par == anc) {
-                            parents.splice(parents.indexOf(par), 1);
-                            break outer_loop;
-                        }
-                    }
-                }
-                for (var i in parents) {
-                    parents[i] = "[[:" + parents[i] + "|" + parents[i].substr(9) + "]]";
-                }
-                text += "(" + WM.Plugins.UpdateCategoryTree.i18n.current.alsoIn + " " + parents.join(", ") + ")";
-            }
-            text += "\n";
-        }
         
         var res = WM.MW.callAPIGet(query);
-        var subCats = res.query.categorymembers;
-        var cat, subIndent, subAncestors;
-        
-        for each (var subCat in subCats) {
-            cat = subCat.title;
-            subIndent = indent + "#";
-            
-            // Make a copy of the object, not a new reference
-            subAncestors = JSON.parse(JSON.stringify(ancestors));
-            
-            // Protect from category loops
-            if (ancestors[cat]) {
-                text += subIndent  + "'''LOOP:''' [[:" + cat + "|" + cat.substr(9) + "]]\n";
-                WM.Log.logWarning("Loop: " + base + " and " + cat + " are reciprocal ancestors");
-            }
-            else {
-                subAncestors[base] = true;
-                text += recurse(subIndent, cat, null, subAncestors);
-            }
-        }
+        var members = res.query.categorymembers;
         
         if (res["query-continue"]) {
             cmcontinue = res["query-continue"].categorymembers.cmcontinue;
-            text += recurse(indent, base, cmcontinue, ancestors);
+            var cont = this.getSubCategories(name, cmcontinue);
+            for (var sub in cont) {
+                members[sub] = cont[sub];
+            }
         }
         
-        return text
-    };
-    
-    this.getInfo = function (name) {
-        var res = WM.MW.callAPIGet({action: "query",
-                                    prop: "categoryinfo",
-                                    titles: encodeURIComponent(name)});
-        var pages = res.query.pages;
-        
-        var pageid;
-        for each (pageid in pages) {
-            break;
-        }
-        
-        return pageid.categoryinfo;
+        return members;
     };
     
     this.getParents = function (child) {
@@ -122,5 +105,19 @@ WM.Cat = new function () {
         }
         
         return parents;
+    };
+    
+    this.getInfo = function (name) {
+        var res = WM.MW.callAPIGet({action: "query",
+                                    prop: "categoryinfo",
+                                    titles: encodeURIComponent(name)});
+        var pages = res.query.pages;
+        
+        var pageid;
+        for each (pageid in pages) {
+            break;
+        }
+        
+        return pageid.categoryinfo;
     };
 };
