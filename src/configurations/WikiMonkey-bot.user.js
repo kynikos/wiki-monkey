@@ -60,8 +60,22 @@ WM.UI.setSpecial([
     [
         ["UpdateCategoryTree", "Update main ToC",
          [{"Table_of_Contents": ["Category:English", "en"],
-           "Table_of_Contents_(Italiano)": ["Category:Italiano", "it"]},
-         "automatic update"]]
+           "Table_of_Contents_(Français)": ["Category:Français", "fr"],
+           "Table_of_Contents_(Indonesia)": ["Category:Indonesia", "en"],
+           "Table_of_Contents_(Italiano)": ["Category:Italiano", "it"],
+           "Table_of_Contents_(Magyar)": ["Category:Magyar", "en"],
+           "Table_of_Contents_(Slovenský)": ["Category:Slovenský", "en"],
+           "Table_of_Contents_(Suomi)": ["Category:Suomi", "en"],
+           "Table_of_Contents_(Svenska)": ["Category:Svenska", "en"],
+           "Table_of_Contents_(Türkçe)": ["Category:Türkçe", "en"],
+           "Table_of_Contents_(Ελληνικά)": ["Category:Ελληνικά", "en"],
+           "Table_of_Contents_(Български)": ["Category:Български", "en"],
+           "Table_of_Contents_(Српски)": ["Category:Српски", "en"],
+           // rtl scripts create buggy output
+           //"Table_of_Contents_(עברית)": ["Category:עברית", "en"],
+           "Table_of_Contents_(ไทย)": ["Category:ไทย", "en"],
+           "Table_of_Contents_(日本語)": ["Category:日本語", "en"]},
+         "[[User:Kynikos/Wiki_Monkey|automatic]] update"]]
     ]
 ])
 

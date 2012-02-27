@@ -20,6 +20,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
     };
     
     this.i18n = {en: {alsoIn: "also in"},
+                 fr: {alsoIn: "aussi dans"},
                  it: {alsoIn: "anche in"},
                  current: {}};
     
