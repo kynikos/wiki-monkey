@@ -6,7 +6,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
         var option;
         for (var key in tocs) {
             option = document.createElement('option');
-            option.value = tocs[key];
+            option.value = JSON.stringify(tocs[key]);
             option.innerHTML = key;
             select.appendChild(option);
         }
@@ -18,6 +18,10 @@ WM.Plugins.UpdateCategoryTree = new function () {
         
         return select;
     };
+    
+    this.i18n = {en: {alsoIn: "also in"},
+                 it: {alsoIn: "anche in"},
+                 current: {}};
     
     var recurse = function (indent, base, cmcontinue, ancestors) {
         WM.Log.logInfo("Processing " + base + "...");
@@ -35,7 +39,25 @@ WM.Plugins.UpdateCategoryTree = new function () {
         }
         else {
             var info = getCategoryInfo(base);
-            text = indent  + "[[:" + base + "|" + base.substr(9) + "]] (" + ((info) ? info.pages : 0) + ")\n";
+            var parents = getParentCategories(base);
+            text = indent  + "[[:" + base + "|" + base.substr(9) + "]] ";
+            text += "(" + ((info) ? info.pages : 0) + ") ";
+            if (parents.length > 1) {
+                outer_loop:
+                for each (var par in parents) {
+                    for (var anc in ancestors) {
+                        if (par == anc) {
+                            parents.splice(parents.indexOf(par), 1);
+                            break outer_loop;
+                        }
+                    }
+                }
+                for (var i in parents) {
+                    parents[i] = "[[:" + parents[i] + "|" + parents[i].substr(9) + "]]";
+                }
+                text += "(" + WM.Plugins.UpdateCategoryTree.i18n.current.alsoIn + " " + parents.join(", ") + ")";
+            }
+            text += "\n";
         }
         
         var res = WM.MW.callAPIGet(query);
@@ -80,6 +102,30 @@ WM.Plugins.UpdateCategoryTree = new function () {
         }
         
         return pageid.categoryinfo;
+    };
+    
+    var getParentCategories = function (child) {
+        // Supports a maximum of 500 parents (5000 for bots)
+        // Needs to implement query continue in order to support more
+        var res = WM.MW.callAPIGet({action: "query",
+                                    prop: "categories",
+                                    titles: encodeURIComponent(child),
+                                    cllimit: 5000});
+        
+        var pages = res.query.pages;
+        
+        var pageid;
+        for each (pageid in pages) {
+            break;
+        }
+        
+        var parents = [];
+        
+        for each (var cat in pageid.categories) {
+            parents.push(cat.title);
+        }
+        
+        return parents;
     };
     
     var updateToC = function (toc, root, summary, minInterval) {
@@ -162,15 +208,19 @@ WM.Plugins.UpdateCategoryTree = new function () {
         var select = document.getElementById("UpdateCategoryTree-select");
         var option = select.options[select.selectedIndex];
         var toc = option.innerHTML;
-        var root = option.value;
+        var value = option.value;
+        var vals;
         
-        if (root == 'ALL') {
+        if (value == 'ALL') {
             for (var key in tocs) {
-                updateToC(key, tocs[key], summary, minInterval);
+                WM.Plugins.UpdateCategoryTree.i18n.current = WM.Plugins.UpdateCategoryTree.i18n[tocs[key][1]];
+                updateToC(key, tocs[key][0], summary, minInterval);
             }
         }
         else {
-            updateToC(toc, root, summary, minInterval);
+            vals = JSON.parse(value);
+            WM.Plugins.UpdateCategoryTree.i18n.current = WM.Plugins.UpdateCategoryTree.i18n[vals[1]];
+            updateToC(toc, vals[0], summary, minInterval);
         }
     };
 };

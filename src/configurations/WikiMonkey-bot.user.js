@@ -59,7 +59,9 @@ WM.UI.setWhatLinksHere([
 WM.UI.setSpecial([
     [
         ["UpdateCategoryTree", "Update main ToC",
-         [{"Table_of_Contents": "Category:English"}, "automatic update"]]
+         [{"Table_of_Contents": ["Category:English", "en"],
+           "Table_of_Contents_(Italiano)": ["Category:Italiano", "it"]},
+         "automatic update"]]
     ]
 ])
 
