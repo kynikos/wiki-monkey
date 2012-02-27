@@ -1,6 +1,7 @@
 WM.Plugins.ArchWikiQuickReport = new function () {
     this.makeUI = function (args) {
         var id = args[0];
+        var article = args[1];
         
         var select = document.createElement('select');
         for each (var value in ["&lt;TYPE&gt;", "content", "style"]) {
@@ -15,9 +16,14 @@ WM.Plugins.ArchWikiQuickReport = new function () {
         input.setAttribute('type', 'text');
         input.id = "ArchWikiQuickReport-input-" + id;
         
+        var link = document.createElement('a');
+        link.href = "/index.php/" + article;
+        link.innerHTML = article;
+        
         var span = document.createElement('span');
         span.appendChild(select);
         span.appendChild(input);
+        span.appendChild(link);
         
         return span;
     };
