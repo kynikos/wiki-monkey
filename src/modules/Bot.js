@@ -308,18 +308,20 @@ WM.Bot = new function () {
         WM.Log.logInfo('Updating filter preview, please wait...');
         this.disableStartBot('Updating filter preview...');
         var enable = false;
+        var N = 0;
         var link;
         for each (var item in items) {
             link = item.getElementsByTagName('a')[0];
             if (canProcessPage(link.title)) {
                 link.className = 'WikiMonkeyBotSelected';
                 enable = true;
+                N++;
             }
             else {
                 link.className = '';
             }
         }
-        WM.Log.logInfo('Preview updated');
+        WM.Log.logInfo('Preview updated (' + N + ' pages selected)');
         (enable) ? this.enableStartBot() : this.disableStartBot('No pages selected, reset and preview the filter');
     };
     
