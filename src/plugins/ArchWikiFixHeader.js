@@ -26,27 +26,30 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         
         var elements = {};
         
-        // Note that patterns get only left-side white space
+        // Note that all patterns get only left-side white space
+        
         var res = storeMatches(source, /\s*(\{\{(DISPLAYTITLE:(.+?)|[Ll]owercase title)\}\})/g, false);
         elements.displaytitle = res[1];
+        
         // Ignore __TOC__, __START__ and __END__
         res = storeMatches(res[0], /\s*(__(NOTOC|FORCETOC|NOEDITSECTION|NEWSECTIONLINK|NONEWSECTIONLINK|NOGALLERY|HIDDENCAT|NOCONTENTCONVERT|NOCC|NOTITLECONVERT|NOTC|INDEX|NOINDEX|STATICREDIRECT)__)/g, false);
         elements.behaviorswitches = res[1];
+        
         res = storeMatches(res[0], /\s*(\[\[[Cc]ategory:(.+?)\]\])/g, false);
         elements.categories = res[1];
+        
         res = storeMatches(res[0], /\s*(\{\{[Ii]18n\|(.+?)\}\})/g, true);
         elements.i18n = res[1];
         
-        var content = res[0];
+        var interwikiLanguages = WM.ArchWiki.getInterwikiLanguages();
+        var regExp = new RegExp("\\s*(\\[\\[(" + interwikiLanguages.join("|") + "):(.+?)\\]\\])", "g");
+        res = storeMatches(res[0], regExp, false);
+        elements.interwiki = res[1];
         
-        // Find interlanguage links? *********************************************
-        // (and remove duplicates)
-        // (see also the bug about synchronizing interlanguage links among the
-        //  various translations)
+        var content = res[0];
         
         var newtext = "";
         
-        // Deprecate Template:Lowercase ******************************************
         var L = elements.displaytitle.length;
         if (L) {
             newtext = elements.displaytitle[elements.displaytitle.length - 1][1];
@@ -104,11 +107,27 @@ WM.Plugins.ArchWikiFixHeader = new function () {
             }
         }
         else {
-            // Remove the language suffix (use a white list) *********************
+            // Remove the language suffix (use WM.ArchWiki.languages) ************
             newtext += "{{i18n|" + WM.Editor.getTitle() + "}}";
             WM.Log.logInfo("Added Template:i18n");
         }
         newtext += "\n";
+        
+        var interwiki = [];
+        for each (var link in elements.interwiki) {
+            if (interwiki.indexOf(link[1]) == -1) {
+                interwiki.push(link[1]);
+            }
+            else {
+                WM.Log.logWarning("Removed duplicate of " + link[1]);
+            }
+        }
+        
+        // if (interwiki) is always true
+        if (interwiki.length) {
+            newtext += interwiki.join("\n");
+            newtext += "\n";
+        }
         
         var firstChar = content.search(/[^\s]/);
         content = content.substr(firstChar);
