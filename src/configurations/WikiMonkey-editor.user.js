@@ -3,7 +3,7 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.com>
-// @version 9dev-editor
+// @version 10dev-editor
 // @description Perform automatic actions when editing wiki pages
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
@@ -22,6 +22,7 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/MW.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Tables.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/UI.js
+// @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiFixHeader.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiNewTemplates.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ExpandContractions.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/MultipleLineBreaks.js
@@ -29,6 +30,7 @@
 
 WM.UI.setEditor([
     [
+        ["ArchWikiFixHeader", "Fix header", null],
         ["ArchWikiNewTemplates", "Use code templates", null],
         ["ExpandContractions", "Expand contractions", null],
         ["MultipleLineBreaks", "Multiple line breaks", null]
