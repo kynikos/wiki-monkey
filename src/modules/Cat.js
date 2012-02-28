@@ -32,6 +32,8 @@ WM.Cat = new function () {
         var subCats = WM.Cat.getSubCategories(base);
         
         var tree = {};
+        // Add base here in order to protect better from self-parenting categories
+        ancestors[base] = true;
         var cat, subAncestors;
         
         for each (var subCat in subCats) {
@@ -44,9 +46,6 @@ WM.Cat = new function () {
             else {
                 // Create a copy of the object, not just a new reference
                 subAncestors = JSON.parse(JSON.stringify(ancestors));
-                
-                subAncestors[base] = true;
-                
                 tree[cat] = walk(cat, subAncestors);
             }
         }
