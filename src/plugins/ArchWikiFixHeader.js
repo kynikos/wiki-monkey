@@ -26,22 +26,23 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         
         var elements = {};
         
-        var res = storeMatches(source, /\s*(\{\{(DISPLAYTITLE:(.+?)|[Ll]owercase title)\}\})\s*/g, false);
+        // Note that patterns get only left-side white space
+        var res = storeMatches(source, /\s*(\{\{(DISPLAYTITLE:(.+?)|[Ll]owercase title)\}\})/g, false);
         elements.displaytitle = res[1];
         // Ignore __TOC__, __START__ and __END__
-        res = storeMatches(res[0], /\s*(__(NOTOC|FORCETOC|NOEDITSECTION|NEWSECTIONLINK|NONEWSECTIONLINK|NOGALLERY|HIDDENCAT|NOCONTENTCONVERT|NOCC|NOTITLECONVERT|NOTC|INDEX|NOINDEX|STATICREDIRECT)__)\s*/g, false);
+        res = storeMatches(res[0], /\s*(__(NOTOC|FORCETOC|NOEDITSECTION|NEWSECTIONLINK|NONEWSECTIONLINK|NOGALLERY|HIDDENCAT|NOCONTENTCONVERT|NOCC|NOTITLECONVERT|NOTC|INDEX|NOINDEX|STATICREDIRECT)__)/g, false);
         elements.behaviorswitches = res[1];
-        res = storeMatches(res[0], /\s*(\[\[[Cc]ategory:(.+?)\]\])\s*/g, false);
+        res = storeMatches(res[0], /\s*(\[\[[Cc]ategory:(.+?)\]\])/g, false);
         elements.categories = res[1];
-        res = storeMatches(res[0], /\s*(\{\{[Ii]18n\|(.+?)\}\})\s*/g, true);
+        res = storeMatches(res[0], /\s*(\{\{[Ii]18n\|(.+?)\}\})/g, true);
         elements.i18n = res[1];
         
         var content = res[0];
         
         // Find interlanguage links? *********************************************
-        // (and remove duplicates) ***********************************************
-        // (see also the bug about synchronizing interlanguage *******************
-        //  links among the various translations) ********************************
+        // (and remove duplicates)
+        // (see also the bug about synchronizing interlanguage links among the
+        //  various translations)
         // [[de:aaa]]
         // [[es:aaa]] (deprecate?)
         // [[fr:aaa]]
@@ -49,8 +50,6 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         // [[ro:aaa]]
         // [[sv:aaa]] (deprecate?)
         // [[uk:aaa]] (deprecate?)
-        
-        WM.Log.logDebug(JSON.stringify(elements));  // ***************************
         
         var newtext = "";
         
@@ -63,28 +62,31 @@ WM.Plugins.ArchWikiFixHeader = new function () {
             }
         }
         
-        // Remove duplicates *****************************************************
         var behaviorSwitches = [];
         for each (var sw in elements.behaviorswitches) {
+            // Remove duplicates *****************************************************
             behaviorSwitches.push(sw[1]);
         }
         
-        if (newtext) {
-            if (behaviorSwitches) {
+        // if (behaviorSwitches) is always true
+        if (behaviorSwitches.length) {
+            if (newtext) {
                 newtext += " ";
-                newtext += behaviorSwitches.join(" ");
             }
+            newtext += behaviorSwitches.join(" ");
+        }
+        
+        if (newtext) {
             newtext += "\n";
         }
         
-        // Remove duplicates *****************************************************
-        var categories = [];
-        for each (var cat in elements.categories) {
-            categories.push(cat[1]);
-        }
-        if (categories) {
-            newtext += categories.join("\n");
-            newtext += "\n";
+        // if (elements.categories) is always true
+        if (elements.categories.length) {
+            // Remove duplicates *****************************************************
+            for each (var cat in elements.categories) {
+                newtext += cat[1];
+                newtext += "\n";
+            }
         }
         else {
             WM.Log.logWarning("The article is not categorized");
@@ -93,7 +95,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         var L = elements.i18n.length;
         if (L) {
             newtext += elements.i18n[0][1];
-            newtext += "\n\n";
+            newtext += "\n";
             if (L > 1) {
                 WM.Log.logWarning("Found multiple instances of {{i18n|...}}: only the first one has been used, the others have been ignored");
             }
@@ -101,6 +103,15 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         else {
             // If i18n is not found I have to create it **************************
             // after finding the right language suffix ***************************
+            WM.Log.logWarning("The article lacks Template:i18n");
+        }
+        
+        var firstChar = content.search(/[^\s]/);
+        content = content.substr(firstChar);
+        
+        var test = content.substr(0, 2);
+        if (test != "{{" && test != "[[") {
+            newtext += "\n";
         }
         
         newtext += content;
