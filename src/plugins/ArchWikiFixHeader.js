@@ -43,13 +43,6 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         // (and remove duplicates)
         // (see also the bug about synchronizing interlanguage links among the
         //  various translations)
-        // [[de:aaa]]
-        // [[es:aaa]] (deprecate?)
-        // [[fr:aaa]]
-        // [[pl:aaa]] (deprecate?)
-        // [[ro:aaa]]
-        // [[sv:aaa]] (deprecate?)
-        // [[uk:aaa]] (deprecate?)
         
         var newtext = "";
         

@@ -13,6 +13,7 @@
 // @match http://*.wikipedia.org/*
 // @match https://wiki.archlinux.org/*
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/WikiMonkey.js
+// @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/ArchWiki.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Bot.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Cat.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Diff.js
