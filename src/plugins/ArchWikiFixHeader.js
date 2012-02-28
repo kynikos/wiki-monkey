@@ -64,8 +64,12 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         
         var behaviorSwitches = [];
         for each (var sw in elements.behaviorswitches) {
-            // Remove duplicates *****************************************************
-            behaviorSwitches.push(sw[1]);
+            if (behaviorSwitches.indexOf(sw[1]) == -1) {
+                behaviorSwitches.push(sw[1]);
+            }
+            else {
+                WM.Log.logWarning("Removed duplicate of " + sw[1]);
+            }
         }
         
         // if (behaviorSwitches) is always true
@@ -80,13 +84,20 @@ WM.Plugins.ArchWikiFixHeader = new function () {
             newtext += "\n";
         }
         
-        // if (elements.categories) is always true
-        if (elements.categories.length) {
-            // Remove duplicates *****************************************************
-            for each (var cat in elements.categories) {
-                newtext += cat[1];
-                newtext += "\n";
+        var categories = [];
+        for each (var cat in elements.categories) {
+            if (categories.indexOf(cat[1]) == -1) {
+                categories.push(cat[1]);
             }
+            else {
+                WM.Log.logWarning("Removed duplicate of " + cat[1]);
+            }
+        }
+        
+        // if (categories) is always true
+        if (categories.length) {
+            newtext += categories.join("\n");
+            newtext += "\n";
         }
         else {
             WM.Log.logWarning("The article is not categorized");
@@ -95,16 +106,16 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         var L = elements.i18n.length;
         if (L) {
             newtext += elements.i18n[0][1];
-            newtext += "\n";
             if (L > 1) {
                 WM.Log.logWarning("Found multiple instances of {{i18n|...}}: only the first one has been used, the others have been ignored");
             }
         }
         else {
-            // If i18n is not found I have to create it **************************
-            // after finding the right language suffix ***************************
-            WM.Log.logWarning("The article lacks Template:i18n");
+            // Remove the language suffix (use a white list) *********************
+            newtext += "{{i18n|" + WM.Editor.getTitle() + "}}";
+            WM.Log.logInfo("Added Template:i18n");
         }
+        newtext += "\n";
         
         var firstChar = content.search(/[^\s]/);
         content = content.substr(firstChar);
