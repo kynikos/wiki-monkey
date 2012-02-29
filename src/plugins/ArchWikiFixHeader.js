@@ -35,7 +35,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         res = storeMatches(res[0], /\s*(__(NOTOC|FORCETOC|NOEDITSECTION|NEWSECTIONLINK|NONEWSECTIONLINK|NOGALLERY|HIDDENCAT|NOCONTENTCONVERT|NOCC|NOTITLECONVERT|NOTC|INDEX|NOINDEX|STATICREDIRECT)__)/g, false);
         elements.behaviorswitches = res[1];
         
-        res = storeMatches(res[0], /\s*(\[\[[Cc]ategory:(.+?)\]\])/g, false);
+        res = storeMatches(res[0], /\s*(\[\[[Cc]ategory:(.+?([ _]\(([^\(]+?)\))?)\]\])/g, false);
         elements.categories = res[1];
         
         res = storeMatches(res[0], /\s*(\{\{[Ii]18n\|(.+?)\}\})/g, true);
@@ -80,8 +80,33 @@ WM.Plugins.ArchWikiFixHeader = new function () {
             newtext += "\n";
         }
         
+        var title = WM.Editor.getTitle().match(/^(.+?)([ _]\(([^\(]+)\))?$/);
+        var detectedLanguage = decodeURI(title[3]);
+        var pureTitle;
+        if (!detectedLanguage || !WM.ArchWiki.isCategoryLanguage(detectedLanguage)) {
+            detectedLanguage = "English";
+            pureTitle = decodeURI(title[0]);
+        }
+        else {
+            pureTitle = decodeURI(title[1]);
+        }
+        WM.Log.logInfo("Article language: " + detectedLanguage);
+        
         var categories = [];
+        var lang;
         for each (var cat in elements.categories) {
+            lang = decodeURI(cat[2]);
+            if (!WM.ArchWiki.isCategoryLanguage(lang)) {
+                lang = decodeURI(cat[4]);
+                if (!lang || !WM.ArchWiki.isCategoryLanguage(lang)) {
+                    lang = "English";
+                }
+            }
+            
+            if (detectedLanguage != lang) {
+                WM.Log.logWarning(cat[1] + " belongs to a different language than the one of the title (" + detectedLanguage + ")");
+            }
+            
             if (categories.indexOf(cat[1]) == -1) {
                 categories.push(cat[1]);
             }
@@ -101,16 +126,20 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         
         var L = elements.i18n.length;
         if (L) {
-            newtext += elements.i18n[0][1];
             if (L > 1) {
                 WM.Log.logWarning("Found multiple instances of {{i18n|...}}: only the first one has been used, the others have been ignored");
             }
+            
+            var parsedTitle = elements.i18n[0][2].replace(/_/g, " ");
+            
+            if (pureTitle != parsedTitle) {
+                WM.Log.logWarning("Updated Template:i18n since it wasn't matching the current article title");
+            }
         }
         else {
-            // Remove the language suffix (use WM.ArchWiki.languages) ************
-            newtext += "{{i18n|" + WM.Editor.getTitle() + "}}";
             WM.Log.logInfo("Added Template:i18n");
         }
+        newtext += "{{i18n|" + pureTitle + "}}";
         newtext += "\n";
         
         var interwiki = [];

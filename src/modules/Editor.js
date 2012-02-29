@@ -20,7 +20,8 @@
 
 WM.Editor = new function () {
     this.getTitle = function () {
-        return WM.getURIParameter('title');
+        var title = WM.getURIParameter('title').replace(/_/g, " ");
+        return title;
     };
     
     this.isSection = function () {
