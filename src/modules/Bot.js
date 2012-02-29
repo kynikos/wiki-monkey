@@ -1,6 +1,6 @@
 /*
- *  Wiki Monkey - Perform automatic actions when editing wiki pages.
- *  Copyright (C) 2011 Dario Giovannetti <dev@dariogiovannetti.com>
+ *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
+ *  Copyright (C) 2011-2012 Dario Giovannetti <dev@dariogiovannetti.com>
  * 
  *  This file is part of Wiki Monkey.
  * 
@@ -58,7 +58,7 @@ WM.Bot = new function () {
                 var id = select.selectedIndex;
                 var UI = document.getElementById('WikiMonkeyBotFunction');
                 // [1] Note that this must also be executed immediately, see [2]
-                var makeUI = eval("WM.Plugins." + fns[id][0] + ".makeUI");
+                var makeUI = eval("WM.Plugins." + fns[id][0] + ".makeBotUI");
                 if (makeUI instanceof Function) {
                     UI.replaceChild(makeUI(fns[id][2]), UI.firstChild);
                 }
@@ -77,7 +77,7 @@ WM.Bot = new function () {
         divFunction.id = "WikiMonkeyBotFunction";
         
         // [2] Note that this is also executed onchange, see [1]
-        var makeUI = eval("WM.Plugins." + functions[0][0] + ".makeUI");
+        var makeUI = eval("WM.Plugins." + functions[0][0] + ".makeBotUI");
         if (makeUI instanceof Function) {
             divFunction.appendChild(makeUI(functions[0][2]));
         }
@@ -308,18 +308,20 @@ WM.Bot = new function () {
         WM.Log.logInfo('Updating filter preview, please wait...');
         this.disableStartBot('Updating filter preview...');
         var enable = false;
+        var N = 0;
         var link;
         for each (var item in items) {
             link = item.getElementsByTagName('a')[0];
             if (canProcessPage(link.title)) {
                 link.className = 'WikiMonkeyBotSelected';
                 enable = true;
+                N++;
             }
             else {
                 link.className = '';
             }
         }
-        WM.Log.logInfo('Preview updated');
+        WM.Log.logInfo('Preview updated (' + N + ' pages selected)');
         (enable) ? this.enableStartBot() : this.disableStartBot('No pages selected, reset and preview the filter');
     };
     

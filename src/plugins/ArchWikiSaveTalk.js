@@ -1,4 +1,14 @@
 WM.Plugins.ArchWikiSaveTalk = new function () {
+    this.makeUI = function (args) {
+        var article = args[0];
+        
+        var link = document.createElement('a');
+        link.href = "/index.php/" + article;
+        link.innerHTML = article;
+        
+        return link;
+    };
+    
     this.main = function (args) {
         var article = args[0];
         var summary = args[1];

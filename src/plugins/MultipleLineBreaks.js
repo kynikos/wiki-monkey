@@ -1,13 +1,12 @@
 WM.Plugins.MultipleLineBreaks = new function () {
     this.main = function (args) {
-        var s = WM.Editor.readSource();
-        var original = s;
+        var source = WM.Editor.readSource();
+        var newtext = source;
         
-        s = s.replace(/[\n]{3,}/g, '\n\n');
+        newtext = newtext.replace(/[\n]{3,}/g, '\n\n');
         
-        WM.Editor.writeSource(s);
-        
-        if (s != original) {
+        if (newtext != source) {
+            WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Removed multiple line breaks");
         }
     };

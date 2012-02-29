@@ -1,6 +1,6 @@
 /*
- *  Wiki Monkey - Perform automatic actions when editing wiki pages.
- *  Copyright (C) 2011 Dario Giovannetti <dev@dariogiovannetti.com>
+ *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
+ *  Copyright (C) 2011-2012 Dario Giovannetti <dev@dariogiovannetti.com>
  * 
  *  This file is part of Wiki Monkey.
  * 
@@ -19,86 +19,13 @@
  */
 
 WM.Editor = new function () {
-    this.makeUI = function (functions) {
-        // This interface is used also by WM.Diff
-        var divContainer = document.createElement('div');
-        divContainer.id = 'WikiMonkeyButtons';
-        
-        GM_addStyle("#WikiMonkeyButtons input.shortcut {font-weight:bold; margin-right:0.67em;} " +
-                    "#WikiMonkeyButtons div.row {margin-bottom:0.67em;} " +
-                    "#WikiMonkeyButtons div.pluginUI {display:inline-block; margin-right:0.33em;}");
-        
-        var buttonAll = document.createElement('input');
-        buttonAll.setAttribute('type', 'button');
-        buttonAll.setAttribute('value', 'Execute all');
-        buttonAll.className = "shortcut";
-        
-        var buttonsN, divRow, buttonRow, divFunction, buttonFunction, makeUI;
-        var rowsN = 0;
-        
-        for each (var row in functions) {
-            buttonRow = document.createElement('input');
-            buttonRow.setAttribute('type', 'button');
-            buttonRow.setAttribute('value', 'Execute row');
-            buttonRow.className = "shortcut";
-            
-            divRow = document.createElement('div');
-            divRow.className = "row";
-            divRow.appendChild(buttonRow);
-            
-            buttonsN = 0;
-            
-            for each (var f in row) {
-                buttonFunction = document.createElement('input');
-                buttonFunction.setAttribute('type', 'button');
-                buttonFunction.setAttribute('value', f[1]);
-                
-                for each (var button in [buttonFunction, buttonRow, buttonAll]) {
-                    button.addEventListener("click", (function (fn, arg) {
-                        return function () {
-                            // window[string] doesn't work
-                            eval("WM.Plugins." + fn + ".main")(arg);
-                        }
-                    })(f[0], f[2]), false);
-                };
-                
-                divFunction = document.createElement('div');
-                divFunction.className = 'pluginUI';
-                divFunction.appendChild(buttonFunction);
-                
-                makeUI = eval("WM.Plugins." + f[0] + ".makeUI");
-                if (makeUI instanceof Function) {
-                    divFunction.appendChild(makeUI(f[2]));
-                }
-                
-                divRow.appendChild(divFunction);
-                
-                buttonsN++;
-            }
-            divContainer.appendChild(divRow);
-            
-            if (buttonsN <= 1) {
-                buttonRow.disabled = true;
-            }
-            
-            rowsN++;
-        }
-        divRow = document.createElement('div');
-        divRow.className = 'row';
-        if (rowsN > 1) {
-            divRow.appendChild(buttonAll);
-        }
-        divContainer.appendChild(divRow);
-        
-        return divContainer;
-    };
-    
     this.getTitle = function () {
-        return queryString['title'];
+        var title = WM.getURIParameter('title').replace(/_/g, " ");
+        return title;
     };
     
     this.isSection = function () {
-        return (queryString['section']) ? true : false;
+        return (WM.getURIParameter('section')) ? true : false;
     };
     
     this.readSource = function () {

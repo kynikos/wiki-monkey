@@ -1,3 +1,3 @@
 // ==UserScript==
-// @version 1.7.2-patrol
+// @version 1.8.0-patrol
 // ==/UserScript==

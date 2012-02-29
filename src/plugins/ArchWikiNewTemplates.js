@@ -1,7 +1,7 @@
 WM.Plugins.ArchWikiNewTemplates = new function () {
     this.main = function (args) {
-        var s = WM.Editor.readSource();
-        var original = s;
+        var source = WM.Editor.readSource();
+        var newtext = source;
         
         var re8 = /&lt;pre&gt;(((?!&lt;(pre|nowiki)&gt;)[^\=\|])*?((?!&lt;(pre|nowiki)&gt;)[^\=\|\}]))&lt;\/pre&gt;/ig;
         var re9 = /&lt;pre&gt;(((?!&lt;(pre|nowiki)&gt;)[^\|])*?((?!&lt;(pre|nowiki)&gt;)[^\|\}]))&lt;\/pre&gt;/ig;
@@ -15,29 +15,28 @@ WM.Plugins.ArchWikiNewTemplates = new function () {
         var re15 = /&lt;tt&gt;(((?!&lt;(tt|nowiki)&gt;)[^\|\n])*?((?!&lt;(tt|nowiki)&gt;)[^\|\}\n]))&lt;\/tt&gt;/ig;
         var re16 = /&lt;tt&gt;(((?!&lt;(tt|nowiki)&gt;)[^\n])+?)&lt;\/tt&gt;/ig;
         
-        s = s.replace(re8, '{{bc|$1}}');
-        s = s.replace(re9, '{{bc|1=$1}}'); // Must come after re8
-        s = s.replace(re10, '{{bc|<nowiki>$1</nowiki>}}'); // Must come after re9
+        newtext = newtext.replace(re8, '{{bc|$1}}');
+        newtext = newtext.replace(re9, '{{bc|1=$1}}'); // Must come after re8
+        newtext = newtext.replace(re10, '{{bc|<nowiki>$1</nowiki>}}'); // Must come after re9
         
-        s = s.replace(re11, '{{ic|$1}}');
-        s = s.replace(re12, '{{ic|1=$1}}'); // Must come after re11
-        s = s.replace(re13, '{{ic|<nowiki>$1</nowiki>}}'); // Must come after re12
+        newtext = newtext.replace(re11, '{{ic|$1}}');
+        newtext = newtext.replace(re12, '{{ic|1=$1}}'); // Must come after re11
+        newtext = newtext.replace(re13, '{{ic|<nowiki>$1</nowiki>}}'); // Must come after re12
         
-        s = s.replace(re14, '{{ic|$1}}');
-        s = s.replace(re15, '{{ic|1=$1}}'); // Must come after re14
-        s = s.replace(re16, '{{ic|<nowiki>$1</nowiki>}}'); // Must come after re15
+        newtext = newtext.replace(re14, '{{ic|$1}}');
+        newtext = newtext.replace(re15, '{{ic|1=$1}}'); // Must come after re14
+        newtext = newtext.replace(re16, '{{ic|<nowiki>$1</nowiki>}}'); // Must come after re15
         
-        WM.Editor.writeSource(s);
-        
-        if (s != original) {
+        if (newtext != source) {
+            WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Turned HTML tags into proper templates");
         }
         
         var tests = [
-            ['&lt;pre>', s.match(/&lt;pre/ig)],
-            ['&lt;code>', s.match(/&lt;code/ig)],
-            ['&lt;tt>', s.match(/&lt;tt/ig)]
-        ]
+            ['&lt;pre>', newtext.match(/&lt;pre/ig)],
+            ['&lt;code>', newtext.match(/&lt;code/ig)],
+            ['&lt;tt>', newtext.match(/&lt;tt/ig)]
+        ];
         
         for each (var test in tests) { 
             if (test[1]) {
