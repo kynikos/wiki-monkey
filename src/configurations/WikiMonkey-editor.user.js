@@ -4,7 +4,7 @@
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.com>
 // @version 10dev-editor
-// @description Perform automatic actions when editing wiki pages
+// @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
 // @updateURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/WikiMonkey-editor.meta.js
