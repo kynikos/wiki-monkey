@@ -1,6 +1,6 @@
 /*
- *  Wiki Monkey - Perform automatic actions when editing wiki pages.
- *  Copyright (C) 2011 Dario Giovannetti <dev@dariogiovannetti.com>
+ *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
+ *  Copyright (C) 2011-2012 Dario Giovannetti <dev@dariogiovannetti.com>
  * 
  *  This file is part of Wiki Monkey.
  * 
