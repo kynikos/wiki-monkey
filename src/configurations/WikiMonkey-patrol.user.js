@@ -29,6 +29,7 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiSaveTalk.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ExpandContractions.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/MultipleLineBreaks.js
+// @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/SimpleReplace.js
 // ==/UserScript==
 
 WM.UI.setEditor([
