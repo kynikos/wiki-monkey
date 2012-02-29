@@ -28,7 +28,10 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         
         // Note that all patterns get only left-side white space
         
-        var res = storeMatches(source, /\s*(\{\{(DISPLAYTITLE:(.+?)|[Ll]owercase title)\}\})/g, false);
+        var res = storeMatches(source, /^\s*(&lt;noinclude&gt;)/g, true);
+        elements.noinclude = res[1];
+        
+        res = storeMatches(res[0], /\s*(\{\{(DISPLAYTITLE:(.+?)|[Ll]owercase title)\}\})/g, false);
         elements.displaytitle = res[1];
         
         // Ignore __TOC__, __START__ and __END__
@@ -50,9 +53,14 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         
         var newtext = "";
         
+        // if (elements.noinclude) is always true
+        if (elements.noinclude.length) {
+            newtext += elements.noinclude[0][1];
+        }
+        
         var L = elements.displaytitle.length;
         if (L) {
-            newtext = elements.displaytitle[elements.displaytitle.length - 1][1];
+            newtext += elements.displaytitle[elements.displaytitle.length - 1][1];
             if (L > 1) {
                 WM.Log.logWarning("Found multiple instances of {{DISPLAYTITLE:...}} or {{Lowercase title}}: only the last one has been used, the others have been deleted");
             }
