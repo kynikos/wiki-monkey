@@ -166,7 +166,7 @@ WM.UI = new function () {
             var help = document.createElement('p');
             help.id = 'WikiMonkeyHelp';
             var helpln = document.createElement('a');
-            helpln.href = 'index.php/User:Kynikos/Wiki_Monkey'
+            helpln.href = 'https://github.com/kynikos/wiki-monkey/wiki'
             helpln.innerHTML = 'help';
             help.appendChild(helpln);
             main.appendChild(help);
