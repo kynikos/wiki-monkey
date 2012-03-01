@@ -3,7 +3,7 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.com>
-// @version 10dev-bot
+// @version 11dev-bot
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
@@ -57,7 +57,7 @@ WM.UI.setDiff([
 ])
 
 WM.UI.setWhatLinksHere([
-    ["SimpleReplace", "Simple RegExp substitution", ["1"]]
+    ["SimpleReplace", "RegExp substitution", ["1"]]
 ])
 
 WM.UI.setSpecial([
