@@ -5,5 +5,5 @@ plugins, exploiting its high-level API.
 
 License: GPLv3 (see LICENSE).
 
-Currently the documentation is located at
-https://wiki.archlinux.org/index.php/User:Kynikos/Wiki_Monkey
+Read the [Wiki](https://github.com/kynikos/wiki-monkey/wiki) in order to get
+started.
