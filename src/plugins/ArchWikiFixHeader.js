@@ -98,7 +98,6 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         else {
             pureTitle = decodeURI(title[1]);
         }
-        WM.Log.logInfo("Article language: " + detectedLanguage);
         
         var categories = [];
         var lang;
@@ -139,15 +138,21 @@ WM.Plugins.ArchWikiFixHeader = new function () {
             }
             
             var parsedTitle = elements.i18n[0][2].replace(/_/g, " ");
+            var test1 = pureTitle.substr(0, 1).toLowerCase() != parsedTitle.substr(0, 1).toLowerCase();
+            var test2 = pureTitle.substr(1) != parsedTitle.substr(1);
             
-            if (pureTitle != parsedTitle) {
+            if (test1 || test2) {
+                newtext += "{{i18n|" + pureTitle + "}}";
                 WM.Log.logWarning("Updated Template:i18n since it wasn't matching the current article title");
+            }
+            else {
+                newtext += "{{i18n|" + parsedTitle + "}}";
             }
         }
         else {
+            newtext += "{{i18n|" + pureTitle + "}}";
             WM.Log.logInfo("Added Template:i18n");
         }
-        newtext += "{{i18n|" + pureTitle + "}}";
         newtext += "\n";
         
         var interwiki = [];
