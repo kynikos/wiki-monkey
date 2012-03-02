@@ -98,7 +98,6 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         else {
             pureTitle = decodeURI(title[1]);
         }
-        WM.Log.logInfo("Article language: " + detectedLanguage);
         
         var categories = [];
         var lang;
