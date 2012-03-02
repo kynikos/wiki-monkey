@@ -79,7 +79,7 @@ WM.UI.setSpecial([
            //"Table_of_Contents_(עברית)": ["Category:עברית", "en"],
            "Table_of_Contents_(ไทย)": ["Category:ไทย", "en"],
            "Table_of_Contents_(日本語)": ["Category:日本語", "en"]},
-         "[[User:Kynikos/Wiki_Monkey|automatic]] update"]]
+         "[[Wiki Monkey]]: automatic update"]]
     ]
 ])
 
