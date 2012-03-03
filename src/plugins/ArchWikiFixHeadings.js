@@ -10,6 +10,8 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
         // ===== is read as ==(=)== (2nd level) and so on
         
         var sections = [];
+        var minLevel = 6;
+        var maxLevel = 1;
         var regExp = /^\=+ *.+? *\=+$/gm;
         var match, line, L, level, start, end;
         
@@ -24,10 +26,16 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
                 while (true) {
                     start = line.substr(level, 1);
                     end = line.substr(L - level - 1, 1);
-                    if (L - level * 2 > 2 && start == "=" && end == "=") {
+                    if (L - level * 2 > 2 && level < 6 && start == "=" && end == "=") {
                         level++;
                     }
                     else {
+                        if (level < minLevel) {
+                            minLevel = level;
+                        }
+                        if (level > maxLevel) {
+                            maxLevel = level;
+                        }
                         break;
                     }
                 }
@@ -41,18 +49,27 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
             }
         }
         
-        return sections;
+        // Articles without sections
+        if (minLevel > maxLevel) {
+            minLevel = 0;
+            maxLevel = 0;
+        }
+        
+        return {sections: sections,
+                minLevel: minLevel,
+                maxLevel: maxLevel};
     };
     
     this.main = function (args) {
         var source = WM.Editor.readSource();
         var newtext = source;
         
-        var sections = findSections(newtext);
+        var info = findSections(newtext);
         
-        for each (var match in sections) {  // ***********************************
+        for each (var match in info.sections) {  // ***********************************
             WM.Log.logDebug(JSON.stringify(match));
         }
+        WM.Log.logDebug(info.minLevel + " " + info.maxLevel);  // ****************
         
         newtext = "";
         
