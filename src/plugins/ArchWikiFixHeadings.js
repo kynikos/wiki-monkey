@@ -10,7 +10,8 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
         // ===== is read as ==(=)== (2nd level) and so on
         
         var sections = [];
-        var minLevel = 6;
+        // Even if 6 is the maximum level allowed, find possible mistakes
+        var minLevel = 99;
         var maxLevel = 1;
         var regExp = /^\=+ *.+? *\=+$/gm;
         var match, line, L, level, start, end;
@@ -26,7 +27,8 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
                 while (true) {
                     start = line.substr(level, 1);
                     end = line.substr(L - level - 1, 1);
-                    if (L - level * 2 > 2 && level < 6 && start == "=" && end == "=") {
+                    // Don't check for level < 6, find also possible mistakes
+                    if (L - level * 2 > 2 && start == "=" && end == "=") {
                         level++;
                     }
                     else {
@@ -70,6 +72,11 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
             WM.Log.logDebug(JSON.stringify(match));
         }
         WM.Log.logDebug(info.minLevel + " " + info.maxLevel);  // ****************
+        
+        // If minLevel is 1 raise everything up by 1 unless maxLevel is > 5 ******
+        // If maxLevel is > 6 raise a warning unless it is possible to lower *****
+        //  all levels enough to make maxLevel < 7
+        // Check that levels are increased by steps of 1 level *******************
         
         newtext = "";
         
