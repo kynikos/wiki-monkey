@@ -70,6 +70,7 @@ WM.UI.setSpecial([
            "Table_of_Contents_(Indonesia)": ["Category:Indonesia", "en"],
            "Table_of_Contents_(Italiano)": ["Category:Italiano", "it"],
            "Table_of_Contents_(Magyar)": ["Category:Magyar", "en"],
+           "Table_of_Contents_(Polski)": ["Category:Polski", "en"],
            "Table_of_Contents_(Slovenský)": ["Category:Slovenský", "en"],
            "Table_of_Contents_(Suomi)": ["Category:Suomi", "en"],
            "Table_of_Contents_(Svenska)": ["Category:Svenska", "en"],
