@@ -19,19 +19,20 @@ WM.Plugins.UpdateCategoryTree = new function () {
         return select;
     };
     
-    this.i18n = {en: {alsoIn: "also in"},
-                 fr: {alsoIn: "aussi dans"},
-                 it: {alsoIn: "anche in"},
-                 current: {}};
+    var createCatLink = function (cat, replace) {
+        var regExp = new RegExp(replace[0], replace[1]);
+        var catName = cat.substr(9).replace(regExp, replace[2]);
+        return "[[:" + cat + "|" + catName + "]]";
+    };
     
-    var recurse = function (tree, indentType, indent, ancestors) {
+    var recurse = function (tree, params, indent, ancestors) {
         var info, parents, subAncestors;
         var text = "";
         
         for (var cat in tree) {
             WM.Log.logInfo("Processing " + cat + "...");
             
-            text += indent + "[[:" + cat + "|" + cat.substr(9) + "]] ";
+            text += indent + createCatLink(cat, params.replace) + " ";
             
             if (tree[cat] == "loop") {
                 text += "'''[LOOP]'''\n";
@@ -54,9 +55,9 @@ WM.Plugins.UpdateCategoryTree = new function () {
                         }
                     }
                     for (var i in parents) {
-                        parents[i] = "[[:" + parents[i] + "|" + parents[i].substr(9) + "]]";
+                        parents[i] = createCatLink(parents[i], params.replace);
                     }
-                    text += "(" + WM.Plugins.UpdateCategoryTree.i18n.current.alsoIn + " " + parents.join(", ") + ")";
+                    text += "(" + params.alsoIn + " " + parents.join(", ") + ")";
                 }
                 
                 text += "\n";
@@ -65,16 +66,16 @@ WM.Plugins.UpdateCategoryTree = new function () {
                 subAncestors = JSON.parse(JSON.stringify(ancestors));
                 
                 subAncestors[cat] = true;
-                subIndent = indent + indentType;
+                subIndent = indent + params.indentType;
                 
-                text += recurse(tree[cat], indentType, subIndent, subAncestors);
+                text += recurse(tree[cat], params, subIndent, subAncestors);
             }
         }
         
         return text
     };
     
-    var updateToC = function (toc, root, indentType, summary, minInterval) {
+    var updateToC = function (toc, params, summary, minInterval) {
         var startMark = "START AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK-->";
         var endMark = "<!--END AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK";
         
@@ -106,9 +107,9 @@ WM.Plugins.UpdateCategoryTree = new function () {
                 var part1 = source.substring(0, start);
                 var part2 = source.substring(end);
                 
-                var tree = WM.Cat.getTree(root);
+                var tree = WM.Cat.getTree(params.root);
                 
-                var treeText = recurse(tree, indentType, "", {});
+                var treeText = recurse(tree, params, "", {});
                 
                 var newtext = part1 + "\n" + treeText + part2;
                 
@@ -157,18 +158,15 @@ WM.Plugins.UpdateCategoryTree = new function () {
         var option = select.options[select.selectedIndex];
         var toc = option.innerHTML;
         var value = option.value;
-        var vals;
         
         if (value == 'ALL') {
             for (var key in tocs) {
-                WM.Plugins.UpdateCategoryTree.i18n.current = WM.Plugins.UpdateCategoryTree.i18n[tocs[key][1]];
-                updateToC(key, tocs[key][0], tocs[key][2], summary, minInterval);
+                updateToC(key, tocs[key], summary, minInterval);
             }
         }
         else {
-            vals = JSON.parse(value);
-            WM.Plugins.UpdateCategoryTree.i18n.current = WM.Plugins.UpdateCategoryTree.i18n[vals[1]];
-            updateToC(toc, vals[0], vals[2], summary, minInterval);
+            var vals = JSON.parse(value);
+            updateToC(toc, vals, summary, minInterval);
         }
     };
 };
