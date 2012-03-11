@@ -24,7 +24,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
                  it: {alsoIn: "anche in"},
                  current: {}};
     
-    var recurse = function (tree, indent, ancestors) {
+    var recurse = function (tree, indentType, indent, ancestors) {
         var info, parents, subAncestors;
         var text = "";
         
@@ -65,16 +65,16 @@ WM.Plugins.UpdateCategoryTree = new function () {
                 subAncestors = JSON.parse(JSON.stringify(ancestors));
                 
                 subAncestors[cat] = true;
-                subIndent = indent + "#";
+                subIndent = indent + indentType;
                 
-                text += recurse(tree[cat], subIndent, subAncestors);
+                text += recurse(tree[cat], indentType, subIndent, subAncestors);
             }
         }
         
         return text
     };
     
-    var updateToC = function (toc, root, summary, minInterval) {
+    var updateToC = function (toc, root, indentType, summary, minInterval) {
         var startMark = "START AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK-->";
         var endMark = "<!--END AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK";
         
@@ -108,7 +108,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
                 
                 var tree = WM.Cat.getTree(root);
                 
-                var treeText = recurse(tree, "", {});
+                var treeText = recurse(tree, indentType, "", {});
                 
                 var newtext = part1 + "\n" + treeText + part2;
                 
@@ -162,13 +162,13 @@ WM.Plugins.UpdateCategoryTree = new function () {
         if (value == 'ALL') {
             for (var key in tocs) {
                 WM.Plugins.UpdateCategoryTree.i18n.current = WM.Plugins.UpdateCategoryTree.i18n[tocs[key][1]];
-                updateToC(key, tocs[key][0], summary, minInterval);
+                updateToC(key, tocs[key][0], tocs[key][2], summary, minInterval);
             }
         }
         else {
             vals = JSON.parse(value);
             WM.Plugins.UpdateCategoryTree.i18n.current = WM.Plugins.UpdateCategoryTree.i18n[vals[1]];
-            updateToC(toc, vals[0], summary, minInterval);
+            updateToC(toc, vals[0], vals[2], summary, minInterval);
         }
     };
 };
