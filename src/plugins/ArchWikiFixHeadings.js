@@ -1,19 +1,11 @@
 WM.Plugins.ArchWikiFixHeadings = new function () {
     var findSections = function (source) {
         // ======Title====== is the deepest level supported
-        
-        // ==Title=== and ===Title== are both 2nd levels and so on
-        // (the shortest sequence of = between the two sides is considered)
-        
-        // = and == are not titles
-        // === is read as =(=)=, ==== is read as =(==)= (both 1st levels)
-        // ===== is read as ==(=)== (2nd level) and so on
+        var MAXLEVEL = 6;
         
         var sections = [];
-        // Even if 6 is the maximum level allowed, find possible mistakes
-        var minLevel = 99;
-        var maxLevel = 1;
-        var maxTocLevel = 1;
+        var minLevel = MAXLEVEL;
+        var maxTocLevel = 0;
         var tocLevel = 1;
         var regExp = /^\=+ *.+? *\=+$/gm;
         var match, line, L, level, prevLevels, start, end, tocPeer;
@@ -28,20 +20,29 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
                 start = "=";
                 end = "=";
                 
+                // ==Title=== and ===Title== are both 2nd levels and so on
+                // (the shortest sequence of = between the two sides is
+                //  considered)
+                
+                // = and == are not titles
+                // === is read as =(=)=, ==== is read as =(==)= (both 1st
+                //                                               levels)
+                // ===== is read as ==(=)== (2nd level) and so on
+                
                 while (true) {
                     start = line.substr(level, 1);
                     end = line.substr(L - level - 1, 1);
                     
-                    // Don't check for level < 6, find also possible mistakes
                     if (L - level * 2 > 2 && start == "=" && end == "=") {
                         level++;
                     }
                     else {
-                        if (level < minLevel) {
-                            minLevel = level;
+                        if (level > MAXLEVEL) {
+                            level = MAXLEVEL;
+                            WM.Log.logWarning('"' + line + '"' + " is considered a level-" + MAXLEVEL + " heading");
                         }
-                        if (level > maxLevel) {
-                            maxLevel = level;
+                        else if (level < minLevel) {
+                            minLevel = level;
                         }
                         break;
                     }
@@ -93,15 +94,12 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
         }
         
         // Articles without sections
-        if (minLevel > maxLevel) {
+        if (maxTocLevel == 0) {
             minLevel = 0;
-            maxLevel = 0;
-            maxTocLevel = 0;
         }
         
         return {sections: sections,
                 minLevel: minLevel,
-                maxLevel: maxLevel,
                 maxTocLevel: maxTocLevel};
     };
     
@@ -114,7 +112,7 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
         for each (var match in info.sections) {  // ***********************************
             WM.Log.logDebug(JSON.stringify(match));
         }
-        WM.Log.logDebug(info.minLevel + " " + info.maxLevel + " " + info.maxTocLevel);  // ****************
+        WM.Log.logDebug(info.minLevel + " " + info.maxTocLevel);  // ***********************************
         
         // If minLevel is 1 raise everything up by 1 unless maxLevel is > 5 ******
         // If maxLevel is > 6 raise a warning unless it is possible to lower *****
@@ -124,7 +122,7 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
         newtext = "";
         
         if (newtext != source) {
-            WM.Editor.writeSource(newtext);
+            //WM.Editor.writeSource(newtext);  // *******************************************
             WM.Log.logInfo("Fixed section headings");
         }
     };
