@@ -13,20 +13,25 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
         // Even if 6 is the maximum level allowed, find possible mistakes
         var minLevel = 99;
         var maxLevel = 1;
+        var maxTocLevel = 1;
+        var tocLevel = 1;
         var regExp = /^\=+ *.+? *\=+$/gm;
-        var match, line, L, level, start, end;
+        var match, line, L, level, prevLevels, start, end, tocPeer;
         
         while (true) {
             match = regExp.exec(source);
+            
             if (match) {
                 line = match[0];
                 L = line.length;
                 level = 1;
                 start = "=";
                 end = "=";
+                
                 while (true) {
                     start = line.substr(level, 1);
                     end = line.substr(L - level - 1, 1);
+                    
                     // Don't check for level < 6, find also possible mistakes
                     if (L - level * 2 > 2 && start == "=" && end == "=") {
                         level++;
@@ -41,8 +46,44 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
                         break;
                     }
                 }
+                
+                if (level == minLevel) {
+                    tocLevel = 1;
+                    prevLevels = {};
+                    prevLevels[level] = 1;
+                    prevLevels.relMax = level;
+                }
+                else if (level > prevLevels.relMax) {
+                    tocLevel++;
+                    prevLevels[level] = tocLevel;
+                    prevLevels.relMax = level;
+                    if (tocLevel > maxTocLevel) {
+                        maxTocLevel = tocLevel;
+                    }
+                }
+                else if (level < prevLevels.relMax) {
+                    if (prevLevels[level]) {
+                        tocLevel = prevLevels[level];
+                    }
+                    else {
+                        // tocPeer is the level immediately greater than the
+                        // current one, and it should have the same tocLevel
+                        // I must reset tocPeer here to the relative maximum
+                        tocPeer = prevLevels.relMax;
+                        for (var pLevel in prevLevels) {
+                            if (pLevel > level && pLevel < tocPeer) {
+                                tocPeer = pLevel;
+                            }
+                        }
+                        tocLevel = prevLevels[tocPeer];
+                        prevLevels[level] = tocLevel;
+                    }
+                    prevLevels.relMax = level;
+                }
+                
                 sections.push({match: match,
                                level: level,
+                               tocLevel: tocLevel,
                                index: (regExp.lastIndex - L),
                                length: L});
             }
@@ -55,11 +96,13 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
         if (minLevel > maxLevel) {
             minLevel = 0;
             maxLevel = 0;
+            maxTocLevel = 0;
         }
         
         return {sections: sections,
                 minLevel: minLevel,
-                maxLevel: maxLevel};
+                maxLevel: maxLevel,
+                maxTocLevel: maxTocLevel};
     };
     
     this.main = function (args) {
@@ -71,7 +114,7 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
         for each (var match in info.sections) {  // ***********************************
             WM.Log.logDebug(JSON.stringify(match));
         }
-        WM.Log.logDebug(info.minLevel + " " + info.maxLevel);  // ****************
+        WM.Log.logDebug(info.minLevel + " " + info.maxLevel + " " + info.maxTocLevel);  // ****************
         
         // If minLevel is 1 raise everything up by 1 unless maxLevel is > 5 ******
         // If maxLevel is > 6 raise a warning unless it is possible to lower *****
