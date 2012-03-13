@@ -105,24 +105,32 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
     
     this.main = function (args) {
         var source = WM.Editor.readSource();
-        var newtext = source;
         
-        var info = findSections(newtext);
+        var info = findSections(source);
         
-        for each (var match in info.sections) {  // ***********************************
-            WM.Log.logDebug(JSON.stringify(match));
+        var increaseLevel;
+        if (info.maxTocLevel < 6) {
+            increaseLevel = 1;
         }
-        WM.Log.logDebug(info.minLevel + " " + info.maxTocLevel);  // ***********************************
+        else {
+            increaseLevel = 0;
+            WM.Log.logWarning("There are 6 levels of headings, it's been necessary to start creating them from level 1 although usually it's suggested to start from level 2");
+        }
         
-        // If minLevel is 1 raise everything up by 1 unless maxLevel is > 5 ******
-        // If maxLevel is > 6 raise a warning unless it is possible to lower *****
-        //  all levels enough to make maxLevel < 7
-        // Check that levels are increased by steps of 1 level *******************
+        var newtext = "";
+        var prevId = 0;
         
-        newtext = "";
+        for each (var section in info.sections) {
+            newtext += source.substring(prevId, section.index);
+            newtext += new Array(section.tocLevel + increaseLevel + 1).join("=");
+            newtext += section.match[0].substr(section.level, section.length - 2 * section.level);
+            newtext += new Array(section.tocLevel + increaseLevel + 1).join("=");
+            prevId = section.index + section.length;
+        }
+        newtext += source.substr(prevId);
         
         if (newtext != source) {
-            //WM.Editor.writeSource(newtext);  // *******************************************
+            WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Fixed section headings");
         }
     };
