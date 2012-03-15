@@ -1,13 +1,13 @@
 // ==UserScript==
-// @id wiki-monkey-patrol
+// @id wiki-monkey-archwikibot
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.com>
-// @version 1.8.3-patrol
+// @version 1.8.3-archwikibot
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-patrol.meta.js
+// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-archwikibot.meta.js
 // @icon http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey.png
 // @icon64 http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey-64.png
 // @match http://*.wikipedia.org/*
@@ -30,6 +30,7 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/1.8.3/src/plugins/ExpandContractions.js
 // @require https://raw.github.com/kynikos/wiki-monkey/1.8.3/src/plugins/MultipleLineBreaks.js
 // @require https://raw.github.com/kynikos/wiki-monkey/1.8.3/src/plugins/SimpleReplace.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.8.3/src/plugins/UpdateCategoryTree.js
 // ==/UserScript==
 
 WM.UI.setEditor([
@@ -55,44 +56,31 @@ WM.UI.setDiff([
     ]
 ])
 
-WM.UI.setWhatLinksHere(null)
+WM.UI.setWhatLinksHere([
+    ["SimpleReplace", "RegExp substitution", ["1"]]
+])
 
-WM.UI.setSpecial(null)
+WM.UI.setSpecial([
+    [
+        ["UpdateCategoryTree", "Update main ToC",
+         [{"Table_of_Contents": ["Category:English", "en"],
+           "Table_of_Contents_(Français)": ["Category:Français", "fr"],
+           "Table_of_Contents_(Indonesia)": ["Category:Indonesia", "en"],
+           "Table_of_Contents_(Italiano)": ["Category:Italiano", "it"],
+           "Table_of_Contents_(Magyar)": ["Category:Magyar", "en"],
+           "Table_of_Contents_(Slovenský)": ["Category:Slovenský", "en"],
+           "Table_of_Contents_(Suomi)": ["Category:Suomi", "en"],
+           "Table_of_Contents_(Svenska)": ["Category:Svenska", "en"],
+           "Table_of_Contents_(Türkçe)": ["Category:Türkçe", "en"],
+           "Table_of_Contents_(Ελληνικά)": ["Category:Ελληνικά", "en"],
+           "Table_of_Contents_(Български)": ["Category:Български", "en"],
+           "Table_of_Contents_(Српски)": ["Category:Српски", "en"],
+           // rtl scripts create buggy output
+           //"Table_of_Contents_(עברית)": ["Category:עברית", "en"],
+           "Table_of_Contents_(ไทย)": ["Category:ไทย", "en"],
+           "Table_of_Contents_(日本語)": ["Category:日本語", "en"]},
+         "[[Wiki Monkey]]: automatic update"]]
+    ]
+])
 
 WM.main()
-
-// Temporary warning about the configuration name change
-if (document.getElementById("WikiMonkey")) {
-    var WMinterface = document.getElementById("WikiMonkey");
-    var warning = document.createElement('p');
-    warning.style.backgroundColor = 'orangered';
-    warning.style.color = 'white';
-    warning.style.fontWeight = 'bold';
-    warning.style.padding = '0.4em';
-    var span = document.createElement('span');
-    span.innerHTML = 'Since Wiki Monkey 1.9.0, the "patrol" configuration will ';
-    span.innerHTML += 'be renamed "archwikipatrol", because the name "patrol" ';
-    span.innerHTML += 'will be used for a more generic configuration. ';
-    span.innerHTML += 'If you want to continue using the ArchWiki-specific ';
-    span.innerHTML += 'tools you must:';
-    warning.appendChild(span);
-    var list = document.createElement('ol');
-    var item = document.createElement('li');
-    item.innerHTML = 'manually install ';
-    item.innerHTML += '<a href="https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-archwikipatrol.user.js">the "archwikipatrol" configuration</a>';
-    list.appendChild(item);
-    item = document.createElement('li');
-    item.innerHTML = 'uninstall the current "patrol" configuration in Firefox\'s ';
-    item.innerHTML += '"Add-ons Manager" -> "User Scripts"';
-    list.appendChild(item);
-    item = document.createElement('li');
-    item.innerHTML = 're-enable the automatic updates for "archwikipatrol" if you were using them before';
-    list.appendChild(item);
-    warning.appendChild(list);
-    var span = document.createElement('span');
-    span.innerHTML = 'For more detailed installation instructions see ';
-    span.innerHTML += '<a href="https://wiki.archlinux.org/index.php/Wiki_Monkey">this article</a>. ';
-    span.innerHTML += 'Thank you, I apologize for the inconvenience.';
-    warning.appendChild(span);
-    WMinterface.insertBefore(warning, WMinterface.firstChild.nextSibling);
-}
