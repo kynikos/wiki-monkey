@@ -56,7 +56,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
                 info = WM.Cat.getInfo(cat);
                 parents = WM.Cat.getParents(cat);
                 
-                text += "<small>(" + ((info) ? info.pages : 0) + ") ";
+                text += "<small>(" + ((info) ? info.pages : 0) + ")";
                 
                 if (parents.length > 1) {
                     outer_loop:
@@ -72,7 +72,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
                         altName = (altNames[parents[i]]) ? altNames[parents[i]] : null;
                         parents[i] = createCatLink(parents[i], params.replace, altName);
                     }
-                    text += "(" + params.alsoIn + " " + parents.join(", ") + ")";
+                    text += " (" + params.alsoIn + " " + parents.join(", ") + ")";
                 }
                 
                 text += "</small>\n";
