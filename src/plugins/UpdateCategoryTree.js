@@ -197,6 +197,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
             for (var key in tocs) {
                 updateToC(key, tocs[key], summary, minInterval);
             }
+            WM.Log.logInfo("Operations completed, check the log for warnings or errors");
         }
         else {
             var vals = JSON.parse(value);
