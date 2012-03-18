@@ -45,7 +45,7 @@ WM.UI.setEditor([
     [
         ["SimpleReplace", "RegExp substitution", ["1"]]
     ]
-])
+]);
 
 WM.UI.setDiff([
     [
@@ -56,11 +56,11 @@ WM.UI.setDiff([
         ["ArchWikiSaveTalk", "Save discussion",
          ["User:" + WM.MW.getUserName() + "/Discussions", "+ diff"]]
     ]
-])
+]);
 
 WM.UI.setWhatLinksHere([
     ["SimpleReplace", "RegExp substitution", ["1"]]
-])
+]);
 
 WM.UI.setSpecial([
     [
@@ -230,6 +230,6 @@ WM.UI.setSpecial([
                                          showIndices: false}},
          "[[Wiki Monkey]]: automatic update"]]
     ]
-])
+]);
 
-WM.main()
+WM.main();

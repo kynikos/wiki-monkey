@@ -44,7 +44,7 @@ WM.UI.setEditor([
     [
         ["SimpleReplace", "RegExp substitution", ["1"]]
     ]
-])
+]);
 
 WM.UI.setDiff([
     [
@@ -55,10 +55,10 @@ WM.UI.setDiff([
         ["ArchWikiSaveTalk", "Save discussion",
          ["User:" + WM.MW.getUserName() + "/Discussions", "+ diff"]]
     ]
-])
+]);
 
-WM.UI.setWhatLinksHere(null)
+WM.UI.setWhatLinksHere(null);
 
-WM.UI.setSpecial(null)
+WM.UI.setSpecial(null);
 
-WM.main()
+WM.main();

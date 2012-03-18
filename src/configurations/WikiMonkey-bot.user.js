@@ -36,22 +36,22 @@ WM.UI.setEditor([
     [
         ["SimpleReplace", "RegExp substitution", ["1"]]
     ]
-])
+]);
 
-WM.UI.setDiff(null)
+WM.UI.setDiff(null);
 
 WM.UI.setWhatLinksHere([
     ["SimpleReplace", "RegExp substitution", ["1"]]
-])
+]);
 
 WM.UI.setSpecial([
     [
         ["UpdateCategoryTree", "Update main ToC",
          [{}, "[[Wiki Monkey]]: automatic update"]]
     ]
-])
+]);
 
-WM.main()
+WM.main();
 
 // Temporary warning about the configuration name change
 if (document.getElementById("WikiMonkey")) {
