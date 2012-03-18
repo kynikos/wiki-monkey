@@ -34,15 +34,19 @@ WM.Plugins.UpdateCategoryTree = new function () {
         return "[[:" + cat + "|" + catName + "]]";
     };
     
-    var recurse = function (tree, params, altNames, indent, ancestors) {
-        var info, parents, subAncestors, altName;
+    var recurse = function (tree, params, altNames, indent, baseIndex, showIndex, ancestors) {
+        var altName, info, parents, subAncestors, subIndent, index, idString, subIndex;
+        var id = 1;
         var text = "";
         
         for (var cat in tree) {
             WM.Log.logInfo("Processing " + cat + "...");
             
+            index = (showIndex) ? (baseIndex + id + ".") : "";
+            
+            idString = (index) ? ("<small>" + index + "</small> ") : "";
             altName = (altNames[cat]) ? altNames[cat] : null;
-            text += indent + createCatLink(cat, params.replace, altName) + " ";
+            text += indent + idString + createCatLink(cat, params.replace, altName) + " ";
             
             if (tree[cat] == "loop") {
                 text += "'''[LOOP]'''\n";
@@ -52,7 +56,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
                 info = WM.Cat.getInfo(cat);
                 parents = WM.Cat.getParents(cat);
                 
-                text += "(" + ((info) ? info.pages : 0) + ") ";
+                text += "<small>(" + ((info) ? info.pages : 0) + ") ";
                 
                 if (parents.length > 1) {
                     outer_loop:
@@ -71,16 +75,19 @@ WM.Plugins.UpdateCategoryTree = new function () {
                     text += "(" + params.alsoIn + " " + parents.join(", ") + ")";
                 }
                 
-                text += "\n";
+                text += "</small>\n";
                 
                 // Create a copy of the object, not just a new reference
                 subAncestors = JSON.parse(JSON.stringify(ancestors));
                 
                 subAncestors[cat] = true;
                 subIndent = indent + params.indentType;
+                subIndex = (index) ? index : baseIndex;
                 
-                text += recurse(tree[cat], params, altNames, subIndent, subAncestors);
+                text += recurse(tree[cat], params, altNames, subIndent, subIndex, params.showIndices, subAncestors);
             }
+            
+            id++;
         }
         
         return text
@@ -137,7 +144,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
                 var part2 = source.substring(end);
                 var tree = WM.Cat.getTree(params.root);
                 var altNames = (params.keepAltName) ? storeAlternativeNames(source) : {};
-                var treeText = recurse(tree, params, altNames, "", {});
+                var treeText = recurse(tree, params, altNames, "", "", false, {});
                 var newtext = part1 + "\n" + treeText + part2;
                 
                 if (newtext != source) {
