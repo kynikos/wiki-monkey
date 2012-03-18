@@ -49,6 +49,10 @@ WM.MW = new function () {
         return userInfo;
     };
     
+    this.isLoggedIn = function () {
+        return this.getUserInfo().query.userinfo.id != 0;
+    };
+    
     this.getUserName = function () {
         return this.getUserInfo().query.userinfo.name;
     };
