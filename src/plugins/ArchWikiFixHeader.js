@@ -41,13 +41,13 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         res = storeMatches(res[0], /\s*(\[\[[Cc]ategory:(.+?([ _]\(([^\(]+?)\))?)\]\])/g, false);
         elements.categories = res[1];
         
-        res = storeMatches(res[0], /\s*(\{\{[Ii]18n\|(.+?)\}\})/g, true);
-        elements.i18n = res[1];
-        
         var interwikiLanguages = WM.ArchWiki.getInterwikiLanguages();
         var regExp = new RegExp("\\s*(\\[\\[(" + interwikiLanguages.join("|") + "):(.+?)\\]\\])", "g");
         res = storeMatches(res[0], regExp, false);
         elements.interwiki = res[1];
+        
+        res = storeMatches(res[0], /\s*(\{\{[Ii]18n\|(.+?)\}\})/g, true);
+        elements.i18n = res[1];
         
         var content = res[0];
         
@@ -131,6 +131,22 @@ WM.Plugins.ArchWikiFixHeader = new function () {
             WM.Log.logWarning("The article is not categorized");
         }
         
+        var interwiki = [];
+        for each (var link in elements.interwiki) {
+            if (interwiki.indexOf(link[1]) == -1) {
+                interwiki.push(link[1]);
+            }
+            else {
+                WM.Log.logWarning("Removed duplicate of " + link[1]);
+            }
+        }
+        
+        // if (interwiki) is always true
+        if (interwiki.length) {
+            newtext += interwiki.join("\n");
+            newtext += "\n";
+        }
+        
         var L = elements.i18n.length;
         if (L) {
             if (L > 1) {
@@ -155,29 +171,14 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         }
         newtext += "\n";
         
-        var interwiki = [];
-        for each (var link in elements.interwiki) {
-            if (interwiki.indexOf(link[1]) == -1) {
-                interwiki.push(link[1]);
-            }
-            else {
-                WM.Log.logWarning("Removed duplicate of " + link[1]);
-            }
-        }
-        
-        // if (interwiki) is always true
-        if (interwiki.length) {
-            newtext += interwiki.join("\n");
-            newtext += "\n";
-        }
-        
         var firstChar = content.search(/[^\s]/);
         content = content.substr(firstChar);
         
-        var test = content.substr(0, 2);
-        if (test != "{{" && test != "[[") {
-            newtext += "\n";
-        }
+        // This workaround shouldn't be necessary anymore
+        //var test = content.substr(0, 2);
+        //if (test != "{{" && test != "[[") {
+            newtext += "\n";  // This line should be merged with the previous `newtext += "\n"`;
+        //}
         
         newtext += content;
         
