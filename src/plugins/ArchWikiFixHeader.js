@@ -89,22 +89,22 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         }
         
         var title = WM.Editor.getTitle().match(/^(.+?)([ _]\(([^\(]+)\))?$/);
-        var detectedLanguage = decodeURI(title[3]);
+        var detectedLanguage = decodeURIComponent(title[3]);
         var pureTitle;
         if (!detectedLanguage || !WM.ArchWiki.isCategoryLanguage(detectedLanguage)) {
             detectedLanguage = "English";
-            pureTitle = decodeURI(title[0]);
+            pureTitle = decodeURIComponent(title[0]);
         }
         else {
-            pureTitle = decodeURI(title[1]);
+            pureTitle = decodeURIComponent(title[1]);
         }
         
         var categories = [];
         var lang;
         for each (var cat in elements.categories) {
-            lang = decodeURI(cat[2]);
+            lang = decodeURIComponent(cat[2]);
             if (!WM.ArchWiki.isCategoryLanguage(lang)) {
-                lang = decodeURI(cat[4]);
+                lang = decodeURIComponent(cat[4]);
                 if (!lang || !WM.ArchWiki.isCategoryLanguage(lang)) {
                     lang = "English";
                 }
