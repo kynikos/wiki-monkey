@@ -19,13 +19,38 @@
  */
 
 WM.MW = new function () {
+    var wikiUrls = (function () {
+        var paths = {DEFAULT: {articles: "index.php",
+                               api: "api.php"},
+                     "archlinux.org": {articles: "index.php",
+                                       api: "api.php"},
+                     "wikipedia.org": {articles: "wiki",
+                                       api: "w/api.php"}};
+        
+        var urls = paths[location.hostname.split(".").slice(1).join(".")];
+        
+        if (!urls) {
+            urls = wikiPaths.DEFAULT;
+        }
+        
+        for (var key in urls) {
+            urls[key] = location.protocol + "//" + location.hostname + "/" + urls[key];
+        }
+        
+        return urls;
+    })();
+    
+    this.getArticlesBaseUrl = function () {
+        return wikiUrls.articles;
+    };
+    
     this.callAPIGet = function (params) {
-        var id = WM.HTTP.sendGetSyncRequest(WM.getBaseURL() + "api.php?format=json" + joinParams(params));
+        var id = WM.HTTP.sendGetSyncRequest(wikiUrls.api + "?format=json" + joinParams(params));
         return JSON.parse(WM.HTTP.getResponseText(id));
     };
     
     this.callAPIPost = function (params) {
-        var id = WM.HTTP.sendPostSyncRequest(WM.getBaseURL() + "api.php", "format=json" + joinParams(params), "Content-type", "application/x-www-form-urlencoded");
+        var id = WM.HTTP.sendPostSyncRequest(wikiUrls.api, "format=json" + joinParams(params), "Content-type", "application/x-www-form-urlencoded");
         return JSON.parse(WM.HTTP.getResponseText(id));
     };
     
