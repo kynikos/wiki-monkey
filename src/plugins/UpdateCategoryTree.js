@@ -19,19 +19,34 @@ WM.Plugins.UpdateCategoryTree = new function () {
         return select;
     };
     
-    this.i18n = {en: {alsoIn: "also in"},
-                 fr: {alsoIn: "aussi dans"},
-                 it: {alsoIn: "anche in"},
-                 current: {}};
+    var createCatLink = function (cat, replace, altName) {
+        var regExp = new RegExp(replace[0], replace[1]);
+        var catName;
+        if (altName) {
+            catName = altName;
+        }
+        else if (replace) {
+            catName = cat.substr(9).replace(regExp, replace[2]);
+        }
+        else {
+            catName = cat.substr(9);
+        }
+        return "[[:" + cat + "|" + catName + "]]";
+    };
     
-    var recurse = function (tree, indent, ancestors) {
-        var info, parents, subAncestors;
+    var recurse = function (tree, params, altNames, indent, baseIndex, showIndex, ancestors) {
+        var altName, info, parents, subAncestors, subIndent, index, idString, subIndex;
+        var id = 1;
         var text = "";
         
         for (var cat in tree) {
             WM.Log.logInfo("Processing " + cat + "...");
             
-            text += indent + "[[:" + cat + "|" + cat.substr(9) + "]] ";
+            index = (showIndex) ? (baseIndex + id + ".") : "";
+            
+            idString = (index) ? ("<small>" + index + "</small> ") : "";
+            altName = (altNames[cat]) ? altNames[cat] : null;
+            text += indent + idString + createCatLink(cat, params.replace, altName) + " ";
             
             if (tree[cat] == "loop") {
                 text += "'''[LOOP]'''\n";
@@ -41,7 +56,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
                 info = WM.Cat.getInfo(cat);
                 parents = WM.Cat.getParents(cat);
                 
-                text += "(" + ((info) ? info.pages : 0) + ") ";
+                text += "<small>(" + ((info) ? info.pages : 0) + ")";
                 
                 if (parents.length > 1) {
                     outer_loop:
@@ -54,27 +69,49 @@ WM.Plugins.UpdateCategoryTree = new function () {
                         }
                     }
                     for (var i in parents) {
-                        parents[i] = "[[:" + parents[i] + "|" + parents[i].substr(9) + "]]";
+                        altName = (altNames[parents[i]]) ? altNames[parents[i]] : null;
+                        parents[i] = createCatLink(parents[i], params.replace, altName);
                     }
-                    text += "(" + WM.Plugins.UpdateCategoryTree.i18n.current.alsoIn + " " + parents.join(", ") + ")";
+                    text += " (" + params.alsoIn + " " + parents.join(", ") + ")";
                 }
                 
-                text += "\n";
+                text += "</small>\n";
                 
                 // Create a copy of the object, not just a new reference
                 subAncestors = JSON.parse(JSON.stringify(ancestors));
                 
                 subAncestors[cat] = true;
-                subIndent = indent + "#";
+                subIndent = indent + params.indentType;
+                subIndex = (index) ? index : baseIndex;
                 
-                text += recurse(tree[cat], subIndent, subAncestors);
+                text += recurse(tree[cat], params, altNames, subIndent, subIndex, params.showIndices, subAncestors);
             }
+            
+            id++;
         }
         
         return text
     };
     
-    var updateToC = function (toc, root, summary, minInterval) {
+    var storeAlternativeNames = function (source) {
+        var dict = {};
+        var regExp = /\[\[\:([Cc]ategory\:.+?)\|(.+?)\]\]/gm;
+        var match;
+        
+        while (true) {
+            match = regExp.exec(source);
+            if (match) {
+                dict[match[1]] = match[2];
+            }
+            else {
+                break;
+            }
+        }
+        
+        return dict;
+    };
+    
+    var updateToC = function (toc, params, summary, minInterval) {
         var startMark = "START AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK-->";
         var endMark = "<!--END AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK";
         
@@ -105,11 +142,9 @@ WM.Plugins.UpdateCategoryTree = new function () {
             if (start > -1 && end > -1) {
                 var part1 = source.substring(0, start);
                 var part2 = source.substring(end);
-                
-                var tree = WM.Cat.getTree(root);
-                
-                var treeText = recurse(tree, "", {});
-                
+                var tree = WM.Cat.getTree(params.root);
+                var altNames = (params.keepAltName) ? storeAlternativeNames(source) : {};
+                var treeText = recurse(tree, params, altNames, "", "", false, {});
                 var newtext = part1 + "\n" + treeText + part2;
                 
                 if (newtext != source) {
@@ -157,18 +192,16 @@ WM.Plugins.UpdateCategoryTree = new function () {
         var option = select.options[select.selectedIndex];
         var toc = option.innerHTML;
         var value = option.value;
-        var vals;
         
         if (value == 'ALL') {
             for (var key in tocs) {
-                WM.Plugins.UpdateCategoryTree.i18n.current = WM.Plugins.UpdateCategoryTree.i18n[tocs[key][1]];
-                updateToC(key, tocs[key][0], summary, minInterval);
+                updateToC(key, tocs[key], summary, minInterval);
             }
+            WM.Log.logInfo("Operations completed, check the log for warnings or errors");
         }
         else {
-            vals = JSON.parse(value);
-            WM.Plugins.UpdateCategoryTree.i18n.current = WM.Plugins.UpdateCategoryTree.i18n[vals[1]];
-            updateToC(toc, vals[0], summary, minInterval);
+            var vals = JSON.parse(value);
+            updateToC(toc, vals, summary, minInterval);
         }
     };
 };

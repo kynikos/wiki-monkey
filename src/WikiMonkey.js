@@ -34,10 +34,6 @@ var WM = new function () {
         return queryString[name];
     };
     
-    this.getBaseURL = function () {
-        return (location.protocol + "//" + location.hostname + "/");
-    };
-    
     this.getLongTextNode = function (element) {
         // DEPRECATED, no longer used anywhere: delete?
         
