@@ -154,7 +154,7 @@ WM.UI = new function () {
         else if (document.getElementById('mw-linksearch-form') && document.getElementById('bodyContent').getElementsByTagName('ol')[0]) {
             baseNode = document.getElementById('bodyContent');
             nextNode = document.getElementById('mw-linksearch-form').nextSibling;
-            UI = (whatLinksHere) ? WM.Bot.makeUI(linkSearch, document.getElementById('bodyContent').getElementsByTagName('ol')[0], 1) : null;
+            UI = (linkSearch) ? WM.Bot.makeUI(linkSearch, document.getElementById('bodyContent').getElementsByTagName('ol')[0], 1) : null;
         }
         else if (location.pathname == "/index.php/Special:SpecialPages") {
             baseNode = document.getElementById('content');
