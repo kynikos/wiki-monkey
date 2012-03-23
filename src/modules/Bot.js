@@ -19,11 +19,12 @@
  */
 
 WM.Bot = new function () {
-    this.makeUI = function (functions, listBase, linkId) {
+    this.makeUI = function (functions, lists) {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyBot';
         
-        GM_addStyle("#WikiMonkeyBotSelection {width:100%; margin-bottom:1em;} " +
+        GM_addStyle("#WikiMonkeyBot-PluginSelect {width:100%; margin-bottom:1em;} " +
+                    "#WikiMonkeyBot-ListSelect {margin-bottom:1em;} " +
                     "#WikiMonkeyBotFilter {height:6em; margin-bottom:1em; resize:vertical;} " +
                     "#WikiMonkeyBotStart, #WikiMonkeyBotStop {margin-right:0.33em; margin-bottom:1em; font-weight:bold;} " +
                     "a.WikiMonkeyBotSelected {background-color:#faa; padding:0.2em 0.4em;} " +
@@ -32,7 +33,7 @@ WM.Bot = new function () {
                     "a.WikiMonkeyBotFailed {background-color:orangered; padding:0.2em 0.4em;}");
         
         divContainer.appendChild(makeFunctionUI(functions));
-        divContainer.appendChild(makeConfUI(listBase, linkId));
+        divContainer.appendChild(makeConfUI(lists));
         
         return divContainer;
     };
@@ -44,7 +45,7 @@ WM.Bot = new function () {
         legend.innerHTML = 'Plugin';
         
         var selectFunctions = document.createElement('select');
-        selectFunctions.id = 'WikiMonkeyBotSelection';
+        selectFunctions.id = 'WikiMonkeyBot-PluginSelect';
         
         for each (var f in functions) {
             option = document.createElement('option');
@@ -54,7 +55,7 @@ WM.Bot = new function () {
         
         selectFunctions.addEventListener("change", (function (fns) {
             return function () {
-                var select = document.getElementById('WikiMonkeyBot').getElementsByTagName('select')[0];
+                var select = document.getElementById('WikiMonkeyBot-PluginSelect');
                 var id = select.selectedIndex;
                 var UI = document.getElementById('WikiMonkeyBotFunction');
                 // [1] Note that this must also be executed immediately, see [2]
@@ -67,7 +68,7 @@ WM.Bot = new function () {
                     // interface is selected, replaceChild won't work
                     UI.replaceChild(document.createElement('div'), UI.firstChild);
                 }
-                WM.Bot.selectedFunction = function (title) {
+                WM.Bot.selections.function_ = function (title) {
                     return eval("WM.Plugins." + fns[id][0] + ".mainAuto")(fns[id][2], title);
                 };
             }
@@ -84,8 +85,8 @@ WM.Bot = new function () {
         else {
             divFunction.appendChild(document.createElement('div'));
         }
-        // Don't use "this.selectedFunction", use "WM.Bot.selectedFunction"
-        WM.Bot.selectedFunction = function (title) {
+        // Don't use "this.selections"
+        WM.Bot.selections.function_ = function (title) {
             return eval("WM.Plugins." + functions[0][0] + ".mainAuto")(functions[0][2], title);
         };
         
@@ -96,15 +97,46 @@ WM.Bot = new function () {
         return fieldset;
     };
     
-    this.selectedFunction = function () {};
+    this.selections = {function_: function () {},
+                       list: {current: null,
+                              previous: null}};
     
-    var makeConfUI = function (listBase, linkId) {
+    var makeListSelector = function (lists) {
+        var selectLists = document.createElement('select');
+        selectLists.id = 'WikiMonkeyBot-ListSelect';
+        
+        for each (var l in lists) {
+            option = document.createElement('option');
+            option.innerHTML = l[2];
+            selectLists.appendChild(option);
+        }
+        
+        selectLists.addEventListener("change", (function (lss) {
+            return function () {
+                var select = document.getElementById('WikiMonkeyBot-ListSelect');
+                var id = select.selectedIndex;
+                WM.Bot.selections.list.previous = WM.Bot.selections.list.current;
+                // [1] Note that this must also be executed immediately, see [2]
+                WM.Bot.selections.list.current = lss[id];
+            }
+        })(lists), false);
+        
+        // [2] Note that this is also executed onchange, see [1]
+        // Don't use "this.selections"
+        WM.Bot.selections.list.current = lists[0];
+        
+        return selectLists;
+    };
+    
+    var makeConfUI = function (lists) {
         var bot = document.createElement('div');
         
         var fieldset = document.createElement('fieldset');
         
         var legend = document.createElement('legend');
         legend.innerHTML = 'Filter';
+        
+        var listSelect = makeListSelector(lists);
         
         var filter = document.createElement('textarea');
         filter.id = 'WikiMonkeyBotFilter';
@@ -127,15 +159,12 @@ WM.Bot = new function () {
         var inversetag = document.createElement('span');
         inversetag.innerHTML = 'Inverse';
         
-        var items = listBase.getElementsByTagName('li');
-        
-        preview.addEventListener("click", (function (lis, lId) {
-            return function () {
-                WM.Bot.previewFilter(lis, lId);
-            }
-        })(items, linkId), false);
+        preview.addEventListener("click", WM.Bot.previewFilter, false);
         
         fieldset.appendChild(legend);
+        if (listSelect.length > 1) {
+            fieldset.appendChild(listSelect);
+        }
         fieldset.appendChild(filter);
         fieldset.appendChild(preview);
         fieldset.appendChild(inverse);
@@ -146,11 +175,7 @@ WM.Bot = new function () {
         start.value = 'Start bot';
         start.id = 'WikiMonkeyBotStart';
         
-        start.addEventListener("click", (function (lis, lId) {
-            return function () {
-                WM.Bot.startAutomatic(lis, lId);
-            }
-        })(items, linkId), false);
+        start.addEventListener("click", WM.Bot.startAutomatic, false);
         
         start.disabled = true;
         
@@ -224,8 +249,8 @@ WM.Bot = new function () {
         this.setEnableControls(true);
         
         //This was the code for doing this previously
-        /*document.getElementById('WikiMonkeyBotSelection').disabled = true;
-        disabledControls.push(document.getElementById('WikiMonkeyBotSelection'));
+        /*document.getElementById('WikiMonkeyBot-PluginSelect').disabled = true;
+        disabledControls.push(document.getElementById('WikiMonkeyBot-PluginSelect'));
         
         var baseNodes = [document.getElementById('WikiMonkeyBotFunction'),
                      document.getElementById('WikiMonkeyBotFilter').parentNode]
@@ -304,12 +329,25 @@ WM.Bot = new function () {
         return response;
     };
     
-    this.previewFilter = function (items, linkId) {
+    this.previewFilter = function () {
         WM.Log.logInfo('Updating filter preview, please wait...');
-        this.disableStartBot('Updating filter preview...');
+        WM.Bot.disableStartBot('Updating filter preview...');
+        
+        var items, linkId, link;
+        
+        if (WM.Bot.selections.list.previous) {
+            items = WM.Bot.selections.list.previous[0].getElementsByTagName('li');
+            linkId = WM.Bot.selections.list.previous[1];
+            for each (var item in items) {
+                link = item.getElementsByTagName('a')[linkId];
+                link.className = '';
+            }
+        }
+        
+        items = WM.Bot.selections.list.current[0].getElementsByTagName('li');
+        linkId = WM.Bot.selections.list.current[1];
         var enable = false;
         var N = 0;
-        var link;
         for each (var item in items) {
             link = item.getElementsByTagName('a')[linkId];
             if (canProcessPage(link.title)) {
@@ -322,7 +360,7 @@ WM.Bot = new function () {
             }
         }
         WM.Log.logInfo('Preview updated (' + N + ' pages selected)');
-        (enable) ? this.enableStartBot() : this.disableStartBot('No pages selected, reset and preview the filter');
+        (enable) ? WM.Bot.enableStartBot() : WM.Bot.disableStartBot('No pages selected, reset and preview the filter');
     };
     
     // GM_setValue can only store strings, bool and 32-bit integers (no 64-bit)
@@ -351,18 +389,20 @@ WM.Bot = new function () {
         return (GMValue != "0") && (GMValue != this.getBotToken());
     };
     
-    this.startAutomatic = function (items, linkId) {
-        if (this.checkOtherBotsRunning() && !this.canForceStart()) {
+    this.startAutomatic = function () {
+        var items = WM.Bot.selections.list.current[0].getElementsByTagName('li');
+        var linkId = WM.Bot.selections.list.current[1];
+        if (WM.Bot.checkOtherBotsRunning() && !WM.Bot.canForceStart()) {
             WM.Log.logError('Another bot is running, aborting...');
-            this.enableForceStart();
+            WM.Bot.enableForceStart();
         }
         else {
-            this.disableForceStart();
-            this.setBotToken();
+            WM.Bot.disableForceStart();
+            WM.Bot.setBotToken();
             WM.Log.logInfo('Starting bot...');
-            this.disableStartBot('Bot is running...');
-            this.disableControls();
-            this.processItem(items, 0, linkId);
+            WM.Bot.disableStartBot('Bot is running...');
+            WM.Bot.disableControls();
+            WM.Bot.processItem(items, 0, linkId);
         }
     };
     
@@ -386,7 +426,7 @@ WM.Bot = new function () {
                             WM.Bot.disableStopBot();
                             ln.className = "WikiMonkeyBotProcessing";
                             WM.Log.logInfo("Processing " + article + "...");
-                            if (WM.Bot.selectedFunction(article) === true) {
+                            if (WM.Bot.selections.function_(article) === true) {
                                 ln.className = "WikiMonkeyBotProcessed";
                                 WM.Log.logInfo(article + " processed");
                                 // Do not increment directly in the function's call!

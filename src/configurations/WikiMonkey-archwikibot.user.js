@@ -3,7 +3,7 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.com>
-// @version 14dev-archwikibot
+// @version 15dev-archwikibot
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
@@ -56,6 +56,10 @@ WM.UI.setDiff([
         ["ArchWikiSaveTalk", "Save discussion",
          ["User:" + WM.MW.getUserName() + "/Discussions", "+ diff"]]
     ]
+]);
+
+WM.UI.setCategory([
+    ["SimpleReplace", "RegExp substitution", ["1"]]
 ]);
 
 WM.UI.setWhatLinksHere([

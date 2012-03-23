@@ -31,6 +31,12 @@ WM.UI = new function () {
         diff = rows;
     };
     
+    var category = null;
+    
+    this.setCategory = function(rows) {
+        category = rows;
+    };
+    
     var whatLinksHere = null;
     
     this.setWhatLinksHere = function(rows) {
@@ -146,15 +152,20 @@ WM.UI = new function () {
             baseNode = nextNode.parentNode;
             UI = (diff) ? makeButtons(diff) : null;
         }
+        else if (document.getElementById('mw-subcategories') || document.getElementById('mw-pages')) {
+            baseNode = document.getElementById('content');
+            nextNode = document.getElementById('bodyContent');
+            UI = (category) ? WM.Bot.makeUI(category, [[document.getElementById('mw-pages'), 0, "Pages"], [document.getElementById('mw-subcategories'), 0, "Subcategories"]]) : null;
+        }
         else if (document.getElementById('mw-whatlinkshere-list')) {
             baseNode = document.getElementById('bodyContent');
             nextNode = baseNode.getElementsByTagName('form')[0].nextSibling;
-            UI = (whatLinksHere) ? WM.Bot.makeUI(whatLinksHere, document.getElementById('mw-whatlinkshere-list'), 0) : null;
+            UI = (whatLinksHere) ? WM.Bot.makeUI(whatLinksHere, [[document.getElementById('mw-whatlinkshere-list'), 0, "Pages"]]) : null;
         }
         else if (document.getElementById('mw-linksearch-form') && document.getElementById('bodyContent').getElementsByTagName('ol')[0]) {
             baseNode = document.getElementById('bodyContent');
             nextNode = document.getElementById('mw-linksearch-form').nextSibling;
-            UI = (linkSearch) ? WM.Bot.makeUI(linkSearch, document.getElementById('bodyContent').getElementsByTagName('ol')[0], 1) : null;
+            UI = (linkSearch) ? WM.Bot.makeUI(linkSearch, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 1, "Pages"]]) : null;
         }
         else if (location.pathname == "/index.php/Special:SpecialPages") {
             baseNode = document.getElementById('content');
