@@ -3,7 +3,7 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.com>
-// @version 13dev-editor
+// @version 14dev-editor
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
@@ -40,6 +40,8 @@ WM.UI.setEditor([
 WM.UI.setDiff(null);
 
 WM.UI.setWhatLinksHere(null);
+
+WM.UI.setLinkSearch(null);
 
 WM.UI.setSpecial(null);
 

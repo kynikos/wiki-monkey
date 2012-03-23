@@ -19,7 +19,7 @@
  */
 
 WM.Bot = new function () {
-    this.makeUI = function (functions, listBase) {
+    this.makeUI = function (functions, listBase, linkId) {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyBot';
         
@@ -32,7 +32,7 @@ WM.Bot = new function () {
                     "a.WikiMonkeyBotFailed {background-color:orangered; padding:0.2em 0.4em;}");
         
         divContainer.appendChild(makeFunctionUI(functions));
-        divContainer.appendChild(makeConfUI(listBase));
+        divContainer.appendChild(makeConfUI(listBase, linkId));
         
         return divContainer;
     };
@@ -98,7 +98,7 @@ WM.Bot = new function () {
     
     this.selectedFunction = function () {};
     
-    var makeConfUI = function (listBase) {
+    var makeConfUI = function (listBase, linkId) {
         var bot = document.createElement('div');
         
         var fieldset = document.createElement('fieldset');
@@ -129,11 +129,11 @@ WM.Bot = new function () {
         
         var items = listBase.getElementsByTagName('li');
         
-        preview.addEventListener("click", (function (lis) {
+        preview.addEventListener("click", (function (lis, lId) {
             return function () {
-                WM.Bot.previewFilter(lis);
+                WM.Bot.previewFilter(lis, lId);
             }
-        })(items), false);
+        })(items, linkId), false);
         
         fieldset.appendChild(legend);
         fieldset.appendChild(filter);
@@ -146,11 +146,11 @@ WM.Bot = new function () {
         start.value = 'Start bot';
         start.id = 'WikiMonkeyBotStart';
         
-        start.addEventListener("click", (function (lis) {
+        start.addEventListener("click", (function (lis, lId) {
             return function () {
-                WM.Bot.startAutomatic(lis);
+                WM.Bot.startAutomatic(lis, lId);
             }
-        })(items), false);
+        })(items, linkId), false);
         
         start.disabled = true;
         
@@ -304,14 +304,14 @@ WM.Bot = new function () {
         return response;
     };
     
-    this.previewFilter = function (items) {
+    this.previewFilter = function (items, linkId) {
         WM.Log.logInfo('Updating filter preview, please wait...');
         this.disableStartBot('Updating filter preview...');
         var enable = false;
         var N = 0;
         var link;
         for each (var item in items) {
-            link = item.getElementsByTagName('a')[0];
+            link = item.getElementsByTagName('a')[linkId];
             if (canProcessPage(link.title)) {
                 link.className = 'WikiMonkeyBotSelected';
                 enable = true;
@@ -351,7 +351,7 @@ WM.Bot = new function () {
         return (GMValue != "0") && (GMValue != this.getBotToken());
     };
     
-    this.startAutomatic = function (items) {
+    this.startAutomatic = function (items, linkId) {
         if (this.checkOtherBotsRunning() && !this.canForceStart()) {
             WM.Log.logError('Another bot is running, aborting...');
             this.enableForceStart();
@@ -362,11 +362,11 @@ WM.Bot = new function () {
             WM.Log.logInfo('Starting bot...');
             this.disableStartBot('Bot is running...');
             this.disableControls();
-            this.processItem(items, 0);
+            this.processItem(items, 0, linkId);
         }
     };
     
-    this.processItem = function (items, index) {
+    this.processItem = function (items, index, linkId) {
         var interval;
         if (WM.MW.isUserBot()) {
             interval = 10000;
@@ -377,7 +377,7 @@ WM.Bot = new function () {
         
         if (!this.checkOtherBotsRunning()) {
             if (items[index]) {
-                var link = items[index].getElementsByTagName('a')[0];
+                var link = items[index].getElementsByTagName('a')[linkId];
                 var title = link.title;
                 if (canProcessPage(title)) {
                     WM.Log.logInfo('Waiting ' + (interval / 1000) + ' seconds...');
@@ -391,7 +391,7 @@ WM.Bot = new function () {
                                 WM.Log.logInfo(article + " processed");
                                 // Do not increment directly in the function's call!
                                 id++;
-                                WM.Bot.processItem(lis, id);
+                                WM.Bot.processItem(lis, id, linkId);
                             }
                             else {
                                 ln.className = "WikiMonkeyBotFailed";
@@ -405,7 +405,7 @@ WM.Bot = new function () {
                 else {
                     // Do not increment directly in the function's call!
                     index++;
-                    WM.Bot.processItem(items, index);
+                    WM.Bot.processItem(items, index, linkId);
                 }
             }
             else {

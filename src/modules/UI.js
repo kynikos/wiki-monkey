@@ -37,6 +37,12 @@ WM.UI = new function () {
         whatLinksHere = rows;
     };
     
+    var linkSearch = null;
+    
+    this.setLinkSearch = function(rows) {
+        linkSearch = rows;
+    };
+    
     var special = null;
     
     this.setSpecial = function(rows) {
@@ -143,7 +149,12 @@ WM.UI = new function () {
         else if (document.getElementById('mw-whatlinkshere-list')) {
             baseNode = document.getElementById('bodyContent');
             nextNode = baseNode.getElementsByTagName('form')[0].nextSibling;
-            UI = (whatLinksHere) ? WM.Bot.makeUI(whatLinksHere, document.getElementById('mw-whatlinkshere-list')) : null;
+            UI = (whatLinksHere) ? WM.Bot.makeUI(whatLinksHere, document.getElementById('mw-whatlinkshere-list'), 0) : null;
+        }
+        else if (document.getElementById('mw-linksearch-form') && document.getElementById('bodyContent').getElementsByTagName('ol')[0]) {
+            baseNode = document.getElementById('bodyContent');
+            nextNode = document.getElementById('mw-linksearch-form').nextSibling;
+            UI = (whatLinksHere) ? WM.Bot.makeUI(linkSearch, document.getElementById('bodyContent').getElementsByTagName('ol')[0], 1) : null;
         }
         else if (location.pathname == "/index.php/Special:SpecialPages") {
             baseNode = document.getElementById('content');
