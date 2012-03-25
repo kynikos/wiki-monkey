@@ -2,7 +2,7 @@
 // @id wiki-monkey-dev-patrol
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
-// @author Dario Giovannetti <dev@dariogiovannetti.com>
+// @author Dario Giovannetti <dev@dariogiovannetti.net>
 // @version 15dev-patrol
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
