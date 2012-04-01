@@ -7,7 +7,7 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
         var minLevel = MAXLEVEL;
         var maxTocLevel = 0;
         var tocLevel = 1;
-        var regExp = /^(\=+ *.+? *\=+) *$/gm;
+        var regExp = /^(\=+ *.+? *\=+)[ \t]*$/gm;
         var match, line, L0, L1, level, prevLevels, start, end, tocPeer;
         
         while (true) {
