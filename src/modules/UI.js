@@ -55,6 +55,12 @@ WM.UI = new function () {
         special = rows;
     };
     
+    var specialList = null;
+    
+    this.setSpecialList = function(rows) {
+        specialList = rows;
+    };
+    
     var makeButtons = function (functions) {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyButtons';
@@ -165,6 +171,15 @@ WM.UI = new function () {
         else if (location.href.indexOf(WM.MW.getArticlesBaseUrl() + "/Special:SpecialPages") > -1) {
             nextNode = document.getElementById('bodyContent');
             UI = (special) ? makeButtons(special) : null;
+        }
+        else {
+            nextNode = document.getElementById('bodyContent');
+            for each (var div in nextNode.getElementsByTagName('div')) {
+                if (div.className == 'mw-spcontent') {
+                    UI = (specialList) ? WM.Bot.makeUI(specialList, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
+                    break;
+                }
+            }
         }
         
         if (UI) {

@@ -47,6 +47,8 @@ WM.UI.setLinkSearch(null);
 
 WM.UI.setSpecial(null);
 
+WM.UI.setSpecialList(null);
+
 WM.main();
 
 // Temporary warning about the configuration name change

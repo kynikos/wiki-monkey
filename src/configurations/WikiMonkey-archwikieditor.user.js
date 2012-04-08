@@ -54,4 +54,6 @@ WM.UI.setLinkSearch(null);
 
 WM.UI.setSpecial(null);
 
+WM.UI.setSpecialList(null);
+
 WM.main();

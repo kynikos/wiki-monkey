@@ -240,4 +240,8 @@ WM.UI.setSpecial([
     ]
 ]);
 
+WM.UI.setSpecialList([
+    ["SimpleReplace", "RegExp substitution", ["1"]]
+]);
+
 WM.main();
