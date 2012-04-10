@@ -104,6 +104,7 @@ WM.ArchWiki = new function () {
             "한국어",
             "Lietuviškai",
             "Nederlands",
+            "Polski",
             "Português",
             "Русский",
             "Slovenský",
