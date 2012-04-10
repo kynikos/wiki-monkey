@@ -97,6 +97,7 @@ WM.ArchWiki = new function () {
             "Suomi",
             "Français",
             "עברית",
+            "Hrvatski",
             "Magyar",
             "Indonesia",
             "Italiano",
