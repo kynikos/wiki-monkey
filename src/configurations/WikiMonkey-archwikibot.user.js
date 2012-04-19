@@ -27,7 +27,6 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiFixHeadings.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiNewTemplates.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiQuickReport.js
-// @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiSaveTalk.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ExpandContractions.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/MultipleLineBreaks.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/SimpleReplace.js
@@ -51,10 +50,6 @@ WM.UI.setDiff([
     [
         ["ArchWikiQuickReport", "Quick report",
          ["1", "User:" + WM.MW.getUserName() + "/RC_Patrol", "+ diff"]]
-    ],
-    [
-        ["ArchWikiSaveTalk", "Save discussion",
-         ["User:" + WM.MW.getUserName() + "/Discussions", "+ diff"]]
     ]
 ]);
 
