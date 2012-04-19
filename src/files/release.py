@@ -5,7 +5,7 @@ import os
 import re
 
 VERSION = sys.argv[1]
-PATH = "./src/configurations"
+PATH = "../configurations"
 
 
 def process_line(line):
