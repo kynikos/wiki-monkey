@@ -245,7 +245,9 @@ WM.UI.setSpecial([
                                          replace: ["[ _]\\(한국어\\)", "", ""],
                                          keepAltName: true,
                                          showIndices: false}},
-         "[[Wiki Monkey]]: automatic update"]],
+         "[[Wiki Monkey]]: automatic update"]]
+    ],
+    [
         ["ArchWikiRemoveCategorySuffix", "Remove category suffix", null]
     ]
 ]);
