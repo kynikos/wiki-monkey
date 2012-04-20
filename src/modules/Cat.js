@@ -57,12 +57,19 @@ WM.Cat = new function () {
         return getMembers(parent, "subcat", null);
     };
     
+    this.getAllMembers = function (parent) {
+        return getMembers(parent, null, null);
+    };
+    
     var getMembers = function (name, cmtype, cmcontinue) {
         var query = {action: "query",
                      list: "categorymembers",
                      cmtitle: encodeURIComponent(name),
-                     cmtype: cmtype,
                      cmlimit: 5000};
+        
+        if (cmtype) {
+            query.cmtype = cmtype;
+        }
         
         if (cmcontinue) {
             query.cmcontinue = cmcontinue;
@@ -73,7 +80,7 @@ WM.Cat = new function () {
         
         if (res["query-continue"]) {
             cmcontinue = res["query-continue"].categorymembers.cmcontinue;
-            var cont = this.getSubCategories(name, cmcontinue);
+            var cont = this.getMembers(name, cmtype, cmcontinue);
             for (var sub in cont) {
                 members[sub] = cont[sub];
             }
