@@ -35,53 +35,91 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
         else { */
             var members = WM.Cat.getAllMembers(cat);
             WM.Log.logDebug(JSON.stringify(members));  // ************************
-            recategorizeNextMember(cat, cats, index, summary, interval, info, members, 0);
+            recategorizeNextMember(cat, cats, index, summary, interval, info, title, members, 0);
         //}
     };
     
-    var recategorizeNextMember = function (cat, cats, index, summary, interval, info, members, mindex) {
+    var recategorizeNextMember = function (cat, cats, index, summary, interval, info, title, members, mindex) {
         if (members[mindex]) {
             var member = members[mindex].title;
             WM.Log.logInfo("Processing " + member + "...");
-            setTimeout(recategorizeMember, interval, [cat, cats, index, summary, interval, info, member, members, mindex]);
+            setTimeout(recategorizeMember, interval, [cat, cats, index, summary, interval, info, title, member, members, mindex]);
         }
         else {
-            checkCategory(cat, cats, index, summary, interval, info);
+            checkCategory(cat, cats, index, summary, interval, info, title);
         }
     };
     
     var recategorizeMember = function (args) {
-        var [cat, cats, index, summary, interval, info, member, members, mindex] = args;
+        var [cat, cats, index, summary, interval, info, title, member, members, mindex] = args;
         
+        var page = WM.MW.callQuery({prop: "info|revisions",
+                                    rvprop: "content|timestamp",
+                                    intoken: "edit",
+                                    titles: encodeURIComponent(member)});
         
+        var edittoken = page.edittoken;
+        var timestamp = page.revisions[0].timestamp;
+        var source = page.revisions[0]["*"];
         
+        var reTitle = cat.replace(/[-[\]{}()*+?.,:!=\\^$|#\s]/g, "\\$&");
+        reTitle = reTitle.replace(/\\ /g, "[ _]");
+        reTitle = reTitle.replace(/^Category\\:/gi, "Category\\: *");
+        reTitle = "\\[\\[ *" + reTitle + " *\\]\\]";
         
-        // ***********************************************************************
-        // \[\[ *[Cc]ategory\: *[Cc]ategory[ _]Title[ _]\(English\) *\]\]
+        var regExp = new RegExp(reTitle, "gi");
+        WM.Log.logDebug(regExp);  // *********************************************
         
+        var newText = source.replace(regExp, "[[Category:" + title + "]]");
+        /*
+        var res = WM.MW.callAPIPost({action: "edit",
+                                     bot: "1",
+                                     title: encodeURIComponent(member),
+                                     summary: encodeURIComponent(summary),
+                                     text: encodeURIComponent(newText),
+                                     basetimestamp: timestamp,
+                                     token: encodeURIComponent(edittoken)});
         
-        
-        
-        continueRecategorizingMembers(cat, cats, index, summary, interval, info, members, mindex);
+        if (!res.edit || res.edit.result != "Success") {
+            WM.Log.logError(member + " has not been updated!");
+        }
+        else { */
+            continueRecategorizingMembers(cat, cats, index, summary, interval, info, title, members, mindex);
+        //}
     };
     
-    var continueRecategorizingMembers = function (cat, cats, index, summary, interval, info, members, mindex) {
+    var continueRecategorizingMembers = function (cat, cats, index, summary, interval, info, title, members, mindex) {
         mindex++;
-        recategorizeNextMember(cat, cats, index, summary, interval, info, members, mindex);
+        recategorizeNextMember(cat, cats, index, summary, interval, info, title, members, mindex);
     };
     
-    var checkCategory = function (cat, cats, index, summary, interval, info) {
-        // Check the number of members in the new category corresponds ***********
-        // with the previous one
-        // Check the old category has 0 members **********************************
+    var checkCategory = function (cat, cats, index, summary, interval, info, title) {
+        /*var newinfo = WM.Cat.getInfo(title);
+        var error = false;
         
-        WM.Log.logDebug(JSON.stringify(info));  // *******************************
+        for (var key in info) {
+            if (info[key] != newinfo[key]) {
+                WM.Log.logError(title + " has a different number of members " + JSON.stringify(newinfo) + " than the original " + cat + " " + JSON.stringify(info));
+                error = true;
+                break;
+            }
+        }
         
-        updateBacklinks(cat, cats, index, summary, interval);
+        if (!error) {
+            var oldinfo = WM.Cat.getInfo(cat);
+            if (oldinfo.size != 0) {
+                WM.Log.logError(cat + " has not been emptied!");
+            }
+            else {*/
+                updateBacklinks(cat, cats, index, summary, interval, title);
+            /*}
+        }*/
     };
     
-    var updateBacklinks = function (cat, cats, index, summary, interval) {
+    var updateBacklinks = function (cat, cats, index, summary, interval, title) {
         // Update all the backlinks of the old category (avoid dangerous namespaces): \[\[\:[Cc]ategory\: *[Cc]ategory[ _]Title[ _]\(English\) ************************************************************************
+        
+        WM.Log.logDebug(title);  // **********************************************
         
         deleteCategory(cat, cats, index, summary, interval);
     };
@@ -141,7 +179,7 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
     };
     
     this.main = function (args) {
-        var root = "Category:About Arch";  // ************************************
+        var root = "Category:LG (English)";  // ************************************
         var interval = 2000;  // *************************************************
         WM.Log.logInfo("Removing _(English) suffix...");
         var tree = WM.Cat.getTree(root);
