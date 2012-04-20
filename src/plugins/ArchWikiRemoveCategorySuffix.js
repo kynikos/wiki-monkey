@@ -69,7 +69,9 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
         
         var regExp = new RegExp(reTitle, "gi");
         
-        var newText = source.replace(regExp, "[[Category:" + title + "]]");
+        var sTitle = title.substr(9);
+        
+        var newText = source.replace(regExp, "[[Category:" + sTitle + "]]");
         
         var res = WM.MW.callAPIPost({action: "edit",
                                      bot: "1",
@@ -147,7 +149,9 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
         
         var regExp = new RegExp(reTitle, "gi");
         
-        var newText = source.replace(regExp, "[[:Category:" + title);
+        var sTitle = title.substr(9);
+        
+        var newText = source.replace(regExp, "[[:Category:" + sTitle);
         
         var res = WM.MW.callAPIPost({action: "edit",
                                      bot: "1",
