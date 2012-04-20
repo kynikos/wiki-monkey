@@ -7,17 +7,10 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
     
     var createCategory = function (cat, cats, index) {
         // Create the renamed category with the old content ************************************************************************
-        /*var res = WM.MW.callAPIGet({action: "query",
-                                    prop: "info|revisions",
-                                    rvprop: "content|timestamp",
-                                    intoken: "edit",
-                                    titles: encodeURIComponent(cat)});
-        var pages = res.query.pages;
-        
-        var pageid;
-        for each (pageid in pages) {
-            break;
-        }
+        /*var pageid = WM.MW.callQuery({prop: "info|revisions",
+                                     rvprop: "content|timestamp",
+                                     intoken: "edit",
+                                     titles: encodeURIComponent(cat)});
         
         var edittoken = pageid.edittoken;
         var timestamp = pageid.revisions[0].timestamp;
@@ -27,7 +20,7 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
         
         
         
-        /*res = WM.MW.callAPIPost({action: "edit",
+        /*var res = WM.MW.callAPIPost({action: "edit",
                                  bot: "1",
                                  title: encodeURIComponent(toc),
                                  summary: encodeURIComponent(summary),

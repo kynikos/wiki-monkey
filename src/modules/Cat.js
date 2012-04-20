@@ -85,17 +85,9 @@ WM.Cat = new function () {
     this.getParents = function (child) {
         // Supports a maximum of 500 parents (5000 for bots)
         // Needs to implement query continue in order to support more
-        var res = WM.MW.callAPIGet({action: "query",
-                                    prop: "categories",
-                                    titles: encodeURIComponent(child),
-                                    cllimit: 5000});
-        
-        var pages = res.query.pages;
-        
-        var pageid;
-        for each (pageid in pages) {
-            break;
-        }
+        var pageid = WM.MW.callQuery({prop: "categories",
+                                     titles: encodeURIComponent(child),
+                                     cllimit: 5000});
         
         var parents = [];
         
@@ -107,16 +99,8 @@ WM.Cat = new function () {
     };
     
     this.getInfo = function (name) {
-        var res = WM.MW.callAPIGet({action: "query",
-                                    prop: "categoryinfo",
-                                    titles: encodeURIComponent(name)});
-        var pages = res.query.pages;
-        
-        var pageid;
-        for each (pageid in pages) {
-            break;
-        }
-        
+        var pageid = WM.MW.callQuery({prop: "categoryinfo",
+                                     titles: encodeURIComponent(name)});
         return pageid.categoryinfo;
     };
 };

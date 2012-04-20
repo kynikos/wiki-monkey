@@ -95,17 +95,10 @@ WM.Plugins.SimpleReplace = new function () {
     this.mainAuto = function (args, title) {
         var id = args[0];
         
-        var res = WM.MW.callAPIGet({action: "query",
-                                    prop: "info|revisions",
+        var pageid = WM.MW.callQuery({prop: "info|revisions",
                                     rvprop: "content|timestamp",
                                     intoken: "edit",
                                     titles: encodeURIComponent(title)});
-        var pages = res.query.pages;
-        
-        var pageid;
-        for each (pageid in pages) {
-            break;
-        }
         
         var edittoken = pageid.edittoken;
         var timestamp = pageid.revisions[0].timestamp;
@@ -116,7 +109,7 @@ WM.Plugins.SimpleReplace = new function () {
         if (newtext != source) {
             var summary = document.getElementById("WikiMonkey-SimpleReplace-Summary-" + id).value;
             
-            res = WM.MW.callAPIPost({action: "edit",
+            var res = WM.MW.callAPIPost({action: "edit",
                                      bot: "1",
                                      title: encodeURIComponent(title),
                                      summary: encodeURIComponent(summary),

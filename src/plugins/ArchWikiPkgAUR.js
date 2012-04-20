@@ -1,16 +1,9 @@
 WM.Plugins.ArchWikiPkgAUR = new function () {
     this.mainAuto = function (args, title) {
-        var res = WM.MW.callAPIGet({action: "query",
-                                    prop: "info|revisions",
-                                    rvprop: "content|timestamp",
-                                    intoken: "edit",
-                                    titles: encodeURIComponent(title)});
-        var pages = res.query.pages;
-        
-        var pageid;
-        for each (pageid in pages) {
-            break;
-        }
+        var pageid = WM.MW.callQuery({prop: "info|revisions",
+                                     rvprop: "content|timestamp",
+                                     intoken: "edit",
+                                     titles: encodeURIComponent(title)});
         
         var edittoken = pageid.edittoken;
         var timestamp = pageid.revisions[0].timestamp;
@@ -22,7 +15,7 @@ WM.Plugins.ArchWikiPkgAUR = new function () {
         if (newtext != source) {
             var summary = "use new package templates, see [[Help:Style]]";
             
-            res = WM.MW.callAPIPost({action: "edit",
+            var res = WM.MW.callAPIPost({action: "edit",
                                      bot: "1",
                                      title: encodeURIComponent(title),
                                      summary: encodeURIComponent(summary),

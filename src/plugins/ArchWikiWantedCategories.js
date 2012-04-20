@@ -2,16 +2,9 @@ WM.Plugins.ArchWikiWantedCategories = new function () {
     this.mainAuto = function (args, title) {
         title = title.replace(" (page does not exist)", "");
         
-        var res = WM.MW.callAPIGet({action: "query",
-                                    prop: "info",
-                                    intoken: "edit",
-                                    titles: encodeURIComponent(title)});
-        var pages = res.query.pages;
-        
-        var pageid;
-        for each (pageid in pages) {
-            break;
-        }
+        var pageid = WM.MW.callQuery({prop: "info",
+                                      intoken: "edit",
+                                      titles: encodeURIComponent(title)});
         
         var edittoken = pageid.edittoken;
         
@@ -21,7 +14,7 @@ WM.Plugins.ArchWikiWantedCategories = new function () {
             var text = "[[Category:" + language + "]]";
             var summary = "wanted category";
             
-            res = WM.MW.callAPIPost({action: "edit",
+            var res = WM.MW.callAPIPost({action: "edit",
                                      bot: "1",
                                      title: encodeURIComponent(title),
                                      summary: encodeURIComponent(summary),
