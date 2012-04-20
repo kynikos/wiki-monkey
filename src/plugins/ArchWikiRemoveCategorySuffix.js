@@ -3,45 +3,79 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
         var [cat, cats, index, interval] = args;
         var summary = "rm English suffix from [[:" + cat + "]], see [[Talk:Table of Contents#English Category Names: Capitalization and Conflict with i18n]]";
         
-        var oldpage = WM.MW.callQuery({prop: "revisions",
-                                       rvprop: "content",
+        var oldpage = WM.MW.callQuery({prop: 'revisions|categoryinfo',
+                                       rvprop: 'content',
                                        titles: encodeURIComponent(cat)});
         
-        var text = oldpage.revisions[0]["*"];
+        var text = oldpage.revisions[0]['*'];
+        var info = oldpage.categoryinfo;
         
         var title = cat.slice(0, -10);
         
-        // Bisogna modificare le categorie parenti *******************************
+        // The suffix should have already been removed from all the parent
+        // categories
         
-        var newpage = WM.MW.callQuery({prop: "info",
-                                       intoken: "edit",
+        var newpage = WM.MW.callQuery({prop: 'info',
+                                       intoken: 'edit',
                                        titles: encodeURIComponent(title)});
         
         var edittoken = newpage.edittoken;
         /*
-        var res = WM.MW.callAPIPost({action: "edit",
-                                 bot: "1",
+        var res = WM.MW.callAPIPost({action: 'edit',
+                                 bot: '1',
                                  title: encodeURIComponent(title),
                                  summary: encodeURIComponent(summary),
                                  text: encodeURIComponent(text),
-                                 createonly: "1",
+                                 createonly: '1',
                                  token: encodeURIComponent(edittoken)});
         
-        if (!res.edit || res.edit.result != 'Success') {
-            WM.Log.logError(title + ' has not been created!');
+        if (!res.edit || res.edit.result != "Success") {
+            WM.Log.logError(title + " has not been created!");
         }
-        */
-        setTimeout(recategorizeMembers, interval, [cat, cats, index, summary, interval]);
+        else { */
+            var members = WM.Cat.getAllMembers(cat);
+            WM.Log.logDebug(JSON.stringify(members));  // ************************
+            recategorizeNextMember(cat, cats, index, summary, interval, info, members, 0);
+        //}
     };
     
-    var recategorizeMembers = function (args) {
-        var [cat, cats, index, summary, interval] = args;
+    var recategorizeNextMember = function (cat, cats, index, summary, interval, info, members, mindex) {
+        if (members[mindex]) {
+            var member = members[mindex].title;
+            WM.Log.logInfo("Processing " + member + "...");
+            setTimeout(recategorizeMember, interval, [cat, cats, index, summary, interval, info, member, members, mindex]);
+        }
+        else {
+            checkCategory(cat, cats, index, summary, interval, info);
+        }
+    };
+    
+    var recategorizeMember = function (args) {
+        var [cat, cats, index, summary, interval, info, member, members, mindex] = args;
         
-        // Remember the number of members of the old category ************************************************************************
-        // Recategorize the members of the old category: \[\[ *[Cc]ategory\: *[Cc]ategory[ _]Title[ _]\(English\) *\]\]
-        // Check the number of members in the new category corresponds with the previous one
         
-        // var info = WM.Cat.getInfo(cat);
+        
+        
+        // ***********************************************************************
+        // \[\[ *[Cc]ategory\: *[Cc]ategory[ _]Title[ _]\(English\) *\]\]
+        
+        
+        
+        
+        continueRecategorizingMembers(cat, cats, index, summary, interval, info, members, mindex);
+    };
+    
+    var continueRecategorizingMembers = function (cat, cats, index, summary, interval, info, members, mindex) {
+        mindex++;
+        recategorizeNextMember(cat, cats, index, summary, interval, info, members, mindex);
+    };
+    
+    var checkCategory = function (cat, cats, index, summary, interval, info) {
+        // Check the number of members in the new category corresponds ***********
+        // with the previous one
+        // Check the old category has 0 members **********************************
+        
+        WM.Log.logDebug(JSON.stringify(info));  // *******************************
         
         updateBacklinks(cat, cats, index, summary, interval);
     };
@@ -59,33 +93,33 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
     };
     
     var iterate = function (cats, index, interval) {
-        var cat = cats[index];
-        
-        WM.Log.logInfo("Processing " + cat + "...");
-        
-        if (cat.substr(-10) == " (English)") {
-            setTimeout(createCategory, interval, [cat, cats, index, interval]);
+        if (cats[index]) {
+            var cat = cats[index];
+            
+            WM.Log.logInfo("Processing " + cat + "...");
+            
+            if (cat.substr(-10) == " (English)") {
+                setTimeout(createCategory, interval, [cat, cats, index, interval]);
+            }
+            else {
+                continueIteration(cats, index, interval);
+            }
         }
         else {
-            continueIteration(cats, index, interval);
+            WM.Log.logInfo("_(English) suffix removed, check the log and the hsitory for problems");
         }
     };
     
     var continueIteration = function (cats, index, interval) {
         index++;
-        if (cats[index]) {
-            iterate(cats, index, interval);
-        }
-        else {
-            WM.Log.logInfo('_(English) suffix removed, check the log and the hsitory for problems');
-        }
+        iterate(cats, index, interval);
     };
     
     var flattenTree = function (tree) {
         var siblings = [];
         for (var cat in tree) {
             siblings.push(cat);
-            if (tree[cat] != "loop") {
+            if (tree[cat] != 'loop') {
                 siblings = siblings.concat(flattenTree(tree[cat]));
             }
         }
@@ -96,7 +130,7 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
         var cats = [];
         var dict = {};
         
-        for (var cat in mcats) {
+        for each (var cat in mcats) {
             if (!dict[cat]) {
                 cats.push(cat);
                 dict[cat] = true;
@@ -107,9 +141,9 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
     };
     
     this.main = function (args) {
-        var root = 'Category:About Arch';  // ************************************
+        var root = "Category:About Arch";  // ************************************
         var interval = 2000;  // *************************************************
-        WM.Log.logInfo('Removing _(English) suffix...');
+        WM.Log.logInfo("Removing _(English) suffix...");
         var tree = WM.Cat.getTree(root);
         var mcats = flattenTree(tree);
         var cats = removeDuplicates(mcats);
