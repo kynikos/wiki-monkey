@@ -2,6 +2,7 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
     var createCategory = function (args) {
         var [cat, cats, index, interval] = args;
         var summary = "rm English suffix from [[:" + cat + "]], see [[Talk:Table of Contents#English Category Names: Capitalization and Conflict with i18n]]";
+        // Controlla se il summary va bene per tutti gli edit/delete *************
         
         var oldpage = WM.MW.callQuery({prop: 'revisions|categoryinfo',
                                        rvprop: 'content',
@@ -63,8 +64,8 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
         var source = page.revisions[0]["*"];
         
         var reTitle = cat.replace(/[-[\]{}()*+?.,:!=\\^$|#\s]/g, "\\$&");
-        reTitle = reTitle.replace(/\\ /g, "[ _]");
-        reTitle = reTitle.replace(/^Category\\:/gi, "Category\\: *");
+        reTitle = reTitle.replace(/\\ /g, "[ _]+");
+        reTitle = reTitle.replace(/^Category\\:/gi, "Category *\\: *");
         reTitle = "\\[\\[ *" + reTitle + " *\\]\\]";
         
         var regExp = new RegExp(reTitle, "gi");
@@ -111,23 +112,93 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
                 WM.Log.logError(cat + " has not been emptied!");
             }
             else {*/
-                updateBacklinks(cat, cats, index, summary, interval, title);
+                var backlinks = WM.MW.getBacklinks(cat, null, null);
+                WM.Log.logDebug(JSON.stringify(backlinks));  // ************************
+                updateNextBacklink(cat, cats, index, summary, interval, info, title, backlinks, 0);
             /*}
         }*/
     };
     
-    var updateBacklinks = function (cat, cats, index, summary, interval, title) {
-        // Update all the backlinks of the old category (avoid dangerous namespaces): \[\[\:[Cc]ategory\: *[Cc]ategory[ _]Title[ _]\(English\) ************************************************************************
+    var updateNextBacklink = function (cat, cats, index, summary, interval, info, title, backlinks, bindex) {
+        if (backlinks[bindex]) {
+            var backlink = backlinks[bindex].title;
+            
+            
+            
+            // Avoid dangerous namespaces ********************************************
+            
+            
+            
+            WM.Log.logInfo("Processing " + backlink + "...");
+            setTimeout(updateBacklink, interval, [cat, cats, index, summary, interval, info, title, backlink, backlinks, bindex]);
+        }
+        else {
+            deleteCategory(cat, cats, index, summary, interval);
+        }
+    };
+    
+    var updateBacklink = function (args) {
+        var [cat, cats, index, summary, interval, info, title, backlink, backlinks, bindex] = args;
         
-        WM.Log.logDebug(title);  // **********************************************
+        var page = WM.MW.callQuery({prop: "info|revisions",
+                                    rvprop: "content|timestamp",
+                                    intoken: "edit",
+                                    titles: encodeURIComponent(backlink)});
         
-        deleteCategory(cat, cats, index, summary, interval);
+        var edittoken = page.edittoken;
+        var timestamp = page.revisions[0].timestamp;
+        var source = page.revisions[0]["*"];
+        
+        var reTitle = cat.replace(/[-[\]{}()*+?.,:!=\\^$|#\s]/g, "\\$&");
+        reTitle = reTitle.replace(/\\ /g, "[ _]+");
+        reTitle = reTitle.replace(/^Category\\:/gi, "Category *\\: *");
+        reTitle = "\\[\\[\\: *" + reTitle;
+        
+        var regExp = new RegExp(reTitle, "gi");
+        WM.Log.logDebug(regExp);  // *********************************************
+        
+        var newText = source.replace(regExp, "[[:Category:" + title);
+        /*
+        var res = WM.MW.callAPIPost({action: "edit",
+                                     bot: "1",
+                                     title: encodeURIComponent(backlink),
+                                     summary: encodeURIComponent(summary),
+                                     text: encodeURIComponent(newText),
+                                     basetimestamp: timestamp,
+                                     token: encodeURIComponent(edittoken)});
+        
+        if (!res.edit || res.edit.result != "Success") {
+            WM.Log.logError(backlink + " has not been updated!");
+        }
+        else { */
+            continueUpdatingBacklinks(cat, cats, index, summary, interval, info, title, backlinks, bindex);
+        //}
+    };
+    
+    var continueUpdatingBacklinks = function (cat, cats, index, summary, interval, info, title, backlinks, bindex) {
+        bindex++;
+        updateNextBacklink(cat, cats, index, summary, interval, info, title, backlinks, bindex);
     };
     
     var deleteCategory = function (cat, cats, index, summary, interval) {
-        // Delete the old category ************************************************************************
+        var page = WM.MW.callQuery({prop: 'info',
+                                    intoken: 'delete',
+                                    titles: encodeURIComponent(cat)});
         
-        continueIteration(cats, index, interval);
+        var edittoken = page.edittoken;
+        /*
+        var res = WM.MW.callAPIPost({action: 'delete',
+                                     bot: '1',
+                                     title: encodeURIComponent(cat),
+                                     token: encodeURIComponent(edittoken),
+                                     reason: encodeURIComponent(summary)});
+        
+        if (!res.edit || res.edit.result != "Success") {
+            WM.Log.logError(cat + " has not been deleted!");
+        }
+        else { */
+            continueIteration(cats, index, interval);
+        //}
     };
     
     var iterate = function (cats, index, interval) {
@@ -144,7 +215,7 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
             }
         }
         else {
-            WM.Log.logInfo("_(English) suffix removed, check the log and the hsitory for problems");
+            WM.Log.logInfo("_(English) suffix removed\nCheck the log and the history for problems\nUpdate the backlinks that have not been updated");
         }
     };
     

@@ -101,4 +101,32 @@ WM.MW = new function () {
         }
         return false;
     };
+    
+    this.getBacklinks = function (bltitle, blnamespace, blcontinue) {
+        var query = {action: "query",
+                     list: "backlinks",
+                     bltitle: encodeURIComponent(bltitle),
+                     bllimit: 5000};
+        
+        if (blnamespace) {
+            query.blnamespace = blnamespace;
+        }
+        
+        if (blcontinue) {
+            query.blcontinue = blcontinue;
+        }
+        
+        var res = WM.MW.callAPIGet(query);
+        var backlinks = res.query.backlinks;
+        
+        if (res["query-continue"]) {
+            blcontinue = res["query-continue"].backlinks.blcontinue;
+            var cont = this.getBacklinks(bltitle, blnamespace, blcontinue);
+            for (var sub in cont) {
+                backlinks[sub] = cont[sub];
+            }
+        }
+        
+        return backlinks;
+    };
 };
