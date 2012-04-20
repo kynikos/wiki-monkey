@@ -1,8 +1,7 @@
 WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
     var createCategory = function (args) {
         var [cat, cats, index, interval, blnamespace] = args;
-        var summary = "remove English suffix from [[:" + cat + "]], see [[Talk:Table of Contents#English Category Names: Capitalization and Conflict with i18n]]";
-        // Controlla se il summary va bene per tutti gli edit/delete *************
+        var summary = "prepare to move here the members of [[:" + cat + "]], see [[Talk:Table of Contents#English Category Names: Capitalization and Conflict with i18n]]";
         
         var oldpage = WM.MW.callQuery({prop: 'revisions|categoryinfo',
                                        rvprop: 'content',
@@ -21,7 +20,7 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
                                        titles: encodeURIComponent(title)});
         
         var edittoken = newpage.edittoken;
-        /*
+        
         var res = WM.MW.callAPIPost({action: 'edit',
                                  bot: '1',
                                  title: encodeURIComponent(title),
@@ -33,25 +32,26 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
         if (!res.edit || res.edit.result != "Success") {
             WM.Log.logError(title + " has not been created!");
         }
-        else { */
+        else {
             var members = WM.Cat.getAllMembers(cat);
-            recategorizeNextMember(cat, cats, index, summary, interval, blnamespace, info, title, members, 0);
-        //}
+            recategorizeNextMember(cat, cats, index, interval, blnamespace, info, title, members, 0);
+        }
     };
     
-    var recategorizeNextMember = function (cat, cats, index, summary, interval, blnamespace, info, title, members, mindex) {
+    var recategorizeNextMember = function (cat, cats, index, interval, blnamespace, info, title, members, mindex) {
         if (members[mindex]) {
             var member = members[mindex].title;
             WM.Log.logInfo("Processing member " + member + "...");
-            setTimeout(recategorizeMember, interval, [cat, cats, index, summary, interval, blnamespace, info, title, member, members, mindex]);
+            setTimeout(recategorizeMember, interval, [cat, cats, index, interval, blnamespace, info, title, member, members, mindex]);
         }
         else {
-            checkCategory(cat, cats, index, summary, interval, blnamespace, info, title);
+            checkCategory(cat, cats, index, interval, blnamespace, info, title);
         }
     };
     
     var recategorizeMember = function (args) {
-        var [cat, cats, index, summary, interval, blnamespace, info, title, member, members, mindex] = args;
+        var [cat, cats, index, interval, blnamespace, info, title, member, members, mindex] = args;
+        var summary = "remove language suffix from [[:" + cat + "]], see [[Talk:Table of Contents#English Category Names: Capitalization and Conflict with i18n]]";
         
         var page = WM.MW.callQuery({prop: "info|revisions",
                                     rvprop: "content|timestamp",
@@ -70,7 +70,7 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
         var regExp = new RegExp(reTitle, "gi");
         
         var newText = source.replace(regExp, "[[Category:" + title + "]]");
-        /*
+        
         var res = WM.MW.callAPIPost({action: "edit",
                                      bot: "1",
                                      title: encodeURIComponent(member),
@@ -82,18 +82,18 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
         if (!res.edit || res.edit.result != "Success") {
             WM.Log.logError(member + " has not been updated!");
         }
-        else { */
-            continueRecategorizingMembers(cat, cats, index, summary, interval, blnamespace, info, title, members, mindex);
-        //}
+        else {
+            continueRecategorizingMembers(cat, cats, index, interval, blnamespace, info, title, members, mindex);
+        }
     };
     
-    var continueRecategorizingMembers = function (cat, cats, index, summary, interval, blnamespace, info, title, members, mindex) {
+    var continueRecategorizingMembers = function (cat, cats, index, interval, blnamespace, info, title, members, mindex) {
         mindex++;
-        recategorizeNextMember(cat, cats, index, summary, interval, blnamespace, info, title, members, mindex);
+        recategorizeNextMember(cat, cats, index, interval, blnamespace, info, title, members, mindex);
     };
     
-    var checkCategory = function (cat, cats, index, summary, interval, blnamespace, info, title) {
-        /*var newinfo = WM.Cat.getInfo(title);
+    var checkCategory = function (cat, cats, index, interval, blnamespace, info, title) {
+        var newinfo = WM.Cat.getInfo(title);
         var error = false;
         
         for (var key in info) {
@@ -109,26 +109,27 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
             if (oldinfo.size != 0) {
                 WM.Log.logError(cat + " has not been emptied!");
             }
-            else {*/
+            else {
                 var backlinks = WM.MW.getBacklinks(cat, blnamespace, null);
-                updateNextBacklink(cat, cats, index, summary, interval, blnamespace, info, title, backlinks, 0);
-            /*}
-        }*/
+                updateNextBacklink(cat, cats, index, interval, blnamespace, info, title, backlinks, 0);
+            }
+        }
     };
     
-    var updateNextBacklink = function (cat, cats, index, summary, interval, blnamespace, info, title, backlinks, bindex) {
+    var updateNextBacklink = function (cat, cats, index, interval, blnamespace, info, title, backlinks, bindex) {
         if (backlinks[bindex]) {
             var backlink = backlinks[bindex].title;
             WM.Log.logInfo("Processing backlink " + backlink + "...");
-            setTimeout(updateBacklink, interval, [cat, cats, index, summary, interval, blnamespace, info, title, backlink, backlinks, bindex]);
+            setTimeout(updateBacklink, interval, [cat, cats, index, interval, blnamespace, info, title, backlink, backlinks, bindex]);
         }
         else {
-            deleteCategory(cat, cats, index, summary, interval, blnamespace);
+            deleteCategory(cat, cats, index, interval, blnamespace, title);
         }
     };
     
     var updateBacklink = function (args) {
-        var [cat, cats, index, summary, interval, blnamespace, info, title, backlink, backlinks, bindex] = args;
+        var [cat, cats, index, interval, blnamespace, info, title, backlink, backlinks, bindex] = args;
+        var summary = "removed language suffix from [[:" + cat + "]], see [[Talk:Table of Contents#English Category Names: Capitalization and Conflict with i18n]]";
         
         var page = WM.MW.callQuery({prop: "info|revisions",
                                     rvprop: "content|timestamp",
@@ -147,7 +148,7 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
         var regExp = new RegExp(reTitle, "gi");
         
         var newText = source.replace(regExp, "[[:Category:" + title);
-        /*
+        
         var res = WM.MW.callAPIPost({action: "edit",
                                      bot: "1",
                                      title: encodeURIComponent(backlink),
@@ -159,23 +160,25 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
         if (!res.edit || res.edit.result != "Success") {
             WM.Log.logError(backlink + " has not been updated!");
         }
-        else { */
-            continueUpdatingBacklinks(cat, cats, index, summary, interval, blnamespace, info, title, backlinks, bindex);
-        //}
+        else {
+            continueUpdatingBacklinks(cat, cats, index, interval, blnamespace, info, title, backlinks, bindex);
+        }
     };
     
-    var continueUpdatingBacklinks = function (cat, cats, index, summary, interval, blnamespace, info, title, backlinks, bindex) {
+    var continueUpdatingBacklinks = function (cat, cats, index, interval, blnamespace, info, title, backlinks, bindex) {
         bindex++;
-        updateNextBacklink(cat, cats, index, summary, interval, blnamespace, info, title, backlinks, bindex);
+        updateNextBacklink(cat, cats, index, interval, blnamespace, info, title, backlinks, bindex);
     };
     
-    var deleteCategory = function (cat, cats, index, summary, interval, blnamespace) {
+    var deleteCategory = function (cat, cats, index, interval, blnamespace, title) {
+        var summary = "moved to [[:" + title + "]], see [[Talk:Table of Contents#English Category Names: Capitalization and Conflict with i18n]]";
+        
         var page = WM.MW.callQuery({prop: 'info',
                                     intoken: 'delete',
                                     titles: encodeURIComponent(cat)});
         
         var edittoken = page.edittoken;
-        /*
+        
         var res = WM.MW.callAPIPost({action: 'delete',
                                      bot: '1',
                                      title: encodeURIComponent(cat),
@@ -185,9 +188,9 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
         if (!res.edit || res.edit.result != "Success") {
             WM.Log.logError(cat + " has not been deleted!");
         }
-        else { */
+        else {
             continueIteration(cats, index, interval, blnamespace);
-        //}
+        }
     };
     
     var iterate = function (cats, index, interval, blnamespace) {
@@ -239,8 +242,8 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
     };
     
     this.main = function (args) {
-        var root = "Category:System recovery (English)";  // ************************************
-        var interval = 2000;  // *************************************************
+        var root = "Category:English";
+        var interval = 8000;
         var blnamespace = "0|1|4|5|6|7|10|11|12|13|14|15";
         WM.Log.logInfo("Removing _(English) suffix...");
         var tree = WM.Cat.getTree(root);
