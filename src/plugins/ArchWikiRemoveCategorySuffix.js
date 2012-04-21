@@ -234,8 +234,10 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
     var removeDuplicates = function (mcats) {
         var cats = [];
         var dict = {};
+        var cat;
         
-        for each (var cat in mcats) {
+        for (var c in mcats) {
+            cat = mcats[c];
             if (!dict[cat]) {
                 cats.push(cat);
                 dict[cat] = true;

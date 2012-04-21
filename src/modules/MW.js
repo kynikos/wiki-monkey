@@ -66,10 +66,10 @@ WM.MW = new function () {
         params.action = "query";
         var res = this.callAPIGet(params);
         var pages = res.query.pages;
-        for each (var pageid in pages) {
+        for (var id in pages) {
             break;
         }
-        return pageid;
+        return pages[id];
     };
     
     // Never use this attribute directly, always use getUserInfo!!!
