@@ -23,8 +23,8 @@ var WM = new function () {
         var qa = location.search.substr(1).split('&');
         var qd = new Object();
         var s = new Array();
-        for each (var p in qa) {
-            s = p.split('=');
+        for (var p in qa) {
+            s = qa[p].split('=');
             qd[s[0]] = s[1];
         }
         return qd;
@@ -39,7 +39,9 @@ var WM = new function () {
         
         // Firefox and other browsers split long text into multiple text nodes
         var text = "";
-        for each (var child in element.childNodes) {
+        var child;
+        for (var c in element.childNodes) {
+            child = element.childNodes[c];
             if (child.nodeType == 3) {
                 text += child.nodeValue;
             }

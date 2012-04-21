@@ -4,7 +4,10 @@ WM.Plugins.ArchWikiQuickReport = new function () {
         var article = args[1];
         
         var select = document.createElement('select');
-        for each (var value in ["&lt;TYPE&gt;", "content", "style"]) {
+        var types = ["&lt;TYPE&gt;", "content", "style"];
+        var value;
+        for (var v in types) {
+            value = types[v];
             option = document.createElement('option');
             option.setAttribute('value', value);
             option.innerHTML = value;

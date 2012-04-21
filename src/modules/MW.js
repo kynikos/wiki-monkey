@@ -94,8 +94,8 @@ WM.MW = new function () {
     
     this.isUserBot = function () {
         var groups = this.getUserInfo().query.userinfo.groups;
-        for each (var g in groups) {
-            if (g == 'bot') {
+        for (var g in groups) {
+            if (groups[g] == 'bot') {
                 return true;
             }
         }

@@ -36,8 +36,8 @@ WM.Cat = new function () {
         ancestors[base] = true;
         var cat, subAncestors;
         
-        for each (var subCat in subCats) {
-            cat = subCat.title;
+        for (var s in subCats) {
+            cat = subCats[s].title;
             
             // Protect from category loops
             if (ancestors[cat]) {
@@ -98,8 +98,8 @@ WM.Cat = new function () {
         
         var parents = [];
         
-        for each (var cat in pageid.categories) {
-            parents.push(cat.title);
+        for (var cat in pageid.categories) {
+            parents.push(pageid.categories[cat].title);
         }
         
         return parents;

@@ -66,8 +66,10 @@ WM.Plugins.ArchWikiFixHeader = new function () {
             }
         }
         
+        var sw;
         var behaviorSwitches = [];
-        for each (var sw in elements.behaviorswitches) {
+        for (var s in elements.behaviorswitches) {
+            sw = elements.behaviorswitches[s];
             if (behaviorSwitches.indexOf(sw[1]) == -1) {
                 behaviorSwitches.push(sw[1]);
             }
@@ -100,8 +102,9 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         }
         
         var categories = [];
-        var lang;
-        for each (var cat in elements.categories) {
+        var cat, lang;
+        for (var c in elements.categories) {
+            cat = elements.categories[c];
             lang = decodeURIComponent(cat[2]);
             if (!WM.ArchWiki.isCategoryLanguage(lang)) {
                 lang = decodeURIComponent(cat[4]);
@@ -131,8 +134,10 @@ WM.Plugins.ArchWikiFixHeader = new function () {
             WM.Log.logWarning("The article is not categorized");
         }
         
+        var link;
         var interwiki = [];
-        for each (var link in elements.interwiki) {
+        for (var l in elements.interwiki) {
+            link = elements.interwiki[l];
             if (interwiki.indexOf(link[1]) == -1) {
                 interwiki.push(link[1]);
             }

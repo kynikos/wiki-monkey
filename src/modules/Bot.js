@@ -47,9 +47,9 @@ WM.Bot = new function () {
         var selectFunctions = document.createElement('select');
         selectFunctions.id = 'WikiMonkeyBot-PluginSelect';
         
-        for each (var f in functions) {
+        for (var f in functions) {
             option = document.createElement('option');
-            option.innerHTML = f[1];
+            option.innerHTML = functions[f][1];
             selectFunctions.appendChild(option);
         }
         
@@ -105,9 +105,9 @@ WM.Bot = new function () {
         var selectLists = document.createElement('select');
         selectLists.id = 'WikiMonkeyBot-ListSelect';
         
-        for each (var l in lists) {
+        for (var l in lists) {
             option = document.createElement('option');
-            option.innerHTML = l[2];
+            option.innerHTML = lists[l][2];
             selectLists.appendChild(option);
         }
         
@@ -150,8 +150,10 @@ WM.Bot = new function () {
         inverse.type = 'checkbox';
         inverse.id = 'WikiMonkeyBotInverse';
         
-        for each (var elem in [filter, inverse]) {
-            elem.addEventListener("change", function () {
+        var elems = [filter, inverse];
+        
+        for (var e in elems) {
+            elems[e].addEventListener("change", function () {
                 WM.Bot.disableStartBot('Filters have changed, preview the selection');
             }, false);
         }
@@ -276,9 +278,10 @@ WM.Bot = new function () {
     };
     
     this.setEnableControls = function (flag) {
-        for each (var elem in document.getElementById('WikiMonkeyBot').getElementsByTagName('fieldset')) {
+        var fsets = document.getElementById('WikiMonkeyBot').getElementsByTagName('fieldset');
+        for (var f in fsets) {
             // HTML5-compliant
-            elem.disabled = flag;
+            fsets[f].disabled = flag;
         }
     };
     
@@ -303,8 +306,9 @@ WM.Bot = new function () {
         var rules = document.getElementById('WikiMonkeyBotFilter').value.split('\n');
         var inverse = document.getElementById('WikiMonkeyBotInverse').checked;
         var response = (inverse) ? true : false;
-        var firstSlash, lastSlash, pattern, modifiers, regexp, test, negative;
-        for each (rule in rules) {
+        var rule, firstSlash, lastSlash, pattern, modifiers, regexp, test, negative;
+        for (var r in rules) {
+            rule = rules[r];
             if (rule) {
                 firstSlash = rule.indexOf('/');
                 lastSlash = rule.lastIndexOf('/');
@@ -338,8 +342,8 @@ WM.Bot = new function () {
         if (WM.Bot.selections.list.previous) {
             items = WM.Bot.selections.list.previous[0].getElementsByTagName('li');
             linkId = WM.Bot.selections.list.previous[1];
-            for each (var item in items) {
-                link = item.getElementsByTagName('a')[linkId];
+            for (var i in items) {
+                link = items[i].getElementsByTagName('a')[linkId];
                 link.className = '';
             }
         }
@@ -348,8 +352,8 @@ WM.Bot = new function () {
         linkId = WM.Bot.selections.list.current[1];
         var enable = false;
         var N = 0;
-        for each (var item in items) {
-            link = item.getElementsByTagName('a')[linkId];
+        for (var i in items) {
+            link = items[i].getElementsByTagName('a')[linkId];
             if (canProcessPage(link.title)) {
                 link.className = 'WikiMonkeyBotSelected';
                 enable = true;
@@ -471,13 +475,15 @@ WM.Bot = new function () {
         GM_setValue('foo' + 'bar');
         
         // Alert all stored values
-        for each (var val in GM_listValues()) {
-          alert(val + ' : ' + GM_getValue(val));
+        for (var v in GM_listValues()) {
+            var val = GM_listValues()[v];
+            alert(val + ' : ' + GM_getValue(val));
         }
         
         // Reset array
-        for each (var key in GM_listValues()) {
-          GM_deleteValue(key);
+        for (var v in GM_listValues()) {
+            var val = GM_listValues()[v];
+            GM_deleteValue(val);
         }
     };
 };

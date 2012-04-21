@@ -121,8 +121,10 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
         
         var newtext = "";
         var prevId = 0;
+        var section;
         
-        for each (var section in info.sections) {
+        for (var s in info.sections) {
+            section = info.sections[s];
             newtext += source.substring(prevId, section.index);
             newtext += new Array(section.tocLevel + increaseLevel + 1).join("=");
             newtext += section.line.substr(section.level, section.length1 - 2 * section.level);

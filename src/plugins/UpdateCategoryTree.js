@@ -35,7 +35,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
     };
     
     var recurse = function (tree, params, altNames, indent, baseIndex, showIndex, ancestors) {
-        var altName, info, parents, subAncestors, subIndent, index, idString, subIndex;
+        var altName, info, parents, subAncestors, subIndent, index, idString, subIndex, par;
         var id = 1;
         var text = "";
         
@@ -60,7 +60,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
                 
                 if (parents.length > 1) {
                     outer_loop:
-                    for each (var par in parents) {
+                    for (var p in parents) {
+                        par = parents[p];
                         for (var anc in ancestors) {
                             if (par == anc) {
                                 parents.splice(parents.indexOf(par), 1);
