@@ -181,16 +181,16 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
                                     intoken: 'delete',
                                     titles: encodeURIComponent(cat)});
         
-        var edittoken = page.edittoken;
+        var deletetoken = page.deletetoken;
         
         var res = WM.MW.callAPIPost({action: 'delete',
                                      bot: '1',
                                      title: encodeURIComponent(cat),
-                                     token: encodeURIComponent(edittoken),
+                                     token: encodeURIComponent(deletetoken),
                                      reason: encodeURIComponent(summary)});
         
-        if (!res.edit || res.edit.result != "Success") {
-            WM.Log.logError(cat + " has not been deleted!");
+        if (!res['delete']) {
+            WM.Log.logError(cat + " has not been deleted!\n" + res['error']['info'] + " (" + res['error']['code'] + ")");
         }
         else {
             continueIteration(cats, index, interval, blnamespace);
