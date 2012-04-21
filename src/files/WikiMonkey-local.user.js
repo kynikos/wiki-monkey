@@ -248,14 +248,14 @@ WM.UI.setSpecial([
          "[[Wiki Monkey]]: automatic update"]]
     ],
     [
-        ["ArchWikiRemoveCategorySuffix", "Remove category suffix", null]
+        ["ArchWikiRemoveCategorySuffix", "Remove category suffix",
+         ["Category:English"]]
     ]
 ]);
 
 WM.UI.setSpecialList([
     ["SimpleReplace", "RegExp substitution", ["1"]],
-    ["ArchWikiWantedCategories", "Create wanted categories",
-     ["Category:English"]]
+    ["ArchWikiWantedCategories", "Create wanted categories", null]
 ]);
 
 WM.main();
