@@ -254,7 +254,8 @@ WM.UI.setSpecial([
 
 WM.UI.setSpecialList([
     ["SimpleReplace", "RegExp substitution", ["1"]],
-    ["ArchWikiWantedCategories", "Create wanted categories", null]
+    ["ArchWikiWantedCategories", "Create wanted categories",
+     ["Category:English"]]
 ]);
 
 WM.main();

@@ -246,7 +246,7 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
     };
     
     this.main = function (args) {
-        var root = "Category:English";
+        var root = args[0];
         var interval = 8000;
         var blnamespace = "0|1|4|5|6|7|10|11|12|13|14|15";
         WM.Log.logInfo("Removing _(English) suffix...");
