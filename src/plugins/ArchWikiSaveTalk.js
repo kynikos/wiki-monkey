@@ -41,7 +41,7 @@ WM.Plugins.ArchWikiSaveTalk = new function () {
             WM.Log.logInfo('Diff correctly appended to ' + article);
         }
         else {
-            WM.Log.logError('The diff has not been appended!');
+            WM.Log.logError('The diff has not been appended!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
         }
     };
 };

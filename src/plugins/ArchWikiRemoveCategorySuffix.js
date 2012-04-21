@@ -30,7 +30,7 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
                                  token: encodeURIComponent(edittoken)});
         
         if (!res.edit || res.edit.result != "Success") {
-            WM.Log.logError(title + " has not been created!");
+            WM.Log.logError(title + " has not been created!\n" + res['error']['info'] + " (" + res['error']['code'] + ")");
         }
         else {
             var members = WM.Cat.getAllMembers(cat);
@@ -82,7 +82,7 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
                                      token: encodeURIComponent(edittoken)});
         
         if (!res.edit || res.edit.result != "Success") {
-            WM.Log.logError(member + " has not been updated!");
+            WM.Log.logError(member + " has not been updated!\n" + res['error']['info'] + " (" + res['error']['code'] + ")");
         }
         else {
             continueRecategorizingMembers(cat, cats, index, interval, blnamespace, info, title, members, mindex);
@@ -162,7 +162,7 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
                                      token: encodeURIComponent(edittoken)});
         
         if (!res.edit || res.edit.result != "Success") {
-            WM.Log.logError(backlink + " has not been updated!");
+            WM.Log.logError(backlink + " has not been updated!\n" + res['error']['info'] + " (" + res['error']['code'] + ")");
         }
         else {
             continueUpdatingBacklinks(cat, cats, index, interval, blnamespace, info, title, backlinks, bindex);

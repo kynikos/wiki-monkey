@@ -153,7 +153,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
                         WM.Log.logInfo(toc + ' correctly updated');
                     }
                     else {
-                        WM.Log.logError(toc + ' has not been updated!');
+                        WM.Log.logError(toc + ' has not been updated!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
                     }
                 }
                 else {

@@ -23,7 +23,13 @@ WM.Plugins.ArchWikiPkgAUR = new function () {
                                      basetimestamp: timestamp,
                                      token: encodeURIComponent(edittoken)});
         
-            return (res.edit && res.edit.result == 'Success') ? true : false;
+            if (res.edit && res.edit.result == 'Success') {
+                return true;
+            }
+            else {
+                WM.Log.logError(res['error']['info'] + " (" + res['error']['code'] + ")");
+                return false;
+            }
         }
         else {
             return true;
