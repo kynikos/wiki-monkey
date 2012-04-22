@@ -22,7 +22,8 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
                 var parser = new DOMParser();
                 page = parser.parseFromString(res.responseText, "text/xml");
                 //page = $.parseXML(res.responseText);
-                for (var aaa in page.childNodes[0].childNodes) {
+                var nodes = page.childNodes[0].childNodes;
+                for (var aaa = 0; nodes.length; aaa++) {
                     WM.Log.logDebug(aaa);  // ****************************************
                 }
             }

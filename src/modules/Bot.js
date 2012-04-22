@@ -249,37 +249,15 @@ WM.Bot = new function () {
     
     this.disableControls = function () {
         this.setEnableControls(true);
-        
-        //This was the code for doing this previously
-        /*document.getElementById('WikiMonkeyBot-PluginSelect').disabled = true;
-        disabledControls.push(document.getElementById('WikiMonkeyBot-PluginSelect'));
-        
-        var baseNodes = [document.getElementById('WikiMonkeyBotFunction'),
-                     document.getElementById('WikiMonkeyBotFilter').parentNode]
-        for each (var base in baseNodes) {
-            for each (var tag in ['input', 'button', 'select', 'textarea']) {
-                for each (var elem in base.getElementsByTagName(tag)) {
-                    if (!elem.disabled) {
-                        elem.disabled = true;
-                        disabledControls.push(elem);
-                    }
-                } 
-            }
-        }*/
     };
     
     this.reEnableControls = function () {
         this.setEnableControls(false);
-        
-        //This was the code for doing this previously
-        /*for each (var elem in disabledControls) {
-            elem.disabled = false;
-        }*/
     };
     
     this.setEnableControls = function (flag) {
         var fsets = document.getElementById('WikiMonkeyBot').getElementsByTagName('fieldset');
-        for (var f in fsets) {
+        for (var f = 0; f < fsets.length; f++) {
             // HTML5-compliant
             fsets[f].disabled = flag;
         }
@@ -342,7 +320,7 @@ WM.Bot = new function () {
         if (WM.Bot.selections.list.previous) {
             items = WM.Bot.selections.list.previous[0].getElementsByTagName('li');
             linkId = WM.Bot.selections.list.previous[1];
-            for (var i in items) {
+            for (var i = 0; i < items.length; i++) {
                 link = items[i].getElementsByTagName('a')[linkId];
                 link.className = '';
             }
@@ -352,7 +330,7 @@ WM.Bot = new function () {
         linkId = WM.Bot.selections.list.current[1];
         var enable = false;
         var N = 0;
-        for (var i in items) {
+        for (var i = 0; i < items.length; i++) {
             link = items[i].getElementsByTagName('a')[linkId];
             if (canProcessPage(link.title)) {
                 link.className = 'WikiMonkeyBotSelected';

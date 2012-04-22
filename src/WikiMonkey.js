@@ -39,9 +39,10 @@ var WM = new function () {
         
         // Firefox and other browsers split long text into multiple text nodes
         var text = "";
+        var nodes = element.childNodes;
         var child;
-        for (var c in element.childNodes) {
-            child = element.childNodes[c];
+        for (var c = 0; c < nodes.length; c++) {
+            child = nodes[c];
             if (child.nodeType == 3) {
                 text += child.nodeValue;
             }

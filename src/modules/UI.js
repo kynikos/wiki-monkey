@@ -181,7 +181,8 @@ WM.UI = new function () {
         else {
             nextNode = document.getElementById('bodyContent');
             var nextNodeDivs = nextNode.getElementsByTagName('div');
-            for (var div in nextNodeDivs) {
+            // Using for...in to loop through node lists is not supported by Chrome
+            for (var div = 0; div < nextNodeDivs.length; div++) {
                 if (nextNodeDivs[div].className == 'mw-spcontent') {
                     UI = (specialList) ? WM.Bot.makeUI(specialList, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
                     break;
