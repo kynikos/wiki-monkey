@@ -1,3 +1,3 @@
 // ==UserScript==
-// @version 15dev-archwikieditor
+// @version 16dev-archwikieditor
 // ==/UserScript==

@@ -3,7 +3,7 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 15dev-archwikipatrol
+// @version 16dev-archwikipatrol
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
@@ -49,7 +49,7 @@ WM.UI.setEditor([
 WM.UI.setDiff([
     [
         ["ArchWikiQuickReport", "Quick report",
-         ["1", "User:" + WM.MW.getUserName() + "/RC_Patrol", "+ diff"]]
+         ["1", "ArchWiki:Reports", "add report"]]
     ]
 ]);
 
