@@ -394,7 +394,7 @@ WM.Bot = new function () {
             interval = 10000;
         }
         else {
-            interval = 120000;
+            interval = 90000;
         }
         
         if (!this.checkOtherBotsRunning()) {
