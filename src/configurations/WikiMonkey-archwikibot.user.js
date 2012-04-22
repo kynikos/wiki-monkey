@@ -7,8 +7,8 @@
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-archwikibot.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-archwikibot.user.js
+// @updateURL https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/configurations/WikiMonkey-archwikibot.meta.js
+// @downloadURL https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/configurations/WikiMonkey-archwikibot.user.js
 // @icon http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey.png
 // @icon64 http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey-64.png
 // @match http://*.wikipedia.org/*
