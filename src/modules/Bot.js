@@ -1,6 +1,6 @@
 /*
  *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
- *  Copyright (C) 2011-2012 Dario Giovannetti <dev@dariogiovannetti.com>
+ *  Copyright (C) 2011-2012 Dario Giovannetti <dev@dariogiovannetti.net>
  * 
  *  This file is part of Wiki Monkey.
  * 
@@ -47,9 +47,9 @@ WM.Bot = new function () {
         var selectFunctions = document.createElement('select');
         selectFunctions.id = 'WikiMonkeyBot-PluginSelect';
         
-        for each (var f in functions) {
+        for (var f in functions) {
             option = document.createElement('option');
-            option.innerHTML = f[1];
+            option.innerHTML = functions[f][1];
             selectFunctions.appendChild(option);
         }
         
@@ -105,9 +105,9 @@ WM.Bot = new function () {
         var selectLists = document.createElement('select');
         selectLists.id = 'WikiMonkeyBot-ListSelect';
         
-        for each (var l in lists) {
+        for (var l in lists) {
             option = document.createElement('option');
-            option.innerHTML = l[2];
+            option.innerHTML = lists[l][2];
             selectLists.appendChild(option);
         }
         
@@ -150,8 +150,10 @@ WM.Bot = new function () {
         inverse.type = 'checkbox';
         inverse.id = 'WikiMonkeyBotInverse';
         
-        for each (var elem in [filter, inverse]) {
-            elem.addEventListener("change", function () {
+        var elems = [filter, inverse];
+        
+        for (var e in elems) {
+            elems[e].addEventListener("change", function () {
                 WM.Bot.disableStartBot('Filters have changed, preview the selection');
             }, false);
         }
@@ -247,38 +249,17 @@ WM.Bot = new function () {
     
     this.disableControls = function () {
         this.setEnableControls(true);
-        
-        //This was the code for doing this previously
-        /*document.getElementById('WikiMonkeyBot-PluginSelect').disabled = true;
-        disabledControls.push(document.getElementById('WikiMonkeyBot-PluginSelect'));
-        
-        var baseNodes = [document.getElementById('WikiMonkeyBotFunction'),
-                     document.getElementById('WikiMonkeyBotFilter').parentNode]
-        for each (var base in baseNodes) {
-            for each (var tag in ['input', 'button', 'select', 'textarea']) {
-                for each (var elem in base.getElementsByTagName(tag)) {
-                    if (!elem.disabled) {
-                        elem.disabled = true;
-                        disabledControls.push(elem);
-                    }
-                } 
-            }
-        }*/
     };
     
     this.reEnableControls = function () {
         this.setEnableControls(false);
-        
-        //This was the code for doing this previously
-        /*for each (var elem in disabledControls) {
-            elem.disabled = false;
-        }*/
     };
     
     this.setEnableControls = function (flag) {
-        for each (var elem in document.getElementById('WikiMonkeyBot').getElementsByTagName('fieldset')) {
+        var fsets = document.getElementById('WikiMonkeyBot').getElementsByTagName('fieldset');
+        for (var f = 0; f < fsets.length; f++) {
             // HTML5-compliant
-            elem.disabled = flag;
+            fsets[f].disabled = flag;
         }
     };
     
@@ -303,8 +284,9 @@ WM.Bot = new function () {
         var rules = document.getElementById('WikiMonkeyBotFilter').value.split('\n');
         var inverse = document.getElementById('WikiMonkeyBotInverse').checked;
         var response = (inverse) ? true : false;
-        var firstSlash, lastSlash, pattern, modifiers, regexp, test, negative;
-        for each (rule in rules) {
+        var rule, firstSlash, lastSlash, pattern, modifiers, regexp, test, negative;
+        for (var r in rules) {
+            rule = rules[r];
             if (rule) {
                 firstSlash = rule.indexOf('/');
                 lastSlash = rule.lastIndexOf('/');
@@ -338,8 +320,8 @@ WM.Bot = new function () {
         if (WM.Bot.selections.list.previous) {
             items = WM.Bot.selections.list.previous[0].getElementsByTagName('li');
             linkId = WM.Bot.selections.list.previous[1];
-            for each (var item in items) {
-                link = item.getElementsByTagName('a')[linkId];
+            for (var i = 0; i < items.length; i++) {
+                link = items[i].getElementsByTagName('a')[linkId];
                 link.className = '';
             }
         }
@@ -348,8 +330,8 @@ WM.Bot = new function () {
         linkId = WM.Bot.selections.list.current[1];
         var enable = false;
         var N = 0;
-        for each (var item in items) {
-            link = item.getElementsByTagName('a')[linkId];
+        for (var i = 0; i < items.length; i++) {
+            link = items[i].getElementsByTagName('a')[linkId];
             if (canProcessPage(link.title)) {
                 link.className = 'WikiMonkeyBotSelected';
                 enable = true;
@@ -412,7 +394,7 @@ WM.Bot = new function () {
             interval = 10000;
         }
         else {
-            interval = 120000;
+            interval = 90000;
         }
         
         if (!this.checkOtherBotsRunning()) {
@@ -471,13 +453,15 @@ WM.Bot = new function () {
         GM_setValue('foo' + 'bar');
         
         // Alert all stored values
-        for each (var val in GM_listValues()) {
-          alert(val + ' : ' + GM_getValue(val));
+        for (var v in GM_listValues()) {
+            var val = GM_listValues()[v];
+            alert(val + ' : ' + GM_getValue(val));
         }
         
         // Reset array
-        for each (var key in GM_listValues()) {
-          GM_deleteValue(key);
+        for (var v in GM_listValues()) {
+            var val = GM_listValues()[v];
+            GM_deleteValue(val);
         }
     };
 };

@@ -1,3 +1,3 @@
 // ==UserScript==
-// @version 1.9.0-bot
+// @version 1.10.0-bot
 // ==/UserScript==

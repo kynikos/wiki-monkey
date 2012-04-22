@@ -1,37 +1,42 @@
 // ==UserScript==
-// @id wiki-monkey-archwikibot
+// @id wiki-monkey-local
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
-// @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.10.0-archwikibot
+// @author Dario Giovannetti <dev@dariogiovannetti.com>
+// @version local
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-archwikibot.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-archwikibot.user.js
+// @updateURL file:///home/dario/WualaSynced/Development/Wiki%20Monkey%20auxiliary/WikiMonkey-local.user.js
+// @downloadURL file:///home/dario/WualaSynced/Development/Wiki%20Monkey%20auxiliary/WikiMonkey-local.user.js
 // @icon http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey.png
 // @icon64 http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey-64.png
 // @match http://*.wikipedia.org/*
 // @match https://wiki.archlinux.org/*
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/WikiMonkey.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/modules/ArchWiki.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/modules/Bot.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/modules/Cat.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/modules/Diff.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/modules/Editor.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/modules/HTTP.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/modules/Log.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/modules/MW.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/modules/Tables.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/modules/UI.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/plugins/ArchWikiFixHeader.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/plugins/ArchWikiFixHeadings.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/plugins/ArchWikiNewTemplates.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/plugins/ArchWikiQuickReport.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/plugins/ExpandContractions.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/plugins/MultipleLineBreaks.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/plugins/SimpleReplace.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/plugins/UpdateCategoryTree.js
+// @require http://code.jquery.com/jquery-1.7.2.min.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/WikiMonkey.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/ArchWiki.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/Bot.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/Cat.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/Diff.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/Editor.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/HTTP.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/Log.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/MW.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/Tables.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/UI.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiFixHeader.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiFixHeadings.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiNewTemplates.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiQuickReport.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiRemoveCategorySuffix.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiSaveTalk.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiTemplateAUR.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiWantedCategories.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ExpandContractions.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/MultipleLineBreaks.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/SimpleReplace.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/UpdateCategoryTree.js
 // ==/UserScript==
 
 WM.UI.setEditor([
@@ -44,13 +49,20 @@ WM.UI.setEditor([
     ],
     [
         ["SimpleReplace", "RegExp substitution", ["1"]]
+    ],
+    [
+        ["ArchWikiTemplateAUR", "Use Template:AUR", null]
     ]
 ]);
 
 WM.UI.setDiff([
     [
         ["ArchWikiQuickReport", "Quick report",
-         ["1", "ArchWiki:Reports", "add report"]]
+         ["1", "User:" + WM.MW.getUserName() + "/RC_Patrol", "+ diff"]]
+    ],
+    [
+        ["ArchWikiSaveTalk", "Save discussion",
+         ["User:" + WM.MW.getUserName() + "/Discussions", "+ diff"]]
     ]
 ]);
 
@@ -63,7 +75,8 @@ WM.UI.setWhatLinksHere([
 ]);
 
 WM.UI.setLinkSearch([
-    ["SimpleReplace", "RegExp substitution", ["1"]]
+    ["SimpleReplace", "RegExp substitution", ["1"]],
+    ["ArchWikiTemplateAUR", "Replace direct AUR package links with Template:AUR", ["replace direct package links with Pkg/AUR templates"]]
 ]);
 
 WM.UI.setSpecial([
@@ -239,11 +252,16 @@ WM.UI.setSpecial([
                                          keepAltName: true,
                                          showIndices: false}},
          "[[Wiki Monkey]]: automatic update"]]
+    ],
+    [
+        ["ArchWikiRemoveCategorySuffix", "Remove category suffix",
+         ["Category:English"]]
     ]
 ]);
 
 WM.UI.setSpecialList([
-    ["SimpleReplace", "RegExp substitution", ["1"]]
+    ["SimpleReplace", "RegExp substitution", ["1"]],
+    ["ArchWikiWantedCategories", "Create wanted categories", null]
 ]);
 
 WM.main();

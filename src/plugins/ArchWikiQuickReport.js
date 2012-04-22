@@ -4,7 +4,10 @@ WM.Plugins.ArchWikiQuickReport = new function () {
         var article = args[1];
         
         var select = document.createElement('select');
-        for each (var value in ["&lt;TYPE&gt;", "content", "style"]) {
+        var types = ["&lt;TYPE&gt;", "content", "style"];
+        var value;
+        for (var v in types) {
+            value = types[v];
             option = document.createElement('option');
             option.setAttribute('value', value);
             option.innerHTML = value;
@@ -45,17 +48,10 @@ WM.Plugins.ArchWikiQuickReport = new function () {
             WM.Log.logError('Select a valid report type');
         }
         else {
-            var res = WM.MW.callAPIGet({action: "query",
-                                        prop: "info|revisions",
-                                        rvprop: "content|timestamp",
-                                        intoken: "edit",
-                                        titles: encodeURIComponent(article)});
-            var pages = res.query.pages;
-            
-            var pageid;
-            for each (pageid in pages) {
-                break;
-            }
+            var pageid = WM.MW.callQuery({prop: "info|revisions",
+                                          rvprop: "content|timestamp",
+                                          intoken: "edit",
+                                          titles: encodeURIComponent(article)});
             
             var edittoken = pageid.edittoken;
             var timestamp = pageid.revisions[0].timestamp;
@@ -63,7 +59,7 @@ WM.Plugins.ArchWikiQuickReport = new function () {
             
             var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", enddate, type, notes]);
             
-            res = WM.MW.callAPIPost({action: "edit",
+            var res = WM.MW.callAPIPost({action: "edit",
                                      bot: "1",
                                      title: encodeURIComponent(article),
                                      summary: encodeURIComponent(summary),
@@ -75,7 +71,7 @@ WM.Plugins.ArchWikiQuickReport = new function () {
                 WM.Log.logInfo('Diff correctly appended to ' + article);
             }
             else {
-                WM.Log.logError('The diff has not been appended!');
+                WM.Log.logError('The diff has not been appended!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
             }
         }
     };

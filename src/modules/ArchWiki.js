@@ -1,6 +1,6 @@
 /*
  *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
- *  Copyright (C) 2011-2012 Dario Giovannetti <dev@dariogiovannetti.com>
+ *  Copyright (C) 2011-2012 Dario Giovannetti <dev@dariogiovannetti.net>
  * 
  *  This file is part of Wiki Monkey.
  * 
@@ -19,6 +19,31 @@
  */
 
 WM.ArchWiki = new function () {
+    var namespaces = {
+        "Media": -2,
+        "Special": -1,
+        "": 0,
+        "Talk": 1,
+        "User": 2,
+        "User talk": 3,
+        "ArchWiki": 4,
+        "ArchWiki talk": 5,
+        "File": 6,
+        "File talk": 7,
+        "MediaWiki": 8,
+        "MediaWiki talk": 9,
+        "Template": 10,
+        "Template talk": 11,
+        "Help": 12,
+        "Help talk": 13,
+        "Category": 14,
+        "Category talk": 15,
+    };
+    
+    this.getNamespaceId = function (name) {
+        return namespaces[name];
+    };
+    
     var languages = {
         names: {
             "Български": {subtag: "bg", english: "Bulgarian"},
@@ -97,6 +122,7 @@ WM.ArchWiki = new function () {
             "Suomi",
             "Français",
             "עברית",
+            "Hrvatski",
             "Magyar",
             "Indonesia",
             "Italiano",
@@ -104,6 +130,7 @@ WM.ArchWiki = new function () {
             "한국어",
             "Lietuviškai",
             "Nederlands",
+            "Polski",
             "Português",
             "Русский",
             "Slovenský",

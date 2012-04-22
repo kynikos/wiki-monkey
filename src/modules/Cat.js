@@ -1,6 +1,6 @@
 /*
  *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
- *  Copyright (C) 2011-2012 Dario Giovannetti <dev@dariogiovannetti.com>
+ *  Copyright (C) 2011-2012 Dario Giovannetti <dev@dariogiovannetti.net>
  * 
  *  This file is part of Wiki Monkey.
  * 
@@ -36,8 +36,8 @@ WM.Cat = new function () {
         ancestors[base] = true;
         var cat, subAncestors;
         
-        for each (var subCat in subCats) {
-            cat = subCat.title;
+        for (var s in subCats) {
+            cat = subCats[s].title;
             
             // Protect from category loops
             if (ancestors[cat]) {
@@ -57,12 +57,19 @@ WM.Cat = new function () {
         return getMembers(parent, "subcat", null);
     };
     
+    this.getAllMembers = function (parent) {
+        return getMembers(parent, null, null);
+    };
+    
     var getMembers = function (name, cmtype, cmcontinue) {
         var query = {action: "query",
                      list: "categorymembers",
                      cmtitle: encodeURIComponent(name),
-                     cmtype: cmtype,
                      cmlimit: 5000};
+        
+        if (cmtype) {
+            query.cmtype = cmtype;
+        }
         
         if (cmcontinue) {
             query.cmcontinue = cmcontinue;
@@ -73,7 +80,7 @@ WM.Cat = new function () {
         
         if (res["query-continue"]) {
             cmcontinue = res["query-continue"].categorymembers.cmcontinue;
-            var cont = this.getSubCategories(name, cmcontinue);
+            var cont = this.getMembers(name, cmtype, cmcontinue);
             for (var sub in cont) {
                 members[sub] = cont[sub];
             }
@@ -85,38 +92,22 @@ WM.Cat = new function () {
     this.getParents = function (child) {
         // Supports a maximum of 500 parents (5000 for bots)
         // Needs to implement query continue in order to support more
-        var res = WM.MW.callAPIGet({action: "query",
-                                    prop: "categories",
-                                    titles: encodeURIComponent(child),
-                                    cllimit: 5000});
-        
-        var pages = res.query.pages;
-        
-        var pageid;
-        for each (pageid in pages) {
-            break;
-        }
+        var pageid = WM.MW.callQuery({prop: "categories",
+                                     titles: encodeURIComponent(child),
+                                     cllimit: 5000});
         
         var parents = [];
         
-        for each (var cat in pageid.categories) {
-            parents.push(cat.title);
+        for (var cat in pageid.categories) {
+            parents.push(pageid.categories[cat].title);
         }
         
         return parents;
     };
     
     this.getInfo = function (name) {
-        var res = WM.MW.callAPIGet({action: "query",
-                                    prop: "categoryinfo",
-                                    titles: encodeURIComponent(name)});
-        var pages = res.query.pages;
-        
-        var pageid;
-        for each (pageid in pages) {
-            break;
-        }
-        
+        var pageid = WM.MW.callQuery({prop: "categoryinfo",
+                                     titles: encodeURIComponent(name)});
         return pageid.categoryinfo;
     };
 };

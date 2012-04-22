@@ -5,7 +5,7 @@ import os
 import re
 
 VERSION = sys.argv[1]
-PATH = "./src/configurations"
+PATH = "../configurations"
 
 
 def process_line(line):
@@ -27,6 +27,12 @@ def process_line(line):
                 if matches:
                     line = ("// @updateURL " + matches.group(1) + "master" +
                             matches.group(2) + "\n")
+                else:
+                    matches = re.match('// @downloadURL (.+/)development'
+                                       '(/.+\.user\.js)', line)
+                    if matches:
+                        line = ("// @downloadURL " + matches.group(1) +
+                                "master" + matches.group(2) + "\n")
     return line
 
 

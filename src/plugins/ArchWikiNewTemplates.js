@@ -38,9 +38,9 @@ WM.Plugins.ArchWikiNewTemplates = new function () {
             ['&lt;tt>', newtext.match(/&lt;tt/ig)]
         ];
         
-        for each (var test in tests) { 
-            if (test[1]) {
-                WM.Log.logWarning(test[1].length + ' ' + test[0] + ' instances require manual intervention');
+        for (var test in tests) { 
+            if (tests[test][1]) {
+                WM.Log.logWarning(tests[test][1].length + ' ' + tests[test][0] + ' instances require manual intervention');
             }
         }
     };

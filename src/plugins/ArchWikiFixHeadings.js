@@ -7,15 +7,16 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
         var minLevel = MAXLEVEL;
         var maxTocLevel = 0;
         var tocLevel = 1;
-        var regExp = /^\=+ *.+? *\=+$/gm;
-        var match, line, L, level, prevLevels, start, end, tocPeer;
+        var regExp = /^(\=+ *.+? *\=+)[ \t]*$/gm;
+        var match, line, L0, L1, level, prevLevels, start, end, tocPeer;
         
         while (true) {
             match = regExp.exec(source);
             
             if (match) {
-                line = match[0];
-                L = line.length;
+                L0 = match[0].length;
+                line = match[1];
+                L1 = line.length;
                 level = 1;
                 start = "=";
                 end = "=";
@@ -31,9 +32,9 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
                 
                 while (true) {
                     start = line.substr(level, 1);
-                    end = line.substr(L - level - 1, 1);
+                    end = line.substr(L1 - level - 1, 1);
                     
-                    if (L - level * 2 > 2 && start == "=" && end == "=") {
+                    if (L1 - level * 2 > 2 && start == "=" && end == "=") {
                         level++;
                     }
                     else {
@@ -82,11 +83,12 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
                     prevLevels.relMax = level;
                 }
                 
-                sections.push({match: match,
+                sections.push({line: line,
                                level: level,
                                tocLevel: tocLevel,
-                               index: (regExp.lastIndex - L),
-                               length: L});
+                               index: (regExp.lastIndex - L0),
+                               length0: L0,
+                               length1: L1});
             }
             else {
                 break;
@@ -119,13 +121,15 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
         
         var newtext = "";
         var prevId = 0;
+        var section;
         
-        for each (var section in info.sections) {
+        for (var s in info.sections) {
+            section = info.sections[s];
             newtext += source.substring(prevId, section.index);
             newtext += new Array(section.tocLevel + increaseLevel + 1).join("=");
-            newtext += section.match[0].substr(section.level, section.length - 2 * section.level);
+            newtext += section.line.substr(section.level, section.length1 - 2 * section.level);
             newtext += new Array(section.tocLevel + increaseLevel + 1).join("=");
-            prevId = section.index + section.length;
+            prevId = section.index + section.length0;
         }
         newtext += source.substr(prevId);
         

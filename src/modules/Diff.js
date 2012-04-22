@@ -1,6 +1,6 @@
 /*
  *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
- *  Copyright (C) 2011-2012 Dario Giovannetti <dev@dariogiovannetti.com>
+ *  Copyright (C) 2011-2012 Dario Giovannetti <dev@dariogiovannetti.net>
  * 
  *  This file is part of Wiki Monkey.
  * 
@@ -23,44 +23,29 @@ WM.Diff = new function () {
         var title = WM.getURIParameter('title');
         var diff = WM.getURIParameter('diff');
         var oldid = WM.getURIParameter('oldid');
-        var res, pages, enddate;
+        var pageid, enddate;
         
         switch (diff) {
             case 'next':
-                res = WM.MW.callAPIGet({action: "query",
-                                        prop: "revisions",
-                                        titles: title,
-                                        rvlimit: "2",
-                                        rvprop: "timestamp",
-                                        rvdir: "newer",
-                                        rvstartid: oldid});
-                pages = res.query.pages;
-                for each (var pageid in pages) {
-                    enddate = pageid.revisions[1].timestamp;
-                    break;
-                }
+                pageid = WM.MW.callQuery({prop: "revisions",
+                                         titles: title,
+                                         rvlimit: "2",
+                                         rvprop: "timestamp",
+                                         rvdir: "newer",
+                                         rvstartid: oldid});
+                enddate = pageid.revisions[1].timestamp;
                 break;
             case 'prev':
-                res = WM.MW.callAPIGet({action: "query",
-                                        prop: "revisions",
-                                        revids: oldid,
-                                        rvprop: "timestamp"});
-                pages = res.query.pages;
-                for each (var pageid in pages) {
-                    enddate = pageid.revisions[0].timestamp;
-                    break;
-                }
+                pageid = WM.MW.callQuery({prop: "revisions",
+                                         revids: oldid,
+                                         rvprop: "timestamp"});
+                enddate = pageid.revisions[0].timestamp;
                 break;
             default:
-                res = WM.MW.callAPIGet({action: "query",
-                                        prop: "revisions",
-                                        revids: diff,
-                                        rvprop: "timestamp"});
-                pages = res.query.pages;
-                for each (var pageid in pages) {
-                    enddate = pageid.revisions[0].timestamp;
-                    break;
-                }
+                pageid = WM.MW.callQuery({prop: "revisions",
+                                         revids: diff,
+                                         rvprop: "timestamp"});
+                enddate = pageid.revisions[0].timestamp;
         }
         return enddate;
     };

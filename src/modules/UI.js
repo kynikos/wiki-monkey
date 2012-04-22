@@ -1,6 +1,6 @@
 /*
  *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
- *  Copyright (C) 2011-2012 Dario Giovannetti <dev@dariogiovannetti.com>
+ *  Copyright (C) 2011-2012 Dario Giovannetti <dev@dariogiovannetti.net>
  * 
  *  This file is part of Wiki Monkey.
  * 
@@ -55,6 +55,12 @@ WM.UI = new function () {
         special = rows;
     };
     
+    var specialList = null;
+    
+    this.setSpecialList = function(rows) {
+        specialList = rows;
+    };
+    
     var makeButtons = function (functions) {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyButtons';
@@ -70,10 +76,12 @@ WM.UI = new function () {
         buttonAll.setAttribute('value', 'Execute all');
         buttonAll.id = "WikiMonkeyButtonAll";
         
-        var buttonsN, divRow, pRow, buttonRow, divPlugins, divFunction, buttonFunction, makeUI;
+        var row, buttonsN, divRow, pRow, buttonRow, divPlugins, divFunction, buttonFunction, ff, buttons, makeUI;
         var rowsN = 0;
         
-        for each (var row in functions) {
+        for (var r in functions) {
+            row = functions[r];
+            
             buttonRow = document.createElement('input');
             buttonRow.setAttribute('type', 'button');
             buttonRow.setAttribute('value', 'Execute row');
@@ -91,27 +99,31 @@ WM.UI = new function () {
             
             buttonsN = 0;
             
-            for each (var f in row) {
+            for (var f in row) {
+                ff = row[f];
+                
                 buttonFunction = document.createElement('input');
                 buttonFunction.setAttribute('type', 'button');
-                buttonFunction.setAttribute('value', f[1]);
+                buttonFunction.setAttribute('value', ff[1]);
                 
-                for each (var button in [buttonFunction, buttonRow, buttonAll]) {
-                    button.addEventListener("click", (function (fn, arg) {
+                buttons = [buttonFunction, buttonRow, buttonAll];
+                
+                for (var button in buttons) {
+                    buttons[button].addEventListener("click", (function (fn, arg) {
                         return function () {
                             // window[string] doesn't work
                             eval("WM.Plugins." + fn + ".main")(arg);
                         }
-                    })(f[0], f[2]), false);
+                    })(ff[0], ff[2]), false);
                 };
                 
                 divFunction = document.createElement('div');
                 divFunction.className = 'pluginUI';
                 divFunction.appendChild(buttonFunction);
                 
-                makeUI = eval("WM.Plugins." + f[0] + ".makeUI");
+                makeUI = eval("WM.Plugins." + ff[0] + ".makeUI");
                 if (makeUI instanceof Function) {
-                    divFunction.appendChild(makeUI(f[2]));
+                    divFunction.appendChild(makeUI(ff[2]));
                 }
                 
                 divPlugins.appendChild(divFunction);
@@ -165,6 +177,17 @@ WM.UI = new function () {
         else if (location.href.indexOf(WM.MW.getArticlesBaseUrl() + "/Special:SpecialPages") > -1) {
             nextNode = document.getElementById('bodyContent');
             UI = (special) ? makeButtons(special) : null;
+        }
+        else {
+            nextNode = document.getElementById('bodyContent');
+            var nextNodeDivs = nextNode.getElementsByTagName('div');
+            // Using for...in to loop through node lists is not supported by Chrome
+            for (var div = 0; div < nextNodeDivs.length; div++) {
+                if (nextNodeDivs[div].className == 'mw-spcontent') {
+                    UI = (specialList) ? WM.Bot.makeUI(specialList, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
+                    break;
+                }
+            }
         }
         
         if (UI) {

@@ -1,14 +1,14 @@
 // ==UserScript==
-// @id wiki-monkey-archwikipatrol
+// @id wiki-monkey-archwikipatrollite
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.10.0-archwikipatrol
+// @version 1.10.0-archwikipatrollite
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-archwikipatrol.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-archwikipatrol.user.js
+// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-archwikipatrollite.meta.js
+// @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-archwikipatrollite.user.js
 // @icon http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey.png
 // @icon64 http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey-64.png
 // @match http://*.wikipedia.org/*
@@ -24,27 +24,10 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/modules/MW.js
 // @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/modules/Tables.js
 // @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/modules/UI.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/plugins/ArchWikiFixHeader.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/plugins/ArchWikiFixHeadings.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/plugins/ArchWikiNewTemplates.js
 // @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/plugins/ArchWikiQuickReport.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/plugins/ExpandContractions.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/plugins/MultipleLineBreaks.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.10.0/src/plugins/SimpleReplace.js
 // ==/UserScript==
 
-WM.UI.setEditor([
-    [
-        ["ArchWikiFixHeader", "Fix header", null],
-        ["ArchWikiFixHeadings", "Fix headings", null],
-        ["ArchWikiNewTemplates", "Use code templates", null],
-        ["ExpandContractions", "Expand contractions", null],
-        ["MultipleLineBreaks", "Multiple line breaks", null]
-    ],
-    [
-        ["SimpleReplace", "RegExp substitution", ["1"]]
-    ]
-]);
+WM.UI.setEditor(null);
 
 WM.UI.setDiff([
     [

@@ -35,7 +35,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
     };
     
     var recurse = function (tree, params, altNames, indent, baseIndex, showIndex, ancestors) {
-        var altName, info, parents, subAncestors, subIndent, index, idString, subIndex;
+        var altName, info, parents, subAncestors, subIndent, index, idString, subIndex, par;
         var id = 1;
         var text = "";
         
@@ -60,7 +60,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
                 
                 if (parents.length > 1) {
                     outer_loop:
-                    for each (var par in parents) {
+                    for (var p in parents) {
+                        par = parents[p];
                         for (var anc in ancestors) {
                             if (par == anc) {
                                 parents.splice(parents.indexOf(par), 1);
@@ -117,17 +118,10 @@ WM.Plugins.UpdateCategoryTree = new function () {
         
         WM.Log.logInfo('Updating ' + toc + "...");
         
-        var res = WM.MW.callAPIGet({action: "query",
-                                    prop: "info|revisions",
-                                    rvprop: "content|timestamp",
-                                    intoken: "edit",
-                                    titles: encodeURIComponent(toc)});
-        var pages = res.query.pages;
-        
-        var pageid;
-        for each (pageid in pages) {
-            break;
-        }
+        var pageid = WM.MW.callQuery({prop: "info|revisions",
+                                      rvprop: "content|timestamp",
+                                      intoken: "edit",
+                                      titles: encodeURIComponent(toc)});
         
         var edittoken = pageid.edittoken;
         var timestamp = pageid.revisions[0].timestamp;
@@ -148,7 +142,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
                 var newtext = part1 + "\n" + treeText + part2;
                 
                 if (newtext != source) {
-                    res = WM.MW.callAPIPost({action: "edit",
+                    var res = WM.MW.callAPIPost({action: "edit",
                                              bot: "1",
                                              title: encodeURIComponent(toc),
                                              summary: encodeURIComponent(summary),
@@ -160,7 +154,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
                         WM.Log.logInfo(toc + ' correctly updated');
                     }
                     else {
-                        WM.Log.logError(toc + ' has not been updated!');
+                        WM.Log.logError(toc + ' has not been updated!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
                     }
                 }
                 else {

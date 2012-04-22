@@ -1,6 +1,6 @@
 /*
  *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
- *  Copyright (C) 2011-2012 Dario Giovannetti <dev@dariogiovannetti.com>
+ *  Copyright (C) 2011-2012 Dario Giovannetti <dev@dariogiovannetti.net>
  * 
  *  This file is part of Wiki Monkey.
  * 
@@ -62,6 +62,16 @@ WM.MW = new function () {
         return string;
     };
     
+    this.callQuery = function (params) {
+        params.action = "query";
+        var res = this.callAPIGet(params);
+        var pages = res.query.pages;
+        for (var id in pages) {
+            break;
+        }
+        return pages[id];
+    };
+    
     // Never use this attribute directly, always use getUserInfo!!!
     var userInfo;
     
@@ -84,11 +94,39 @@ WM.MW = new function () {
     
     this.isUserBot = function () {
         var groups = this.getUserInfo().query.userinfo.groups;
-        for each (var g in groups) {
-            if (g == 'bot') {
+        for (var g in groups) {
+            if (groups[g] == 'bot') {
                 return true;
             }
         }
         return false;
+    };
+    
+    this.getBacklinks = function (bltitle, blnamespace, blcontinue) {
+        var query = {action: "query",
+                     list: "backlinks",
+                     bltitle: encodeURIComponent(bltitle),
+                     bllimit: 5000};
+        
+        if (blnamespace) {
+            query.blnamespace = blnamespace;
+        }
+        
+        if (blcontinue) {
+            query.blcontinue = blcontinue;
+        }
+        
+        var res = WM.MW.callAPIGet(query);
+        var backlinks = res.query.backlinks;
+        
+        if (res["query-continue"]) {
+            blcontinue = res["query-continue"].backlinks.blcontinue;
+            var cont = this.getBacklinks(bltitle, blnamespace, blcontinue);
+            for (var sub in cont) {
+                backlinks[sub] = cont[sub];
+            }
+        }
+        
+        return backlinks;
     };
 };
