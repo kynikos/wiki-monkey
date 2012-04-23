@@ -179,7 +179,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
             minInterval = 60000;
         }
         else {
-            minInterval = 86400000;
+            minInterval = 21600000;
         }
         
         var select = document.getElementById("UpdateCategoryTree-select");
