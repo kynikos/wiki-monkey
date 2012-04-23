@@ -29,7 +29,6 @@
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiFixHeadings.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiNewTemplates.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiQuickReport.js
-// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiRemoveCategorySuffix.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiSaveTalk.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiTemplateAUR.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiWantedCategories.js
@@ -252,10 +251,6 @@ WM.UI.setSpecial([
                                          keepAltName: true,
                                          showIndices: false}},
          "[[Wiki Monkey]]: automatic update"]]
-    ],
-    [
-        ["ArchWikiRemoveCategorySuffix", "Remove category suffix",
-         ["Category:English"]]
     ]
 ]);
 
