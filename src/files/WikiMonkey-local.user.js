@@ -58,11 +58,11 @@ WM.UI.setEditor([
 WM.UI.setDiff([
     [
         ["ArchWikiQuickReport", "Quick report",
-         ["1", "User:" + WM.MW.getUserName() + "/RC_Patrol", "+ diff"]]
+         ["1", "User:Kynikos/RC_Patrol", "add report"]]
     ],
     [
         ["ArchWikiSaveTalk", "Save discussion",
-         ["User:" + WM.MW.getUserName() + "/Discussions", "+ diff"]]
+         ["User:Kynikos/Discussions", "add talk"]]
     ]
 ]);
 
