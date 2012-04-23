@@ -72,7 +72,7 @@ WM.UI.setSpecial([
          [{"Table of Contents": {root: "Category:English",
                                  alsoIn: "also in",
                                  indentType: ":",
-                                 replace: ["[ _]\\(English\\)", "", ""],
+                                 replace: null,
                                  keepAltName: false,
                                  showIndices: true},
            "Table of Contents (Dansk)": {root: "Category:Dansk",

@@ -20,12 +20,12 @@ WM.Plugins.UpdateCategoryTree = new function () {
     };
     
     var createCatLink = function (cat, replace, altName) {
-        var regExp = new RegExp(replace[0], replace[1]);
         var catName;
         if (altName) {
             catName = altName;
         }
         else if (replace) {
+            var regExp = new RegExp(replace[0], replace[1]);
             catName = cat.substr(9).replace(regExp, replace[2]);
         }
         else {
