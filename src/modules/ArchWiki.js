@@ -40,10 +40,6 @@ WM.ArchWiki = new function () {
         "Category talk": 15,
     };
     
-    this.getNamespaceId = function (name) {
-        return namespaces[name];
-    };
-    
     var languages = {
         names: {
             "Български": {subtag: "bg", english: "Bulgarian"},
@@ -143,11 +139,14 @@ WM.ArchWiki = new function () {
             "正體中文"
         ],
         interwiki: {
-            all: ["de", "en", "es", "fr", "pl", "ro", "sv", "uk"],
-            alive: ["de", "fr", "ro"],
-            unused: ["en"],
-            dead: ["es", "pl", "sv", "uk"]
+            all: ["de", "en", "es", "fr", "pl", "pt-br", "ro", "sv", "uk"],
+            alive: ["de", "en", "fr", "ro"],
+            dead: ["es", "pl", "pt-br", "sv", "uk"]
         }
+    };
+    
+    this.getNamespaceId = function (name) {
+        return namespaces[name];
     };
     
     this.getCategoryLanguages = function () {
@@ -180,14 +179,6 @@ WM.ArchWiki = new function () {
     
     this.isAliveInterwikiLanguage = function (lang) {
         return languages.interwiki.alive.indexOf(lang) > -1;
-    };
-    
-    this.getUnusedInterwikiLanguages = function () {
-        return languages.interwiki.unused;
-    };
-    
-    this.isUnusedInterwikiLanguage = function (lang) {
-        return languages.interwiki.unused.indexOf(lang) > -1;
     };
     
     this.getDeadInterwikiLanguages = function () {
