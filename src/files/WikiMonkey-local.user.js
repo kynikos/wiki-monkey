@@ -72,7 +72,7 @@ WM.UI.setCategory([
 
 WM.UI.setWhatLinksHere([
     ["SimpleReplace", "RegExp substitution", ["1"]],
-    ["ArchWikiTurkishIwLinks", "Add Turkish Interwiki links", null]
+    ["DeletePage", "Delete pages", null]
 ]);
 
 WM.UI.setLinkSearch([
