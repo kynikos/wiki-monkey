@@ -139,8 +139,9 @@ WM.ArchWiki = new function () {
             "正體中文"
         ],
         interwiki: {
-            all: ["de", "en", "es", "fr", "pl", "pt-br", "ro", "sv", "uk"],
-            alive: ["de", "en", "fr", "ro"],
+            all: ["de", "en", "es", "fa", "fi", "fr", "pl", "pt-br", "ro",
+                  "sv", "tr", "uk"],
+            alive: ["de", "en", "fa", "fi", "fr", "ro", "tr"],
             dead: ["es", "pl", "pt-br", "sv", "uk"]
         }
     };
