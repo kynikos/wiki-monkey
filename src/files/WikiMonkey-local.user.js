@@ -31,7 +31,7 @@
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiQuickReport.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiSaveTalk.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiTemplateAUR.js
-// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiTurkishIwLinks.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/DeletePage.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiWantedCategories.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ExpandContractions.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/MultipleLineBreaks.js

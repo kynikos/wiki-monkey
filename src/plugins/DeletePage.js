@@ -1,11 +1,11 @@
-WM.Plugins.ArchWikiTurkishIwLinks = new function () {
+WM.Plugins.DeletePage = new function () {
     this.mainAuto = function (args, title) {
         var page = WM.MW.callQuery({prop: 'info',
                                     intoken: 'delete',
                                     titles: encodeURIComponent(title)});
         
         var deletetoken = page.deletetoken;
-        
+        WM.Log.logDebug(title + deletetoken);  // ****************
         var summary = "Turkish articles moved to http://archtr.org/wiki/";
         
         var res = WM.MW.callAPIPost({action: 'delete',
