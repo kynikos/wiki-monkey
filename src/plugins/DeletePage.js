@@ -5,7 +5,7 @@ WM.Plugins.DeletePage = new function () {
                                     titles: encodeURIComponent(title)});
         
         var deletetoken = page.deletetoken;
-        WM.Log.logDebug(title + deletetoken);  // ****************
+        
         var summary = "Turkish articles moved to http://archtr.org/wiki/";
         
         var res = WM.MW.callAPIPost({action: 'delete',
