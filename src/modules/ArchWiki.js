@@ -97,13 +97,11 @@ WM.ArchWiki = new function () {
             "Nederlands",
             "Polski",
             "Português",
-            "Română",
             "Русский",
             "Slovenský",
             "Српски",
             "Svenska",
             "ไทย",
-            "Türkçe",
             "Українська",
             "简体中文",
             "正體中文"
@@ -133,7 +131,6 @@ WM.ArchWiki = new function () {
             "Српски",
             "Svenska",
             "ไทย",
-            "Türkçe",
             "Українська",
             "简体中文",
             "正體中文"
