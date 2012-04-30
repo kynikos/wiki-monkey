@@ -20,7 +20,11 @@ WM.Plugins.UpdateCategoryTree = new function () {
     };
     
     var readToC = function (args) {
-        var [params, tocs, index, summary, timeout] = args;
+        var params = args[0];
+        var tocs = args[1];
+        var index = args[2];
+        var summary = args[3];
+        var timeout = args[4];
         
         WM.Log.logInfo('Updating ' + params.page + "...");
         
@@ -85,13 +89,34 @@ WM.Plugins.UpdateCategoryTree = new function () {
     };
     
     var getTree = function (args) {
-        var [params, tocs, index, summary, timeout, timestamp, edittoken, source, part1, part2] = args;
+        var params = args[0];
+        var tocs = args[1];
+        var index = args[2];
+        var summary = args[3];
+        var timeout = args[4];
+        var timestamp = args[5];
+        var edittoken = args[6];
+        var source = args[7];
+        var part1 = args[8];
+        var part2 = args[9];
+        
         var tree = WM.Cat.getTree(params.root);
         setTimeout(recurseTree, timeout, [params, tocs, index, summary, timeout, timestamp, edittoken, source, part1, part2, tree]);
     };
     
     var recurseTree = function (args) {
-        var [params, tocs, index, summary, timeout, timestamp, edittoken, source, part1, part2, tree] = args;
+        var params = args[0];
+        var tocs = args[1];
+        var index = args[2];
+        var summary = args[3];
+        var timeout = args[4];
+        var timestamp = args[5];
+        var edittoken = args[6];
+        var source = args[7];
+        var part1 = args[8];
+        var part2 = args[9];
+        var tree = args[10];
+        
         var altNames = (params.keepAltName) ? storeAlternativeNames(source) : {};
         var treeText = recurse(tree, params, altNames, "", "", false, {});
         var newtext = part1 + "\n" + treeText + part2;
@@ -174,7 +199,16 @@ WM.Plugins.UpdateCategoryTree = new function () {
     };
     
     var writeToC = function (args) {
-        var [params, tocs, index, summary, timeout, timestamp, edittoken, source, newtext] = args;
+        var params = args[0];
+        var tocs = args[1];
+        var index = args[2];
+        var summary = args[3];
+        var timeout = args[4];
+        var timestamp = args[5];
+        var edittoken = args[6];
+        var source = args[7];
+        var newtext = args[8];
+        
         if (newtext != source) {
             var res = WM.MW.callAPIPost({action: "edit",
                                      bot: "1",
