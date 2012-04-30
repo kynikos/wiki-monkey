@@ -255,7 +255,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
             iterateTocs(tocs, -1, summary, timeout);
         }
         else {
-            iterateTocs([tocs[select.selectedIndex]], -1, summary, timeout);
+            var rtocs = [tocs[select.selectedIndex]];
+            iterateTocs(rtocs, -1, summary, timeout);
         }
     };
 };
