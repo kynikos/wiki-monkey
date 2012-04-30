@@ -6,12 +6,12 @@ WM.Plugins.UpdateCategoryTree = new function () {
         var option;
         for (var key in tocs) {
             option = document.createElement('option');
-            option.value = JSON.stringify(tocs[key]);
-            option.innerHTML = key;
+            option.value = tocs[key].page;
+            option.innerHTML = tocs[key].page;
             select.appendChild(option);
         }
         option = document.createElement('option');
-        option.value = 'ALL';
+        option.value = '*';
         option.innerHTML = 'UPDATE ALL';
         select.appendChild(option);
         select.id = "UpdateCategoryTree-select";
@@ -19,13 +19,117 @@ WM.Plugins.UpdateCategoryTree = new function () {
         return select;
     };
     
+    var readToC = function (args) {
+        var params = args[0];
+        var tocs = args[1];
+        var index = args[2];
+        var summary = args[3];
+        var timeout = args[4];
+        
+        WM.Log.logInfo('Updating ' + params.page + "...");
+        
+        var minInterval;
+        if (WM.MW.isUserBot()) {
+            minInterval = 60000;
+        }
+        else {
+            minInterval = 21600000;
+        }
+        
+        var startMark = "START AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK-->";
+        var endMark = "<!--END AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK";
+        
+        var pageid = WM.MW.callQuery({prop: "info|revisions",
+                                      rvprop: "content|timestamp",
+                                      intoken: "edit",
+                                      titles: encodeURIComponent(params.page)});
+        
+        var edittoken = pageid.edittoken;
+        var timestamp = pageid.revisions[0].timestamp;
+        var source = pageid.revisions[0]["*"];
+        
+        var now = new Date();
+        var msTimestamp = Date.parse(timestamp);
+        if (now.getTime() - msTimestamp >= minInterval) {
+            var start = source.indexOf(startMark) + startMark.length;
+            var end = source.lastIndexOf(endMark);
+            
+            if (start > -1 && end > -1) {
+                var part1 = source.substring(0, start);
+                var part2 = source.substring(end);
+                setTimeout(getTree, timeout, [params, tocs, index, summary, timeout, timestamp, edittoken, source, part1, part2]);
+            }
+            else {
+                WM.Log.logError("Cannot find insertion marks in " + params.page);
+                iterateTocs(tocs, index, summary, timeout);
+            }
+        }
+        else {
+            WM.Log.logWarning(params.page + ' has been updated too recently');
+            iterateTocs(tocs, index, summary, timeout);
+        }
+    };
+    
+    var storeAlternativeNames = function (source) {
+        var dict = {};
+        var regExp = /\[\[\:([Cc]ategory\:.+?)\|(.+?)\]\]/gm;
+        var match;
+        
+        while (true) {
+            match = regExp.exec(source);
+            if (match) {
+                dict[match[1]] = match[2];
+            }
+            else {
+                break;
+            }
+        }
+        
+        return dict;
+    };
+    
+    var getTree = function (args) {
+        var params = args[0];
+        var tocs = args[1];
+        var index = args[2];
+        var summary = args[3];
+        var timeout = args[4];
+        var timestamp = args[5];
+        var edittoken = args[6];
+        var source = args[7];
+        var part1 = args[8];
+        var part2 = args[9];
+        
+        var tree = WM.Cat.getTree(params.root);
+        setTimeout(recurseTree, timeout, [params, tocs, index, summary, timeout, timestamp, edittoken, source, part1, part2, tree]);
+    };
+    
+    var recurseTree = function (args) {
+        var params = args[0];
+        var tocs = args[1];
+        var index = args[2];
+        var summary = args[3];
+        var timeout = args[4];
+        var timestamp = args[5];
+        var edittoken = args[6];
+        var source = args[7];
+        var part1 = args[8];
+        var part2 = args[9];
+        var tree = args[10];
+        
+        var altNames = (params.keepAltName) ? storeAlternativeNames(source) : {};
+        var treeText = recurse(tree, params, altNames, "", "", false, {});
+        var newtext = part1 + "\n" + treeText + part2;
+        setTimeout(writeToC, timeout, [params, tocs, index, summary, timeout, timestamp, edittoken, source, newtext]);
+    };
+    
     var createCatLink = function (cat, replace, altName) {
-        var regExp = new RegExp(replace[0], replace[1]);
         var catName;
         if (altName) {
             catName = altName;
         }
         else if (replace) {
+            var regExp = new RegExp(replace[0], replace[1]);
             catName = cat.substr(9).replace(regExp, replace[2]);
         }
         else {
@@ -94,79 +198,47 @@ WM.Plugins.UpdateCategoryTree = new function () {
         return text
     };
     
-    var storeAlternativeNames = function (source) {
-        var dict = {};
-        var regExp = /\[\[\:([Cc]ategory\:.+?)\|(.+?)\]\]/gm;
-        var match;
+    var writeToC = function (args) {
+        var params = args[0];
+        var tocs = args[1];
+        var index = args[2];
+        var summary = args[3];
+        var timeout = args[4];
+        var timestamp = args[5];
+        var edittoken = args[6];
+        var source = args[7];
+        var newtext = args[8];
         
-        while (true) {
-            match = regExp.exec(source);
-            if (match) {
-                dict[match[1]] = match[2];
-            }
-            else {
-                break;
-            }
-        }
-        
-        return dict;
-    };
-    
-    var updateToC = function (toc, params, summary, minInterval) {
-        var startMark = "START AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK-->";
-        var endMark = "<!--END AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK";
-        
-        WM.Log.logInfo('Updating ' + toc + "...");
-        
-        var pageid = WM.MW.callQuery({prop: "info|revisions",
-                                      rvprop: "content|timestamp",
-                                      intoken: "edit",
-                                      titles: encodeURIComponent(toc)});
-        
-        var edittoken = pageid.edittoken;
-        var timestamp = pageid.revisions[0].timestamp;
-        var source = pageid.revisions[0]["*"];
-        
-        var now = new Date();
-        var msTimestamp = Date.parse(timestamp);
-        if (now.getTime() - msTimestamp >= minInterval) {
-            var start = source.indexOf(startMark) + startMark.length;
-            var end = source.lastIndexOf(endMark);
+        if (newtext != source) {
+            var res = WM.MW.callAPIPost({action: "edit",
+                                     bot: "1",
+                                     title: encodeURIComponent(params.page),
+                                     summary: encodeURIComponent(summary),
+                                     text: encodeURIComponent(newtext),
+                                     basetimestamp: timestamp,
+                                     token: encodeURIComponent(edittoken)});
             
-            if (start > -1 && end > -1) {
-                var part1 = source.substring(0, start);
-                var part2 = source.substring(end);
-                var tree = WM.Cat.getTree(params.root);
-                var altNames = (params.keepAltName) ? storeAlternativeNames(source) : {};
-                var treeText = recurse(tree, params, altNames, "", "", false, {});
-                var newtext = part1 + "\n" + treeText + part2;
-                
-                if (newtext != source) {
-                    var res = WM.MW.callAPIPost({action: "edit",
-                                             bot: "1",
-                                             title: encodeURIComponent(toc),
-                                             summary: encodeURIComponent(summary),
-                                             text: encodeURIComponent(newtext),
-                                             basetimestamp: timestamp,
-                                             token: encodeURIComponent(edittoken)});
-                    
-                    if (res.edit && res.edit.result == 'Success') {
-                        WM.Log.logInfo(toc + ' correctly updated');
-                    }
-                    else {
-                        WM.Log.logError(toc + ' has not been updated!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
-                    }
-                }
-                else {
-                    WM.Log.logInfo(toc + ' is already up to date');
-                }
+            if (res.edit && res.edit.result == 'Success') {
+                WM.Log.logInfo(params.page + ' correctly updated');
             }
             else {
-                WM.Log.logError("Cannot find insertion marks in " + toc);
+                WM.Log.logError(params.page + ' has not been updated!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
             }
         }
         else {
-            WM.Log.logWarning(toc + ' has been updated too recently');
+            WM.Log.logInfo(params.page + ' is already up to date');
+        }
+        
+        iterateTocs(tocs, index, summary, timeout)
+    };
+    
+    var iterateTocs = function (tocs, index, summary, timeout) {
+        index++;
+        if (tocs[index]) {
+            setTimeout(readToC, timeout, [tocs[index], tocs, index, summary, timeout]);
+        }
+        else {
+            WM.Log.logInfo("Operations completed, check the log for warnings or errors");
         }
     };
     
@@ -174,28 +246,17 @@ WM.Plugins.UpdateCategoryTree = new function () {
         var tocs = args[0];
         var summary = args[1];
         
-        var minInterval;
-        if (WM.MW.isUserBot()) {
-            minInterval = 60000;
-        }
-        else {
-            minInterval = 86400000;
-        }
+        var timeout = 100;
         
         var select = document.getElementById("UpdateCategoryTree-select");
-        var option = select.options[select.selectedIndex];
-        var toc = option.innerHTML;
-        var value = option.value;
+        var value = select.options[select.selectedIndex].value;
         
-        if (value == 'ALL') {
-            for (var key in tocs) {
-                updateToC(key, tocs[key], summary, minInterval);
-            }
-            WM.Log.logInfo("Operations completed, check the log for warnings or errors");
+        if (value == '*') {
+            iterateTocs(tocs, -1, summary, timeout);
         }
         else {
-            var vals = JSON.parse(value);
-            updateToC(toc, vals, summary, minInterval);
+            var rtocs = [tocs[select.selectedIndex]];
+            iterateTocs(rtocs, -1, summary, timeout);
         }
     };
 };

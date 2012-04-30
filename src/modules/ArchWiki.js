@@ -40,10 +40,6 @@ WM.ArchWiki = new function () {
         "Category talk": 15,
     };
     
-    this.getNamespaceId = function (name) {
-        return namespaces[name];
-    };
-    
     var languages = {
         names: {
             "Български": {subtag: "bg", english: "Bulgarian"},
@@ -61,10 +57,8 @@ WM.ArchWiki = new function () {
             "Indonesia": {subtag: "id", english: "Indonesian"},
             "Italiano": {subtag: "it", english: "Italian"},
             "日本語": {subtag: "ja", english: "Japanese"},
-            "Қазақша": {subtag: "kk", english: "Kazakh"},
             "한국어": {subtag: "ko", english: "Korean"},
             "Lietuviškai": {subtag: "lt", english: "Lithuanian"},
-            "Македонски": {subtag: "mk", english: "Macedonian"},
             "Nederlands": {subtag: "nl", english: "Dutch"},
             "Polski": {subtag: "pl", english: "Polish"},
             "Português": {subtag: "pt", english: "Portuguese"},
@@ -94,20 +88,16 @@ WM.ArchWiki = new function () {
             "Indonesia",
             "Italiano",
             "日本語",
-            "Қазақша",
             "한국어",
             "Lietuviškai",
-            "Македонски",
             "Nederlands",
             "Polski",
             "Português",
-            "Română",
             "Русский",
             "Slovenský",
             "Српски",
             "Svenska",
             "ไทย",
-            "Türkçe",
             "Українська",
             "简体中文",
             "正體中文"
@@ -119,8 +109,6 @@ WM.ArchWiki = new function () {
             "Ελληνικά",
             "English",
             "Español",
-            "Suomi",
-            "Français",
             "עברית",
             "Hrvatski",
             "Magyar",
@@ -137,17 +125,20 @@ WM.ArchWiki = new function () {
             "Српски",
             "Svenska",
             "ไทย",
-            "Türkçe",
             "Українська",
             "简体中文",
             "正體中文"
         ],
         interwiki: {
-            all: ["de", "en", "es", "fr", "pl", "ro", "sv", "uk"],
-            alive: ["de", "fr", "ro"],
-            unused: ["en"],
-            dead: ["es", "pl", "sv", "uk"]
+            all: ["de", "en", "es", "fa", "fi", "fr", "pl", "pt-br", "ro",
+                  "sv", "tr", "uk"],
+            alive: ["de", "en", "fa", "fi", "fr", "ro", "tr"],
+            dead: ["es", "pl", "pt-br", "sv", "uk"]
         }
+    };
+    
+    this.getNamespaceId = function (name) {
+        return namespaces[name];
     };
     
     this.getCategoryLanguages = function () {
@@ -180,14 +171,6 @@ WM.ArchWiki = new function () {
     
     this.isAliveInterwikiLanguage = function (lang) {
         return languages.interwiki.alive.indexOf(lang) > -1;
-    };
-    
-    this.getUnusedInterwikiLanguages = function () {
-        return languages.interwiki.unused;
-    };
-    
-    this.isUnusedInterwikiLanguage = function (lang) {
-        return languages.interwiki.unused.indexOf(lang) > -1;
     };
     
     this.getDeadInterwikiLanguages = function () {

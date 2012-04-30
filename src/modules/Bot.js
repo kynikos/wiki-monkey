@@ -397,15 +397,18 @@ WM.Bot = new function () {
             interval = 90000;
         }
         
-        if (!this.checkOtherBotsRunning()) {
-            if (items[index]) {
-                var link = items[index].getElementsByTagName('a')[linkId];
-                var title = link.title;
-                if (canProcessPage(title)) {
-                    WM.Log.logInfo('Waiting ' + (interval / 1000) + ' seconds...');
-                    var stopId = setTimeout((function (lis, id, ln, article) {
-                        return function () {
-                            WM.Bot.disableStopBot();
+        if (items[index]) {
+            var link = items[index].getElementsByTagName('a')[linkId];
+            var title = link.title;
+            if (canProcessPage(title)) {
+                WM.Log.logInfo('Waiting ' + (interval / 1000) + ' seconds...');
+                var stopId = setTimeout((function (lis, id, ln, article) {
+                    return function () {
+                        // Stop must be disabled before any check is performed
+                        WM.Bot.disableStopBot();
+                        // Check here if other bots have been started,
+                        // _not_ before setTimeout! 
+                        if (!WM.Bot.checkOtherBotsRunning()) {
                             ln.className = "WikiMonkeyBotProcessing";
                             WM.Log.logInfo("Processing " + article + "...");
                             if (WM.Bot.selections.function_(article) === true) {
@@ -420,23 +423,23 @@ WM.Bot = new function () {
                                 WM.Log.logError("Error processing " + article + ", stopping the bot");
                                 WM.Bot.endAutomatic(true);
                             }
-                        };
-                    })(items, index, link, title), interval);
-                    this.enableStopBot(stopId);
-                }
-                else {
-                    // Do not increment directly in the function's call!
-                    index++;
-                    WM.Bot.processItem(items, index, linkId);
-                }
+                        }
+                        else {
+                            WM.Log.logError('Another bot has been force-started, stopping...');
+                            WM.Bot.endAutomatic(false);
+                        }
+                    };
+                })(items, index, link, title), interval);
+                this.enableStopBot(stopId);
             }
             else {
-                this.endAutomatic(true);
+                // Do not increment directly in the function's call!
+                index++;
+                WM.Bot.processItem(items, index, linkId);
             }
         }
         else {
-            WM.Log.logError('Another bot has been force-started, stopping...');
-            this.endAutomatic(false);
+            this.endAutomatic(true);
         }
     };
     
