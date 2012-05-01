@@ -244,9 +244,6 @@ WM.Bot = new function () {
         document.getElementById('WikiMonkeyBotStart').style.display = 'inline';
     };
     
-    //This attribute was used with the previous method for disabling controls
-    //var disabledControls = [];
-    
     this.disableControls = function () {
         this.setEnableControls(true);
     };
@@ -451,7 +448,7 @@ WM.Bot = new function () {
     };
     
     // Incomplete ****************************************************************
-    var startSemiAutomatic = function (args) {
+    /*var startSemiAutomatic = function (args) {
         // Remember a value
         GM_setValue('foo' + 'bar');
         
@@ -466,5 +463,5 @@ WM.Bot = new function () {
             var val = GM_listValues()[v];
             GM_deleteValue(val);
         }
-    };
+    };*/
 };
