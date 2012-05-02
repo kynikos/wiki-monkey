@@ -903,11 +903,11 @@ WM.Editor = new function () {
     };
     
     this.readSource = function () {
-        return document.getElementById('wpTextbox1').innerHTML;
+        return document.getElementById('wpTextbox1').value;
     };
     
     this.writeSource = function (text) {
-        document.getElementById('wpTextbox1').innerHTML = text;
+        document.getElementById('wpTextbox1').value = text;
     };
     
     this.readSummary = function () {
