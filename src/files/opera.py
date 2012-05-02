@@ -7,6 +7,7 @@ SRC_PATH = ".."
 CFG_PATH = os.path.join(SRC_PATH, "configurations")
 OPERA_PATH = os.path.join(CFG_PATH, "opera")
 MAIN_SCRIPT = os.path.join(SRC_PATH, "WikiMonkey.js")
+GM_API_EMULATION = "GmApiEmulation.js"
 
 
 def read_script(s):
@@ -23,6 +24,11 @@ def get_licence():
         return "\n" + match.group(1) + "\n"
 
 
+def get_GM_API_emulation():
+    with open(GM_API_EMULATION, 'r') as s:
+        return "\n" + s.read()
+
+
 def write_opera_configuration(f, g):
     functions = ""
     header = True
@@ -34,7 +40,7 @@ def write_opera_configuration(f, g):
                 functions += read_script(s)
         elif line[:18] == "// ==/UserScript==":
             header = False
-            g.write(line + get_licence() + functions)
+            g.write(line + get_licence() + get_GM_API_emulation() + functions)
         else:
             g.write(line)
 

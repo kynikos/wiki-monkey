@@ -35,6 +35,81 @@
  *  along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+if (!GM_setValue || !GM_getValue || !GM_listValues || !GM_deleteValue) {
+    var setWikiMonkeyGmApiEmulationCookie = function (value) {
+        var name = "WikiMonkeyGmApiValuesEmulation";
+        
+        var expireDate = new Date();
+        expireDate.setTime(expireDate.getTime() + (3110400000));  // 36 days
+        var expires = ";expires=" + expireDate.toUTCString();
+        
+        var path = ";path=/";
+        
+        document.cookie = name + "=" + escape(value) + expires + path;
+    };
+    
+    var getWikiMonkeyGmApiEmulationCookie = function () {
+        if (document.cookie.length > 0) {
+            var cookieArray = document.cookie.split(';');
+            var regExp = /^ *WikiMonkeyGmApiValuesEmulation\=(.+)$/;
+            for (var i in cookieArray) {
+                var match = regExp.exec(cookieArray[i]);
+                if (match) {
+                    return unescape(match[1]);
+                }
+            }
+        }
+        return null;
+    };
+
+    var GM_setValue = function (name, value) {
+        var valueString = getWikiMonkeyGmApiEmulationCookie();
+        var valueDict = (valueString) ? JSON.parse(valueString) : {};
+        valueDict[name] = value;
+        setWikiMonkeyGmApiEmulationCookie(JSON.stringify(valueDict));
+        return value;
+    };
+
+    var GM_getValue = function (name, defaultValue) {
+        var valueString = getWikiMonkeyGmApiEmulationCookie();
+        var valueDict = (valueString) ? JSON.parse(valueString) : undefined;
+        return (valueDict) ? valueDict[name] : defaultValue;
+    };
+
+    var GM_listValues = function () {
+        var valueString = getWikiMonkeyGmApiEmulationCookie();
+        if (valueString) {
+            var valueDict = JSON.parse(valueString);
+            var keys = [];
+            for (var key in valueDict) {
+                keys.push(key);
+            }
+            return keys;
+        }
+        else {
+            return undefined;
+        }
+    };
+
+    var GM_deleteValue = function (name) {
+        var valueString = getWikiMonkeyGmApiEmulationCookie();
+        var valueDict = (valueString) ? JSON.parse(valueString) : {};
+        delete valueDict[name];
+        setWikiMonkeyGmApiEmulationCookie(JSON.stringify(valueDict));
+        return undefined;
+    };
+}
+
+if (!GM_addStyle) {
+    var GM_addStyle = function (css) {
+        var head = document.getElementsByTagName('head')[0];
+        var style = document.createElement('style');
+        style.setAttribute('type', 'text/css');
+        style.innerHTML = css;
+        head.appendChild(style);
+    };
+}
+
 var WM = new function () {
     var queryString = (function () {
         var qa = location.search.substr(1).split('&');
@@ -162,9 +237,17 @@ WM.Bot = new function () {
         selectLists.id = 'WikiMonkeyBot-ListSelect';
         
         for (var l in lists) {
-            option = document.createElement('option');
-            option.innerHTML = lists[l][2];
-            selectLists.appendChild(option);
+            if (lists[l][0]) {
+                option = document.createElement('option');
+                option.innerHTML = lists[l][2];
+                selectLists.appendChild(option);
+                
+                if (!WM.Bot.selections.list.current) {
+                    // [1] Note that this is also executed onchange, see [2]
+                    // Don't use "this.selections"
+                    WM.Bot.selections.list.current = lists[l];
+                }
+            }
         }
         
         selectLists.addEventListener("change", (function (lss) {
@@ -172,14 +255,10 @@ WM.Bot = new function () {
                 var select = document.getElementById('WikiMonkeyBot-ListSelect');
                 var id = select.selectedIndex;
                 WM.Bot.selections.list.previous = WM.Bot.selections.list.current;
-                // [1] Note that this must also be executed immediately, see [2]
+                // [2] Note that this must also be executed immediately, see [1]
                 WM.Bot.selections.list.current = lss[id];
             }
         })(lists), false);
-        
-        // [2] Note that this is also executed onchange, see [1]
-        // Don't use "this.selections"
-        WM.Bot.selections.list.current = lists[0];
         
         return selectLists;
     };
