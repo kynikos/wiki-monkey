@@ -106,9 +106,17 @@ WM.Bot = new function () {
         selectLists.id = 'WikiMonkeyBot-ListSelect';
         
         for (var l in lists) {
-            option = document.createElement('option');
-            option.innerHTML = lists[l][2];
-            selectLists.appendChild(option);
+            if (lists[l][0]) {
+                option = document.createElement('option');
+                option.innerHTML = lists[l][2];
+                selectLists.appendChild(option);
+                
+                if (!WM.Bot.selections.list.current) {
+                    // [1] Note that this is also executed onchange, see [2]
+                    // Don't use "this.selections"
+                    WM.Bot.selections.list.current = lists[l];
+                }
+            }
         }
         
         selectLists.addEventListener("change", (function (lss) {
@@ -116,14 +124,10 @@ WM.Bot = new function () {
                 var select = document.getElementById('WikiMonkeyBot-ListSelect');
                 var id = select.selectedIndex;
                 WM.Bot.selections.list.previous = WM.Bot.selections.list.current;
-                // [1] Note that this must also be executed immediately, see [2]
+                // [2] Note that this must also be executed immediately, see [1]
                 WM.Bot.selections.list.current = lss[id];
             }
         })(lists), false);
-        
-        // [2] Note that this is also executed onchange, see [1]
-        // Don't use "this.selections"
-        WM.Bot.selections.list.current = lists[0];
         
         return selectLists;
     };
