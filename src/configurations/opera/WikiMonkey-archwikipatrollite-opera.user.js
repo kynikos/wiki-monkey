@@ -1,18 +1,18 @@
 // ==UserScript==
-// @id wiki-monkey-dev-archwikipatrollite
+// @id wiki-monkey-dev-archwikipatrollite-opera
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 16dev-archwikipatrollite
+// @version 16dev-archwikipatrollite-opera
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/WikiMonkey-archwikipatrollite.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/WikiMonkey-archwikipatrollite.user.js
+// @updateURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/opera/WikiMonkey-archwikipatrollite-opera.meta.js
+// @downloadURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/opera/WikiMonkey-archwikipatrollite-opera.user.js
 // @icon http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey.png
 // @icon64 http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey-64.png
-// @match http://*.wikipedia.org/*
-// @match https://wiki.archlinux.org/*
+// @include http://*.wikipedia.org/*
+// @include https://wiki.archlinux.org/*
 // ==/UserScript==
 
 /*
@@ -1064,7 +1064,7 @@ WM.MW = new function () {
         var urls = paths[location.hostname.split(".").slice(1).join(".")];
         
         if (!urls) {
-            urls = wikiPaths.DEFAULT;
+            urls = paths.DEFAULT;
         }
         
         for (var key in urls) {
@@ -1453,6 +1453,7 @@ WM.Plugins.ArchWikiQuickReport = new function () {
         }
     };
 };
+
 
 WM.UI.setEditor(null);
 

@@ -1,20 +1,3 @@
-// ==UserScript==
-// @id wiki-monkey-dev-editor-opera
-// @name Wiki Monkey
-// @namespace https://github.com/kynikos/wiki-monkey
-// @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 16dev-editor-opera
-// @description MediaWiki-compatible bot and editor assistant that runs in the browser
-// @website https://github.com/kynikos/wiki-monkey
-// @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/opera/WikiMonkey-editor-opera.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/opera/WikiMonkey-editor-opera.user.js
-// @icon http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey.png
-// @icon64 http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey-64.png
-// @include http://*.wikipedia.org/*
-// @include https://wiki.archlinux.org/*
-// ==/UserScript==
-
 /*
  *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
  *  Copyright (C) 2011-2012 Dario Giovannetti <dev@dariogiovannetti.net>
@@ -34,6 +17,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+if (location.href.match(/^http:\/\/[a-z]+\.wikipedia\.org\//i) ||
+    location.href.match(/^https:\/\/wiki\.archlinux\.org\//i)) {
 
 if (!GM_setValue || !GM_getValue || !GM_listValues || !GM_deleteValue) {
     var setWikiMonkeyGmApiEmulationCookie = function (value) {
@@ -146,6 +132,170 @@ var WM = new function () {
     
     this.main = function () {
         this.UI.makeUI();
+    };
+};
+
+WM.ArchWiki = new function () {
+    var namespaces = {
+        "Media": -2,
+        "Special": -1,
+        "": 0,
+        "Talk": 1,
+        "User": 2,
+        "User talk": 3,
+        "ArchWiki": 4,
+        "ArchWiki talk": 5,
+        "File": 6,
+        "File talk": 7,
+        "MediaWiki": 8,
+        "MediaWiki talk": 9,
+        "Template": 10,
+        "Template talk": 11,
+        "Help": 12,
+        "Help talk": 13,
+        "Category": 14,
+        "Category talk": 15,
+    };
+    
+    var languages = {
+        names: {
+            "Български": {subtag: "bg", english: "Bulgarian"},
+            "Česky": {subtag: "cs", english: "Czech"},
+            "Dansk": {subtag: "da", english: "Danish"},
+            "Deutsch": {subtag: "de", english: "German"},
+            "Ελληνικά": {subtag: "el", english: "Greek"},
+            "English": {subtag: "en", english: "English"},
+            "Español": {subtag: "es", english: "Spanish"},
+            "Suomi": {subtag: "fi", english: "Finnish"},
+            "Français": {subtag: "fr", english: "French"},
+            "עברית": {subtag: "he", english: "Hebrew"},
+            "Hrvatski": {subtag: "hr", english: "Croatian"},
+            "Magyar": {subtag: "hu", english: "Hungarian"},
+            "Indonesia": {subtag: "id", english: "Indonesian"},
+            "Italiano": {subtag: "it", english: "Italian"},
+            "日本語": {subtag: "ja", english: "Japanese"},
+            "한국어": {subtag: "ko", english: "Korean"},
+            "Lietuviškai": {subtag: "lt", english: "Lithuanian"},
+            "Nederlands": {subtag: "nl", english: "Dutch"},
+            "Polski": {subtag: "pl", english: "Polish"},
+            "Português": {subtag: "pt", english: "Portuguese"},
+            "Română": {subtag: "ro", english: "Romanian"},
+            "Русский": {subtag: "ru", english: "Russian"},
+            "Slovenský": {subtag: "sk", english: "Slovak"},
+            "Српски": {subtag: "sr", english: "Serbian"},
+            "Svenska": {subtag: "sv", english: "Swedish"},
+            "ไทย": {subtag: "th", english: "Thai"},
+            "Türkçe": {subtag: "tr", english: "Turkish"},
+            "Українська": {subtag: "uk", english: "Ukrainian"},
+            "简体中文": {subtag: "zh-CN", english: "Chinese (Simplified)"},
+            "正體中文": {subtag: "zh-TW", english: "Chinese (Traditional)"}
+        },
+        categories: [
+            "Български",
+            "Česky",
+            "Dansk",
+            "Ελληνικά",
+            "English",
+            "Español",
+            "Suomi",
+            "Français",
+            "עברית",
+            "Hrvatski",
+            "Magyar",
+            "Indonesia",
+            "Italiano",
+            "日本語",
+            "한국어",
+            "Lietuviškai",
+            "Nederlands",
+            "Polski",
+            "Português",
+            "Русский",
+            "Slovenský",
+            "Српски",
+            "Svenska",
+            "ไทย",
+            "Українська",
+            "简体中文",
+            "正體中文"
+        ],
+        i18n: [
+            "Български",
+            "Česky",
+            "Dansk",
+            "Ελληνικά",
+            "English",
+            "Español",
+            "עברית",
+            "Hrvatski",
+            "Magyar",
+            "Indonesia",
+            "Italiano",
+            "日本語",
+            "한국어",
+            "Lietuviškai",
+            "Nederlands",
+            "Polski",
+            "Português",
+            "Русский",
+            "Slovenský",
+            "Српски",
+            "Svenska",
+            "ไทย",
+            "Українська",
+            "简体中文",
+            "正體中文"
+        ],
+        interwiki: {
+            all: ["de", "en", "es", "fa", "fi", "fr", "pl", "pt-br", "ro",
+                  "sv", "tr", "uk"],
+            alive: ["de", "en", "fa", "fi", "fr", "ro", "tr"],
+            dead: ["es", "pl", "pt-br", "sv", "uk"]
+        }
+    };
+    
+    this.getNamespaceId = function (name) {
+        return namespaces[name];
+    };
+    
+    this.getCategoryLanguages = function () {
+        return languages.categories;
+    };
+    
+    this.isCategoryLanguage = function (lang) {
+        return languages.categories.indexOf(lang) > -1;
+    };
+    
+    this.getI18nLanguages = function () {
+        return languages.i18n;
+    };
+    
+    this.isI18nLanguage = function (lang) {
+        return languages.i18n.indexOf(lang) > -1;
+    };
+    
+    this.getInterwikiLanguages = function () {
+        return languages.interwiki.all;
+    };
+    
+    this.isInterwikiLanguage = function (lang) {
+        return languages.interwiki.all.indexOf(lang) > -1;
+    };
+    
+    this.getAliveInterwikiLanguages = function () {
+        return languages.interwiki.alive;
+    };
+    
+    this.isAliveInterwikiLanguage = function (lang) {
+        return languages.interwiki.alive.indexOf(lang) > -1;
+    };
+    
+    this.getDeadInterwikiLanguages = function () {
+        return languages.interwiki.dead;
+    };
+    
+    this.isDeadInterwikiLanguage = function (lang) {
+        return languages.interwiki.dead.indexOf(lang) > -1;
     };
 };
 
@@ -1211,206 +1361,94 @@ WM.UI = new function () {
         }
     };
 };
-WM.Plugins.ExpandContractions = new function () {
-    var replace = function (source, regExp, newString, checkString, checkStrings) {
-        var newtext = source.replace(regExp, newString);
-        if (checkStrings.length > 1 && newtext != source) {
-            WM.Log.logWarning("Replaced some \"" + checkString + "\" with \"" + checkStrings[0] + "\": check that it didn't mean \"" + checkStrings.slice(1).join("\" or \"") + "\" instead");
-        }
-        return newtext;
-    };
-    
-    this.main = function (args) {
-        var source = WM.Editor.readSource();
-        var newtext = source;
-        
-        // Ignoring "I" since writing in 1st person isn't formal anyway
-        // Note that JavaScript doesn't support look behind :(
-        // Pay attention to preserve the original capitalization
-        
-        newtext = replace(newtext, /([a-z])'re/ig, '$1 are', "'re", ["are"]);
-        newtext = replace(newtext, /([a-z])'ve/ig, '$1 have', "'ve", ["have"]);
-        newtext = replace(newtext, /([a-z])'ll/ig, '$1 will', "'ll", ["will", "shall"]);
-        newtext = replace(newtext, /([a-z])'d/ig, '$1 would', "'d", ["would", "had"]);
-        newtext = replace(newtext, /(c)an't/ig, '$1annot', "can't", ["cannot"]);
-        newtext = replace(newtext, /(w)on't/ig, '$1ill not', "won't", ["will not"]);
-        newtext = replace(newtext, /([a-z])n't/ig, '$1 not', "n't", ["not"]);
-        newtext = replace(newtext, /(here|there)'s/ig, '$1 is', "here/there's", ["here/there is", "here/there has"]);
-        // Replacing he's, she's, that's, what's, where's, who's ... may be too dangerous
-        newtext = replace(newtext, /([a-z])'s (been)/ig, '$1 has $2', "'s been", ["has been"]);
-        newtext = replace(newtext, /(let)'s/ig, '$1 us', "let's", ["let us"]);
-        
-        var ss = newtext.match(/[a-z]'s/gi);
-        if (ss) {
-            WM.Log.logWarning("Found " + ss.length + " instances of \"'s\": check if they can be replaced with \"is\", \"has\", ...");
-        }
-        
-        if (newtext != source) {
-            WM.Editor.writeSource(newtext);
-            WM.Log.logInfo("Expanded contractions");
-        }
-    };
-};
-
-WM.Plugins.MultipleLineBreaks = new function () {
-    this.main = function (args) {
-        var source = WM.Editor.readSource();
-        var newtext = source;
-        
-        newtext = newtext.replace(/[\n]{3,}/g, '\n\n');
-        
-        if (newtext != source) {
-            WM.Editor.writeSource(newtext);
-            WM.Log.logInfo("Removed multiple line breaks");
-        }
-    };
-};
-
-WM.Plugins.SimpleReplace = new function () {
+WM.Plugins.ArchWikiQuickReport = new function () {
     this.makeUI = function (args) {
         var id = args[0];
+        var article = args[1];
         
-        GM_addStyle("#WikiMonkey-SimpleReplace {display:inline-block;} " +
-                    "#WikiMonkey-SimpleReplace div {display:inline-block; margin-right:2em;} " +
-                    "#WikiMonkey-SimpleReplace input[type='text'] {margin-left:0.33em;}");
+        var select = document.createElement('select');
+        var types = ["&lt;TYPE&gt;", "content", "style"];
+        var value;
+        for (var v in types) {
+            value = types[v];
+            option = document.createElement('option');
+            option.setAttribute('value', value);
+            option.innerHTML = value;
+            select.appendChild(option);
+        }
+        select.id = "ArchWikiQuickReport-select-" + id;
         
-        var divMain = document.createElement('div');
-        divMain.id = "WikiMonkey-SimpleReplace";
+        var input = document.createElement('input');
+        input.setAttribute('type', 'text');
+        input.id = "ArchWikiQuickReport-input-" + id;
         
-        var par1 = document.createElement('div');
+        var link = document.createElement('a');
+        link.href = "/index.php/" + article;
+        link.innerHTML = article;
         
-        var regexpLabel = document.createElement('span');
-        regexpLabel.innerHTML = 'RegExp pattern:';
+        var span = document.createElement('span');
+        span.appendChild(select);
+        span.appendChild(input);
+        span.appendChild(link);
         
-        var regexp = document.createElement('input');
-        regexp.setAttribute('type', 'text');
-        regexp.id = "WikiMonkey-SimpleReplace-RegExp-" + id;
-        
-        var ignoreCase = document.createElement('input');
-        ignoreCase.setAttribute('type', 'checkbox');
-        ignoreCase.id = "WikiMonkey-SimpleReplace-IgnoreCase-" + id;
-        
-        var ignoreCaseLabel = document.createElement('span');
-        ignoreCaseLabel.innerHTML = 'i';
-        
-        par1.appendChild(regexpLabel);
-        par1.appendChild(regexp);
-        par1.appendChild(ignoreCase);
-        par1.appendChild(ignoreCaseLabel);
-        
-        var par2 = document.createElement('div');
-        
-        var newStringLabel = document.createElement('span');
-        newStringLabel.innerHTML = 'New string:';
-        
-        var newString = document.createElement('input');
-        newString.setAttribute('type', 'text');
-        newString.id = "WikiMonkey-SimpleReplace-NewString-" + id;
-        
-        par2.appendChild(newStringLabel);
-        par2.appendChild(newString);
-        
-        divMain.appendChild(par1);
-        divMain.appendChild(par2);
-        
-        return divMain;
-    };
-    
-    this.makeBotUI = function (args) {
-        var id = args[0];
-        
-        // this.makeUI doesn't work
-        var divMain = WM.Plugins.SimpleReplace.makeUI(args);
-        
-        var par3 = document.createElement('div');
-        
-        var summaryLabel = document.createElement('span');
-        summaryLabel.innerHTML = 'Edit summary:';
-        
-        var summary = document.createElement('input');
-        summary.setAttribute('type', 'text');
-        summary.id = "WikiMonkey-SimpleReplace-Summary-" + id;
-        
-        par3.appendChild(summaryLabel);
-        par3.appendChild(summary);
-        
-        divMain.appendChild(par3);
-        
-        return divMain;
-    };
-    
-    var doReplace = function (source, id) {
-        var pattern = document.getElementById("WikiMonkey-SimpleReplace-RegExp-" + id).value;
-        var ignoreCase = document.getElementById("WikiMonkey-SimpleReplace-IgnoreCase-" + id).checked;
-        var newString = document.getElementById("WikiMonkey-SimpleReplace-NewString-" + id).value;
-        
-        var regexp = new RegExp(pattern, "g" + ((ignoreCase) ? "i" : ""));
-        
-        return source.replace(regexp, newString);
+        return span;
     };
     
     this.main = function (args) {
         var id = args[0];
+        var article = args[1];
+        var summary = args[2];
         
-        var source = WM.Editor.readSource();
-        var newtext = doReplace(source, id);
-        if (newtext != source) {
-            WM.Editor.writeSource(newtext);
-            WM.Log.logInfo("Text substituted");
+        WM.Log.logInfo('Appending diff to ' + article + "...");
+        
+        var title = WM.getURIParameter('title');
+        var enddate = WM.Diff.getEndTimestamp();
+        var select = document.getElementById("ArchWikiQuickReport-select-" + id);
+        var type = select.options[select.selectedIndex].value;
+        var notes = document.getElementById("ArchWikiQuickReport-input-" + id).value;
+        
+        if (type != 'content' && type != 'style') {
+            WM.Log.logError('Select a valid report type');
         }
-    };
-    
-    this.mainAuto = function (args, title) {
-        var id = args[0];
-        
-        var pageid = WM.MW.callQuery({prop: "info|revisions",
-                                    rvprop: "content|timestamp",
-                                    intoken: "edit",
-                                    titles: encodeURIComponent(title)});
-        
-        var edittoken = pageid.edittoken;
-        var timestamp = pageid.revisions[0].timestamp;
-        var source = pageid.revisions[0]["*"];
-        
-        var newtext = doReplace(source, id);
-        
-        if (newtext != source) {
-            var summary = document.getElementById("WikiMonkey-SimpleReplace-Summary-" + id).value;
+        else {
+            var pageid = WM.MW.callQuery({prop: "info|revisions",
+                                          rvprop: "content|timestamp",
+                                          intoken: "edit",
+                                          titles: encodeURIComponent(article)});
+            
+            var edittoken = pageid.edittoken;
+            var timestamp = pageid.revisions[0].timestamp;
+            var source = pageid.revisions[0]["*"];
+            
+            var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", enddate, type, notes]);
             
             var res = WM.MW.callAPIPost({action: "edit",
                                      bot: "1",
-                                     title: encodeURIComponent(title),
+                                     title: encodeURIComponent(article),
                                      summary: encodeURIComponent(summary),
                                      text: encodeURIComponent(newtext),
                                      basetimestamp: timestamp,
                                      token: encodeURIComponent(edittoken)});
-        
+            
             if (res.edit && res.edit.result == 'Success') {
-                return true;
+                WM.Log.logInfo('Diff correctly appended to ' + article);
             }
             else {
-                WM.Log.logError(res['error']['info'] + " (" + res['error']['code'] + ")");
-                return false;
+                WM.Log.logError('The diff has not been appended!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
             }
-        }
-        else {
-            return true;
         }
     };
 };
 
 
-WM.UI.setEditor([
+WM.UI.setEditor(null);
+
+WM.UI.setDiff([
     [
-        ["ExpandContractions", "Expand contractions", null],
-        ["MultipleLineBreaks", "Multiple line breaks", null]
-    ],
-    [
-        ["SimpleReplace", "RegExp substitution", ["1"]]
+        ["ArchWikiQuickReport", "Quick report",
+         ["1", "ArchWiki:Reports", "add report"]]
     ]
 ]);
-
-WM.UI.setDiff(null);
 
 WM.UI.setCategory(null);
 
@@ -1423,3 +1461,5 @@ WM.UI.setSpecial(null);
 WM.UI.setSpecialList(null);
 
 WM.main();
+
+}

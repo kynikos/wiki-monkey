@@ -1,18 +1,18 @@
 // ==UserScript==
-// @id wiki-monkey-dev-editor-opera
+// @id wiki-monkey-dev-archwikieditor-chromium
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 16dev-editor-opera
+// @version 16dev-archwikieditor-chromium
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/opera/WikiMonkey-editor-opera.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/opera/WikiMonkey-editor-opera.user.js
+// @updateURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/chromium/WikiMonkey-archwikieditor-chromium.meta.js
+// @downloadURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/chromium/WikiMonkey-archwikieditor-chromium.user.js
 // @icon http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey.png
 // @icon64 http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey-64.png
-// @include http://*.wikipedia.org/*
-// @include https://wiki.archlinux.org/*
+// @match http://*.wikipedia.org/*
+// @match https://wiki.archlinux.org/*
 // ==/UserScript==
 
 /*
@@ -34,81 +34,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-if (!GM_setValue || !GM_getValue || !GM_listValues || !GM_deleteValue) {
-    var setWikiMonkeyGmApiEmulationCookie = function (value) {
-        var name = "WikiMonkeyGmApiValuesEmulation";
-        
-        var expireDate = new Date();
-        expireDate.setTime(expireDate.getTime() + (3110400000));  // 36 days
-        var expires = ";expires=" + expireDate.toUTCString();
-        
-        var path = ";path=/";
-        
-        document.cookie = name + "=" + escape(value) + expires + path;
-    };
-    
-    var getWikiMonkeyGmApiEmulationCookie = function () {
-        if (document.cookie.length > 0) {
-            var cookieArray = document.cookie.split(';');
-            var regExp = /^ *WikiMonkeyGmApiValuesEmulation\=(.+)$/;
-            for (var i in cookieArray) {
-                var match = regExp.exec(cookieArray[i]);
-                if (match) {
-                    return unescape(match[1]);
-                }
-            }
-        }
-        return null;
-    };
-
-    var GM_setValue = function (name, value) {
-        var valueString = getWikiMonkeyGmApiEmulationCookie();
-        var valueDict = (valueString) ? JSON.parse(valueString) : {};
-        valueDict[name] = value;
-        setWikiMonkeyGmApiEmulationCookie(JSON.stringify(valueDict));
-        return value;
-    };
-
-    var GM_getValue = function (name, defaultValue) {
-        var valueString = getWikiMonkeyGmApiEmulationCookie();
-        var valueDict = (valueString) ? JSON.parse(valueString) : undefined;
-        return (valueDict) ? valueDict[name] : defaultValue;
-    };
-
-    var GM_listValues = function () {
-        var valueString = getWikiMonkeyGmApiEmulationCookie();
-        if (valueString) {
-            var valueDict = JSON.parse(valueString);
-            var keys = [];
-            for (var key in valueDict) {
-                keys.push(key);
-            }
-            return keys;
-        }
-        else {
-            return undefined;
-        }
-    };
-
-    var GM_deleteValue = function (name) {
-        var valueString = getWikiMonkeyGmApiEmulationCookie();
-        var valueDict = (valueString) ? JSON.parse(valueString) : {};
-        delete valueDict[name];
-        setWikiMonkeyGmApiEmulationCookie(JSON.stringify(valueDict));
-        return undefined;
-    };
-}
-
-if (!GM_addStyle) {
-    var GM_addStyle = function (css) {
-        var head = document.getElementsByTagName('head')[0];
-        var style = document.createElement('style');
-        style.setAttribute('type', 'text/css');
-        style.innerHTML = css;
-        head.appendChild(style);
-    };
-}
 
 var WM = new function () {
     var queryString = (function () {
@@ -146,6 +71,170 @@ var WM = new function () {
     
     this.main = function () {
         this.UI.makeUI();
+    };
+};
+
+WM.ArchWiki = new function () {
+    var namespaces = {
+        "Media": -2,
+        "Special": -1,
+        "": 0,
+        "Talk": 1,
+        "User": 2,
+        "User talk": 3,
+        "ArchWiki": 4,
+        "ArchWiki talk": 5,
+        "File": 6,
+        "File talk": 7,
+        "MediaWiki": 8,
+        "MediaWiki talk": 9,
+        "Template": 10,
+        "Template talk": 11,
+        "Help": 12,
+        "Help talk": 13,
+        "Category": 14,
+        "Category talk": 15,
+    };
+    
+    var languages = {
+        names: {
+            "Български": {subtag: "bg", english: "Bulgarian"},
+            "Česky": {subtag: "cs", english: "Czech"},
+            "Dansk": {subtag: "da", english: "Danish"},
+            "Deutsch": {subtag: "de", english: "German"},
+            "Ελληνικά": {subtag: "el", english: "Greek"},
+            "English": {subtag: "en", english: "English"},
+            "Español": {subtag: "es", english: "Spanish"},
+            "Suomi": {subtag: "fi", english: "Finnish"},
+            "Français": {subtag: "fr", english: "French"},
+            "עברית": {subtag: "he", english: "Hebrew"},
+            "Hrvatski": {subtag: "hr", english: "Croatian"},
+            "Magyar": {subtag: "hu", english: "Hungarian"},
+            "Indonesia": {subtag: "id", english: "Indonesian"},
+            "Italiano": {subtag: "it", english: "Italian"},
+            "日本語": {subtag: "ja", english: "Japanese"},
+            "한국어": {subtag: "ko", english: "Korean"},
+            "Lietuviškai": {subtag: "lt", english: "Lithuanian"},
+            "Nederlands": {subtag: "nl", english: "Dutch"},
+            "Polski": {subtag: "pl", english: "Polish"},
+            "Português": {subtag: "pt", english: "Portuguese"},
+            "Română": {subtag: "ro", english: "Romanian"},
+            "Русский": {subtag: "ru", english: "Russian"},
+            "Slovenský": {subtag: "sk", english: "Slovak"},
+            "Српски": {subtag: "sr", english: "Serbian"},
+            "Svenska": {subtag: "sv", english: "Swedish"},
+            "ไทย": {subtag: "th", english: "Thai"},
+            "Türkçe": {subtag: "tr", english: "Turkish"},
+            "Українська": {subtag: "uk", english: "Ukrainian"},
+            "简体中文": {subtag: "zh-CN", english: "Chinese (Simplified)"},
+            "正體中文": {subtag: "zh-TW", english: "Chinese (Traditional)"}
+        },
+        categories: [
+            "Български",
+            "Česky",
+            "Dansk",
+            "Ελληνικά",
+            "English",
+            "Español",
+            "Suomi",
+            "Français",
+            "עברית",
+            "Hrvatski",
+            "Magyar",
+            "Indonesia",
+            "Italiano",
+            "日本語",
+            "한국어",
+            "Lietuviškai",
+            "Nederlands",
+            "Polski",
+            "Português",
+            "Русский",
+            "Slovenský",
+            "Српски",
+            "Svenska",
+            "ไทย",
+            "Українська",
+            "简体中文",
+            "正體中文"
+        ],
+        i18n: [
+            "Български",
+            "Česky",
+            "Dansk",
+            "Ελληνικά",
+            "English",
+            "Español",
+            "עברית",
+            "Hrvatski",
+            "Magyar",
+            "Indonesia",
+            "Italiano",
+            "日本語",
+            "한국어",
+            "Lietuviškai",
+            "Nederlands",
+            "Polski",
+            "Português",
+            "Русский",
+            "Slovenský",
+            "Српски",
+            "Svenska",
+            "ไทย",
+            "Українська",
+            "简体中文",
+            "正體中文"
+        ],
+        interwiki: {
+            all: ["de", "en", "es", "fa", "fi", "fr", "pl", "pt-br", "ro",
+                  "sv", "tr", "uk"],
+            alive: ["de", "en", "fa", "fi", "fr", "ro", "tr"],
+            dead: ["es", "pl", "pt-br", "sv", "uk"]
+        }
+    };
+    
+    this.getNamespaceId = function (name) {
+        return namespaces[name];
+    };
+    
+    this.getCategoryLanguages = function () {
+        return languages.categories;
+    };
+    
+    this.isCategoryLanguage = function (lang) {
+        return languages.categories.indexOf(lang) > -1;
+    };
+    
+    this.getI18nLanguages = function () {
+        return languages.i18n;
+    };
+    
+    this.isI18nLanguage = function (lang) {
+        return languages.i18n.indexOf(lang) > -1;
+    };
+    
+    this.getInterwikiLanguages = function () {
+        return languages.interwiki.all;
+    };
+    
+    this.isInterwikiLanguage = function (lang) {
+        return languages.interwiki.all.indexOf(lang) > -1;
+    };
+    
+    this.getAliveInterwikiLanguages = function () {
+        return languages.interwiki.alive;
+    };
+    
+    this.isAliveInterwikiLanguage = function (lang) {
+        return languages.interwiki.alive.indexOf(lang) > -1;
+    };
+    
+    this.getDeadInterwikiLanguages = function () {
+        return languages.interwiki.dead;
+    };
+    
+    this.isDeadInterwikiLanguage = function (lang) {
+        return languages.interwiki.dead.indexOf(lang) > -1;
     };
 };
 
@@ -1211,6 +1300,392 @@ WM.UI = new function () {
         }
     };
 };
+WM.Plugins.ArchWikiFixHeader = new function () {
+    var storeMatches = function (source, regExp, single) {
+        var match, L, i;
+        var result = [];
+        while (true) {
+            match = regExp.exec(source);
+            if (match) {
+                L = match[0].length;
+                result.push(match);
+                i = regExp.lastIndex;
+                source = source.substring(0, i - L) + source.substring(i);
+                regExp.lastIndex = i - L;
+                if (single) {
+                    break;
+                }
+            }
+            else {
+                break;
+            }
+        }
+        return [source, result];
+    };
+    
+    this.main = function (args) {
+        var source = WM.Editor.readSource();
+        
+        var elements = {};
+        
+        // Note that all patterns get only left-side white space
+        
+        var res = storeMatches(source, /^\s*(&lt;noinclude&gt;)/g, true);
+        elements.noinclude = res[1];
+        
+        res = storeMatches(res[0], /\s*(\{\{(DISPLAYTITLE:(.+?)|[Ll]owercase title)\}\})/g, false);
+        elements.displaytitle = res[1];
+        
+        // Ignore __TOC__, __START__ and __END__
+        res = storeMatches(res[0], /\s*(__(NOTOC|FORCETOC|NOEDITSECTION|NEWSECTIONLINK|NONEWSECTIONLINK|NOGALLERY|HIDDENCAT|NOCONTENTCONVERT|NOCC|NOTITLECONVERT|NOTC|INDEX|NOINDEX|STATICREDIRECT)__)/g, false);
+        elements.behaviorswitches = res[1];
+        
+        res = storeMatches(res[0], /\s*(\[\[[Cc]ategory:(.+?([ _]\(([^\(]+?)\))?)\]\])/g, false);
+        elements.categories = res[1];
+        
+        var interwikiLanguages = WM.ArchWiki.getInterwikiLanguages();
+        var regExp = new RegExp("\\s*(\\[\\[(" + interwikiLanguages.join("|") + "):(.+?)\\]\\])", "g");
+        res = storeMatches(res[0], regExp, false);
+        elements.interwiki = res[1];
+        
+        res = storeMatches(res[0], /\s*(\{\{[Ii]18n\|(.+?)\}\})/g, true);
+        elements.i18n = res[1];
+        
+        var content = res[0];
+        
+        var newtext = "";
+        
+        // if (elements.noinclude) is always true
+        if (elements.noinclude.length) {
+            newtext += elements.noinclude[0][1];
+        }
+        
+        var L = elements.displaytitle.length;
+        if (L) {
+            newtext += elements.displaytitle[elements.displaytitle.length - 1][1];
+            if (L > 1) {
+                WM.Log.logWarning("Found multiple instances of {{DISPLAYTITLE:...}} or {{Lowercase title}}: only the last one has been used, the others have been deleted");
+            }
+        }
+        
+        var sw;
+        var behaviorSwitches = [];
+        for (var s in elements.behaviorswitches) {
+            sw = elements.behaviorswitches[s];
+            if (behaviorSwitches.indexOf(sw[1]) == -1) {
+                behaviorSwitches.push(sw[1]);
+            }
+            else {
+                WM.Log.logWarning("Removed duplicate of " + sw[1]);
+            }
+        }
+        
+        // if (behaviorSwitches) is always true
+        if (behaviorSwitches.length) {
+            if (newtext) {
+                newtext += " ";
+            }
+            newtext += behaviorSwitches.join(" ");
+        }
+        
+        if (newtext) {
+            newtext += "\n";
+        }
+        
+        var title = WM.Editor.getTitle().match(/^(.+?)([ _]\(([^\(]+)\))?$/);
+        var detectedLanguage = decodeURIComponent(title[3]);
+        var pureTitle;
+        if (!detectedLanguage || !WM.ArchWiki.isCategoryLanguage(detectedLanguage)) {
+            detectedLanguage = "English";
+            pureTitle = decodeURIComponent(title[0]);
+        }
+        else {
+            pureTitle = decodeURIComponent(title[1]);
+        }
+        
+        var categories = [];
+        var cat, lang;
+        for (var c in elements.categories) {
+            cat = elements.categories[c];
+            lang = decodeURIComponent(cat[2]);
+            if (!WM.ArchWiki.isCategoryLanguage(lang)) {
+                lang = decodeURIComponent(cat[4]);
+                if (!lang || !WM.ArchWiki.isCategoryLanguage(lang)) {
+                    lang = "English";
+                }
+            }
+            
+            if (detectedLanguage != lang) {
+                WM.Log.logWarning(cat[1] + " belongs to a different language than the one of the title (" + detectedLanguage + ")");
+            }
+            
+            if (categories.indexOf(cat[1]) == -1) {
+                categories.push(cat[1]);
+            }
+            else {
+                WM.Log.logWarning("Removed duplicate of " + cat[1]);
+            }
+        }
+        
+        // if (categories) is always true
+        if (categories.length) {
+            newtext += categories.join("\n");
+            newtext += "\n";
+        }
+        else {
+            WM.Log.logWarning("The article is not categorized");
+        }
+        
+        var link;
+        var interwiki = [];
+        for (var l in elements.interwiki) {
+            link = elements.interwiki[l];
+            if (interwiki.indexOf(link[1]) == -1) {
+                interwiki.push(link[1]);
+            }
+            else {
+                WM.Log.logWarning("Removed duplicate of " + link[1]);
+            }
+        }
+        
+        // if (interwiki) is always true
+        if (interwiki.length) {
+            newtext += interwiki.join("\n");
+            newtext += "\n";
+        }
+        
+        var L = elements.i18n.length;
+        if (L) {
+            if (L > 1) {
+                WM.Log.logWarning("Found multiple instances of {{i18n|...}}: only the first one has been used, the others have been ignored");
+            }
+            
+            var parsedTitle = elements.i18n[0][2].replace(/_/g, " ");
+            var test1 = pureTitle.substr(0, 1).toLowerCase() != parsedTitle.substr(0, 1).toLowerCase();
+            var test2 = pureTitle.substr(1) != parsedTitle.substr(1);
+            
+            if (test1 || test2) {
+                newtext += "{{i18n|" + pureTitle + "}}";
+                WM.Log.logWarning("Updated Template:i18n since it wasn't matching the current article title");
+            }
+            else {
+                newtext += "{{i18n|" + parsedTitle + "}}";
+            }
+        }
+        else {
+            newtext += "{{i18n|" + pureTitle + "}}";
+            WM.Log.logInfo("Added Template:i18n");
+        }
+        newtext += "\n";
+        
+        var firstChar = content.search(/[^\s]/);
+        content = content.substr(firstChar);
+        
+        // This workaround shouldn't be necessary anymore
+        //var test = content.substr(0, 2);
+        //if (test != "{{" && test != "[[") {
+            newtext += "\n";  // This line should be merged with the previous `newtext += "\n"`;
+        //}
+        
+        newtext += content;
+        
+        if (newtext != source) {
+            WM.Editor.writeSource(newtext);
+            WM.Log.logInfo("Fixed header");
+        }
+    };
+};
+
+WM.Plugins.ArchWikiFixHeadings = new function () {
+    var findSections = function (source) {
+        // ======Title====== is the deepest level supported
+        var MAXLEVEL = 6;
+        
+        var sections = [];
+        var minLevel = MAXLEVEL;
+        var maxTocLevel = 0;
+        var tocLevel = 1;
+        var regExp = /^(\=+ *.+? *\=+)[ \t]*$/gm;
+        var match, line, L0, L1, level, prevLevels, start, end, tocPeer;
+        
+        while (true) {
+            match = regExp.exec(source);
+            
+            if (match) {
+                L0 = match[0].length;
+                line = match[1];
+                L1 = line.length;
+                level = 1;
+                start = "=";
+                end = "=";
+                
+                // ==Title=== and ===Title== are both 2nd levels and so on
+                // (the shortest sequence of = between the two sides is
+                //  considered)
+                
+                // = and == are not titles
+                // === is read as =(=)=, ==== is read as =(==)= (both 1st
+                //                                               levels)
+                // ===== is read as ==(=)== (2nd level) and so on
+                
+                while (true) {
+                    start = line.substr(level, 1);
+                    end = line.substr(L1 - level - 1, 1);
+                    
+                    if (L1 - level * 2 > 2 && start == "=" && end == "=") {
+                        level++;
+                    }
+                    else {
+                        if (level > MAXLEVEL) {
+                            level = MAXLEVEL;
+                            WM.Log.logWarning('"' + line + '"' + " is considered a level-" + MAXLEVEL + " heading");
+                        }
+                        else if (level < minLevel) {
+                            minLevel = level;
+                        }
+                        break;
+                    }
+                }
+                
+                if (level == minLevel) {
+                    tocLevel = 1;
+                    prevLevels = {};
+                    prevLevels[level] = 1;
+                    prevLevels.relMax = level;
+                }
+                else if (level > prevLevels.relMax) {
+                    tocLevel++;
+                    prevLevels[level] = tocLevel;
+                    prevLevels.relMax = level;
+                    if (tocLevel > maxTocLevel) {
+                        maxTocLevel = tocLevel;
+                    }
+                }
+                else if (level < prevLevels.relMax) {
+                    if (prevLevels[level]) {
+                        tocLevel = prevLevels[level];
+                    }
+                    else {
+                        // tocPeer is the level immediately greater than the
+                        // current one, and it should have the same tocLevel
+                        // I must reset tocPeer here to the relative maximum
+                        tocPeer = prevLevels.relMax;
+                        for (var pLevel in prevLevels) {
+                            if (pLevel > level && pLevel < tocPeer) {
+                                tocPeer = pLevel;
+                            }
+                        }
+                        tocLevel = prevLevels[tocPeer];
+                        prevLevels[level] = tocLevel;
+                    }
+                    prevLevels.relMax = level;
+                }
+                
+                sections.push({line: line,
+                               level: level,
+                               tocLevel: tocLevel,
+                               index: (regExp.lastIndex - L0),
+                               length0: L0,
+                               length1: L1});
+            }
+            else {
+                break;
+            }
+        }
+        
+        // Articles without sections
+        if (maxTocLevel == 0) {
+            minLevel = 0;
+        }
+        
+        return {sections: sections,
+                minLevel: minLevel,
+                maxTocLevel: maxTocLevel};
+    };
+    
+    this.main = function (args) {
+        var source = WM.Editor.readSource();
+        
+        var info = findSections(source);
+        
+        var increaseLevel;
+        if (info.maxTocLevel < 6) {
+            increaseLevel = 1;
+        }
+        else {
+            increaseLevel = 0;
+            WM.Log.logWarning("There are 6 levels of headings, it's been necessary to start creating them from level 1 although usually it's suggested to start from level 2");
+        }
+        
+        var newtext = "";
+        var prevId = 0;
+        var section;
+        
+        for (var s in info.sections) {
+            section = info.sections[s];
+            newtext += source.substring(prevId, section.index);
+            newtext += new Array(section.tocLevel + increaseLevel + 1).join("=");
+            newtext += section.line.substr(section.level, section.length1 - 2 * section.level);
+            newtext += new Array(section.tocLevel + increaseLevel + 1).join("=");
+            prevId = section.index + section.length0;
+        }
+        newtext += source.substr(prevId);
+        
+        if (newtext != source) {
+            WM.Editor.writeSource(newtext);
+            WM.Log.logInfo("Fixed section headings");
+        }
+    };
+};
+
+WM.Plugins.ArchWikiNewTemplates = new function () {
+    this.main = function (args) {
+        var source = WM.Editor.readSource();
+        var newtext = source;
+        
+        var re8 = /&lt;pre&gt;(((?!&lt;(pre|nowiki)&gt;)[^\=\|])*?((?!&lt;(pre|nowiki)&gt;)[^\=\|\}]))&lt;\/pre&gt;/ig;
+        var re9 = /&lt;pre&gt;(((?!&lt;(pre|nowiki)&gt;)[^\|])*?((?!&lt;(pre|nowiki)&gt;)[^\|\}]))&lt;\/pre&gt;/ig;
+        var re10 = /&lt;pre&gt;(\n*((?!&lt;(pre|nowiki)&gt;).\n*)+?)&lt;\/pre&gt;/ig;
+        
+        var re11 = /&lt;code&gt;(((?!&lt;(code|nowiki)&gt;)[^\=\|\n])*?((?!&lt;(code|nowiki)&gt;)[^\=\|\}\n]))&lt;\/code&gt;/ig;
+        var re12 = /&lt;code&gt;(((?!&lt;(code|nowiki)&gt;)[^\|\n])*?((?!&lt;(code|nowiki)&gt;)[^\|\}\n]))&lt;\/code&gt;/ig;
+        var re13 = /&lt;code&gt;(((?!&lt;(code|nowiki)&gt;)[^\n])+?)&lt;\/code&gt;/ig;
+        
+        var re14 = /&lt;tt&gt;(((?!&lt;(tt|nowiki)&gt;)[^\=\|\n])*?((?!&lt;(tt|nowiki)&gt;)[^\=\|\}\n]))&lt;\/tt&gt;/ig;
+        var re15 = /&lt;tt&gt;(((?!&lt;(tt|nowiki)&gt;)[^\|\n])*?((?!&lt;(tt|nowiki)&gt;)[^\|\}\n]))&lt;\/tt&gt;/ig;
+        var re16 = /&lt;tt&gt;(((?!&lt;(tt|nowiki)&gt;)[^\n])+?)&lt;\/tt&gt;/ig;
+        
+        newtext = newtext.replace(re8, '{{bc|$1}}');
+        newtext = newtext.replace(re9, '{{bc|1=$1}}'); // Must come after re8
+        newtext = newtext.replace(re10, '{{bc|<nowiki>$1</nowiki>}}'); // Must come after re9
+        
+        newtext = newtext.replace(re11, '{{ic|$1}}');
+        newtext = newtext.replace(re12, '{{ic|1=$1}}'); // Must come after re11
+        newtext = newtext.replace(re13, '{{ic|<nowiki>$1</nowiki>}}'); // Must come after re12
+        
+        newtext = newtext.replace(re14, '{{ic|$1}}');
+        newtext = newtext.replace(re15, '{{ic|1=$1}}'); // Must come after re14
+        newtext = newtext.replace(re16, '{{ic|<nowiki>$1</nowiki>}}'); // Must come after re15
+        
+        if (newtext != source) {
+            WM.Editor.writeSource(newtext);
+            WM.Log.logInfo("Turned HTML tags into proper templates");
+        }
+        
+        var tests = [
+            ['&lt;pre>', newtext.match(/&lt;pre/ig)],
+            ['&lt;code>', newtext.match(/&lt;code/ig)],
+            ['&lt;tt>', newtext.match(/&lt;tt/ig)]
+        ];
+        
+        for (var test in tests) { 
+            if (tests[test][1]) {
+                WM.Log.logWarning(tests[test][1].length + ' ' + tests[test][0] + ' instances require manual intervention');
+            }
+        }
+    };
+};
+
 WM.Plugins.ExpandContractions = new function () {
     var replace = function (source, regExp, newString, checkString, checkStrings) {
         var newtext = source.replace(regExp, newString);
@@ -1402,6 +1877,9 @@ WM.Plugins.SimpleReplace = new function () {
 
 WM.UI.setEditor([
     [
+        ["ArchWikiFixHeader", "Fix header", null],
+        ["ArchWikiFixHeadings", "Fix headings", null],
+        ["ArchWikiNewTemplates", "Use code templates", null],
         ["ExpandContractions", "Expand contractions", null],
         ["MultipleLineBreaks", "Multiple line breaks", null]
     ],

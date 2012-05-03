@@ -1,18 +1,18 @@
 // ==UserScript==
-// @id wiki-monkey-dev-bot
+// @id wiki-monkey-dev-bot-opera
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 16dev-bot
+// @version 16dev-bot-opera
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/WikiMonkey-bot.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/WikiMonkey-bot.user.js
+// @updateURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/opera/WikiMonkey-bot-opera.meta.js
+// @downloadURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/opera/WikiMonkey-bot-opera.user.js
 // @icon http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey.png
 // @icon64 http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey-64.png
-// @match http://*.wikipedia.org/*
-// @match https://wiki.archlinux.org/*
+// @include http://*.wikipedia.org/*
+// @include https://wiki.archlinux.org/*
 // ==/UserScript==
 
 /*
@@ -900,7 +900,7 @@ WM.MW = new function () {
         var urls = paths[location.hostname.split(".").slice(1).join(".")];
         
         if (!urls) {
-            urls = wikiPaths.DEFAULT;
+            urls = paths.DEFAULT;
         }
         
         for (var key in urls) {
@@ -1251,6 +1251,7 @@ WM.Plugins.ExpandContractions = new function () {
         }
     };
 };
+
 WM.Plugins.MultipleLineBreaks = new function () {
     this.main = function (args) {
         var source = WM.Editor.readSource();
@@ -1264,6 +1265,7 @@ WM.Plugins.MultipleLineBreaks = new function () {
         }
     };
 };
+
 WM.Plugins.SimpleReplace = new function () {
     this.makeUI = function (args) {
         var id = args[0];
@@ -1396,6 +1398,7 @@ WM.Plugins.SimpleReplace = new function () {
         }
     };
 };
+
 WM.Plugins.UpdateCategoryTree = new function () {
     this.makeUI = function (args) {
         var tocs = args[0];
@@ -1658,6 +1661,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
         }
     };
 };
+
 
 WM.UI.setEditor([
     [
