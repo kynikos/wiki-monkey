@@ -30,7 +30,7 @@ WM.MW = new function () {
         var urls = paths[location.hostname.split(".").slice(1).join(".")];
         
         if (!urls) {
-            urls = wikiPaths.DEFAULT;
+            urls = paths.DEFAULT;
         }
         
         for (var key in urls) {
