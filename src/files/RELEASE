@@ -11,6 +11,7 @@
   * Edit all WikiMonkey-configuration.meta.js scripts:
     - Change @version to the next version number (must be identical to the
       value in WikiMonkey.user.js)
+* Commit
 * Run opera.py
 * Commit and push to the remote repository
 * Install all the temporary-version configurations and check that they work
