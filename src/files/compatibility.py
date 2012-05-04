@@ -70,9 +70,7 @@ def process_line(m, g, functions, header, line):
         # If functions is empty it means it's a meta file
         if functions == "":
             pass
-        elif m[1] == "chromium":
-            line += "\n" + get_licence() + functions
-        elif m[1] == "opera":
+        elif m[1] in ("chromium", "opera"):
             line += "\n" + get_licence() + get_GM_API_emulation() + functions
         elif m[1] == "standalone":
             # Not +=
