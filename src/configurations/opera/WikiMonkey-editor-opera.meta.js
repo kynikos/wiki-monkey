@@ -1,3 +1,3 @@
 // ==UserScript==
-// @version 16dev-editor-opera
+// @version 1.10.2-editor-opera
 // ==/UserScript==
