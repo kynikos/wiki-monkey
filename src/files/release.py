@@ -40,8 +40,8 @@ def main():
     files = os.listdir(PATH)
     for name in files:
         ext = name[-8:]
-        file = os.path.join(PATH, name)
         if ext in (".user.js", ".meta.js"):
+            file = os.path.join(PATH, name)
             new = ""
             with open(file, 'r') as f:
                 for line in f:

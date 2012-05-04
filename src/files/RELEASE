@@ -1,7 +1,7 @@
 * Make sure to be on the development branch
 * Create a temporary branch named after the version to be released
 * Checkout the new branch
-* Test release.py
+* Run release.py
   * Edit all WikiMonkey-configuration.user.js scripts:
     - Change @id to stable id
     - Change @version to the next version number
@@ -11,6 +11,8 @@
   * Edit all WikiMonkey-configuration.meta.js scripts:
     - Change @version to the next version number (must be identical to the
       value in WikiMonkey.user.js)
+* Commit
+* Run compatibility.py
 * Commit and push to the remote repository
 * Install all the temporary-version configurations and check that they work
   correctly
