@@ -132,8 +132,8 @@ WM.ArchWiki = new function () {
         interwiki: {
             all: ["de", "en", "es", "fa", "fi", "fr", "pl", "pt-br", "ro",
                   "sv", "tr", "uk"],
-            alive: ["de", "en", "fa", "fi", "fr", "ro", "tr"],
-            dead: ["es", "pl", "pt-br", "sv", "uk"]
+            alive: ["de", "en", "fa", "fi", "fr", "ro", "sv", "tr"],
+            dead: ["es", "pl", "pt-br", "uk"]
         }
     };
     
