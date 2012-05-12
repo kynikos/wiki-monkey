@@ -57,7 +57,7 @@ WM.UI.setEditor([
 WM.UI.setDiff([
     [
         ["ArchWikiQuickReport", "Quick report",
-         ["1", "User:Kynikos/RC_Patrol", "add report"]]
+         ["1", "ArchWiki:Reports", "add report"]]
     ],
     [
         ["ArchWikiSaveTalk", "Save discussion",
