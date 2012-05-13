@@ -28,7 +28,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         
         // Note that all patterns get only left-side white space
         
-        var res = storeMatches(source, /^\s*(&lt;noinclude&gt;)/g, true);
+        var res = storeMatches(source, /^\s*(<noinclude>)/g, true);
         elements.noinclude = res[1];
         
         res = storeMatches(res[0], /\s*(\{\{(DISPLAYTITLE:(.+?)|[Ll]owercase title)\}\})/g, false);

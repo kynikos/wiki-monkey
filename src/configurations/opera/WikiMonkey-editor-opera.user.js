@@ -3,7 +3,7 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.10.2-editor-opera
+// @version 1.10.3-editor-opera
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
@@ -1003,7 +1003,7 @@ WM.MW = new function () {
 
 WM.Tables = new function () {
     this.appendRow = function (source, mark, values) {
-        var lastId = source.lastIndexOf('|}&lt;!--' + mark);
+        var lastId = source.lastIndexOf('|}<!--' + mark);
         var endtable = (lastId > -1) ? lastId : source.lastIndexOf('|}');
         
         var part1 = source.substring(0, endtable);

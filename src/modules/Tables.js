@@ -20,7 +20,7 @@
 
 WM.Tables = new function () {
     this.appendRow = function (source, mark, values) {
-        var lastId = source.lastIndexOf('|}&lt;!--' + mark);
+        var lastId = source.lastIndexOf('|}<!--' + mark);
         var endtable = (lastId > -1) ? lastId : source.lastIndexOf('|}');
         
         var part1 = source.substring(0, endtable);
