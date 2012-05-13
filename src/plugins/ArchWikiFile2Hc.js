@@ -2,9 +2,9 @@ WM.Plugins.ArchWikiFile2Hc = new function () {
     this.main = function (args) {
         var source = WM.Editor.readSource();
         
-        var re3 = /\{\{ *[Ff]ile\s*\|(?: *(?:name|1) *\=)?(\n*(?:(?!\{\{|\||&lt;[Nn][Oo][Ww][Ii][Kk][Ii]&gt;|\=).\n*)+?)\|(?: *(?:content|2) *\=)?(\n*(?:(?!\{\{|\=).\n*)*?)\}\}/g;
-        var re4 = /\{\{ *[Ff]ile\s*\|(?: *(?:name|1) *\=)?(\n*(?:(?!\{\{|\||&lt;[Nn][Oo][Ww][Ii][Kk][Ii]&gt;|\=).\n*)+?)\|(?: *(?:content|2) *\=)?(\n*(?:(?!\{\{).\n*)*?)\}\}/g;
-        var re5 = /\{\{ *[Ff]ile\s*\|(?: *(?:name|1) *\=)?(\n*(?:(?!\{\{|\||&lt;[Nn][Oo][Ww][Ii][Kk][Ii]&gt;).\n*)+?)\|(?: *(?:content|2) *\=)?(\n*(?:(?!\{\{).\n*)*?)\}\}/g;
+        var re3 = /\{\{ *[Ff]ile\s*\|(?: *(?:name|1) *\=)?(\n*(?:(?!\{\{|\||<[Nn][Oo][Ww][Ii][Kk][Ii]>|\=).\n*)+?)\|(?: *(?:content|2) *\=)?(\n*(?:(?!\{\{|\=).\n*)*?)\}\}/g;
+        var re4 = /\{\{ *[Ff]ile\s*\|(?: *(?:name|1) *\=)?(\n*(?:(?!\{\{|\||<[Nn][Oo][Ww][Ii][Kk][Ii]>|\=).\n*)+?)\|(?: *(?:content|2) *\=)?(\n*(?:(?!\{\{).\n*)*?)\}\}/g;
+        var re5 = /\{\{ *[Ff]ile\s*\|(?: *(?:name|1) *\=)?(\n*(?:(?!\{\{|\||<[Nn][Oo][Ww][Ii][Kk][Ii]>).\n*)+?)\|(?: *(?:content|2) *\=)?(\n*(?:(?!\{\{).\n*)*?)\}\}/g;
         
         var newtext = source.replace(re3, '{{hc|$1|$2}}');
         // Note the {{hc|1=$1|$2}} case is impossible
