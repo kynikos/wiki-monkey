@@ -1,14 +1,14 @@
 // ==UserScript==
-// @id wiki-monkey-dev-archwikieditor-chromium
+// @id wiki-monkey-archwikieditor-chromium
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 16dev-archwikieditor-chromium
+// @version 1.10.3-archwikieditor-chromium
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/chromium/WikiMonkey-archwikieditor-chromium.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/chromium/WikiMonkey-archwikieditor-chromium.user.js
+// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-archwikieditor-chromium.meta.js
+// @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-archwikieditor-chromium.user.js
 // @icon http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey.png
 // @icon64 http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey-64.png
 // @match http://*.wikipedia.org/*
@@ -263,8 +263,8 @@ WM.ArchWiki = new function () {
         interwiki: {
             all: ["de", "en", "es", "fa", "fi", "fr", "pl", "pt-br", "ro",
                   "sv", "tr", "uk"],
-            alive: ["de", "en", "fa", "fi", "fr", "ro", "tr"],
-            dead: ["es", "pl", "pt-br", "sv", "uk"]
+            alive: ["de", "en", "fa", "fi", "fr", "ro", "sv", "tr"],
+            dead: ["es", "pl", "pt-br", "uk"]
         }
     };
     
@@ -1167,7 +1167,7 @@ WM.MW = new function () {
 
 WM.Tables = new function () {
     this.appendRow = function (source, mark, values) {
-        var lastId = source.lastIndexOf('|}&lt;!--' + mark);
+        var lastId = source.lastIndexOf('|}<!--' + mark);
         var endtable = (lastId > -1) ? lastId : source.lastIndexOf('|}');
         
         var part1 = source.substring(0, endtable);
@@ -1405,7 +1405,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         
         // Note that all patterns get only left-side white space
         
-        var res = storeMatches(source, /^\s*(&lt;noinclude&gt;)/g, true);
+        var res = storeMatches(source, /^\s*(<noinclude>)/g, true);
         elements.noinclude = res[1];
         
         res = storeMatches(res[0], /\s*(\{\{(DISPLAYTITLE:(.+?)|[Ll]owercase title)\}\})/g, false);
@@ -1718,17 +1718,17 @@ WM.Plugins.ArchWikiNewTemplates = new function () {
         var source = WM.Editor.readSource();
         var newtext = source;
         
-        var re8 = /&lt;pre&gt;(((?!&lt;(pre|nowiki)&gt;)[^\=\|])*?((?!&lt;(pre|nowiki)&gt;)[^\=\|\}]))&lt;\/pre&gt;/ig;
-        var re9 = /&lt;pre&gt;(((?!&lt;(pre|nowiki)&gt;)[^\|])*?((?!&lt;(pre|nowiki)&gt;)[^\|\}]))&lt;\/pre&gt;/ig;
-        var re10 = /&lt;pre&gt;(\n*((?!&lt;(pre|nowiki)&gt;).\n*)+?)&lt;\/pre&gt;/ig;
+        var re8 = /<pre>(((?!<(pre|nowiki)>)[^\=\|])*?((?!<(pre|nowiki)>)[^\=\|\}]))<\/pre>/ig;
+        var re9 = /<pre>(((?!<(pre|nowiki)>)[^\|])*?((?!<(pre|nowiki)>)[^\|\}]))<\/pre>/ig;
+        var re10 = /<pre>(\n*((?!<(pre|nowiki)>).\n*)+?)<\/pre>/ig;
         
-        var re11 = /&lt;code&gt;(((?!&lt;(code|nowiki)&gt;)[^\=\|\n])*?((?!&lt;(code|nowiki)&gt;)[^\=\|\}\n]))&lt;\/code&gt;/ig;
-        var re12 = /&lt;code&gt;(((?!&lt;(code|nowiki)&gt;)[^\|\n])*?((?!&lt;(code|nowiki)&gt;)[^\|\}\n]))&lt;\/code&gt;/ig;
-        var re13 = /&lt;code&gt;(((?!&lt;(code|nowiki)&gt;)[^\n])+?)&lt;\/code&gt;/ig;
+        var re11 = /<code>(((?!<(code|nowiki)>)[^\=\|\n])*?((?!<(code|nowiki)>)[^\=\|\}\n]))<\/code>/ig;
+        var re12 = /<code>(((?!<(code|nowiki)>)[^\|\n])*?((?!<(code|nowiki)>)[^\|\}\n]))<\/code>/ig;
+        var re13 = /<code>(((?!<(code|nowiki)>)[^\n])+?)<\/code>/ig;
         
-        var re14 = /&lt;tt&gt;(((?!&lt;(tt|nowiki)&gt;)[^\=\|\n])*?((?!&lt;(tt|nowiki)&gt;)[^\=\|\}\n]))&lt;\/tt&gt;/ig;
-        var re15 = /&lt;tt&gt;(((?!&lt;(tt|nowiki)&gt;)[^\|\n])*?((?!&lt;(tt|nowiki)&gt;)[^\|\}\n]))&lt;\/tt&gt;/ig;
-        var re16 = /&lt;tt&gt;(((?!&lt;(tt|nowiki)&gt;)[^\n])+?)&lt;\/tt&gt;/ig;
+        var re14 = /<tt>(((?!<(tt|nowiki)>)[^\=\|\n])*?((?!<(tt|nowiki)>)[^\=\|\}\n]))<\/tt>/ig;
+        var re15 = /<tt>(((?!<(tt|nowiki)>)[^\|\n])*?((?!<(tt|nowiki)>)[^\|\}\n]))<\/tt>/ig;
+        var re16 = /<tt>(((?!<(tt|nowiki)>)[^\n])+?)<\/tt>/ig;
         
         newtext = newtext.replace(re8, '{{bc|$1}}');
         newtext = newtext.replace(re9, '{{bc|1=$1}}'); // Must come after re8
@@ -1748,9 +1748,9 @@ WM.Plugins.ArchWikiNewTemplates = new function () {
         }
         
         var tests = [
-            ['&lt;pre>', newtext.match(/&lt;pre/ig)],
-            ['&lt;code>', newtext.match(/&lt;code/ig)],
-            ['&lt;tt>', newtext.match(/&lt;tt/ig)]
+            ['&lt;pre>', newtext.match(/<pre/ig)],
+            ['&lt;code>', newtext.match(/<code/ig)],
+            ['&lt;tt>', newtext.match(/<tt/ig)]
         ];
         
         for (var test in tests) { 

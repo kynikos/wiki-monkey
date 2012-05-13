@@ -1,14 +1,14 @@
 // ==UserScript==
-// @id wiki-monkey-dev-bot-chromium
+// @id wiki-monkey-bot-chromium
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 16dev-bot-chromium
+// @version 1.10.3-bot-chromium
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/chromium/WikiMonkey-bot-chromium.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/chromium/WikiMonkey-bot-chromium.user.js
+// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-bot-chromium.meta.js
+// @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-bot-chromium.user.js
 // @icon http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey.png
 // @icon64 http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey-64.png
 // @match http://*.wikipedia.org/*
@@ -1003,7 +1003,7 @@ WM.MW = new function () {
 
 WM.Tables = new function () {
     this.appendRow = function (source, mark, values) {
-        var lastId = source.lastIndexOf('|}&lt;!--' + mark);
+        var lastId = source.lastIndexOf('|}<!--' + mark);
         var endtable = (lastId > -1) ? lastId : source.lastIndexOf('|}');
         
         var part1 = source.substring(0, endtable);

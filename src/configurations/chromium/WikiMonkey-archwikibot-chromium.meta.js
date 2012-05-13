@@ -1,3 +1,3 @@
 // ==UserScript==
-// @version 16dev-archwikibot-chromium
+// @version 1.10.3-archwikibot-chromium
 // ==/UserScript==

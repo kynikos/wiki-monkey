@@ -1,14 +1,14 @@
 // ==UserScript==
-// @id wiki-monkey-dev-archwikipatrollite-opera
+// @id wiki-monkey-archwikipatrollite-opera
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 16dev-archwikipatrollite-opera
+// @version 1.10.3-archwikipatrollite-opera
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/opera/WikiMonkey-archwikipatrollite-opera.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/opera/WikiMonkey-archwikipatrollite-opera.user.js
+// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/opera/WikiMonkey-archwikipatrollite-opera.meta.js
+// @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/opera/WikiMonkey-archwikipatrollite-opera.user.js
 // @icon http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey.png
 // @icon64 http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey-64.png
 // @include http://*.wikipedia.org/*
@@ -263,8 +263,8 @@ WM.ArchWiki = new function () {
         interwiki: {
             all: ["de", "en", "es", "fa", "fi", "fr", "pl", "pt-br", "ro",
                   "sv", "tr", "uk"],
-            alive: ["de", "en", "fa", "fi", "fr", "ro", "tr"],
-            dead: ["es", "pl", "pt-br", "sv", "uk"]
+            alive: ["de", "en", "fa", "fi", "fr", "ro", "sv", "tr"],
+            dead: ["es", "pl", "pt-br", "uk"]
         }
     };
     
@@ -1167,7 +1167,7 @@ WM.MW = new function () {
 
 WM.Tables = new function () {
     this.appendRow = function (source, mark, values) {
-        var lastId = source.lastIndexOf('|}&lt;!--' + mark);
+        var lastId = source.lastIndexOf('|}<!--' + mark);
         var endtable = (lastId > -1) ? lastId : source.lastIndexOf('|}');
         
         var part1 = source.substring(0, endtable);
