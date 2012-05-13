@@ -18,6 +18,7 @@
   correctly
 * Checkout the master branch and merge the temporary branch into the master
   branch (assess the possibility of a rebase)
+  (try `git merge -X theirs branch`)
 * Delete the temporary branch both locally and remotely
   ("git push origin :tmpbranch" or "git push origin :refs/heads/tmpbranch")
 * Tag the release commit with the new version number (the @require scripts
