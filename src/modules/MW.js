@@ -54,6 +54,34 @@ WM.MW = new function () {
         return JSON.parse(WM.HTTP.getResponseText(id));
     };
     
+    this.callAPIGetAsync = function (params, call) {
+        GM_xmlhttpRequest({
+            method: "GET",
+            url: wikiUrls.api + "?format=json" + joinParams(params),
+            onload: function (res) {
+                call(res.responseJSON);
+            }
+        });
+    };
+    
+    this.callAPIPostAsync = function (params, call) {
+        var queryData = new FormData();
+        queryData.append("format", "json");
+        for (var p in params) {
+            queryData.append(p, params[p]);
+        }
+        
+        GM_xmlhttpRequest({
+            method: "POST",
+            url: wikiUrls.api,
+            data: queryData,
+            headers: {"Content-type": "application/x-www-form-urlencoded"},
+            onload: function (res) {
+                call(res.responseJSON);
+            }
+        });
+    };
+    
     var joinParams = function (params) {
         var string = "";
         for (var key in params) {
