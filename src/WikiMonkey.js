@@ -50,6 +50,99 @@ var WM = new function () {
         return text;
     };
     
+    this.recurseTreeAsync = function (params) {
+        /*
+         * params = {
+         *     node: ,
+         *     parentIndex: ,
+         *     siblingIndex: ,
+         *     ancestors: ,
+         *     children: ,
+         *     callChildren: ,
+         *     callNode: ,
+         *     callEnd: ,
+         *     stage: ,
+         *     nodesList:
+         * }
+         * 
+         * nodesList: [
+         *     {
+         *         node: ,
+         *         parentIndex: ,
+         *         siblingIndex: ,
+         *         ancestors: [...],
+         *         children: [...]
+         *     },
+         *     {...}
+         * ]
+         */
+        // SISTEMA ANTI LOOP!!! **************************************************
+        switch (params.stage) {
+            case 0:
+                params.stage = 1;
+                params.callChildren(params);
+                break;
+            case 1:
+                params.nodesList.push({
+                    node: params.node,
+                    parentIndex: params.parentIndex,
+                    siblingIndex: params.siblingIndex,
+                    ancestors: params.ancestors,
+                    children: params.children
+                });
+                params.stage = 2;
+                params.callNode(params);
+                break;
+            case 2:
+                if (params.children) {
+                    // Go to the first child
+                    params.node = params.children[0];
+                    params.parentIndex = params.nodesList.length - 1;
+                    params.siblingIndex = 0;
+                    params.ancestors.push(params.node);
+                    params.children = [];
+                    params.stage = 0;
+                    this.recurseTreeAsync(params);
+                }
+                else if (params.parentIndex != null) {
+                    // Go to the next sibling
+                    var parent = params.nodesList[params.parentIndex];
+                    params.siblingIndex++;
+                    params.node = parent.children[params.siblingIndex];
+                    if (!params.node) {
+                        // There are no more siblings
+                        params.node = parent.node;
+                        params.parentIndex = parent.parentIndex;
+                        params.siblingIndex = parent.siblingIndex;
+                        params.ancestors = parent.ancestors;
+                        params.children = parent.children;
+                        params.stage = 2;
+                        this.recurseTreeAsync(params);
+                    }
+                    params.children = [];
+                    params.stage = 0;
+                    this.recurseTreeAsync(params);
+                }
+                else {
+                    // End of recursion
+                    // CALCOLARE E RESTITUIRE ANCHE UN TREE ******************
+                    // A DIZIONARI ANNIDATI **********************************
+                    callEnd(params);
+                }
+                break;
+            default:
+                params.nodesList = [{
+                    node: params.node,
+                    parentIndex: null,
+                    siblingIndex: 0,
+                    ancestors: [],
+                    children: []
+                }];
+                params.stage = 0;
+                this.recurseTreeAsync(params);
+        }
+    };
+    
     this.Plugins = {};
     
     this.main = function () {
