@@ -3,7 +3,7 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
         var regExp = /\[(https?\:\/\/aur\.archlinux\.org\/packages\.php\?ID\=[0-9]+) ([^\]]+?)\]/g;
         var match, res, page;
         var links = {};
-        
+        /*
         while (true) {
             match = regExp.exec(source);
             
@@ -18,7 +18,22 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
                     //type: 'POST',
                     //dataType: 'html'
                 });
-                
+                */
+                var ret = GM_xmlhttpRequest({
+                    method: "GET",
+                    url: "https://aur.archlinux.org/",
+                    onload: function (res) {
+                        //WM.Log.logDebug(JSON.stringify(res.responseText));
+                        var parser = new DOMParser();
+                        page = parser.parseFromString(res.responseText, "text/xml");
+                        //page = $.parseXML(res.responseText);
+                        var links = page.getElementsByTagName('a');
+                        for (var i = 0; links.length; i++) {
+                            WM.Log.logDebug(links[i].innerHTML);  // ****************************************
+                        }
+                    }
+                });
+                /*
                 var parser = new DOMParser();
                 page = parser.parseFromString(res.responseText, "text/xml");
                 //page = $.parseXML(res.responseText);
@@ -30,7 +45,7 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
             else {
                 break;
             }
-        }
+        }*/
         
         var newText = source;
         
