@@ -27,7 +27,7 @@ WM.Diff = new function () {
         
         switch (diff) {
             case 'next':
-                pageid = WM.MW.callQuery({prop: "revisions",
+                pageid = WM.MW.callQuerySync({prop: "revisions",
                                          titles: title,
                                          rvlimit: "2",
                                          rvprop: "timestamp",
@@ -36,13 +36,13 @@ WM.Diff = new function () {
                 enddate = pageid.revisions[1].timestamp;
                 break;
             case 'prev':
-                pageid = WM.MW.callQuery({prop: "revisions",
+                pageid = WM.MW.callQuerySync({prop: "revisions",
                                          revids: oldid,
                                          rvprop: "timestamp"});
                 enddate = pageid.revisions[0].timestamp;
                 break;
             default:
-                pageid = WM.MW.callQuery({prop: "revisions",
+                pageid = WM.MW.callQuerySync({prop: "revisions",
                                          revids: diff,
                                          rvprop: "timestamp"});
                 enddate = pageid.revisions[0].timestamp;

@@ -1,6 +1,6 @@
 WM.Plugins.ArchWikiTurkishIwLinks = new function () {
     this.mainAuto = function (args, title) {
-        var pageid = WM.MW.callQuery({prop: "revisions",
+        var pageid = WM.MW.callQuerySync({prop: "revisions",
                                       rvprop: "content",
                                       titles: encodeURIComponent(title)});
         
@@ -10,7 +10,7 @@ WM.Plugins.ArchWikiTurkishIwLinks = new function () {
         
         var enTitle = title.match(/^(.+?) \(Türkçe\)$/)[1];
         
-        var page = WM.MW.callQuery({prop: "info|revisions",
+        var page = WM.MW.callQuerySync({prop: "info|revisions",
                                       rvprop: "content|timestamp",
                                       intoken: "edit",
                                       titles: encodeURIComponent(enTitle)});
@@ -24,7 +24,7 @@ WM.Plugins.ArchWikiTurkishIwLinks = new function () {
         if (newText != enSource) {
             var summary = "add Turkish interlanguage link";
             
-            var res = WM.MW.callAPIPost({action: "edit",
+            var res = WM.MW.callAPIPostSync({action: "edit",
                                      bot: "1",
                                      title: encodeURIComponent(enTitle),
                                      summary: encodeURIComponent(summary),

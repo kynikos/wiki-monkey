@@ -70,7 +70,7 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
     this.mainAuto = function (args, title) {
         var summary = args[0];
         
-        var res = WM.MW.callAPIGet({action: "query",
+        var res = WM.MW.callAPIGetSync({action: "query",
                                     prop: "info|revisions",
                                     rvprop: "content|timestamp",
                                     intoken: "edit",
@@ -89,7 +89,7 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
         var newtext = doReplace(source);
         
         if (newtext != source) {
-            res = WM.MW.callAPIPost({action: "edit",
+            res = WM.MW.callAPIPostSync({action: "edit",
                                      bot: "1",
                                      title: encodeURIComponent(title),
                                      summary: encodeURIComponent(summary),

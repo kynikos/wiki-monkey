@@ -7,7 +7,7 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
         if (cat.substr(-10) == " (English)") {
             var summary = "prepare to move here the members of [[:" + cat + "]], see [[Talk:Table of Contents#English Category Names: Capitalization and Conflict with i18n]]";
             
-            var oldpage = WM.MW.callQuery({prop: 'revisions|categoryinfo',
+            var oldpage = WM.MW.callQuerySync({prop: 'revisions|categoryinfo',
                                            rvprop: 'content',
                                            titles: encodeURIComponent(cat)});
             
@@ -22,13 +22,13 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
             // The suffix should have already been removed from all the parent
             // categories
             
-            var newpage = WM.MW.callQuery({prop: 'info',
+            var newpage = WM.MW.callQuerySync({prop: 'info',
                                            intoken: 'edit',
                                            titles: encodeURIComponent(title)});
             
             var edittoken = newpage.edittoken;
             
-            var res = WM.MW.callAPIPost({action: 'edit',
+            var res = WM.MW.callAPIPostSync({action: 'edit',
                                      bot: '1',
                                      title: encodeURIComponent(title),
                                      summary: encodeURIComponent(summary),
@@ -64,7 +64,7 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
         var [cat, info, title, member, members, mindex] = args;
         var summary = "remove language suffix from [[:" + cat + "]], see [[Talk:Table of Contents#English Category Names: Capitalization and Conflict with i18n]]";
         
-        var page = WM.MW.callQuery({prop: "info|revisions",
+        var page = WM.MW.callQuerySync({prop: "info|revisions",
                                     rvprop: "content|timestamp",
                                     intoken: "edit",
                                     titles: encodeURIComponent(member)});
@@ -84,7 +84,7 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
         
         var newText = source.replace(regExp, "[[Category:" + sTitle + "]]");
         
-        var res = WM.MW.callAPIPost({action: "edit",
+        var res = WM.MW.callAPIPostSync({action: "edit",
                                      bot: "1",
                                      title: encodeURIComponent(member),
                                      summary: encodeURIComponent(summary),
@@ -144,7 +144,7 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
         var [cat, info, title, backlink, backlinks, bindex] = args;
         var summary = "removed language suffix from [[:" + cat + "]], see [[Talk:Table of Contents#English Category Names: Capitalization and Conflict with i18n]]";
         
-        var page = WM.MW.callQuery({prop: "info|revisions",
+        var page = WM.MW.callQuerySync({prop: "info|revisions",
                                     rvprop: "content|timestamp",
                                     intoken: "edit",
                                     titles: encodeURIComponent(backlink)});
@@ -164,7 +164,7 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
         
         var newText = source.replace(regExp, "[[:Category:" + sTitle);
         
-        var res = WM.MW.callAPIPost({action: "edit",
+        var res = WM.MW.callAPIPostSync({action: "edit",
                                      bot: "1",
                                      title: encodeURIComponent(backlink),
                                      summary: encodeURIComponent(summary),
@@ -188,13 +188,13 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
     var deleteCategory = function (cat, title) {
         var summary = "moved to [[:" + title + "]], see [[Talk:Table of Contents#English Category Names: Capitalization and Conflict with i18n]]";
         
-        var page = WM.MW.callQuery({prop: 'info',
+        var page = WM.MW.callQuerySync({prop: 'info',
                                     intoken: 'delete',
                                     titles: encodeURIComponent(cat)});
         
         var deletetoken = page.deletetoken;
         
-        var res = WM.MW.callAPIPost({action: 'delete',
+        var res = WM.MW.callAPIPostSync({action: 'delete',
                                      bot: '1',
                                      title: encodeURIComponent(cat),
                                      token: encodeURIComponent(deletetoken),

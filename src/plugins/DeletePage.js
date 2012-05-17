@@ -2,13 +2,13 @@ WM.Plugins.DeletePage = new function () {
     this.mainAuto = function (args, title) {
         var summary = args[0];
         
-        var page = WM.MW.callQuery({prop: 'info',
+        var page = WM.MW.callQuerySync({prop: 'info',
                                     intoken: 'delete',
                                     titles: encodeURIComponent(title)});
         
         var deletetoken = page.deletetoken;
         
-        var res = WM.MW.callAPIPost({action: 'delete',
+        var res = WM.MW.callAPIPostSync({action: 'delete',
                                      bot: '1',
                                      title: encodeURIComponent(title),
                                      token: encodeURIComponent(deletetoken),
@@ -28,13 +28,13 @@ WM.Plugins.DeletePage = new function () {
         
         WM.Log.logInfo("Deleting " + title + "...");
         
-        var page = WM.MW.callQuery({prop: 'info',
+        var page = WM.MW.callQuerySync({prop: 'info',
                                     intoken: 'delete',
                                     titles: encodeURIComponent(title)});
         
         var deletetoken = page.deletetoken;
         
-        var res = WM.MW.callAPIPost({action: 'delete',
+        var res = WM.MW.callAPIPostSync({action: 'delete',
                                      bot: '1',
                                      title: encodeURIComponent(title),
                                      token: encodeURIComponent(deletetoken),

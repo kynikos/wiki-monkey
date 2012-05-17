@@ -39,7 +39,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
         var startMark = "START AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK-->";
         var endMark = "<!--END AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK";
         
-        var pageid = WM.MW.callQuery({prop: "info|revisions",
+        var pageid = WM.MW.callQuerySync({prop: "info|revisions",
                                       rvprop: "content|timestamp",
                                       intoken: "edit",
                                       titles: encodeURIComponent(params.page)});
@@ -210,7 +210,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
         var newtext = args[8];
         
         if (newtext != source) {
-            var res = WM.MW.callAPIPost({action: "edit",
+            var res = WM.MW.callAPIPostSync({action: "edit",
                                      bot: "1",
                                      title: encodeURIComponent(params.page),
                                      summary: encodeURIComponent(summary),

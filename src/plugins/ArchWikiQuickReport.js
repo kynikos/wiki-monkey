@@ -48,7 +48,7 @@ WM.Plugins.ArchWikiQuickReport = new function () {
             WM.Log.logError('Select a valid report type');
         }
         else {
-            var pageid = WM.MW.callQuery({prop: "info|revisions",
+            var pageid = WM.MW.callQuerySync({prop: "info|revisions",
                                           rvprop: "content|timestamp",
                                           intoken: "edit",
                                           titles: encodeURIComponent(article)});
@@ -59,7 +59,7 @@ WM.Plugins.ArchWikiQuickReport = new function () {
             
             var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", enddate, type, notes]);
             
-            var res = WM.MW.callAPIPost({action: "edit",
+            var res = WM.MW.callAPIPostSync({action: "edit",
                                      bot: "1",
                                      title: encodeURIComponent(article),
                                      summary: encodeURIComponent(summary),

@@ -60,7 +60,7 @@ WM.Cat = new function () {
             query.cmcontinue = cmcontinue;
         }
         
-        var res = WM.MW.callAPIGet(query);
+        var res = WM.MW.callAPIGetSync(query);
         var members = res.query.categorymembers;
         
         if (res["query-continue"]) {
@@ -77,7 +77,7 @@ WM.Cat = new function () {
     this.getParents = function (child) {
         // Supports a maximum of 500 parents (5000 for bots)
         // Needs to implement query continue in order to support more
-        var pageid = WM.MW.callQuery({prop: "categories",
+        var pageid = WM.MW.callQuerySync({prop: "categories",
                                      titles: encodeURIComponent(child),
                                      cllimit: 5000});
         
@@ -91,7 +91,7 @@ WM.Cat = new function () {
     };
     
     this.getInfo = function (name) {
-        var pageid = WM.MW.callQuery({prop: "categoryinfo",
+        var pageid = WM.MW.callQuerySync({prop: "categoryinfo",
                                      titles: encodeURIComponent(name)});
         return pageid.categoryinfo;
     };

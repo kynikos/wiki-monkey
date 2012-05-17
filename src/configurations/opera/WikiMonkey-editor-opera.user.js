@@ -658,7 +658,7 @@ WM.Cat = new function () {
             query.cmcontinue = cmcontinue;
         }
         
-        var res = WM.MW.callAPIGet(query);
+        var res = WM.MW.callAPIGetSync(query);
         var members = res.query.categorymembers;
         
         if (res["query-continue"]) {
@@ -675,7 +675,7 @@ WM.Cat = new function () {
     this.getParents = function (child) {
         // Supports a maximum of 500 parents (5000 for bots)
         // Needs to implement query continue in order to support more
-        var pageid = WM.MW.callQuery({prop: "categories",
+        var pageid = WM.MW.callQuerySync({prop: "categories",
                                      titles: encodeURIComponent(child),
                                      cllimit: 5000});
         
@@ -689,7 +689,7 @@ WM.Cat = new function () {
     };
     
     this.getInfo = function (name) {
-        var pageid = WM.MW.callQuery({prop: "categoryinfo",
+        var pageid = WM.MW.callQuerySync({prop: "categoryinfo",
                                      titles: encodeURIComponent(name)});
         return pageid.categoryinfo;
     };
@@ -704,7 +704,7 @@ WM.Diff = new function () {
         
         switch (diff) {
             case 'next':
-                pageid = WM.MW.callQuery({prop: "revisions",
+                pageid = WM.MW.callQuerySync({prop: "revisions",
                                          titles: title,
                                          rvlimit: "2",
                                          rvprop: "timestamp",
@@ -713,13 +713,13 @@ WM.Diff = new function () {
                 enddate = pageid.revisions[1].timestamp;
                 break;
             case 'prev':
-                pageid = WM.MW.callQuery({prop: "revisions",
+                pageid = WM.MW.callQuerySync({prop: "revisions",
                                          revids: oldid,
                                          rvprop: "timestamp"});
                 enddate = pageid.revisions[0].timestamp;
                 break;
             default:
-                pageid = WM.MW.callQuery({prop: "revisions",
+                pageid = WM.MW.callQuerySync({prop: "revisions",
                                          revids: diff,
                                          rvprop: "timestamp"});
                 enddate = pageid.revisions[0].timestamp;
@@ -914,12 +914,12 @@ WM.MW = new function () {
         return wikiUrls.articles;
     };
     
-    this.callAPIGet = function (params) {
+    this.callAPIGetSync = function (params) {
         var id = WM.HTTP.sendGetSyncRequest(wikiUrls.api + "?format=json" + joinParams(params));
         return JSON.parse(WM.HTTP.getResponseText(id));
     };
     
-    this.callAPIPost = function (params) {
+    this.callAPIPostSync = function (params) {
         var id = WM.HTTP.sendPostSyncRequest(wikiUrls.api, "format=json" + joinParams(params), "Content-type", "application/x-www-form-urlencoded");
         return JSON.parse(WM.HTTP.getResponseText(id));
     };
@@ -932,9 +932,9 @@ WM.MW = new function () {
         return string;
     };
     
-    this.callQuery = function (params) {
+    this.callQuerySync = function (params) {
         params.action = "query";
-        var res = this.callAPIGet(params);
+        var res = this.callAPIGetSync(params);
         var pages = res.query.pages;
         for (var id in pages) {
             break;
@@ -947,7 +947,7 @@ WM.MW = new function () {
     
     this.getUserInfo = function () {
         if (!userInfo) {
-            userInfo = this.callAPIGet({action: "query",
+            userInfo = this.callAPIGetSync({action: "query",
                                         meta: "userinfo",
                                         uiprop: "groups"});
         }
@@ -986,7 +986,7 @@ WM.MW = new function () {
             query.blcontinue = blcontinue;
         }
         
-        var res = WM.MW.callAPIGet(query);
+        var res = WM.MW.callAPIGetSync(query);
         var backlinks = res.query.backlinks;
         
         if (res["query-continue"]) {
@@ -1363,7 +1363,7 @@ WM.Plugins.SimpleReplace = new function () {
     this.mainAuto = function (args, title) {
         var id = args[0];
         
-        var pageid = WM.MW.callQuery({prop: "info|revisions",
+        var pageid = WM.MW.callQuerySync({prop: "info|revisions",
                                     rvprop: "content|timestamp",
                                     intoken: "edit",
                                     titles: encodeURIComponent(title)});
@@ -1377,7 +1377,7 @@ WM.Plugins.SimpleReplace = new function () {
         if (newtext != source) {
             var summary = document.getElementById("WikiMonkey-SimpleReplace-Summary-" + id).value;
             
-            var res = WM.MW.callAPIPost({action: "edit",
+            var res = WM.MW.callAPIPostSync({action: "edit",
                                      bot: "1",
                                      title: encodeURIComponent(title),
                                      summary: encodeURIComponent(summary),

@@ -18,7 +18,7 @@ WM.Plugins.ArchWikiSaveTalk = new function () {
         var title = WM.getURIParameter('title');
         var enddate = WM.Diff.getEndTimestamp();
         
-        var pageid = WM.MW.callQuery({prop: "info|revisions",
+        var pageid = WM.MW.callQuerySync({prop: "info|revisions",
                                       rvprop: "content|timestamp",
                                       intoken: "edit",
                                       titles: encodeURIComponent(article)});
@@ -29,7 +29,7 @@ WM.Plugins.ArchWikiSaveTalk = new function () {
         
         var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", enddate]);
         
-        var res = WM.MW.callAPIPost({action: "edit",
+        var res = WM.MW.callAPIPostSync({action: "edit",
                                  bot: "1",
                                  title: encodeURIComponent(article),
                                  summary: encodeURIComponent(summary),

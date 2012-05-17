@@ -44,17 +44,7 @@ WM.MW = new function () {
         return wikiUrls.articles;
     };
     
-    this.callAPIGet = function (params) {
-        var id = WM.HTTP.sendGetSyncRequest(wikiUrls.api + "?format=json" + joinParams(params));
-        return JSON.parse(WM.HTTP.getResponseText(id));
-    };
-    
-    this.callAPIPost = function (params) {
-        var id = WM.HTTP.sendPostSyncRequest(wikiUrls.api, "format=json" + joinParams(params), "Content-type", "application/x-www-form-urlencoded");
-        return JSON.parse(WM.HTTP.getResponseText(id));
-    };
-    
-    this.callAPIGetAsync = function (params, call) {
+    this.callAPIGet = function (params, call) {
         GM_xmlhttpRequest({
             method: "GET",
             url: wikiUrls.api + "?format=json" + joinParams(params),
@@ -64,7 +54,7 @@ WM.MW = new function () {
         });
     };
     
-    this.callAPIPostAsync = function (params, call) {
+    this.callAPIPost = function (params, call) {
         var queryData = new FormData();
         queryData.append("format", "json");
         for (var p in params) {
@@ -82,6 +72,16 @@ WM.MW = new function () {
         });
     };
     
+    this.callAPIGetSync = function (params) {
+        var id = WM.HTTP.sendGetSyncRequest(wikiUrls.api + "?format=json" + joinParams(params));
+        return JSON.parse(WM.HTTP.getResponseText(id));
+    };
+    
+    this.callAPIPostSync = function (params) {
+        var id = WM.HTTP.sendPostSyncRequest(wikiUrls.api, "format=json" + joinParams(params), "Content-type", "application/x-www-form-urlencoded");
+        return JSON.parse(WM.HTTP.getResponseText(id));
+    };
+    
     var joinParams = function (params) {
         var string = "";
         for (var key in params) {
@@ -90,9 +90,21 @@ WM.MW = new function () {
         return string;
     };
     
-    this.callQuery = function (params) {
+    this.callQuery = function (params, call) {
         params.action = "query";
-        var res = this.callAPIGet(params);
+        var callBack = function (res) {
+            var pages = res.query.pages;
+            for (var id in pages) {
+                break;
+            }
+            call(pages[id]);
+        };
+        this.callAPIGet(params, callBack);
+    };
+    
+    this.callQuerySync = function (params) {
+        params.action = "query";
+        var res = this.callAPIGetSync(params);
         var pages = res.query.pages;
         for (var id in pages) {
             break;
@@ -105,9 +117,9 @@ WM.MW = new function () {
     
     this.getUserInfo = function () {
         if (!userInfo) {
-            userInfo = this.callAPIGet({action: "query",
-                                        meta: "userinfo",
-                                        uiprop: "groups"});
+            userInfo = this.callAPIGetSync({action: "query",
+                                            meta: "userinfo",
+                                            uiprop: "groups"});
         }
         return userInfo;
     };
@@ -144,7 +156,7 @@ WM.MW = new function () {
             query.blcontinue = blcontinue;
         }
         
-        var res = WM.MW.callAPIGet(query);
+        var res = WM.MW.callAPIGetSync(query);
         var backlinks = res.query.backlinks;
         
         if (res["query-continue"]) {

@@ -1,6 +1,6 @@
 WM.Plugins.ArchWikiPkgAUR = new function () {
     this.mainAuto = function (args, title) {
-        var pageid = WM.MW.callQuery({prop: "info|revisions",
+        var pageid = WM.MW.callQuerySync({prop: "info|revisions",
                                      rvprop: "content|timestamp",
                                      intoken: "edit",
                                      titles: encodeURIComponent(title)});
@@ -15,7 +15,7 @@ WM.Plugins.ArchWikiPkgAUR = new function () {
         if (newtext != source) {
             var summary = "use new package templates, see [[Help:Style]]";
             
-            var res = WM.MW.callAPIPost({action: "edit",
+            var res = WM.MW.callAPIPostSync({action: "edit",
                                      bot: "1",
                                      title: encodeURIComponent(title),
                                      summary: encodeURIComponent(summary),
