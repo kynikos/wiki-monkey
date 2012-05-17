@@ -23,7 +23,6 @@ WM.Cat = new function () {
         WM.recurseTreeAsync({
             node: base,
             callChildren: function (params) {
-                WM.Log.logInfo("Processing " + params.node + "...");
                 var subCats = WM.Cat.getSubCategories(params.node);
                 for (var s in subCats) {
                     params.children.push(subCats[s].title);
