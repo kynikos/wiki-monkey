@@ -19,38 +19,23 @@
  */
 
 WM.Cat = new function () {
-    this.getTree = function (base) {
-        var tree = {};
-        tree[base] = walk(base, {});
-        // return {base: walk(base, {})}; doesn't work
-        return tree;
+    this.recurseTree = function (base, callCat, callEnd) {
+        WM.recurseTreeAsync({
+            node: base,
+            callChildren: function (params) {
+                WM.Log.logInfo("Processing " + params.node + "...");
+                var subCats = WM.Cat.getSubCategories(params.node);
+                for (var s in subCats) {
+                    params.children.push(subCats[s].title);
+                }
+            },
+            callNode: callCat,
+            callEnd: callEnd,
+        });
     };
     
-    var walk = function (base, ancestors) {
-        WM.Log.logInfo("Walking " + base + "...");
-        
-        var subCats = WM.Cat.getSubCategories(base);
-        
-        var tree = {};
-        // Add base here in order to protect better from self-parenting categories
-        ancestors[base] = true;
-        var cat, subAncestors;
-        
-        for (var s in subCats) {
-            cat = subCats[s].title;
-            
-            // Protect from category loops
-            if (ancestors[cat]) {
-                tree[cat] = "loop";
-            }
-            else {
-                // Create a copy of the object, not just a new reference
-                subAncestors = JSON.parse(JSON.stringify(ancestors));
-                tree[cat] = walk(cat, subAncestors);
-            }
-        }
-        
-        return tree;
+    this.continueRecurseTree = function (args) {
+        WM.recurseTreeAsync(args[0]);
     };
     
     this.getSubCategories = function (parent) {
