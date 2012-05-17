@@ -34,7 +34,7 @@ WM.Cat = new function () {
         });
     };
     
-    this.continueRecurseTree = function (args) {
+    this.recurseTreeContinue = function (args) {
         WM.recurseTreeAsync(args[0]);
     };
     
