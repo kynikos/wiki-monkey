@@ -75,13 +75,40 @@ var WM = new function () {
          *     },
          *     {...}
          * ]
+         * 
+         * Example:
+         * 
+         * recurseTreeAsync({
+         *     node: ,
+         *     callChildren: ,
+         *     callNode: ,
+         *     callEnd: ,
+         * });
+         * 
+         * callChildren(params) {
+         *     params.children = ;
+         *     recurseTreeAsync(params);
+         * }
+         * 
+         * callNode(params) {
+         *     recurseTreeAsync(params);
+         * }
+         * 
+         * callEnd(params) {}
          */
-        // SISTEMA ANTI LOOP!!! **************************************************
+        // TESTARE I LOOP E LE CATEGORIE AUTO-CATEGORIZZATE!!! *******************
         switch (params.stage) {
             case 0:
                 params.stage = 1;
-                params.callChildren(params);
-                break;
+                // Prevent infinite loops
+                if (params.ancestors.indexOf(params.node) == -1) {
+                    params.callChildren(params);
+                    break;
+                }
+                else {
+                    params.children = "loop";
+                    // Do not break here!!!
+                }
             case 1:
                 params.nodesList.push({
                     node: params.node,
@@ -94,12 +121,12 @@ var WM = new function () {
                 params.callNode(params);
                 break;
             case 2:
-                if (params.children) {
+                if (params.children && params.children != "loop") {
                     // Go to the first child
+                    params.ancestors.push(params.node);
                     params.node = params.children[0];
                     params.parentIndex = params.nodesList.length - 1;
                     params.siblingIndex = 0;
-                    params.ancestors.push(params.node);
                     params.children = [];
                     params.stage = 0;
                     this.recurseTreeAsync(params);
@@ -111,13 +138,10 @@ var WM = new function () {
                     params.node = parent.children[params.siblingIndex];
                     if (!params.node) {
                         // There are no more siblings
-                        params.node = parent.node;
+                        params.siblingIndex = parent.siblingIndex + 1;
+                        params.node = params.nodesList[params.siblingIndex];
                         params.parentIndex = parent.parentIndex;
-                        params.siblingIndex = parent.siblingIndex;
                         params.ancestors = parent.ancestors;
-                        params.children = parent.children;
-                        params.stage = 2;
-                        this.recurseTreeAsync(params);
                     }
                     params.children = [];
                     params.stage = 0;
@@ -125,8 +149,6 @@ var WM = new function () {
                 }
                 else {
                     // End of recursion
-                    // CALCOLARE E RESTITUIRE ANCHE UN TREE ******************
-                    // A DIZIONARI ANNIDATI **********************************
                     callEnd(params);
                 }
                 break;
