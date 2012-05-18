@@ -73,13 +73,13 @@ WM.MW = new function () {
     };
     
     this.callAPIGetSync = function (params) {
-        var id = WM.HTTP.sendGetSyncRequest(wikiUrls.api + "?format=json" + joinParams(params));
-        return JSON.parse(WM.HTTP.getResponseText(id));
+        var res = WM.HTTP.sendGetSyncRequest(wikiUrls.api + "?format=json" + joinParams(params));
+        return JSON.parse(res.responseText);
     };
     
     this.callAPIPostSync = function (params) {
-        var id = WM.HTTP.sendPostSyncRequest(wikiUrls.api, "format=json" + joinParams(params), "Content-type", "application/x-www-form-urlencoded");
-        return JSON.parse(WM.HTTP.getResponseText(id));
+        var res = WM.HTTP.sendPostSyncRequest(wikiUrls.api, "format=json" + joinParams(params), "Content-type", "application/x-www-form-urlencoded");
+        return JSON.parse(res.responseText());
     };
     
     var joinParams = function (params) {
