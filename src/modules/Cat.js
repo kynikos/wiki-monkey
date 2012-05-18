@@ -38,14 +38,40 @@ WM.Cat = new function () {
     };
     
     this.getSubCategories = function (parent) {
-        return getMembers(parent, "subcat", null);
+        return getMembersSync(parent, "subcat", null);
     };
     
     this.getAllMembers = function (parent) {
-        return getMembers(parent, null, null);
+        return getMembersSync(parent, null, null);
     };
     
-    var getMembers = function (name, cmtype, cmcontinue) {
+    this.getMembers = function (name, cmtype, callEnd) {
+        var query = {action: "query",
+                     list: "categorymembers",
+                     cmtitle: encodeURIComponent(name),
+                     cmlimit: 5000};
+        
+        if (cmtype) {
+            query.cmtype = cmtype;
+        }
+        
+        this.getMembersContinue(query, callEnd, []);
+    };
+    
+    this.getMembersContinue = function (query, callEnd, members) {
+        WM.MW.callAPIGet(query, function (res) {
+            members = members.concat(res.query.categorymembers);
+            if (res["query-continue"]) {
+                query.cmcontinue = res["query-continue"].categorymembers.cmcontinue;
+                this.getMembersContinue(query, callEnd, members);
+            }
+            else {
+                callEnd(members);
+            }
+        });
+    };
+    
+    var getMembersSync = function (name, cmtype, cmcontinue) {
         var query = {action: "query",
                      list: "categorymembers",
                      cmtitle: encodeURIComponent(name),
@@ -64,7 +90,7 @@ WM.Cat = new function () {
         
         if (res["query-continue"]) {
             cmcontinue = res["query-continue"].categorymembers.cmcontinue;
-            var cont = this.getMembers(name, cmtype, cmcontinue);
+            var cont = this.getMembersSync(name, cmtype, cmcontinue);
             for (var sub in cont) {
                 members[sub] = cont[sub];
             }
