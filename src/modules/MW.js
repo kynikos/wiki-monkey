@@ -121,28 +121,31 @@ WM.MW = new function () {
         return pages[id];
     };
     
-    // Never use this attribute directly, always use getUserInfo!!!
     var userInfo;
     
-    this.getUserInfo = function () {
-        if (!userInfo) {
-            userInfo = this.callAPIGetSync({action: "query",
-                                            meta: "userinfo",
-                                            uiprop: "groups"});
-        }
-        return userInfo;
+    this._storeUserInfo = function (call) {
+        userInfo = this.callAPIGet({action: "query",
+                                    meta: "userinfo",
+                                    uiprop: "groups"},
+                                    WM.MW._storeUserInfoEnd,
+                                    call);
     };
     
+    this._storeUserInfoEnd = function (res, call) {
+        userInfo = res;
+        call();
+    }
+    
     this.isLoggedIn = function () {
-        return this.getUserInfo().query.userinfo.id != 0;
+        return userInfo.query.userinfo.id != 0;
     };
     
     this.getUserName = function () {
-        return this.getUserInfo().query.userinfo.name;
+        return userInfo.query.userinfo.name;
     };
     
     this.isUserBot = function () {
-        var groups = this.getUserInfo().query.userinfo.groups;
+        var groups = userInfo.query.userinfo.groups;
         for (var g in groups) {
             if (groups[g] == 'bot') {
                 return true;

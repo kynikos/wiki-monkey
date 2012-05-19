@@ -173,6 +173,6 @@ var WM = new function () {
     this.Plugins = {};
     
     this.main = function () {
-        this.UI.makeUI();
+        this.MW._storeUserInfo(WM.UI.makeUI);
     };
 };
