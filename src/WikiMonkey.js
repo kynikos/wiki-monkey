@@ -61,6 +61,7 @@ var WM = new function () {
          *     callChildren: ,
          *     callNode: ,
          *     callEnd: ,
+         *     callArgs: ,
          *     stage: ,
          *     nodesList:
          * }
@@ -83,6 +84,7 @@ var WM = new function () {
          *     callChildren: ,
          *     callNode: ,
          *     callEnd: ,
+         *     callArgs:
          * });
          * 
          * callChildren(params) {
@@ -96,72 +98,76 @@ var WM = new function () {
          * 
          * callEnd(params) {}
          */
-        // TESTARE I LOOP E LE CATEGORIE AUTO-CATEGORIZZATE!!! *******************
-        switch (params.stage) {
-            case 0:
-                params.stage = 1;
-                // Prevent infinite loops
-                if (params.ancestors.indexOf(params.node) == -1) {
-                    params.callChildren(params);
-                    break;
-                }
-                else {
-                    params.children = "loop";
-                    // Do not break here!!!
-                }
-            case 1:
-                params.nodesList.push({
-                    node: params.node,
-                    parentIndex: params.parentIndex,
-                    siblingIndex: params.siblingIndex,
-                    ancestors: params.ancestors,
-                    children: params.children
-                });
-                params.stage = 2;
-                params.callNode(params);
-                break;
-            case 2:
-                if (params.children && params.children != "loop") {
-                    // Go to the first child
-                    params.ancestors.push(params.node);
-                    params.node = params.children[0];
-                    params.parentIndex = params.nodesList.length - 1;
-                    params.siblingIndex = 0;
-                    params.children = [];
-                    params.stage = 0;
-                    this.recurseTreeAsync(params);
-                }
-                else if (params.parentIndex != null) {
-                    // Go to the next sibling
-                    var parent = params.nodesList[params.parentIndex];
-                    params.siblingIndex++;
-                    params.node = parent.children[params.siblingIndex];
-                    if (!params.node) {
-                        // There are no more siblings
-                        params.siblingIndex = parent.siblingIndex + 1;
-                        params.node = params.nodesList[params.siblingIndex];
-                        params.parentIndex = parent.parentIndex;
-                        params.ancestors = parent.ancestors;
+        if (params.stage === undefined) {
+            params.parentIndex = null;
+            params.siblingIndex = 0;
+            params.ancestors = [];
+            params.children = [];
+            params.nodesList = [];
+            params.stage = 1;
+            this.recurseTreeAsync(params);
+        }
+        else {
+            // TESTARE I LOOP E LE CATEGORIE AUTO-CATEGORIZZATE!!! *******************
+            switch (params.stage) {
+                case 1:
+                    params.stage = 2;
+                    // Prevent infinite loops
+                    if (params.ancestors.indexOf(params.node) == -1) {
+                        params.callChildren(params);
+                        break;
                     }
-                    params.children = [];
-                    params.stage = 0;
-                    this.recurseTreeAsync(params);
-                }
-                else {
-                    // End of recursion
-                    callEnd(params);
-                }
-                break;
-            default:
-                params.nodesList = [{
-                    node: params.node,
-                    parentIndex: null,
-                    siblingIndex: 0,
-                    ancestors: [],
-                    children: []
-                }];
-                params.stage = 0;
-                this.recurseTreeAsync(params);
+                    else {
+                        params.children = "loop";
+                        // Do not break here!!!
+                    }
+                case 2:
+                    params.nodesList.push({
+                        node: params.node,
+                        parentIndex: params.parentIndex,
+                        siblingIndex: params.siblingIndex,
+                        ancestors: params.ancestors.slice(0),
+                        children: params.children.slice(0),
+                    });
+                    params.stage = 3;
+                    params.callNode(params);
+                    break;
+                case 3:
+                    if (params.children.length && params.children != "loop") {
+                        // Go to the first child
+                        params.ancestors.push(params.node);
+                        params.node = params.children[0];
+                        params.parentIndex = params.nodesList.length - 1;
+                        params.siblingIndex = 0;
+                        params.children = [];
+                        params.stage = 1;
+                        this.recurseTreeAsync(params);
+                    }
+                    else if (params.parentIndex != null) {
+                        // Go to the next sibling
+                        var parent = params.nodesList[params.parentIndex];
+                        params.siblingIndex++;
+                        params.node = parent.children[params.siblingIndex];
+                        params.children = [];
+                        if (params.node) {
+                            params.stage = 1;
+                        }
+                        else {
+                            // There are no more siblings
+                            params.node = parent.node;
+                            params.parentIndex = parent.parentIndex;
+                            params.siblingIndex = parent.siblingIndex;
+                            params.ancestors = parent.ancestors.slice(0);
+                            params.stage = 3;
+                        }
+                        this.recurseTreeAsync(params);
+                    }
+                    else {
+                        // End of recursion
+                        params.callEnd(params);
+                    }
+                    break;
+            }
         }
     };
     

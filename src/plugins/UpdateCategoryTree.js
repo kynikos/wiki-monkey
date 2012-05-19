@@ -19,8 +19,19 @@ WM.Plugins.UpdateCategoryTree = new function () {
         return select;
     };
     
-    var readToC = function () {
-        WM.Log.logInfo('Updating ' + this.params.params.page + "...");
+    var readToC = function (args) {
+        WM.Log.logInfo('Updating ' + args.params.page + "...");
+        WM.MW.callQuery({prop: "info|revisions",
+                         rvprop: "content|timestamp",
+                         intoken: "edit",
+                         titles: encodeURIComponent(args.params.page)},
+                        WM.Plugins.UpdateCategoryTree.processToC, args);
+    };
+    
+    this.processToC = function (pageid, args) {
+        args.edittoken = pageid.edittoken;
+        args.timestamp = pageid.revisions[0].timestamp;
+        args.source = pageid.revisions[0]["*"];
         
         var minInterval;
         if (WM.MW.isUserBot()) {
@@ -30,48 +41,37 @@ WM.Plugins.UpdateCategoryTree = new function () {
             minInterval = 21600000;
         }
         
-        WM.MW.callQuery({prop: "info|revisions",
-                         rvprop: "content|timestamp",
-                         intoken: "edit",
-                         titles: encodeURIComponent(this.params.params.page)},
-                        this.processToC);
-    };
-    
-    this.processToC = function (pageid) {
-        this.params.edittoken = pageid.edittoken;
-        this.params.timestamp = pageid.revisions[0].timestamp;
-        this.params.source = pageid.revisions[0]["*"];
-        
         var now = new Date();
-        var msTimestamp = Date.parse(timestamp);
+        var msTimestamp = Date.parse(args.timestamp);
         if (now.getTime() - msTimestamp >= minInterval) {
-            var start = source.indexOf(this.params.startMark) + startMark.length;
-            var end = source.lastIndexOf(this.params.endMark);
+            var start = args.source.indexOf(args.startMark) + args.startMark.length;
+            var end = args.source.lastIndexOf(args.endMark);
             
             if (start > -1 && end > -1) {
-                this.params.part1 = source.substring(0, start);
-                this.params.part2 = source.substring(end);
-                (this.params.params.keepAltName) ? storeAlternativeNames() : {};
-                WM.Cat.recurseTree(this.params.params.root,
-                                   this.processCategory,
-                                   this.writeToC);
+                args.part1 = args.source.substring(0, start);
+                args.part2 = args.source.substring(end);
+                args.altNames = (args.params.keepAltName) ? storeAlternativeNames(args.source) : {};
+                WM.Cat.recurseTree({node: args.params.root,
+                                    callNode: WM.Plugins.UpdateCategoryTree.processCategory,
+                                    callEnd: WM.Plugins.UpdateCategoryTree.writeToC,
+                                    callArgs: args});
             }
             else {
-                WM.Log.logError("Cannot find insertion marks in " + this.params.params.page);
-                iterateTocs();
+                WM.Log.logError("Cannot find insertion marks in " + args.params.page);
+                iterateTocs(args);
             }
         }
         else {
-            WM.Log.logWarning(this.params.params.page + ' has been updated too recently');
-            iterateTocs();
+            WM.Log.logWarning(args.params.page + ' has been updated too recently');
+            iterateTocs(args);
         }
     };
     
-    var storeAlternativeNames = function () {
+    var storeAlternativeNames = function (source) {
         var dict = {};
         var regExp = /\[\[\:([Cc]ategory\:.+?)\|(.+?)\]\]/gm;
         while (true) {
-            var match = regExp.exec(this.params.source);
+            var match = regExp.exec(source);
             if (match) {
                 dict[match[1]] = match[2];
             }
@@ -79,30 +79,34 @@ WM.Plugins.UpdateCategoryTree = new function () {
                 break;
             }
         }
-        this.params.altNames = dict;
+        return dict;
     };
     
     this.processCategory = function (params) {
+        var args = params.callArgs;
+        
         WM.Log.logInfo("Processing " + params.node + "...");
         
         var text = "";
         
         for (var i = 0; i < params.ancestors.length; i++) {
-            text += this.params.params.indentType;
+            text += args.params.indentType;
         }
         
-        if (this.params.params.showIndices) {
+        if (args.params.showIndices) {
             var indices = [];
             var node = params;
-            while (node.parentIndex) {
-                indices.push(node.siblingIndex);
+            while (node.parentIndex != null) {
+                indices.push(node.siblingIndex + 1);
                 node = params.nodesList[node.parentIndex];
             }
-            text += (indices) ? ("<small>" + indices.reverse().join(".") + ".</small> ") : "";
+            if (indices.length) {
+                text += "<small>" + indices.reverse().join(".") + ".</small> ";
+            }
         }
         
-        var altName = (this.params.altNames[params.node]) ? this.params.altNames[params.node] : null;
-        text += createCatLink(params.node, this.params.params.replace, altName) + " ";
+        var altName = (args.altNames[params.node]) ? args.altNames[params.node] : null;
+        text += createCatLink(params.node, args.params.replace, altName) + " ";
         
         if (params.children == "loop") {
             text += "'''[LOOP]'''\n";
@@ -126,16 +130,18 @@ WM.Plugins.UpdateCategoryTree = new function () {
                     }
                 }
                 for (var i in parents) {
-                    altName = (this.params.altNames[parents[i]]) ? this.params.altNames[parents[i]] : null;
-                    parents[i] = createCatLink(parents[i], this.params.params.replace, altName);
+                    altName = (args.altNames[parents[i]]) ? args.altNames[parents[i]] : null;
+                    parents[i] = createCatLink(parents[i], args.params.replace, altName);
                 }
-                text += " (" + this.params.params.alsoIn + " " + parents.join(", ") + ")";
+                text += " (" + args.params.alsoIn + " " + parents.join(", ") + ")";
             }
             
             text += "</small>\n";
         }
         
-        this.params.treeText += text;
+        args.treeText += text;
+        
+        params.callArgs = args;
         
         WM.Cat.recurseTreeContinue(params);
     };
@@ -155,70 +161,70 @@ WM.Plugins.UpdateCategoryTree = new function () {
         return "[[:" + cat + "|" + catName + "]]";
     };
     
-    var writeToC = function (params) {
-        var newtext = this.params.part1 + "\n" + this.params.treeText + this.params.part2;
-        if (newtext != this.params.source) {
+    this.writeToC = function (params) {
+        var args = params.callArgs;
+        
+        var newtext = args.part1 + "\n" + args.treeText + args.part2;
+        
+        if (newtext != args.source) {
             WM.MW.callAPIPost({action: "edit",
                                bot: "1",
-                               title: encodeURIComponent(this.params.params.page),
-                               summary: encodeURIComponent(this.params.summary),
+                               title: encodeURIComponent(args.params.page),
+                               summary: encodeURIComponent(args.summary),
                                text: encodeURIComponent(newtext),
-                               basetimestamp: this.params.timestamp,
-                               token: encodeURIComponent(this.params.edittoken)},
-                              this.checkWrite);
+                               basetimestamp: args.timestamp,
+                               token: encodeURIComponent(args.edittoken)},
+                              WM.Plugins.UpdateCategoryTree.checkWrite,
+                              args);
         }
         else {
-            WM.Log.logInfo(this.params.params.page + ' is already up to date');
-            iterateTocs()
+            WM.Log.logInfo(args.params.page + ' is already up to date');
+            iterateTocs(args)
         }
     };
     
-    this.checkWrite = function (res) {
+    this.checkWrite = function (res, args) {
         if (res.edit && res.edit.result == 'Success') {
-            WM.Log.logInfo(this.params.params.page + ' correctly updated');
-            iterateTocs()
+            WM.Log.logInfo(args.params.page + ' correctly updated');
+            iterateTocs(args);
         }
         else {
-            WM.Log.logError(this.params.params.page + ' has not been updated!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
+            WM.Log.logError(args.params.page + ' has not been updated!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
         }
     };
     
-    var iterateTocs = function () {
-        this.params.index++;
-        this.params.params = this.params.tocs[this.params.index];
-        if (this.params.tocs[this.params.index]) {
-            readToC();
+    var iterateTocs = function (args) {
+        args.index++;
+        args.params = args.tocs[args.index];
+        if (args.tocs[args.index]) {
+            readToC(args);
         }
         else {
             WM.Log.logInfo("Operations completed, check the log for warnings or errors");
         }
     };
     
-    this.params = {
-        tocs: [],
-        index: -1,
-        params: {},
-        edittoken: "",
-        timestamp: "",
-        source: "",
-        part1: "",
-        part2: "",
-        treeText: "",
-        startMark: "START AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK-->",
-        endMark: "<!--END AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK",
-        altNames: {},
-        summary: ""
-    };
-    
     this.main = function (args) {
         var tocs = args[0];
-        this.params.summary = args[1];
+        var summary = args[1];
         
         var select = document.getElementById("UpdateCategoryTree-select");
         var value = select.options[select.selectedIndex].value;
         
-        this.params.tocs = (value == '*') ? tocs : [tocs[select.selectedIndex]];
-        
-        iterateTocs();
+        iterateTocs({
+            tocs: (value == '*') ? tocs : [tocs[select.selectedIndex]],
+            index: -1,
+            params: {},
+            edittoken: "",
+            timestamp: "",
+            source: "",
+            part1: "",
+            part2: "",
+            treeText: "",
+            startMark: "START AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK-->",
+            endMark: "<!--END AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK",
+            altNames: {},
+            summary: args[1]
+        });
     };
 };

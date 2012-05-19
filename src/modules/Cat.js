@@ -19,22 +19,19 @@
  */
 
 WM.Cat = new function () {
-    this.recurseTree = function (base, callCat, callEnd) {
-        WM.recurseTreeAsync({
-            node: base,
-            callChildren: function (params) {
-                var subCats = WM.Cat.getSubCategories(params.node);
-                for (var s in subCats) {
-                    params.children.push(subCats[s].title);
-                }
-            },
-            callNode: callCat,
-            callEnd: callEnd,
-        });
+    this.recurseTree = function (params) {
+        params.callChildren = function (params) {
+            var subCats = WM.Cat.getSubCategories(params.node);
+            for (var s in subCats) {
+                params.children.push(subCats[s].title);
+            }
+            WM.recurseTreeAsync(params);
+        };
+        WM.recurseTreeAsync(params);
     };
     
-    this.recurseTreeContinue = function (args) {
-        WM.recurseTreeAsync(args[0]);
+    this.recurseTreeContinue = function (params) {
+        WM.recurseTreeAsync(params);
     };
     
     this.getSubCategories = function (parent) {
@@ -86,6 +83,7 @@ WM.Cat = new function () {
         }
         
         var res = WM.MW.callAPIGetSync(query);
+        
         var members = res.query.categorymembers;
         
         if (res["query-continue"]) {
@@ -108,8 +106,10 @@ WM.Cat = new function () {
         
         var parents = [];
         
-        for (var cat in pageid.categories) {
-            parents.push(pageid.categories[cat].title);
+        if (pageid.categories) {
+            for (var cat in pageid.categories) {
+                parents.push(pageid.categories[cat].title);
+            }
         }
         
         return parents;
