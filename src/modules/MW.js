@@ -44,17 +44,17 @@ WM.MW = new function () {
         return wikiUrls.articles;
     };
     
-    this.callAPIGet = function (params, call) {
+    this.callAPIGet = function (params, call, callArgs) {
         GM_xmlhttpRequest({
             method: "GET",
             url: wikiUrls.api + "?format=json" + joinParams(params),
             onload: function (res) {
-                call(res.responseJSON);
+                call(res.responseJSON, callArgs);
             }
         });
     };
     
-    this.callAPIPost = function (params, call) {
+    this.callAPIPost = function (params, call, callArgs) {
         var queryData = new FormData();
         queryData.append("format", "json");
         for (var p in params) {
@@ -67,7 +67,7 @@ WM.MW = new function () {
             data: queryData,
             headers: {"Content-type": "application/x-www-form-urlencoded"},
             onload: function (res) {
-                call(res.responseJSON);
+                call(res.responseJSON, callArgs);
             }
         });
     };
@@ -90,14 +90,14 @@ WM.MW = new function () {
         return string;
     };
     
-    this.callQuery = function (params, call) {
+    this.callQuery = function (params, call, callArgs) {
         params.action = "query";
         var callBack = function (res) {
             var pages = res.query.pages;
             for (var id in pages) {
                 break;
             }
-            call(pages[id]);
+            call(pages[id], callArgs);
         };
         this.callAPIGet(params, callBack);
     };
