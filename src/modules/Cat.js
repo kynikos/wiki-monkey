@@ -57,15 +57,15 @@ WM.Cat = new function () {
             query.cmtype = cmtype;
         }
         
-        this.getMembersContinue(query, call, callArgs, []);
+        this._getMembersContinue(query, call, callArgs, []);
     };
     
-    this.getMembersContinue = function (query, call, callArgs, members) {
+    this._getMembersContinue = function (query, call, callArgs, members) {
         WM.MW.callAPIGet(query, function (res) {
             members = members.concat(res.query.categorymembers);
             if (res["query-continue"]) {
                 query.cmcontinue = res["query-continue"].categorymembers.cmcontinue;
-                this.getMembersContinue(query, call, callArgs, members);
+                this._getMembersContinue(query, call, callArgs, members);
             }
             else {
                 call(members, callArgs);
@@ -73,27 +73,53 @@ WM.Cat = new function () {
         });
     };
     
-    this.getParents = function (child) {
-        // Supports a maximum of 500 parents (5000 for bots)
-        // Needs to implement query continue in order to support more
-        var pageid = WM.MW.callQuerySync({prop: "categories",
-                                     titles: child,
-                                     cllimit: 5000});
+    this.getParents = function (name, call, callArgs) {
+        var query = {action: "query",
+                     prop: "categories",
+                     titles: name,
+                     cllimit: 5000};
         
-        var parents = [];
-        
-        if (pageid.categories) {
-            for (var cat in pageid.categories) {
-                parents.push(pageid.categories[cat].title);
-            }
-        }
-        
-        return parents;
+        this._getParentsContinue(query, call, callArgs, []);
     };
     
-    this.getInfo = function (name) {
-        var pageid = WM.MW.callQuerySync({prop: "categoryinfo",
-                                     titles: name});
-        return pageid.categoryinfo;
+    this._getParentsContinue = function (query, call, callArgs, parents) {
+        WM.MW.callAPIGet(query, function (res) {
+            var pages = res.query.pages;
+            
+            for (var id in pages) {
+                break;
+            }
+            
+            var page = pages[id];
+            
+            if (page.categories) {
+                parents = parents.concat(page.categories);
+            }
+            
+            if (res["query-continue"]) {
+                query.clcontinue = res["query-continue"].categories.clcontinue;
+                this._getParentsContinue(query, call, callArgs, parents);
+            }
+            else {
+                var parentTitles = [];
+                
+                for (var par in parents) {
+                    parentTitles.push(parents[par].title);
+                }
+                
+                call(parentTitles, callArgs);
+            }
+        });
+    };
+    
+    this.getInfo = function (name, call, callArgs) {
+        WM.MW.callQuery({prop: "categoryinfo",
+                         titles: name},
+                         WM.Cat._getInfoContinue,
+                         [call, callArgs]);
+    };
+    
+    this._getInfoContinue = function (page, args) {
+        args[0](page.categoryinfo, args[1]);
     };
 };
