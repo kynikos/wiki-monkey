@@ -50,6 +50,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
             if (start > -1 && end > -1) {
                 args.part1 = args.source.substring(0, start);
                 args.part2 = args.source.substring(end);
+                args.treeText = "";
                 args.altNames = (args.params.keepAltName) ? storeAlternativeNames(args.source) : {};
                 WM.Cat.recurseTree({node: args.params.root,
                                     callNode: WM.Plugins.UpdateCategoryTree.processCategory,
@@ -122,9 +123,10 @@ WM.Plugins.UpdateCategoryTree = new function () {
                 outer_loop:
                 for (var p in parents) {
                     var par = parents[p];
-                    for (var anc in params.ancestors) {
+                    for (var a in params.ancestors) {
+                        var anc = params.ancestors[a];
                         if (par == anc) {
-                            parents.splice(parents.indexOf(par), 1);
+                            parents.splice(p, 1);
                             break outer_loop;
                         }
                     }

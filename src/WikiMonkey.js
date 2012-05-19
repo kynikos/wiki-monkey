@@ -108,7 +108,6 @@ var WM = new function () {
             this.recurseTreeAsync(params);
         }
         else {
-            // TESTARE I LOOP E LE CATEGORIE AUTO-CATEGORIZZATE!!! *******************
             switch (params.stage) {
                 case 1:
                     params.stage = 2;
