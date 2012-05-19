@@ -24,7 +24,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
         WM.MW.callQuery({prop: "info|revisions",
                          rvprop: "content|timestamp",
                          intoken: "edit",
-                         titles: encodeURIComponent(args.params.page)},
+                         titles: args.params.page},
                         WM.Plugins.UpdateCategoryTree.processToC, args);
     };
     
@@ -169,11 +169,11 @@ WM.Plugins.UpdateCategoryTree = new function () {
         if (newtext != args.source) {
             WM.MW.callAPIPost({action: "edit",
                                bot: "1",
-                               title: encodeURIComponent(args.params.page),
-                               summary: encodeURIComponent(args.summary),
-                               text: encodeURIComponent(newtext),
+                               title: args.params.page,
+                               summary: args.summary,
+                               text: newtext,
                                basetimestamp: args.timestamp,
-                               token: encodeURIComponent(args.edittoken)},
+                               token: args.edittoken},
                               WM.Plugins.UpdateCategoryTree.checkWrite,
                               args);
         }

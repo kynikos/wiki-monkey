@@ -4,15 +4,15 @@ WM.Plugins.DeletePage = new function () {
         
         var page = WM.MW.callQuerySync({prop: 'info',
                                     intoken: 'delete',
-                                    titles: encodeURIComponent(title)});
+                                    titles: title});
         
         var deletetoken = page.deletetoken;
         
         var res = WM.MW.callAPIPostSync({action: 'delete',
                                      bot: '1',
-                                     title: encodeURIComponent(title),
-                                     token: encodeURIComponent(deletetoken),
-                                     reason: encodeURIComponent(summary)});
+                                     title: title,
+                                     token: deletetoken,
+                                     reason: summary});
         
         if (!res['delete']) {
             WM.Log.logError(cat + " has not been deleted!\n" + res['error']['info'] + " (" + res['error']['code'] + ")");
@@ -30,15 +30,15 @@ WM.Plugins.DeletePage = new function () {
         
         var page = WM.MW.callQuerySync({prop: 'info',
                                     intoken: 'delete',
-                                    titles: encodeURIComponent(title)});
+                                    titles: title});
         
         var deletetoken = page.deletetoken;
         
         var res = WM.MW.callAPIPostSync({action: 'delete',
                                      bot: '1',
-                                     title: encodeURIComponent(title),
-                                     token: encodeURIComponent(deletetoken),
-                                     reason: encodeURIComponent(summary)});
+                                     title: title,
+                                     token: deletetoken,
+                                     reason: summary});
         
         if (!res['delete']) {
             WM.Log.logError(cat + " has not been deleted!\n" + res['error']['info'] + " (" + res['error']['code'] + ")");

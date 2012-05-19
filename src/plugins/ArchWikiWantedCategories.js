@@ -4,7 +4,7 @@ WM.Plugins.ArchWikiWantedCategories = new function () {
         
         var pageid = WM.MW.callQuerySync({prop: "info",
                                       intoken: "edit",
-                                      titles: encodeURIComponent(title)});
+                                      titles: title});
         
         var edittoken = pageid.edittoken;
         
@@ -16,11 +16,11 @@ WM.Plugins.ArchWikiWantedCategories = new function () {
             
             var res = WM.MW.callAPIPostSync({action: "edit",
                                      bot: "1",
-                                     title: encodeURIComponent(title),
-                                     summary: encodeURIComponent(summary),
-                                     text: encodeURIComponent(text),
+                                     title: title,
+                                     summary: summary,
+                                     text: text,
                                      createonly: "1",
-                                     token: encodeURIComponent(edittoken)});
+                                     token: edittoken});
             
             if (res.edit && res.edit.result == 'Success') {
                 return true;

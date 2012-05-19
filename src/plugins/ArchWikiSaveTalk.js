@@ -21,7 +21,7 @@ WM.Plugins.ArchWikiSaveTalk = new function () {
         var pageid = WM.MW.callQuerySync({prop: "info|revisions",
                                       rvprop: "content|timestamp",
                                       intoken: "edit",
-                                      titles: encodeURIComponent(article)});
+                                      titles: article});
         
         var edittoken = pageid.edittoken;
         var timestamp = pageid.revisions[0].timestamp;
@@ -31,11 +31,11 @@ WM.Plugins.ArchWikiSaveTalk = new function () {
         
         var res = WM.MW.callAPIPostSync({action: "edit",
                                  bot: "1",
-                                 title: encodeURIComponent(article),
-                                 summary: encodeURIComponent(summary),
-                                 text: encodeURIComponent(newtext),
+                                 title: article,
+                                 summary: summary,
+                                 text: newtext,
                                  basetimestamp: timestamp,
-                                 token: encodeURIComponent(edittoken)});
+                                 token: edittoken});
         
         if (res.edit && res.edit.result == 'Success') {
             WM.Log.logInfo('Diff correctly appended to ' + article);

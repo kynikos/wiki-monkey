@@ -45,7 +45,7 @@ WM.Cat = new function () {
     this.getMembers = function (name, cmtype, callEnd) {
         var query = {action: "query",
                      list: "categorymembers",
-                     cmtitle: encodeURIComponent(name),
+                     cmtitle: name,
                      cmlimit: 5000};
         
         if (cmtype) {
@@ -71,7 +71,7 @@ WM.Cat = new function () {
     var getMembersSync = function (name, cmtype, cmcontinue) {
         var query = {action: "query",
                      list: "categorymembers",
-                     cmtitle: encodeURIComponent(name),
+                     cmtitle: name,
                      cmlimit: 5000};
         
         if (cmtype) {
@@ -101,7 +101,7 @@ WM.Cat = new function () {
         // Supports a maximum of 500 parents (5000 for bots)
         // Needs to implement query continue in order to support more
         var pageid = WM.MW.callQuerySync({prop: "categories",
-                                     titles: encodeURIComponent(child),
+                                     titles: child,
                                      cllimit: 5000});
         
         var parents = [];
@@ -117,7 +117,7 @@ WM.Cat = new function () {
     
     this.getInfo = function (name) {
         var pageid = WM.MW.callQuerySync({prop: "categoryinfo",
-                                     titles: encodeURIComponent(name)});
+                                     titles: name});
         return pageid.categoryinfo;
     };
 };

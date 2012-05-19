@@ -55,20 +55,29 @@ WM.MW = new function () {
     };
     
     this.callAPIPost = function (params, call, callArgs) {
-        var queryData = new FormData();
-        queryData.append("format", "json");
-        for (var p in params) {
-            queryData.append(p, params[p]);
+        var string = "format=json" + joinParams(params);
+        
+        if (string.length > 8000) {
+            var queryData = new FormData();
+            queryData.append("format", "json");
+            for (var p in params) {
+                queryData.append(p, params[p]);
+            }
+            var ctype = "multipart/form-data";
+        }
+        else {
+            var queryData = string;
+            var ctype = "application/x-www-form-urlencoded";
         }
         
         GM_xmlhttpRequest({
             method: "POST",
             url: wikiUrls.api,
             data: queryData,
-            headers: {"Content-type": "application/x-www-form-urlencoded"},
+            headers: {"Content-type": ctype},
             onload: function (res) {
                 call(res.responseJSON, callArgs);
-            }
+            },
         });
     };
     
@@ -85,7 +94,7 @@ WM.MW = new function () {
     var joinParams = function (params) {
         var string = "";
         for (var key in params) {
-            string += ("&" + key + "=" + params[key]);
+            string += ("&" + key + "=" + encodeURIComponent(params[key]));
         }
         return string;
     };
@@ -145,7 +154,7 @@ WM.MW = new function () {
     this.getBacklinks = function (bltitle, blnamespace, blcontinue) {
         var query = {action: "query",
                      list: "backlinks",
-                     bltitle: encodeURIComponent(bltitle),
+                     bltitle: bltitle,
                      bllimit: 5000};
         
         if (blnamespace) {

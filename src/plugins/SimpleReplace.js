@@ -98,7 +98,7 @@ WM.Plugins.SimpleReplace = new function () {
         var pageid = WM.MW.callQuerySync({prop: "info|revisions",
                                     rvprop: "content|timestamp",
                                     intoken: "edit",
-                                    titles: encodeURIComponent(title)});
+                                    titles: title});
         
         var edittoken = pageid.edittoken;
         var timestamp = pageid.revisions[0].timestamp;
@@ -111,11 +111,11 @@ WM.Plugins.SimpleReplace = new function () {
             
             var res = WM.MW.callAPIPostSync({action: "edit",
                                      bot: "1",
-                                     title: encodeURIComponent(title),
-                                     summary: encodeURIComponent(summary),
-                                     text: encodeURIComponent(newtext),
+                                     title: title,
+                                     summary: summary,
+                                     text: newtext,
                                      basetimestamp: timestamp,
-                                     token: encodeURIComponent(edittoken)});
+                                     token: edittoken});
         
             if (res.edit && res.edit.result == 'Success') {
                 return true;

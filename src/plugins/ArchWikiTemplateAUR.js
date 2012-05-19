@@ -74,7 +74,7 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
                                     prop: "info|revisions",
                                     rvprop: "content|timestamp",
                                     intoken: "edit",
-                                    titles: encodeURIComponent(title)});
+                                    titles: title});
         var pages = res.query.pages;
         
         var pageid;
@@ -91,11 +91,11 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
         if (newtext != source) {
             res = WM.MW.callAPIPostSync({action: "edit",
                                      bot: "1",
-                                     title: encodeURIComponent(title),
-                                     summary: encodeURIComponent(summary),
-                                     text: encodeURIComponent(newtext),
+                                     title: title,
+                                     summary: summary,
+                                     text: newtext,
                                      basetimestamp: timestamp,
-                                     token: encodeURIComponent(edittoken)});
+                                     token: edittoken});
         
             return (res.edit && res.edit.result == 'Success') ? true : false;
         }

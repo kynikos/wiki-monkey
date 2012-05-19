@@ -9,7 +9,7 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
             
             var oldpage = WM.MW.callQuerySync({prop: 'revisions|categoryinfo',
                                            rvprop: 'content',
-                                           titles: encodeURIComponent(cat)});
+                                           titles: cat});
             
             // CHECK THE CATEGORY STILL EXISTS, IT MAY HAVE BEEN DELETED *********
             // IN A PREVIOUS LOOP ************************************************
@@ -24,17 +24,17 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
             
             var newpage = WM.MW.callQuerySync({prop: 'info',
                                            intoken: 'edit',
-                                           titles: encodeURIComponent(title)});
+                                           titles: title});
             
             var edittoken = newpage.edittoken;
             
             var res = WM.MW.callAPIPostSync({action: 'edit',
                                      bot: '1',
-                                     title: encodeURIComponent(title),
-                                     summary: encodeURIComponent(summary),
-                                     text: encodeURIComponent(text),
+                                     title: title,
+                                     summary: summary,
+                                     text: text,
                                      createonly: '1',
-                                     token: encodeURIComponent(edittoken)});
+                                     token: edittoken});
             
             if (!res.edit || res.edit.result != "Success") {
                 WM.Log.logError(title + " has not been created!\n" + res['error']['info'] + " (" + res['error']['code'] + ")");
@@ -67,7 +67,7 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
         var page = WM.MW.callQuerySync({prop: "info|revisions",
                                     rvprop: "content|timestamp",
                                     intoken: "edit",
-                                    titles: encodeURIComponent(member)});
+                                    titles: member});
         
         var edittoken = page.edittoken;
         var timestamp = page.revisions[0].timestamp;
@@ -86,11 +86,11 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
         
         var res = WM.MW.callAPIPostSync({action: "edit",
                                      bot: "1",
-                                     title: encodeURIComponent(member),
-                                     summary: encodeURIComponent(summary),
-                                     text: encodeURIComponent(newText),
+                                     title: member,
+                                     summary: summary,
+                                     text: newText,
                                      basetimestamp: timestamp,
-                                     token: encodeURIComponent(edittoken)});
+                                     token: edittoken});
         
         if (!res.edit || res.edit.result != "Success") {
             WM.Log.logError(member + " has not been updated!\n" + res['error']['info'] + " (" + res['error']['code'] + ")");
@@ -147,7 +147,7 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
         var page = WM.MW.callQuerySync({prop: "info|revisions",
                                     rvprop: "content|timestamp",
                                     intoken: "edit",
-                                    titles: encodeURIComponent(backlink)});
+                                    titles: backlink});
         
         var edittoken = page.edittoken;
         var timestamp = page.revisions[0].timestamp;
@@ -166,11 +166,11 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
         
         var res = WM.MW.callAPIPostSync({action: "edit",
                                      bot: "1",
-                                     title: encodeURIComponent(backlink),
-                                     summary: encodeURIComponent(summary),
-                                     text: encodeURIComponent(newText),
+                                     title: backlink,
+                                     summary: summary,
+                                     text: newText,
                                      basetimestamp: timestamp,
-                                     token: encodeURIComponent(edittoken)});
+                                     token: edittoken});
         
         if (!res.edit || res.edit.result != "Success") {
             WM.Log.logError(backlink + " has not been updated!\n" + res['error']['info'] + " (" + res['error']['code'] + ")");
@@ -190,15 +190,15 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
         
         var page = WM.MW.callQuerySync({prop: 'info',
                                     intoken: 'delete',
-                                    titles: encodeURIComponent(cat)});
+                                    titles: cat});
         
         var deletetoken = page.deletetoken;
         
         var res = WM.MW.callAPIPostSync({action: 'delete',
                                      bot: '1',
-                                     title: encodeURIComponent(cat),
-                                     token: encodeURIComponent(deletetoken),
-                                     reason: encodeURIComponent(summary)});
+                                     title: cat,
+                                     token: deletetoken,
+                                     reason: summary});
         
         if (!res['delete']) {
             WM.Log.logError(cat + " has not been deleted!\n" + res['error']['info'] + " (" + res['error']['code'] + ")");
