@@ -43,8 +43,8 @@ WM.Cat = new function () {
         WM.Cat.getMembers(parent, "subcat", call, callArgs);
     };
     
-    this.getAllMembers = function (parent) {
-        return getMembersSync(parent, null, null);
+    this.getAllMembers = function (parent, call, callArgs) {
+        WM.Cat.getMembers(parent, null, call, callArgs);
     };
     
     this.getMembers = function (name, cmtype, call, callArgs) {
@@ -71,35 +71,6 @@ WM.Cat = new function () {
                 call(members, callArgs);
             }
         });
-    };
-    
-    var getMembersSync = function (name, cmtype, cmcontinue) {
-        var query = {action: "query",
-                     list: "categorymembers",
-                     cmtitle: name,
-                     cmlimit: 5000};
-        
-        if (cmtype) {
-            query.cmtype = cmtype;
-        }
-        
-        if (cmcontinue) {
-            query.cmcontinue = cmcontinue;
-        }
-        
-        var res = WM.MW.callAPIGetSync(query);
-        
-        var members = res.query.categorymembers;
-        
-        if (res["query-continue"]) {
-            cmcontinue = res["query-continue"].categorymembers.cmcontinue;
-            var cont = this.getMembersSync(name, cmtype, cmcontinue);
-            for (var sub in cont) {
-                members[sub] = cont[sub];
-            }
-        }
-        
-        return members;
     };
     
     this.getParents = function (child) {
