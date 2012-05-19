@@ -20,13 +20,7 @@
 
 WM.Cat = new function () {
     this.recurseTree = function (params) {
-        params.callChildren = function (params) {
-            var subCats = WM.Cat.getSubCategories(params.node);
-            for (var s in subCats) {
-                params.children.push(subCats[s].title);
-            }
-            WM.recurseTreeAsync(params);
-        };
+        params.callChildren = WM.Cat.recurseTreeCallChildren;
         WM.recurseTreeAsync(params);
     };
     
@@ -34,15 +28,26 @@ WM.Cat = new function () {
         WM.recurseTreeAsync(params);
     };
     
-    this.getSubCategories = function (parent) {
-        return getMembersSync(parent, "subcat", null);
+    this.recurseTreeCallChildren = function (params) {
+        WM.Cat.getSubCategories(params.node, WM.Cat.recurseTreeCallChildrenContinue, params);
+    };
+    
+    this.recurseTreeCallChildrenContinue = function (subCats, params) {
+        for (var s in subCats) {
+            params.children.push(subCats[s].title);
+        }
+        WM.recurseTreeAsync(params);
+    };
+    
+    this.getSubCategories = function (parent, call, callArgs) {
+        WM.Cat.getMembers(parent, "subcat", call, callArgs);
     };
     
     this.getAllMembers = function (parent) {
         return getMembersSync(parent, null, null);
     };
     
-    this.getMembers = function (name, cmtype, callEnd) {
+    this.getMembers = function (name, cmtype, call, callArgs) {
         var query = {action: "query",
                      list: "categorymembers",
                      cmtitle: name,
@@ -52,18 +57,18 @@ WM.Cat = new function () {
             query.cmtype = cmtype;
         }
         
-        this.getMembersContinue(query, callEnd, []);
+        this.getMembersContinue(query, call, callArgs, []);
     };
     
-    this.getMembersContinue = function (query, callEnd, members) {
+    this.getMembersContinue = function (query, call, callArgs, members) {
         WM.MW.callAPIGet(query, function (res) {
             members = members.concat(res.query.categorymembers);
             if (res["query-continue"]) {
                 query.cmcontinue = res["query-continue"].categorymembers.cmcontinue;
-                this.getMembersContinue(query, callEnd, members);
+                this.getMembersContinue(query, call, callArgs, members);
             }
             else {
-                callEnd(members);
+                call(members, callArgs);
             }
         });
     };
