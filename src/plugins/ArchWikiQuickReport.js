@@ -38,41 +38,55 @@ WM.Plugins.ArchWikiQuickReport = new function () {
         
         WM.Log.logInfo('Appending diff to ' + article + "...");
         
-        var title = WM.getURIParameter('title');
-        var enddate = WM.Diff.getEndTimestamp();
         var select = document.getElementById("ArchWikiQuickReport-select-" + id);
         var type = select.options[select.selectedIndex].value;
-        var notes = document.getElementById("ArchWikiQuickReport-input-" + id).value;
         
         if (type != 'content' && type != 'style') {
             WM.Log.logError('Select a valid report type');
         }
         else {
-            var pageid = WM.MW.callQuerySync({prop: "info|revisions",
-                                          rvprop: "content|timestamp",
-                                          intoken: "edit",
-                                          titles: article});
-            
-            var edittoken = pageid.edittoken;
-            var timestamp = pageid.revisions[0].timestamp;
-            var source = pageid.revisions[0]["*"];
-            
-            var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", enddate, type, notes]);
-            
-            var res = WM.MW.callAPIPostSync({action: "edit",
-                                     bot: "1",
-                                     title: article,
-                                     summary: summary,
-                                     text: newtext,
-                                     basetimestamp: timestamp,
-                                     token: edittoken});
-            
-            if (res.edit && res.edit.result == 'Success') {
-                WM.Log.logInfo('Diff correctly appended to ' + article);
-            }
-            else {
-                WM.Log.logError('The diff has not been appended!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
-            }
+            WM.MW.callQuery({prop: "info|revisions",
+                             rvprop: "content|timestamp",
+                             intoken: "edit",
+                             titles: article},
+                             WM.Plugins.ArchWikiQuickReport.mainContinue,
+                             [id, article, type, summary]);
+        }
+    };
+    
+    this.mainContinue = function (pageid, args) {
+        var id = args[0];
+        var article = args[1];
+        var type = args[2];
+        var summary = args[3];
+        
+        var edittoken = pageid.edittoken;
+        var timestamp = pageid.revisions[0].timestamp;
+        var source = pageid.revisions[0]["*"];
+        
+        var title = WM.getURIParameter('title');
+        var enddate = WM.Diff.getEndTimestamp();
+        var notes = document.getElementById("ArchWikiQuickReport-input-" + id).value;
+        
+        var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", enddate, type, notes]);
+        
+        WM.MW.callAPIPost({action: "edit",
+                           bot: "1",
+                           title: article,
+                           summary: summary,
+                           text: newtext,
+                           basetimestamp: timestamp,
+                           token: edittoken},
+                           WM.Plugins.ArchWikiQuickReport.mainEnd,
+                           article);
+    };
+    
+    this.mainEnd = function (res, article) {
+        if (res.edit && res.edit.result == 'Success') {
+            WM.Log.logInfo('Diff correctly appended to ' + article);
+        }
+        else {
+            WM.Log.logError('The diff has not been appended!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
         }
     };
 };
