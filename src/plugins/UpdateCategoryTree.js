@@ -112,35 +112,60 @@ WM.Plugins.UpdateCategoryTree = new function () {
         if (params.children == "loop") {
             text += "'''[LOOP]'''\n";
             WM.Log.logWarning("Loop in " + params.node);
+            WM.Plugins.UpdateCategoryTree.processCategoryEnd(params, args, text);
         }
         else {
-            var info = WM.Cat.getInfo(params.node);
-            var parents = WM.Cat.getParents(params.node);
-            
-            text += "<small>(" + ((info) ? info.pages : 0) + ")";
-            
-            if (parents.length > 1) {
-                outer_loop:
-                for (var p in parents) {
-                    var par = parents[p];
-                    for (var a in params.ancestors) {
-                        var anc = params.ancestors[a];
-                        if (par == anc) {
-                            parents.splice(p, 1);
-                            break outer_loop;
-                        }
+            WM.Cat.getInfo(params.node,
+                           WM.Plugins.UpdateCategoryTree.processCategoryGetParents,
+                           [params, args, text, altName]);
+        }
+    };
+    
+    this.processCategoryGetParents = function (info, args_) {
+        var params = args_[0];
+        var args = args_[1];
+        var text = args_[2];
+        var altName = args_[3];
+        
+        WM.Cat.getParents(params.node,
+                          WM.Plugins.UpdateCategoryTree.processCategoryAddSuffix,
+                          [params, args, text, altName, info]);
+    }
+    
+    this.processCategoryAddSuffix = function (parents, args_) {
+        var params = args_[0];
+        var args = args_[1];
+        var text = args_[2];
+        var altName = args_[3];
+        var info = args_[4];
+        
+        text += "<small>(" + ((info) ? info.pages : 0) + ")";
+        
+        if (parents.length > 1) {
+            outer_loop:
+            for (var p in parents) {
+                var par = parents[p];
+                for (var a in params.ancestors) {
+                    var anc = params.ancestors[a];
+                    if (par == anc) {
+                        parents.splice(p, 1);
+                        break outer_loop;
                     }
                 }
-                for (var i in parents) {
-                    altName = (args.altNames[parents[i]]) ? args.altNames[parents[i]] : null;
-                    parents[i] = createCatLink(parents[i], args.params.replace, altName);
-                }
-                text += " (" + args.params.alsoIn + " " + parents.join(", ") + ")";
             }
-            
-            text += "</small>\n";
+            for (var i in parents) {
+                altName = (args.altNames[parents[i]]) ? args.altNames[parents[i]] : null;
+                parents[i] = createCatLink(parents[i], args.params.replace, altName);
+            }
+            text += " (" + args.params.alsoIn + " " + parents.join(", ") + ")";
         }
         
+        text += "</small>\n";
+        
+        WM.Plugins.UpdateCategoryTree.processCategoryEnd(params, args, text);
+    };
+    
+    this.processCategoryEnd = function (params, args, text) {
         args.treeText += text;
         
         params.callArgs = args;

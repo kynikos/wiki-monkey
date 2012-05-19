@@ -70,17 +70,10 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
     this.mainAuto = function (args, title) {
         var summary = args[0];
         
-        var res = WM.MW.callAPIGetSync({action: "query",
-                                    prop: "info|revisions",
+        var pageid = WM.MW.callQuerySync({prop: "info|revisions",
                                     rvprop: "content|timestamp",
                                     intoken: "edit",
                                     titles: title});
-        var pages = res.query.pages;
-        
-        var pageid;
-        for each (pageid in pages) {
-            break;
-        }
         
         var edittoken = pageid.edittoken;
         var timestamp = pageid.revisions[0].timestamp;
