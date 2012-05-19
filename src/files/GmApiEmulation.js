@@ -72,3 +72,10 @@ if (!GM_addStyle) {
         head.appendChild(style);
     };
 }
+
+if (!GM_xmlhttpRequest) {
+    var GM_xmlhttpRequest = function () {
+        // IMPLEMENTARE!!! *******************************************************
+        WM.Log.logError("GM_xmlhttpRequest is not yet emulated for your browser!");
+    };
+}
