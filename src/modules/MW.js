@@ -151,7 +151,7 @@ WM.MW = new function () {
         return false;
     };
     
-    this.getBacklinks = function (bltitle, blnamespace, blcontinue) {
+    this.getBacklinks = function (bltitle, blnamespace, call, callArgs) {
         var query = {action: "query",
                      list: "backlinks",
                      bltitle: bltitle,
@@ -161,21 +161,19 @@ WM.MW = new function () {
             query.blnamespace = blnamespace;
         }
         
-        if (blcontinue) {
-            query.blcontinue = blcontinue;
-        }
-        
-        var res = WM.MW.callAPIGetSync(query);
-        var backlinks = res.query.backlinks;
-        
-        if (res["query-continue"]) {
-            blcontinue = res["query-continue"].backlinks.blcontinue;
-            var cont = this.getBacklinks(bltitle, blnamespace, blcontinue);
-            for (var sub in cont) {
-                backlinks[sub] = cont[sub];
+        this.getBacklinksContinue(query, call, callArgs, []);
+    };
+    
+    this.getBacklinksContinue = function (query, call, callArgs, backlinks) {
+        WM.MW.callAPIGet(query, function (res) {
+            backlinks = backlinks.concat(res.query.backlinks);
+            if (res["query-continue"]) {
+                query.blcontinue = res["query-continue"].backlinks.blcontinue;
+                this.getBacklinksContinue(query, call, callArgs, backlinks);
             }
-        }
-        
-        return backlinks;
+            else {
+                call(backlinks, callArgs);
+            }
+        });
     };
 };
