@@ -75,7 +75,80 @@ if (!GM_addStyle) {
 
 if (!GM_xmlhttpRequest) {
     var GM_xmlhttpRequest = function (params) {
-        // IMPLEMENT!!! **********************************************************
-        WM.Log.logError("GM_xmlhttpRequest is not yet emulated for your browser!");
+        /* This function emulates GM_xmlhttpRequest only partially
+         * Notably cross-origin requests are not supported
+         *
+         * params = {
+         *     method: ,
+         *     url: ,
+         *     data: ,
+         *     headers: ,
+         *     user: ,
+         *     password: ,
+         *     onload: ,
+         *     onerror: ,
+         *     onreadystatechange: ,
+         * 
+         *     // Not yet implemented
+         *     //binary: ,
+         *     //mozBackgroundRequest: ,
+         *     //overrideMimeType: ,
+         *     //ignoreCache: ,
+         *     //ignoreRedirect: ,
+         *     //ignoreTempRedirect: ,
+         *     //ignorePermanentRedirect: ,
+         *     //failOnRedirect: ,
+         *     //redirectionLimit: ,
+         * }
+         */
+        if (!params.method) params.method = "GET";
+        if (!params.data) params.data = null;
+        if (!params.headers) params.headers = {};
+        if (!params.user) params.user = null;
+        if (!params.password) params.password = null;
+        if (!params.onload) params.onload = function (req) {};
+        if (!params.onerror) params.onerror = function (req) {};
+        if (!params.onreadystatechange) params.onreadystatechange = function (req) {};
+        params.async = true;
+        
+        var req = new XMLHttpRequest();
+        
+        req.open(params.method, params.url, params.async, params.user, params.password);
+        
+        for (var header in params.headers) {
+            req.setRequestHeader(header, params.headers[header]);
+        }
+        
+        req.onreadystatechange = function () {
+            var response = {
+                responseText: req.responseText,
+                responseJSON: JSON.parse(req.responseText),
+                readyState: req.readyState,
+                responseHeaders: req.getAllResponseHeaders(),
+                status: req.status,
+                statusText: req.statusText,
+                // Not yet implemented
+                //finalUrl: ,
+            };
+            
+            params.onreadystatechange(response);
+            
+            if (req.readyState == 4) {
+                if (req.status == 200) {
+                    params.onload(response);
+                }
+                else {
+                    params.onerror(response);
+                }
+            }
+        };
+        
+        req.send(params.data);
+        
+        return {
+            abort: function () {
+                req.abort();
+            },
+        }
     };
 }
