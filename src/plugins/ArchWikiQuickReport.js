@@ -45,27 +45,37 @@ WM.Plugins.ArchWikiQuickReport = new function () {
             WM.Log.logError('Select a valid report type');
         }
         else {
-            WM.MW.callQuery({prop: "info|revisions",
-                             rvprop: "content|timestamp",
-                             intoken: "edit",
-                             titles: article},
-                             WM.Plugins.ArchWikiQuickReport.mainWrite,
-                             [id, article, type, summary]);
+            WM.Diff.getEndTimestamp(WM.Plugins.ArchWikiQuickReport.mainGetEndTimestamp,
+                                    [id, article, type, summary]);
         }
     };
     
-    this.mainWrite = function (pageid, args) {
+    this.mainGetEndTimestamp = function (enddate, args) {
         var id = args[0];
         var article = args[1];
         var type = args[2];
         var summary = args[3];
         
-        var edittoken = pageid.edittoken;
-        var timestamp = pageid.revisions[0].timestamp;
-        var source = pageid.revisions[0]["*"];
+        WM.MW.callQuery({prop: "info|revisions",
+                         rvprop: "content|timestamp",
+                         intoken: "edit",
+                         titles: article},
+                         WM.Plugins.ArchWikiQuickReport.mainWrite,
+                         [id, article, type, summary, enddate]);
+    };
+    
+    this.mainWrite = function (page, args) {
+        var id = args[0];
+        var article = args[1];
+        var type = args[2];
+        var summary = args[3];
+        var enddate = args[4];
+        
+        var edittoken = page.edittoken;
+        var timestamp = page.revisions[0].timestamp;
+        var source = page.revisions[0]["*"];
         
         var title = WM.getURIParameter('title');
-        var enddate = WM.Diff.getEndTimestamp();
         var notes = document.getElementById("ArchWikiQuickReport-input-" + id).value;
         
         var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", enddate, type, notes]);

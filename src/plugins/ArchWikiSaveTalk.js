@@ -15,24 +15,32 @@ WM.Plugins.ArchWikiSaveTalk = new function () {
         
         WM.Log.logInfo('Appending diff to ' + article + "...");
         
+        WM.Diff.getEndTimestamp(WM.Plugins.ArchWikiSaveTalk.mainGetEndTimestamp,
+                                [article, summary]);
+    };
+    
+    this.mainGetEndTimestamp = function (enddate, args) {
+        var article = args[0];
+        var summary = args[1];
+        
         WM.MW.callQuery({prop: "info|revisions",
                          rvprop: "content|timestamp",
                          intoken: "edit",
                          titles: article},
                          WM.Plugins.ArchWikiSaveTalk.mainWrite,
-                         [article, summary]);
+                         [article, summary, enddate]);
     };
     
     this.mainWrite = function (page, args) {
         var article = args[0];
         var summary = args[1];
+        var enddate = args[2];
         
         var edittoken = page.edittoken;
         var timestamp = page.revisions[0].timestamp;
         var source = page.revisions[0]["*"];
         
         var title = WM.getURIParameter('title');
-        var enddate = WM.Diff.getEndTimestamp();
         
         var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", enddate]);
         
