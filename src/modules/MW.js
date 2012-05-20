@@ -55,30 +55,31 @@ WM.MW = new function () {
     };
     
     this.callAPIPost = function (params, call, callArgs) {
-        var string = "format=json" + joinParams(params);
-        
-        if (string.length > 8000) {
-            var queryData = new FormData();
-            queryData.append("format", "json");
-            for (var p in params) {
-                queryData.append(p, params[p]);
-            }
-            var ctype = "multipart/form-data";
-        }
-        else {
-            var queryData = string;
-            var ctype = "application/x-www-form-urlencoded";
-        }
-        
-        GM_xmlhttpRequest({
+        var query = {
             method: "POST",
             url: wikiUrls.api,
-            data: queryData,
-            headers: {"Content-type": ctype},
             onload: function (res) {
                 call(res.responseJSON, callArgs);
             },
-        });
+        }
+        
+        var string = "format=json" + joinParams(params);
+        
+        if (string.length > 8000) {
+            query.data = new FormData();
+            query.data.append("format", "json");
+            for (var p in params) {
+                query.data.append(p, params[p]);
+            }
+            // Do not add "multipart/form-data" explicitly or the query will fail
+            //query.headers = {"Content-type": "multipart/form-data"};
+        }
+        else {
+            query.data = string;
+            query.headers = {"Content-type": "application/x-www-form-urlencoded"};
+        }
+        
+        GM_xmlhttpRequest(query);
     };
     
     this.callAPIGetSync = function (params) {
