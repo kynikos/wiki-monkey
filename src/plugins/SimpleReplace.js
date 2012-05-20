@@ -92,41 +92,55 @@ WM.Plugins.SimpleReplace = new function () {
         }
     };
     
-    this.mainAuto = function (args, title) {
+    this.mainAuto = function (args, title, callBot) {
         var id = args[0];
         
-        var pageid = WM.MW.callQuerySync({prop: "info|revisions",
-                                    rvprop: "content|timestamp",
-                                    intoken: "edit",
-                                    titles: title});
+        var query = {prop: "info|revisions",
+                     rvprop: "content|timestamp",
+                     intoken: "edit",
+                     titles: title};
         
-        var edittoken = pageid.edittoken;
-        var timestamp = pageid.revisions[0].timestamp;
-        var source = pageid.revisions[0]["*"];
+        WM.MW.callQuery(query,
+                        WM.Plugins.SimpleReplace.mainAutoWrite,
+                        [id, title, callBot]);
+    };
+        
+    this.mainAutoWrite = function (page, args) {
+        var id = args[0];
+        var title = args[1];
+        var callBot = args[2];
+        
+        var edittoken = page.edittoken;
+        var timestamp = page.revisions[0].timestamp;
+        var source = page.revisions[0]["*"];
         
         var newtext = doReplace(source, id);
         
         if (newtext != source) {
             var summary = document.getElementById("WikiMonkey-SimpleReplace-Summary-" + id).value;
             
-            var res = WM.MW.callAPIPostSync({action: "edit",
-                                     bot: "1",
-                                     title: title,
-                                     summary: summary,
-                                     text: newtext,
-                                     basetimestamp: timestamp,
-                                     token: edittoken});
-        
-            if (res.edit && res.edit.result == 'Success') {
-                return true;
-            }
-            else {
-                WM.Log.logError(res['error']['info'] + " (" + res['error']['code'] + ")");
-                return false;
-            }
+            WM.MW.callAPIPost({action: "edit",
+                               bot: "1",
+                               title: title,
+                               summary: summary,
+                               text: newtext,
+                               basetimestamp: timestamp,
+                               token: edittoken},
+                               WM.Plugins.SimpleReplace.mainAutoEnd,
+                               callBot);
         }
         else {
-            return true;
+            callBot(true);
+        }
+    };
+    
+    this.mainAutoEnd = function (res, callBot) {
+        if (res.edit && res.edit.result == 'Success') {
+            callBot(true);
+        }
+        else {
+            WM.Log.logError(res['error']['info'] + " (" + res['error']['code'] + ")");
+            callBot(false);
         }
     };
 };

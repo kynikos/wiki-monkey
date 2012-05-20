@@ -74,8 +74,8 @@ if (!GM_addStyle) {
 }
 
 if (!GM_xmlhttpRequest) {
-    var GM_xmlhttpRequest = function () {
-        // IMPLEMENTARE!!! *******************************************************
+    var GM_xmlhttpRequest = function (params) {
+        // IMPLEMENT!!! **********************************************************
         WM.Log.logError("GM_xmlhttpRequest is not yet emulated for your browser!");
     };
 }
