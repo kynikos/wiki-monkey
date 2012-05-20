@@ -15,28 +15,39 @@ WM.Plugins.ArchWikiSaveTalk = new function () {
         
         WM.Log.logInfo('Appending diff to ' + article + "...");
         
+        WM.MW.callQuery({prop: "info|revisions",
+                         rvprop: "content|timestamp",
+                         intoken: "edit",
+                         titles: article},
+                         WM.Plugins.ArchWikiSaveTalk.mainWrite,
+                         [article, summary]);
+    };
+    
+    this.mainWrite = function (page, args) {
+        var article = args[0];
+        var summary = args[1];
+        
+        var edittoken = page.edittoken;
+        var timestamp = page.revisions[0].timestamp;
+        var source = page.revisions[0]["*"];
+        
         var title = WM.getURIParameter('title');
         var enddate = WM.Diff.getEndTimestamp();
         
-        var pageid = WM.MW.callQuerySync({prop: "info|revisions",
-                                      rvprop: "content|timestamp",
-                                      intoken: "edit",
-                                      titles: article});
-        
-        var edittoken = pageid.edittoken;
-        var timestamp = pageid.revisions[0].timestamp;
-        var source = pageid.revisions[0]["*"];
-        
         var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", enddate]);
         
-        var res = WM.MW.callAPIPostSync({action: "edit",
-                                 bot: "1",
-                                 title: article,
-                                 summary: summary,
-                                 text: newtext,
-                                 basetimestamp: timestamp,
-                                 token: edittoken});
-        
+        WM.MW.callAPIPost({action: "edit",
+                           bot: "1",
+                           title: article,
+                           summary: summary,
+                           text: newtext,
+                           basetimestamp: timestamp,
+                           token: edittoken},
+                           WM.Plugins.ArchWikiSaveTalk.mainEnd,
+                           article);
+    };
+    
+    this.mainEnd = function (res, article) {
         if (res.edit && res.edit.result == 'Success') {
             WM.Log.logInfo('Diff correctly appended to ' + article);
         }

@@ -49,12 +49,12 @@ WM.Plugins.ArchWikiQuickReport = new function () {
                              rvprop: "content|timestamp",
                              intoken: "edit",
                              titles: article},
-                             WM.Plugins.ArchWikiQuickReport.mainContinue,
+                             WM.Plugins.ArchWikiQuickReport.mainWrite,
                              [id, article, type, summary]);
         }
     };
     
-    this.mainContinue = function (pageid, args) {
+    this.mainWrite = function (pageid, args) {
         var id = args[0];
         var article = args[1];
         var type = args[2];
