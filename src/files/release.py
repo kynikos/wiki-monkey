@@ -1,47 +1,64 @@
 #!/usr/bin/python3
 
-import sys
 import os
 import re
 
-VERSION = sys.argv[1]
-PATH = "../configurations"
+CONFIG = {
+    "VERSION": "1.10.3",
+    "PATH": "../configurations",
+    "ALIB_VERSION": "1.0",
+    "ALIB_PATH": "../../../js-aux-lib/src",
+}
 
 
 def process_line(line):
-    matches = re.match('// @require (.+/)development(/.+\.js)', line)
-    if matches:
-        line = ("// @require " + matches.group(1) + VERSION +
-                matches.group(2) + "\n")
-    else:
-        matches = re.match('// @id wiki-monkey-dev-([a-z]+)', line)
+    replaces = (
+        (
+            '// @require https://raw\.github\.com/kynikos/wiki-monkey/'
+            'development(/.+\.js)',
+            "// @require https://raw.github.com/kynikos/wiki-monkey/"
+            "{VERSION}{g0}\n",
+        ),
+        (
+            '// @require https://raw\.github\.com/kynikos/js-aux-lib/'
+            'master(/.+\.js)',
+            "// @require https://raw.github.com/kynikos/js-aux-lib/"
+            "{ALIB_VERSION}{g0}\n",
+        ),
+        (
+            '// @id wiki-monkey-dev-([a-z]+)',
+            "// @id wiki-monkey-{g0}\n",
+        ),
+        (
+            '// @version [0-9]+dev-([a-z]+)',
+            "// @version {VERSION}-{g0}\n",
+        ),
+        (
+            '// @updateURL (.+/)development(/.+\.meta\.js)',
+            "// @updateURL {g0}master{g1}\n",
+        ),
+        (
+            '// @downloadURL (.+/)development(/.+\.user\.js)',
+            "// @downloadURL {g0}master{g1}\n",
+        ),
+    )
+    for replace in replaces:
+        PARAMS = CONFIG.copy()
+        matches = re.match(replace[0], line)
         if matches:
-            line = "// @id wiki-monkey-" + matches.group(1) + "\n"
-        else:
-            matches = re.match('// @version [0-9]+dev-([a-z]+)', line)
-            if matches:
-                line = "// @version " + VERSION + "-" + matches.group(1) + "\n"
-            else:
-                matches = re.match('// @updateURL (.+/)development'
-                                   '(/.+\.meta\.js)', line)
-                if matches:
-                    line = ("// @updateURL " + matches.group(1) + "master" +
-                            matches.group(2) + "\n")
-                else:
-                    matches = re.match('// @downloadURL (.+/)development'
-                                       '(/.+\.user\.js)', line)
-                    if matches:
-                        line = ("// @downloadURL " + matches.group(1) +
-                                "master" + matches.group(2) + "\n")
+            for id, group in enumerate(matches.groups()):
+                PARAMS["g" + str(id)] = group
+            line = replace[1].format(**PARAMS)
+            break
     return line
 
 
 def main():
-    files = os.listdir(PATH)
+    files = os.listdir(CONFIG["PATH"])
     for name in files:
         ext = name[-8:]
         if ext in (".user.js", ".meta.js"):
-            file = os.path.join(PATH, name)
+            file = os.path.join(CONFIG["PATH"], name)
             new = ""
             with open(file, 'r') as f:
                 for line in f:

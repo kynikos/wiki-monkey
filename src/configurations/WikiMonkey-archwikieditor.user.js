@@ -13,8 +13,8 @@
 // @icon64 http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey-64.png
 // @match http://*.wikipedia.org/*
 // @match https://wiki.archlinux.org/*
-// @require https://raw.github.com/kynikos/js-aux-lib/development/src/Async.js
-// @require https://raw.github.com/kynikos/js-aux-lib/development/src/HTTP.js
+// @require https://raw.github.com/kynikos/js-aux-lib/master/src/Async.js
+// @require https://raw.github.com/kynikos/js-aux-lib/master/src/HTTP.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/WikiMonkey.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/ArchWiki.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Bot.js

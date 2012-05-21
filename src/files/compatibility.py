@@ -4,6 +4,7 @@ import os
 import re
 
 SRC_PATH = ".."
+ALIB_SRC_PATH = "../../../js-aux-lib/src"
 MAIN_SCRIPT = os.path.join(SRC_PATH, "WikiMonkey.js")
 CFG_PATH = os.path.join(SRC_PATH, "configurations")
 CHROMIUM_PATH = os.path.join(CFG_PATH, "chromium")
@@ -12,7 +13,7 @@ STALONE_PATH = os.path.join(CFG_PATH, "standalone")
 EXTENSIONS = ((CHROMIUM_PATH, "chromium"),
               (OPERA_PATH, "opera"),
               (STALONE_PATH, "standalone"))
-GM_API_EMULATION = "GmApiEmulation.js"
+GM_API_EMULATION = os.path.join(ALIB_SRC_PATH, "GMAPIEmulation.js")
 STANDALONE_CONDITION = """
 if (location.href.match(/^http:\/\/[a-z]+\.wikipedia\.org\//i) ||
     location.href.match(/^https:\/\/wiki\.archlinux\.org\//i)) {
@@ -35,7 +36,7 @@ def get_licence():
 
 def get_GM_API_emulation():
     with open(GM_API_EMULATION, 'r') as s:
-        return "\n" + s.read()
+        return get_script(s)
 
 
 def process_line(m, g, functions, header, line):
@@ -46,9 +47,16 @@ def process_line(m, g, functions, header, line):
     download_url = re.match('^// @downloadURL (.+/configurations)(/.+)'
                             '(\.(meta|user)\.js)$', line)
     matches = re.match('^// @match (.+)$', line)
-    requires = re.match('^// @require .+/src/(.+\.js)', line)
+    alib_requires = re.match('^// @require https://raw\.github\.com/kynikos/'
+                             'js-aux-lib/[^/]+/src/(.+\.js)', line)
+    requires = re.match('^// @require https://raw\.github\.com/kynikos/'
+                        'wiki-monkey/[^/]+/src/(.+\.js)', line)
     
-    if requires:
+    if alib_requires:
+        source = os.path.join(ALIB_SRC_PATH, alib_requires.group(1))
+        with open(source, 'r') as s:
+            functions += get_script(s)
+    elif requires:
         source = os.path.join(SRC_PATH, requires.group(1))
         with open(source, 'r') as s:
             functions += get_script(s)
