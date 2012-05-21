@@ -75,7 +75,7 @@ WM.Plugins.ArchWikiQuickReport = new function () {
         var timestamp = page.revisions[0].timestamp;
         var source = page.revisions[0]["*"];
         
-        var title = WM.getURIParameter('title');
+        var title = Alib.HTTP.getURIParameter('title');
         var pEnddate = enddate.substr(0, 10) + " " + enddate.substr(11, 8);
         var notes = document.getElementById("ArchWikiQuickReport-input-" + id).value;
         

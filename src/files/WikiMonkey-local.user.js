@@ -14,13 +14,14 @@
 // @match http://*.wikipedia.org/*
 // @match https://wiki.archlinux.org/*
 // @require http://code.jquery.com/jquery-1.7.2.min.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/js-aux-lib/src/Async.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/js-aux-lib/src/HTTP.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/WikiMonkey.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/ArchWiki.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/Bot.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/Cat.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/Diff.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/Editor.js
-// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/HTTP.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/Log.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/MW.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/Tables.js

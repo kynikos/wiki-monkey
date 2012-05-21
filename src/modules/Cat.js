@@ -21,11 +21,11 @@
 WM.Cat = new function () {
     this.recurseTree = function (params) {
         params.callChildren = WM.Cat.recurseTreeCallChildren;
-        WM.recurseTreeAsync(params);
+        Alib.Async.recurseTreeAsync(params);
     };
     
     this.recurseTreeContinue = function (params) {
-        WM.recurseTreeAsync(params);
+        Alib.Async.recurseTreeAsync(params);
     };
     
     this.recurseTreeCallChildren = function (params) {
@@ -36,7 +36,7 @@ WM.Cat = new function () {
         for (var s in subCats) {
             params.children.push(subCats[s].title);
         }
-        WM.recurseTreeAsync(params);
+        Alib.Async.recurseTreeAsync(params);
     };
     
     this.getSubCategories = function (parent, call, callArgs) {

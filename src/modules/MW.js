@@ -84,13 +84,13 @@ WM.MW = new function () {
     
     this.callAPIGetSync = function (params) {
         // DEPRECATED!!! *********************************************************
-        var res = WM.HTTP.sendGetSyncRequest(wikiUrls.api + "?format=json" + joinParams(params));
+        var res = Alib.HTTP.sendGetSyncRequest(wikiUrls.api + "?format=json" + joinParams(params));
         return JSON.parse(res.responseText);
     };
     
     this.callAPIPostSync = function (params) {
         // DEPRECATED!!! *********************************************************
-        var res = WM.HTTP.sendPostSyncRequest(wikiUrls.api, "format=json" + joinParams(params), "Content-type", "application/x-www-form-urlencoded");
+        var res = Alib.HTTP.sendPostSyncRequest(wikiUrls.api, "format=json" + joinParams(params), "Content-type", "application/x-www-form-urlencoded");
         return JSON.parse(res.responseText());
     };
     

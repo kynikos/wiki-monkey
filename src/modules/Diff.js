@@ -20,9 +20,9 @@
 
 WM.Diff = new function () {
     this.getEndTimestamp = function (call, callArgs) {
-        var title = WM.getURIParameter('title');
-        var diff = WM.getURIParameter('diff');
-        var oldid = WM.getURIParameter('oldid');
+        var title = Alib.HTTP.getURIParameter('title');
+        var diff = Alib.HTTP.getURIParameter('diff');
+        var oldid = Alib.HTTP.getURIParameter('oldid');
         
         var giveEndTimestamp = function (page, id) {
             call(page.revisions[id].timestamp, callArgs);

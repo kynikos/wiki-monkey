@@ -20,12 +20,12 @@
 
 WM.Editor = new function () {
     this.getTitle = function () {
-        var title = WM.getURIParameter('title').replace(/_/g, " ");
+        var title = Alib.HTTP.getURIParameter('title').replace(/_/g, " ");
         return title;
     };
     
     this.isSection = function () {
-        return (WM.getURIParameter('section')) ? true : false;
+        return (Alib.HTTP.getURIParameter('section')) ? true : false;
     };
     
     this.readSource = function () {
