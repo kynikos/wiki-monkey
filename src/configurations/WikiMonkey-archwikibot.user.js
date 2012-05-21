@@ -28,6 +28,7 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiFixHeadings.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiNewTemplates.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiQuickReport.js
+// @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiTemplateAUR.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ExpandContractions.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/MultipleLineBreaks.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/SimpleReplace.js
@@ -44,6 +45,9 @@ WM.UI.setEditor([
     ],
     [
         ["SimpleReplace", "RegExp substitution", ["1"]]
+    ],
+    [
+        ["ArchWikiTemplateAUR", "Use Template:AUR", null]
     ]
 ]);
 
@@ -63,7 +67,8 @@ WM.UI.setWhatLinksHere([
 ]);
 
 WM.UI.setLinkSearch([
-    ["SimpleReplace", "RegExp substitution", ["1"]]
+    ["SimpleReplace", "RegExp substitution", ["1"]],
+    ["ArchWikiTemplateAUR", "Replace direct AUR package links with Template:AUR", ["replace direct package links with Pkg/AUR templates"]]
 ]);
 
 WM.UI.setSpecial([

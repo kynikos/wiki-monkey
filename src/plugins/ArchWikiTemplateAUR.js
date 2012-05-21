@@ -1,99 +1,121 @@
 WM.Plugins.ArchWikiTemplateAUR = new function () {
-    var doReplace = function (source) {
+    var doReplace = function (source, call, callArgs) {
         var regExp = /\[(https?\:\/\/aur\.archlinux\.org\/packages\.php\?ID\=[0-9]+) ([^\]]+?)\]/g;
-        var match, res, page;
-        var links = {};
-        /*
+        var links = [];
+        
         while (true) {
-            match = regExp.exec(source);
-            
+            var match = regExp.exec(source);
             if (match) {
-                links[match[0]] = match;
-                res = $.ajax({
-                    async: false,
-                    url: "https://wiki.archlinux.org/index.php/Main_Page",
-                    //url: "https://aur.archlinux.org/",
-                    //url: match[1],
-                    //type: 'GET',
-                    //type: 'POST',
-                    //dataType: 'html'
-                });
-                */
-                var ret = GM_xmlhttpRequest({
-                    method: "GET",
-                    url: "https://aur.archlinux.org/",
-                    onload: function (res) {
-                        //WM.Log.logDebug(JSON.stringify(res.responseText));
-                        var parser = new DOMParser();
-                        page = parser.parseFromString(res.responseText, "text/xml");
-                        //page = $.parseXML(res.responseText);
-                        var links = page.getElementsByTagName('a');
-                        for (var i = 0; links.length; i++) {
-                            WM.Log.logDebug(links[i].innerHTML);  // ****************************************
-                        }
-                    }
-                });
-                /*
-                var parser = new DOMParser();
-                page = parser.parseFromString(res.responseText, "text/xml");
-                //page = $.parseXML(res.responseText);
-                var nodes = page.childNodes[0].childNodes;
-                for (var aaa = 0; nodes.length; aaa++) {
-                    WM.Log.logDebug(aaa);  // ****************************************
-                }
+                links.push(match);
             }
             else {
                 break;
             }
-        }*/
+        }
         
         var newText = source;
         
-        for (var link in links) {
-            if (links[link]) {
-                //newText = newText.replace(link, links[link]);  // ****************
-            }
+        WM.Plugins.ArchWikiTemplateAUR.doReplaceContinue(source, newText, links, 0, call, callArgs);
+    };
+    
+    this.doReplaceContinue = function (source, newText, links, index, call, callArgs) {
+        if (links[index]) {
+            WM.Log.logInfo("Processing " + links[index][0] + "...");
+            GM_xmlhttpRequest({
+                method: "GET",
+                url: links[index][1],
+                onload: function (res) {
+                    var parser = new DOMParser();
+                    var page = parser.parseFromString(res.responseText, "text/xml");
+                    var divs = page.getElementsByTagName('div');
+                    for (var i = 0; divs.length; i++) {
+                        if (divs[i].className == "pgboxbody") {
+                            var span = divs[i].getElementsByTagName('span')[0];
+                            var pkgname = span.innerHTML.split(" ")[0];
+                            if (links[index][2] == pkgname) {
+                                newText = newText.replace(links[index][0],
+                                                          "{{AUR|" + pkgname + "}}");
+                            }
+                            break;
+                        }
+                    }
+                    index++;
+                    WM.Plugins.ArchWikiTemplateAUR.doReplaceContinue(source, newText, links, index, call, callArgs);
+                }
+            });
         }
-        
-        return newText;
+        else {
+            call(source, newText, callArgs);
+        }
     };
     
     this.main = function (args) {
         var source = WM.Editor.readSource();
-        var newtext = doReplace(source);
+        WM.Log.logInfo("Replacing direct AUR package links...");
+        doReplace(source, WM.Plugins.ArchWikiTemplateAUR.mainEnd);
+    };
+    
+    this.mainEnd = function (source, newtext) {
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
-            WM.Log.logInfo("Replaced direct package links");
+            WM.Log.logInfo("Replaced direct AUR package links");
         }
     };
     
-    this.mainAuto = function (args, title) {
+    this.mainAuto = function (args, title, callBot) {
         var summary = args[0];
         
-        var pageid = WM.MW.callQuerySync({prop: "info|revisions",
-                                    rvprop: "content|timestamp",
-                                    intoken: "edit",
-                                    titles: title});
+        WM.MW.callQuery({prop: "info|revisions",
+                         rvprop: "content|timestamp",
+                         intoken: "edit",
+                         titles: title},
+                         WM.Plugins.ArchWikiTemplateAUR.mainAutoReplace,
+                         [title, summary, callBot]);
+    };
+    
+    this.mainAutoReplace = function (page, args) {
+        var title = args[0];
+        var summary = args[1];
+        var callBot = args[2];
         
-        var edittoken = pageid.edittoken;
-        var timestamp = pageid.revisions[0].timestamp;
-        var source = pageid.revisions[0]["*"];
+        var edittoken = page.edittoken;
+        var timestamp = page.revisions[0].timestamp;
+        var source = page.revisions[0]["*"];
         
-        var newtext = doReplace(source);
+        doReplace(source,
+                  WM.Plugins.ArchWikiTemplateAUR.mainAutoWrite,
+                  [title, edittoken, timestamp, summary, callBot]);
+    };
+    
+    this.mainAutoWrite = function (source, newtext, args) {
+        var title = args[0];
+        var edittoken = args[1];
+        var timestamp = args[2];
+        var summary = args[3];
+        var callBot = args[4];
         
         if (newtext != source) {
-            res = WM.MW.callAPIPostSync({action: "edit",
-                                     bot: "1",
-                                     title: title,
-                                     summary: summary,
-                                     text: newtext,
-                                     basetimestamp: timestamp,
-                                     token: edittoken});
-        
-            return (res.edit && res.edit.result == 'Success') ? true : false;
+            WM.MW.callAPIPost({action: "edit",
+                               bot: "1",
+                               title: title,
+                               summary: summary,
+                               text: newtext,
+                               basetimestamp: timestamp,
+                               token: edittoken},
+                               WM.Plugins.ArchWikiTemplateAUR.mainAutoEnd,
+                               callBot);
         }
         else {
-            return true;
+            callBot(true);
+        }
+    };
+    
+    this.mainAutoEnd = function (res, callBot) {
+        if (res.edit && res.edit.result == 'Success') {
+            callBot(true);
+        }
+        else {
+            callBot(false);
         }
     };
 };
