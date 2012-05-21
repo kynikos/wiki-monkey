@@ -41,8 +41,9 @@ WM.Plugins.ArchWikiSaveTalk = new function () {
         var source = page.revisions[0]["*"];
         
         var title = WM.getURIParameter('title');
+        var pEnddate = enddate.substr(0, 10) + " " + enddate.substr(11, 8);
         
-        var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", enddate]);
+        var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", pEnddate]);
         
         WM.MW.callAPIPost({action: "edit",
                            bot: "1",

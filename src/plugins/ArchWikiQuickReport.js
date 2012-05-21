@@ -76,9 +76,10 @@ WM.Plugins.ArchWikiQuickReport = new function () {
         var source = page.revisions[0]["*"];
         
         var title = WM.getURIParameter('title');
+        var pEnddate = enddate.substr(0, 10) + " " + enddate.substr(11, 8);
         var notes = document.getElementById("ArchWikiQuickReport-input-" + id).value;
         
-        var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", enddate, type, notes]);
+        var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", pEnddate, type, notes]);
         
         WM.MW.callAPIPost({action: "edit",
                            bot: "1",

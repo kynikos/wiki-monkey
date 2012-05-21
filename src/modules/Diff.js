@@ -23,7 +23,6 @@ WM.Diff = new function () {
         var title = WM.getURIParameter('title');
         var diff = WM.getURIParameter('diff');
         var oldid = WM.getURIParameter('oldid');
-        var page, enddate;
         
         var giveEndTimestamp = function (page, id) {
             call(page.revisions[id].timestamp, callArgs);
