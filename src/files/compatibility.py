@@ -101,7 +101,8 @@ def main():
                                      m[1] != "standalone"):
                 with open(file, 'r') as f:
                     cfile = os.path.join(m[0], name[:-8] + "-" + m[1] +
-                                         name[-8:])
+                                         name[-3 if (m[1] == "standalone")
+                                              else -8:])
                     with open(cfile, 'w'):
                         pass
                     with open(cfile, 'a') as g:
