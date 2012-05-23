@@ -22,6 +22,7 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Editor.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Log.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/MW.js
+// @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Parser.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Tables.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/UI.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ExpandContractions.js
