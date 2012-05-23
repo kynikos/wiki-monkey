@@ -23,22 +23,14 @@ WM.Plugins.ArchWikiSaveTalk = new function () {
         var article = args[0];
         var summary = args[1];
         
-        WM.MW.callQuery({prop: "info|revisions",
-                         rvprop: "content|timestamp",
-                         intoken: "edit",
-                         titles: article},
-                         WM.Plugins.ArchWikiSaveTalk.mainWrite,
-                         [article, summary, enddate]);
+        WM.MW.callQueryEdit(article,
+                            WM.Plugins.ArchWikiSaveTalk.mainWrite,
+                            [summary, enddate]);
     };
     
-    this.mainWrite = function (page, args) {
-        var article = args[0];
-        var summary = args[1];
-        var enddate = args[2];
-        
-        var edittoken = page.edittoken;
-        var timestamp = page.revisions[0].timestamp;
-        var source = page.revisions[0]["*"];
+    this.mainWrite = function (article, source, timestamp, edittoken, args) {
+        var summary = args[0];
+        var enddate = args[1];
         
         var title = Alib.HTTP.getURIParameter('title');
         var pEnddate = enddate.substr(0, 10) + " " + enddate.substr(11, 8);

@@ -21,25 +21,13 @@ WM.Plugins.UpdateCategoryTree = new function () {
     
     var readToC = function (args) {
         WM.Log.logInfo('Updating ' + args.params.page + "...");
-        WM.MW.callQuery({prop: "info|revisions",
-                         rvprop: "content|timestamp",
-                         intoken: "edit",
-                         titles: args.params.page},
-                        WM.Plugins.UpdateCategoryTree.processToC, args);
+        WM.MW.callQueryEdit(args.params.page,
+                            WM.Plugins.UpdateCategoryTree.processToC,
+                            args);
     };
     
-    this.processToC = function (pageid, args) {
-        args.edittoken = pageid.edittoken;
-        args.timestamp = pageid.revisions[0].timestamp;
-        args.source = pageid.revisions[0]["*"];
-        
-        var minInterval;
-        if (WM.MW.isUserBot()) {
-            minInterval = 60000;
-        }
-        else {
-            minInterval = 21600000;
-        }
+    this.processToC = function (title, source, timestamp, edittoken, args) {
+        var minInterval = (WM.MW.isUserBot()) ? 60000 : 21600000;
         
         var now = new Date();
         var msTimestamp = Date.parse(args.timestamp);

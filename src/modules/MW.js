@@ -82,18 +82,6 @@ WM.MW = new function () {
         GM_xmlhttpRequest(query);
     };
     
-    this.callAPIGetSync = function (params) {
-        // DEPRECATED!!! *********************************************************
-        var res = Alib.HTTP.sendGetSyncRequest(wikiUrls.api + "?format=json" + joinParams(params));
-        return JSON.parse(res.responseText);
-    };
-    
-    this.callAPIPostSync = function (params) {
-        // DEPRECATED!!! *********************************************************
-        var res = Alib.HTTP.sendPostSyncRequest(wikiUrls.api, "format=json" + joinParams(params), "Content-type", "application/x-www-form-urlencoded");
-        return JSON.parse(res.responseText());
-    };
-    
     var joinParams = function (params) {
         var string = "";
         for (var key in params) {
@@ -114,15 +102,18 @@ WM.MW = new function () {
         this.callAPIGet(params, callBack);
     };
     
-    this.callQuerySync = function (params) {
-        // DEPRECATED!!! *********************************************************
-        params.action = "query";
-        var res = this.callAPIGetSync(params);
-        var pages = res.query.pages;
-        for (var id in pages) {
-            break;
-        }
-        return pages[id];
+    this.callQueryEdit = function (title, call, callArgs) {
+        var callBack = function (page, args) {
+            source = page.revisions[0]["*"];
+            timestamp = page.revisions[0].timestamp;
+            edittoken = page.edittoken;
+            call(title, source, timestamp, edittoken, callArgs);
+        };
+        this.callQuery({prop: "info|revisions",
+                        rvprop: "content|timestamp",
+                        intoken: "edit",
+                        titles: title},
+                        callBack);
     };
     
     var userInfo;

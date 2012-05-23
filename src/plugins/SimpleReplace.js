@@ -95,24 +95,14 @@ WM.Plugins.SimpleReplace = new function () {
     this.mainAuto = function (args, title, callBot) {
         var id = args[0];
         
-        var query = {prop: "info|revisions",
-                     rvprop: "content|timestamp",
-                     intoken: "edit",
-                     titles: title};
-        
-        WM.MW.callQuery(query,
-                        WM.Plugins.SimpleReplace.mainAutoWrite,
-                        [id, title, callBot]);
+        WM.MW.callQueryEdit(title,
+                            WM.Plugins.SimpleReplace.mainAutoWrite,
+                            [id, callBot]);
     };
         
-    this.mainAutoWrite = function (page, args) {
+    this.mainAutoWrite = function (title, source, timestamp, edittoken, args) {
         var id = args[0];
-        var title = args[1];
-        var callBot = args[2];
-        
-        var edittoken = page.edittoken;
-        var timestamp = page.revisions[0].timestamp;
-        var source = page.revisions[0]["*"];
+        var callBot = args[1];
         
         var newtext = doReplace(source, id);
         

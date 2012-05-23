@@ -65,22 +65,14 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
     this.mainAuto = function (args, title, callBot) {
         var summary = args[0];
         
-        WM.MW.callQuery({prop: "info|revisions",
-                         rvprop: "content|timestamp",
-                         intoken: "edit",
-                         titles: title},
-                         WM.Plugins.ArchWikiTemplateAUR.mainAutoReplace,
-                         [title, summary, callBot]);
+        WM.MW.callQueryEdit(title,
+                            WM.Plugins.ArchWikiTemplateAUR.mainAutoReplace,
+                            [summary, callBot]);
     };
     
-    this.mainAutoReplace = function (page, args) {
-        var title = args[0];
-        var summary = args[1];
-        var callBot = args[2];
-        
-        var edittoken = page.edittoken;
-        var timestamp = page.revisions[0].timestamp;
-        var source = page.revisions[0]["*"];
+    this.mainAutoReplace = function (title, source, timestamp, edittoken, args) {
+        var summary = args[0];
+        var callBot = args[1];
         
         doReplace(source,
                   WM.Plugins.ArchWikiTemplateAUR.mainAutoWrite,

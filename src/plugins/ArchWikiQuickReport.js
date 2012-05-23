@@ -56,24 +56,16 @@ WM.Plugins.ArchWikiQuickReport = new function () {
         var type = args[2];
         var summary = args[3];
         
-        WM.MW.callQuery({prop: "info|revisions",
-                         rvprop: "content|timestamp",
-                         intoken: "edit",
-                         titles: article},
-                         WM.Plugins.ArchWikiQuickReport.mainWrite,
-                         [id, article, type, summary, enddate]);
+        WM.MW.callQueryEdit(article,
+                            WM.Plugins.ArchWikiQuickReport.mainWrite,
+                            [id, type, summary, enddate]);
     };
     
-    this.mainWrite = function (page, args) {
+    this.mainWrite = function (article, source, timestamp, edittoken, args) {
         var id = args[0];
-        var article = args[1];
-        var type = args[2];
-        var summary = args[3];
-        var enddate = args[4];
-        
-        var edittoken = page.edittoken;
-        var timestamp = page.revisions[0].timestamp;
-        var source = page.revisions[0]["*"];
+        var type = args[1];
+        var summary = args[2];
+        var enddate = args[3];
         
         var title = Alib.HTTP.getURIParameter('title');
         var pEnddate = enddate.substr(0, 10) + " " + enddate.substr(11, 8);
