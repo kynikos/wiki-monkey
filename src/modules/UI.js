@@ -151,7 +151,7 @@ WM.UI = new function () {
         return divContainer;
     };
     
-    this.makeUI = function () {
+    this._makeUI = function () {
         var nextNode, UI;
         
         if (document.getElementById('editform')) {
@@ -164,15 +164,15 @@ WM.UI = new function () {
         }
         else if (document.getElementById('mw-subcategories') || document.getElementById('mw-pages')) {
             nextNode = document.getElementById('bodyContent');
-            UI = (category) ? WM.Bot.makeUI(category, [[document.getElementById('mw-pages'), 0, "Pages"], [document.getElementById('mw-subcategories'), 0, "Subcategories"]]) : null;
+            UI = (category) ? WM.Bot._makeUI(category, [[document.getElementById('mw-pages'), 0, "Pages"], [document.getElementById('mw-subcategories'), 0, "Subcategories"]]) : null;
         }
         else if (document.getElementById('mw-whatlinkshere-list')) {
             nextNode = document.getElementById('bodyContent').getElementsByTagName('form')[0].nextSibling;
-            UI = (whatLinksHere) ? WM.Bot.makeUI(whatLinksHere, [[document.getElementById('mw-whatlinkshere-list'), 0, "Pages"]]) : null;
+            UI = (whatLinksHere) ? WM.Bot._makeUI(whatLinksHere, [[document.getElementById('mw-whatlinkshere-list'), 0, "Pages"]]) : null;
         }
         else if (document.getElementById('mw-linksearch-form') && document.getElementById('bodyContent').getElementsByTagName('ol')[0]) {
             nextNode = document.getElementById('mw-linksearch-form').nextSibling;
-            UI = (linkSearch) ? WM.Bot.makeUI(linkSearch, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 1, "Pages"]]) : null;
+            UI = (linkSearch) ? WM.Bot._makeUI(linkSearch, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 1, "Pages"]]) : null;
         }
         else if (location.href.indexOf(WM.MW.getArticlesBaseUrl() + "/Special:SpecialPages") > -1) {
             nextNode = document.getElementById('bodyContent');
@@ -184,7 +184,7 @@ WM.UI = new function () {
             // Using for...in to loop through node lists is not supported by Chrome
             for (var div = 0; div < nextNodeDivs.length; div++) {
                 if (nextNodeDivs[div].className == 'mw-spcontent') {
-                    UI = (specialList) ? WM.Bot.makeUI(specialList, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
+                    UI = (specialList) ? WM.Bot._makeUI(specialList, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
                     break;
                 }
             }
@@ -211,7 +211,7 @@ WM.UI = new function () {
             main.appendChild(help);
             
             main.appendChild(UI);
-            main.appendChild(WM.Log.makeLogArea());
+            main.appendChild(WM.Log._makeLogArea());
             nextNode.parentNode.insertBefore(main, nextNode);
         }
     };

@@ -22,6 +22,6 @@ var WM = new function () {
     this.Plugins = {};
     
     this.main = function () {
-        this.MW._storeUserInfo(WM.UI.makeUI);
+        this.MW._storeUserInfo(WM.UI._makeUI);
     };
 };

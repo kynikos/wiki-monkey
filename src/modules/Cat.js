@@ -20,7 +20,7 @@
 
 WM.Cat = new function () {
     this.recurseTree = function (params) {
-        params.callChildren = WM.Cat.recurseTreeCallChildren;
+        params.callChildren = WM.Cat._recurseTreeCallChildren;
         Alib.Async.recurseTreeAsync(params);
     };
     
@@ -28,11 +28,11 @@ WM.Cat = new function () {
         Alib.Async.recurseTreeAsync(params);
     };
     
-    this.recurseTreeCallChildren = function (params) {
-        WM.Cat.getSubCategories(params.node, WM.Cat.recurseTreeCallChildrenContinue, params);
+    this._recurseTreeCallChildren = function (params) {
+        WM.Cat.getSubCategories(params.node, WM.Cat._recurseTreeCallChildrenContinue, params);
     };
     
-    this.recurseTreeCallChildrenContinue = function (subCats, params) {
+    this._recurseTreeCallChildrenContinue = function (subCats, params) {
         for (var s in subCats) {
             params.children.push(subCats[s].title);
         }
@@ -40,14 +40,14 @@ WM.Cat = new function () {
     };
     
     this.getSubCategories = function (parent, call, callArgs) {
-        WM.Cat.getMembers(parent, "subcat", call, callArgs);
+        WM.Cat._getMembers(parent, "subcat", call, callArgs);
     };
     
     this.getAllMembers = function (parent, call, callArgs) {
-        WM.Cat.getMembers(parent, null, call, callArgs);
+        WM.Cat._getMembers(parent, null, call, callArgs);
     };
     
-    this.getMembers = function (name, cmtype, call, callArgs) {
+    this._getMembers = function (name, cmtype, call, callArgs) {
         var query = {action: "query",
                      list: "categorymembers",
                      cmtitle: name,

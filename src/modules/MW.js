@@ -168,15 +168,15 @@ WM.MW = new function () {
             query.blnamespace = blnamespace;
         }
         
-        this.getBacklinksContinue(query, call, callArgs, []);
+        this._getBacklinksContinue(query, call, callArgs, []);
     };
     
-    this.getBacklinksContinue = function (query, call, callArgs, backlinks) {
+    this._getBacklinksContinue = function (query, call, callArgs, backlinks) {
         WM.MW.callAPIGet(query, function (res) {
             backlinks = backlinks.concat(res.query.backlinks);
             if (res["query-continue"]) {
                 query.blcontinue = res["query-continue"].backlinks.blcontinue;
-                this.getBacklinksContinue(query, call, callArgs, backlinks);
+                this._getBacklinksContinue(query, call, callArgs, backlinks);
             }
             else {
                 call(backlinks, callArgs);

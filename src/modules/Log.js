@@ -19,7 +19,7 @@
  */
 
 WM.Log = new function () {
-    this.makeLogArea = function () {
+    this._makeLogArea = function () {
         log = document.createElement('div');
         log.id = 'WikiMonkeyLog';
         
