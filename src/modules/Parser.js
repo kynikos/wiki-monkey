@@ -19,6 +19,168 @@
  */
 
 WM.Parser = new function () {
+    this.convertUnderscoresToSpaces = function (title) {
+        return title.replace(/_/g, " ");
+    };
+    
+    this.neutralizeNowikiTags = function (source) {
+        var tags = Alib.RegEx.matchAll(source, /<nowiki>[.\s]+?<\/nowiki>/gi);
+        for (var t in tags) {
+            var L = tags[t].match[0].length;
+            var filler = "";
+            while (filler.length < L) {
+                filler += "x";
+            }
+            source = source.substr(0, tags[t].index - 1) + filler + source.substr(tags[t].index + L)
+        }
+        return source;
+    };
+    
+    var prepareTitleCasing = function (pattern) {
+        var firstChar = pattern.charAt(0);
+        var fcUpper = firstChar.toUpperCase();
+        var fcLower = firstChar.toLowerCase();
+        if (fcUpper != fcLower) {
+            pattern = "[" + fcUpper + fcLower + "]" + pattern.substr(1);
+        }
+        return pattern;
+    };
+    
+    this.findBehaviorSwitches = function (source, word) {
+        var res;
+        if (word) {
+            var regExp = new RegExp("__" + Alib.RegEx.escapePattern(word) + "__", "g");
+            res = Alib.RegEx.matchAll(source, regExp);
+        }
+        else {
+            res = Alib.RegEx.matchAll(source, /__(TOC|NOTOC|FORCETOC|NOEDITSECTION|NEWSECTIONLINK|NONEWSECTIONLINK|NOGALLERY|HIDDENCAT|NOCONTENTCONVERT|NOCC|NOTITLECONVERT|NOTC|INDEX|NOINDEX|STATICREDIRECT|START|END)__/g);
+        }
+        return res;
+    };
+    
+    this.findVariables = function (source, variable) {
+        var regExp = new RegExp("\\{\\{ *" + Alib.RegEx.escapePattern(variable) + " *\\}\\}", "g");
+        return Alib.RegEx.matchAll(source, regExp);
+    };
+    
+    this.findVariableVariables = function (source, variable) {
+        var regExp = new RegExp("\\{\\{ *" + Alib.RegEx.escapePattern(variable) + " *: *(.+?) *\\}\\}", "g");
+        return Alib.RegEx.matchAll(source, regExp);
+    };
+    
+    this.findInternalLinks = function (source, namespace) {
+        var res;
+        if (namespace) {
+            var nsPattern = Alib.RegEx.escapePattern(namespace);
+            nsPattern = prepareTitleCasing(nsPattern);
+            var regExp = new RegExp("\\[\\[ *((" + nsPattern + ") *: *(.+?)) *\\]\\]", "g");
+            res = Alib.RegEx.matchAll(source, regExp);
+        }
+        else {
+            res = Alib.RegEx.matchAll(source, /\[\[ *((?:(.+?) *: *)?(.+?)) *\]\]/g);
+        }
+        return res;
+    };
+    
+    this.findCategories = function (source) {
+        return this.findInternalLinks(source, "Category");
+    };
+    
+    this.findInterlanguageLinks = function (source, language) {
+        var res;
+        if (language) {
+            res = this.findInternalLinks(source, language);
+        }
+        else {
+            var interwikiLanguages = WM.ArchWiki.getInterwikiLanguages();
+            var regExp = new RegExp("\\s*(\\[\\[ *((" + interwikiLanguages.join("|") + ") *: *(.+?)) *\\]\\])", "gi");
+            return Alib.RegEx.matchAll(source, regExp);
+        }
+        return res;
+    };
+    
+    this.findInterwikiLinks = function (source, wiki) {
+        return this.findInternalLinks(source, wiki);
+    };
+    
+    this.findTemplateTags = function (source, template) {
+        var templatePattern = Alib.RegEx.escapePattern(template);
+        templatePattern = prepareTitleCasing(templatePattern);
+        var regExp = new RegExp("\\{\\{ *" + templatePattern, "g");
+        return Alib.RegEx.matchAll(source, regExp);
+    };
+    
+    this.findTemplates = function (source, template) {
+        var nSource = this.neutralizeNowikiTags(source);
+        var templatePattern = Alib.RegEx.escapePattern(template);
+        templatePattern = prepareTitleCasing(templatePattern);
+        var regExp = new RegExp("\\{\\{( *(" + templatePattern + ")\\s*\\|)(\\s*(?:.(?!\\{\\{)\\s*)*?)\\}\\}", "g");
+        var templates = [];
+        
+        do {
+            var res = Alib.RegEx.matchAll(nSource, regExp);
+            
+            for (var t in res) {
+                var match = res[t].match;
+                var index = res[t].index;
+                var L = match[0].length;
+                var args = match[3].split("|");
+                var arguments = [];
+                var argId = index + match[1].length;
+                
+                for (var a in args) {
+                    var argL = args[a].length;
+                    var eqId = args[a].indexOf("=");
+                    // eqId must be > 0, not -1, in fact the key must not be empty
+                    if (eqId > 0) {
+                        var rawKey = args[a].substr(0, eqId);
+                        var reKey = /(\s*)(.+?)\s*/;
+                        var keyMatches = reKey.exec(rawKey);
+                        var key = keyMatches[2];
+                        var keyId = argId + ((keyMatches[1]) ? keyMatches[1].length : 0);
+                        
+                        var nValue = args[a].substr(eqId + 1);
+                        var valueId = argId + keyMatches[0].length;
+                        var valueL = argL - eqId - 1;
+                    }
+                    else {
+                        var key = null;
+                        var keyId = null;
+                        var nValue = args[a];
+                        var valueId = argId;
+                        var valueL = argL;
+                    }
+                    
+                    var value = source.substr(valueId, valueL);
+                    
+                    arguments.push({key: key,
+                                    key_index: keyId,
+                                    value: value,
+                                    value_index: valueId});
+                    
+                    // 1 is the length of |
+                    argId = argId + argL + 1;
+                }
+                
+                templates.push({
+                    name: match[2],
+                    index: index,
+                    length: L,
+                    arguments: arguments,
+                });
+                
+                var filler = "";
+                while (filler.length < L) {
+                    filler += "x";
+                }
+                nSource = nSource.substr(0, res[t].index - 1) + filler + nSource.substr(res[t].index + L)
+            }
+        // Find also nested templates
+        } while (res);
+        
+        return templates;
+    };
+        
     this.findSectionHeadings = function (source) {
         // ======Title====== is the deepest level supported
         var MAXLEVEL = 6;
@@ -60,7 +222,6 @@ WM.Parser = new function () {
                     else {
                         if (level > MAXLEVEL) {
                             level = MAXLEVEL;
-                            WM.Log.logWarning('"' + line + '"' + " is considered a level-" + MAXLEVEL + " heading");
                         }
                         else if (level < minLevel) {
                             minLevel = level;

@@ -180,4 +180,18 @@ WM.ArchWiki = new function () {
     this.isDeadInterwikiLanguage = function (lang) {
         return languages.interwiki.dead.indexOf(lang) > -1;
     };
+        
+    this.detectLanguage = function (title) {
+        var matches = title.match(/^(.+?)([ _]\(([^\(]+)\))?$/);
+        var detectedLanguage = title[3];
+        var pureTitle;
+        if (!detectedLanguage || !WM.ArchWiki.isCategoryLanguage(detectedLanguage)) {
+            detectedLanguage = "English";
+            pureTitle = title[0];
+        }
+        else {
+            pureTitle = title[1];
+        }
+        return [pureTitle, detectedLanguage];
+    };
 };
