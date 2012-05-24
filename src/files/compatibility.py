@@ -14,10 +14,16 @@ EXTENSIONS = ((CHROMIUM_PATH, "chromium"),
               (OPERA_PATH, "opera"),
               (STALONE_PATH, "standalone"))
 GM_API_EMULATION = os.path.join(ALIB_SRC_PATH, "GMAPIEmulation.js")
-STANDALONE_CONDITION = """
-if (location.href.match(/^http:\/\/[a-z]+\.wikipedia\.org\//i) ||
-    location.href.match(/^https:\/\/wiki\.archlinux\.org\//i)) {
-"""
+STANDALONE = {
+    "start": "\nif ({}) {{\n",
+    "match": "location.href.match({})",
+    "join": " ||\n    ",
+    "conditions": {
+        "http://*.wikipedia.org/*": "/^http:\/\/[a-z]+\.wikipedia\.org/i",
+        "https://wiki.archlinux.org/*": "/^https:\/\/wiki\.archlinux\.org/i",
+    },
+    "end": "\n}\n",
+}
 
 
 def get_script(s):
@@ -39,7 +45,7 @@ def get_GM_API_emulation():
         return get_script(s)
 
 
-def process_line(m, g, functions, header, line):
+def process_line(m, g, functions, match_urls, header, line):
     id = re.match('^// @id ([^ \n]+)', line)
     version = re.match('^// @version ([^ \n]+)', line)
     update_url = re.match('^// @updateURL (.+/configurations)(/.+)'
@@ -71,8 +77,13 @@ def process_line(m, g, functions, header, line):
         g.write("// @downloadURL " + download_url.group(1) + "/" + m[1] +
                 download_url.group(2) + "-" + m[1] + download_url.group(3) +
                 "\n")
-    elif m[1] == "opera" and matches:
-        g.write("// @include " + matches.group(1) + "\n")
+    elif matches:
+        if m[1] == "opera":
+            g.write("// @include " + matches.group(1) + "\n")
+        elif m[1] == "standalone":
+            match_urls.append(STANDALONE["conditions"][matches.group(1)])
+        else:
+            g.write(line)
     elif line[:18] == "// ==/UserScript==":
         header = False
         # If functions is empty it means it's a meta file
@@ -82,8 +93,10 @@ def process_line(m, g, functions, header, line):
             line += "\n" + get_licence() + get_GM_API_emulation() + functions
         elif m[1] == "standalone":
             # Not +=
-            line = (get_licence() + STANDALONE_CONDITION +
-                    get_GM_API_emulation() + functions)
+            line = (get_licence() + STANDALONE["start"].format(
+                        STANDALONE["join"].join(
+                           [STANDALONE["match"].format(m) for m in match_urls])
+                    ) + get_GM_API_emulation() + functions)
         g.write(line)
     elif m[1] != "standalone" or not header:
         g.write(line)
@@ -101,19 +114,19 @@ def main():
                                      m[1] != "standalone"):
                 with open(file, 'r') as f:
                     cfile = os.path.join(m[0], name[:-8] + "-" + m[1] +
-                                         name[-3 if (m[1] == "standalone")
-                                              else -8:])
+                                   name[-3 if (m[1] == "standalone") else -8:])
                     with open(cfile, 'w'):
                         pass
                     with open(cfile, 'a') as g:
                         functions = ""
+                        match_urls = []
                         header = True
                         for line in f:
                             functions, header = process_line(m, g, functions,
-                                                             header, line)
+                                                      match_urls, header, line)
                         else:
                             if m[1] == "standalone":
-                                g.write("\n}\n")
+                                g.write(STANDALONE["end"])
 
 if __name__ == '__main__':
     main()
