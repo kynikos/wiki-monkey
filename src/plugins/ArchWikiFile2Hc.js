@@ -1,5 +1,7 @@
 WM.Plugins.ArchWikiFile2Hc = new function () {
     this.main = function (args) {
+        // Out of date, should use WM.Parser *************************************
+        
         var source = WM.Editor.readSource();
         
         var re3 = /\{\{ *[Ff]ile\s*\|(?: *(?:name|1) *\=)?(\n*(?:(?!\{\{|\||<[Nn][Oo][Ww][Ii][Kk][Ii]>|\=).\n*)+?)\|(?: *(?:content|2) *\=)?(\n*(?:(?!\{\{|\=).\n*)*?)\}\}/g;

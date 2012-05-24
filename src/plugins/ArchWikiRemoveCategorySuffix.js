@@ -1,5 +1,7 @@
 WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
     this.createCategory = function (params) {
+        // OUT OF DATE ***********************************************************
+        
         WM.Log.logInfo("Processing category " + cat + "...");
         
         var cat = params.node;

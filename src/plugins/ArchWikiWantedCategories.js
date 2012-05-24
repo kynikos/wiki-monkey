@@ -15,9 +15,9 @@ WM.Plugins.ArchWikiWantedCategories = new function () {
         
         var edittoken = page.edittoken;
         
-        var language = title.match(/^(.+?)([ _]\(([^\(]+)\))?$/)[3];
+        var language = WM.ArchWiki.detectLanguage(title)[1];
         
-        if (language && WM.ArchWiki.isCategoryLanguage(language)) {
+        if (language != "English") {
             var text = "[[Category:" + language + "]]";
             var summary = "wanted category";
             
