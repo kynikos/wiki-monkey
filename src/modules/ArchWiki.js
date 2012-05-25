@@ -183,14 +183,14 @@ WM.ArchWiki = new function () {
         
     this.detectLanguage = function (title) {
         var matches = title.match(/^(.+?)([ _]\(([^\(]+)\))?$/);
-        var detectedLanguage = title[3];
+        var detectedLanguage = matches[3];
         var pureTitle;
         if (!detectedLanguage || !WM.ArchWiki.isCategoryLanguage(detectedLanguage)) {
             detectedLanguage = "English";
-            pureTitle = title[0];
+            pureTitle = matches[0];
         }
         else {
-            pureTitle = title[1];
+            pureTitle = matches[1];
         }
         return [pureTitle, detectedLanguage];
     };

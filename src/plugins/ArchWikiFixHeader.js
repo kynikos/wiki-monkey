@@ -21,7 +21,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         var titlemods = displaytitle.concat(lowercasetitle);
         var rmtitlemods = [];
         for (var m in titlemods) {
-            rmtitlemods.push([titlemods[m].index, titlemods[m].match[0].length]);
+            rmtitlemods.push([titlemods[m].index, titlemods[m].length]);
         }
         rmtitlemods.sort(function (a, b) {
             return a[0] - b[0];
@@ -37,13 +37,13 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         var dt = displaytitle.pop();
         var lct = lowercasetitle.pop();
         var dlct = "";
-        if (dt.match && !lct.match) {
+        if (dt && !lct) {
             var dlct = dt.match[0];
         }
-        else if (!dt.match && lct.match) {
+        else if (!dt && lct) {
             var dlct = lct.match[0];
         }
-        else if (dt.match && lct.match) {
+        else if (dt && lct) {
             var dlct = (dt.match.index < lct.match.index) ? lct.match[0] : dt.match[0];
         }
         if (displaytitle.length || lowercasetitle.length) {
@@ -51,7 +51,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         }
         
         // Behavior switches
-        var behaviorswitches = WM.Parser.findBehaviorSwitches(source);
+        var behaviorswitches = WM.Parser.findBehaviorSwitches(content);
         var bslist = [];
         var tempcontent = "";
         var contentId = 0;
@@ -68,7 +68,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
                     WM.Log.logWarning("Removed duplicate of " + behaviorswitches[b].match[0]);
                 }
                 tempcontent += content.substr(contentId, behaviorswitches[b].index);
-                contentId = behaviorswitches[b].index + behaviorswitches[b].match[0].length;
+                contentId = behaviorswitches[b].index + behaviorswitches[b].length;
             }
         }
         tempcontent += content.substr(contentId);
@@ -85,14 +85,14 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         }
         
         // Categories
-        var categories = WM.Parser.findCategories(source);
+        var categories = WM.Parser.findCategories(content);
         var catlist = [];
         var tempcontent = "";
         var contentId = 0;
         for (var c in categories) {
             var cat = categories[c];
             var catlang = WM.ArchWiki.detectLanguage(cat.match[1])[1];
-            if (language != catglang) {
+            if (language != catlang) {
                 WM.Log.logWarning(cat.match[1] + " belongs to a different language than the one of the title (" + language + ")");
             }
             if (catlist.indexOf(cat.match[0]) == -1) {
@@ -102,7 +102,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
                 WM.Log.logWarning("Removed duplicate of " + cat.match[1]);
             }
             tempcontent += content.substr(contentId, cat.index);
-            contentId = cat.index + cat.match[0].length;
+            contentId = cat.index + cat.length;
         }
         if (catlist.length) {
             header += catlist.join("\n") + "\n";
@@ -114,7 +114,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         content = tempcontent;
         
         // Interlanguage links
-        var interlanguage = WM.Parser.findInterlanguageLinks(source);
+        var interlanguage = WM.Parser.findInterlanguageLinks(content);
         var iwlist = [];
         var tempcontent = "";
         var contentId = 0;
@@ -127,7 +127,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
                 WM.Log.logWarning("Removed duplicate of " + link.match[1]);
             }
             tempcontent += content.substr(contentId, link.index);
-            contentId = link.index + link.match[0].length;
+            contentId = link.index + link.length;
         }
         if (iwlist.length) {
             header += iwlist.join("\n") + "\n";
@@ -136,12 +136,12 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         content = tempcontent;
         
         // Template:i18n
-        var i18ns = WM.Parser.findTemplates(source, "i18n");
+        var i18ns = WM.Parser.findTemplates(content, "i18n");
         var i18n = i18ns.pop();
         if (i18ns.length) {
             WM.Log.logWarning("Found multiple instances of Template:i18n : only the first one has been used, the others have been ignored");
         }
-        if (i18n.name) {
+        if (i18n) {
             var parsedTitle = WM.Parser.convertUnderscoresToSpaces(i18n.arguments[0].value);
             var test1 = pureTitle.substr(0, 1).toLowerCase() != parsedTitle.substr(0, 1).toLowerCase();
             var test2 = pureTitle.substr(1) != parsedTitle.substr(1);

@@ -26,12 +26,11 @@ WM.Parser = new function () {
     this.neutralizeNowikiTags = function (source) {
         var tags = Alib.RegEx.matchAll(source, /<nowiki>[.\s]+?<\/nowiki>/gi);
         for (var t in tags) {
-            var L = tags[t].match[0].length;
             var filler = "";
-            while (filler.length < L) {
+            while (filler.length < tags[t].length) {
                 filler += "x";
             }
-            source = source.substr(0, tags[t].index - 1) + filler + source.substr(tags[t].index + L)
+            source = source.substr(0, tags[t].index - 1) + filler + source.substr(tags[t].index + tags[t].length)
         }
         return source;
     };
@@ -123,7 +122,7 @@ WM.Parser = new function () {
             for (var t in res) {
                 var match = res[t].match;
                 var index = res[t].index;
-                var L = match[0].length;
+                var L = res[t].length;
                 var args = match[3].split("|");
                 var arguments = [];
                 var argId = index + match[1].length;
@@ -176,7 +175,7 @@ WM.Parser = new function () {
                 nSource = nSource.substr(0, res[t].index - 1) + filler + nSource.substr(res[t].index + L)
             }
         // Find also nested templates
-        } while (res);
+        } while (res.length);
         
         return templates;
     };
