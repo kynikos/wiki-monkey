@@ -114,7 +114,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         content = tempcontent;
         
         // Interlanguage links
-        var interlanguage = WM.Parser.findInterlanguageLinks(content);
+        var interlanguage = WM.ArchWiki.findInterlanguageLinks(content);
         var iwlist = [];
         var tempcontent = "";
         var contentId = 0;

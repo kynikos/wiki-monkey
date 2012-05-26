@@ -65,33 +65,48 @@ WM.MW = new function () {
         local: {},
     };
     
-    wikiPaths.local = (function () {
-        return this.getWikiPaths(location.href);
-    })();
-    
-    this.getWikiPaths = function (href) {
+    var getWikiPaths = function (href) {
+        // It's necessary to keep this function in a private attribute,
+        // otherwise wikiPaths.local cannot be initialized
         if (href) {
             for (var r in wikiPaths.known) {
                 var re = new RegExp(r, "i");
                 var match = re.exec(href);
                 if (match) {
                     var hostname = match[0];
-                    var paths = wikiPaths.known[r];
+                    var paths = {};
+                    for (var p in wikiPaths.known[r]) {
+                        paths[p] = wikiPaths.known[r][p];
+                    }
                     break;
                 }
             }
             if (!paths) {
                 var hostname = Alib.HTTP.getURLParts(href).hostname;
-                var paths = wikiPaths.default_;
+                var paths = {};
+                for (var p in wikiPaths.default_) {
+                    paths[p] = wikiPaths.default_[p];
+                }
             }
             for (var key in paths) {
                 paths[key] = hostname + paths[key];
             }
         }
         else {
-            paths = wikiPaths.local;
+            var paths = {};
+            for (var p in wikiPaths.local) {
+                paths[p] = wikiPaths.local[p];
+            }
         }
         return paths;
+    };
+    
+    wikiPaths.local = (function () {
+        return getWikiPaths(location.href);
+    })();
+    
+    this.getWikiPaths = function (href) {
+        return getWikiPaths(href)
     };
     
     this.callAPIGet = function (params, call, callArgs) {

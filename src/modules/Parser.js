@@ -23,6 +23,10 @@ WM.Parser = new function () {
         return title.replace(/_/g, " ");
     };
     
+    this.convertSpacesToUnderscores = function (title) {
+        return title.replace(/ /g, "_");
+    };
+    
     this.neutralizeNowikiTags = function (source) {
         var tags = Alib.RegEx.matchAll(source, /<nowiki>[.\s]+?<\/nowiki>/gi);
         for (var t in tags) {
@@ -83,19 +87,6 @@ WM.Parser = new function () {
     
     this.findCategories = function (source) {
         return this.findInternalLinks(source, "Category");
-    };
-    
-    this.findInterlanguageLinks = function (source, language) {
-        var res;
-        if (language) {
-            res = this.findInternalLinks(source, language);
-        }
-        else {
-            var interwikiLanguages = WM.ArchWiki.getInterwikiLanguages();
-            var regExp = new RegExp("\\s*(\\[\\[ *((" + interwikiLanguages.join("|") + ") *: *(.+?)) *\\]\\])", "gi");
-            return Alib.RegEx.matchAll(source, regExp);
-        }
-        return res;
     };
     
     this.findInterwikiLinks = function (source, wiki) {

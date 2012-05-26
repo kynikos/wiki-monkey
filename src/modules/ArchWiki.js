@@ -219,4 +219,17 @@ WM.ArchWiki = new function () {
         }
         return [pureTitle, detectedLanguage];
     };
+    
+    this.findInterlanguageLinks = function (source, language) {
+        var res;
+        if (language) {
+            res = WM.Parser.findInternalLinks(source, language);
+        }
+        else {
+            var interwikiLanguages = this.getInterwikiLanguages();
+            var regExp = new RegExp("\\s*(\\[\\[ *((" + interwikiLanguages.join("|") + ") *: *(.+?)) *\\]\\])", "gi");
+            res = Alib.RegEx.matchAll(source, regExp);
+        }
+        return res;
+    };
 };

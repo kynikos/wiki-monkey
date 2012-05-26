@@ -3,7 +3,10 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         var link;
         
         for (var tag in newlinks) {
-            link = newlinks[tag];
+            link = {};
+            for (var key in newlinks[tag]) {
+                link[key] = newlinks[tag][key];
+            }
             break;
         }
         
@@ -11,9 +14,12 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
             delete newlinks[tag];
             visitedlinks[tag] = link;
             
-            WM.Log.logInfo("Processing " + link.url + "...");
+            WM.Log.logInfo("Reading " + link.url + "...");
             
             var paths = WM.MW.getWikiPaths(link.url);
+            
+            visitedlinks[tag].api = paths.api;
+            
             var title = link.title;
             var query = paths.api +
                         "?format=json" +
@@ -23,11 +29,11 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
                         "&lllimit=5000" +
                         "&llurl=1" +
                         "&redirect=1";
-                        
+            
             WM.Plugins.SynchronizeInterlanguageLinks.collectLinksContinue(query, visitedlinks, newlinks, whitelist, null, callEnd, callArgs);
         }
         else {
-            WM.Plugins.SynchronizeInterlanguageLinks.callEnd(visitedlinks, callArgs);
+            callEnd(visitedlinks, callArgs);
         }
     };
     
@@ -37,6 +43,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
             method: "GET",
             url: query,
             onload: function (res) {
+                res = res.responseJSON;
                 for (var id in res.query.pages) {
                     var page = res.query.pages[id];
                     break;
@@ -46,8 +53,15 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
                 var conflict = false;
                 
                 if (langlinks) {
-                    for (var link in langlinks) {
+                    for (var l in langlinks) {
+                        var link = langlinks[l];
                         if (whitelist.indexOf(link.lang) > -1) {
+                            // Support old MediaWiki versions that don't return the full URL
+                            if (!link.url) {
+                                WM.Log.logDebug('AAA ' + JSON.stringify(link));  // ***************************************
+                                
+                            }
+                            
                             if (!visitedlinks[link.lang] && !newlinks[link.lang]) {
                                 newlinks[link.lang] = {
                                     url: link.url,
@@ -62,7 +76,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
                             }
                         }
                         else {
-                            WM.Log.logWarning("[[" + link.lang + ":" + conflict["*"] + "]] has been ignored");
+                            WM.Log.logWarning("[[" + link.lang + ":" + link["*"] + "]] has been ignored");
                         }
                     }
                 }
@@ -73,7 +87,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
                         WM.Plugins.SynchronizeInterlanguageLinks.collectLinksContinue(query, visitedlinks, newlinks, whitelist, continue_, callEnd, callArgs);
                     }
                     else {
-                        WM.Plugins.SynchronizeInterlanguageLinks.collectlinks(visitedlinks, newlinks, whitelist, callEnd, callArgs);
+                        WM.Plugins.SynchronizeInterlanguageLinks.collectLinks(visitedlinks, newlinks, whitelist, callEnd, callArgs);
                     }
                 }
             },
@@ -83,17 +97,47 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         });
     };
     
-    this.createLinks = function (links) {
-        // ***********************************************************************
-        // Warning per i tag non supportati dalla wiki corrente
-        // Controllare che l'url corrisponda con quello settato localmente
-        // Non mettere l'interlink per la lingua corrente
-        // Se chiamata dall'editor deve aggiornare solo la pagina, altrimenti
-        //     provare ad aggiornarle tutte
+    this.createLinks = function (lang, links, callEnd, callArgs) {
+        WM.Log.logInfo("Processing " + links[lang].url + "...");
         
+        var query = links[lang].api +
+                    "?format=json" +
+                    "&action=query" +
+                    "&meta=siteinfo" +
+                    "&siprop=interwikimap" +
+                    "&sifilteriw=local";
         
-        
-        
+        GM_xmlhttpRequest({
+            method: "GET",
+            url: query,
+            onload: function (res) {
+                res = res.responseJSON;
+                var linkList = "";
+                var iwmap = res.query.interwikimap;
+                for (var tag in links) {
+                    if (tag != lang) {
+                        var link = links[tag];
+                        var tagFound = false;
+                        for (var l in iwmap) {
+                            if (iwmap[l].prefix == tag) {
+                                if (WM.MW.getWikiPaths(iwmap[l].url) == link.api) {
+                                    linkList += "[[" + tag + ":" + link.title + "]]\n";
+                                }
+                                else {
+                                    WM.Log.logWarning("On this wiki, " + tag + " interlanguage links point to a different wiki than the others, ignoring them");
+                                }
+                                tagFound = true;
+                                break;
+                            }
+                        }
+                        if (!tagFound) {
+                            WM.Log.logWarning(tag + " interlanguage links are not supported by this wiki, ignoring them");
+                        }
+                    }
+                }
+                callEnd(linkList, callArgs);
+            }
+        });
     };
     
     this.main = function (args) {
@@ -102,20 +146,53 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         
         WM.Log.logInfo("Synchronizing interlanguage links...");
         
+        var paths = WM.MW.getWikiPaths();
+        var title = WM.Editor.getTitle();
         var newlinks = {};
         newlinks[tag] = {
-            url: location.href,
-            title: WM.Editor.getTitle(),
+            url: paths.articles + WM.Parser.convertSpacesToUnderscores(title),
+            title: title,
         };
         
-        WM.Plugins.SynchronizeInterlanguageLinks.collectLinks({}, newlinks, whitelist, WM.Plugins.SynchronizeInterlanguageLinks.mainEnd);
+        WM.Plugins.SynchronizeInterlanguageLinks.collectLinks(
+            {},
+            newlinks,
+            whitelist,
+            WM.Plugins.SynchronizeInterlanguageLinks.mainContinue,
+            [tag, whitelist]
+        );
+    };
+    
+    this.mainContinue = function (links, args) {
+        var tag = args[0];
+        var whitelist = args[1];
+        
+        WM.Plugins.SynchronizeInterlanguageLinks.createLinks(
+            tag,
+            links,
+            WM.Plugins.SynchronizeInterlanguageLinks.mainEnd,
+            [whitelist,]
+        );
     };
     
     this.mainEnd = function (links, args) {
-        // ***********************************************************************
+        var whitelist = args[0];
+        
         var source = WM.Editor.readSource();
         
+        var regExp = new RegExp("\\s*(\\[\\[ *((" + whitelist.join("|") + ") *: *(.+?)) *\\]\\])", "gi");
+        var matches = Alib.RegEx.matchAll(source, regExp);
         
+        var newText = "";
+        var textId = 0;
+        for (var l in matches) {
+            var link = matches[l];
+            newText += source.substr(textId, link.index);
+            textId = link.index + link.length;
+        }
+        newText += source.substr(textId);
+        
+        newText = links + newText;
         
         if (newText != source) {
             WM.Editor.writeSource(newText);

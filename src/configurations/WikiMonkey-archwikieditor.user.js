@@ -51,7 +51,7 @@ WM.UI.setEditor([
         ["SynchronizeInterlanguageLinks", "Sync interlanguage links",
          [function () {
              var title = WM.Editor.getTitle();
-             var language = WM.ArchWiki.detectLanguage(title);
+             var language = WM.ArchWiki.detectLanguage(title)[1];
              return WM.ArchWiki.getInterlanguageTag(language);
          },
          WM.ArchWiki.getAliveInterwikiLanguages()]
