@@ -61,73 +61,79 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
             onload: function (res) {
                 res = res.responseJSON;
                 
-                var iwmap = res.query.interwikimap;
-                visitedlinks[tag].iwmap = iwmap;
-                
-                for (var id in res.query.pages) {
-                    var page = res.query.pages[id];
-                    break;
-                }
-                var langlinks = page.langlinks;
-                
-                var conflict = false;
-                
-                if (langlinks) {
-                    for (var l in langlinks) {
-                        var link = langlinks[l];
-                        if (whitelist.indexOf(link.lang) > -1) {
-                            // Some old MediaWiki versions don't return the full URL
-                            if (!link.url) {
-                                for (var iw in iwmap) {
-                                    if (iwmap[iw].prefix == link.lang) {
-                                        link.url = iwmap[iw].url.replace("$1", WM.Parser.convertSpacesToUnderscores(link["*"]));
-                                        break;
+                // If the wiki has disabled the API it will stop here
+                if (res) {
+                    var iwmap = res.query.interwikimap;
+                    visitedlinks[tag].iwmap = iwmap;
+                    
+                    for (var id in res.query.pages) {
+                        var page = res.query.pages[id];
+                        break;
+                    }
+                    var langlinks = page.langlinks;
+                    
+                    var conflict = false;
+                    
+                    if (langlinks) {
+                        for (var l in langlinks) {
+                            var link = langlinks[l];
+                            if (whitelist.indexOf(link.lang) > -1) {
+                                // Some old MediaWiki versions don't return the full URL
+                                if (!link.url) {
+                                    for (var iw in iwmap) {
+                                        if (iwmap[iw].prefix == link.lang) {
+                                            link.url = iwmap[iw].url.replace("$1", WM.Parser.convertSpacesToUnderscores(link["*"]));
+                                            break;
+                                        }
                                     }
                                 }
-                            }
-                            
-                            if (!visitedlinks[link.lang] && !newlinks[link.lang]) {
-                                newlinks[link.lang] = {
-                                    url: link.url,
-                                    title: link["*"],
+                                
+                                if (!visitedlinks[link.lang] && !newlinks[link.lang]) {
+                                    newlinks[link.lang] = {
+                                        url: link.url,
+                                        title: link["*"],
+                                    }
+                                }
+                                else if ((visitedlinks[link.lang] && visitedlinks[link.lang].url != link.url) ||
+                                         (newlinks[link.lang] && newlinks[link.lang].url != link.url)) {
+                                    conflict = true;
+                                    WM.Log.logError("Conflicting interlanguage links: [[" + link.lang + ":" + link["*"] + "]]");
+                                    break;
                                 }
                             }
-                            else if ((visitedlinks[link.lang] && visitedlinks[link.lang].url != link.url) ||
-                                     (newlinks[link.lang] && newlinks[link.lang].url != link.url)) {
-                                conflict = true;
-                                WM.Log.logError("Conflicting interlanguage links: [[" + link.lang + ":" + link["*"] + "]]");
-                                break;
+                            else {
+                                WM.Log.logWarning("[[" + link.lang + ":" + link["*"] + "]] has been ignored");
                             }
                         }
+                    }
+                    
+                    if (!conflict) {
+                        if (res["query-continue"]) {
+                            continue_ = res["query-continue"].langlinks.llcontinue;
+                            WM.Plugins.SynchronizeInterlanguageLinks.collectLinksContinue(
+                                tag,
+                                query,
+                                visitedlinks,
+                                newlinks,
+                                whitelist,
+                                continue_,
+                                callEnd,
+                                callArgs
+                            );
+                        }
                         else {
-                            WM.Log.logWarning("[[" + link.lang + ":" + link["*"] + "]] has been ignored");
+                            WM.Plugins.SynchronizeInterlanguageLinks.collectLinks(
+                                visitedlinks,
+                                newlinks,
+                                whitelist,
+                                callEnd,
+                                callArgs
+                            );
                         }
                     }
                 }
-                
-                if (!conflict) {
-                    if (res["query-continue"]) {
-                        continue_ = res["query-continue"].langlinks.llcontinue;
-                        WM.Plugins.SynchronizeInterlanguageLinks.collectLinksContinue(
-                            tag,
-                            query,
-                            visitedlinks,
-                            newlinks,
-                            whitelist,
-                            continue_,
-                            callEnd,
-                            callArgs
-                        );
-                    }
-                    else {
-                        WM.Plugins.SynchronizeInterlanguageLinks.collectLinks(
-                            visitedlinks,
-                            newlinks,
-                            whitelist,
-                            callEnd,
-                            callArgs
-                        );
-                    }
+                else {
+                    WM.Log.logError("It is likely that the API for this wiki is disabled");
                 }
             },
             onerror: function (res) {
@@ -136,8 +142,11 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         });
     };
     
-    var createLinks = function (lang, links) {
+    var updateLinks = function (source, lang, whitelist, links) {
         WM.Log.logInfo("Processing " + links[lang].url + "...");
+        
+        // ORDINARE I LINK SECONDO UN ORDINE ALFABETICO **************************
+        //     prendere una funzione dal file di configurazione ******************
         
         var iwmap = links[lang].iwmap;
         
@@ -164,7 +173,24 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
                 }
             }
         }
-        return linkList;
+        
+        var regExp = new RegExp("(\\[\\[ *((" + whitelist.join("|") + ") *: *(.+?)) *\\]\\])\\s*", "gi");
+        var matches = Alib.RegEx.matchAll(source, regExp);
+        
+        var cleanText = "";
+        var textId = 0;
+        for (var l in matches) {
+            var link = matches[l];
+            cleanText += source.substring(textId, link.index);
+            textId = link.index + link.length;
+        }
+        cleanText += source.substring(textId);
+        
+        // Insert the new links at the index of the first previous link
+        var firstLink = matches[0].index;
+        var newText = cleanText.substr(0, firstLink) + linkList + cleanText.substr(firstLink);
+        
+        return newText;
     };
     
     this.main = function (args) {
@@ -199,33 +225,14 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         var tag = args[0];
         var source = args[1];
         
-        // FORSE NON TUTTE LE WIKI METTONO GLI INTERLINK IN ALTO *****************
-        //     BISOGNEREBBE RIUSCIRE A METTERLI NEL POSTO PRECISO ****************
-        //     prendere una funzione dal file di configurazione ******************
-        //     forse un modo più semplice sarebbe metterli all'indice ************
-        //         più basso tra i precedenti link rimossi ***********************
-        // ORDINARE I LINK SECONDO UN ORDINE ALFABETICO **************************
-        //     prendere una funzione dal file di configurazione ******************
-        
-        var textLinks = createLinks(tag, links);
-        
-        var regExp = new RegExp("\\s*(\\[\\[ *((" + whitelist.join("|") + ") *: *(.+?)) *\\]\\])", "gi");
-        var matches = Alib.RegEx.matchAll(source, regExp);
-        
-        var newText = "";
-        var textId = 0;
-        for (var l in matches) {
-            var link = matches[l];
-            newText += source.substring(textId, link.index);
-            textId = link.index + link.length;
-        }
-        newText += source.substring(textId);
-        
-        newText = textLinks + newText;
+        var newText = updateLinks(source, tag, whitelist, links);
         
         if (newText != source) {
             WM.Editor.writeSource(newText);
             WM.Log.logInfo("Sycnhronized interlanguage links");
+        }
+        else {
+            WM.Log.logInfo("Interlanguage links were already synchronized");
         }
     };
     
@@ -269,29 +276,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         var summary = args[1];
         var callBot = args[2];
         
-        // FORSE NON TUTTE LE WIKI METTONO GLI INTERLINK IN ALTO *****************
-        //     BISOGNEREBBE RIUSCIRE A METTERLI NEL POSTO PRECISO ****************
-        //     prendere una funzione dal file di configurazione ******************
-        //     forse un modo più semplice sarebbe metterli all'indice ************
-        //         più basso tra i precedenti link rimossi ***********************
-        // ORDINARE I LINK SECONDO UN ORDINE ALFABETICO **************************
-        //     prendere una funzione dal file di configurazione ******************
-        
-        var textLinks = createLinks(tag, links);
-        
-        var regExp = new RegExp("\\s*(\\[\\[ *((" + whitelist.join("|") + ") *: *(.+?)) *\\]\\])", "gi");
-        var matches = Alib.RegEx.matchAll(source, regExp);
-        
-        var newText = "";
-        var textId = 0;
-        for (var l in matches) {
-            var link = matches[l];
-            newText += source.substring(textId, link.index);
-            textId = link.index + link.length;
-        }
-        newText += source.substring(textId);
-        
-        newText = textLinks + newText;
+        var newText = updateLinks(source, tag, whitelist, links);
         
         if (newText != source) {
             WM.MW.callAPIPost({action: "edit",
