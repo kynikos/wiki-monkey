@@ -46,7 +46,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
             );
         }
         else {
-            callEnd(visitedlinks, callArgs);
+            callEnd(visitedlinks, whitelist, callArgs);
         }
     };
     
@@ -182,6 +182,8 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         };
         
         // LA PAGINA NELL'EDITOR VA PARSATA SUBITO QUI ***************************
+        //     creare delle funzioni per standardizzare la creazione *************
+        //     degli elementi di newlinks e visitedlinks *************************
         var source = WM.Editor.readSource();
         
         WM.Plugins.SynchronizeInterlanguageLinks.collectLinks(
@@ -189,18 +191,19 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
             newlinks,
             whitelist,
             WM.Plugins.SynchronizeInterlanguageLinks.mainEnd,
-            [tag, whitelist, source]
+            [tag, source]
         );
     };
     
-    this.mainEnd = function (links, args) {
+    this.mainEnd = function (links, whitelist, args) {
         var tag = args[0];
-        var whitelist = args[1];
-        var source = args[2];
+        var source = args[1];
         
         // FORSE NON TUTTE LE WIKI METTONO GLI INTERLINK IN ALTO *****************
         //     BISOGNEREBBE RIUSCIRE A METTERLI NEL POSTO PRECISO ****************
         //     prendere una funzione dal file di configurazione ******************
+        //     forse un modo più semplice sarebbe metterli all'indice ************
+        //         più basso tra i precedenti link rimossi ***********************
         // ORDINARE I LINK SECONDO UN ORDINE ALFABETICO **************************
         //     prendere una funzione dal file di configurazione ******************
         
@@ -227,33 +230,70 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
     };
     
     this.mainAuto = function (args, title, callBot) {
-        // ***********************************************************************
-        var summary = args[0];
+        var tag = args[0]();
+        var whitelist = args[1];
+        var summary = args[2];
+        
+        // RIUSCIRE AD EDITARE ANCHE LE PAGINE SULLE WIKI ESTERNE? ***************
+        //     non sarebbe un comportamento coerente con la funzione del bot *****
+        
+        var paths = WM.MW.getWikiPaths();
+        var newlinks = {};
+        newlinks[tag] = {
+            url: paths.articles + WM.Parser.convertSpacesToUnderscores(title),
+            title: title,
+        };
+        
+        WM.Plugins.SynchronizeInterlanguageLinks.collectLinks(
+            {},
+            newlinks,
+            whitelist,
+            WM.Plugins.SynchronizeInterlanguageLinks.mainAutoRead,
+            [title, tag, summary, callBot]
+        );
+    };
+    
+    this.mainAutoRead = function (links, whitelist, args) {
+        var title = args[0];
+        var tag = args[1];
+        var summary = args[2];
+        var callBot = args[3];
         
         WM.MW.callQueryEdit(title,
-                            WM.Plugins.SynchronizeInterlanguageLinks.mainAutoReplace,
-                            [summary, callBot]);
+                            WM.Plugins.SynchronizeInterlanguageLinks.mainAutoWrite,
+                            [tag, summary, callBot]);
     };
     
-    this.mainAutoReplace = function (title, source, timestamp, edittoken, args) {
-        // ***********************************************************************
-        var summary = args[0];
-        var callBot = args[1];
+    this.mainAutoWrite = function (title, source, timestamp, edittoken, args) {
+        var tag = args[0];
+        var summary = args[1];
+        var callBot = args[2];
         
-        doReplace(source,
-                  WM.Plugins.SynchronizeInterlanguageLinks.mainAutoWrite,
-                  [title, edittoken, timestamp, summary, callBot]);
-    };
-    
-    this.mainAutoWrite = function (source, newtext, args) {
-        // ***********************************************************************
-        var title = args[0];
-        var edittoken = args[1];
-        var timestamp = args[2];
-        var summary = args[3];
-        var callBot = args[4];
+        // FORSE NON TUTTE LE WIKI METTONO GLI INTERLINK IN ALTO *****************
+        //     BISOGNEREBBE RIUSCIRE A METTERLI NEL POSTO PRECISO ****************
+        //     prendere una funzione dal file di configurazione ******************
+        //     forse un modo più semplice sarebbe metterli all'indice ************
+        //         più basso tra i precedenti link rimossi ***********************
+        // ORDINARE I LINK SECONDO UN ORDINE ALFABETICO **************************
+        //     prendere una funzione dal file di configurazione ******************
         
-        if (newtext != source) {
+        var textLinks = createLinks(tag, links);
+        
+        var regExp = new RegExp("\\s*(\\[\\[ *((" + whitelist.join("|") + ") *: *(.+?)) *\\]\\])", "gi");
+        var matches = Alib.RegEx.matchAll(source, regExp);
+        
+        var newText = "";
+        var textId = 0;
+        for (var l in matches) {
+            var link = matches[l];
+            newText += source.substring(textId, link.index);
+            textId = link.index + link.length;
+        }
+        newText += source.substring(textId);
+        
+        newText = textLinks + newText;
+        
+        if (newText != source) {
             WM.MW.callAPIPost({action: "edit",
                                bot: "1",
                                title: title,
@@ -270,7 +310,6 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
     };
     
     this.mainAutoEnd = function (res, callBot) {
-        // ***********************************************************************
         if (res.edit && res.edit.result == 'Success') {
             callBot(true);
         }
