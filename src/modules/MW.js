@@ -218,7 +218,7 @@ WM.MW = new function () {
         var query = {action: "query",
                      list: "backlinks",
                      bltitle: bltitle,
-                     bllimit: 5000};
+                     bllimit: 500};
         
         if (blnamespace) {
             query.blnamespace = blnamespace;
@@ -244,7 +244,7 @@ WM.MW = new function () {
         var query = {action: "query",
                      prop: "langlinks",
                      titles: title,
-                     lllimit: 5000,
+                     lllimit: 500,
                      llurl: "1",
                      redirect: "1"};
         

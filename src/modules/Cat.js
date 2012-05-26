@@ -51,7 +51,7 @@ WM.Cat = new function () {
         var query = {action: "query",
                      list: "categorymembers",
                      cmtitle: name,
-                     cmlimit: 5000};
+                     cmlimit: 500};
         
         if (cmtype) {
             query.cmtype = cmtype;
@@ -77,7 +77,7 @@ WM.Cat = new function () {
         var query = {action: "query",
                      prop: "categories",
                      titles: name,
-                     cllimit: 5000};
+                     cllimit: 500};
         
         this._getParentsContinue(query, call, callArgs, []);
     };
