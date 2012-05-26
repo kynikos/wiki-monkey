@@ -174,7 +174,7 @@ WM.UI = new function () {
             nextNode = document.getElementById('mw-linksearch-form').nextSibling;
             UI = (linkSearch) ? WM.Bot._makeUI(linkSearch, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 1, "Pages"]]) : null;
         }
-        else if (location.href.indexOf(WM.MW.getArticlesBaseUrl() + "/Special:SpecialPages") > -1) {
+        else if (location.href.indexOf(WM.MW.getWikiPaths().articles + "Special:SpecialPages") > -1) {
             nextNode = document.getElementById('bodyContent');
             UI = (special) ? makeButtons(special) : null;
         }

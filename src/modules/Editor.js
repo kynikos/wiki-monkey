@@ -20,8 +20,7 @@
 
 WM.Editor = new function () {
     this.getTitle = function () {
-        var title = Alib.HTTP.getURIParameter('title').replace(/_/g, " ");
-        return title;
+        return WM.Parser.convertUnderscoresToSpaces(decodeURIComponent(Alib.HTTP.getURIParameter('title')));
     };
     
     this.isSection = function () {

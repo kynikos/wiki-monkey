@@ -34,6 +34,7 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ExpandContractions.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/MultipleLineBreaks.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/SimpleReplace.js
+// @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/SynchronizeInterlanguageLinks.js
 // ==/UserScript==
 
 WM.UI.setEditor([
@@ -48,6 +49,14 @@ WM.UI.setEditor([
         ["SimpleReplace", "RegExp substitution", ["1"]]
     ],
     [
+        ["SynchronizeInterlanguageLinks", "Sync interlanguage links",
+         [function () {
+             var title = WM.Editor.getTitle();
+             var language = WM.ArchWiki.detectLanguage(title);
+             return WM.ArchWiki.getInterlanguageTag(language);
+         },
+         WM.ArchWiki.getAliveInterwikiLanguages()]
+        ],
         ["ArchWikiTemplateAUR", "Use Template:AUR", null]
     ]
 ]);

@@ -19,35 +19,85 @@
  */
 
 WM.MW = new function () {
-    var wikiUrls = (function () {
-        var paths = {DEFAULT: {articles: "index.php",
-                               api: "api.php"},
-                     "archlinux.org": {articles: "index.php",
-                                       api: "api.php"},
-                     "wikipedia.org": {articles: "wiki",
-                                       api: "w/api.php"}};
-        
-        var urls = paths[location.hostname.split(".").slice(1).join(".")];
-        
-        if (!urls) {
-            urls = paths.DEFAULT;
-        }
-        
-        for (var key in urls) {
-            urls[key] = location.protocol + "//" + location.hostname + "/" + urls[key];
-        }
-        
-        return urls;
+    var wikiPaths = {
+        known: {
+            "^https?://[^\.]+\.wikipedia\.org": {
+                articles: "/wiki/",
+                api: "/w/api.php"
+            },
+            "^https?://wiki\.archlinux\.org": {
+                articles: "/index.php/",
+                api: "/api.php"
+            },
+            "^https?://wiki\.archlinux\.de": {
+                articles: "/title/",
+                api: "/api.php"
+            },
+            "^http://wiki\.archlinux\.fr": {
+                articles: "/",
+                api: "/api.php"
+            },
+            "^http://wiki\.archlinux\.ro": {
+                articles: "/index.php/",
+                api: "/api.php"
+            },
+            "^http://(?:www\.)?archlinux\.fi": {
+                articles: "/wiki/",
+                api: "/w/api.php"
+            },
+            "^http://wiki\.archlinux\.se": {
+                articles: "/index.php?title=",
+                api: "/api.php"
+            },
+            "^http://(?:www\.)?archtr\.org": {
+                articles: "/index.php?title=",
+                api: "/wiki/api.php"
+            },
+            "^http://wiki\.archlinux\.ir": {
+                articles: "/index.php/",
+                api: "/api.php"
+            },
+        },
+        default_: {
+            articles: "/index.php?title=",
+            api: "/api.php"
+        },
+        local: {},
+    };
+    
+    wikiPaths.local = (function () {
+        return this.getWikiPaths(location.href);
     })();
     
-    this.getArticlesBaseUrl = function () {
-        return wikiUrls.articles;
+    this.getWikiPaths = function (href) {
+        if (href) {
+            for (var r in wikiPaths.known) {
+                var re = new RegExp(r, "i");
+                var match = re.exec(href);
+                if (match) {
+                    var hostname = match[0];
+                    var paths = wikiPaths.known[r];
+                    break;
+                }
+            }
+            if (!paths) {
+                var hostname = Alib.HTTP.getURLParts(href).hostname;
+                var paths = wikiPaths.default_;
+            }
+            for (var key in paths) {
+                paths[key] = hostname + paths[key];
+            }
+        }
+        else {
+            paths = wikiPaths.local;
+        }
+        return paths;
     };
     
     this.callAPIGet = function (params, call, callArgs) {
         GM_xmlhttpRequest({
             method: "GET",
-            url: wikiUrls.api + "?format=json" + joinParams(params),
+            url: wikiPaths.local.api + "?format=json" + joinParams(params),
             onload: function (res) {
                 call(res.responseJSON, callArgs);
             }
@@ -57,7 +107,7 @@ WM.MW = new function () {
     this.callAPIPost = function (params, call, callArgs) {
         var query = {
             method: "POST",
-            url: wikiUrls.api,
+            url: wikiPaths.local.api,
             onload: function (res) {
                 call(res.responseJSON, callArgs);
             },
@@ -171,6 +221,30 @@ WM.MW = new function () {
             }
             else {
                 call(backlinks, callArgs);
+            }
+        });
+    };
+    
+    this.getLanglinks = function (title, call, callArgs) {
+        var query = {action: "query",
+                     prop: "langlinks",
+                     titles: title,
+                     lllimit: 5000,
+                     llurl: "1",
+                     redirect: "1"};
+        
+        this._getLanglinksContinue(query, call, callArgs, []);
+    };
+    
+    this._getLanglinksContinue = function (query, call, callArgs, langlinks) {
+        WM.MW.callAPIGet(query, function (res) {
+            langlinks = langlinks.concat(res.query.langlinks);
+            if (res["query-continue"]) {
+                query.llcontinue = res["query-continue"].langlinks.llcontinue;
+                this._getLanglinksContinue(query, call, callArgs, langlinks);
+            }
+            else {
+                call(langlinks, callArgs);
             }
         });
     };

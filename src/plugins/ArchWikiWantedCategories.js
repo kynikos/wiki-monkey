@@ -17,7 +17,7 @@ WM.Plugins.ArchWikiWantedCategories = new function () {
         
         var language = WM.ArchWiki.detectLanguage(title)[1];
         
-        if (language != "English") {
+        if (language != WM.ArchWiki.getLocalLanguage()) {
             var text = "[[Category:" + language + "]]";
             var summary = "wanted category";
             

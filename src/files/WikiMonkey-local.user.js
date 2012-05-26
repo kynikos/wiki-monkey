@@ -38,6 +38,7 @@
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ExpandContractions.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/MultipleLineBreaks.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/SimpleReplace.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/SynchronizeInterlanguageLinks.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/UpdateCategoryTree.js
 // ==/UserScript==
 
@@ -53,6 +54,14 @@ WM.UI.setEditor([
         ["SimpleReplace", "RegExp substitution", ["1"]]
     ],
     [
+        ["SynchronizeInterlanguageLinks", "Sync interlanguage links",
+         [function () {
+             var title = WM.Editor.getTitle();
+             var language = WM.ArchWiki.detectLanguage(title);
+             return WM.ArchWiki.getInterlanguageTag(language);
+         },
+         WM.ArchWiki.getAliveInterwikiLanguages()]
+        ],
         ["ArchWikiTemplateAUR", "Use Template:AUR", null]
     ]
 ]);
