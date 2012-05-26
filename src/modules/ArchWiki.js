@@ -227,7 +227,7 @@ WM.ArchWiki = new function () {
         }
         else {
             var interwikiLanguages = this.getInterwikiLanguages();
-            var regExp = new RegExp("\\s*(\\[\\[ *((" + interwikiLanguages.join("|") + ") *: *(.+?)) *\\]\\])", "gi");
+            var regExp = new RegExp("\\[\\[ *((" + interwikiLanguages.join("|") + ") *: *(.+?)) *\\]\\]", "gi");
             res = Alib.RegEx.matchAll(source, regExp);
         }
         return res;

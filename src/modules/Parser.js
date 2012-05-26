@@ -104,7 +104,7 @@ WM.Parser = new function () {
         var nSource = this.neutralizeNowikiTags(source);
         var templatePattern = Alib.RegEx.escapePattern(template);
         templatePattern = prepareTitleCasing(templatePattern);
-        var regExp = new RegExp("\\{\\{( *(" + templatePattern + ")\\s*\\|)(\\s*(?:.(?!\\{\\{)\\s*)*?)\\}\\}", "g");
+        var regExp = new RegExp("(\\{\\{ *(" + templatePattern + ")\\s*\\|)(\\s*(?:.(?!\\{\\{)\\s*)*?)\\}\\}", "g");
         var templates = [];
         
         do {

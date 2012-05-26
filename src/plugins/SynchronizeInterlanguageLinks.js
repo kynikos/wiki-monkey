@@ -181,27 +181,30 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
             title: title,
         };
         
-        // FORSE IL SOURCE DELLA PAGINA NELL'EDITOR ANDREBBE PRESO CON ***********
-        //     WM.Editor.readSource() ********************************************
+        // LA PAGINA NELL'EDITOR VA PARSATA SUBITO QUI ***************************
+        var source = WM.Editor.readSource();
+        
         WM.Plugins.SynchronizeInterlanguageLinks.collectLinks(
             {},
             newlinks,
             whitelist,
             WM.Plugins.SynchronizeInterlanguageLinks.mainEnd,
-            [tag, whitelist]
+            [tag, whitelist, source]
         );
     };
     
     this.mainEnd = function (links, args) {
         var tag = args[0];
         var whitelist = args[1];
+        var source = args[2];
         
         // FORSE NON TUTTE LE WIKI METTONO GLI INTERLINK IN ALTO *****************
         //     BISOGNEREBBE RIUSCIRE A METTERLI NEL POSTO PRECISO ****************
+        //     prendere una funzione dal file di configurazione ******************
         // ORDINARE I LINK SECONDO UN ORDINE ALFABETICO **************************
-        var textLinks = createLinks(tag, links);
+        //     prendere una funzione dal file di configurazione ******************
         
-        var source = WM.Editor.readSource();
+        var textLinks = createLinks(tag, links);
         
         var regExp = new RegExp("\\s*(\\[\\[ *((" + whitelist.join("|") + ") *: *(.+?)) *\\]\\])", "gi");
         var matches = Alib.RegEx.matchAll(source, regExp);
