@@ -29,10 +29,10 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         var tempcontent = "";
         var contentId = 0;
         for (var r in rmtitlemods) {
-            tempcontent += content.substr(contentId, rmtitlemods[r][0]);
+            tempcontent += content.substring(contentId, rmtitlemods[r][0]);
             contentId = rmtitlemods[r][0] + rmtitlemods[r][1];
         }
-        tempcontent += content.substr(contentId);
+        tempcontent += content.substring(contentId);
         content = tempcontent;
         var dt = displaytitle.pop();
         var lct = lowercasetitle.pop();
@@ -67,11 +67,11 @@ WM.Plugins.ArchWikiFixHeader = new function () {
                 else {
                     WM.Log.logWarning("Removed duplicate of " + behaviorswitches[b].match[0]);
                 }
-                tempcontent += content.substr(contentId, behaviorswitches[b].index);
+                tempcontent += content.substring(contentId, behaviorswitches[b].index);
                 contentId = behaviorswitches[b].index + behaviorswitches[b].length;
             }
         }
-        tempcontent += content.substr(contentId);
+        tempcontent += content.substring(contentId);
         content = tempcontent;
         
         if (!dlct && bslist.length) {
@@ -101,7 +101,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
             else {
                 WM.Log.logWarning("Removed duplicate of " + cat.match[1]);
             }
-            tempcontent += content.substr(contentId, cat.index);
+            tempcontent += content.substring(contentId, cat.index);
             contentId = cat.index + cat.length;
         }
         if (catlist.length) {
@@ -110,7 +110,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         else {
             WM.Log.logWarning("The article is not categorized");
         }
-        tempcontent += content.substr(contentId);
+        tempcontent += content.substring(contentId);
         content = tempcontent;
         
         // Interlanguage links
@@ -126,13 +126,13 @@ WM.Plugins.ArchWikiFixHeader = new function () {
             else {
                 WM.Log.logWarning("Removed duplicate of " + link.match[1]);
             }
-            tempcontent += content.substr(contentId, link.index);
+            tempcontent += content.substring(contentId, link.index);
             contentId = link.index + link.length;
         }
         if (iwlist.length) {
             header += iwlist.join("\n") + "\n";
         }
-        tempcontent += content.substr(contentId);
+        tempcontent += content.substring(contentId);
         content = tempcontent;
         
         // Template:i18n

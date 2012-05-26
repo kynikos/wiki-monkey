@@ -21,6 +21,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
             visitedlinks[tag].api = paths.api;
             
             var title = link.title;
+            
             var query = paths.api +
                         "?format=json" +
                         "&action=query" +
@@ -28,22 +29,41 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
                         "&titles=" + encodeURIComponent(title) +
                         "&lllimit=5000" +
                         "&llurl=1" +
-                        "&redirect=1";
+                        "&redirect=1" +
+                        "&meta=siteinfo" +
+                        "&siprop=interwikimap" +
+                        "&sifilteriw=local";
             
-            WM.Plugins.SynchronizeInterlanguageLinks.collectLinksContinue(query, visitedlinks, newlinks, whitelist, null, callEnd, callArgs);
+            WM.Plugins.SynchronizeInterlanguageLinks.collectLinksContinue(
+                tag,
+                query,
+                visitedlinks,
+                newlinks,
+                whitelist,
+                null,
+                callEnd,
+                callArgs
+            );
         }
         else {
             callEnd(visitedlinks, callArgs);
         }
     };
     
-    this.collectLinksContinue = function (query, visitedlinks, newlinks, whitelist, continue_, callEnd, callArgs) {
-        if (continue_) query += "&llcontinue=" + encodeURIComponent(continue_);
+    this.collectLinksContinue = function (tag, query, visitedlinks, newlinks, whitelist, continue_, callEnd, callArgs) {
+        if (continue_) {
+            query += "&llcontinue=" + encodeURIComponent(continue_)
+        }
+        
         GM_xmlhttpRequest({
             method: "GET",
             url: query,
             onload: function (res) {
                 res = res.responseJSON;
+                
+                var iwmap = res.query.interwikimap;
+                visitedlinks[tag].iwmap = iwmap;
+                
                 for (var id in res.query.pages) {
                     var page = res.query.pages[id];
                     break;
@@ -56,10 +76,14 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
                     for (var l in langlinks) {
                         var link = langlinks[l];
                         if (whitelist.indexOf(link.lang) > -1) {
-                            // Support old MediaWiki versions that don't return the full URL
+                            // Some old MediaWiki versions don't return the full URL
                             if (!link.url) {
-                                WM.Log.logDebug('AAA ' + JSON.stringify(link));  // ***************************************
-                                
+                                for (var iw in iwmap) {
+                                    if (iwmap[iw].prefix == link.lang) {
+                                        link.url = iwmap[iw].url.replace("$1", WM.Parser.convertSpacesToUnderscores(link["*"]));
+                                        break;
+                                    }
+                                }
                             }
                             
                             if (!visitedlinks[link.lang] && !newlinks[link.lang]) {
@@ -84,10 +108,25 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
                 if (!conflict) {
                     if (res["query-continue"]) {
                         continue_ = res["query-continue"].langlinks.llcontinue;
-                        WM.Plugins.SynchronizeInterlanguageLinks.collectLinksContinue(query, visitedlinks, newlinks, whitelist, continue_, callEnd, callArgs);
+                        WM.Plugins.SynchronizeInterlanguageLinks.collectLinksContinue(
+                            tag,
+                            query,
+                            visitedlinks,
+                            newlinks,
+                            whitelist,
+                            continue_,
+                            callEnd,
+                            callArgs
+                        );
                     }
                     else {
-                        WM.Plugins.SynchronizeInterlanguageLinks.collectLinks(visitedlinks, newlinks, whitelist, callEnd, callArgs);
+                        WM.Plugins.SynchronizeInterlanguageLinks.collectLinks(
+                            visitedlinks,
+                            newlinks,
+                            whitelist,
+                            callEnd,
+                            callArgs
+                        );
                     }
                 }
             },
@@ -97,47 +136,35 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         });
     };
     
-    this.createLinks = function (lang, links, callEnd, callArgs) {
+    var createLinks = function (lang, links) {
         WM.Log.logInfo("Processing " + links[lang].url + "...");
         
-        var query = links[lang].api +
-                    "?format=json" +
-                    "&action=query" +
-                    "&meta=siteinfo" +
-                    "&siprop=interwikimap" +
-                    "&sifilteriw=local";
+        var iwmap = links[lang].iwmap;
         
-        GM_xmlhttpRequest({
-            method: "GET",
-            url: query,
-            onload: function (res) {
-                res = res.responseJSON;
-                var linkList = "";
-                var iwmap = res.query.interwikimap;
-                for (var tag in links) {
-                    if (tag != lang) {
-                        var link = links[tag];
-                        var tagFound = false;
-                        for (var l in iwmap) {
-                            if (iwmap[l].prefix == tag) {
-                                if (WM.MW.getWikiPaths(iwmap[l].url) == link.api) {
-                                    linkList += "[[" + tag + ":" + link.title + "]]\n";
-                                }
-                                else {
-                                    WM.Log.logWarning("On this wiki, " + tag + " interlanguage links point to a different wiki than the others, ignoring them");
-                                }
-                                tagFound = true;
-                                break;
-                            }
+        var linkList = "";
+        
+        for (var tag in links) {
+            if (tag != lang) {
+                var link = links[tag];
+                var tagFound = false;
+                for (var l in iwmap) {
+                    if (iwmap[l].prefix == tag) {
+                        if (WM.MW.getWikiPaths(iwmap[l].url).api == link.api) {
+                            linkList += "[[" + tag + ":" + link.title + "]]\n";
                         }
-                        if (!tagFound) {
-                            WM.Log.logWarning(tag + " interlanguage links are not supported by this wiki, ignoring them");
+                        else {
+                            WM.Log.logWarning("On this wiki, " + tag + " interlanguage links point to a different wiki than the others, ignoring them");
                         }
+                        tagFound = true;
+                        break;
                     }
                 }
-                callEnd(linkList, callArgs);
+                if (!tagFound) {
+                    WM.Log.logWarning(tag + " interlanguage links are not supported by this wiki, ignoring them");
+                }
             }
-        });
+        }
+        return linkList;
     };
     
     this.main = function (args) {
@@ -154,29 +181,25 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
             title: title,
         };
         
+        // FORSE IL SOURCE DELLA PAGINA NELL'EDITOR ANDREBBE PRESO CON ***********
+        //     WM.Editor.readSource() ********************************************
         WM.Plugins.SynchronizeInterlanguageLinks.collectLinks(
             {},
             newlinks,
             whitelist,
-            WM.Plugins.SynchronizeInterlanguageLinks.mainContinue,
+            WM.Plugins.SynchronizeInterlanguageLinks.mainEnd,
             [tag, whitelist]
         );
     };
     
-    this.mainContinue = function (links, args) {
+    this.mainEnd = function (links, args) {
         var tag = args[0];
         var whitelist = args[1];
         
-        WM.Plugins.SynchronizeInterlanguageLinks.createLinks(
-            tag,
-            links,
-            WM.Plugins.SynchronizeInterlanguageLinks.mainEnd,
-            [whitelist,]
-        );
-    };
-    
-    this.mainEnd = function (links, args) {
-        var whitelist = args[0];
+        // FORSE NON TUTTE LE WIKI METTONO GLI INTERLINK IN ALTO *****************
+        //     BISOGNEREBBE RIUSCIRE A METTERLI NEL POSTO PRECISO ****************
+        // ORDINARE I LINK SECONDO UN ORDINE ALFABETICO **************************
+        var textLinks = createLinks(tag, links);
         
         var source = WM.Editor.readSource();
         
@@ -187,12 +210,12 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         var textId = 0;
         for (var l in matches) {
             var link = matches[l];
-            newText += source.substr(textId, link.index);
+            newText += source.substring(textId, link.index);
             textId = link.index + link.length;
         }
-        newText += source.substr(textId);
+        newText += source.substring(textId);
         
-        newText = links + newText;
+        newText = textLinks + newText;
         
         if (newText != source) {
             WM.Editor.writeSource(newText);
