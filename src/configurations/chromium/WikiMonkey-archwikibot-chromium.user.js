@@ -1441,16 +1441,23 @@ WM.MW = new function () {
         
         var string = "format=json" + joinParams(params);
         
-        if (string.length > 8000) {
-            query.data = new FormData();
-            query.data.append("format", "json");
-            for (var p in params) {
-                query.data.append(p, params[p]);
+        // It's necessary to use try...catch because some browsers don't
+        // support FormData yet and will throw an exception
+        try {
+            if (string.length > 8000) {
+                query.data = new FormData();
+                query.data.append("format", "json");
+                for (var p in params) {
+                    query.data.append(p, params[p]);
+                }
+                // Do not add "multipart/form-data" explicitly or the query will fail
+                //query.headers = {"Content-type": "multipart/form-data"};
             }
-            // Do not add "multipart/form-data" explicitly or the query will fail
-            //query.headers = {"Content-type": "multipart/form-data"};
+            else {
+                throw "string < 8000 characters";
+            }
         }
-        else {
+        catch (err) {
             query.data = string;
             query.headers = {"Content-type": "application/x-www-form-urlencoded"};
         }
