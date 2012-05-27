@@ -1407,7 +1407,9 @@ WM.MW = new function () {
             method: "GET",
             url: wikiPaths.local.api + "?format=json" + joinParams(params),
             onload: function (res) {
-                call(res.responseJSON, callArgs);
+                // Currently only Scriptish supports the responseJSON method
+                var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
+                call(json, callArgs);
             }
         });
     };
@@ -1417,7 +1419,9 @@ WM.MW = new function () {
             method: "POST",
             url: wikiPaths.local.api,
             onload: function (res) {
-                call(res.responseJSON, callArgs);
+                // Currently only Scriptish supports the responseJSON method
+                var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
+                call(json, callArgs);
             },
         }
         
@@ -2682,7 +2686,9 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
             method: "GET",
             url: query,
             onload: function (res) {
-                res = res.responseJSON;
+                // Currently only Scriptish supports the responseJSON method
+                var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
+                res = json;
                 
                 // If the wiki has the API disabled, it will stop here
                 if (res) {
