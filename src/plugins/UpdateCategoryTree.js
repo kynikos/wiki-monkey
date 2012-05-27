@@ -27,6 +27,10 @@ WM.Plugins.UpdateCategoryTree = new function () {
     };
     
     this.processToC = function (title, source, timestamp, edittoken, args) {
+        args.source = source;
+        args.timestamp = timestamp;
+        args.edittoken = edittoken;
+        
         var minInterval = (WM.MW.isUserBot()) ? 60000 : 21600000;
         
         var now = new Date();
