@@ -315,6 +315,15 @@ Alib.Async = new function () {
 
 if (!Alib) var Alib = {};
 
+Alib.Compatibility = new function () {
+    this.normalizeCarriageReturns = function (source) {
+        // Opera and IE use \r\n instead of \n
+        return source.replace(/\r\n/g, '\n');
+    };
+};
+
+if (!Alib) var Alib = {};
+
 Alib.HTTP = new function () {
     var queryString = (function () {
         var qa = location.search.substr(1).split('&');
@@ -1232,7 +1241,9 @@ WM.Editor = new function () {
     };
     
     this.readSource = function () {
-        return document.getElementById('wpTextbox1').value;
+        var value = document.getElementById('wpTextbox1').value;
+        // For compatibility with Opera and IE
+        return Alib.Compatibility.normalizeCarriageReturns(value);
     };
     
     this.writeSource = function (text) {
