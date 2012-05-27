@@ -1,4 +1,27 @@
 WM.Plugins.SynchronizeInterlanguageLinks = new function () {
+    var addNewLink = function (newlinks, lang, title, url) {
+        newlinks[lang] = {
+            title: title,
+            url: url,
+        };
+        return newlinks;
+    };
+    
+    var addVisitedLink = function (visitedlinks, lang, title, url, api) {
+        visitedlinks[lang] = {
+            title: title,
+            url: url,
+            api: api,
+            iwmap: [],
+        };
+        return visitedlinks;
+    };
+    
+    var addInterwikiMap = function(visitedlinks, lang, iwmap) {
+        visitedlinks[lang].iwmap = iwmap;
+        return visitedlinks;
+    };
+    
     this.collectLinks = function (visitedlinks, newlinks, whitelist, callEnd, callArgs) {
         var link;
         
@@ -12,13 +35,12 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         
         if (link) {
             delete newlinks[tag];
-            visitedlinks[tag] = link;
             
             WM.Log.logInfo("Reading " + link.url + "...");
             
             var paths = WM.MW.getWikiPaths(link.url);
             
-            visitedlinks[tag].api = paths.api;
+            visitedlinks = addVisitedLink(visitedlinks, tag, link.title, link.url, paths.api);
             
             var title = link.title;
             
@@ -61,10 +83,10 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
             onload: function (res) {
                 res = res.responseJSON;
                 
-                // If the wiki has disabled the API it will stop here
+                // If the wiki has the API disabled, it will stop here
                 if (res) {
                     var iwmap = res.query.interwikimap;
-                    visitedlinks[tag].iwmap = iwmap;
+                    visitedlinks = addInterwikiMap(visitedlinks, tag, iwmap);
                     
                     for (var id in res.query.pages) {
                         var page = res.query.pages[id];
@@ -89,10 +111,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
                                 }
                                 
                                 if (!visitedlinks[link.lang] && !newlinks[link.lang]) {
-                                    newlinks[link.lang] = {
-                                        url: link.url,
-                                        title: link["*"],
-                                    }
+                                    newlinks = addNewLink(newlinks, link.lang, link["*"], link.url);
                                 }
                                 else if ((visitedlinks[link.lang] && visitedlinks[link.lang].url != link.url) ||
                                          (newlinks[link.lang] && newlinks[link.lang].url != link.url)) {
@@ -145,9 +164,6 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
     var updateLinks = function (source, lang, whitelist, links) {
         WM.Log.logInfo("Processing " + links[lang].url + "...");
         
-        // ORDINARE I LINK SECONDO UN ORDINE ALFABETICO **************************
-        //     prendere una funzione dal file di configurazione ******************
-        
         var iwmap = links[lang].iwmap;
         
         var linkList = "";
@@ -199,26 +215,97 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         
         WM.Log.logInfo("Synchronizing interlanguage links...");
         
-        var paths = WM.MW.getWikiPaths();
         var title = WM.Editor.getTitle();
-        var newlinks = {};
-        newlinks[tag] = {
-            url: paths.articles + WM.Parser.convertSpacesToUnderscores(title),
-            title: title,
-        };
-        
-        // LA PAGINA NELL'EDITOR VA PARSATA SUBITO QUI ***************************
-        //     creare delle funzioni per standardizzare la creazione *************
-        //     degli elementi di newlinks e visitedlinks *************************
         var source = WM.Editor.readSource();
         
-        WM.Plugins.SynchronizeInterlanguageLinks.collectLinks(
-            {},
-            newlinks,
-            whitelist,
-            WM.Plugins.SynchronizeInterlanguageLinks.mainEnd,
-            [tag, source]
+        WM.MW.callAPIGet(
+            {
+                action: "query",
+                meta: "siteinfo",
+                siprop: "interwikimap",
+                sifilteriw: "local",
+            },
+            WM.Plugins.SynchronizeInterlanguageLinks.mainContinue,
+            [tag, whitelist, title, source]
         );
+    };
+    
+    this.mainContinue = function (res, args) {
+        var tag = args[0];
+        var whitelist = args[1];
+        var title = args[2];
+        var source = args[3];
+        
+        var iwmap = res.query.interwikimap;
+        
+        WM.MW.callAPIPost(
+            {
+                action: "parse",
+                title: title,
+                text: source,
+                prop: "langlinks",
+            },
+            WM.Plugins.SynchronizeInterlanguageLinks.mainInitialize,
+            [tag, whitelist, title, source, iwmap]
+        );
+    };
+    
+    this.mainInitialize = function (res, args) {
+        var tag = args[0];
+        var whitelist = args[1];
+        var title = args[2];
+        var source = args[3];
+        var iwmap = args[4];
+        
+        var paths = WM.MW.getWikiPaths();
+        var url = paths.articles + WM.Parser.convertSpacesToUnderscores(title);
+        var visitedlinks = addVisitedLink({}, tag, title, url, paths.api)
+        visitedlinks = addInterwikiMap(visitedlinks, tag, iwmap);
+        var newlinks = {};
+        var langlinks = res.parse.langlinks;
+        
+        if (langlinks) {
+            var error = false;
+            for (var l in langlinks) {
+                var link = langlinks[l];
+                if (whitelist.indexOf(link.lang) > -1) {
+                    // Some old MediaWiki versions don't return the full URL
+                    if (!link.url) {
+                        for (var iw in iwmap) {
+                            if (iwmap[iw].prefix == link.lang) {
+                                link.url = iwmap[iw].url.replace("$1", WM.Parser.convertSpacesToUnderscores(link["*"]));
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (!visitedlinks[link.lang] && !newlinks[link.lang]) {
+                        newlinks = addNewLink(newlinks, link.lang, link["*"], link.url);
+                    }
+                    else {
+                        WM.Log.logError("Conflicting interlanguage links: [[" + link.lang + ":" + link["*"] + "]]");
+                        error = true;
+                    }
+                }
+                else {
+                    WM.Log.logWarning("[[" + link.lang + ":" + link["*"] + "]] has been ignored");
+                    error = true;
+                }
+            }
+        
+            if (!error) {
+                WM.Plugins.SynchronizeInterlanguageLinks.collectLinks(
+                    visitedlinks,
+                    newlinks,
+                    whitelist,
+                    WM.Plugins.SynchronizeInterlanguageLinks.mainEnd,
+                    [tag, source]
+                );
+            }
+        }
+        else {
+            WM.Log.logInfo("No interlanguage links found");
+        }
     };
     
     this.mainEnd = function (links, whitelist, args) {
@@ -241,15 +328,9 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         var whitelist = args[1];
         var summary = args[2];
         
-        // RIUSCIRE AD EDITARE ANCHE LE PAGINE SULLE WIKI ESTERNE? ***************
-        //     non sarebbe un comportamento coerente con la funzione del bot *****
-        
         var paths = WM.MW.getWikiPaths();
-        var newlinks = {};
-        newlinks[tag] = {
-            url: paths.articles + WM.Parser.convertSpacesToUnderscores(title),
-            title: title,
-        };
+        var url = paths.articles + WM.Parser.convertSpacesToUnderscores(title);
+        var newlinks = addNewLink({}, tag, title, url);
         
         WM.Plugins.SynchronizeInterlanguageLinks.collectLinks(
             {},
