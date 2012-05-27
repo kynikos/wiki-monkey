@@ -14,6 +14,7 @@
 // @match http://*.wikipedia.org/*
 // @match https://wiki.archlinux.org/*
 // @require https://raw.github.com/kynikos/js-aux-lib/master/src/Async.js
+// @require https://raw.github.com/kynikos/js-aux-lib/master/src/Compatibility.js
 // @require https://raw.github.com/kynikos/js-aux-lib/master/src/HTTP.js
 // @require https://raw.github.com/kynikos/js-aux-lib/master/src/RegEx.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/WikiMonkey.js

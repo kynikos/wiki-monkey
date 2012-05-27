@@ -28,7 +28,9 @@ WM.Editor = new function () {
     };
     
     this.readSource = function () {
-        return document.getElementById('wpTextbox1').value;
+        var value = document.getElementById('wpTextbox1').value;
+        // For compatibility with Opera and IE
+        return Alib.Compatibility.normalizeCarriageReturns(value);
     };
     
     this.writeSource = function (text) {

@@ -15,6 +15,7 @@
 // @match https://wiki.archlinux.org/*
 // @require http://code.jquery.com/jquery-1.7.2.min.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/js-aux-lib/src/Async.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/js-aux-lib/src/Compatibility.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/js-aux-lib/src/HTTP.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/js-aux-lib/src/RegEx.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/WikiMonkey.js
