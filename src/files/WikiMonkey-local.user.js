@@ -2,7 +2,7 @@
 // @id wiki-monkey-local
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
-// @author Dario Giovannetti <dev@dariogiovannetti.com>
+// @author Dario Giovannetti <dev@dariogiovannetti.net>
 // @version local
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
