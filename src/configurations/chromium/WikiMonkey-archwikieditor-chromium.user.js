@@ -611,8 +611,16 @@ WM.ArchWiki = new function () {
         var detectedLanguage = matches[3];
         var pureTitle;
         if (!detectedLanguage || !WM.ArchWiki.isCategoryLanguage(detectedLanguage)) {
-            detectedLanguage = languages.local;
-            pureTitle = matches[0];
+            // Language categories are exceptions
+            var testLangCat = matches[1].match(/^ *[Cc]ategory *: *(.+?) *$/);
+            if (WM.ArchWiki.isCategoryLanguage(testLangCat[1])) {
+                detectedLanguage = testLangCat[1];
+                pureTitle = matches[1];
+            }
+            else {
+                detectedLanguage = languages.local;
+                pureTitle = matches[0];
+            }
         }
         else {
             pureTitle = matches[1];
