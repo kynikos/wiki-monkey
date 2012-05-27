@@ -2333,7 +2333,7 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
                     var parser = new DOMParser();
                     var page = parser.parseFromString(res.responseText, "text/xml");
                     var divs = page.getElementsByTagName('div');
-                    for (var i = 0; divs.length; i++) {
+                    for (var i = 0; i < divs.length; i++) {
                         if (divs[i].className == "pgboxbody") {
                             var span = divs[i].getElementsByTagName('span')[0];
                             var pkgname = span.innerHTML.split(" ")[0];
