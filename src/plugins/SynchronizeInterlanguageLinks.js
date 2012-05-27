@@ -81,7 +81,9 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
             method: "GET",
             url: query,
             onload: function (res) {
-                res = res.responseJSON;
+                // Currently only Scriptish supports the responseJSON method
+                var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
+                res = json;
                 
                 // If the wiki has the API disabled, it will stop here
                 if (res) {
