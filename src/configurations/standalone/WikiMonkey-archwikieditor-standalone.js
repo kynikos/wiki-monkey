@@ -608,7 +608,7 @@ WM.ArchWiki = new function () {
         if (!detectedLanguage || !WM.ArchWiki.isCategoryLanguage(detectedLanguage)) {
             // Language categories are exceptions
             var testLangCat = matches[1].match(/^ *[Cc]ategory *: *(.+?) *$/);
-            if (WM.ArchWiki.isCategoryLanguage(testLangCat[1])) {
+            if (testLangCat && WM.ArchWiki.isCategoryLanguage(testLangCat[1])) {
                 detectedLanguage = testLangCat[1];
                 pureTitle = matches[1];
             }
