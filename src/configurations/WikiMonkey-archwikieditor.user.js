@@ -1,9 +1,9 @@
 // ==UserScript==
-// @id wiki-monkey-dev-archwikieditor
+// @id wiki-monkey-archwikieditor
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 16dev-archwikieditor
+// @version development-archwikieditor
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues

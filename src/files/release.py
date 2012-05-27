@@ -1,12 +1,21 @@
 #!/usr/bin/python3
 
+import sys
 import os
 import re
 
+# Usage:
+# ./release.py development
+# ./release.py VERSION ALIB_VERSION
+
+development = re.search("(^|[^a-z])dev", sys.argv[1], re.I)
+
 CONFIG = {
-    "VERSION": "1.10.3",
+    "VERSION": sys.argv[1],
+    "REPO_VERSION": "development" if development else sys.argv[1],
+    "UPDATE": "development" if development else "master",
     "PATH": "../configurations",
-    "ALIB_VERSION": "1.0",
+    "ALIB_VERSION": "master" if development else sys.argv[2],
     "ALIB_PATH": "../../../js-aux-lib/src",
 }
 
@@ -15,31 +24,31 @@ def process_line(line):
     replaces = (
         (
             '// @require https://raw\.github\.com/kynikos/wiki-monkey/'
-            'development(/.+\.js)',
+            '[^/]+(/.+\.js)',
             "// @require https://raw.github.com/kynikos/wiki-monkey/"
-            "{VERSION}{g0}\n",
+            "{REPO_VERSION}{g0}\n",
         ),
         (
             '// @require https://raw\.github\.com/kynikos/js-aux-lib/'
-            'master(/.+\.js)',
+            '[^/]+(/.+\.js)',
             "// @require https://raw.github.com/kynikos/js-aux-lib/"
             "{ALIB_VERSION}{g0}\n",
         ),
         (
-            '// @id wiki-monkey-dev-([a-z]+)',
-            "// @id wiki-monkey-{g0}\n",
-        ),
-        (
-            '// @version [0-9]+dev-([a-z]+)',
+            '// @version .+-([a-z]+)',
             "// @version {VERSION}-{g0}\n",
         ),
         (
-            '// @updateURL (.+/)development(/.+\.meta\.js)',
-            "// @updateURL {g0}master{g1}\n",
+            '// @updateURL https://raw\.github\.com/kynikos/wiki-monkey/'
+            '[^/]+(/.+\.meta\.js)',
+            "// @updateURL https://raw.github.com/kynikos/wiki-monkey/"
+            "{UPDATE}{g0}\n",
         ),
         (
-            '// @downloadURL (.+/)development(/.+\.user\.js)',
-            "// @downloadURL {g0}master{g1}\n",
+            '// @downloadURL https://raw\.github\.com/kynikos/wiki-monkey/'
+            '[^/]+(/.+\.user\.js)',
+            "// @downloadURL https://raw.github.com/kynikos/wiki-monkey/"
+            "{UPDATE}{g0}\n",
         ),
     )
     for replace in replaces:
