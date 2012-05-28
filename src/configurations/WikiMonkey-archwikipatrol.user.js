@@ -24,6 +24,7 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Cat.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Diff.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Editor.js
+// @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Interlanguage.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Log.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/MW.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Parser.js
