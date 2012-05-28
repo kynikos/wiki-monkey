@@ -79,7 +79,7 @@ WM.UI.setDiff([
 
 WM.UI.setCategory([
     ["SimpleReplace", "RegExp substitution", ["1"]],
-    ["SynchronizeInterlanguageLinks", "Sync interlanguage links",
+    ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
      [function () {
          var title = WM.Editor.getTitle();
          var language = WM.ArchWiki.detectLanguage(title)[1];
@@ -91,7 +91,7 @@ WM.UI.setCategory([
 
 WM.UI.setWhatLinksHere([
     ["SimpleReplace", "RegExp substitution", ["1"]],
-    ["SynchronizeInterlanguageLinks", "Sync interlanguage links",
+    ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
      [function () {
          var title = WM.Editor.getTitle();
          var language = WM.ArchWiki.detectLanguage(title)[1];
@@ -103,7 +103,7 @@ WM.UI.setWhatLinksHere([
 
 WM.UI.setLinkSearch([
     ["SimpleReplace", "RegExp substitution", ["1"]],
-    ["SynchronizeInterlanguageLinks", "Sync interlanguage links",
+    ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
      [function () {
          var title = WM.Editor.getTitle();
          var language = WM.ArchWiki.detectLanguage(title)[1];
@@ -299,7 +299,7 @@ WM.UI.setSpecial([
 
 WM.UI.setSpecialList([
     ["SimpleReplace", "RegExp substitution", ["1"]],
-    ["SynchronizeInterlanguageLinks", "Sync interlanguage links",
+    ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
      [function () {
          var title = WM.Editor.getTitle();
          var language = WM.ArchWiki.detectLanguage(title)[1];
