@@ -254,7 +254,7 @@ WM.MW = new function () {
                      titles: title,
                      lllimit: 500,
                      llurl: "1",
-                     redirect: "1"};
+                     redirects: "1"};
         
         this._getLanglinksContinue(query, call, callArgs, []);
     };
