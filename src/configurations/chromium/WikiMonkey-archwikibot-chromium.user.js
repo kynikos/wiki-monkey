@@ -3381,8 +3381,7 @@ WM.UI.setEditor([
              var language = WM.ArchWiki.detectLanguage(title)[1];
              return WM.ArchWiki.getInterlanguageTag(language);
          },
-         WM.ArchWiki.getAliveInterwikiLanguages()]
-        ],
+         WM.ArchWiki.getAliveInterwikiLanguages()]],
         ["ArchWikiTemplateAUR", "Use Template:AUR", null]
     ]
 ]);
@@ -3395,15 +3394,39 @@ WM.UI.setDiff([
 ]);
 
 WM.UI.setCategory([
-    ["SimpleReplace", "RegExp substitution", ["1"]]
+    ["SimpleReplace", "RegExp substitution", ["1"]],
+    ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
+     [function () {
+         var title = WM.Editor.getTitle();
+         var language = WM.ArchWiki.detectLanguage(title)[1];
+         return WM.ArchWiki.getInterlanguageTag(language);
+     },
+     WM.ArchWiki.getAliveInterwikiLanguages(),
+     "synchronized interlanguage links with the other wikis"]]
 ]);
 
 WM.UI.setWhatLinksHere([
-    ["SimpleReplace", "RegExp substitution", ["1"]]
+    ["SimpleReplace", "RegExp substitution", ["1"]],
+    ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
+     [function () {
+         var title = WM.Editor.getTitle();
+         var language = WM.ArchWiki.detectLanguage(title)[1];
+         return WM.ArchWiki.getInterlanguageTag(language);
+     },
+     WM.ArchWiki.getAliveInterwikiLanguages(),
+     "synchronized interlanguage links with the other wikis"]]
 ]);
 
 WM.UI.setLinkSearch([
     ["SimpleReplace", "RegExp substitution", ["1"]],
+    ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
+     [function () {
+         var title = WM.Editor.getTitle();
+         var language = WM.ArchWiki.detectLanguage(title)[1];
+         return WM.ArchWiki.getInterlanguageTag(language);
+     },
+     WM.ArchWiki.getAliveInterwikiLanguages(),
+     "synchronized interlanguage links with the other wikis"]],
     ["ArchWikiTemplateAUR", "Replace direct AUR package links with Template:AUR", ["replace direct package links with Pkg/AUR templates"]]
 ]);
 
@@ -3591,7 +3614,15 @@ WM.UI.setSpecial([
 ]);
 
 WM.UI.setSpecialList([
-    ["SimpleReplace", "RegExp substitution", ["1"]]
+    ["SimpleReplace", "RegExp substitution", ["1"]],
+    ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
+     [function () {
+         var title = WM.Editor.getTitle();
+         var language = WM.ArchWiki.detectLanguage(title)[1];
+         return WM.ArchWiki.getInterlanguageTag(language);
+     },
+     WM.ArchWiki.getAliveInterwikiLanguages(),
+     "synchronized interlanguage links with the other wikis"]]
 ]);
 
 WM.main();

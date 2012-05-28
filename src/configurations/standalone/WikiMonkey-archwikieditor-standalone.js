@@ -3021,8 +3021,7 @@ WM.UI.setEditor([
              var language = WM.ArchWiki.detectLanguage(title)[1];
              return WM.ArchWiki.getInterlanguageTag(language);
          },
-         WM.ArchWiki.getAliveInterwikiLanguages()]
-        ],
+         WM.ArchWiki.getAliveInterwikiLanguages()]],
         ["ArchWikiTemplateAUR", "Use Template:AUR", null]
     ]
 ]);
