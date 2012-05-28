@@ -234,6 +234,7 @@ WM.ArchWiki = new function () {
             res = WM.Parser.findInternalLinks(source, language);
         }
         else {
+            source = WM.Parser.neutralizeNowikiTags(source);
             var interwikiLanguages = this.getInterwikiLanguages();
             var regExp = new RegExp("\\[\\[ *((" + interwikiLanguages.join("|") + ") *: *(.+?)) *\\]\\]", "gi");
             res = Alib.RegEx.matchAll(source, regExp);

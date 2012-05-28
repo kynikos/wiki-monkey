@@ -206,7 +206,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         
         // Insert the new links at the index of the first previous link
         var firstLink = matches[0].index;
-        var newText = cleanText.substr(0, firstLink) + linkList + cleanText.substr(firstLink);
+        var newText = cleanText.substring(0, firstLink) + linkList + cleanText.substr(firstLink);
         
         return newText;
     };

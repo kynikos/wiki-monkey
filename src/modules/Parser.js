@@ -28,13 +28,14 @@ WM.Parser = new function () {
     };
     
     this.neutralizeNowikiTags = function (source) {
-        var tags = Alib.RegEx.matchAll(source, /<nowiki>[.\s]+?<\/nowiki>/gi);
+        // /<nowiki>[.\s]+?<\/nowiki>/gi doesn't work
+        var tags = Alib.RegEx.matchAll(source, /<nowiki>(.?\s?)+?<\/nowiki>/gi);
         for (var t in tags) {
             var filler = "";
             while (filler.length < tags[t].length) {
                 filler += "x";
             }
-            source = source.substr(0, tags[t].index - 1) + filler + source.substr(tags[t].index + tags[t].length)
+            source = source.substring(0, tags[t].index) + filler + source.substr(tags[t].index + tags[t].length)
         }
         return source;
     };
@@ -50,6 +51,7 @@ WM.Parser = new function () {
     };
     
     this.findBehaviorSwitches = function (source, word) {
+        source = this.neutralizeNowikiTags(source);
         var res;
         if (word) {
             var regExp = new RegExp("__" + Alib.RegEx.escapePattern(word) + "__", "g");
@@ -62,16 +64,19 @@ WM.Parser = new function () {
     };
     
     this.findVariables = function (source, variable) {
+        source = this.neutralizeNowikiTags(source);
         var regExp = new RegExp("\\{\\{ *" + Alib.RegEx.escapePattern(variable) + " *\\}\\}", "g");
         return Alib.RegEx.matchAll(source, regExp);
     };
     
     this.findVariableVariables = function (source, variable) {
+        source = this.neutralizeNowikiTags(source);
         var regExp = new RegExp("\\{\\{ *" + Alib.RegEx.escapePattern(variable) + " *: *(.+?) *\\}\\}", "g");
         return Alib.RegEx.matchAll(source, regExp);
     };
     
     this.findInternalLinks = function (source, namespace) {
+        source = this.neutralizeNowikiTags(source);
         var res;
         if (namespace) {
             var nsPattern = Alib.RegEx.escapePattern(namespace);
@@ -94,6 +99,7 @@ WM.Parser = new function () {
     };
     
     this.findTemplateTags = function (source, template) {
+        source = this.neutralizeNowikiTags(source);
         var templatePattern = Alib.RegEx.escapePattern(template);
         templatePattern = prepareTitleCasing(templatePattern);
         var regExp = new RegExp("\\{\\{ *" + templatePattern, "g");
@@ -123,14 +129,15 @@ WM.Parser = new function () {
                     var eqId = args[a].indexOf("=");
                     // eqId must be > 0, not -1, in fact the key must not be empty
                     if (eqId > 0) {
-                        var rawKey = args[a].substr(0, eqId);
-                        var reKey = /(\s*)(.+?)\s*/;
+                        var rawKey = args[a].substring(0, eqId);
+                        var reKey = /^(\s*)(.+?)\s*$/;
                         var keyMatches = reKey.exec(rawKey);
                         var key = keyMatches[2];
                         var keyId = argId + ((keyMatches[1]) ? keyMatches[1].length : 0);
                         
+                        // 1 is the length of =
                         var nValue = args[a].substr(eqId + 1);
-                        var valueId = argId + keyMatches[0].length;
+                        var valueId = argId + keyMatches[0].length + 1;
                         var valueL = argL - eqId - 1;
                     }
                     else {
@@ -163,7 +170,7 @@ WM.Parser = new function () {
                 while (filler.length < L) {
                     filler += "x";
                 }
-                nSource = nSource.substr(0, res[t].index - 1) + filler + nSource.substr(res[t].index + L)
+                nSource = nSource.substring(0, res[t].index) + filler + nSource.substr(res[t].index + L)
             }
         // Find also nested templates
         } while (res.length);
