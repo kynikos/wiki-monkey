@@ -2379,6 +2379,9 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Replaced direct AUR package links");
         }
+        else {
+            WM.Log.logInfo("No replaceable AUR package links found");
+        }
     };
     
     this.mainAuto = function (args, title, callBot) {
