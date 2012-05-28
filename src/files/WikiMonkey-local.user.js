@@ -17,7 +17,9 @@
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/js-aux-lib/src/Async.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/js-aux-lib/src/Compatibility.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/js-aux-lib/src/HTTP.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/js-aux-lib/src/Obj.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/js-aux-lib/src/RegEx.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/js-aux-lib/src/Str.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/WikiMonkey.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/ArchWiki.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/Bot.js

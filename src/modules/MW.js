@@ -169,11 +169,8 @@ WM.MW = new function () {
     this.callQuery = function (params, call, callArgs) {
         params.action = "query";
         var callBack = function (res) {
-            var pages = res.query.pages;
-            for (var id in pages) {
-                break;
-            }
-            call(pages[id], callArgs);
+            var page = Alib.Obj.getFirstItem(res.query.pages);
+            call(page, callArgs);
         };
         this.callAPIGet(params, callBack);
     };

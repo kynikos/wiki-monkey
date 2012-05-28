@@ -31,11 +31,8 @@ WM.Parser = new function () {
         // /<nowiki>[.\s]+?<\/nowiki>/gi doesn't work
         var tags = Alib.RegEx.matchAll(source, /<nowiki>(.?\s?)+?<\/nowiki>/gi);
         for (var t in tags) {
-            var filler = "";
-            while (filler.length < tags[t].length) {
-                filler += "x";
-            }
-            source = source.substring(0, tags[t].index) + filler + source.substr(tags[t].index + tags[t].length)
+            var filler = Alib.Str.padRight("", "x", tags[t].length);
+            source = Alib.Str.overwriteAt(source, filler, tags[t].index);
         }
         return source;
     };
@@ -166,11 +163,8 @@ WM.Parser = new function () {
                     arguments: arguments,
                 });
                 
-                var filler = "";
-                while (filler.length < L) {
-                    filler += "x";
-                }
-                nSource = nSource.substring(0, res[t].index) + filler + nSource.substr(res[t].index + L)
+                var filler = Alib.Str.padRight("", "x", L);
+                nSource = Alib.Str.overwriteAt(nSource, filler, res[t].index);
             }
         // Find also nested templates
         } while (res.length);

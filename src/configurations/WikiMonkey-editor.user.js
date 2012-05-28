@@ -16,7 +16,9 @@
 // @require https://raw.github.com/kynikos/js-aux-lib/master/src/Async.js
 // @require https://raw.github.com/kynikos/js-aux-lib/master/src/Compatibility.js
 // @require https://raw.github.com/kynikos/js-aux-lib/master/src/HTTP.js
+// @require https://raw.github.com/kynikos/js-aux-lib/master/src/Obj.js
 // @require https://raw.github.com/kynikos/js-aux-lib/master/src/RegEx.js
+// @require https://raw.github.com/kynikos/js-aux-lib/master/src/Str.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/WikiMonkey.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Bot.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Cat.js

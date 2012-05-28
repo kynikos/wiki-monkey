@@ -159,7 +159,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
             else {
                 header += "{{i18n|" + parsedTitle + "}}";
             }
-            content = content.substr(0, i18n.index) + content.substr(i18n.index + i18n.length);
+            content = Alib.Str.removeFor(content, i18n.index, i18n.length);
         }
         else {
             header += "{{i18n|" + pureTitle + "}}";

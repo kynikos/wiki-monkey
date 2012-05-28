@@ -40,8 +40,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
             var end = args.source.lastIndexOf(args.endMark);
             
             if (start > -1 && end > -1) {
-                args.part1 = args.source.substring(0, start);
-                args.part2 = args.source.substring(end);
+                args.startId = start;
+                args.endId = end;
                 args.treeText = "";
                 args.altNames = (args.params.keepAltName) ? storeAlternativeNames(args.source) : {};
                 WM.Cat.recurseTree({node: args.params.root,
@@ -183,7 +183,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
     this.writeToC = function (params) {
         var args = params.callArgs;
         
-        var newtext = args.part1 + "\n" + args.treeText + args.part2;
+        args.treeText = "\n" + args.treeText;
+        var newtext = Alib.Str.overwriteBetween(args.source, args.treeText, args.startId, args.endId);
         
         if (newtext != args.source) {
             WM.MW.callAPIPost({action: "edit",
@@ -237,8 +238,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
             edittoken: "",
             timestamp: "",
             source: "",
-            part1: "",
-            part2: "",
+            startId: 0,
+            endId: 0,
             treeText: "",
             startMark: "START AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK-->",
             endMark: "<!--END AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK",

@@ -23,10 +23,8 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
     };
     
     this.collectLinks = function (visitedlinks, newlinks, whitelist, callEnd, callArgs) {
-        var link;
-        
         for (var tag in newlinks) {
-            link = {};
+            var link = {};
             for (var key in newlinks[tag]) {
                 link[key] = newlinks[tag][key];
             }
@@ -90,10 +88,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
                     var iwmap = res.query.interwikimap;
                     visitedlinks = addInterwikiMap(visitedlinks, tag, iwmap);
                     
-                    for (var id in res.query.pages) {
-                        var page = res.query.pages[id];
-                        break;
-                    }
+                    var page = Alib.Obj.getFirstItem(res.query.pages);
                     var langlinks = page.langlinks;
                     
                     var conflict = false;
@@ -206,7 +201,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         
         // Insert the new links at the index of the first previous link
         var firstLink = matches[0].index;
-        var newText = cleanText.substring(0, firstLink) + linkList + cleanText.substr(firstLink);
+        var newText = Alib.Str.insert(cleanText, linkList, firstLink);
         
         return newText;
     };

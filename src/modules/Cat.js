@@ -84,13 +84,7 @@ WM.Cat = new function () {
     
     this._getParentsContinue = function (query, call, callArgs, parents) {
         WM.MW.callAPIGet(query, function (res) {
-            var pages = res.query.pages;
-            
-            for (var id in pages) {
-                break;
-            }
-            
-            var page = pages[id];
+            var page = Alib.Obj.getFirstItem(res.query.pages);
             
             if (page.categories) {
                 parents = parents.concat(page.categories);
