@@ -49,66 +49,65 @@ WM.Parser = new function () {
     
     this.findBehaviorSwitches = function (source, word) {
         source = this.neutralizeNowikiTags(source);
-        var res;
+        var regExp;
         if (word) {
-            var regExp = new RegExp("__" + Alib.RegEx.escapePattern(word) + "__", "g");
-            res = Alib.RegEx.matchAll(source, regExp);
+            // Behavior switches aren't case-sensitive
+            regExp = new RegExp("__" + Alib.RegEx.escapePattern(word) + "__", "gi");
         }
         else {
-            res = Alib.RegEx.matchAll(source, /__(TOC|NOTOC|FORCETOC|NOEDITSECTION|NEWSECTIONLINK|NONEWSECTIONLINK|NOGALLERY|HIDDENCAT|NOCONTENTCONVERT|NOCC|NOTITLECONVERT|NOTC|INDEX|NOINDEX|STATICREDIRECT|START|END)__/g);
+            // Behavior switches aren't case-sensitive
+            regExp = /__(TOC|NOTOC|FORCETOC|NOEDITSECTION|NEWSECTIONLINK|NONEWSECTIONLINK|NOGALLERY|HIDDENCAT|NOCONTENTCONVERT|NOCC|NOTITLECONVERT|NOTC|INDEX|NOINDEX|STATICREDIRECT|START|END)__/gi;
         }
-        return res;
-    };
-    
-    this.findVariables = function (source, variable) {
-        source = this.neutralizeNowikiTags(source);
-        var regExp = new RegExp("\\{\\{ *" + Alib.RegEx.escapePattern(variable) + " *\\}\\}", "g");
-        return Alib.RegEx.matchAll(source, regExp);
-    };
-    
-    this.findVariableVariables = function (source, variable) {
-        source = this.neutralizeNowikiTags(source);
-        var regExp = new RegExp("\\{\\{ *" + Alib.RegEx.escapePattern(variable) + " *: *(.+?) *\\}\\}", "g");
         return Alib.RegEx.matchAll(source, regExp);
     };
     
     this.findInternalLinks = function (source, namespace) {
         source = this.neutralizeNowikiTags(source);
-        var res;
+        var regExp;
         if (namespace) {
-            var nsPattern = Alib.RegEx.escapePattern(namespace);
-            nsPattern = prepareTitleCasing(nsPattern);
-            var regExp = new RegExp("\\[\\[ *((" + nsPattern + ") *: *(.+?)) *\\]\\]", "g");
-            res = Alib.RegEx.matchAll(source, regExp);
+            // Namespaces aren't case-sensitive
+            regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*((" + Alib.RegEx.escapePattern(namespace) + ")[ _]*:[ _]*(.+?)(?:[ _]*\\|\\s*(.+?))?)\\s*\\]\\]", "gi");
         }
         else {
-            res = Alib.RegEx.matchAll(source, /\[\[ *((?:(.+?) *: *)?(.+?)) *\]\]/g);
+            // Namespaces aren't case-sensitive
+            regExp = /\[\[:?[ _]*:?[ _]*((?:(.+?)[ _]*:[ _]*)?(.+?)(?:[ _]*\|\s*(.+?))?)\s*\]\]/gi;
         }
-        return res;
-    };
-    
-    this.findCategories = function (source) {
-        return this.findInternalLinks(source, "Category");
+        return Alib.RegEx.matchAll(source, regExp);
     };
     
     this.findInterwikiLinks = function (source, wiki) {
         return this.findInternalLinks(source, wiki);
     };
     
-    this.findTemplateTags = function (source, template) {
-        source = this.neutralizeNowikiTags(source);
-        var templatePattern = Alib.RegEx.escapePattern(template);
-        templatePattern = prepareTitleCasing(templatePattern);
-        var regExp = new RegExp("\\{\\{ *" + templatePattern, "g");
+    var findSpecialLinks = function (source, string) {
+        // See also WM.ArchWiki.findAllInterlanguageLinks!!!
+        source = WM.Parser.neutralizeNowikiTags(source);
+        // Categories and language tags aren't case-sensitive
+        var regExp = new RegExp("\\[\\[(?:[ _]+:)?[ _]*((?:(" + Alib.RegEx.escapePattern(string) + ")[ _]*:[ _]*)(.+?)(?:[ _]*\\|\\s*(.+?))?)\\s*\\]\\]", "gi");
         return Alib.RegEx.matchAll(source, regExp);
     };
     
-    this.findTemplates = function (source, template) {
-        var nSource = this.neutralizeNowikiTags(source);
-        var templatePattern = Alib.RegEx.escapePattern(template);
-        templatePattern = prepareTitleCasing(templatePattern);
-        var regExp = new RegExp("(\\{\\{ *(" + templatePattern + ")\\s*\\|)(\\s*(?:.(?!\\{\\{)\\s*)*?)\\}\\}", "g");
-        var templates = [];
+    this.findCategories = function (source) {
+        return findSpecialLinks(source, "Category");
+    };
+    
+    this.findInterlanguageLinks = function (source, language) {
+        // See also WM.ArchWiki.findAllInterlanguageLinks!!!
+        return findSpecialLinks(source, language);
+    };
+    
+    this.findVariables = function (source, variable) {
+        source = this.neutralizeNowikiTags(source);
+        // Variables are case-sensitive
+        // There can't be an underscore before the variable name
+        // There can't be a whitespace between the variable name and the colon
+        var regExp = new RegExp("\\{\\{\\s*((" + Alib.RegEx.escapePattern(variable) + ")(?:\\:[_\\s]*((?:.(?!\\{\\{)[_\\s]*?)+?))?)[_\\s]*\\}\\}", "g");
+        return Alib.RegEx.matchAll(source, regExp);
+    };
+    
+    var findTransclusionsEngine = function (source, regExp) {
+        var nSource = WM.Parser.neutralizeNowikiTags(source);
+        var transclusions = [];
         
         do {
             var res = Alib.RegEx.matchAll(nSource, regExp);
@@ -117,47 +116,51 @@ WM.Parser = new function () {
                 var match = res[t].match;
                 var index = res[t].index;
                 var L = res[t].length;
-                var args = match[3].split("|");
                 var arguments = [];
-                var argId = index + match[1].length;
-                
-                for (var a in args) {
-                    var argL = args[a].length;
-                    var eqId = args[a].indexOf("=");
-                    // eqId must be > 0, not -1, in fact the key must not be empty
-                    if (eqId > 0) {
-                        var rawKey = args[a].substring(0, eqId);
-                        var reKey = /^(\s*)(.+?)\s*$/;
-                        var keyMatches = reKey.exec(rawKey);
-                        var key = keyMatches[2];
-                        var keyId = argId + ((keyMatches[1]) ? keyMatches[1].length : 0);
-                        
-                        // 1 is the length of =
-                        var nValue = args[a].substr(eqId + 1);
-                        var valueId = argId + keyMatches[0].length + 1;
-                        var valueL = argL - eqId - 1;
-                    }
-                    else {
-                        var key = null;
-                        var keyId = null;
-                        var nValue = args[a];
-                        var valueId = argId;
-                        var valueL = argL;
-                    }
-                    
-                    var value = source.substr(valueId, valueL);
-                    
-                    arguments.push({key: key,
-                                    key_index: keyId,
-                                    value: value,
-                                    value_index: valueId});
-                    
+                if (match[3]) {
+                    var args = match[3].split("|");
                     // 1 is the length of |
-                    argId = argId + argL + 1;
+                    var argId = index + match[1].length + 1;
+                    
+                    for (var a in args) {
+                        var argL = args[a].length;
+                        var eqId = args[a].indexOf("=");
+                        // eqId must be > 0, not -1, in fact the key must not be empty
+                        if (eqId > 0) {
+                            var rawKey = args[a].substring(0, eqId);
+                            var reKey = /^(\s*)(.+?)\s*$/;
+                            var keyMatches = reKey.exec(rawKey);
+                            var key = keyMatches[2];
+                            var keyId = argId + ((keyMatches[1]) ? keyMatches[1].length : 0);
+                            
+                            // 1 is the length of =
+                            var nValue = args[a].substr(eqId + 1);
+                            var valueId = argId + keyMatches[0].length + 1;
+                            var valueL = argL - eqId - 1;
+                        }
+                        else {
+                            var key = null;
+                            var keyId = null;
+                            var nValue = args[a];
+                            var valueId = argId;
+                            var valueL = argL;
+                        }
+                        
+                        var value = source.substr(valueId, valueL);
+                        
+                        arguments.push({key: key,
+                                        key_index: keyId,
+                                        value: value,
+                                        value_index: valueId});
+                        
+                        // 1 is the length of |
+                        argId = argId + argL + 1;
+                    }
                 }
                 
-                templates.push({
-                    name: match[2],
+                transclusions.push({
+                    title: match[2],
+                    match: match,
                     index: index,
                     length: L,
                     arguments: arguments,
@@ -166,10 +169,56 @@ WM.Parser = new function () {
                 var filler = Alib.Str.padRight("", "x", L);
                 nSource = Alib.Str.overwriteAt(nSource, filler, res[t].index);
             }
-        // Find also nested templates
+        // Find also nested transclusions
         } while (res.length);
         
-        return templates;
+        return transclusions;
+    };
+    
+    this.findTemplates = function (source, template) {
+        // Templates can't be transcluded with a colon before the title
+        // The title must not be broken by new line characters
+        if (template) {
+            var pattern = Alib.RegEx.escapePattern(template);
+            pattern = prepareTitleCasing(pattern);
+        }
+        else {
+            var pattern = ".+?";
+        }
+        var regExp = new RegExp("(\\{\\{\\s*[_ ]*(" + pattern + ")[_\\s]*)(?:\\|((?:\\s*.(?!\\{\\{)\\s*)*?))?\\}\\}", "g");
+        return findTransclusionsEngine(source, regExp);
+    };
+    
+    this.findTransclusions = function (source, namespace, title) {
+        // The difference from templates is the possibility of a colon before
+        // the title which forces the transclusion of a page instead of a
+        // template
+        // The title must not be broken by newline characters
+        if (namespace) {
+            var namespacePattern = Alib.RegEx.escapePattern(namespace);
+            namespacePattern = prepareTitleCasing(namespacePattern);
+        }
+        if (title) {
+            var titlePattern = Alib.RegEx.escapePattern(title);
+            titlePattern = prepareTitleCasing(titlePattern);
+        }
+        
+        if (namespacePattern && titlePattern) {
+            var pattern = namespacePattern + "[ _]*:[ _]*" + titlePattern;
+        }
+        else if (!namespacePattern && titlePattern) {
+            var pattern = titlePattern;
+        }
+        else if (namespacePattern && !titlePattern) {
+            var pattern = namespacePattern + "[ _]*:.+?";
+        }
+        else {
+            var pattern = ".+?";
+        }
+        
+        // There can't be an underscore before the colon
+        var regExp = new RegExp("(\\{\\{\\s*:?[ _]*(" + pattern + ")[_\\s]*)(?:\\|((?:\\s*.(?!\\{\\{)\\s*)*?))?\\}\\}", "g");
+        return findTransclusionsEngine(source, regExp);
     };
         
     this.findSectionHeadings = function (source) {

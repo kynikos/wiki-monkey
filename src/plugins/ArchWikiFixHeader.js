@@ -16,21 +16,17 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         }
         
         // DISPLAYTITLE and Template:Lowercase_title
-        var displaytitle = WM.Parser.findVariableVariables(content, "DISPLAYTITLE");
-        var lowercasetitle = WM.Parser.findTemplateTags(content, "Lowercase title");
+        var displaytitle = WM.Parser.findVariables(content, "DISPLAYTITLE");
+        var lowercasetitle = WM.Parser.findTemplates(content, "Lowercase title");
         var titlemods = displaytitle.concat(lowercasetitle);
-        var rmtitlemods = [];
-        for (var m in titlemods) {
-            rmtitlemods.push([titlemods[m].index, titlemods[m].length]);
-        }
-        rmtitlemods.sort(function (a, b) {
-            return a[0] - b[0];
+        titlemods.sort(function (a, b) {
+            return a.index - b.index;
         });
         var tempcontent = "";
         var contentId = 0;
-        for (var r in rmtitlemods) {
-            tempcontent += content.substring(contentId, rmtitlemods[r][0]);
-            contentId = rmtitlemods[r][0] + rmtitlemods[r][1];
+        for (var t in titlemods) {
+            tempcontent += content.substring(contentId, titlemods[t].index);
+            contentId = titlemods[t].index + titlemods[t].length;
         }
         tempcontent += content.substring(contentId);
         content = tempcontent;
@@ -38,13 +34,13 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         var lct = lowercasetitle.pop();
         var dlct = "";
         if (dt && !lct) {
-            var dlct = dt.match[0];
+            var dlct = "{{DISPLAYTITLE:" + dt.match[2] + "}}";
         }
         else if (!dt && lct) {
-            var dlct = lct.match[0];
+            var dlct = "{{Lowercase title}}";
         }
         else if (dt && lct) {
-            var dlct = (dt.match.index < lct.match.index) ? lct.match[0] : dt.match[0];
+            var dlct = (dt.index < lct.index) ? "{{Lowercase title}}" : "{{DISPLAYTITLE:" + dt.match[2] + "}}";
         }
         if (displaytitle.length || lowercasetitle.length) {
             WM.Log.logWarning("Found multiple instances of {{DISPLAYTITLE:...}} or {{Lowercase title}}: only the last one has been used, the others have been deleted");
@@ -114,7 +110,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         content = tempcontent;
         
         // Interlanguage links
-        var interlanguage = WM.ArchWiki.findInterlanguageLinks(content);
+        var interlanguage = WM.ArchWiki.findAllInterlanguageLinks(content);
         var iwlist = [];
         var tempcontent = "";
         var contentId = 0;
