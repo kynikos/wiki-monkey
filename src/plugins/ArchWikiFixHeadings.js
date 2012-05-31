@@ -1,5 +1,5 @@
 WM.Plugins.ArchWikiFixHeadings = new function () {
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         
         var info = WM.Parser.findSectionHeadings(source);
@@ -30,6 +30,10 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Fixed section headings");
+        }
+        
+        if (callNext) {
+            callNext();
         }
     };
 };

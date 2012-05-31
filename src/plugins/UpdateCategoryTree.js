@@ -222,10 +222,13 @@ WM.Plugins.UpdateCategoryTree = new function () {
         }
         else {
             WM.Log.logInfo("Operations completed, check the log for warnings or errors");
+            if (args.callNext) {
+                args.callNext();
+            }
         }
     };
     
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var tocs = args[0];
         var summary = args[1];
         
@@ -245,7 +248,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
             startMark: "START AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK-->",
             endMark: "<!--END AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK",
             altNames: {},
-            summary: args[1]
+            summary: args[1],
+            callNext: callNext,
         });
     };
 };

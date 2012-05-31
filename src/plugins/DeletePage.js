@@ -1,5 +1,5 @@
 WM.Plugins.DeletePage = new function () {
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var [title, summary] = args;
         
         WM.Log.logInfo("Deleting " + title + "...");
@@ -8,11 +8,11 @@ WM.Plugins.DeletePage = new function () {
                          intoken: 'delete',
                          titles: title},
                          WM.Plugins.DeletePage.mainWrite,
-                         [title, summary]);
+                         [title, summary, callNext]);
     };
     
     this.mainWrite = function (page, args) {
-        var [title, summary] = args;
+        var [title, summary, callNext] = args;
         
         var deletetoken = page.deletetoken;
         
@@ -23,15 +23,21 @@ WM.Plugins.DeletePage = new function () {
                            reason: summary},
                            null,
                            WM.Plugins.DeletePage.mainEnd,
-                           title);
+                           [title, callNext]);
     };
     
-    this.mainEnd = function (res, title) {
+    this.mainEnd = function (res, args) {
+        var title = args[0];
+        var callNext = args[1];
+        
         if (!res['delete']) {
             WM.Log.logError(title + " has not been deleted!\n" + res['error']['info'] + " (" + res['error']['code'] + ")");
         }
         else {
             WM.Log.logInfo(title + " deleted");
+            if (callNext) {
+                callNext();
+            }
         }
     };
     

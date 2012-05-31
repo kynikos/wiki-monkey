@@ -52,19 +52,23 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
         }
     };
     
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         WM.Log.logInfo("Replacing direct AUR package links...");
-        doReplace(source, WM.Plugins.ArchWikiTemplateAUR.mainEnd);
+        doReplace(source, WM.Plugins.ArchWikiTemplateAUR.mainEnd, callNext);
     };
     
-    this.mainEnd = function (source, newtext) {
+    this.mainEnd = function (source, newtext, callNext) {
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Replaced direct AUR package links");
         }
         else {
             WM.Log.logInfo("No replaceable AUR package links found");
+        }
+        
+        if (callNext) {
+            callNext();
         }
     };
     

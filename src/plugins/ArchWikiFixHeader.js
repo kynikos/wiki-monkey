@@ -1,5 +1,5 @@
 WM.Plugins.ArchWikiFixHeader = new function () {
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         
         var detLang = WM.ArchWiki.detectLanguage(WM.Editor.getTitle());
@@ -171,6 +171,10 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         if (newText != source) {
             WM.Editor.writeSource(newText);
             WM.Log.logInfo("Fixed header");
+        }
+        
+        if (callNext) {
+            callNext();
         }
     };
 };

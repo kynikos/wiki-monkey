@@ -1,5 +1,5 @@
 WM.Plugins.SynchronizeInterlanguageLinks = new function () {
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var tag = args[0]();
         var whitelist = args[1];
         
@@ -10,7 +10,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         WM.MW.getInterwikiMap(
             title,
             WM.Plugins.SynchronizeInterlanguageLinks.mainContinue,
-            [tag, whitelist, title]
+            [tag, whitelist, title, callNext]
         );
     };
     
@@ -18,6 +18,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         var tag = args[0];
         var whitelist = args[1];
         var title = args[2];
+        var callNext = args[3];
         
         var source = WM.Editor.readSource();
         
@@ -56,12 +57,15 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
                     whitelist,
                     false,
                     WM.Plugins.SynchronizeInterlanguageLinks.mainEnd,
-                    [tag, url, source, langlinks, iwmap]
+                    [tag, url, source, langlinks, iwmap, callNext]
                 );
             }
         }
         else {
             WM.Log.logInfo("No interlanguage links found");
+            if (callNext) {
+                callNext();
+            }
         }
     };
     
@@ -71,6 +75,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         var source = args[2];
         var langlinks = args[3];
         var iwmap = args[4];
+        var callNext = args[5];
         
         if (links != "conflict") {
             var newText = WM.Interlanguage.updateLinks(tag, url, iwmap, source, langlinks, links);
@@ -81,6 +86,10 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
             }
             else {
                 WM.Log.logInfo("Interlanguage links were already synchronized");
+            }
+        
+            if (callNext) {
+                callNext();
             }
         }
     };

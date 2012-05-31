@@ -61,6 +61,17 @@ WM.UI = new function () {
         specialList = rows;
     };
     
+    this._executeAsync = function (functions, id) {
+        id++;
+        if (functions[id]) {
+            var fid = functions[id];
+            var callContinue = function () {
+                WM.UI._executeAsync(functions, id);
+            };
+            fid[0](fid[1], callContinue);
+        }
+    };
+    
     var makeButtons = function (functions) {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyButtons';
@@ -107,17 +118,17 @@ WM.UI = new function () {
                 buttonFunction.setAttribute('type', 'button');
                 buttonFunction.setAttribute('value', ff[1]);
                 
-                var exFunction = (function (fn, arg) {
+                buttonFunction.addEventListener("click", (function (fn, arg) {
                     return function () {
                         // window[string] doesn't work
-                        eval("WM.Plugins." + fn + ".main")(arg);
+                        eval("WM.Plugins." + fn + ".main")(arg, null);
                     }
-                })(ff[0], ff[2]);
+                })(ff[0], ff[2]), false);
                 
-                buttonFunction.addEventListener("click", exFunction, false);
-                
-                rowFunctions.push(exFunction);
-                allFunctions.push(exFunction);
+                // window[string] doesn't work
+                var exFunction = eval("WM.Plugins." + ff[0] + ".main");
+                rowFunctions.push([exFunction, ff[2]]);
+                allFunctions.push([exFunction, ff[2]]);
                 
                 var divFunction = document.createElement('div');
                 divFunction.className = 'pluginUI';
@@ -135,9 +146,7 @@ WM.UI = new function () {
             
             buttonRow.addEventListener("click", (function (rowFunctions) {
                 return function () {
-                    for (var fr in rowFunctions) {
-                        rowFunctions[fr]();
-                    }
+                    WM.UI._executeAsync(rowFunctions, -1);
                 };
             })(rowFunctions), false);
             
@@ -153,9 +162,7 @@ WM.UI = new function () {
         
         buttonAll.addEventListener("click", (function (allFunctions) {
             return function () {
-                for (var fa in allFunctions) {
-                    allFunctions[fa]();
-                }
+                WM.UI._executeAsync(allFunctions, -1);
             };
         })(allFunctions), false);
         

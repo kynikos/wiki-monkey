@@ -7,7 +7,7 @@ WM.Plugins.ExpandContractions = new function () {
         return newtext;
     };
     
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         var newtext = source;
         
@@ -36,6 +36,10 @@ WM.Plugins.ExpandContractions = new function () {
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Expanded contractions");
+        }
+        
+        if (callNext) {
+            callNext();
         }
     };
 };

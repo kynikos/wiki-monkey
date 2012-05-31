@@ -31,7 +31,7 @@ WM.Plugins.ArchWikiQuickReport = new function () {
         return span;
     };
     
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var id = args[0];
         var article = args[1];
         var summary = args[2];
@@ -46,7 +46,7 @@ WM.Plugins.ArchWikiQuickReport = new function () {
         }
         else {
             WM.Diff.getEndTimestamp(WM.Plugins.ArchWikiQuickReport.mainGetEndTimestamp,
-                                    [id, article, type, summary]);
+                                    [id, article, type, summary, callNext]);
         }
     };
     
@@ -55,10 +55,11 @@ WM.Plugins.ArchWikiQuickReport = new function () {
         var article = args[1];
         var type = args[2];
         var summary = args[3];
+        var callNext = args[4];
         
         WM.MW.callQueryEdit(article,
                             WM.Plugins.ArchWikiQuickReport.mainWrite,
-                            [id, type, summary, enddate]);
+                            [id, type, summary, enddate, callNext]);
     };
     
     this.mainWrite = function (article, source, timestamp, edittoken, args) {
@@ -66,6 +67,7 @@ WM.Plugins.ArchWikiQuickReport = new function () {
         var type = args[1];
         var summary = args[2];
         var enddate = args[3];
+        var callNext = args[4];
         
         var title = Alib.HTTP.getURIParameter('title');
         var pEnddate = enddate.substr(0, 10) + " " + enddate.substr(11, 8);
@@ -82,12 +84,18 @@ WM.Plugins.ArchWikiQuickReport = new function () {
                            token: edittoken},
                            null,
                            WM.Plugins.ArchWikiQuickReport.mainEnd,
-                           article);
+                           [article, callNext]);
     };
     
-    this.mainEnd = function (res, article) {
+    this.mainEnd = function (res, args) {
+        var article = args[0];
+        var callNext = args[1];
+        
         if (res.edit && res.edit.result == 'Success') {
             WM.Log.logInfo('Diff correctly appended to ' + article);
+            if (callNext) {
+                callNext();
+            }
         }
         else {
             WM.Log.logError('The diff has not been appended!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");

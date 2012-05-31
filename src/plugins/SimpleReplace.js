@@ -81,7 +81,7 @@ WM.Plugins.SimpleReplace = new function () {
         return source.replace(regexp, newString);
     };
     
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var id = args[0];
         
         var source = WM.Editor.readSource();
@@ -89,6 +89,10 @@ WM.Plugins.SimpleReplace = new function () {
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Text substituted");
+        }
+        
+        if (callNext) {
+            callNext();
         }
     };
     
