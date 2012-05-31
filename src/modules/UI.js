@@ -76,52 +76,54 @@ WM.UI = new function () {
         buttonAll.setAttribute('value', 'Execute all');
         buttonAll.id = "WikiMonkeyButtonAll";
         
-        var row, buttonsN, divRow, pRow, buttonRow, divPlugins, divFunction, buttonFunction, ff, buttons, makeUI;
+        var allFunctions = [];
         var rowsN = 0;
         
         for (var r in functions) {
-            row = functions[r];
+            var row = functions[r];
             
-            buttonRow = document.createElement('input');
+            var buttonRow = document.createElement('input');
             buttonRow.setAttribute('type', 'button');
             buttonRow.setAttribute('value', 'Execute row');
             
-            pRow = document.createElement('div');
+            var pRow = document.createElement('div');
             pRow.className = "shortcut";
             pRow.appendChild(buttonRow);
             
-            divPlugins = document.createElement('div');
+            var divPlugins = document.createElement('div');
             divPlugins.className = "plugins";
             
-            divRow = document.createElement('div');
+            var divRow = document.createElement('div');
             divRow.className = "row";
             divRow.appendChild(pRow);
             
-            buttonsN = 0;
+            var rowFunctions = [];
+            var buttonsN = 0;
             
             for (var f in row) {
-                ff = row[f];
+                var ff = row[f];
                 
-                buttonFunction = document.createElement('input');
+                var buttonFunction = document.createElement('input');
                 buttonFunction.setAttribute('type', 'button');
                 buttonFunction.setAttribute('value', ff[1]);
                 
-                buttons = [buttonFunction, buttonRow, buttonAll];
+                var exFunction = (function (fn, arg) {
+                    return function () {
+                        // window[string] doesn't work
+                        eval("WM.Plugins." + fn + ".main")(arg);
+                    }
+                })(ff[0], ff[2]);
                 
-                for (var button in buttons) {
-                    buttons[button].addEventListener("click", (function (fn, arg) {
-                        return function () {
-                            // window[string] doesn't work
-                            eval("WM.Plugins." + fn + ".main")(arg);
-                        }
-                    })(ff[0], ff[2]), false);
-                };
+                buttonFunction.addEventListener("click", exFunction, false);
                 
-                divFunction = document.createElement('div');
+                rowFunctions.push(exFunction);
+                allFunctions.push(exFunction);
+                
+                var divFunction = document.createElement('div');
                 divFunction.className = 'pluginUI';
                 divFunction.appendChild(buttonFunction);
                 
-                makeUI = eval("WM.Plugins." + ff[0] + ".makeUI");
+                var makeUI = eval("WM.Plugins." + ff[0] + ".makeUI");
                 if (makeUI instanceof Function) {
                     divFunction.appendChild(makeUI(ff[2]));
                 }
@@ -130,6 +132,14 @@ WM.UI = new function () {
                 
                 buttonsN++;
             }
+            
+            buttonRow.addEventListener("click", (function (rowFunctions) {
+                return function () {
+                    for (var fr in rowFunctions) {
+                        rowFunctions[fr]();
+                    }
+                };
+            })(rowFunctions), false);
             
             divRow.appendChild(divPlugins);
             divContainer.appendChild(divRow);
@@ -140,6 +150,14 @@ WM.UI = new function () {
             
             rowsN++;
         }
+        
+        buttonAll.addEventListener("click", (function (allFunctions) {
+            return function () {
+                for (var fa in allFunctions) {
+                    allFunctions[fa]();
+                }
+            };
+        })(allFunctions), false);
         
         if (rowsN > 1) {
             divRow = document.createElement('div');
