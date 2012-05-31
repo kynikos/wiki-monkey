@@ -82,7 +82,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
             
             if (newText != source) {
                 WM.Editor.writeSource(newText);
-                WM.Log.logInfo("Sycnhronized interlanguage links");
+                WM.Log.logInfo("Synchronized interlanguage links");
             }
             else {
                 WM.Log.logInfo("Interlanguage links were already synchronized");
@@ -95,7 +95,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
     };
     
     this.mainAuto = function (args, title, callBot) {
-        var tag = args[0]();
+        var tag = args[0](title);
         var whitelist = args[1];
         var summary = args[2];
         
@@ -105,7 +105,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         var visitedlinks = {};
         
         var newlinks = {};
-        newlinks[link.lang] = WM.Interlanguage.createNewLink(title, url);
+        newlinks[tag] = WM.Interlanguage.createNewLink(title, url);
         
         WM.Interlanguage.collectLinks(
             visitedlinks,
