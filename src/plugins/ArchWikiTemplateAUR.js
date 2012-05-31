@@ -21,7 +21,7 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
     this.doReplaceContinue = function (source, newText, links, index, call, callArgs) {
         if (links[index]) {
             WM.Log.logInfo("Processing " + links[index][0] + "...");
-            GM_xmlhttpRequest({
+            var query = {
                 method: "GET",
                 url: links[index][1],
                 onload: function (res) {
@@ -44,8 +44,18 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
                 },
                 onerror: function (res) {
                     WM.Log.logError("Failed query: " + res.finalUrl);
-                }
-            });
+                },
+            };
+            try {
+                GM_xmlhttpRequest(query);
+            }
+            catch (err) {
+                WM.Log.logError("Failed HTTP request - " + err +
+                                "\nIf the error above is \"Security violation\" " +
+                                "you are probably using Wiki Monkey without " +
+                                "Scriptish, Greasemonkey or Tampermonkey: " +
+                                "see https://github.com/kynikos/wiki-monkey/wiki");
+            }
         }
         else {
             call(source, newText, callArgs);

@@ -113,7 +113,7 @@ WM.MW = new function () {
         if (!api) {
             api = wikiPaths.local.api;
         }
-        GM_xmlhttpRequest({
+        var query = {
             method: "GET",
             url: api + "?format=json" + joinParams(params),
             onload: function (res) {
@@ -133,7 +133,18 @@ WM.MW = new function () {
             onerror: function (res) {
                 WM.Log.logError("Failed query: " + res.finalUrl);
             }
-        });
+        };
+        
+        try {
+            GM_xmlhttpRequest(query);
+        }
+        catch (err) {
+            WM.Log.logError("Failed HTTP request - " + err +
+                            "\nIf the error above is \"Security violation\" " +
+                            "you are probably using Wiki Monkey without " +
+                            "Scriptish, Greasemonkey or Tampermonkey: " +
+                            "see https://github.com/kynikos/wiki-monkey/wiki");
+        }
     };
     
     this.callAPIPost = function (params, api, call, callArgs) {
@@ -190,7 +201,16 @@ WM.MW = new function () {
             query.headers = {"Content-type": "application/x-www-form-urlencoded"};
         }
         
-        GM_xmlhttpRequest(query);
+        try {
+            GM_xmlhttpRequest(query);
+        }
+        catch (err) {
+            WM.Log.logError("Failed HTTP request - " + err +
+                            "\nIf the error above is \"Security violation\" " +
+                            "you are probably using Wiki Monkey without " +
+                            "Scriptish, Greasemonkey or Tampermonkey: " +
+                            "see https://github.com/kynikos/wiki-monkey/wiki");
+        }
     };
     
     var joinParams = function (params) {
