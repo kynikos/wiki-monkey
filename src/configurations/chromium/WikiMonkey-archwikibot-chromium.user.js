@@ -1570,7 +1570,7 @@ WM.Log = new function () {
         log.id = 'WikiMonkeyLog';
         
         GM_addStyle("#WikiMonkeyLog {height:10em; border:2px solid #07b; padding:0.5em; overflow:auto; resize:vertical; background-color:#111;} " +
-                    "#WikiMonkeyLog pre.timestamp, #WikiMonkeyLog pre.message {overflow:hidden; resize:none;} " +
+                    "#WikiMonkeyLog pre.timestamp, #WikiMonkeyLog pre.message {overflow:visible; resize:none;} " +
                     "#WikiMonkeyLog pre.timestamp {float:left; width:5em; margin:0; border:none; padding:0; font-size:0.9em; color:#eee; background-color:transparent;} " +
                     "#WikiMonkeyLog pre.message {margin:0 0 0.5em 5em; border:none; padding:0; color:#eee; background-color:transparent;} " +
                     "#WikiMonkeyLog pre.mdebug {color:cyan;} " +
