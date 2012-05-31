@@ -194,6 +194,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
                                text: newtext,
                                basetimestamp: args.timestamp,
                                token: args.edittoken},
+                              null,
                               WM.Plugins.UpdateCategoryTree.checkWrite,
                               args);
         }

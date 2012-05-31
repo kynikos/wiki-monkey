@@ -116,6 +116,7 @@ WM.Plugins.SimpleReplace = new function () {
                                text: newtext,
                                basetimestamp: timestamp,
                                token: edittoken},
+                               null,
                                WM.Plugins.SimpleReplace.mainAutoEnd,
                                callBot);
         }

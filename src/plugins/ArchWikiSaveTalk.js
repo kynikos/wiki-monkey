@@ -44,6 +44,7 @@ WM.Plugins.ArchWikiSaveTalk = new function () {
                            text: newtext,
                            basetimestamp: timestamp,
                            token: edittoken},
+                           null,
                            WM.Plugins.ArchWikiSaveTalk.mainEnd,
                            article);
     };

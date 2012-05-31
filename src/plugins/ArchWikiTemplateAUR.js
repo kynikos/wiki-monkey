@@ -41,6 +41,9 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
                     }
                     index++;
                     WM.Plugins.ArchWikiTemplateAUR.doReplaceContinue(source, newText, links, index, call, callArgs);
+                },
+                onerror: function (res) {
+                    WM.Log.logError("Failed query: " + res.finalUrl);
                 }
             });
         }
@@ -97,6 +100,7 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
                                text: newtext,
                                basetimestamp: timestamp,
                                token: edittoken},
+                               null,
                                WM.Plugins.ArchWikiTemplateAUR.mainAutoEnd,
                                callBot);
         }

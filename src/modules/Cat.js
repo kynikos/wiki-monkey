@@ -61,7 +61,7 @@ WM.Cat = new function () {
     };
     
     this._getMembersContinue = function (query, call, callArgs, members) {
-        WM.MW.callAPIGet(query, function (res) {
+        WM.MW.callAPIGet(query, null, function (res) {
             members = members.concat(res.query.categorymembers);
             if (res["query-continue"]) {
                 query.cmcontinue = res["query-continue"].categorymembers.cmcontinue;
@@ -83,7 +83,7 @@ WM.Cat = new function () {
     };
     
     this._getParentsContinue = function (query, call, callArgs, parents) {
-        WM.MW.callAPIGet(query, function (res) {
+        WM.MW.callAPIGet(query, null, function (res) {
             var page = Alib.Obj.getFirstItem(res.query.pages);
             
             if (page.categories) {

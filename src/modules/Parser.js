@@ -79,21 +79,21 @@ WM.Parser = new function () {
         return this.findInternalLinks(source, wiki);
     };
     
-    var findSpecialLinks = function (source, string) {
+    this.findSpecialLinks = function (source, pattern) {
         // See also WM.ArchWiki.findAllInterlanguageLinks!!!
-        source = WM.Parser.neutralizeNowikiTags(source);
+        source = this.neutralizeNowikiTags(source);
         // Categories and language tags aren't case-sensitive
-        var regExp = new RegExp("\\[\\[(?:[ _]+:)?[ _]*((?:(" + Alib.RegEx.escapePattern(string) + ")[ _]*:[ _]*)(.+?)(?:[ _]*\\|\\s*(.+?))?)\\s*\\]\\]", "gi");
+        var regExp = new RegExp("\\[\\[(?:[ _]+:)?[ _]*((?:(" + pattern + ")[ _]*:[ _]*)(.+?)(?:[ _]*\\|\\s*(.+?))?)\\s*\\]\\]", "gi");
         return Alib.RegEx.matchAll(source, regExp);
     };
     
     this.findCategories = function (source) {
-        return findSpecialLinks(source, "Category");
+        return this.findSpecialLinks(source, "Category");
     };
     
     this.findInterlanguageLinks = function (source, language) {
         // See also WM.ArchWiki.findAllInterlanguageLinks!!!
-        return findSpecialLinks(source, language);
+        return this.findSpecialLinks(source, Alib.RegEx.escapePattern(language));
     };
     
     this.findVariables = function (source, variable) {

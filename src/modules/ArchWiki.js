@@ -230,10 +230,7 @@ WM.ArchWiki = new function () {
     
     this.findAllInterlanguageLinks = function (source) {
         // See also WM.Parser.findInterlanguageLinks!!!
-        source = WM.Parser.neutralizeNowikiTags(source);
         var interwikiLanguages = this.getInterwikiLanguages();
-        // Language tags aren't case-sensitive
-        var regExp = new RegExp("\\[\\[(?:[ _]+:)?[ _]*((?:(" + interwikiLanguages.join("|") + ")[ _]*:[ _]*)(.+?)(?:[ _]*\\|[_\\s]*(.+?))?)[_\\s]*\\]\\]", "gi");
-        return Alib.RegEx.matchAll(source, regExp);
+        return WM.Parser.findSpecialLinks(source, interwikiLanguages.join("|"));
     };
 };

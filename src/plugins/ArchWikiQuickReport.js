@@ -80,6 +80,7 @@ WM.Plugins.ArchWikiQuickReport = new function () {
                            text: newtext,
                            basetimestamp: timestamp,
                            token: edittoken},
+                           null,
                            WM.Plugins.ArchWikiQuickReport.mainEnd,
                            article);
     };

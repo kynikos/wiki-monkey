@@ -19,209 +19,208 @@
  */
 
 WM.Interlanguage = new function () {
-    this.addNewLink = function (newlinks, lang, title, url) {
-        newlinks[lang] = {
-            title: title,
-            url: url,
-        };
-        return newlinks;
-    };
-    
-    this.addVisitedLink = function (visitedlinks, lang, title, url, api) {
-        visitedlinks[lang] = {
-            title: title,
-            url: url,
-            api: api,
-            iwmap: [],
-        };
-        return visitedlinks;
-    };
-    
-    this.addInterwikiMap = function(visitedlinks, lang, iwmap) {
-        visitedlinks[lang].iwmap = iwmap;
-        return visitedlinks;
-    };
-    
-    this.collectLinks = function (visitedlinks, newlinks, whitelist, callEnd, callArgs) {
-        for (var tag in newlinks) {
-            var link = {};
-            for (var key in newlinks[tag]) {
-                link[key] = newlinks[tag][key];
+    this.parseLinks = function (whitelist, source, iwmap) {
+        var parsedLinks = WM.Parser.findSpecialLinks(
+            source,
+            whitelist.join("|")
+        );
+        
+        var langlinks = [];
+        for (var p in parsedLinks) {
+            var link = parsedLinks[p];
+            var ltag = link.match[2];
+            var ltitle = link.match[3];
+            for (var iw in iwmap) {
+                if (iwmap[iw].prefix == ltag) {
+                    var lurl = iwmap[iw].url.replace("$1", WM.Parser.convertSpacesToUnderscores(ltitle));
+                    break;
+                }
             }
-            break;
+            langlinks.push({
+                lang: ltag,
+                title: ltitle,
+                url: lurl,
+                index: link.index,
+                length: link.length,
+            });
         }
         
-        if (link) {
-            delete newlinks[tag];
+        return langlinks;
+    };
+    
+    this.queryLinks = function (api, title, whitelist, callEnd, callArgs) {
+        WM.MW.callAPIGet(
+            {
+                action: "query",
+                prop: "info|revisions",
+                rvprop: "content|timestamp",
+                intoken: "edit",
+                titles: title,
+                redirects: "1",
+                meta: "siteinfo",
+                siprop: "interwikimap",
+                sifilteriw: "local",
+            },
+            api,
+            function (res, args) {
+                var page = Alib.Obj.getFirstItem(res.query.pages);
+                var source = page.revisions[0]["*"];
+                var timestamp = page.revisions[0].timestamp;
+                var edittoken = page.edittoken;
+                var iwmap = res.query.interwikimap;
+        
+                var langlinks = WM.Interlanguage.parseLinks(whitelist, source, iwmap);
+                
+                callEnd(
+                    api,
+                    title,
+                    whitelist,
+                    langlinks,
+                    iwmap,
+                    source,
+                    timestamp,
+                    edittoken,
+                    callArgs
+                );
+            }
+        );
+    };
+    
+    this.createNewLink = function (title, url) {
+        return {
+            title: title,
+            url: url,
+        };
+    };
+    
+    this.createVisitedLink = function (title, url, iwmap, api, source, timestamp, edittoken, links) {
+        var entry = {
+            title: title,
+            url: url,
+            iwmap: iwmap,
+            api: api,
+            source: source,
+            timestamp: timestamp,
+            edittoken: edittoken,
+            links: [],
+        };
+        for (var l in links) {
+            entry.links.push(links[l]);
+        }
+        return entry;
+    };
+    
+    this.collectLinks = function (visitedlinks, newlinks, whitelist, conflict, callEnd, callArgs) {
+        if (!conflict) {
+            for (var tag in newlinks) {
+                var link = newlinks[tag];
+                break;
+            }
             
-            WM.Log.logInfo("Reading " + link.url + "...");
-            
-            var paths = WM.MW.getWikiPaths(link.url);
-            
-            visitedlinks = WM.Interlanguage.addVisitedLink(visitedlinks, tag, link.title, link.url, paths.api);
-            
-            var title = link.title;
-            
-            var query = paths.api +
-                        "?format=json" +
-                        "&action=query" +
-                        "&prop=langlinks" +
-                        "&titles=" + encodeURIComponent(title) +
-                        "&lllimit=500" +
-                        "&llurl=1" +
-                        "&redirects=1" +
-                        "&meta=siteinfo" +
-                        "&siprop=interwikimap" +
-                        "&sifilteriw=local";
-            
-            WM.Interlanguage.collectLinksContinue(
-                tag,
-                query,
-                visitedlinks,
-                newlinks,
-                whitelist,
-                null,
-                callEnd,
-                callArgs
-            );
+            if (link) {
+                var title = link.title;
+                var url = link.url;
+                var api = WM.MW.getWikiPaths(url).api;
+                
+                delete newlinks[tag];
+                
+                WM.Log.logInfo("Reading " + url + "...");
+                
+                this.queryLinks(
+                    api,
+                    title,
+                    whitelist,
+                    WM.Interlanguage.collectLinksContinue,
+                    [url, tag, visitedlinks, newlinks, callEnd, callArgs]
+                );
+            }
+            else {
+                callEnd(visitedlinks, callArgs);
+            }
         }
         else {
-            callEnd(visitedlinks, whitelist, callArgs);
+            callEnd("conflict", callArgs);
         }
     };
     
-    this.collectLinksContinue = function (tag, query, visitedlinks, newlinks, whitelist, continue_, callEnd, callArgs) {
-        if (continue_) {
-            query += "&llcontinue=" + encodeURIComponent(continue_)
-        }
+    this.collectLinksContinue = function (api, title, whitelist, langlinks, iwmap, source, timestamp, edittoken, args) {
+        var url = args[0];
+        var tag = args[1];
+        var visitedlinks = args[2];
+        var newlinks = args[3];
+        var callEnd = args[4];
+        var callArgs = args[5];
         
-        GM_xmlhttpRequest({
-            method: "GET",
-            url: query,
-            onload: function (res) {
-                // Currently only Scriptish supports the responseJSON method
-                var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
-                res = json;
-                
-                // If the wiki has the API disabled, it will stop here
-                if (res) {
-                    var iwmap = res.query.interwikimap;
-                    visitedlinks = WM.Interlanguage.addInterwikiMap(visitedlinks, tag, iwmap);
-                    
-                    var page = Alib.Obj.getFirstItem(res.query.pages);
-                    var langlinks = page.langlinks;
-                    
-                    var conflict = false;
-                    
-                    if (langlinks) {
-                        for (var l in langlinks) {
-                            var link = langlinks[l];
-                            if (whitelist.indexOf(link.lang) > -1) {
-                                // Some old MediaWiki versions don't return the full URL
-                                if (!link.url) {
-                                    for (var iw in iwmap) {
-                                        if (iwmap[iw].prefix == link.lang) {
-                                            link.url = iwmap[iw].url.replace("$1", WM.Parser.convertSpacesToUnderscores(link["*"]));
-                                            break;
-                                        }
-                                    }
-                                }
-                                
-                                if (!visitedlinks[link.lang] && !newlinks[link.lang]) {
-                                    newlinks = WM.Interlanguage.addNewLink(newlinks, link.lang, link["*"], link.url);
-                                }
-                                else if ((visitedlinks[link.lang] && visitedlinks[link.lang].url != link.url) ||
-                                         (newlinks[link.lang] && newlinks[link.lang].url != link.url)) {
-                                    conflict = true;
-                                    WM.Log.logError("Conflicting interlanguage links: [[" + link.lang + ":" + link["*"] + "]]");
-                                    break;
-                                }
-                            }
-                            else {
-                                WM.Log.logWarning("[[" + link.lang + ":" + link["*"] + "]] has been ignored");
-                            }
-                        }
-                    }
-                    
-                    if (!conflict) {
-                        if (res["query-continue"]) {
-                            continue_ = res["query-continue"].langlinks.llcontinue;
-                            WM.Interlanguage.collectLinksContinue(
-                                tag,
-                                query,
-                                visitedlinks,
-                                newlinks,
-                                whitelist,
-                                continue_,
-                                callEnd,
-                                callArgs
-                            );
-                        }
-                        else {
-                            WM.Interlanguage.collectLinks(
-                                visitedlinks,
-                                newlinks,
-                                whitelist,
-                                callEnd,
-                                callArgs
-                            );
-                        }
-                    }
-                }
-                else {
-                    WM.Log.logError("It is likely that the API for this wiki is disabled");
-                }
-            },
-            onerror: function (res) {
-                WM.Log.logError("Failed query: " + res.finalUrl);
+        visitedlinks[tag] = WM.Interlanguage.createVisitedLink(title, url, iwmap, api, source, timestamp, edittoken, langlinks);
+        
+        var conflict = false;
+        
+        for (var l in langlinks) {
+            var link = langlinks[l];
+            if (!visitedlinks[link.lang] && !newlinks[link.lang]) {
+                newlinks[link.lang] = this.createNewLink(link.title, link.url);
             }
-        });
+            else if ((visitedlinks[link.lang] && visitedlinks[link.lang].url != link.url) ||
+                     (newlinks[link.lang] && newlinks[link.lang].url != link.url)) {
+                conflict = true;
+                WM.Log.logError("Conflicting interlanguage links: [[" + link.lang + ":" + link.title + "]]");
+                break;
+            }
+        }
+        
+        WM.Interlanguage.collectLinks(
+            visitedlinks,
+            newlinks,
+            whitelist,
+            conflict,
+            callEnd,
+            callArgs
+        );
     };
     
-    this.updateLinks = function (source, lang, whitelist, links) {
-        WM.Log.logInfo("Processing " + links[lang].url + "...");
-        
-        var iwmap = links[lang].iwmap;
-        
+    this.updateLinks = function (lang, url, iwmap, source, oldlinks, newlinks) {
         var linkList = "";
         
-        for (var tag in links) {
+        for (var tag in newlinks) {
             if (tag != lang) {
-                var link = links[tag];
+                var link = newlinks[tag];
                 var tagFound = false;
-                for (var l in iwmap) {
-                    if (iwmap[l].prefix == tag) {
-                        if (WM.MW.getWikiPaths(iwmap[l].url).api == link.api) {
+                for (var iw in iwmap) {
+                    if (iwmap[iw].prefix == tag) {
+                        if (WM.MW.getWikiPaths(iwmap[iw].url).api == link.api) {
                             linkList += "[[" + tag + ":" + link.title + "]]\n";
                         }
                         else {
-                            WM.Log.logWarning("On this wiki, " + tag + " interlanguage links point to a different wiki than the others, ignoring them");
+                            WM.Log.logWarning("On " + url + ", " + tag + " interlanguage links point to a different wiki than the others, ignoring them");
                         }
                         tagFound = true;
                         break;
                     }
                 }
                 if (!tagFound) {
-                    WM.Log.logWarning(tag + " interlanguage links are not supported by this wiki, ignoring them");
+                    WM.Log.logWarning(tag + " interlanguage links are not supported in " + url + ", ignoring them");
                 }
             }
         }
         
-        var regExp = new RegExp("(\\[\\[ *((" + whitelist.join("|") + ") *: *(.+?)) *\\]\\])\\s*", "gi");
-        var matches = Alib.RegEx.matchAll(source, regExp);
-        
         var cleanText = "";
         var textId = 0;
-        for (var l in matches) {
-            var link = matches[l];
+        for (var l in oldlinks) {
+            var link = oldlinks[l];
             cleanText += source.substring(textId, link.index);
             textId = link.index + link.length;
         }
         cleanText += source.substring(textId);
         
         // Insert the new links at the index of the first previous link
-        var firstLink = matches[0].index;
-        var newText = Alib.Str.insert(cleanText, linkList, firstLink);
+        var firstLink = oldlinks[0].index;
+        
+        var part1 = cleanText.substring(0, firstLink);
+        var part2a = cleanText.substr(firstLink);
+        var firstChar = part2a.search(/[^\s]/);
+        var part2b = part2a.substr(firstChar);
+        
+        var newText = part1 + linkList + part2b;
         
         return newText;
     };

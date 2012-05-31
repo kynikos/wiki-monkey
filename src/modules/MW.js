@@ -106,31 +106,61 @@ WM.MW = new function () {
     })();
     
     this.getWikiPaths = function (href) {
-        return getWikiPaths(href)
+        return getWikiPaths(href);
     };
     
-    this.callAPIGet = function (params, call, callArgs) {
+    this.callAPIGet = function (params, api, call, callArgs) {
+        if (!api) {
+            api = wikiPaths.local.api;
+        }
         GM_xmlhttpRequest({
             method: "GET",
-            url: wikiPaths.local.api + "?format=json" + joinParams(params),
+            url: api + "?format=json" + joinParams(params),
             onload: function (res) {
-                // Currently only Scriptish supports the responseJSON method
-                var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
-                call(json, callArgs);
+                try {
+                    // Currently only Scriptish supports the responseJSON method
+                    var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
+                }
+                catch (err) {
+                    WM.Log.logError("It is likely that the API for this wiki is disabled, see " + api);
+                }
+                if (json) {
+                    // Don't put this into the try block or all its exceptions
+                    // will be catched printing the same API error
+                    call(json, callArgs);
+                }
+            },
+            onerror: function (res) {
+                WM.Log.logError("Failed query: " + res.finalUrl);
             }
         });
     };
     
-    this.callAPIPost = function (params, call, callArgs) {
+    this.callAPIPost = function (params, api, call, callArgs) {
+        if (!api) {
+            api = wikiPaths.local.api;
+        }
         var query = {
             method: "POST",
-            url: wikiPaths.local.api,
+            url: api,
             onload: function (res) {
-                // Currently only Scriptish supports the responseJSON method
-                var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
-                call(json, callArgs);
+                try {
+                    // Currently only Scriptish supports the responseJSON method
+                    var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
+                }
+                catch (err) {
+                    WM.Log.logError("It is likely that the API for this wiki is disabled, see " + api);
+                }
+                if (json) {
+                    // Don't put this into the try block or all its exceptions
+                    // will be catched printing the same API error
+                    call(json, callArgs);
+                }
             },
-        }
+            onerror: function (res) {
+                WM.Log.logError("Failed query: " + res.finalUrl);
+            }
+        };
         
         var string = "format=json" + joinParams(params);
         
@@ -172,7 +202,7 @@ WM.MW = new function () {
             var page = Alib.Obj.getFirstItem(res.query.pages);
             call(page, callArgs);
         };
-        this.callAPIGet(params, callBack);
+        this.callAPIGet(params, null, callBack);
     };
     
     this.callQueryEdit = function (title, call, callArgs) {
@@ -195,6 +225,7 @@ WM.MW = new function () {
         userInfo = this.callAPIGet({action: "query",
                                     meta: "userinfo",
                                     uiprop: "groups"},
+                                    null,
                                     WM.MW._storeUserInfoEnd,
                                     call);
     };
@@ -236,7 +267,7 @@ WM.MW = new function () {
     };
     
     this._getBacklinksContinue = function (query, call, callArgs, backlinks) {
-        WM.MW.callAPIGet(query, function (res) {
+        WM.MW.callAPIGet(query, null, function (res) {
             backlinks = backlinks.concat(res.query.backlinks);
             if (res["query-continue"]) {
                 query.blcontinue = res["query-continue"].backlinks.blcontinue;
@@ -248,7 +279,7 @@ WM.MW = new function () {
         });
     };
     
-    this.getLanglinks = function (title, call, callArgs) {
+    this.getLanglinks = function (title, iwmap, call, callArgs) {
         var query = {action: "query",
                      prop: "langlinks",
                      titles: title,
@@ -256,19 +287,51 @@ WM.MW = new function () {
                      llurl: "1",
                      redirects: "1"};
         
-        this._getLanglinksContinue(query, call, callArgs, []);
+        if (iwmap) {
+            query.meta = "siteinfo";
+            query.siprop = "interwikimap";
+            query.sifilteriw = "local";
+        }
+        
+        this._getLanglinksContinue(query, call, callArgs, [], null);
     };
     
-    this._getLanglinksContinue = function (query, call, callArgs, langlinks) {
-        WM.MW.callAPIGet(query, function (res) {
-            langlinks = langlinks.concat(res.query.langlinks);
+    this._getLanglinksContinue = function (query, call, callArgs, langlinks, iwmap) {
+        WM.MW.callAPIGet(query, null, function (res) {
+            var page = Alib.Obj.getFirstItem(res.query.pages);
+            langlinks = langlinks.concat(page.langlinks);
+            iwmap = res.query.interwikimap;
+            
+            if (query.meta) {
+                delete query.meta;
+                delete query.siprop;
+                delete query.sifilteriw;
+            }
+            
             if (res["query-continue"]) {
                 query.llcontinue = res["query-continue"].langlinks.llcontinue;
-                this._getLanglinksContinue(query, call, callArgs, langlinks);
+                this._getLanglinksContinue(query, call, callArgs, langlinks, iwmap);
             }
             else {
-                call(langlinks, callArgs);
+                call(langlinks, iwmap, callArgs);
             }
         });
+    };
+    
+    this.getInterwikiMap = function (title, call, callArgs) {
+        var query = 
+        
+        WM.MW.callAPIGet(
+            {
+                action: "query",
+                meta: "siteinfo",
+                siprop: "interwikimap",
+                sifilteriw: "local",
+            },
+            null,
+            function (res) {
+                call(res.query.interwikimap, callArgs);
+            }
+        );
     };
 };

@@ -21,6 +21,7 @@ WM.Plugins.DeletePage = new function () {
                            title: title,
                            token: deletetoken,
                            reason: summary},
+                           null,
                            WM.Plugins.DeletePage.mainEnd,
                            title);
     };
@@ -55,6 +56,7 @@ WM.Plugins.DeletePage = new function () {
                            title: title,
                            token: deletetoken,
                            reason: summary},
+                           null,
                            WM.Plugins.DeletePage.mainAutoEnd,
                            callBot);
     };
