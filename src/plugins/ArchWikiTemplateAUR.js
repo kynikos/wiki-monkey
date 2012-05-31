@@ -43,18 +43,23 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
                     WM.Plugins.ArchWikiTemplateAUR.doReplaceContinue(source, newText, links, index, call, callArgs);
                 },
                 onerror: function (res) {
-                    WM.Log.logError("Failed query: " + res.finalUrl);
+                    WM.Log.logError("Failed query: " + res.finalUrl + "\nYou may " +
+                                    "have tried to use a plugin which requires " +
+                                    "cross-origin HTTP requests, but you are not " +
+                                    "using Scriptish (Firefox), Greasemonkey " +
+                                    "(Firefox), Tampermonkey (Chrome/Chromium) " +
+                                    "or a similar extension");
                 },
             };
             try {
                 GM_xmlhttpRequest(query);
             }
             catch (err) {
-                WM.Log.logError("Failed HTTP request - " + err +
-                                "\nIf the error above is \"Security violation\" " +
-                                "you are probably using Wiki Monkey without " +
-                                "Scriptish, Greasemonkey or Tampermonkey: " +
-                                "see https://github.com/kynikos/wiki-monkey/wiki");
+                WM.Log.logError("Failed HTTP request - " + err + "\nYou may have " +
+                                "tried to use a plugin which requires cross-origin " +
+                                "HTTP requests, but you are not using Scriptish " +
+                                "(Firefox), Greasemonkey (Firefox), Tampermonkey " +
+                                "(Chrome/Chromium) or a similar extension");
             }
         }
         else {
