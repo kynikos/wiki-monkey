@@ -396,6 +396,32 @@ Alib.HTTP = new function () {
 
 if (!Alib) var Alib = {};
 
+Alib.Obj = new function () {
+    this.getKeys = function (object) {
+        var keys = [];
+        for (var i in object) {
+            keys.push(i);
+        }
+        return keys;
+    };
+    
+    this.getValues = function (object) {
+        var values = [];
+        for (var i in object) {
+            values.push(object[i]);
+        }
+        return values;
+    };
+    
+    this.getFirstItem = function (object) {
+        for (var i in object) {
+            return object[i];
+        }
+    };
+};
+
+if (!Alib) var Alib = {};
+
 Alib.RegEx = new function () {
     this.escapePattern = function (string) {
         return string.replace(/[-[\]{}()*+?.,:!=\\^$|#\s]/g, "\\$&");
@@ -416,6 +442,59 @@ Alib.RegEx = new function () {
             }
         }
         return result;
+    };
+};
+
+if (!Alib) var Alib = {};
+
+Alib.Str = new function () {
+    this.insert = function (string, newString, id) {
+        if (!id) id = 0;
+        return string.substring(0, id) + newString + string.substr(id);
+    };
+    
+    this.overwriteAt = function (string, newString, id) {
+        if (!id) id = 0;
+        return string.substring(0, id) + newString + string.substr(id + newString.length);
+    };
+    
+    this.overwriteBetween = function (string, newString, id1, id2) {
+        if (!id1) id1 = 0;
+        if (!id2) id2 = id1;
+        if (id1 > id2) {
+            var tempid = id2;
+            id2 = id1;
+            id1 = tempid;
+        }
+        return string.substring(0, id1) + newString + string.substr(id2);
+    };
+    
+    this.overwriteFor = function (string, newString, id, length) {
+        if (!id) id = 0;
+        if (!length || length < 0) length = 0;
+        return string.substring(0, id) + newString + string.substr(id + length);
+    };
+    
+    this.removeBetween = function (string, id1, id2) {
+        return this.overwriteBetween(string, "", id1, id2);
+    };
+    
+    this.removeFor = function (string, id, length) {
+        return this.overwriteFor(string, "", id, length);
+    };
+    
+    this.padLeft = function (string, filler, length) {
+        while (string.length < length) {
+            string = filler + string;
+        }
+        return string;
+    };
+    
+    this.padRight = function (string, filler, length) {
+        while (string.length < length) {
+            string += filler;
+        }
+        return string;
     };
 };
 
@@ -637,17 +716,10 @@ WM.ArchWiki = new function () {
         return [pureTitle, detectedLanguage];
     };
     
-    this.findInterlanguageLinks = function (source, language) {
-        var res;
-        if (language) {
-            res = WM.Parser.findInternalLinks(source, language);
-        }
-        else {
-            var interwikiLanguages = this.getInterwikiLanguages();
-            var regExp = new RegExp("\\[\\[ *((" + interwikiLanguages.join("|") + ") *: *(.+?)) *\\]\\]", "gi");
-            res = Alib.RegEx.matchAll(source, regExp);
-        }
-        return res;
+    this.findAllInterlanguageLinks = function (source) {
+        // See also WM.Parser.findInterlanguageLinks!!!
+        var interwikiLanguages = this.getInterwikiLanguages();
+        return WM.Parser.findSpecialLinks(source, interwikiLanguages.join("|"));
     };
 };
 
@@ -1130,7 +1202,7 @@ WM.Cat = new function () {
     };
     
     this._getMembersContinue = function (query, call, callArgs, members) {
-        WM.MW.callAPIGet(query, function (res) {
+        WM.MW.callAPIGet(query, null, function (res) {
             members = members.concat(res.query.categorymembers);
             if (res["query-continue"]) {
                 query.cmcontinue = res["query-continue"].categorymembers.cmcontinue;
@@ -1152,14 +1224,8 @@ WM.Cat = new function () {
     };
     
     this._getParentsContinue = function (query, call, callArgs, parents) {
-        WM.MW.callAPIGet(query, function (res) {
-            var pages = res.query.pages;
-            
-            for (var id in pages) {
-                break;
-            }
-            
-            var page = pages[id];
+        WM.MW.callAPIGet(query, null, function (res) {
+            var page = Alib.Obj.getFirstItem(res.query.pages);
             
             if (page.categories) {
                 parents = parents.concat(page.categories);
@@ -1260,6 +1326,235 @@ WM.Editor = new function () {
     
     this.appendToSummary = function (text) {
         document.getElementById('wpSummary').setAttribute("value", this.readSummary() + text);
+    };
+};
+
+WM.Interlanguage = new function () {
+    this.parseLinks = function (whitelist, source, iwmap) {
+        var parsedLinks = WM.Parser.findSpecialLinks(
+            source,
+            whitelist.join("|")
+        );
+        
+        var langlinks = [];
+        for (var p in parsedLinks) {
+            var link = parsedLinks[p];
+            var ltag = link.match[2];
+            var ltitle = link.match[3];
+            for (var iw in iwmap) {
+                if (iwmap[iw].prefix == ltag) {
+                    var lurl = iwmap[iw].url.replace("$1", WM.Parser.convertSpacesToUnderscores(ltitle));
+                    break;
+                }
+            }
+            langlinks.push({
+                lang: ltag,
+                title: ltitle,
+                url: lurl,
+                index: link.index,
+                length: link.length,
+            });
+        }
+        
+        return langlinks;
+    };
+    
+    this.queryLinks = function (api, title, whitelist, callEnd, callArgs) {
+        WM.MW.callAPIGet(
+            {
+                action: "query",
+                prop: "info|revisions",
+                rvprop: "content|timestamp",
+                intoken: "edit",
+                titles: title,
+                redirects: "1",
+                meta: "siteinfo",
+                siprop: "interwikimap",
+                sifilteriw: "local",
+            },
+            api,
+            function (res, args) {
+                var page = Alib.Obj.getFirstItem(res.query.pages);
+                if (page.revisions) {
+                    var source = page.revisions[0]["*"];
+                    var timestamp = page.revisions[0].timestamp;
+                    var edittoken = page.edittoken;
+                    var iwmap = res.query.interwikimap;
+                    var langlinks = WM.Interlanguage.parseLinks(whitelist, source, iwmap);
+                }
+                else {
+                    // The requested article doesn't exist
+                    var source = "missing";
+                    var timestamp = null;
+                    var edittoken = null;
+                    var iwmap = res.query.interwikimap;
+                    var langlinks = "missing";
+                }
+                
+                callEnd(
+                    api,
+                    title,
+                    whitelist,
+                    langlinks,
+                    iwmap,
+                    source,
+                    timestamp,
+                    edittoken,
+                    callArgs
+                );
+            }
+        );
+    };
+    
+    this.createNewLink = function (title, url) {
+        return {
+            title: title,
+            url: url,
+        };
+    };
+    
+    this.createVisitedLink = function (title, url, iwmap, api, source, timestamp, edittoken, links) {
+        var entry = {
+            title: title,
+            url: url,
+            iwmap: iwmap,
+            api: api,
+            source: source,
+            timestamp: timestamp,
+            edittoken: edittoken,
+            links: [],
+        };
+        for (var l in links) {
+            entry.links.push(links[l]);
+        }
+        return entry;
+    };
+    
+    this.collectLinks = function (visitedlinks, newlinks, whitelist, error, callEnd, callArgs) {
+        // If error is "missing" it should be possible to continue safely
+        if (error != "conflict") {
+            for (var tag in newlinks) {
+                var link = newlinks[tag];
+                break;
+            }
+            
+            if (link) {
+                var title = link.title;
+                var url = link.url;
+                var api = WM.MW.getWikiPaths(url).api;
+                
+                delete newlinks[tag];
+                
+                WM.Log.logInfo("Reading " + url + "...");
+                
+                this.queryLinks(
+                    api,
+                    title,
+                    whitelist,
+                    WM.Interlanguage.collectLinksContinue,
+                    [url, tag, visitedlinks, newlinks, callEnd, callArgs]
+                );
+            }
+            else {
+                callEnd(visitedlinks, callArgs);
+            }
+        }
+        else {
+            callEnd(error, callArgs);
+        }
+    };
+    
+    this.collectLinksContinue = function (api, title, whitelist, langlinks, iwmap, source, timestamp, edittoken, args) {
+        var url = args[0];
+        var tag = args[1];
+        var visitedlinks = args[2];
+        var newlinks = args[3];
+        var callEnd = args[4];
+        var callArgs = args[5];
+            
+        var error = "";
+        
+        if (langlinks != "missing") {
+            visitedlinks[tag] = WM.Interlanguage.createVisitedLink(title, url, iwmap, api, source, timestamp, edittoken, langlinks);
+            
+            for (var l in langlinks) {
+                var link = langlinks[l];
+                if (!visitedlinks[link.lang] && !newlinks[link.lang]) {
+                    newlinks[link.lang] = WM.Interlanguage.createNewLink(link.title, link.url);
+                }
+                else if ((visitedlinks[link.lang] && visitedlinks[link.lang].url != link.url) ||
+                         (newlinks[link.lang] && newlinks[link.lang].url != link.url)) {
+                    error = "conflict";
+                    WM.Log.logError("Conflicting interlanguage links: [[" + link.lang + ":" + link.title + "]]");
+                    break;
+                }
+            }
+        }
+        else {
+            error = "missing";
+            WM.Log.logWarning("[[" + tag + ":" + title + "]] seems to point to a non-existing article, removing it");
+        }
+        
+        WM.Interlanguage.collectLinks(
+            visitedlinks,
+            newlinks,
+            whitelist,
+            error,
+            callEnd,
+            callArgs
+        );
+    };
+    
+    this.updateLinks = function (lang, url, iwmap, source, oldlinks, newlinks) {
+        var linkList = "";
+        
+        for (var tag in newlinks) {
+            if (tag != lang) {
+                var link = newlinks[tag];
+                var tagFound = false;
+                for (var iw in iwmap) {
+                    if (iwmap[iw].prefix == tag) {
+                        if (WM.MW.getWikiPaths(iwmap[iw].url).api == link.api) {
+                            linkList += "[[" + tag + ":" + link.title + "]]\n";
+                        }
+                        else {
+                            WM.Log.logWarning("On " + url + ", " + tag + " interlanguage links point to a different wiki than the others, ignoring them");
+                        }
+                        tagFound = true;
+                        break;
+                    }
+                }
+                if (!tagFound) {
+                    WM.Log.logWarning(tag + " interlanguage links are not supported in " + url + ", ignoring them");
+                }
+            }
+        }
+        
+        var cleanText = "";
+        var textId = 0;
+        for (var l in oldlinks) {
+            var link = oldlinks[l];
+            cleanText += source.substring(textId, link.index);
+            textId = link.index + link.length;
+        }
+        cleanText += source.substring(textId);
+        
+        if (oldlinks.length) {
+            // Insert the new links at the index of the first previous link
+            var firstLink = oldlinks[0].index;
+        }
+        else {
+            var firstLink = 0;
+        }
+        
+        var part1 = cleanText.substring(0, firstLink);
+        var part2a = cleanText.substr(firstLink);
+        var firstChar = part2a.search(/[^\s]/);
+        var part2b = part2a.substr(firstChar);
+        
+        var newText = part1 + linkList + part2b;
+        
+        return newText;
     };
 };
 
@@ -1413,37 +1708,83 @@ WM.MW = new function () {
     })();
     
     this.getWikiPaths = function (href) {
-        return getWikiPaths(href)
+        return getWikiPaths(href);
     };
     
-    this.callAPIGet = function (params, call, callArgs) {
-        GM_xmlhttpRequest({
+    this.callAPIGet = function (params, api, call, callArgs) {
+        if (!api) {
+            api = wikiPaths.local.api;
+        }
+        var query = {
             method: "GET",
-            url: wikiPaths.local.api + "?format=json" + joinParams(params),
+            url: api + "?format=json" + joinParams(params),
             onload: function (res) {
-                // Currently only Scriptish supports the responseJSON method
-                var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
-                call(json, callArgs);
+                try {
+                    // Currently only Scriptish supports the responseJSON method
+                    var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
+                }
+                catch (err) {
+                    WM.Log.logError("It is likely that the API for this wiki is disabled, see " + api);
+                }
+                if (json) {
+                    // Don't put this into the try block or all its exceptions
+                    // will be catched printing the same API error
+                    call(json, callArgs);
+                }
+            },
+            onerror: function (res) {
+                WM.Log.logError("Failed query: " + res.finalUrl);
             }
-        });
+        };
+        
+        try {
+            GM_xmlhttpRequest(query);
+        }
+        catch (err) {
+            WM.Log.logError("Failed HTTP request - " + err +
+                            "\nIf the error above is \"Security violation\" " +
+                            "you are probably using Wiki Monkey without " +
+                            "Scriptish, Greasemonkey or Tampermonkey: " +
+                            "see https://github.com/kynikos/wiki-monkey/wiki");
+        }
     };
     
-    this.callAPIPost = function (params, call, callArgs) {
+    this.callAPIPost = function (params, api, call, callArgs) {
+        if (!api) {
+            api = wikiPaths.local.api;
+        }
         var query = {
             method: "POST",
-            url: wikiPaths.local.api,
+            url: api,
             onload: function (res) {
-                // Currently only Scriptish supports the responseJSON method
-                var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
-                call(json, callArgs);
+                try {
+                    // Currently only Scriptish supports the responseJSON method
+                    var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
+                }
+                catch (err) {
+                    WM.Log.logError("It is likely that the API for this wiki is disabled, see " + api);
+                }
+                if (json) {
+                    // Don't put this into the try block or all its exceptions
+                    // will be catched printing the same API error
+                    call(json, callArgs);
+                }
             },
-        }
+            onerror: function (res) {
+                WM.Log.logError("Failed query: " + res.finalUrl);
+            }
+        };
         
         var string = "format=json" + joinParams(params);
         
         // It's necessary to use try...catch because some browsers don't
         // support FormData yet and will throw an exception
         try {
+            // Temporarily disable multipart/form-data requests ******************
+            // because Tampermonkey doesn't support them, see ********************
+            // http://forum.tampermonkey.net/viewtopic.php?f=17&t=271 ************
+            throw "Temporarily disabled, see bug #91";  // ***********************
+            
             if (string.length > 8000) {
                 query.data = new FormData();
                 query.data.append("format", "json");
@@ -1462,7 +1803,16 @@ WM.MW = new function () {
             query.headers = {"Content-type": "application/x-www-form-urlencoded"};
         }
         
-        GM_xmlhttpRequest(query);
+        try {
+            GM_xmlhttpRequest(query);
+        }
+        catch (err) {
+            WM.Log.logError("Failed HTTP request - " + err +
+                            "\nIf the error above is \"Security violation\" " +
+                            "you are probably using Wiki Monkey without " +
+                            "Scriptish, Greasemonkey or Tampermonkey: " +
+                            "see https://github.com/kynikos/wiki-monkey/wiki");
+        }
     };
     
     var joinParams = function (params) {
@@ -1476,13 +1826,10 @@ WM.MW = new function () {
     this.callQuery = function (params, call, callArgs) {
         params.action = "query";
         var callBack = function (res) {
-            var pages = res.query.pages;
-            for (var id in pages) {
-                break;
-            }
-            call(pages[id], callArgs);
+            var page = Alib.Obj.getFirstItem(res.query.pages);
+            call(page, callArgs);
         };
-        this.callAPIGet(params, callBack);
+        this.callAPIGet(params, null, callBack);
     };
     
     this.callQueryEdit = function (title, call, callArgs) {
@@ -1505,6 +1852,7 @@ WM.MW = new function () {
         userInfo = this.callAPIGet({action: "query",
                                     meta: "userinfo",
                                     uiprop: "groups"},
+                                    null,
                                     WM.MW._storeUserInfoEnd,
                                     call);
     };
@@ -1546,7 +1894,7 @@ WM.MW = new function () {
     };
     
     this._getBacklinksContinue = function (query, call, callArgs, backlinks) {
-        WM.MW.callAPIGet(query, function (res) {
+        WM.MW.callAPIGet(query, null, function (res) {
             backlinks = backlinks.concat(res.query.backlinks);
             if (res["query-continue"]) {
                 query.blcontinue = res["query-continue"].backlinks.blcontinue;
@@ -1558,28 +1906,60 @@ WM.MW = new function () {
         });
     };
     
-    this.getLanglinks = function (title, call, callArgs) {
+    this.getLanglinks = function (title, iwmap, call, callArgs) {
         var query = {action: "query",
                      prop: "langlinks",
                      titles: title,
                      lllimit: 500,
                      llurl: "1",
-                     redirect: "1"};
+                     redirects: "1"};
         
-        this._getLanglinksContinue(query, call, callArgs, []);
+        if (iwmap) {
+            query.meta = "siteinfo";
+            query.siprop = "interwikimap";
+            query.sifilteriw = "local";
+        }
+        
+        this._getLanglinksContinue(query, call, callArgs, [], null);
     };
     
-    this._getLanglinksContinue = function (query, call, callArgs, langlinks) {
-        WM.MW.callAPIGet(query, function (res) {
-            langlinks = langlinks.concat(res.query.langlinks);
+    this._getLanglinksContinue = function (query, call, callArgs, langlinks, iwmap) {
+        WM.MW.callAPIGet(query, null, function (res) {
+            var page = Alib.Obj.getFirstItem(res.query.pages);
+            langlinks = langlinks.concat(page.langlinks);
+            iwmap = res.query.interwikimap;
+            
+            if (query.meta) {
+                delete query.meta;
+                delete query.siprop;
+                delete query.sifilteriw;
+            }
+            
             if (res["query-continue"]) {
                 query.llcontinue = res["query-continue"].langlinks.llcontinue;
-                this._getLanglinksContinue(query, call, callArgs, langlinks);
+                this._getLanglinksContinue(query, call, callArgs, langlinks, iwmap);
             }
             else {
-                call(langlinks, callArgs);
+                call(langlinks, iwmap, callArgs);
             }
         });
+    };
+    
+    this.getInterwikiMap = function (title, call, callArgs) {
+        var query = 
+        
+        WM.MW.callAPIGet(
+            {
+                action: "query",
+                meta: "siteinfo",
+                siprop: "interwikimap",
+                sifilteriw: "local",
+            },
+            null,
+            function (res) {
+                call(res.query.interwikimap, callArgs);
+            }
+        );
     };
 };
 
@@ -1593,13 +1973,11 @@ WM.Parser = new function () {
     };
     
     this.neutralizeNowikiTags = function (source) {
-        var tags = Alib.RegEx.matchAll(source, /<nowiki>[.\s]+?<\/nowiki>/gi);
+        // /<nowiki>[.\s]+?<\/nowiki>/gi doesn't work
+        var tags = Alib.RegEx.matchAll(source, /<nowiki>(.?\s?)+?<\/nowiki>/gi);
         for (var t in tags) {
-            var filler = "";
-            while (filler.length < tags[t].length) {
-                filler += "x";
-            }
-            source = source.substr(0, tags[t].index - 1) + filler + source.substr(tags[t].index + tags[t].length)
+            var filler = Alib.Str.padRight("", "x", tags[t].length);
+            source = Alib.Str.overwriteAt(source, filler, tags[t].index);
         }
         return source;
     };
@@ -1615,62 +1993,66 @@ WM.Parser = new function () {
     };
     
     this.findBehaviorSwitches = function (source, word) {
-        var res;
+        source = this.neutralizeNowikiTags(source);
+        var regExp;
         if (word) {
-            var regExp = new RegExp("__" + Alib.RegEx.escapePattern(word) + "__", "g");
-            res = Alib.RegEx.matchAll(source, regExp);
+            // Behavior switches aren't case-sensitive
+            regExp = new RegExp("__" + Alib.RegEx.escapePattern(word) + "__", "gi");
         }
         else {
-            res = Alib.RegEx.matchAll(source, /__(TOC|NOTOC|FORCETOC|NOEDITSECTION|NEWSECTIONLINK|NONEWSECTIONLINK|NOGALLERY|HIDDENCAT|NOCONTENTCONVERT|NOCC|NOTITLECONVERT|NOTC|INDEX|NOINDEX|STATICREDIRECT|START|END)__/g);
+            // Behavior switches aren't case-sensitive
+            regExp = /__(TOC|NOTOC|FORCETOC|NOEDITSECTION|NEWSECTIONLINK|NONEWSECTIONLINK|NOGALLERY|HIDDENCAT|NOCONTENTCONVERT|NOCC|NOTITLECONVERT|NOTC|INDEX|NOINDEX|STATICREDIRECT|START|END)__/gi;
         }
-        return res;
-    };
-    
-    this.findVariables = function (source, variable) {
-        var regExp = new RegExp("\\{\\{ *" + Alib.RegEx.escapePattern(variable) + " *\\}\\}", "g");
-        return Alib.RegEx.matchAll(source, regExp);
-    };
-    
-    this.findVariableVariables = function (source, variable) {
-        var regExp = new RegExp("\\{\\{ *" + Alib.RegEx.escapePattern(variable) + " *: *(.+?) *\\}\\}", "g");
         return Alib.RegEx.matchAll(source, regExp);
     };
     
     this.findInternalLinks = function (source, namespace) {
-        var res;
+        source = this.neutralizeNowikiTags(source);
+        var regExp;
         if (namespace) {
-            var nsPattern = Alib.RegEx.escapePattern(namespace);
-            nsPattern = prepareTitleCasing(nsPattern);
-            var regExp = new RegExp("\\[\\[ *((" + nsPattern + ") *: *(.+?)) *\\]\\]", "g");
-            res = Alib.RegEx.matchAll(source, regExp);
+            // Namespaces aren't case-sensitive
+            regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*((" + Alib.RegEx.escapePattern(namespace) + ")[ _]*:[ _]*(.+?)(?:[ _]*\\|\\s*(.+?))?)\\s*\\]\\]", "gi");
         }
         else {
-            res = Alib.RegEx.matchAll(source, /\[\[ *((?:(.+?) *: *)?(.+?)) *\]\]/g);
+            // Namespaces aren't case-sensitive
+            regExp = /\[\[:?[ _]*:?[ _]*((?:(.+?)[ _]*:[ _]*)?(.+?)(?:[ _]*\|\s*(.+?))?)\s*\]\]/gi;
         }
-        return res;
-    };
-    
-    this.findCategories = function (source) {
-        return this.findInternalLinks(source, "Category");
+        return Alib.RegEx.matchAll(source, regExp);
     };
     
     this.findInterwikiLinks = function (source, wiki) {
         return this.findInternalLinks(source, wiki);
     };
     
-    this.findTemplateTags = function (source, template) {
-        var templatePattern = Alib.RegEx.escapePattern(template);
-        templatePattern = prepareTitleCasing(templatePattern);
-        var regExp = new RegExp("\\{\\{ *" + templatePattern, "g");
+    this.findSpecialLinks = function (source, pattern) {
+        // See also WM.ArchWiki.findAllInterlanguageLinks!!!
+        source = this.neutralizeNowikiTags(source);
+        // Categories and language tags aren't case-sensitive
+        var regExp = new RegExp("\\[\\[(?:[ _]+:)?[ _]*((?:(" + pattern + ")[ _]*:[ _]*)(.+?)(?:[ _]*\\|\\s*(.+?))?)\\s*\\]\\]", "gi");
         return Alib.RegEx.matchAll(source, regExp);
     };
     
-    this.findTemplates = function (source, template) {
-        var nSource = this.neutralizeNowikiTags(source);
-        var templatePattern = Alib.RegEx.escapePattern(template);
-        templatePattern = prepareTitleCasing(templatePattern);
-        var regExp = new RegExp("(\\{\\{ *(" + templatePattern + ")\\s*\\|)(\\s*(?:.(?!\\{\\{)\\s*)*?)\\}\\}", "g");
-        var templates = [];
+    this.findCategories = function (source) {
+        return this.findSpecialLinks(source, "Category");
+    };
+    
+    this.findInterlanguageLinks = function (source, language) {
+        // See also WM.ArchWiki.findAllInterlanguageLinks!!!
+        return this.findSpecialLinks(source, Alib.RegEx.escapePattern(language));
+    };
+    
+    this.findVariables = function (source, variable) {
+        source = this.neutralizeNowikiTags(source);
+        // Variables are case-sensitive
+        // There can't be an underscore before the variable name
+        // There can't be a whitespace between the variable name and the colon
+        var regExp = new RegExp("\\{\\{\\s*((" + Alib.RegEx.escapePattern(variable) + ")(?:\\:[_\\s]*((?:.(?!\\{\\{)[_\\s]*?)+?))?)[_\\s]*\\}\\}", "g");
+        return Alib.RegEx.matchAll(source, regExp);
+    };
+    
+    var findTransclusionsEngine = function (source, regExp) {
+        var nSource = WM.Parser.neutralizeNowikiTags(source);
+        var transclusions = [];
         
         do {
             var res = Alib.RegEx.matchAll(nSource, regExp);
@@ -1679,61 +2061,109 @@ WM.Parser = new function () {
                 var match = res[t].match;
                 var index = res[t].index;
                 var L = res[t].length;
-                var args = match[3].split("|");
                 var arguments = [];
-                var argId = index + match[1].length;
-                
-                for (var a in args) {
-                    var argL = args[a].length;
-                    var eqId = args[a].indexOf("=");
-                    // eqId must be > 0, not -1, in fact the key must not be empty
-                    if (eqId > 0) {
-                        var rawKey = args[a].substr(0, eqId);
-                        var reKey = /(\s*)(.+?)\s*/;
-                        var keyMatches = reKey.exec(rawKey);
-                        var key = keyMatches[2];
-                        var keyId = argId + ((keyMatches[1]) ? keyMatches[1].length : 0);
-                        
-                        var nValue = args[a].substr(eqId + 1);
-                        var valueId = argId + keyMatches[0].length;
-                        var valueL = argL - eqId - 1;
-                    }
-                    else {
-                        var key = null;
-                        var keyId = null;
-                        var nValue = args[a];
-                        var valueId = argId;
-                        var valueL = argL;
-                    }
-                    
-                    var value = source.substr(valueId, valueL);
-                    
-                    arguments.push({key: key,
-                                    key_index: keyId,
-                                    value: value,
-                                    value_index: valueId});
-                    
+                if (match[3]) {
+                    var args = match[3].split("|");
                     // 1 is the length of |
-                    argId = argId + argL + 1;
+                    var argId = index + match[1].length + 1;
+                    
+                    for (var a in args) {
+                        var argL = args[a].length;
+                        var eqId = args[a].indexOf("=");
+                        // eqId must be > 0, not -1, in fact the key must not be empty
+                        if (eqId > 0) {
+                            var rawKey = args[a].substring(0, eqId);
+                            var reKey = /^(\s*)(.+?)\s*$/;
+                            var keyMatches = reKey.exec(rawKey);
+                            var key = keyMatches[2];
+                            var keyId = argId + ((keyMatches[1]) ? keyMatches[1].length : 0);
+                            
+                            // 1 is the length of =
+                            var nValue = args[a].substr(eqId + 1);
+                            var valueId = argId + keyMatches[0].length + 1;
+                            var valueL = argL - eqId - 1;
+                        }
+                        else {
+                            var key = null;
+                            var keyId = null;
+                            var nValue = args[a];
+                            var valueId = argId;
+                            var valueL = argL;
+                        }
+                        
+                        var value = source.substr(valueId, valueL);
+                        
+                        arguments.push({key: key,
+                                        key_index: keyId,
+                                        value: value,
+                                        value_index: valueId});
+                        
+                        // 1 is the length of |
+                        argId = argId + argL + 1;
+                    }
                 }
                 
-                templates.push({
-                    name: match[2],
+                transclusions.push({
+                    title: match[2],
+                    match: match,
                     index: index,
                     length: L,
                     arguments: arguments,
                 });
                 
-                var filler = "";
-                while (filler.length < L) {
-                    filler += "x";
-                }
-                nSource = nSource.substr(0, res[t].index - 1) + filler + nSource.substr(res[t].index + L)
+                var filler = Alib.Str.padRight("", "x", L);
+                nSource = Alib.Str.overwriteAt(nSource, filler, res[t].index);
             }
-        // Find also nested templates
+        // Find also nested transclusions
         } while (res.length);
         
-        return templates;
+        return transclusions;
+    };
+    
+    this.findTemplates = function (source, template) {
+        // Templates can't be transcluded with a colon before the title
+        // The title must not be broken by new line characters
+        if (template) {
+            var pattern = Alib.RegEx.escapePattern(template);
+            pattern = prepareTitleCasing(pattern);
+        }
+        else {
+            var pattern = ".+?";
+        }
+        var regExp = new RegExp("(\\{\\{\\s*[_ ]*(" + pattern + ")[_\\s]*)(?:\\|((?:\\s*.(?!\\{\\{)\\s*)*?))?\\}\\}", "g");
+        return findTransclusionsEngine(source, regExp);
+    };
+    
+    this.findTransclusions = function (source, namespace, title) {
+        // The difference from templates is the possibility of a colon before
+        // the title which forces the transclusion of a page instead of a
+        // template
+        // The title must not be broken by newline characters
+        if (namespace) {
+            var namespacePattern = Alib.RegEx.escapePattern(namespace);
+            namespacePattern = prepareTitleCasing(namespacePattern);
+        }
+        if (title) {
+            var titlePattern = Alib.RegEx.escapePattern(title);
+            titlePattern = prepareTitleCasing(titlePattern);
+        }
+        
+        if (namespacePattern && titlePattern) {
+            var pattern = namespacePattern + "[ _]*:[ _]*" + titlePattern;
+        }
+        else if (!namespacePattern && titlePattern) {
+            var pattern = titlePattern;
+        }
+        else if (namespacePattern && !titlePattern) {
+            var pattern = namespacePattern + "[ _]*:.+?";
+        }
+        else {
+            var pattern = ".+?";
+        }
+        
+        // There can't be an underscore before the colon
+        var regExp = new RegExp("(\\{\\{\\s*:?[ _]*(" + pattern + ")[_\\s]*)(?:\\|((?:\\s*.(?!\\{\\{)\\s*)*?))?\\}\\}", "g");
+        return findTransclusionsEngine(source, regExp);
     };
         
     this.findSectionHeadings = function (source) {
@@ -1847,10 +2277,11 @@ WM.Tables = new function () {
         var lastId = source.lastIndexOf('|}<!--' + mark);
         var endtable = (lastId > -1) ? lastId : source.lastIndexOf('|}');
         
-        var part1 = source.substring(0, endtable);
-        var part2 = source.substring(endtable);
+        var row = "|-\n|" + values.join("\n|") + "\n";
         
-        return part1 + "|-\n|" + values.join("\n|") + "\n" + part2;
+        var newText = Alib.Str.insert(source, row, endtable);
+        
+        return newText;
     };
 };
 
@@ -1897,6 +2328,17 @@ WM.UI = new function () {
         specialList = rows;
     };
     
+    this._executeAsync = function (functions, id) {
+        id++;
+        if (functions[id]) {
+            var fid = functions[id];
+            var callContinue = function () {
+                WM.UI._executeAsync(functions, id);
+            };
+            fid[0](fid[1], callContinue);
+        }
+    };
+    
     var makeButtons = function (functions) {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyButtons';
@@ -1912,52 +2354,54 @@ WM.UI = new function () {
         buttonAll.setAttribute('value', 'Execute all');
         buttonAll.id = "WikiMonkeyButtonAll";
         
-        var row, buttonsN, divRow, pRow, buttonRow, divPlugins, divFunction, buttonFunction, ff, buttons, makeUI;
+        var allFunctions = [];
         var rowsN = 0;
         
         for (var r in functions) {
-            row = functions[r];
+            var row = functions[r];
             
-            buttonRow = document.createElement('input');
+            var buttonRow = document.createElement('input');
             buttonRow.setAttribute('type', 'button');
             buttonRow.setAttribute('value', 'Execute row');
             
-            pRow = document.createElement('div');
+            var pRow = document.createElement('div');
             pRow.className = "shortcut";
             pRow.appendChild(buttonRow);
             
-            divPlugins = document.createElement('div');
+            var divPlugins = document.createElement('div');
             divPlugins.className = "plugins";
             
-            divRow = document.createElement('div');
+            var divRow = document.createElement('div');
             divRow.className = "row";
             divRow.appendChild(pRow);
             
-            buttonsN = 0;
+            var rowFunctions = [];
+            var buttonsN = 0;
             
             for (var f in row) {
-                ff = row[f];
+                var ff = row[f];
                 
-                buttonFunction = document.createElement('input');
+                var buttonFunction = document.createElement('input');
                 buttonFunction.setAttribute('type', 'button');
                 buttonFunction.setAttribute('value', ff[1]);
                 
-                buttons = [buttonFunction, buttonRow, buttonAll];
+                buttonFunction.addEventListener("click", (function (fn, arg) {
+                    return function () {
+                        // window[string] doesn't work
+                        eval("WM.Plugins." + fn + ".main")(arg, null);
+                    }
+                })(ff[0], ff[2]), false);
                 
-                for (var button in buttons) {
-                    buttons[button].addEventListener("click", (function (fn, arg) {
-                        return function () {
-                            // window[string] doesn't work
-                            eval("WM.Plugins." + fn + ".main")(arg);
-                        }
-                    })(ff[0], ff[2]), false);
-                };
+                // window[string] doesn't work
+                var exFunction = eval("WM.Plugins." + ff[0] + ".main");
+                rowFunctions.push([exFunction, ff[2]]);
+                allFunctions.push([exFunction, ff[2]]);
                 
-                divFunction = document.createElement('div');
+                var divFunction = document.createElement('div');
                 divFunction.className = 'pluginUI';
                 divFunction.appendChild(buttonFunction);
                 
-                makeUI = eval("WM.Plugins." + ff[0] + ".makeUI");
+                var makeUI = eval("WM.Plugins." + ff[0] + ".makeUI");
                 if (makeUI instanceof Function) {
                     divFunction.appendChild(makeUI(ff[2]));
                 }
@@ -1966,6 +2410,12 @@ WM.UI = new function () {
                 
                 buttonsN++;
             }
+            
+            buttonRow.addEventListener("click", (function (rowFunctions) {
+                return function () {
+                    WM.UI._executeAsync(rowFunctions, -1);
+                };
+            })(rowFunctions), false);
             
             divRow.appendChild(divPlugins);
             divContainer.appendChild(divRow);
@@ -1976,6 +2426,12 @@ WM.UI = new function () {
             
             rowsN++;
         }
+        
+        buttonAll.addEventListener("click", (function (allFunctions) {
+            return function () {
+                WM.UI._executeAsync(allFunctions, -1);
+            };
+        })(allFunctions), false);
         
         if (rowsN > 1) {
             divRow = document.createElement('div');
@@ -2053,7 +2509,7 @@ WM.UI = new function () {
     };
 };
 WM.Plugins.ArchWikiFixHeader = new function () {
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         
         var detLang = WM.ArchWiki.detectLanguage(WM.Editor.getTitle());
@@ -2070,21 +2526,17 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         }
         
         // DISPLAYTITLE and Template:Lowercase_title
-        var displaytitle = WM.Parser.findVariableVariables(content, "DISPLAYTITLE");
-        var lowercasetitle = WM.Parser.findTemplateTags(content, "Lowercase title");
+        var displaytitle = WM.Parser.findVariables(content, "DISPLAYTITLE");
+        var lowercasetitle = WM.Parser.findTemplates(content, "Lowercase title");
         var titlemods = displaytitle.concat(lowercasetitle);
-        var rmtitlemods = [];
-        for (var m in titlemods) {
-            rmtitlemods.push([titlemods[m].index, titlemods[m].length]);
-        }
-        rmtitlemods.sort(function (a, b) {
-            return a[0] - b[0];
+        titlemods.sort(function (a, b) {
+            return a.index - b.index;
         });
         var tempcontent = "";
         var contentId = 0;
-        for (var r in rmtitlemods) {
-            tempcontent += content.substring(contentId, rmtitlemods[r][0]);
-            contentId = rmtitlemods[r][0] + rmtitlemods[r][1];
+        for (var t in titlemods) {
+            tempcontent += content.substring(contentId, titlemods[t].index);
+            contentId = titlemods[t].index + titlemods[t].length;
         }
         tempcontent += content.substring(contentId);
         content = tempcontent;
@@ -2092,13 +2544,13 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         var lct = lowercasetitle.pop();
         var dlct = "";
         if (dt && !lct) {
-            var dlct = dt.match[0];
+            var dlct = "{{DISPLAYTITLE:" + dt.match[2] + "}}";
         }
         else if (!dt && lct) {
-            var dlct = lct.match[0];
+            var dlct = "{{Lowercase title}}";
         }
         else if (dt && lct) {
-            var dlct = (dt.match.index < lct.match.index) ? lct.match[0] : dt.match[0];
+            var dlct = (dt.index < lct.index) ? "{{Lowercase title}}" : "{{DISPLAYTITLE:" + dt.match[2] + "}}";
         }
         if (displaytitle.length || lowercasetitle.length) {
             WM.Log.logWarning("Found multiple instances of {{DISPLAYTITLE:...}} or {{Lowercase title}}: only the last one has been used, the others have been deleted");
@@ -2168,7 +2620,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         content = tempcontent;
         
         // Interlanguage links
-        var interlanguage = WM.ArchWiki.findInterlanguageLinks(content);
+        var interlanguage = WM.ArchWiki.findAllInterlanguageLinks(content);
         var iwlist = [];
         var tempcontent = "";
         var contentId = 0;
@@ -2213,7 +2665,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
             else {
                 header += "{{i18n|" + parsedTitle + "}}";
             }
-            content = content.substr(0, i18n.index) + content.substr(i18n.index + i18n.length);
+            content = Alib.Str.removeFor(content, i18n.index, i18n.length);
         }
         else {
             header += "{{i18n|" + pureTitle + "}}";
@@ -2230,11 +2682,15 @@ WM.Plugins.ArchWikiFixHeader = new function () {
             WM.Editor.writeSource(newText);
             WM.Log.logInfo("Fixed header");
         }
+        
+        if (callNext) {
+            callNext();
+        }
     };
 };
 
 WM.Plugins.ArchWikiFixHeadings = new function () {
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         
         var info = WM.Parser.findSectionHeadings(source);
@@ -2266,11 +2722,15 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Fixed section headings");
         }
+        
+        if (callNext) {
+            callNext();
+        }
     };
 };
 
 WM.Plugins.ArchWikiNewTemplates = new function () {
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         var newtext = source;
         
@@ -2314,6 +2774,10 @@ WM.Plugins.ArchWikiNewTemplates = new function () {
                 WM.Log.logWarning(tests[test][1].length + ' ' + tests[test][0] + ' instances require manual intervention');
             }
         }
+        
+        if (callNext) {
+            callNext();
+        }
     };
 };
 
@@ -2340,7 +2804,7 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
     this.doReplaceContinue = function (source, newText, links, index, call, callArgs) {
         if (links[index]) {
             WM.Log.logInfo("Processing " + links[index][0] + "...");
-            GM_xmlhttpRequest({
+            var query = {
                 method: "GET",
                 url: links[index][1],
                 onload: function (res) {
@@ -2360,27 +2824,44 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
                     }
                     index++;
                     WM.Plugins.ArchWikiTemplateAUR.doReplaceContinue(source, newText, links, index, call, callArgs);
-                }
-            });
+                },
+                onerror: function (res) {
+                    WM.Log.logError("Failed query: " + res.finalUrl);
+                },
+            };
+            try {
+                GM_xmlhttpRequest(query);
+            }
+            catch (err) {
+                WM.Log.logError("Failed HTTP request - " + err +
+                                "\nIf the error above is \"Security violation\" " +
+                                "you are probably using Wiki Monkey without " +
+                                "Scriptish, Greasemonkey or Tampermonkey: " +
+                                "see https://github.com/kynikos/wiki-monkey/wiki");
+            }
         }
         else {
             call(source, newText, callArgs);
         }
     };
     
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         WM.Log.logInfo("Replacing direct AUR package links...");
-        doReplace(source, WM.Plugins.ArchWikiTemplateAUR.mainEnd);
+        doReplace(source, WM.Plugins.ArchWikiTemplateAUR.mainEnd, callNext);
     };
     
-    this.mainEnd = function (source, newtext) {
+    this.mainEnd = function (source, newtext, callNext) {
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Replaced direct AUR package links");
         }
         else {
             WM.Log.logInfo("No replaceable AUR package links found");
+        }
+        
+        if (callNext) {
+            callNext();
         }
     };
     
@@ -2416,6 +2897,7 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
                                text: newtext,
                                basetimestamp: timestamp,
                                token: edittoken},
+                               null,
                                WM.Plugins.ArchWikiTemplateAUR.mainAutoEnd,
                                callBot);
         }
@@ -2443,7 +2925,7 @@ WM.Plugins.ExpandContractions = new function () {
         return newtext;
     };
     
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         var newtext = source;
         
@@ -2473,11 +2955,15 @@ WM.Plugins.ExpandContractions = new function () {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Expanded contractions");
         }
+        
+        if (callNext) {
+            callNext();
+        }
     };
 };
 
 WM.Plugins.MultipleLineBreaks = new function () {
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         var newtext = source;
         
@@ -2486,6 +2972,10 @@ WM.Plugins.MultipleLineBreaks = new function () {
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Removed multiple line breaks");
+        }
+        
+        if (callNext) {
+            callNext();
         }
     };
 };
@@ -2573,7 +3063,7 @@ WM.Plugins.SimpleReplace = new function () {
         return source.replace(regexp, newString);
     };
     
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var id = args[0];
         
         var source = WM.Editor.readSource();
@@ -2581,6 +3071,10 @@ WM.Plugins.SimpleReplace = new function () {
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Text substituted");
+        }
+        
+        if (callNext) {
+            callNext();
         }
     };
     
@@ -2608,6 +3102,7 @@ WM.Plugins.SimpleReplace = new function () {
                                text: newtext,
                                basetimestamp: timestamp,
                                token: edittoken},
+                               null,
                                WM.Plugins.SimpleReplace.mainAutoEnd,
                                callBot);
         }
@@ -2628,329 +3123,98 @@ WM.Plugins.SimpleReplace = new function () {
 };
 
 WM.Plugins.SynchronizeInterlanguageLinks = new function () {
-    var addNewLink = function (newlinks, lang, title, url) {
-        newlinks[lang] = {
-            title: title,
-            url: url,
-        };
-        return newlinks;
-    };
-    
-    var addVisitedLink = function (visitedlinks, lang, title, url, api) {
-        visitedlinks[lang] = {
-            title: title,
-            url: url,
-            api: api,
-            iwmap: [],
-        };
-        return visitedlinks;
-    };
-    
-    var addInterwikiMap = function(visitedlinks, lang, iwmap) {
-        visitedlinks[lang].iwmap = iwmap;
-        return visitedlinks;
-    };
-    
-    this.collectLinks = function (visitedlinks, newlinks, whitelist, callEnd, callArgs) {
-        var link;
-        
-        for (var tag in newlinks) {
-            link = {};
-            for (var key in newlinks[tag]) {
-                link[key] = newlinks[tag][key];
-            }
-            break;
-        }
-        
-        if (link) {
-            delete newlinks[tag];
-            
-            WM.Log.logInfo("Reading " + link.url + "...");
-            
-            var paths = WM.MW.getWikiPaths(link.url);
-            
-            visitedlinks = addVisitedLink(visitedlinks, tag, link.title, link.url, paths.api);
-            
-            var title = link.title;
-            
-            var query = paths.api +
-                        "?format=json" +
-                        "&action=query" +
-                        "&prop=langlinks" +
-                        "&titles=" + encodeURIComponent(title) +
-                        "&lllimit=500" +
-                        "&llurl=1" +
-                        "&redirect=1" +
-                        "&meta=siteinfo" +
-                        "&siprop=interwikimap" +
-                        "&sifilteriw=local";
-            
-            WM.Plugins.SynchronizeInterlanguageLinks.collectLinksContinue(
-                tag,
-                query,
-                visitedlinks,
-                newlinks,
-                whitelist,
-                null,
-                callEnd,
-                callArgs
-            );
-        }
-        else {
-            callEnd(visitedlinks, whitelist, callArgs);
-        }
-    };
-    
-    this.collectLinksContinue = function (tag, query, visitedlinks, newlinks, whitelist, continue_, callEnd, callArgs) {
-        if (continue_) {
-            query += "&llcontinue=" + encodeURIComponent(continue_)
-        }
-        
-        GM_xmlhttpRequest({
-            method: "GET",
-            url: query,
-            onload: function (res) {
-                // Currently only Scriptish supports the responseJSON method
-                var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
-                res = json;
-                
-                // If the wiki has the API disabled, it will stop here
-                if (res) {
-                    var iwmap = res.query.interwikimap;
-                    visitedlinks = addInterwikiMap(visitedlinks, tag, iwmap);
-                    
-                    for (var id in res.query.pages) {
-                        var page = res.query.pages[id];
-                        break;
-                    }
-                    var langlinks = page.langlinks;
-                    
-                    var conflict = false;
-                    
-                    if (langlinks) {
-                        for (var l in langlinks) {
-                            var link = langlinks[l];
-                            if (whitelist.indexOf(link.lang) > -1) {
-                                // Some old MediaWiki versions don't return the full URL
-                                if (!link.url) {
-                                    for (var iw in iwmap) {
-                                        if (iwmap[iw].prefix == link.lang) {
-                                            link.url = iwmap[iw].url.replace("$1", WM.Parser.convertSpacesToUnderscores(link["*"]));
-                                            break;
-                                        }
-                                    }
-                                }
-                                
-                                if (!visitedlinks[link.lang] && !newlinks[link.lang]) {
-                                    newlinks = addNewLink(newlinks, link.lang, link["*"], link.url);
-                                }
-                                else if ((visitedlinks[link.lang] && visitedlinks[link.lang].url != link.url) ||
-                                         (newlinks[link.lang] && newlinks[link.lang].url != link.url)) {
-                                    conflict = true;
-                                    WM.Log.logError("Conflicting interlanguage links: [[" + link.lang + ":" + link["*"] + "]]");
-                                    break;
-                                }
-                            }
-                            else {
-                                WM.Log.logWarning("[[" + link.lang + ":" + link["*"] + "]] has been ignored");
-                            }
-                        }
-                    }
-                    
-                    if (!conflict) {
-                        if (res["query-continue"]) {
-                            continue_ = res["query-continue"].langlinks.llcontinue;
-                            WM.Plugins.SynchronizeInterlanguageLinks.collectLinksContinue(
-                                tag,
-                                query,
-                                visitedlinks,
-                                newlinks,
-                                whitelist,
-                                continue_,
-                                callEnd,
-                                callArgs
-                            );
-                        }
-                        else {
-                            WM.Plugins.SynchronizeInterlanguageLinks.collectLinks(
-                                visitedlinks,
-                                newlinks,
-                                whitelist,
-                                callEnd,
-                                callArgs
-                            );
-                        }
-                    }
-                }
-                else {
-                    WM.Log.logError("It is likely that the API for this wiki is disabled");
-                }
-            },
-            onerror: function (res) {
-                WM.Log.logError("Failed query: " + res.finalUrl);
-            }
-        });
-    };
-    
-    var updateLinks = function (source, lang, whitelist, links) {
-        WM.Log.logInfo("Processing " + links[lang].url + "...");
-        
-        var iwmap = links[lang].iwmap;
-        
-        var linkList = "";
-        
-        for (var tag in links) {
-            if (tag != lang) {
-                var link = links[tag];
-                var tagFound = false;
-                for (var l in iwmap) {
-                    if (iwmap[l].prefix == tag) {
-                        if (WM.MW.getWikiPaths(iwmap[l].url).api == link.api) {
-                            linkList += "[[" + tag + ":" + link.title + "]]\n";
-                        }
-                        else {
-                            WM.Log.logWarning("On this wiki, " + tag + " interlanguage links point to a different wiki than the others, ignoring them");
-                        }
-                        tagFound = true;
-                        break;
-                    }
-                }
-                if (!tagFound) {
-                    WM.Log.logWarning(tag + " interlanguage links are not supported by this wiki, ignoring them");
-                }
-            }
-        }
-        
-        var regExp = new RegExp("(\\[\\[ *((" + whitelist.join("|") + ") *: *(.+?)) *\\]\\])\\s*", "gi");
-        var matches = Alib.RegEx.matchAll(source, regExp);
-        
-        var cleanText = "";
-        var textId = 0;
-        for (var l in matches) {
-            var link = matches[l];
-            cleanText += source.substring(textId, link.index);
-            textId = link.index + link.length;
-        }
-        cleanText += source.substring(textId);
-        
-        // Insert the new links at the index of the first previous link
-        var firstLink = matches[0].index;
-        var newText = cleanText.substr(0, firstLink) + linkList + cleanText.substr(firstLink);
-        
-        return newText;
-    };
-    
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var tag = args[0]();
         var whitelist = args[1];
         
         WM.Log.logInfo("Synchronizing interlanguage links...");
         
         var title = WM.Editor.getTitle();
+        
+        WM.MW.getInterwikiMap(
+            title,
+            WM.Plugins.SynchronizeInterlanguageLinks.mainContinue,
+            [tag, whitelist, title, callNext]
+        );
+    };
+    
+    this.mainContinue = function (iwmap, args) {
+        var tag = args[0];
+        var whitelist = args[1];
+        var title = args[2];
+        var callNext = args[3];
+        
         var source = WM.Editor.readSource();
         
-        WM.MW.callAPIGet(
-            {
-                action: "query",
-                meta: "siteinfo",
-                siprop: "interwikimap",
-                sifilteriw: "local",
-            },
-            WM.Plugins.SynchronizeInterlanguageLinks.mainContinue,
-            [tag, whitelist, title, source]
-        );
-    };
-    
-    this.mainContinue = function (res, args) {
-        var tag = args[0];
-        var whitelist = args[1];
-        var title = args[2];
-        var source = args[3];
-        
-        var iwmap = res.query.interwikimap;
-        
-        WM.MW.callAPIPost(
-            {
-                action: "parse",
-                title: title,
-                text: source,
-                prop: "langlinks",
-            },
-            WM.Plugins.SynchronizeInterlanguageLinks.mainInitialize,
-            [tag, whitelist, title, source, iwmap]
-        );
-    };
-    
-    this.mainInitialize = function (res, args) {
-        var tag = args[0];
-        var whitelist = args[1];
-        var title = args[2];
-        var source = args[3];
-        var iwmap = args[4];
+        var langlinks = WM.Interlanguage.parseLinks(whitelist, source, iwmap);
         
         var paths = WM.MW.getWikiPaths();
         var url = paths.articles + WM.Parser.convertSpacesToUnderscores(title);
-        var visitedlinks = addVisitedLink({}, tag, title, url, paths.api)
-        visitedlinks = addInterwikiMap(visitedlinks, tag, iwmap);
+        var api = paths.api;
+        
+        var visitedlinks = {};
+        visitedlinks[tag] = WM.Interlanguage.createVisitedLink(title, url, iwmap, api, source, null, null, langlinks);
+        
         var newlinks = {};
-        var langlinks = res.parse.langlinks;
+        
+        WM.Log.logInfo("Reading " + url + "...");
         
         if (langlinks) {
-            var error = false;
+            var conflict = false;
             for (var l in langlinks) {
                 var link = langlinks[l];
-                if (whitelist.indexOf(link.lang) > -1) {
-                    // Some old MediaWiki versions don't return the full URL
-                    if (!link.url) {
-                        for (var iw in iwmap) {
-                            if (iwmap[iw].prefix == link.lang) {
-                                link.url = iwmap[iw].url.replace("$1", WM.Parser.convertSpacesToUnderscores(link["*"]));
-                                break;
-                            }
-                        }
-                    }
-                    
-                    if (!visitedlinks[link.lang] && !newlinks[link.lang]) {
-                        newlinks = addNewLink(newlinks, link.lang, link["*"], link.url);
-                    }
-                    else {
-                        WM.Log.logError("Conflicting interlanguage links: [[" + link.lang + ":" + link["*"] + "]]");
-                        error = true;
-                    }
+                if (!visitedlinks[link.lang] && !newlinks[link.lang]) {
+                    newlinks[link.lang] = WM.Interlanguage.createNewLink(link.title, link.url);
                 }
-                else {
-                    WM.Log.logWarning("[[" + link.lang + ":" + link["*"] + "]] has been ignored");
-                    error = true;
+                else if ((visitedlinks[link.lang] && visitedlinks[link.lang].url != link.url) ||
+                         (newlinks[link.lang] && newlinks[link.lang].url != link.url)) {
+                    conflict = true;
+                    WM.Log.logError("Conflicting interlanguage links: [[" + link.lang + ":" + link.title + "]]");
+                    break;
                 }
             }
         
-            if (!error) {
-                WM.Plugins.SynchronizeInterlanguageLinks.collectLinks(
+            if (!conflict) {
+                WM.Interlanguage.collectLinks(
                     visitedlinks,
                     newlinks,
                     whitelist,
+                    false,
                     WM.Plugins.SynchronizeInterlanguageLinks.mainEnd,
-                    [tag, source]
+                    [tag, url, source, langlinks, iwmap, callNext]
                 );
             }
         }
         else {
             WM.Log.logInfo("No interlanguage links found");
+            if (callNext) {
+                callNext();
+            }
         }
     };
     
-    this.mainEnd = function (links, whitelist, args) {
+    this.mainEnd = function (links, args) {
         var tag = args[0];
-        var source = args[1];
+        var url = args[1];
+        var source = args[2];
+        var langlinks = args[3];
+        var iwmap = args[4];
+        var callNext = args[5];
         
-        var newText = updateLinks(source, tag, whitelist, links);
+        if (links != "conflict") {
+            var newText = WM.Interlanguage.updateLinks(tag, url, iwmap, source, langlinks, links);
+            
+            if (newText != source) {
+                WM.Editor.writeSource(newText);
+                WM.Log.logInfo("Sycnhronized interlanguage links");
+            }
+            else {
+                WM.Log.logInfo("Interlanguage links were already synchronized");
+            }
         
-        if (newText != source) {
-            WM.Editor.writeSource(newText);
-            WM.Log.logInfo("Sycnhronized interlanguage links");
-        }
-        else {
-            WM.Log.logInfo("Interlanguage links were already synchronized");
+            if (callNext) {
+                callNext();
+            }
         }
     };
     
@@ -2961,48 +3225,56 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         
         var paths = WM.MW.getWikiPaths();
         var url = paths.articles + WM.Parser.convertSpacesToUnderscores(title);
-        var newlinks = addNewLink({}, tag, title, url);
         
-        WM.Plugins.SynchronizeInterlanguageLinks.collectLinks(
-            {},
+        var visitedlinks = {};
+        
+        var newlinks = {};
+        newlinks[link.lang] = WM.Interlanguage.createNewLink(title, url);
+        
+        WM.Interlanguage.collectLinks(
+            visitedlinks,
             newlinks,
             whitelist,
-            WM.Plugins.SynchronizeInterlanguageLinks.mainAutoRead,
-            [title, tag, summary, callBot]
+            false,
+            WM.Plugins.SynchronizeInterlanguageLinks.mainAutoWrite,
+            [title, url, tag, summary, callBot]
         );
     };
     
-    this.mainAutoRead = function (links, whitelist, args) {
+    this.mainAutoWrite = function (links, args) {
         var title = args[0];
-        var tag = args[1];
-        var summary = args[2];
-        var callBot = args[3];
+        var url = args[1];
+        var tag = args[2];
+        var summary = args[3];
+        var callBot = args[4];
         
-        WM.MW.callQueryEdit(title,
-                            WM.Plugins.SynchronizeInterlanguageLinks.mainAutoWrite,
-                            [tag, summary, callBot]);
-    };
-    
-    this.mainAutoWrite = function (title, source, timestamp, edittoken, args) {
-        var tag = args[0];
-        var summary = args[1];
-        var callBot = args[2];
-        
-        var newText = updateLinks(source, tag, whitelist, links);
-        
-        if (newText != source) {
-            WM.MW.callAPIPost({action: "edit",
-                               bot: "1",
-                               title: title,
-                               summary: summary,
-                               text: newtext,
-                               basetimestamp: timestamp,
-                               token: edittoken},
-                               WM.Plugins.SynchronizeInterlanguageLinks.mainAutoEnd,
-                               callBot);
+        if (links != "conflict") {
+            var iwmap = links[tag].iwmap;
+            var source = links[tag].source;
+            var langlinks = links[tag].links;
+            var timestamp = links[tag].timestamp;
+            var edittoken = links[tag].edittoken;
+            
+            var newText = WM.Interlanguage.updateLinks(tag, url, iwmap, source, langlinks, links);
+            
+            if (newText != source) {
+                WM.MW.callAPIPost({action: "edit",
+                                   bot: "1",
+                                   title: title,
+                                   summary: summary,
+                                   text: newText,
+                                   basetimestamp: timestamp,
+                                   token: edittoken},
+                                   null,
+                                   WM.Plugins.SynchronizeInterlanguageLinks.mainAutoEnd,
+                                   callBot);
+            }
+            else {
+                callBot(true);
+            }
         }
         else {
-            callBot(true);
+            callBot(false);
         }
     };
     
@@ -3033,6 +3305,7 @@ WM.UI.setEditor([
          [function () {
              var title = WM.Editor.getTitle();
              var language = WM.ArchWiki.detectLanguage(title)[1];
+            // The language must correspond to a working interwiki tag
              return WM.ArchWiki.getInterlanguageTag(language);
          },
          WM.ArchWiki.getAliveInterwikiLanguages()]],
