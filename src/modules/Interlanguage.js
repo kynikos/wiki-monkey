@@ -158,7 +158,7 @@ WM.Interlanguage = new function () {
         for (var l in langlinks) {
             var link = langlinks[l];
             if (!visitedlinks[link.lang] && !newlinks[link.lang]) {
-                newlinks[link.lang] = this.createNewLink(link.title, link.url);
+                newlinks[link.lang] = WM.Interlanguage.createNewLink(link.title, link.url);
             }
             else if ((visitedlinks[link.lang] && visitedlinks[link.lang].url != link.url) ||
                      (newlinks[link.lang] && newlinks[link.lang].url != link.url)) {
@@ -212,8 +212,13 @@ WM.Interlanguage = new function () {
         }
         cleanText += source.substring(textId);
         
-        // Insert the new links at the index of the first previous link
-        var firstLink = oldlinks[0].index;
+        if (oldlinks.length) {
+            // Insert the new links at the index of the first previous link
+            var firstLink = oldlinks[0].index;
+        }
+        else {
+            var firstLink = 0;
+        }
         
         var part1 = cleanText.substring(0, firstLink);
         var part2a = cleanText.substr(firstLink);

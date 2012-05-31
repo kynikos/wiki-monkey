@@ -57,6 +57,7 @@ WM.UI.setEditor([
          [function () {
              var title = WM.Editor.getTitle();
              var language = WM.ArchWiki.detectLanguage(title)[1];
+            // The language must correspond to a working interwiki tag
              return WM.ArchWiki.getInterlanguageTag(language);
          },
          WM.ArchWiki.getAliveInterwikiLanguages()]],
