@@ -64,12 +64,21 @@ WM.Interlanguage = new function () {
             api,
             function (res, args) {
                 var page = Alib.Obj.getFirstItem(res.query.pages);
-                var source = page.revisions[0]["*"];
-                var timestamp = page.revisions[0].timestamp;
-                var edittoken = page.edittoken;
-                var iwmap = res.query.interwikimap;
-        
-                var langlinks = WM.Interlanguage.parseLinks(whitelist, source, iwmap);
+                if (page.revisions) {
+                    var source = page.revisions[0]["*"];
+                    var timestamp = page.revisions[0].timestamp;
+                    var edittoken = page.edittoken;
+                    var iwmap = res.query.interwikimap;
+                    var langlinks = WM.Interlanguage.parseLinks(whitelist, source, iwmap);
+                }
+                else {
+                    // The requested article doesn't exist
+                    var source = "missing";
+                    var timestamp = null;
+                    var edittoken = null;
+                    var iwmap = res.query.interwikimap;
+                    var langlinks = "missing";
+                }
                 
                 callEnd(
                     api,
@@ -110,8 +119,9 @@ WM.Interlanguage = new function () {
         return entry;
     };
     
-    this.collectLinks = function (visitedlinks, newlinks, whitelist, conflict, callEnd, callArgs) {
-        if (!conflict) {
+    this.collectLinks = function (visitedlinks, newlinks, whitelist, error, callEnd, callArgs) {
+        // If error is "missing" it should be possible to continue safely
+        if (error != "conflict") {
             for (var tag in newlinks) {
                 var link = newlinks[tag];
                 break;
@@ -139,7 +149,7 @@ WM.Interlanguage = new function () {
             }
         }
         else {
-            callEnd("conflict", callArgs);
+            callEnd(error, callArgs);
         }
     };
     
@@ -150,29 +160,35 @@ WM.Interlanguage = new function () {
         var newlinks = args[3];
         var callEnd = args[4];
         var callArgs = args[5];
+            
+        var error = "";
         
-        visitedlinks[tag] = WM.Interlanguage.createVisitedLink(title, url, iwmap, api, source, timestamp, edittoken, langlinks);
-        
-        var conflict = false;
-        
-        for (var l in langlinks) {
-            var link = langlinks[l];
-            if (!visitedlinks[link.lang] && !newlinks[link.lang]) {
-                newlinks[link.lang] = WM.Interlanguage.createNewLink(link.title, link.url);
+        if (langlinks != "missing") {
+            visitedlinks[tag] = WM.Interlanguage.createVisitedLink(title, url, iwmap, api, source, timestamp, edittoken, langlinks);
+            
+            for (var l in langlinks) {
+                var link = langlinks[l];
+                if (!visitedlinks[link.lang] && !newlinks[link.lang]) {
+                    newlinks[link.lang] = WM.Interlanguage.createNewLink(link.title, link.url);
+                }
+                else if ((visitedlinks[link.lang] && visitedlinks[link.lang].url != link.url) ||
+                         (newlinks[link.lang] && newlinks[link.lang].url != link.url)) {
+                    error = "conflict";
+                    WM.Log.logError("Conflicting interlanguage links: [[" + link.lang + ":" + link.title + "]]");
+                    break;
+                }
             }
-            else if ((visitedlinks[link.lang] && visitedlinks[link.lang].url != link.url) ||
-                     (newlinks[link.lang] && newlinks[link.lang].url != link.url)) {
-                conflict = true;
-                WM.Log.logError("Conflicting interlanguage links: [[" + link.lang + ":" + link.title + "]]");
-                break;
-            }
+        }
+        else {
+            error = "missing";
+            WM.Log.logWarning("[[" + tag + ":" + title + "]] seems to point to a non-existing article, removing it");
         }
         
         WM.Interlanguage.collectLinks(
             visitedlinks,
             newlinks,
             whitelist,
-            conflict,
+            error,
             callEnd,
             callArgs
         );
