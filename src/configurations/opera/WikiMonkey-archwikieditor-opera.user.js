@@ -3,12 +3,12 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version development-archwikieditor-opera
+// @version 1.11.0-archwikieditor-opera
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/opera/WikiMonkey-archwikieditor-opera.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/opera/WikiMonkey-archwikieditor-opera.user.js
+// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/opera/WikiMonkey-archwikieditor-opera.meta.js
+// @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/opera/WikiMonkey-archwikieditor-opera.user.js
 // @icon http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey.png
 // @icon64 http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey-64.png
 // @include https://wiki.archlinux.org/*
@@ -3227,7 +3227,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
             
             if (newText != source) {
                 WM.Editor.writeSource(newText);
-                WM.Log.logInfo("Sycnhronized interlanguage links");
+                WM.Log.logInfo("Synchronized interlanguage links");
             }
             else {
                 WM.Log.logInfo("Interlanguage links were already synchronized");
@@ -3240,7 +3240,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
     };
     
     this.mainAuto = function (args, title, callBot) {
-        var tag = args[0]();
+        var tag = args[0](title);
         var whitelist = args[1];
         var summary = args[2];
         
@@ -3250,7 +3250,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         var visitedlinks = {};
         
         var newlinks = {};
-        newlinks[link.lang] = WM.Interlanguage.createNewLink(title, url);
+        newlinks[tag] = WM.Interlanguage.createNewLink(title, url);
         
         WM.Interlanguage.collectLinks(
             visitedlinks,
@@ -3320,17 +3320,6 @@ WM.UI.setEditor([
     ],
     [
         ["SimpleReplace", "RegExp substitution", ["1"]]
-    ],
-    [
-        ["SynchronizeInterlanguageLinks", "Sync interlanguage links",
-         [function () {
-             var title = WM.Editor.getTitle();
-             var language = WM.ArchWiki.detectLanguage(title)[1];
-            // The language must correspond to a working interwiki tag
-             return WM.ArchWiki.getInterlanguageTag(language);
-         },
-         WM.ArchWiki.getAliveInterwikiLanguages()]],
-        ["ArchWikiTemplateAUR", "Use Template:AUR", null]
     ]
 ]);
 
