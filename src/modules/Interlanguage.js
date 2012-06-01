@@ -140,7 +140,7 @@ WM.Interlanguage = new function () {
                     api,
                     title,
                     whitelist,
-                    WM.Interlanguage.collectLinksContinue,
+                    WM.Interlanguage._collectLinksContinue,
                     [url, tag, visitedlinks, newlinks, callEnd, callArgs]
                 );
             }
@@ -153,7 +153,7 @@ WM.Interlanguage = new function () {
         }
     };
     
-    this.collectLinksContinue = function (api, title, whitelist, langlinks, iwmap, source, timestamp, edittoken, args) {
+    this._collectLinksContinue = function (api, title, whitelist, langlinks, iwmap, source, timestamp, edittoken, args) {
         var url = args[0];
         var tag = args[1];
         var visitedlinks = args[2];
