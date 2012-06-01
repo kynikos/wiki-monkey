@@ -1,18 +1,23 @@
 * Make sure to be on the development branch
+* Adapt the main configurations for creating the compatibility versions:
+  * Restrict SynchronizeInterlanguageLinks's whitelist to only local languages
+    or remove the plugin altogether
+  * Remove the ArchWikiTemplateAUR plugin
 * Run compatibility.py
+* Restore the main configurations to their original state
 * Commit and push to the remote repository
 * Install all the configurations and check that they work correctly in every
   supported browser
 * Run release.py VERSION ALIB_VERSION (check that the ALIB_VERSION tag exists)
 * Commit
+* Adapt the main configurations for creating the compatibility versions
 * Run compatibility.py
+* Restore the main configurations to their original state
 * Commit
 * Checkout the master branch and merge the development branch
 * Tag the release commit with the new version number
 * Checkout the development branch
 * Run release.py DEVELOPMENT
-* Commit
-* Run compatibility.py
 * Commit
 * Push to the remote repository
 * Update documentation
