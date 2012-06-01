@@ -1,19 +1,3 @@
-// ==UserScript==
-// @id wiki-monkey-archwikipatrol-chromium
-// @name Wiki Monkey
-// @namespace https://github.com/kynikos/wiki-monkey
-// @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.11.0-archwikipatrol-chromium
-// @description MediaWiki-compatible bot and editor assistant that runs in the browser
-// @website https://github.com/kynikos/wiki-monkey
-// @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-archwikipatrol-chromium.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-archwikipatrol-chromium.user.js
-// @icon http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey.png
-// @icon64 http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey-64.png
-// @match https://wiki.archlinux.org/*
-// ==/UserScript==
-
 /*
  *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
  *  Copyright (C) 2011-2012 Dario Giovannetti <dev@dariogiovannetti.net>
@@ -33,6 +17,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+if (location.href.match(/^https:\/\/wiki\.archlinux\.org/i)) {
 
 if (!GM_setValue || !GM_getValue || !GM_listValues || !GM_deleteValue) {
     var setWikiMonkeyGmApiEmulationCookie = function (value) {
@@ -2797,111 +2783,6 @@ WM.Plugins.ArchWikiNewTemplates = new function () {
     };
 };
 
-WM.Plugins.ArchWikiQuickReport = new function () {
-    this.makeUI = function (args) {
-        var id = args[0];
-        var article = args[1];
-        
-        var select = document.createElement('select');
-        var types = ["&lt;TYPE&gt;", "content", "style"];
-        var value;
-        for (var v in types) {
-            value = types[v];
-            option = document.createElement('option');
-            option.setAttribute('value', value);
-            option.innerHTML = value;
-            select.appendChild(option);
-        }
-        select.id = "ArchWikiQuickReport-select-" + id;
-        
-        var input = document.createElement('input');
-        input.setAttribute('type', 'text');
-        input.id = "ArchWikiQuickReport-input-" + id;
-        
-        var link = document.createElement('a');
-        link.href = "/index.php/" + article;
-        link.innerHTML = article;
-        
-        var span = document.createElement('span');
-        span.appendChild(select);
-        span.appendChild(input);
-        span.appendChild(link);
-        
-        return span;
-    };
-    
-    this.main = function (args, callNext) {
-        var id = args[0];
-        var article = args[1];
-        var summary = args[2];
-        
-        WM.Log.logInfo('Appending diff to ' + article + "...");
-        
-        var select = document.getElementById("ArchWikiQuickReport-select-" + id);
-        var type = select.options[select.selectedIndex].value;
-        
-        if (type != 'content' && type != 'style') {
-            WM.Log.logError('Select a valid report type');
-        }
-        else {
-            WM.Diff.getEndTimestamp(WM.Plugins.ArchWikiQuickReport.mainGetEndTimestamp,
-                                    [id, article, type, summary, callNext]);
-        }
-    };
-    
-    this.mainGetEndTimestamp = function (enddate, args) {
-        var id = args[0];
-        var article = args[1];
-        var type = args[2];
-        var summary = args[3];
-        var callNext = args[4];
-        
-        WM.MW.callQueryEdit(article,
-                            WM.Plugins.ArchWikiQuickReport.mainWrite,
-                            [id, type, summary, enddate, callNext]);
-    };
-    
-    this.mainWrite = function (article, source, timestamp, edittoken, args) {
-        var id = args[0];
-        var type = args[1];
-        var summary = args[2];
-        var enddate = args[3];
-        var callNext = args[4];
-        
-        var title = Alib.HTTP.getURIParameter('title');
-        var pEnddate = enddate.substr(0, 10) + " " + enddate.substr(11, 8);
-        var notes = document.getElementById("ArchWikiQuickReport-input-" + id).value;
-        
-        var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", pEnddate, type, notes]);
-        
-        WM.MW.callAPIPost({action: "edit",
-                           bot: "1",
-                           title: article,
-                           summary: summary,
-                           text: newtext,
-                           basetimestamp: timestamp,
-                           token: edittoken},
-                           null,
-                           WM.Plugins.ArchWikiQuickReport.mainEnd,
-                           [article, callNext]);
-    };
-    
-    this.mainEnd = function (res, args) {
-        var article = args[0];
-        var callNext = args[1];
-        
-        if (res.edit && res.edit.result == 'Success') {
-            WM.Log.logInfo('Diff correctly appended to ' + article);
-            if (callNext) {
-                callNext();
-            }
-        }
-        else {
-            WM.Log.logError('The diff has not been appended!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
-        }
-    };
-};
-
 WM.Plugins.ArchWikiTemplateAUR = new function () {
     var doReplace = function (source, call, callArgs) {
         var regExp = /\[(https?\:\/\/aur\.archlinux\.org\/packages\.php\?ID\=[0-9]+) ([^\]]+?)\]/g;
@@ -3428,12 +3309,7 @@ WM.UI.setEditor([
     ]
 ]);
 
-WM.UI.setDiff([
-    [
-        ["ArchWikiQuickReport", "Quick report",
-         ["1", "ArchWiki:Reports", "add report"]]
-    ]
-]);
+WM.UI.setDiff(null);
 
 WM.UI.setCategory(null);
 
@@ -3446,3 +3322,5 @@ WM.UI.setSpecial(null);
 WM.UI.setSpecialList(null);
 
 WM.main();
+
+}

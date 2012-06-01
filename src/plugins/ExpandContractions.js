@@ -7,7 +7,7 @@ WM.Plugins.ExpandContractions = new function () {
         return newtext;
     };
     
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         var newtext = source;
         
@@ -26,6 +26,7 @@ WM.Plugins.ExpandContractions = new function () {
         // Replacing he's, she's, that's, what's, where's, who's ... may be too dangerous
         newtext = replace(newtext, /([a-z])'s (been)/ig, '$1 has $2', "'s been", ["has been"]);
         newtext = replace(newtext, /(let)'s/ig, '$1 us', "let's", ["let us"]);
+        newtext = replace(newtext, /(it)'(s own)/ig, '$1$2', "it's own", ["its own"]);
         
         var ss = newtext.match(/[a-z]'s/gi);
         if (ss) {
@@ -35,6 +36,10 @@ WM.Plugins.ExpandContractions = new function () {
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Expanded contractions");
+        }
+        
+        if (callNext) {
+            callNext();
         }
     };
 };

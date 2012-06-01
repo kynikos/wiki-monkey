@@ -1,37 +1,49 @@
 WM.Plugins.ArchWikiWantedCategories = new function () {
-    this.mainAuto = function (args, title) {
+    this.mainAuto = function (args, title, callBot) {
         title = title.replace(" (page does not exist)", "");
         
-        var pageid = WM.MW.callQuery({prop: "info",
-                                      intoken: "edit",
-                                      titles: encodeURIComponent(title)});
+        WM.MW.callQuery({prop: "info",
+                         intoken: "edit",
+                         titles: title},
+                         WM.Plugins.ArchWikiWantedCategories.mainAutoWrite,
+                         [title, callBot]);
+    };
+    
+    this.mainAutoWrite = function (page, args) {
+        var title = args[0];
+        var callBot = args[1];
         
-        var edittoken = pageid.edittoken;
+        var edittoken = page.edittoken;
         
-        var language = title.match(/^(.+?)([ _]\(([^\(]+)\))?$/)[3];
+        var language = WM.ArchWiki.detectLanguage(title)[1];
         
-        if (language && WM.ArchWiki.isCategoryLanguage(language)) {
+        if (language != WM.ArchWiki.getLocalLanguage()) {
             var text = "[[Category:" + language + "]]";
             var summary = "wanted category";
             
-            var res = WM.MW.callAPIPost({action: "edit",
-                                     bot: "1",
-                                     title: encodeURIComponent(title),
-                                     summary: encodeURIComponent(summary),
-                                     text: encodeURIComponent(text),
-                                     createonly: "1",
-                                     token: encodeURIComponent(edittoken)});
-            
-            if (res.edit && res.edit.result == 'Success') {
-                return true;
-            }
-            else {
-                WM.Log.logError(res['error']['info'] + " (" + res['error']['code'] + ")");
-                return false;
-            }
+            WM.MW.callAPIPost({action: "edit",
+                               bot: "1",
+                               title: title,
+                               summary: summary,
+                               text: text,
+                               createonly: "1",
+                               token: edittoken},
+                               null,
+                               WM.Plugins.ArchWikiWantedCategories.mainAutoWrite,
+                               callBot);
         }
         else {
-            return true;
+            callBot(true);
+        }
+    };
+    
+    this.mainAutoEnd = function (res, callBot) {
+        if (res.edit && res.edit.result == 'Success') {
+            callBot(true);
+        }
+        else {
+            WM.Log.logError(res['error']['info'] + " (" + res['error']['code'] + ")");
+            callBot(false);
         }
     };
 };

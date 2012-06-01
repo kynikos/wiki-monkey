@@ -1,27 +1,28 @@
 * Make sure to be on the development branch
-* Create a temporary branch named after the version to be released
-* Checkout the new branch
-* Run release.py
-  * Edit all WikiMonkey-configuration.user.js scripts:
-    - Change @id to stable id
-    - Change @version to the next version number
-    - Switch @updateURL and @downloadURL to the master branch (NOT the
-      temporary branch!)
-    - Switch @require scripts to the temporary new version branch
-  * Edit all WikiMonkey-configuration.meta.js scripts:
-    - Change @version to the next version number (must be identical to the
-      value in WikiMonkey.user.js)
-* Commit
+* Adapt the main configurations for creating the compatibility versions:
+  * Restrict SynchronizeInterlanguageLinks's whitelist to only local languages
+    or remove the plugin altogether
+  * Remove the ArchWikiTemplateAUR plugin
 * Run compatibility.py
+* Restore the main configurations to their original state
 * Commit and push to the remote repository
-* Install all the temporary-version configurations and check that they work
-  correctly
-* Checkout the master branch and merge the temporary branch into the master
-  branch (assess the possibility of a rebase)
-* Delete the temporary branch both locally and remotely
-  ("git push origin :tmpbranch" or "git push origin :refs/heads/tmpbranch")
-* Tag the release commit with the new version number (the @require scripts
-  will continue working this way)
-* Push to the remote repository
+* Install all the configurations and check that they work correctly in every
+  supported browser
+* Run release.py VERSION ALIB_VERSION (check that the ALIB_VERSION tag exists)
+* Commit
+* Adapt the main configurations for creating the compatibility versions
+* Run compatibility.py
+* Restore the main configurations to their original state
+* Commit
+* Checkout the master branch and merge the development branch
+* Tag the release commit with the new version number
 * Checkout the development branch
+* Run release.py DEVELOPMENT
+* Commit
+* Push to the remote repository
 * Update documentation
+
+NOTES:
+* To force merge "theirs" branch: `git merge -X theirs branch`
+* To delete a remote branch: `git push origin :tmpbranch`
+  or `git push origin :refs/heads/tmpbranch`

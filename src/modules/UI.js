@@ -61,6 +61,17 @@ WM.UI = new function () {
         specialList = rows;
     };
     
+    this._executeAsync = function (functions, id) {
+        id++;
+        if (functions[id]) {
+            var fid = functions[id];
+            var callContinue = function () {
+                WM.UI._executeAsync(functions, id);
+            };
+            fid[0](fid[1], callContinue);
+        }
+    };
+    
     var makeButtons = function (functions) {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyButtons';
@@ -76,52 +87,54 @@ WM.UI = new function () {
         buttonAll.setAttribute('value', 'Execute all');
         buttonAll.id = "WikiMonkeyButtonAll";
         
-        var row, buttonsN, divRow, pRow, buttonRow, divPlugins, divFunction, buttonFunction, ff, buttons, makeUI;
+        var allFunctions = [];
         var rowsN = 0;
         
         for (var r in functions) {
-            row = functions[r];
+            var row = functions[r];
             
-            buttonRow = document.createElement('input');
+            var buttonRow = document.createElement('input');
             buttonRow.setAttribute('type', 'button');
             buttonRow.setAttribute('value', 'Execute row');
             
-            pRow = document.createElement('div');
+            var pRow = document.createElement('div');
             pRow.className = "shortcut";
             pRow.appendChild(buttonRow);
             
-            divPlugins = document.createElement('div');
+            var divPlugins = document.createElement('div');
             divPlugins.className = "plugins";
             
-            divRow = document.createElement('div');
+            var divRow = document.createElement('div');
             divRow.className = "row";
             divRow.appendChild(pRow);
             
-            buttonsN = 0;
+            var rowFunctions = [];
+            var buttonsN = 0;
             
             for (var f in row) {
-                ff = row[f];
+                var ff = row[f];
                 
-                buttonFunction = document.createElement('input');
+                var buttonFunction = document.createElement('input');
                 buttonFunction.setAttribute('type', 'button');
                 buttonFunction.setAttribute('value', ff[1]);
                 
-                buttons = [buttonFunction, buttonRow, buttonAll];
+                buttonFunction.addEventListener("click", (function (fn, arg) {
+                    return function () {
+                        // window[string] doesn't work
+                        eval("WM.Plugins." + fn + ".main")(arg, null);
+                    }
+                })(ff[0], ff[2]), false);
                 
-                for (var button in buttons) {
-                    buttons[button].addEventListener("click", (function (fn, arg) {
-                        return function () {
-                            // window[string] doesn't work
-                            eval("WM.Plugins." + fn + ".main")(arg);
-                        }
-                    })(ff[0], ff[2]), false);
-                };
+                // window[string] doesn't work
+                var exFunction = eval("WM.Plugins." + ff[0] + ".main");
+                rowFunctions.push([exFunction, ff[2]]);
+                allFunctions.push([exFunction, ff[2]]);
                 
-                divFunction = document.createElement('div');
+                var divFunction = document.createElement('div');
                 divFunction.className = 'pluginUI';
                 divFunction.appendChild(buttonFunction);
                 
-                makeUI = eval("WM.Plugins." + ff[0] + ".makeUI");
+                var makeUI = eval("WM.Plugins." + ff[0] + ".makeUI");
                 if (makeUI instanceof Function) {
                     divFunction.appendChild(makeUI(ff[2]));
                 }
@@ -130,6 +143,12 @@ WM.UI = new function () {
                 
                 buttonsN++;
             }
+            
+            buttonRow.addEventListener("click", (function (rowFunctions) {
+                return function () {
+                    WM.UI._executeAsync(rowFunctions, -1);
+                };
+            })(rowFunctions), false);
             
             divRow.appendChild(divPlugins);
             divContainer.appendChild(divRow);
@@ -141,6 +160,12 @@ WM.UI = new function () {
             rowsN++;
         }
         
+        buttonAll.addEventListener("click", (function (allFunctions) {
+            return function () {
+                WM.UI._executeAsync(allFunctions, -1);
+            };
+        })(allFunctions), false);
+        
         if (rowsN > 1) {
             divRow = document.createElement('div');
             divRow.className = "row";
@@ -151,7 +176,7 @@ WM.UI = new function () {
         return divContainer;
     };
     
-    this.makeUI = function () {
+    this._makeUI = function () {
         var nextNode, UI;
         
         if (document.getElementById('editform')) {
@@ -164,17 +189,17 @@ WM.UI = new function () {
         }
         else if (document.getElementById('mw-subcategories') || document.getElementById('mw-pages')) {
             nextNode = document.getElementById('bodyContent');
-            UI = (category) ? WM.Bot.makeUI(category, [[document.getElementById('mw-pages'), 0, "Pages"], [document.getElementById('mw-subcategories'), 0, "Subcategories"]]) : null;
+            UI = (category) ? WM.Bot._makeUI(category, [[document.getElementById('mw-pages'), 0, "Pages"], [document.getElementById('mw-subcategories'), 0, "Subcategories"]]) : null;
         }
         else if (document.getElementById('mw-whatlinkshere-list')) {
             nextNode = document.getElementById('bodyContent').getElementsByTagName('form')[0].nextSibling;
-            UI = (whatLinksHere) ? WM.Bot.makeUI(whatLinksHere, [[document.getElementById('mw-whatlinkshere-list'), 0, "Pages"]]) : null;
+            UI = (whatLinksHere) ? WM.Bot._makeUI(whatLinksHere, [[document.getElementById('mw-whatlinkshere-list'), 0, "Pages"]]) : null;
         }
         else if (document.getElementById('mw-linksearch-form') && document.getElementById('bodyContent').getElementsByTagName('ol')[0]) {
             nextNode = document.getElementById('mw-linksearch-form').nextSibling;
-            UI = (linkSearch) ? WM.Bot.makeUI(linkSearch, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 1, "Pages"]]) : null;
+            UI = (linkSearch) ? WM.Bot._makeUI(linkSearch, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 1, "Pages"]]) : null;
         }
-        else if (location.href.indexOf(WM.MW.getArticlesBaseUrl() + "/Special:SpecialPages") > -1) {
+        else if (location.href.indexOf(WM.MW.getWikiPaths().articles + "Special:SpecialPages") > -1) {
             nextNode = document.getElementById('bodyContent');
             UI = (special) ? makeButtons(special) : null;
         }
@@ -184,7 +209,7 @@ WM.UI = new function () {
             // Using for...in to loop through node lists is not supported by Chrome
             for (var div = 0; div < nextNodeDivs.length; div++) {
                 if (nextNodeDivs[div].className == 'mw-spcontent') {
-                    UI = (specialList) ? WM.Bot.makeUI(specialList, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
+                    UI = (specialList) ? WM.Bot._makeUI(specialList, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
                     break;
                 }
             }
@@ -211,7 +236,7 @@ WM.UI = new function () {
             main.appendChild(help);
             
             main.appendChild(UI);
-            main.appendChild(WM.Log.makeLogArea());
+            main.appendChild(WM.Log._makeLogArea());
             nextNode.parentNode.insertBefore(main, nextNode);
         }
     };

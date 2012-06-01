@@ -1,19 +1,3 @@
-// ==UserScript==
-// @id wiki-monkey-archwikipatrol-chromium
-// @name Wiki Monkey
-// @namespace https://github.com/kynikos/wiki-monkey
-// @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.11.0-archwikipatrol-chromium
-// @description MediaWiki-compatible bot and editor assistant that runs in the browser
-// @website https://github.com/kynikos/wiki-monkey
-// @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-archwikipatrol-chromium.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-archwikipatrol-chromium.user.js
-// @icon http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey.png
-// @icon64 http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey-64.png
-// @match https://wiki.archlinux.org/*
-// ==/UserScript==
-
 /*
  *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
  *  Copyright (C) 2011-2012 Dario Giovannetti <dev@dariogiovannetti.net>
@@ -33,6 +17,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+if (location.href.match(/^https:\/\/wiki\.archlinux\.org/i)) {
 
 if (!GM_setValue || !GM_getValue || !GM_listValues || !GM_deleteValue) {
     var setWikiMonkeyGmApiEmulationCookie = function (value) {
@@ -3446,3 +3432,5 @@ WM.UI.setSpecial(null);
 WM.UI.setSpecialList(null);
 
 WM.main();
+
+}

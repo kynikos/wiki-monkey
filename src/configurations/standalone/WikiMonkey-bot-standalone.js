@@ -1,19 +1,3 @@
-// ==UserScript==
-// @id wiki-monkey-archwikipatrol-chromium
-// @name Wiki Monkey
-// @namespace https://github.com/kynikos/wiki-monkey
-// @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.11.0-archwikipatrol-chromium
-// @description MediaWiki-compatible bot and editor assistant that runs in the browser
-// @website https://github.com/kynikos/wiki-monkey
-// @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-archwikipatrol-chromium.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-archwikipatrol-chromium.user.js
-// @icon http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey.png
-// @icon64 http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey-64.png
-// @match https://wiki.archlinux.org/*
-// ==/UserScript==
-
 /*
  *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
  *  Copyright (C) 2011-2012 Dario Giovannetti <dev@dariogiovannetti.net>
@@ -33,6 +17,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+if (location.href.match(/^http:\/\/[a-z]+\.wikipedia\.org/i) ||
+    location.href.match(/^https:\/\/wiki\.archlinux\.org/i)) {
 
 if (!GM_setValue || !GM_getValue || !GM_listValues || !GM_deleteValue) {
     var setWikiMonkeyGmApiEmulationCookie = function (value) {
@@ -509,223 +496,6 @@ var WM = new function () {
     
     this.main = function () {
         this.MW._storeUserInfo(WM.UI._makeUI);
-    };
-};
-
-WM.ArchWiki = new function () {
-    var namespaces = {
-        "Media": -2,
-        "Special": -1,
-        "": 0,
-        "Talk": 1,
-        "User": 2,
-        "User talk": 3,
-        "ArchWiki": 4,
-        "ArchWiki talk": 5,
-        "File": 6,
-        "File talk": 7,
-        "MediaWiki": 8,
-        "MediaWiki talk": 9,
-        "Template": 10,
-        "Template talk": 11,
-        "Help": 12,
-        "Help talk": 13,
-        "Category": 14,
-        "Category talk": 15,
-    };
-    
-    var languages = {
-        local: "English",
-        names: {
-            "Български": {subtag: "bg", english: "Bulgarian"},
-            "Česky": {subtag: "cs", english: "Czech"},
-            "Dansk": {subtag: "da", english: "Danish"},
-            "Deutsch": {subtag: "de", english: "German"},
-            "Ελληνικά": {subtag: "el", english: "Greek"},
-            "English": {subtag: "en", english: "English"},
-            "Español": {subtag: "es", english: "Spanish"},
-            "فارسی": {subtag: "fa", english: "Persian"},
-            "Suomi": {subtag: "fi", english: "Finnish"},
-            "Français": {subtag: "fr", english: "French"},
-            "עברית": {subtag: "he", english: "Hebrew"},
-            "Hrvatski": {subtag: "hr", english: "Croatian"},
-            "Magyar": {subtag: "hu", english: "Hungarian"},
-            "Indonesia": {subtag: "id", english: "Indonesian"},
-            "Italiano": {subtag: "it", english: "Italian"},
-            "日本語": {subtag: "ja", english: "Japanese"},
-            "한국어": {subtag: "ko", english: "Korean"},
-            "Lietuviškai": {subtag: "lt", english: "Lithuanian"},
-            "Nederlands": {subtag: "nl", english: "Dutch"},
-            "Polski": {subtag: "pl", english: "Polish"},
-            "Português": {subtag: "pt", english: "Portuguese"},
-            "Română": {subtag: "ro", english: "Romanian"},
-            "Русский": {subtag: "ru", english: "Russian"},
-            "Slovenský": {subtag: "sk", english: "Slovak"},
-            "Српски": {subtag: "sr", english: "Serbian"},
-            "Svenska": {subtag: "sv", english: "Swedish"},
-            "ไทย": {subtag: "th", english: "Thai"},
-            "Türkçe": {subtag: "tr", english: "Turkish"},
-            "Українська": {subtag: "uk", english: "Ukrainian"},
-            "简体中文": {subtag: "zh-CN", english: "Chinese (Simplified)"},
-            "正體中文": {subtag: "zh-TW", english: "Chinese (Traditional)"}
-        },
-        categories: [
-            "Български",
-            "Česky",
-            "Dansk",
-            "Ελληνικά",
-            "English",
-            "Español",
-            "Suomi",
-            "Français",
-            "עברית",
-            "Hrvatski",
-            "Magyar",
-            "Indonesia",
-            "Italiano",
-            "日本語",
-            "한국어",
-            "Lietuviškai",
-            "Nederlands",
-            "Polski",
-            "Português",
-            "Русский",
-            "Slovenský",
-            "Српски",
-            "Svenska",
-            "ไทย",
-            "Українська",
-            "简体中文",
-            "正體中文"
-        ],
-        i18n: [
-            "Български",
-            "Česky",
-            "Dansk",
-            "Ελληνικά",
-            "English",
-            "Español",
-            "עברית",
-            "Hrvatski",
-            "Magyar",
-            "Indonesia",
-            "Italiano",
-            "日本語",
-            "한국어",
-            "Lietuviškai",
-            "Nederlands",
-            "Polski",
-            "Português",
-            "Русский",
-            "Slovenský",
-            "Српски",
-            "Svenska",
-            "ไทย",
-            "Українська",
-            "简体中文",
-            "正體中文"
-        ],
-        interwiki: {
-            all: ["de", "en", "es", "fa", "fi", "fr", "pl", "pt-br", "ro",
-                  "sv", "tr", "uk"],
-            alive: ["de", "en", "fa", "fi", "fr", "ro", "sv", "tr"],
-            dead: ["es", "pl", "pt-br", "uk"],
-            languages: {
-                "Deutsch": "de",
-                "English": "en",
-                "Español": "es",
-                "فارسی": "fa",
-                "Suomi": "fi",
-                "Français": "fr",
-                "Polski": "pl",
-                "Português": "pt-br",
-                "Română": "ro",
-                "Svenska": "sv",
-                "Türkçe": "tr",
-                "Українська": "uk",
-                
-            }
-        }
-    };
-    
-    this.getNamespaceId = function (name) {
-        return namespaces[name];
-    };
-    
-    this.getLocalLanguage = function () {
-        return languages.local;
-    };
-    
-    this.getCategoryLanguages = function () {
-        return languages.categories;
-    };
-    
-    this.isCategoryLanguage = function (lang) {
-        return languages.categories.indexOf(lang) > -1;
-    };
-    
-    this.getI18nLanguages = function () {
-        return languages.i18n;
-    };
-    
-    this.isI18nLanguage = function (lang) {
-        return languages.i18n.indexOf(lang) > -1;
-    };
-    
-    this.getInterwikiLanguages = function () {
-        return languages.interwiki.all;
-    };
-    
-    this.isInterwikiLanguage = function (lang) {
-        return languages.interwiki.all.indexOf(lang) > -1;
-    };
-    
-    this.getAliveInterwikiLanguages = function () {
-        return languages.interwiki.alive;
-    };
-    
-    this.isAliveInterwikiLanguage = function (lang) {
-        return languages.interwiki.alive.indexOf(lang) > -1;
-    };
-    
-    this.getDeadInterwikiLanguages = function () {
-        return languages.interwiki.dead;
-    };
-    
-    this.isDeadInterwikiLanguage = function (lang) {
-        return languages.interwiki.dead.indexOf(lang) > -1;
-    };
-    
-    this.getInterlanguageTag = function (language) {
-        return languages.interwiki.languages[language];
-    };
-        
-    this.detectLanguage = function (title) {
-        var matches = title.match(/^(.+?)([ _]\(([^\(]+)\))?$/);
-        var detectedLanguage = matches[3];
-        var pureTitle;
-        if (!detectedLanguage || !WM.ArchWiki.isCategoryLanguage(detectedLanguage)) {
-            // Language categories are exceptions
-            var testLangCat = matches[1].match(/^ *[Cc]ategory *: *(.+?) *$/);
-            if (testLangCat && WM.ArchWiki.isCategoryLanguage(testLangCat[1])) {
-                detectedLanguage = testLangCat[1];
-                pureTitle = matches[1];
-            }
-            else {
-                detectedLanguage = languages.local;
-                pureTitle = matches[0];
-            }
-        }
-        else {
-            pureTitle = matches[1];
-        }
-        return [pureTitle, detectedLanguage];
-    };
-    
-    this.findAllInterlanguageLinks = function (source) {
-        // See also WM.Parser.findInterlanguageLinks!!!
-        var interwikiLanguages = this.getInterwikiLanguages();
-        return WM.Parser.findSpecialLinks(source, interwikiLanguages.join("|"));
     };
 };
 
@@ -2524,524 +2294,6 @@ WM.UI = new function () {
         }
     };
 };
-WM.Plugins.ArchWikiFixHeader = new function () {
-    this.main = function (args, callNext) {
-        var source = WM.Editor.readSource();
-        
-        var detLang = WM.ArchWiki.detectLanguage(WM.Editor.getTitle());
-        var pureTitle = detLang[0];
-        var language = detLang[1];
-        
-        var header = "";
-        var content = source;
-        
-        // <noinclude>
-        var content = content.replace(/^\s*<noinclude>/, "");
-        if (content != source) {
-            header += "<noinclude>\n";
-        }
-        
-        // DISPLAYTITLE and Template:Lowercase_title
-        var displaytitle = WM.Parser.findVariables(content, "DISPLAYTITLE");
-        var lowercasetitle = WM.Parser.findTemplates(content, "Lowercase title");
-        var titlemods = displaytitle.concat(lowercasetitle);
-        titlemods.sort(function (a, b) {
-            return a.index - b.index;
-        });
-        var tempcontent = "";
-        var contentId = 0;
-        for (var t in titlemods) {
-            tempcontent += content.substring(contentId, titlemods[t].index);
-            contentId = titlemods[t].index + titlemods[t].length;
-        }
-        tempcontent += content.substring(contentId);
-        content = tempcontent;
-        var dt = displaytitle.pop();
-        var lct = lowercasetitle.pop();
-        var dlct = "";
-        if (dt && !lct) {
-            var dlct = "{{DISPLAYTITLE:" + dt.match[2] + "}}";
-        }
-        else if (!dt && lct) {
-            var dlct = "{{Lowercase title}}";
-        }
-        else if (dt && lct) {
-            var dlct = (dt.index < lct.index) ? "{{Lowercase title}}" : "{{DISPLAYTITLE:" + dt.match[2] + "}}";
-        }
-        if (displaytitle.length || lowercasetitle.length) {
-            WM.Log.logWarning("Found multiple instances of {{DISPLAYTITLE:...}} or {{Lowercase title}}: only the last one has been used, the others have been deleted");
-        }
-        
-        // Behavior switches
-        var behaviorswitches = WM.Parser.findBehaviorSwitches(content);
-        var bslist = [];
-        var tempcontent = "";
-        var contentId = 0;
-        for (var b in behaviorswitches) {
-            var bs = behaviorswitches[b].match[1];
-            if (bs == "TOC" || bs == "START" || bs == "END") {
-                behaviorswitches.splice(b, 1);
-            }
-            else {
-                if (bslist.indexOf(behaviorswitches[b].match[0]) == -1) {
-                    bslist.push(behaviorswitches[b].match[0]);
-                }
-                else {
-                    WM.Log.logWarning("Removed duplicate of " + behaviorswitches[b].match[0]);
-                }
-                tempcontent += content.substring(contentId, behaviorswitches[b].index);
-                contentId = behaviorswitches[b].index + behaviorswitches[b].length;
-            }
-        }
-        tempcontent += content.substring(contentId);
-        content = tempcontent;
-        
-        if (!dlct && bslist.length) {
-            header += bslist.join(" ") + "\n";
-        }
-        else if (dlct && !bslist.length) {
-            header += dlct + "\n";
-        }
-        else if (dlct && bslist.length) {
-            header += dlct + " " + bslist.join(" ") + "\n";
-        }
-        
-        // Categories
-        var categories = WM.Parser.findCategories(content);
-        var catlist = [];
-        var tempcontent = "";
-        var contentId = 0;
-        for (var c in categories) {
-            var cat = categories[c];
-            var catlang = WM.ArchWiki.detectLanguage(cat.match[1])[1];
-            if (language != catlang) {
-                WM.Log.logWarning(cat.match[1] + " belongs to a different language than the one of the title (" + language + ")");
-            }
-            if (catlist.indexOf(cat.match[0]) == -1) {
-                catlist.push(cat.match[0]);
-            }
-            else {
-                WM.Log.logWarning("Removed duplicate of " + cat.match[1]);
-            }
-            tempcontent += content.substring(contentId, cat.index);
-            contentId = cat.index + cat.length;
-        }
-        if (catlist.length) {
-            header += catlist.join("\n") + "\n";
-        }
-        else {
-            WM.Log.logWarning("The article is not categorized");
-        }
-        tempcontent += content.substring(contentId);
-        content = tempcontent;
-        
-        // Interlanguage links
-        var interlanguage = WM.ArchWiki.findAllInterlanguageLinks(content);
-        var iwlist = [];
-        var tempcontent = "";
-        var contentId = 0;
-        for (var l in interlanguage) {
-            var link = interlanguage[l];
-            if (iwlist.indexOf(link.match[0]) == -1) {
-                // Remove also dead interlanguage links
-                if (WM.ArchWiki.isAliveInterwikiLanguage(link.match[2])) {
-                    iwlist.push(link.match[0]);
-                }
-                else {
-                    WM.Log.logWarning("Removed dead interlanguage link: " + link.match[1]);
-                }
-            }
-            else {
-                WM.Log.logWarning("Removed duplicate of " + link.match[1]);
-            }
-            tempcontent += content.substring(contentId, link.index);
-            contentId = link.index + link.length;
-        }
-        if (iwlist.length) {
-            header += iwlist.join("\n") + "\n";
-        }
-        tempcontent += content.substring(contentId);
-        content = tempcontent;
-        
-        // Template:i18n
-        var i18ns = WM.Parser.findTemplates(content, "i18n");
-        var i18n = i18ns.pop();
-        if (i18ns.length) {
-            WM.Log.logWarning("Found multiple instances of Template:i18n : only the first one has been used, the others have been ignored");
-        }
-        if (i18n) {
-            var parsedTitle = WM.Parser.convertUnderscoresToSpaces(i18n.arguments[0].value);
-            var test1 = pureTitle.substr(0, 1).toLowerCase() != parsedTitle.substr(0, 1).toLowerCase();
-            var test2 = pureTitle.substr(1) != parsedTitle.substr(1);
-            
-            if (test1 || test2) {
-                header += "{{i18n|" + pureTitle + "}}";
-                WM.Log.logWarning("Updated Template:i18n since it wasn't matching the current article title");
-            }
-            else {
-                header += "{{i18n|" + parsedTitle + "}}";
-            }
-            content = Alib.Str.removeFor(content, i18n.index, i18n.length);
-        }
-        else {
-            header += "{{i18n|" + pureTitle + "}}";
-            WM.Log.logInfo("Added Template:i18n");
-        }
-        header += "\n\n";
-        
-        var firstChar = content.search(/[^\s]/);
-        content = content.substr(firstChar);
-        
-        var newText = header + content;
-        
-        if (newText != source) {
-            WM.Editor.writeSource(newText);
-            WM.Log.logInfo("Fixed header");
-        }
-        
-        if (callNext) {
-            callNext();
-        }
-    };
-};
-
-WM.Plugins.ArchWikiFixHeadings = new function () {
-    this.main = function (args, callNext) {
-        var source = WM.Editor.readSource();
-        
-        var info = WM.Parser.findSectionHeadings(source);
-        
-        var increaseLevel;
-        if (info.maxTocLevel < 6) {
-            increaseLevel = 1;
-        }
-        else {
-            increaseLevel = 0;
-            WM.Log.logWarning("There are 6 levels of headings, it's been necessary to start creating them from level 1 although usually it's suggested to start from level 2");
-        }
-        
-        var newtext = "";
-        var prevId = 0;
-        var section;
-        
-        for (var s in info.sections) {
-            section = info.sections[s];
-            newtext += source.substring(prevId, section.index);
-            newtext += new Array(section.tocLevel + increaseLevel + 1).join("=");
-            newtext += section.line.substr(section.level, section.length1 - 2 * section.level);
-            newtext += new Array(section.tocLevel + increaseLevel + 1).join("=");
-            prevId = section.index + section.length0;
-        }
-        newtext += source.substr(prevId);
-        
-        if (newtext != source) {
-            WM.Editor.writeSource(newtext);
-            WM.Log.logInfo("Fixed section headings");
-        }
-        
-        if (callNext) {
-            callNext();
-        }
-    };
-};
-
-WM.Plugins.ArchWikiNewTemplates = new function () {
-    this.main = function (args, callNext) {
-        var source = WM.Editor.readSource();
-        var newtext = source;
-        
-        var re8 = /<pre>(((?!<(pre|nowiki)>)[^\=\|])*?((?!<(pre|nowiki)>)[^\=\|\}]))<\/pre>/ig;
-        var re9 = /<pre>(((?!<(pre|nowiki)>)[^\|])*?((?!<(pre|nowiki)>)[^\|\}]))<\/pre>/ig;
-        var re10 = /<pre>(\n*((?!<(pre|nowiki)>).\n*)+?)<\/pre>/ig;
-        
-        var re11 = /<code>(((?!<(code|nowiki)>)[^\=\|\n])*?((?!<(code|nowiki)>)[^\=\|\}\n]))<\/code>/ig;
-        var re12 = /<code>(((?!<(code|nowiki)>)[^\|\n])*?((?!<(code|nowiki)>)[^\|\}\n]))<\/code>/ig;
-        var re13 = /<code>(((?!<(code|nowiki)>)[^\n])+?)<\/code>/ig;
-        
-        var re14 = /<tt>(((?!<(tt|nowiki)>)[^\=\|\n])*?((?!<(tt|nowiki)>)[^\=\|\}\n]))<\/tt>/ig;
-        var re15 = /<tt>(((?!<(tt|nowiki)>)[^\|\n])*?((?!<(tt|nowiki)>)[^\|\}\n]))<\/tt>/ig;
-        var re16 = /<tt>(((?!<(tt|nowiki)>)[^\n])+?)<\/tt>/ig;
-        
-        newtext = newtext.replace(re8, '{{bc|$1}}');
-        newtext = newtext.replace(re9, '{{bc|1=$1}}'); // Must come after re8
-        newtext = newtext.replace(re10, '{{bc|<nowiki>$1</nowiki>}}'); // Must come after re9
-        
-        newtext = newtext.replace(re11, '{{ic|$1}}');
-        newtext = newtext.replace(re12, '{{ic|1=$1}}'); // Must come after re11
-        newtext = newtext.replace(re13, '{{ic|<nowiki>$1</nowiki>}}'); // Must come after re12
-        
-        newtext = newtext.replace(re14, '{{ic|$1}}');
-        newtext = newtext.replace(re15, '{{ic|1=$1}}'); // Must come after re14
-        newtext = newtext.replace(re16, '{{ic|<nowiki>$1</nowiki>}}'); // Must come after re15
-        
-        if (newtext != source) {
-            WM.Editor.writeSource(newtext);
-            WM.Log.logInfo("Turned HTML tags into proper templates");
-        }
-        
-        var tests = [
-            ['&lt;pre>', newtext.match(/<pre/ig)],
-            ['&lt;code>', newtext.match(/<code/ig)],
-            ['&lt;tt>', newtext.match(/<tt/ig)]
-        ];
-        
-        for (var test in tests) { 
-            if (tests[test][1]) {
-                WM.Log.logWarning(tests[test][1].length + ' ' + tests[test][0] + ' instances require manual intervention');
-            }
-        }
-        
-        if (callNext) {
-            callNext();
-        }
-    };
-};
-
-WM.Plugins.ArchWikiQuickReport = new function () {
-    this.makeUI = function (args) {
-        var id = args[0];
-        var article = args[1];
-        
-        var select = document.createElement('select');
-        var types = ["&lt;TYPE&gt;", "content", "style"];
-        var value;
-        for (var v in types) {
-            value = types[v];
-            option = document.createElement('option');
-            option.setAttribute('value', value);
-            option.innerHTML = value;
-            select.appendChild(option);
-        }
-        select.id = "ArchWikiQuickReport-select-" + id;
-        
-        var input = document.createElement('input');
-        input.setAttribute('type', 'text');
-        input.id = "ArchWikiQuickReport-input-" + id;
-        
-        var link = document.createElement('a');
-        link.href = "/index.php/" + article;
-        link.innerHTML = article;
-        
-        var span = document.createElement('span');
-        span.appendChild(select);
-        span.appendChild(input);
-        span.appendChild(link);
-        
-        return span;
-    };
-    
-    this.main = function (args, callNext) {
-        var id = args[0];
-        var article = args[1];
-        var summary = args[2];
-        
-        WM.Log.logInfo('Appending diff to ' + article + "...");
-        
-        var select = document.getElementById("ArchWikiQuickReport-select-" + id);
-        var type = select.options[select.selectedIndex].value;
-        
-        if (type != 'content' && type != 'style') {
-            WM.Log.logError('Select a valid report type');
-        }
-        else {
-            WM.Diff.getEndTimestamp(WM.Plugins.ArchWikiQuickReport.mainGetEndTimestamp,
-                                    [id, article, type, summary, callNext]);
-        }
-    };
-    
-    this.mainGetEndTimestamp = function (enddate, args) {
-        var id = args[0];
-        var article = args[1];
-        var type = args[2];
-        var summary = args[3];
-        var callNext = args[4];
-        
-        WM.MW.callQueryEdit(article,
-                            WM.Plugins.ArchWikiQuickReport.mainWrite,
-                            [id, type, summary, enddate, callNext]);
-    };
-    
-    this.mainWrite = function (article, source, timestamp, edittoken, args) {
-        var id = args[0];
-        var type = args[1];
-        var summary = args[2];
-        var enddate = args[3];
-        var callNext = args[4];
-        
-        var title = Alib.HTTP.getURIParameter('title');
-        var pEnddate = enddate.substr(0, 10) + " " + enddate.substr(11, 8);
-        var notes = document.getElementById("ArchWikiQuickReport-input-" + id).value;
-        
-        var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", pEnddate, type, notes]);
-        
-        WM.MW.callAPIPost({action: "edit",
-                           bot: "1",
-                           title: article,
-                           summary: summary,
-                           text: newtext,
-                           basetimestamp: timestamp,
-                           token: edittoken},
-                           null,
-                           WM.Plugins.ArchWikiQuickReport.mainEnd,
-                           [article, callNext]);
-    };
-    
-    this.mainEnd = function (res, args) {
-        var article = args[0];
-        var callNext = args[1];
-        
-        if (res.edit && res.edit.result == 'Success') {
-            WM.Log.logInfo('Diff correctly appended to ' + article);
-            if (callNext) {
-                callNext();
-            }
-        }
-        else {
-            WM.Log.logError('The diff has not been appended!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
-        }
-    };
-};
-
-WM.Plugins.ArchWikiTemplateAUR = new function () {
-    var doReplace = function (source, call, callArgs) {
-        var regExp = /\[(https?\:\/\/aur\.archlinux\.org\/packages\.php\?ID\=[0-9]+) ([^\]]+?)\]/g;
-        var links = [];
-        
-        while (true) {
-            var match = regExp.exec(source);
-            if (match) {
-                links.push(match);
-            }
-            else {
-                break;
-            }
-        }
-        
-        var newText = source;
-        
-        WM.Plugins.ArchWikiTemplateAUR.doReplaceContinue(source, newText, links, 0, call, callArgs);
-    };
-    
-    this.doReplaceContinue = function (source, newText, links, index, call, callArgs) {
-        if (links[index]) {
-            WM.Log.logInfo("Processing " + links[index][0] + "...");
-            var query = {
-                method: "GET",
-                url: links[index][1],
-                onload: function (res) {
-                    var parser = new DOMParser();
-                    var page = parser.parseFromString(res.responseText, "text/xml");
-                    var divs = page.getElementsByTagName('div');
-                    for (var i = 0; i < divs.length; i++) {
-                        if (divs[i].className == "pgboxbody") {
-                            var span = divs[i].getElementsByTagName('span')[0];
-                            var pkgname = span.innerHTML.split(" ")[0];
-                            if (links[index][2] == pkgname) {
-                                newText = newText.replace(links[index][0],
-                                                          "{{AUR|" + pkgname + "}}");
-                            }
-                            break;
-                        }
-                    }
-                    index++;
-                    WM.Plugins.ArchWikiTemplateAUR.doReplaceContinue(source, newText, links, index, call, callArgs);
-                },
-                onerror: function (res) {
-                    WM.Log.logError("Failed query: " + res.finalUrl + "\nYou may " +
-                                    "have tried to use a plugin which requires " +
-                                    "cross-origin HTTP requests, but you are not " +
-                                    "using Scriptish (Firefox), Greasemonkey " +
-                                    "(Firefox), Tampermonkey (Chrome/Chromium) " +
-                                    "or a similar extension");
-                },
-            };
-            try {
-                GM_xmlhttpRequest(query);
-            }
-            catch (err) {
-                WM.Log.logError("Failed HTTP request - " + err + "\nYou may have " +
-                                "tried to use a plugin which requires cross-origin " +
-                                "HTTP requests, but you are not using Scriptish " +
-                                "(Firefox), Greasemonkey (Firefox), Tampermonkey " +
-                                "(Chrome/Chromium) or a similar extension");
-            }
-        }
-        else {
-            call(source, newText, callArgs);
-        }
-    };
-    
-    this.main = function (args, callNext) {
-        var source = WM.Editor.readSource();
-        WM.Log.logInfo("Replacing direct AUR package links...");
-        doReplace(source, WM.Plugins.ArchWikiTemplateAUR.mainEnd, callNext);
-    };
-    
-    this.mainEnd = function (source, newtext, callNext) {
-        if (newtext != source) {
-            WM.Editor.writeSource(newtext);
-            WM.Log.logInfo("Replaced direct AUR package links");
-        }
-        else {
-            WM.Log.logInfo("No replaceable AUR package links found");
-        }
-        
-        if (callNext) {
-            callNext();
-        }
-    };
-    
-    this.mainAuto = function (args, title, callBot) {
-        var summary = args[0];
-        
-        WM.MW.callQueryEdit(title,
-                            WM.Plugins.ArchWikiTemplateAUR.mainAutoReplace,
-                            [summary, callBot]);
-    };
-    
-    this.mainAutoReplace = function (title, source, timestamp, edittoken, args) {
-        var summary = args[0];
-        var callBot = args[1];
-        
-        doReplace(source,
-                  WM.Plugins.ArchWikiTemplateAUR.mainAutoWrite,
-                  [title, edittoken, timestamp, summary, callBot]);
-    };
-    
-    this.mainAutoWrite = function (source, newtext, args) {
-        var title = args[0];
-        var edittoken = args[1];
-        var timestamp = args[2];
-        var summary = args[3];
-        var callBot = args[4];
-        
-        if (newtext != source) {
-            WM.MW.callAPIPost({action: "edit",
-                               bot: "1",
-                               title: title,
-                               summary: summary,
-                               text: newtext,
-                               basetimestamp: timestamp,
-                               token: edittoken},
-                               null,
-                               WM.Plugins.ArchWikiTemplateAUR.mainAutoEnd,
-                               callBot);
-        }
-        else {
-            callBot(true);
-        }
-    };
-    
-    this.mainAutoEnd = function (res, callBot) {
-        if (res.edit && res.edit.result == 'Success') {
-            callBot(true);
-        }
-        else {
-            callBot(false);
-        }
-    };
-};
-
 WM.Plugins.ExpandContractions = new function () {
     var replace = function (source, regExp, newString, checkString, checkStrings) {
         var newtext = source.replace(regExp, newString);
@@ -3248,178 +2500,265 @@ WM.Plugins.SimpleReplace = new function () {
     };
 };
 
-WM.Plugins.SynchronizeInterlanguageLinks = new function () {
-    this.main = function (args, callNext) {
-        var tag = args[0]();
-        var whitelist = args[1];
+WM.Plugins.UpdateCategoryTree = new function () {
+    this.makeUI = function (args) {
+        var tocs = args[0];
         
-        WM.Log.logInfo("Synchronizing interlanguage links...");
+        var select = document.createElement('select');
+        var option;
+        for (var key in tocs) {
+            option = document.createElement('option');
+            option.value = tocs[key].page;
+            option.innerHTML = tocs[key].page;
+            select.appendChild(option);
+        }
+        option = document.createElement('option');
+        option.value = '*';
+        option.innerHTML = 'UPDATE ALL';
+        select.appendChild(option);
+        select.id = "UpdateCategoryTree-select";
         
-        var title = WM.Editor.getTitle();
-        
-        WM.MW.getInterwikiMap(
-            title,
-            WM.Plugins.SynchronizeInterlanguageLinks.mainContinue,
-            [tag, whitelist, title, callNext]
-        );
+        return select;
     };
     
-    this.mainContinue = function (iwmap, args) {
-        var tag = args[0];
-        var whitelist = args[1];
-        var title = args[2];
-        var callNext = args[3];
+    var readToC = function (args) {
+        WM.Log.logInfo('Updating ' + args.params.page + "...");
+        WM.MW.callQueryEdit(args.params.page,
+                            WM.Plugins.UpdateCategoryTree.processToC,
+                            args);
+    };
+    
+    this.processToC = function (title, source, timestamp, edittoken, args) {
+        args.source = source;
+        args.timestamp = timestamp;
+        args.edittoken = edittoken;
         
-        var source = WM.Editor.readSource();
+        var minInterval = (WM.MW.isUserBot()) ? 60000 : 21600000;
         
-        var langlinks = WM.Interlanguage.parseLinks(whitelist, source, iwmap);
-        
-        var paths = WM.MW.getWikiPaths();
-        var url = paths.articles + WM.Parser.convertSpacesToUnderscores(title);
-        var api = paths.api;
-        
-        var visitedlinks = {};
-        visitedlinks[tag] = WM.Interlanguage.createVisitedLink(title, url, iwmap, api, source, null, null, langlinks);
-        
-        var newlinks = {};
-        
-        WM.Log.logInfo("Reading " + url + "...");
-        
-        if (langlinks) {
-            var conflict = false;
-            for (var l in langlinks) {
-                var link = langlinks[l];
-                if (!visitedlinks[link.lang] && !newlinks[link.lang]) {
-                    newlinks[link.lang] = WM.Interlanguage.createNewLink(link.title, link.url);
-                }
-                else if ((visitedlinks[link.lang] && visitedlinks[link.lang].url != link.url) ||
-                         (newlinks[link.lang] && newlinks[link.lang].url != link.url)) {
-                    conflict = true;
-                    WM.Log.logError("Conflicting interlanguage links: [[" + link.lang + ":" + link.title + "]]");
-                    break;
-                }
+        var now = new Date();
+        var msTimestamp = Date.parse(args.timestamp);
+        if (now.getTime() - msTimestamp >= minInterval) {
+            var start = args.source.indexOf(args.startMark) + args.startMark.length;
+            var end = args.source.lastIndexOf(args.endMark);
+            
+            if (start > -1 && end > -1) {
+                args.startId = start;
+                args.endId = end;
+                args.treeText = "";
+                args.altNames = (args.params.keepAltName) ? storeAlternativeNames(args.source) : {};
+                WM.Cat.recurseTree({node: args.params.root,
+                                    callNode: WM.Plugins.UpdateCategoryTree.processCategory,
+                                    callEnd: WM.Plugins.UpdateCategoryTree.writeToC,
+                                    callArgs: args});
             }
-        
-            if (!conflict) {
-                WM.Interlanguage.collectLinks(
-                    visitedlinks,
-                    newlinks,
-                    whitelist,
-                    false,
-                    WM.Plugins.SynchronizeInterlanguageLinks.mainEnd,
-                    [tag, url, source, langlinks, iwmap, callNext]
-                );
+            else {
+                WM.Log.logError("Cannot find insertion marks in " + args.params.page);
+                iterateTocs(args);
             }
         }
         else {
-            WM.Log.logInfo("No interlanguage links found");
-            if (callNext) {
-                callNext();
-            }
+            WM.Log.logWarning(args.params.page + ' has been updated too recently');
+            iterateTocs(args);
         }
     };
     
-    this.mainEnd = function (links, args) {
-        var tag = args[0];
-        var url = args[1];
-        var source = args[2];
-        var langlinks = args[3];
-        var iwmap = args[4];
-        var callNext = args[5];
-        
-        if (links != "conflict") {
-            var newText = WM.Interlanguage.updateLinks(tag, url, iwmap, source, langlinks, links);
-            
-            if (newText != source) {
-                WM.Editor.writeSource(newText);
-                WM.Log.logInfo("Synchronized interlanguage links");
+    var storeAlternativeNames = function (source) {
+        var dict = {};
+        var regExp = /\[\[\:([Cc]ategory\:.+?)\|(.+?)\]\]/gm;
+        while (true) {
+            var match = regExp.exec(source);
+            if (match) {
+                dict[match[1]] = match[2];
             }
             else {
-                WM.Log.logInfo("Interlanguage links were already synchronized");
-            }
-        
-            if (callNext) {
-                callNext();
+                break;
             }
         }
+        return dict;
     };
     
-    this.mainAuto = function (args, title, callBot) {
-        var tag = args[0](title);
-        var whitelist = args[1];
-        var summary = args[2];
+    this.processCategory = function (params) {
+        var args = params.callArgs;
         
-        var paths = WM.MW.getWikiPaths();
-        var url = paths.articles + WM.Parser.convertSpacesToUnderscores(title);
+        WM.Log.logInfo("Processing " + params.node + "...");
         
-        var visitedlinks = {};
+        var text = "";
         
-        var newlinks = {};
-        newlinks[tag] = WM.Interlanguage.createNewLink(title, url);
+        for (var i = 0; i < params.ancestors.length; i++) {
+            text += args.params.indentType;
+        }
         
-        WM.Interlanguage.collectLinks(
-            visitedlinks,
-            newlinks,
-            whitelist,
-            false,
-            WM.Plugins.SynchronizeInterlanguageLinks.mainAutoWrite,
-            [title, url, tag, summary, callBot]
-        );
-    };
-    
-    this.mainAutoWrite = function (links, args) {
-        var title = args[0];
-        var url = args[1];
-        var tag = args[2];
-        var summary = args[3];
-        var callBot = args[4];
-        
-        if (links != "conflict") {
-            var iwmap = links[tag].iwmap;
-            var source = links[tag].source;
-            var langlinks = links[tag].links;
-            var timestamp = links[tag].timestamp;
-            var edittoken = links[tag].edittoken;
-            
-            var newText = WM.Interlanguage.updateLinks(tag, url, iwmap, source, langlinks, links);
-            
-            if (newText != source) {
-                WM.MW.callAPIPost({action: "edit",
-                                   bot: "1",
-                                   title: title,
-                                   summary: summary,
-                                   text: newText,
-                                   basetimestamp: timestamp,
-                                   token: edittoken},
-                                   null,
-                                   WM.Plugins.SynchronizeInterlanguageLinks.mainAutoEnd,
-                                   callBot);
+        if (args.params.showIndices) {
+            var indices = [];
+            var node = params;
+            while (node.parentIndex != null) {
+                indices.push(node.siblingIndex + 1);
+                node = params.nodesList[node.parentIndex];
             }
-            else {
-                callBot(true);
+            if (indices.length) {
+                text += "<small>" + indices.reverse().join(".") + ".</small> ";
             }
+        }
+        
+        var altName = (args.altNames[params.node]) ? args.altNames[params.node] : null;
+        text += createCatLink(params.node, args.params.replace, altName) + " ";
+        
+        if (params.children == "loop") {
+            text += "'''[LOOP]'''\n";
+            WM.Log.logWarning("Loop in " + params.node);
+            WM.Plugins.UpdateCategoryTree.processCategoryEnd(params, args, text);
         }
         else {
-            callBot(false);
+            WM.Cat.getInfo(params.node,
+                           WM.Plugins.UpdateCategoryTree.processCategoryGetParents,
+                           [params, args, text, altName]);
         }
     };
     
-    this.mainAutoEnd = function (res, callBot) {
+    this.processCategoryGetParents = function (info, args_) {
+        var params = args_[0];
+        var args = args_[1];
+        var text = args_[2];
+        var altName = args_[3];
+        
+        WM.Cat.getParents(params.node,
+                          WM.Plugins.UpdateCategoryTree.processCategoryAddSuffix,
+                          [params, args, text, altName, info]);
+    }
+    
+    this.processCategoryAddSuffix = function (parents, args_) {
+        var params = args_[0];
+        var args = args_[1];
+        var text = args_[2];
+        var altName = args_[3];
+        var info = args_[4];
+        
+        text += "<small>(" + ((info) ? info.pages : 0) + ")";
+        
+        if (parents.length > 1) {
+            outer_loop:
+            for (var p in parents) {
+                var par = parents[p];
+                for (var a in params.ancestors) {
+                    var anc = params.ancestors[a];
+                    if (par == anc) {
+                        parents.splice(p, 1);
+                        break outer_loop;
+                    }
+                }
+            }
+            for (var i in parents) {
+                altName = (args.altNames[parents[i]]) ? args.altNames[parents[i]] : null;
+                parents[i] = createCatLink(parents[i], args.params.replace, altName);
+            }
+            text += " (" + args.params.alsoIn + " " + parents.join(", ") + ")";
+        }
+        
+        text += "</small>\n";
+        
+        WM.Plugins.UpdateCategoryTree.processCategoryEnd(params, args, text);
+    };
+    
+    this.processCategoryEnd = function (params, args, text) {
+        args.treeText += text;
+        
+        params.callArgs = args;
+        
+        WM.Cat.recurseTreeContinue(params);
+    };
+    
+    var createCatLink = function (cat, replace, altName) {
+        var catName;
+        if (altName) {
+            catName = altName;
+        }
+        else if (replace) {
+            var regExp = new RegExp(replace[0], replace[1]);
+            catName = cat.substr(9).replace(regExp, replace[2]);
+        }
+        else {
+            catName = cat.substr(9);
+        }
+        return "[[:" + cat + "|" + catName + "]]";
+    };
+    
+    this.writeToC = function (params) {
+        var args = params.callArgs;
+        
+        args.treeText = "\n" + args.treeText;
+        var newtext = Alib.Str.overwriteBetween(args.source, args.treeText, args.startId, args.endId);
+        
+        if (newtext != args.source) {
+            WM.MW.callAPIPost({action: "edit",
+                               bot: "1",
+                               title: args.params.page,
+                               summary: args.summary,
+                               text: newtext,
+                               basetimestamp: args.timestamp,
+                               token: args.edittoken},
+                              null,
+                              WM.Plugins.UpdateCategoryTree.checkWrite,
+                              args);
+        }
+        else {
+            WM.Log.logInfo(args.params.page + ' is already up to date');
+            iterateTocs(args)
+        }
+    };
+    
+    this.checkWrite = function (res, args) {
         if (res.edit && res.edit.result == 'Success') {
-            callBot(true);
+            WM.Log.logInfo(args.params.page + ' correctly updated');
+            iterateTocs(args);
         }
         else {
-            callBot(false);
+            WM.Log.logError(args.params.page + ' has not been updated!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
         }
+    };
+    
+    var iterateTocs = function (args) {
+        args.index++;
+        args.params = args.tocs[args.index];
+        if (args.tocs[args.index]) {
+            readToC(args);
+        }
+        else {
+            WM.Log.logInfo("Operations completed, check the log for warnings or errors");
+            if (args.callNext) {
+                args.callNext();
+            }
+        }
+    };
+    
+    this.main = function (args, callNext) {
+        var tocs = args[0];
+        var summary = args[1];
+        
+        var select = document.getElementById("UpdateCategoryTree-select");
+        var value = select.options[select.selectedIndex].value;
+        
+        iterateTocs({
+            tocs: (value == '*') ? tocs : [tocs[select.selectedIndex]],
+            index: -1,
+            params: {},
+            edittoken: "",
+            timestamp: "",
+            source: "",
+            startId: 0,
+            endId: 0,
+            treeText: "",
+            startMark: "START AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK-->",
+            endMark: "<!--END AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK",
+            altNames: {},
+            summary: args[1],
+            callNext: callNext,
+        });
     };
 };
 
 
 WM.UI.setEditor([
     [
-        ["ArchWikiFixHeader", "Fix header", null],
-        ["ArchWikiFixHeadings", "Fix headings", null],
-        ["ArchWikiNewTemplates", "Use code templates", null],
         ["ExpandContractions", "Expand contractions", null],
         ["MultipleLineBreaks", "Multiple line breaks", null]
     ],
@@ -3428,21 +2767,31 @@ WM.UI.setEditor([
     ]
 ]);
 
-WM.UI.setDiff([
+WM.UI.setDiff(null);
+
+WM.UI.setCategory([
+    ["SimpleReplace", "RegExp substitution", ["1"]]
+]);
+
+WM.UI.setWhatLinksHere([
+    ["SimpleReplace", "RegExp substitution", ["1"]]
+]);
+
+WM.UI.setLinkSearch([
+    ["SimpleReplace", "RegExp substitution", ["1"]]
+]);
+
+WM.UI.setSpecial([
     [
-        ["ArchWikiQuickReport", "Quick report",
-         ["1", "ArchWiki:Reports", "add report"]]
+        ["UpdateCategoryTree", "Update main ToC",
+         [{}, "[[Wiki Monkey]]: automatic update"]]
     ]
 ]);
 
-WM.UI.setCategory(null);
-
-WM.UI.setWhatLinksHere(null);
-
-WM.UI.setLinkSearch(null);
-
-WM.UI.setSpecial(null);
-
-WM.UI.setSpecialList(null);
+WM.UI.setSpecialList([
+    ["SimpleReplace", "RegExp substitution", ["1"]]
+]);
 
 WM.main();
+
+}

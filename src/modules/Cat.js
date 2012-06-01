@@ -19,95 +19,101 @@
  */
 
 WM.Cat = new function () {
-    this.getTree = function (base) {
-        var tree = {};
-        tree[base] = walk(base, {});
-        // return {base: walk(base, {})}; doesn't work
-        return tree;
+    this.recurseTree = function (params) {
+        params.callChildren = WM.Cat._recurseTreeCallChildren;
+        Alib.Async.recurseTreeAsync(params);
     };
     
-    var walk = function (base, ancestors) {
-        WM.Log.logInfo("Walking " + base + "...");
-        
-        var subCats = WM.Cat.getSubCategories(base);
-        
-        var tree = {};
-        // Add base here in order to protect better from self-parenting categories
-        ancestors[base] = true;
-        var cat, subAncestors;
-        
+    this.recurseTreeContinue = function (params) {
+        Alib.Async.recurseTreeAsync(params);
+    };
+    
+    this._recurseTreeCallChildren = function (params) {
+        WM.Cat.getSubCategories(params.node, WM.Cat._recurseTreeCallChildrenContinue, params);
+    };
+    
+    this._recurseTreeCallChildrenContinue = function (subCats, params) {
         for (var s in subCats) {
-            cat = subCats[s].title;
-            
-            // Protect from category loops
-            if (ancestors[cat]) {
-                tree[cat] = "loop";
-            }
-            else {
-                // Create a copy of the object, not just a new reference
-                subAncestors = JSON.parse(JSON.stringify(ancestors));
-                tree[cat] = walk(cat, subAncestors);
-            }
+            params.children.push(subCats[s].title);
         }
-        
-        return tree;
+        Alib.Async.recurseTreeAsync(params);
     };
     
-    this.getSubCategories = function (parent) {
-        return getMembers(parent, "subcat", null);
+    this.getSubCategories = function (parent, call, callArgs) {
+        WM.Cat._getMembers(parent, "subcat", call, callArgs);
     };
     
-    this.getAllMembers = function (parent) {
-        return getMembers(parent, null, null);
+    this.getAllMembers = function (parent, call, callArgs) {
+        WM.Cat._getMembers(parent, null, call, callArgs);
     };
     
-    var getMembers = function (name, cmtype, cmcontinue) {
+    this._getMembers = function (name, cmtype, call, callArgs) {
         var query = {action: "query",
                      list: "categorymembers",
-                     cmtitle: encodeURIComponent(name),
-                     cmlimit: 5000};
+                     cmtitle: name,
+                     cmlimit: 500};
         
         if (cmtype) {
             query.cmtype = cmtype;
         }
         
-        if (cmcontinue) {
-            query.cmcontinue = cmcontinue;
-        }
-        
-        var res = WM.MW.callAPIGet(query);
-        var members = res.query.categorymembers;
-        
-        if (res["query-continue"]) {
-            cmcontinue = res["query-continue"].categorymembers.cmcontinue;
-            var cont = this.getMembers(name, cmtype, cmcontinue);
-            for (var sub in cont) {
-                members[sub] = cont[sub];
+        this._getMembersContinue(query, call, callArgs, []);
+    };
+    
+    this._getMembersContinue = function (query, call, callArgs, members) {
+        WM.MW.callAPIGet(query, null, function (res) {
+            members = members.concat(res.query.categorymembers);
+            if (res["query-continue"]) {
+                query.cmcontinue = res["query-continue"].categorymembers.cmcontinue;
+                this._getMembersContinue(query, call, callArgs, members);
             }
-        }
-        
-        return members;
+            else {
+                call(members, callArgs);
+            }
+        });
     };
     
-    this.getParents = function (child) {
-        // Supports a maximum of 500 parents (5000 for bots)
-        // Needs to implement query continue in order to support more
-        var pageid = WM.MW.callQuery({prop: "categories",
-                                     titles: encodeURIComponent(child),
-                                     cllimit: 5000});
+    this.getParents = function (name, call, callArgs) {
+        var query = {action: "query",
+                     prop: "categories",
+                     titles: name,
+                     cllimit: 500};
         
-        var parents = [];
-        
-        for (var cat in pageid.categories) {
-            parents.push(pageid.categories[cat].title);
-        }
-        
-        return parents;
+        this._getParentsContinue(query, call, callArgs, []);
     };
     
-    this.getInfo = function (name) {
-        var pageid = WM.MW.callQuery({prop: "categoryinfo",
-                                     titles: encodeURIComponent(name)});
-        return pageid.categoryinfo;
+    this._getParentsContinue = function (query, call, callArgs, parents) {
+        WM.MW.callAPIGet(query, null, function (res) {
+            var page = Alib.Obj.getFirstItem(res.query.pages);
+            
+            if (page.categories) {
+                parents = parents.concat(page.categories);
+            }
+            
+            if (res["query-continue"]) {
+                query.clcontinue = res["query-continue"].categories.clcontinue;
+                this._getParentsContinue(query, call, callArgs, parents);
+            }
+            else {
+                var parentTitles = [];
+                
+                for (var par in parents) {
+                    parentTitles.push(parents[par].title);
+                }
+                
+                call(parentTitles, callArgs);
+            }
+        });
+    };
+    
+    this.getInfo = function (name, call, callArgs) {
+        WM.MW.callQuery({prop: "categoryinfo",
+                         titles: name},
+                         WM.Cat._getInfoContinue,
+                         [call, callArgs]);
+    };
+    
+    this._getInfoContinue = function (page, args) {
+        args[0](page.categoryinfo, args[1]);
     };
 };

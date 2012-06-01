@@ -41,6 +41,7 @@ WM.ArchWiki = new function () {
     };
     
     var languages = {
+        local: "English",
         names: {
             "Български": {subtag: "bg", english: "Bulgarian"},
             "Česky": {subtag: "cs", english: "Czech"},
@@ -49,6 +50,7 @@ WM.ArchWiki = new function () {
             "Ελληνικά": {subtag: "el", english: "Greek"},
             "English": {subtag: "en", english: "English"},
             "Español": {subtag: "es", english: "Spanish"},
+            "فارسی": {subtag: "fa", english: "Persian"},
             "Suomi": {subtag: "fi", english: "Finnish"},
             "Français": {subtag: "fr", english: "French"},
             "עברית": {subtag: "he", english: "Hebrew"},
@@ -133,12 +135,31 @@ WM.ArchWiki = new function () {
             all: ["de", "en", "es", "fa", "fi", "fr", "pl", "pt-br", "ro",
                   "sv", "tr", "uk"],
             alive: ["de", "en", "fa", "fi", "fr", "ro", "sv", "tr"],
-            dead: ["es", "pl", "pt-br", "uk"]
+            dead: ["es", "pl", "pt-br", "uk"],
+            languages: {
+                "Deutsch": "de",
+                "English": "en",
+                "Español": "es",
+                "فارسی": "fa",
+                "Suomi": "fi",
+                "Français": "fr",
+                "Polski": "pl",
+                "Português": "pt-br",
+                "Română": "ro",
+                "Svenska": "sv",
+                "Türkçe": "tr",
+                "Українська": "uk",
+                
+            }
         }
     };
     
     this.getNamespaceId = function (name) {
         return namespaces[name];
+    };
+    
+    this.getLocalLanguage = function () {
+        return languages.local;
     };
     
     this.getCategoryLanguages = function () {
@@ -179,5 +200,37 @@ WM.ArchWiki = new function () {
     
     this.isDeadInterwikiLanguage = function (lang) {
         return languages.interwiki.dead.indexOf(lang) > -1;
+    };
+    
+    this.getInterlanguageTag = function (language) {
+        return languages.interwiki.languages[language];
+    };
+        
+    this.detectLanguage = function (title) {
+        var matches = title.match(/^(.+?)([ _]\(([^\(]+)\))?$/);
+        var detectedLanguage = matches[3];
+        var pureTitle;
+        if (!detectedLanguage || !WM.ArchWiki.isCategoryLanguage(detectedLanguage)) {
+            // Language categories are exceptions
+            var testLangCat = matches[1].match(/^ *[Cc]ategory *: *(.+?) *$/);
+            if (testLangCat && WM.ArchWiki.isCategoryLanguage(testLangCat[1])) {
+                detectedLanguage = testLangCat[1];
+                pureTitle = matches[1];
+            }
+            else {
+                detectedLanguage = languages.local;
+                pureTitle = matches[0];
+            }
+        }
+        else {
+            pureTitle = matches[1];
+        }
+        return [pureTitle, detectedLanguage];
+    };
+    
+    this.findAllInterlanguageLinks = function (source) {
+        // See also WM.Parser.findInterlanguageLinks!!!
+        var interwikiLanguages = this.getInterwikiLanguages();
+        return WM.Parser.findSpecialLinks(source, interwikiLanguages.join("|"));
     };
 };

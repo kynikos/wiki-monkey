@@ -23,9 +23,10 @@ WM.Tables = new function () {
         var lastId = source.lastIndexOf('|}<!--' + mark);
         var endtable = (lastId > -1) ? lastId : source.lastIndexOf('|}');
         
-        var part1 = source.substring(0, endtable);
-        var part2 = source.substring(endtable);
+        var row = "|-\n|" + values.join("\n|") + "\n";
         
-        return part1 + "|-\n|" + values.join("\n|") + "\n" + part2;
+        var newText = Alib.Str.insert(source, row, endtable);
+        
+        return newText;
     };
 };

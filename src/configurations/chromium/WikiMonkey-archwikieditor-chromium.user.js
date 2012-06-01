@@ -3,7 +3,7 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.10.3-archwikieditor-chromium
+// @version 1.11.0-archwikieditor-chromium
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
@@ -11,7 +11,6 @@
 // @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-archwikieditor-chromium.user.js
 // @icon http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey.png
 // @icon64 http://cloud.github.com/downloads/kynikos/wiki-monkey/wiki-monkey-64.png
-// @match http://*.wikipedia.org/*
 // @match https://wiki.archlinux.org/*
 // ==/UserScript==
 
@@ -110,7 +109,228 @@ if (!GM_addStyle) {
     };
 }
 
-var WM = new function () {
+if (!GM_xmlhttpRequest) {
+    var GM_xmlhttpRequest = function (params) {
+        /* This function emulates GM_xmlhttpRequest only partially
+         * Notably cross-origin requests are not supported
+         *
+         * params = {
+         *     method: ,
+         *     url: ,
+         *     data: ,
+         *     headers: ,
+         *     user: ,
+         *     password: ,
+         *     onload: ,
+         *     onerror: ,
+         *     onreadystatechange: ,
+         * 
+         *     // Not yet implemented
+         *     //binary: ,
+         *     //mozBackgroundRequest: ,
+         *     //overrideMimeType: ,
+         *     //ignoreCache: ,
+         *     //ignoreRedirect: ,
+         *     //ignoreTempRedirect: ,
+         *     //ignorePermanentRedirect: ,
+         *     //failOnRedirect: ,
+         *     //redirectionLimit: ,
+         * }
+         */
+        if (!params.method) params.method = "GET";
+        if (!params.data) params.data = null;
+        if (!params.headers) params.headers = {};
+        if (!params.user) params.user = null;
+        if (!params.password) params.password = null;
+        if (!params.onload) params.onload = function (req) {};
+        if (!params.onerror) params.onerror = function (req) {};
+        if (!params.onreadystatechange) params.onreadystatechange = function (req) {};
+        params.async = true;
+        
+        var req = new XMLHttpRequest();
+        
+        req.open(params.method, params.url, params.async, params.user, params.password);
+        
+        for (var header in params.headers) {
+            req.setRequestHeader(header, params.headers[header]);
+        }
+        
+        req.onreadystatechange = function () {
+            var response = {
+                responseText: req.responseText,
+                readyState: req.readyState,
+                responseHeaders: req.getAllResponseHeaders(),
+                status: req.status,
+                statusText: req.statusText,
+                // Not yet implemented
+                //finalUrl: ,
+            };
+            
+            try {
+                response.responseJSON = JSON.parse(req.responseText);
+            }
+            catch (err) {
+                response.responseJSON = undefined;
+            }
+            
+            params.onreadystatechange(response);
+            
+            if (req.readyState == 4) {
+                if (req.status == 200) {
+                    params.onload(response);
+                }
+                else {
+                    params.onerror(response);
+                }
+            }
+        };
+        
+        req.send(params.data);
+        
+        return {
+            abort: function () {
+                req.abort();
+            },
+        }
+    };
+}
+
+if (!Alib) var Alib = {};
+
+Alib.Async = new function () {
+    this.recurseTreeAsync = function (params) {
+        /*
+         * params = {
+         *     node: ,
+         *     parentIndex: ,
+         *     siblingIndex: ,
+         *     ancestors: ,
+         *     children: ,
+         *     callChildren: ,
+         *     callNode: ,
+         *     callEnd: ,
+         *     callArgs: ,
+         *     stage: ,
+         *     nodesList:
+         * }
+         * 
+         * nodesList: [
+         *     {
+         *         node: ,
+         *         parentIndex: ,
+         *         siblingIndex: ,
+         *         ancestors: [...],
+         *         children: [...]
+         *     },
+         *     {...}
+         * ]
+         * 
+         * Example:
+         * 
+         * recurseTreeAsync({
+         *     node: ,
+         *     callChildren: ,
+         *     callNode: ,
+         *     callEnd: ,
+         *     callArgs:
+         * });
+         * 
+         * callChildren(params) {
+         *     params.children = ;
+         *     recurseTreeAsync(params);
+         * }
+         * 
+         * callNode(params) {
+         *     recurseTreeAsync(params);
+         * }
+         * 
+         * callEnd(params) {}
+         */
+        if (params.stage === undefined) {
+            params.parentIndex = null;
+            params.siblingIndex = 0;
+            params.ancestors = [];
+            params.children = [];
+            params.nodesList = [];
+            params.stage = 1;
+            this.recurseTreeAsync(params);
+        }
+        else {
+            switch (params.stage) {
+                case 1:
+                    params.stage = 2;
+                    // Prevent infinite loops
+                    if (params.ancestors.indexOf(params.node) == -1) {
+                        params.callChildren(params);
+                        break;
+                    }
+                    else {
+                        params.children = "loop";
+                        // Do not break here!!!
+                    }
+                case 2:
+                    params.nodesList.push({
+                        node: params.node,
+                        parentIndex: params.parentIndex,
+                        siblingIndex: params.siblingIndex,
+                        ancestors: params.ancestors.slice(0),
+                        children: params.children.slice(0),
+                    });
+                    params.stage = 3;
+                    params.callNode(params);
+                    break;
+                case 3:
+                    if (params.children.length && params.children != "loop") {
+                        // Go to the first child
+                        params.ancestors.push(params.node);
+                        params.node = params.children[0];
+                        params.parentIndex = params.nodesList.length - 1;
+                        params.siblingIndex = 0;
+                        params.children = [];
+                        params.stage = 1;
+                        this.recurseTreeAsync(params);
+                    }
+                    else if (params.parentIndex != null) {
+                        // Go to the next sibling
+                        var parent = params.nodesList[params.parentIndex];
+                        params.siblingIndex++;
+                        params.node = parent.children[params.siblingIndex];
+                        params.children = [];
+                        if (params.node) {
+                            params.stage = 1;
+                        }
+                        else {
+                            // There are no more siblings
+                            params.node = parent.node;
+                            params.parentIndex = parent.parentIndex;
+                            params.siblingIndex = parent.siblingIndex;
+                            params.ancestors = parent.ancestors.slice(0);
+                            params.stage = 3;
+                        }
+                        this.recurseTreeAsync(params);
+                    }
+                    else {
+                        // End of recursion
+                        params.callEnd(params);
+                    }
+                    break;
+            }
+        }
+    };
+};
+
+if (!Alib) var Alib = {};
+
+Alib.Compatibility = new function () {
+    this.normalizeCarriageReturns = function (source) {
+        // Opera and IE use \r\n instead of \n
+        return source.replace(/\r\n/g, '\n');
+    };
+};
+
+if (!Alib) var Alib = {};
+
+Alib.HTTP = new function () {
     var queryString = (function () {
         var qa = location.search.substr(1).split('&');
         var qd = new Object();
@@ -126,26 +346,169 @@ var WM = new function () {
         return queryString[name];
     };
     
-    this.getLongTextNode = function (element) {
-        // DEPRECATED, no longer used anywhere: delete?
-        
-        // Firefox and other browsers split long text into multiple text nodes
-        var text = "";
-        var nodes = element.childNodes;
-        var child;
-        for (var c = 0; c < nodes.length; c++) {
-            child = nodes[c];
-            if (child.nodeType == 3) {
-                text += child.nodeValue;
-            }
-        }
-        return text;
+    this.getURLParts = function (url) {
+        var re = /^(.+?\:\/\/)([^\/]+)(.+?)(\?.+)$/i;
+        var match = re.match(url);
+        return {
+            protocol: match[1],
+            hostname: match[2],
+            path: match[3],
+            query: match[4],
+        };
     };
     
+    this.sendGetAsyncRequest = function (url, call) {
+        var req = new XMLHttpRequest();
+        req.onreadystatechange = function () {
+            if (req.readyState == 4 && req.status == 200) {
+                call(req);
+            }
+        };
+        req.open("GET", url, true);
+        req.send();
+    };
+    
+    this.sendGetSyncRequest = function (url) {
+        var req = new XMLHttpRequest();
+        req.open("GET", url, false);
+        req.send();
+        return req;
+    };
+    
+    this.sendPostAsyncRequest = function (url, call, query, header, headervalue) {
+        var req = new XMLHttpRequest();
+        req.onreadystatechange = function() {
+            if (req.readyState == 4 && req.status == 200) {
+                call(req);
+            }
+        };
+        req.open("POST", url, true);
+        if (header && headervalue) {
+            req.setRequestHeader(header, headervalue);
+        }
+        req.send(query);
+    };
+    
+    this.sendPostSyncRequest = function (url, query, header, headervalue) {
+        var req = new XMLHttpRequest();
+        req.open("POST", url, false);
+        if (header && headervalue) {
+            req.setRequestHeader(header, headervalue);
+        }
+        req.send(query);
+        return req;
+    };
+};
+
+if (!Alib) var Alib = {};
+
+Alib.Obj = new function () {
+    this.getKeys = function (object) {
+        var keys = [];
+        for (var i in object) {
+            keys.push(i);
+        }
+        return keys;
+    };
+    
+    this.getValues = function (object) {
+        var values = [];
+        for (var i in object) {
+            values.push(object[i]);
+        }
+        return values;
+    };
+    
+    this.getFirstItem = function (object) {
+        for (var i in object) {
+            return object[i];
+        }
+    };
+};
+
+if (!Alib) var Alib = {};
+
+Alib.RegEx = new function () {
+    this.escapePattern = function (string) {
+        return string.replace(/[-[\]{}()*+?.,:!=\\^$|#\s]/g, "\\$&");
+    };
+    
+    this.matchAll = function (source, regExp) {
+        var result = [];
+        while (true) {
+            var match = regExp.exec(source);
+            if (match) {
+                var L = match[0].length;
+                result.push({"match": match,
+                             "index": regExp.lastIndex - L,
+                             "length": L});
+            }
+            else {
+                break;
+            }
+        }
+        return result;
+    };
+};
+
+if (!Alib) var Alib = {};
+
+Alib.Str = new function () {
+    this.insert = function (string, newString, id) {
+        if (!id) id = 0;
+        return string.substring(0, id) + newString + string.substr(id);
+    };
+    
+    this.overwriteAt = function (string, newString, id) {
+        if (!id) id = 0;
+        return string.substring(0, id) + newString + string.substr(id + newString.length);
+    };
+    
+    this.overwriteBetween = function (string, newString, id1, id2) {
+        if (!id1) id1 = 0;
+        if (!id2) id2 = id1;
+        if (id1 > id2) {
+            var tempid = id2;
+            id2 = id1;
+            id1 = tempid;
+        }
+        return string.substring(0, id1) + newString + string.substr(id2);
+    };
+    
+    this.overwriteFor = function (string, newString, id, length) {
+        if (!id) id = 0;
+        if (!length || length < 0) length = 0;
+        return string.substring(0, id) + newString + string.substr(id + length);
+    };
+    
+    this.removeBetween = function (string, id1, id2) {
+        return this.overwriteBetween(string, "", id1, id2);
+    };
+    
+    this.removeFor = function (string, id, length) {
+        return this.overwriteFor(string, "", id, length);
+    };
+    
+    this.padLeft = function (string, filler, length) {
+        while (string.length < length) {
+            string = filler + string;
+        }
+        return string;
+    };
+    
+    this.padRight = function (string, filler, length) {
+        while (string.length < length) {
+            string += filler;
+        }
+        return string;
+    };
+};
+
+var WM = new function () {
     this.Plugins = {};
     
     this.main = function () {
-        this.UI.makeUI();
+        this.MW._storeUserInfo(WM.UI._makeUI);
     };
 };
 
@@ -172,6 +535,7 @@ WM.ArchWiki = new function () {
     };
     
     var languages = {
+        local: "English",
         names: {
             "Български": {subtag: "bg", english: "Bulgarian"},
             "Česky": {subtag: "cs", english: "Czech"},
@@ -180,6 +544,7 @@ WM.ArchWiki = new function () {
             "Ελληνικά": {subtag: "el", english: "Greek"},
             "English": {subtag: "en", english: "English"},
             "Español": {subtag: "es", english: "Spanish"},
+            "فارسی": {subtag: "fa", english: "Persian"},
             "Suomi": {subtag: "fi", english: "Finnish"},
             "Français": {subtag: "fr", english: "French"},
             "עברית": {subtag: "he", english: "Hebrew"},
@@ -264,12 +629,31 @@ WM.ArchWiki = new function () {
             all: ["de", "en", "es", "fa", "fi", "fr", "pl", "pt-br", "ro",
                   "sv", "tr", "uk"],
             alive: ["de", "en", "fa", "fi", "fr", "ro", "sv", "tr"],
-            dead: ["es", "pl", "pt-br", "uk"]
+            dead: ["es", "pl", "pt-br", "uk"],
+            languages: {
+                "Deutsch": "de",
+                "English": "en",
+                "Español": "es",
+                "فارسی": "fa",
+                "Suomi": "fi",
+                "Français": "fr",
+                "Polski": "pl",
+                "Português": "pt-br",
+                "Română": "ro",
+                "Svenska": "sv",
+                "Türkçe": "tr",
+                "Українська": "uk",
+                
+            }
         }
     };
     
     this.getNamespaceId = function (name) {
         return namespaces[name];
+    };
+    
+    this.getLocalLanguage = function () {
+        return languages.local;
     };
     
     this.getCategoryLanguages = function () {
@@ -311,10 +695,42 @@ WM.ArchWiki = new function () {
     this.isDeadInterwikiLanguage = function (lang) {
         return languages.interwiki.dead.indexOf(lang) > -1;
     };
+    
+    this.getInterlanguageTag = function (language) {
+        return languages.interwiki.languages[language];
+    };
+        
+    this.detectLanguage = function (title) {
+        var matches = title.match(/^(.+?)([ _]\(([^\(]+)\))?$/);
+        var detectedLanguage = matches[3];
+        var pureTitle;
+        if (!detectedLanguage || !WM.ArchWiki.isCategoryLanguage(detectedLanguage)) {
+            // Language categories are exceptions
+            var testLangCat = matches[1].match(/^ *[Cc]ategory *: *(.+?) *$/);
+            if (testLangCat && WM.ArchWiki.isCategoryLanguage(testLangCat[1])) {
+                detectedLanguage = testLangCat[1];
+                pureTitle = matches[1];
+            }
+            else {
+                detectedLanguage = languages.local;
+                pureTitle = matches[0];
+            }
+        }
+        else {
+            pureTitle = matches[1];
+        }
+        return [pureTitle, detectedLanguage];
+    };
+    
+    this.findAllInterlanguageLinks = function (source) {
+        // See also WM.Parser.findInterlanguageLinks!!!
+        var interwikiLanguages = this.getInterwikiLanguages();
+        return WM.Parser.findSpecialLinks(source, interwikiLanguages.join("|"));
+    };
 };
 
 WM.Bot = new function () {
-    this.makeUI = function (functions, lists) {
+    this._makeUI = function (functions, lists) {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyBot';
         
@@ -363,8 +779,8 @@ WM.Bot = new function () {
                     // interface is selected, replaceChild won't work
                     UI.replaceChild(document.createElement('div'), UI.firstChild);
                 }
-                WM.Bot.selections.function_ = function (title) {
-                    return eval("WM.Plugins." + fns[id][0] + ".mainAuto")(fns[id][2], title);
+                WM.Bot.selections.function_ = function (title, callContinue) {
+                    eval("WM.Plugins." + fns[id][0] + ".mainAuto")(fns[id][2], title, callContinue);
                 };
             }
         })(functions), false);
@@ -381,8 +797,8 @@ WM.Bot = new function () {
             divFunction.appendChild(document.createElement('div'));
         }
         // Don't use "this.selections"
-        WM.Bot.selections.function_ = function (title) {
-            return eval("WM.Plugins." + functions[0][0] + ".mainAuto")(functions[0][2], title);
+        WM.Bot.selections.function_ = function (title, callContinue) {
+            eval("WM.Plugins." + functions[0][0] + ".mainAuto")(functions[0][2], title, callContinue);
         };
         
         fieldset.appendChild(legend);
@@ -453,14 +869,14 @@ WM.Bot = new function () {
         
         for (var e in elems) {
             elems[e].addEventListener("change", function () {
-                WM.Bot.disableStartBot('Filters have changed, preview the selection');
+                WM.Bot._disableStartBot('Filters have changed, preview the selection');
             }, false);
         }
         
         var inversetag = document.createElement('span');
         inversetag.innerHTML = 'Inverse';
         
-        preview.addEventListener("click", WM.Bot.previewFilter, false);
+        preview.addEventListener("click", WM.Bot._previewFilter, false);
         
         fieldset.appendChild(legend);
         if (listSelect.length > 1) {
@@ -476,7 +892,7 @@ WM.Bot = new function () {
         start.value = 'Start bot';
         start.id = 'WikiMonkeyBotStart';
         
-        start.addEventListener("click", WM.Bot.startAutomatic, false);
+        start.addEventListener("click", WM.Bot._startAutomatic, false);
         
         start.disabled = true;
         
@@ -506,17 +922,17 @@ WM.Bot = new function () {
         return bot;
     };
     
-    this.enableStartBot = function () {
+    this._enableStartBot = function () {
         document.getElementById('WikiMonkeyBotStartMsg').innerHTML = '';
         document.getElementById('WikiMonkeyBotStart').disabled = false;
     };
     
-    this.disableStartBot = function (message) {
+    this._disableStartBot = function (message) {
         document.getElementById('WikiMonkeyBotStartMsg').innerHTML = message;
         document.getElementById('WikiMonkeyBotStart').disabled = true;
     };
     
-    this.enableStopBot = function (stopId) {
+    this._enableStopBot = function (stopId) {
         var stop = document.createElement('input');
         stop.type = 'button';
         stop.value = 'Stop bot';
@@ -525,9 +941,9 @@ WM.Bot = new function () {
         stop.addEventListener("click", (function (id) {
             return function () {
                 clearTimeout(id);
-                // run disableStopBot() here, not in endAutomatic()
-                WM.Bot.disableStopBot();
-                WM.Bot.endAutomatic(true);
+                // run _disableStopBot() here, not in _endAutomatic()
+                WM.Bot._disableStopBot();
+                WM.Bot._endAutomatic(true);
                 WM.Log.logInfo('Bot stopped manually');
             }
         })(stopId), false);
@@ -537,21 +953,21 @@ WM.Bot = new function () {
         start.style.display = 'none';
     };
     
-    this.disableStopBot = function () {
+    this._disableStopBot = function () {
         var stop = document.getElementById('WikiMonkeyBotStop');
         stop.parentNode.removeChild(stop);
         document.getElementById('WikiMonkeyBotStart').style.display = 'inline';
     };
     
-    this.disableControls = function () {
-        this.setEnableControls(true);
+    this._disableControls = function () {
+        this._setEnableControls(true);
     };
     
-    this.reEnableControls = function () {
-        this.setEnableControls(false);
+    this._reEnableControls = function () {
+        this._setEnableControls(false);
     };
     
-    this.setEnableControls = function (flag) {
+    this._setEnableControls = function (flag) {
         var fsets = document.getElementById('WikiMonkeyBot').getElementsByTagName('fieldset');
         for (var f = 0; f < fsets.length; f++) {
             // HTML5-compliant
@@ -559,20 +975,20 @@ WM.Bot = new function () {
         }
     };
     
-    this.enableForceStart = function () {
+    this._enableForceStart = function () {
         var force = document.getElementById('WikiMonkeyBotForceStart');
         force.getElementsByTagName('input')[0].disabled = false;
         force.style.display = 'inline';
     };
     
-    this.disableForceStart = function () {
+    this._disableForceStart = function () {
         var force = document.getElementById('WikiMonkeyBotForceStart');
         force.getElementsByTagName('input')[0].checked = false;
         force.getElementsByTagName('input')[0].disabled = true;
         force.style.display = 'none';
     };
     
-    this.canForceStart = function () {
+    this._canForceStart = function () {
         return document.getElementById('WikiMonkeyBotForceStart').getElementsByTagName('input')[0].checked;
     };
     
@@ -607,9 +1023,9 @@ WM.Bot = new function () {
         return response;
     };
     
-    this.previewFilter = function () {
+    this._previewFilter = function () {
         WM.Log.logInfo('Updating filter preview, please wait...');
-        WM.Bot.disableStartBot('Updating filter preview...');
+        WM.Bot._disableStartBot('Updating filter preview...');
         
         var items, linkId, link;
         
@@ -638,53 +1054,53 @@ WM.Bot = new function () {
             }
         }
         WM.Log.logInfo('Preview updated (' + N + ' pages selected)');
-        (enable) ? WM.Bot.enableStartBot() : WM.Bot.disableStartBot('No pages selected, reset and preview the filter');
+        (enable) ? WM.Bot._enableStartBot() : WM.Bot._disableStartBot('No pages selected, reset and preview the filter');
     };
     
     // GM_setValue can only store strings, bool and 32-bit integers (no 64-bit)
     this.botToken = "0";
     
-    this.setBotToken = function () {
+    this._setBotToken = function () {
         var date = new Date();
         var token = date.getTime() + "";
         this.botToken = token;
         GM_setValue('BotToken', token);
     };
     
-    this.resetBotToken = function (reset) {
+    this._resetBotToken = function (reset) {
         this.botToken = "0";
         if (reset) {
             GM_setValue('BotToken', "0");
         }
     };
     
-    this.getBotToken = function () {
+    this._getBotToken = function () {
         return this.botToken;
     };
     
-    this.checkOtherBotsRunning = function () {
+    this._checkOtherBotsRunning = function () {
         GMValue = GM_getValue('BotToken', "0");
-        return (GMValue != "0") && (GMValue != this.getBotToken());
+        return (GMValue != "0") && (GMValue != this._getBotToken());
     };
     
-    this.startAutomatic = function () {
+    this._startAutomatic = function () {
         var items = WM.Bot.selections.list.current[0].getElementsByTagName('li');
         var linkId = WM.Bot.selections.list.current[1];
-        if (WM.Bot.checkOtherBotsRunning() && !WM.Bot.canForceStart()) {
+        if (WM.Bot._checkOtherBotsRunning() && !WM.Bot._canForceStart()) {
             WM.Log.logError('Another bot is running, aborting...');
-            WM.Bot.enableForceStart();
+            WM.Bot._enableForceStart();
         }
         else {
-            WM.Bot.disableForceStart();
-            WM.Bot.setBotToken();
+            WM.Bot._disableForceStart();
+            WM.Bot._setBotToken();
             WM.Log.logInfo('Starting bot...');
-            WM.Bot.disableStartBot('Bot is running...');
-            WM.Bot.disableControls();
-            WM.Bot.processItem(items, 0, linkId);
+            WM.Bot._disableStartBot('Bot is running...');
+            WM.Bot._disableControls();
+            WM.Bot._processItem(items, 0, linkId);
         }
     };
     
-    this.processItem = function (items, index, linkId) {
+    this._processItem = function (items, index, linkId) {
         var interval;
         if (WM.MW.isUserBot()) {
             interval = 10000;
@@ -701,209 +1117,205 @@ WM.Bot = new function () {
                 var stopId = setTimeout((function (lis, id, ln, article) {
                     return function () {
                         // Stop must be disabled before any check is performed
-                        WM.Bot.disableStopBot();
+                        WM.Bot._disableStopBot();
                         // Check here if other bots have been started,
                         // _not_ before setTimeout! 
-                        if (!WM.Bot.checkOtherBotsRunning()) {
+                        if (!WM.Bot._checkOtherBotsRunning()) {
                             ln.className = "WikiMonkeyBotProcessing";
                             WM.Log.logInfo("Processing " + article + "...");
-                            if (WM.Bot.selections.function_(article) === true) {
-                                ln.className = "WikiMonkeyBotProcessed";
-                                WM.Log.logInfo(article + " processed");
-                                // Do not increment directly in the function's call!
-                                id++;
-                                WM.Bot.processItem(lis, id, linkId);
-                            }
-                            else {
-                                ln.className = "WikiMonkeyBotFailed";
-                                WM.Log.logError("Error processing " + article + ", stopping the bot");
-                                WM.Bot.endAutomatic(true);
-                            }
+                            WM.Bot.selections.function_(article, function (res) {
+                                if (res === true) {
+                                    ln.className = "WikiMonkeyBotProcessed";
+                                    WM.Log.logInfo(article + " processed");
+                                    // Do not increment directly in the function's call!
+                                    id++;
+                                    WM.Bot._processItem(lis, id, linkId);
+                                }
+                                else {
+                                    ln.className = "WikiMonkeyBotFailed";
+                                    WM.Log.logError("Error processing " + article + ", stopping the bot");
+                                    WM.Bot._endAutomatic(true);
+                                }
+                            });
                         }
                         else {
                             WM.Log.logError('Another bot has been force-started, stopping...');
-                            WM.Bot.endAutomatic(false);
+                            WM.Bot._endAutomatic(false);
                         }
                     };
                 })(items, index, link, title), interval);
-                this.enableStopBot(stopId);
+                this._enableStopBot(stopId);
             }
             else {
                 // Do not increment directly in the function's call!
                 index++;
-                WM.Bot.processItem(items, index, linkId);
+                WM.Bot._processItem(items, index, linkId);
             }
         }
         else {
-            this.endAutomatic(true);
+            this._endAutomatic(true);
         }
     };
     
-    this.endAutomatic = function (reset) {
-        this.resetBotToken(reset);
+    this._endAutomatic = function (reset) {
+        this._resetBotToken(reset);
         WM.Log.logInfo('Bot operations completed (check the log for warnings or errors)');
-        this.disableStartBot('Bot operations completed, reset and preview the filter');
-        this.reEnableControls();
+        this._disableStartBot('Bot operations completed, reset and preview the filter');
+        this._reEnableControls();
     };
-    
-    // Incomplete ****************************************************************
-    /*var startSemiAutomatic = function (args) {
-        // Remember a value
-        GM_setValue('foo' + 'bar');
-        
-        // Alert all stored values
-        for (var v in GM_listValues()) {
-            var val = GM_listValues()[v];
-            alert(val + ' : ' + GM_getValue(val));
-        }
-        
-        // Reset array
-        for (var v in GM_listValues()) {
-            var val = GM_listValues()[v];
-            GM_deleteValue(val);
-        }
-    };*/
 };
 
 WM.Cat = new function () {
-    this.getTree = function (base) {
-        var tree = {};
-        tree[base] = walk(base, {});
-        // return {base: walk(base, {})}; doesn't work
-        return tree;
+    this.recurseTree = function (params) {
+        params.callChildren = WM.Cat._recurseTreeCallChildren;
+        Alib.Async.recurseTreeAsync(params);
     };
     
-    var walk = function (base, ancestors) {
-        WM.Log.logInfo("Walking " + base + "...");
-        
-        var subCats = WM.Cat.getSubCategories(base);
-        
-        var tree = {};
-        // Add base here in order to protect better from self-parenting categories
-        ancestors[base] = true;
-        var cat, subAncestors;
-        
+    this.recurseTreeContinue = function (params) {
+        Alib.Async.recurseTreeAsync(params);
+    };
+    
+    this._recurseTreeCallChildren = function (params) {
+        WM.Cat.getSubCategories(params.node, WM.Cat._recurseTreeCallChildrenContinue, params);
+    };
+    
+    this._recurseTreeCallChildrenContinue = function (subCats, params) {
         for (var s in subCats) {
-            cat = subCats[s].title;
-            
-            // Protect from category loops
-            if (ancestors[cat]) {
-                tree[cat] = "loop";
-            }
-            else {
-                // Create a copy of the object, not just a new reference
-                subAncestors = JSON.parse(JSON.stringify(ancestors));
-                tree[cat] = walk(cat, subAncestors);
-            }
+            params.children.push(subCats[s].title);
         }
-        
-        return tree;
+        Alib.Async.recurseTreeAsync(params);
     };
     
-    this.getSubCategories = function (parent) {
-        return getMembers(parent, "subcat", null);
+    this.getSubCategories = function (parent, call, callArgs) {
+        WM.Cat._getMembers(parent, "subcat", call, callArgs);
     };
     
-    this.getAllMembers = function (parent) {
-        return getMembers(parent, null, null);
+    this.getAllMembers = function (parent, call, callArgs) {
+        WM.Cat._getMembers(parent, null, call, callArgs);
     };
     
-    var getMembers = function (name, cmtype, cmcontinue) {
+    this._getMembers = function (name, cmtype, call, callArgs) {
         var query = {action: "query",
                      list: "categorymembers",
-                     cmtitle: encodeURIComponent(name),
-                     cmlimit: 5000};
+                     cmtitle: name,
+                     cmlimit: 500};
         
         if (cmtype) {
             query.cmtype = cmtype;
         }
         
-        if (cmcontinue) {
-            query.cmcontinue = cmcontinue;
-        }
-        
-        var res = WM.MW.callAPIGet(query);
-        var members = res.query.categorymembers;
-        
-        if (res["query-continue"]) {
-            cmcontinue = res["query-continue"].categorymembers.cmcontinue;
-            var cont = this.getMembers(name, cmtype, cmcontinue);
-            for (var sub in cont) {
-                members[sub] = cont[sub];
+        this._getMembersContinue(query, call, callArgs, []);
+    };
+    
+    this._getMembersContinue = function (query, call, callArgs, members) {
+        WM.MW.callAPIGet(query, null, function (res) {
+            members = members.concat(res.query.categorymembers);
+            if (res["query-continue"]) {
+                query.cmcontinue = res["query-continue"].categorymembers.cmcontinue;
+                this._getMembersContinue(query, call, callArgs, members);
             }
-        }
-        
-        return members;
+            else {
+                call(members, callArgs);
+            }
+        });
     };
     
-    this.getParents = function (child) {
-        // Supports a maximum of 500 parents (5000 for bots)
-        // Needs to implement query continue in order to support more
-        var pageid = WM.MW.callQuery({prop: "categories",
-                                     titles: encodeURIComponent(child),
-                                     cllimit: 5000});
+    this.getParents = function (name, call, callArgs) {
+        var query = {action: "query",
+                     prop: "categories",
+                     titles: name,
+                     cllimit: 500};
         
-        var parents = [];
-        
-        for (var cat in pageid.categories) {
-            parents.push(pageid.categories[cat].title);
-        }
-        
-        return parents;
+        this._getParentsContinue(query, call, callArgs, []);
     };
     
-    this.getInfo = function (name) {
-        var pageid = WM.MW.callQuery({prop: "categoryinfo",
-                                     titles: encodeURIComponent(name)});
-        return pageid.categoryinfo;
+    this._getParentsContinue = function (query, call, callArgs, parents) {
+        WM.MW.callAPIGet(query, null, function (res) {
+            var page = Alib.Obj.getFirstItem(res.query.pages);
+            
+            if (page.categories) {
+                parents = parents.concat(page.categories);
+            }
+            
+            if (res["query-continue"]) {
+                query.clcontinue = res["query-continue"].categories.clcontinue;
+                this._getParentsContinue(query, call, callArgs, parents);
+            }
+            else {
+                var parentTitles = [];
+                
+                for (var par in parents) {
+                    parentTitles.push(parents[par].title);
+                }
+                
+                call(parentTitles, callArgs);
+            }
+        });
+    };
+    
+    this.getInfo = function (name, call, callArgs) {
+        WM.MW.callQuery({prop: "categoryinfo",
+                         titles: name},
+                         WM.Cat._getInfoContinue,
+                         [call, callArgs]);
+    };
+    
+    this._getInfoContinue = function (page, args) {
+        args[0](page.categoryinfo, args[1]);
     };
 };
 
 WM.Diff = new function () {
-    this.getEndTimestamp = function () {
-        var title = WM.getURIParameter('title');
-        var diff = WM.getURIParameter('diff');
-        var oldid = WM.getURIParameter('oldid');
-        var pageid, enddate;
+    this.getEndTimestamp = function (call, callArgs) {
+        var title = Alib.HTTP.getURIParameter('title');
+        var diff = Alib.HTTP.getURIParameter('diff');
+        var oldid = Alib.HTTP.getURIParameter('oldid');
+        
+        var giveEndTimestamp = function (page, id) {
+            call(page.revisions[id].timestamp, callArgs);
+        };
         
         switch (diff) {
             case 'next':
-                pageid = WM.MW.callQuery({prop: "revisions",
-                                         titles: title,
-                                         rvlimit: "2",
-                                         rvprop: "timestamp",
-                                         rvdir: "newer",
-                                         rvstartid: oldid});
-                enddate = pageid.revisions[1].timestamp;
+                WM.MW.callQuery({prop: "revisions",
+                                 titles: title,
+                                 rvlimit: "2",
+                                 rvprop: "timestamp",
+                                 rvdir: "newer",
+                                 rvstartid: oldid},
+                                 giveEndTimestamp,
+                                 1);
                 break;
             case 'prev':
-                pageid = WM.MW.callQuery({prop: "revisions",
-                                         revids: oldid,
-                                         rvprop: "timestamp"});
-                enddate = pageid.revisions[0].timestamp;
+                WM.MW.callQuery({prop: "revisions",
+                                 revids: oldid,
+                                 rvprop: "timestamp"},
+                                 giveEndTimestamp,
+                                 0);
                 break;
             default:
-                pageid = WM.MW.callQuery({prop: "revisions",
-                                         revids: diff,
-                                         rvprop: "timestamp"});
-                enddate = pageid.revisions[0].timestamp;
+                WM.MW.callQuery({prop: "revisions",
+                                 revids: diff,
+                                 rvprop: "timestamp"},
+                                 giveEndTimestamp,
+                                 0);
         }
-        return enddate;
     };
 };
 
 WM.Editor = new function () {
     this.getTitle = function () {
-        var title = WM.getURIParameter('title').replace(/_/g, " ");
-        return title;
+        return WM.Parser.convertUnderscoresToSpaces(decodeURIComponent(Alib.HTTP.getURIParameter('title')));
     };
     
     this.isSection = function () {
-        return (WM.getURIParameter('section')) ? true : false;
+        return (Alib.HTTP.getURIParameter('section')) ? true : false;
     };
     
     this.readSource = function () {
-        return document.getElementById('wpTextbox1').value;
+        var value = document.getElementById('wpTextbox1').value;
+        // For compatibility with Opera and IE
+        return Alib.Compatibility.normalizeCarriageReturns(value);
     };
     
     this.writeSource = function (text) {
@@ -923,80 +1335,242 @@ WM.Editor = new function () {
     };
 };
 
-WM.HTTP = new function () {
-    /*
-     * WARNING!!!
-     * ALWAYS PUSH TO THIS ARRAY: NEVER POP, SORT, REVERSE OR CHANGE THE
-     * INDEXES IN ANY WAY
-     * COROLLARY (KNOWN BUG): This causes a minor memory leak (elements cannot
-     * be removed)
-     */
-    var xmlhttp = new Array();
-    
-    this.sendGetAsyncRequest = function (url, cfunc) {
-        var L = xmlhttp.push(new XMLHttpRequest());
-        var id = L - 1;
-        var xh = xmlhttp[id];
-        xh.onreadystatechange = function () {
-            if (xh.readyState == 4 && xh.status == 200) {
-                cfunc();
+WM.Interlanguage = new function () {
+    this.parseLinks = function (whitelist, source, iwmap) {
+        var parsedLinks = WM.Parser.findSpecialLinks(
+            source,
+            whitelist.join("|")
+        );
+        
+        var langlinks = [];
+        for (var p in parsedLinks) {
+            var link = parsedLinks[p];
+            var ltag = link.match[2];
+            var ltitle = link.match[3];
+            for (var iw in iwmap) {
+                if (iwmap[iw].prefix == ltag) {
+                    var lurl = iwmap[iw].url.replace("$1", WM.Parser.convertSpacesToUnderscores(ltitle));
+                    break;
+                }
             }
-        };
-        xh.open("GET", url, true);
-        xh.send();
-        return id;
+            langlinks.push({
+                lang: ltag,
+                title: ltitle,
+                url: lurl,
+                index: link.index,
+                length: link.length,
+            });
+        }
+        
+        return langlinks;
     };
     
-    this.sendGetSyncRequest = function (url) {
-        var L = xmlhttp.push(new XMLHttpRequest());
-        var id = L - 1;
-        var xh = xmlhttp[id];
-        xh.open("GET", url, false);
-        xh.send();
-        return id;
-    };
-    
-    this.sendPostAsyncRequest = function (url, cfunc, string, header, headervalue) {
-        var L = xmlhttp.push(new XMLHttpRequest());
-        var id = L - 1;
-        var xh = xmlhttp[id];
-        xh.onreadystatechange = function() {
-            if (xh.readyState == 4 && xh.status == 200) {
-                cfunc();
+    this.queryLinks = function (api, title, whitelist, callEnd, callArgs) {
+        WM.MW.callAPIGet(
+            {
+                action: "query",
+                prop: "info|revisions",
+                rvprop: "content|timestamp",
+                intoken: "edit",
+                titles: title,
+                redirects: "1",
+                meta: "siteinfo",
+                siprop: "interwikimap",
+                sifilteriw: "local",
+            },
+            api,
+            function (res, args) {
+                var page = Alib.Obj.getFirstItem(res.query.pages);
+                if (page.revisions) {
+                    var source = page.revisions[0]["*"];
+                    var timestamp = page.revisions[0].timestamp;
+                    var edittoken = page.edittoken;
+                    var iwmap = res.query.interwikimap;
+                    var langlinks = WM.Interlanguage.parseLinks(whitelist, source, iwmap);
+                }
+                else {
+                    // The requested article doesn't exist
+                    var source = "missing";
+                    var timestamp = null;
+                    var edittoken = null;
+                    var iwmap = res.query.interwikimap;
+                    var langlinks = "missing";
+                }
+                
+                callEnd(
+                    api,
+                    title,
+                    whitelist,
+                    langlinks,
+                    iwmap,
+                    source,
+                    timestamp,
+                    edittoken,
+                    callArgs
+                );
             }
+        );
+    };
+    
+    this.createNewLink = function (title, url) {
+        return {
+            title: title,
+            url: url,
         };
-        xh.open("POST", url, true);
-        if (header && headervalue) {
-            xh.setRequestHeader(header, headervalue);
-        }
-        xh.send(string);
-        return id;
     };
     
-    this.sendPostSyncRequest = function (url, string, header, headervalue) {
-        var L = xmlhttp.push(new XMLHttpRequest());
-        var id = L - 1;
-        var xh = xmlhttp[id];
-        xh.open("POST", url, false);
-        if (header && headervalue) {
-            xh.setRequestHeader(header, headervalue);
+    this.createVisitedLink = function (title, url, iwmap, api, source, timestamp, edittoken, links) {
+        var entry = {
+            title: title,
+            url: url,
+            iwmap: iwmap,
+            api: api,
+            source: source,
+            timestamp: timestamp,
+            edittoken: edittoken,
+            links: [],
+        };
+        for (var l in links) {
+            entry.links.push(links[l]);
         }
-        xh.send(string);
-        return id;
+        return entry;
     };
     
-    this.getResponseText = function (id) {
-        return xmlhttp[id].responseText;
-    }
+    this.collectLinks = function (visitedlinks, newlinks, whitelist, error, callEnd, callArgs) {
+        // If error is "missing" it should be possible to continue safely
+        if (error != "conflict") {
+            for (var tag in newlinks) {
+                var link = newlinks[tag];
+                break;
+            }
+            
+            if (link) {
+                var title = link.title;
+                var url = link.url;
+                var api = WM.MW.getWikiPaths(url).api;
+                
+                delete newlinks[tag];
+                
+                WM.Log.logInfo("Reading " + url + "...");
+                
+                this.queryLinks(
+                    api,
+                    title,
+                    whitelist,
+                    WM.Interlanguage.collectLinksContinue,
+                    [url, tag, visitedlinks, newlinks, callEnd, callArgs]
+                );
+            }
+            else {
+                callEnd(visitedlinks, callArgs);
+            }
+        }
+        else {
+            callEnd(error, callArgs);
+        }
+    };
+    
+    this.collectLinksContinue = function (api, title, whitelist, langlinks, iwmap, source, timestamp, edittoken, args) {
+        var url = args[0];
+        var tag = args[1];
+        var visitedlinks = args[2];
+        var newlinks = args[3];
+        var callEnd = args[4];
+        var callArgs = args[5];
+            
+        var error = "";
+        
+        if (langlinks != "missing") {
+            visitedlinks[tag] = WM.Interlanguage.createVisitedLink(title, url, iwmap, api, source, timestamp, edittoken, langlinks);
+            
+            for (var l in langlinks) {
+                var link = langlinks[l];
+                if (!visitedlinks[link.lang] && !newlinks[link.lang]) {
+                    newlinks[link.lang] = WM.Interlanguage.createNewLink(link.title, link.url);
+                }
+                else if ((visitedlinks[link.lang] && visitedlinks[link.lang].url != link.url) ||
+                         (newlinks[link.lang] && newlinks[link.lang].url != link.url)) {
+                    error = "conflict";
+                    WM.Log.logError("Conflicting interlanguage links: [[" + link.lang + ":" + link.title + "]]");
+                    break;
+                }
+            }
+        }
+        else {
+            error = "missing";
+            WM.Log.logWarning("[[" + tag + ":" + title + "]] seems to point to a non-existing article, removing it");
+        }
+        
+        WM.Interlanguage.collectLinks(
+            visitedlinks,
+            newlinks,
+            whitelist,
+            error,
+            callEnd,
+            callArgs
+        );
+    };
+    
+    this.updateLinks = function (lang, url, iwmap, source, oldlinks, newlinks) {
+        var linkList = "";
+        
+        for (var tag in newlinks) {
+            if (tag != lang) {
+                var link = newlinks[tag];
+                var tagFound = false;
+                for (var iw in iwmap) {
+                    if (iwmap[iw].prefix == tag) {
+                        if (WM.MW.getWikiPaths(iwmap[iw].url).api == link.api) {
+                            linkList += "[[" + tag + ":" + link.title + "]]\n";
+                        }
+                        else {
+                            WM.Log.logWarning("On " + url + ", " + tag + " interlanguage links point to a different wiki than the others, ignoring them");
+                        }
+                        tagFound = true;
+                        break;
+                    }
+                }
+                if (!tagFound) {
+                    WM.Log.logWarning(tag + " interlanguage links are not supported in " + url + ", ignoring them");
+                }
+            }
+        }
+        
+        var cleanText = "";
+        var textId = 0;
+        for (var l in oldlinks) {
+            var link = oldlinks[l];
+            cleanText += source.substring(textId, link.index);
+            textId = link.index + link.length;
+        }
+        cleanText += source.substring(textId);
+        
+        if (oldlinks.length) {
+            // Insert the new links at the index of the first previous link
+            var firstLink = oldlinks[0].index;
+        }
+        else {
+            var firstLink = 0;
+        }
+        
+        var part1 = cleanText.substring(0, firstLink);
+        var part2a = cleanText.substr(firstLink);
+        var firstChar = part2a.search(/[^\s]/);
+        var part2b = part2a.substr(firstChar);
+        
+        var newText = part1 + linkList + part2b;
+        
+        return newText;
+    };
 };
 
 WM.Log = new function () {
-    this.makeLogArea = function () {
+    this._makeLogArea = function () {
         log = document.createElement('div');
         log.id = 'WikiMonkeyLog';
         
         GM_addStyle("#WikiMonkeyLog {height:10em; border:2px solid #07b; padding:0.5em; overflow:auto; resize:vertical; background-color:#111;} " +
-                    "#WikiMonkeyLog pre.timestamp, #WikiMonkeyLog pre.message {overflow:hidden; resize:none;} " +
+                    "#WikiMonkeyLog pre.timestamp, #WikiMonkeyLog pre.message {overflow:visible; resize:none;} " +
                     "#WikiMonkeyLog pre.timestamp {float:left; width:5em; margin:0; border:none; padding:0; font-size:0.9em; color:#eee; background-color:transparent;} " +
                     "#WikiMonkeyLog pre.message {margin:0 0 0.5em 5em; border:none; padding:0; color:#eee; background-color:transparent;} " +
                     "#WikiMonkeyLog pre.mdebug {color:cyan;} " +
@@ -1053,81 +1627,267 @@ WM.Log = new function () {
 };
 
 WM.MW = new function () {
-    var wikiUrls = (function () {
-        var paths = {DEFAULT: {articles: "index.php",
-                               api: "api.php"},
-                     "archlinux.org": {articles: "index.php",
-                                       api: "api.php"},
-                     "wikipedia.org": {articles: "wiki",
-                                       api: "w/api.php"}};
-        
-        var urls = paths[location.hostname.split(".").slice(1).join(".")];
-        
-        if (!urls) {
-            urls = paths.DEFAULT;
+    var wikiPaths = {
+        known: {
+            "^https?://[^\.]+\.wikipedia\.org": {
+                articles: "/wiki/",
+                api: "/w/api.php"
+            },
+            "^https?://wiki\.archlinux\.org": {
+                articles: "/index.php/",
+                api: "/api.php"
+            },
+            "^https?://wiki\.archlinux\.de": {
+                articles: "/title/",
+                api: "/api.php"
+            },
+            "^http://wiki\.archlinux\.fr": {
+                articles: "/",
+                api: "/api.php"
+            },
+            "^http://wiki\.archlinux\.ro": {
+                articles: "/index.php/",
+                api: "/api.php"
+            },
+            "^http://(?:www\.)?archlinux\.fi": {
+                articles: "/wiki/",
+                api: "/w/api.php"
+            },
+            "^http://wiki\.archlinux\.se": {
+                articles: "/index.php?title=",
+                api: "/api.php"
+            },
+            "^http://(?:www\.)?archtr\.org": {
+                articles: "/index.php?title=",
+                api: "/wiki/api.php"
+            },
+            "^http://wiki\.archlinux\.ir": {
+                articles: "/index.php/",
+                api: "/api.php"
+            },
+        },
+        default_: {
+            articles: "/index.php?title=",
+            api: "/api.php"
+        },
+        local: {},
+    };
+    
+    var getWikiPaths = function (href) {
+        // It's necessary to keep this function in a private attribute,
+        // otherwise wikiPaths.local cannot be initialized
+        if (href) {
+            for (var r in wikiPaths.known) {
+                var re = new RegExp(r, "i");
+                var match = re.exec(href);
+                if (match) {
+                    var hostname = match[0];
+                    var paths = {};
+                    for (var p in wikiPaths.known[r]) {
+                        paths[p] = wikiPaths.known[r][p];
+                    }
+                    break;
+                }
+            }
+            if (!paths) {
+                var hostname = Alib.HTTP.getURLParts(href).hostname;
+                var paths = {};
+                for (var p in wikiPaths.default_) {
+                    paths[p] = wikiPaths.default_[p];
+                }
+            }
+            for (var key in paths) {
+                paths[key] = hostname + paths[key];
+            }
         }
-        
-        for (var key in urls) {
-            urls[key] = location.protocol + "//" + location.hostname + "/" + urls[key];
+        else {
+            var paths = {};
+            for (var p in wikiPaths.local) {
+                paths[p] = wikiPaths.local[p];
+            }
         }
-        
-        return urls;
+        return paths;
+    };
+    
+    wikiPaths.local = (function () {
+        return getWikiPaths(location.href);
     })();
     
-    this.getArticlesBaseUrl = function () {
-        return wikiUrls.articles;
+    this.getWikiPaths = function (href) {
+        return getWikiPaths(href);
     };
     
-    this.callAPIGet = function (params) {
-        var id = WM.HTTP.sendGetSyncRequest(wikiUrls.api + "?format=json" + joinParams(params));
-        return JSON.parse(WM.HTTP.getResponseText(id));
+    this.callAPIGet = function (params, api, call, callArgs) {
+        if (!api) {
+            api = wikiPaths.local.api;
+        }
+        var query = {
+            method: "GET",
+            url: api + "?format=json" + joinParams(params),
+            onload: function (res) {
+                try {
+                    // Currently only Scriptish supports the responseJSON method
+                    var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
+                }
+                catch (err) {
+                    WM.Log.logError("It is likely that the API for this wiki is disabled, see " + api);
+                }
+                if (json) {
+                    // Don't put this into the try block or all its exceptions
+                    // will be catched printing the same API error
+                    call(json, callArgs);
+                }
+            },
+            onerror: function (res) {
+                WM.Log.logError("Failed query: " + res.finalUrl + "\nYou may " +
+                                "have tried to use a plugin which requires " +
+                                "cross-origin HTTP requests, but you are not " +
+                                "using Scriptish (Firefox), Greasemonkey " +
+                                "(Firefox), Tampermonkey (Chrome/Chromium) " +
+                                "or a similar extension");
+            }
+        };
+        
+        try {
+            GM_xmlhttpRequest(query);
+        }
+        catch (err) {
+            WM.Log.logError("Failed HTTP request - " + err + "\nYou may have " +
+                            "tried to use a plugin which requires cross-origin " +
+                            "HTTP requests, but you are not using Scriptish " +
+                            "(Firefox), Greasemonkey (Firefox), Tampermonkey " +
+                            "(Chrome/Chromium) or a similar extension");
+        }
     };
     
-    this.callAPIPost = function (params) {
-        var id = WM.HTTP.sendPostSyncRequest(wikiUrls.api, "format=json" + joinParams(params), "Content-type", "application/x-www-form-urlencoded");
-        return JSON.parse(WM.HTTP.getResponseText(id));
+    this.callAPIPost = function (params, api, call, callArgs) {
+        if (!api) {
+            api = wikiPaths.local.api;
+        }
+        var query = {
+            method: "POST",
+            url: api,
+            onload: function (res) {
+                try {
+                    // Currently only Scriptish supports the responseJSON method
+                    var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
+                }
+                catch (err) {
+                    WM.Log.logError("It is likely that the API for this wiki is disabled, see " + api);
+                }
+                if (json) {
+                    // Don't put this into the try block or all its exceptions
+                    // will be catched printing the same API error
+                    call(json, callArgs);
+                }
+            },
+            onerror: function (res) {
+                WM.Log.logError("Failed query: " + res.finalUrl + "\nYou may " +
+                                "have tried to use a plugin which requires " +
+                                "cross-origin HTTP requests, but you are not " +
+                                "using Scriptish (Firefox), Greasemonkey " +
+                                "(Firefox), Tampermonkey (Chrome/Chromium) " +
+                                "or a similar extension");
+            }
+        };
+        
+        var string = "format=json" + joinParams(params);
+        
+        // It's necessary to use try...catch because some browsers don't
+        // support FormData yet and will throw an exception
+        try {
+            // Temporarily disable multipart/form-data requests ******************
+            // because Tampermonkey doesn't support them, see ********************
+            // http://forum.tampermonkey.net/viewtopic.php?f=17&t=271 ************
+            throw "Temporarily disabled, see bug #91";  // ***********************
+            
+            if (string.length > 8000) {
+                query.data = new FormData();
+                query.data.append("format", "json");
+                for (var p in params) {
+                    query.data.append(p, params[p]);
+                }
+                // Do not add "multipart/form-data" explicitly or the query will fail
+                //query.headers = {"Content-type": "multipart/form-data"};
+            }
+            else {
+                throw "string < 8000 characters";
+            }
+        }
+        catch (err) {
+            query.data = string;
+            query.headers = {"Content-type": "application/x-www-form-urlencoded"};
+        }
+        
+        try {
+            GM_xmlhttpRequest(query);
+        }
+        catch (err) {
+            WM.Log.logError("Failed HTTP request - " + err + "\nYou may have " +
+                            "tried to use a plugin which requires cross-origin " +
+                            "HTTP requests, but you are not using Scriptish " +
+                            "(Firefox), Greasemonkey (Firefox), Tampermonkey " +
+                            "(Chrome/Chromium) or a similar extension");
+        }
     };
     
     var joinParams = function (params) {
         var string = "";
         for (var key in params) {
-            string += ("&" + key + "=" + params[key]);
+            string += ("&" + key + "=" + encodeURIComponent(params[key]));
         }
         return string;
     };
     
-    this.callQuery = function (params) {
+    this.callQuery = function (params, call, callArgs) {
         params.action = "query";
-        var res = this.callAPIGet(params);
-        var pages = res.query.pages;
-        for (var id in pages) {
-            break;
-        }
-        return pages[id];
+        var callBack = function (res) {
+            var page = Alib.Obj.getFirstItem(res.query.pages);
+            call(page, callArgs);
+        };
+        this.callAPIGet(params, null, callBack);
     };
     
-    // Never use this attribute directly, always use getUserInfo!!!
+    this.callQueryEdit = function (title, call, callArgs) {
+        var callBack = function (page, args) {
+            source = page.revisions[0]["*"];
+            timestamp = page.revisions[0].timestamp;
+            edittoken = page.edittoken;
+            call(title, source, timestamp, edittoken, callArgs);
+        };
+        this.callQuery({prop: "info|revisions",
+                        rvprop: "content|timestamp",
+                        intoken: "edit",
+                        titles: title},
+                        callBack);
+    };
+    
     var userInfo;
     
-    this.getUserInfo = function () {
-        if (!userInfo) {
-            userInfo = this.callAPIGet({action: "query",
-                                        meta: "userinfo",
-                                        uiprop: "groups"});
-        }
-        return userInfo;
+    this._storeUserInfo = function (call) {
+        userInfo = this.callAPIGet({action: "query",
+                                    meta: "userinfo",
+                                    uiprop: "groups"},
+                                    null,
+                                    WM.MW._storeUserInfoEnd,
+                                    call);
     };
     
+    this._storeUserInfoEnd = function (res, call) {
+        userInfo = res;
+        call();
+    }
+    
     this.isLoggedIn = function () {
-        return this.getUserInfo().query.userinfo.id != 0;
+        return userInfo.query.userinfo.id != 0;
     };
     
     this.getUserName = function () {
-        return this.getUserInfo().query.userinfo.name;
+        return userInfo.query.userinfo.name;
     };
     
     this.isUserBot = function () {
-        var groups = this.getUserInfo().query.userinfo.groups;
+        var groups = userInfo.query.userinfo.groups;
         for (var g in groups) {
             if (groups[g] == 'bot') {
                 return true;
@@ -1136,443 +1896,293 @@ WM.MW = new function () {
         return false;
     };
     
-    this.getBacklinks = function (bltitle, blnamespace, blcontinue) {
+    this.getBacklinks = function (bltitle, blnamespace, call, callArgs) {
         var query = {action: "query",
                      list: "backlinks",
-                     bltitle: encodeURIComponent(bltitle),
-                     bllimit: 5000};
+                     bltitle: bltitle,
+                     bllimit: 500};
         
         if (blnamespace) {
             query.blnamespace = blnamespace;
         }
         
-        if (blcontinue) {
-            query.blcontinue = blcontinue;
-        }
-        
-        var res = WM.MW.callAPIGet(query);
-        var backlinks = res.query.backlinks;
-        
-        if (res["query-continue"]) {
-            blcontinue = res["query-continue"].backlinks.blcontinue;
-            var cont = this.getBacklinks(bltitle, blnamespace, blcontinue);
-            for (var sub in cont) {
-                backlinks[sub] = cont[sub];
+        this._getBacklinksContinue(query, call, callArgs, []);
+    };
+    
+    this._getBacklinksContinue = function (query, call, callArgs, backlinks) {
+        WM.MW.callAPIGet(query, null, function (res) {
+            backlinks = backlinks.concat(res.query.backlinks);
+            if (res["query-continue"]) {
+                query.blcontinue = res["query-continue"].backlinks.blcontinue;
+                this._getBacklinksContinue(query, call, callArgs, backlinks);
             }
+            else {
+                call(backlinks, callArgs);
+            }
+        });
+    };
+    
+    this.getLanglinks = function (title, iwmap, call, callArgs) {
+        var query = {action: "query",
+                     prop: "langlinks",
+                     titles: title,
+                     lllimit: 500,
+                     llurl: "1",
+                     redirects: "1"};
+        
+        if (iwmap) {
+            query.meta = "siteinfo";
+            query.siprop = "interwikimap";
+            query.sifilteriw = "local";
         }
         
-        return backlinks;
+        this._getLanglinksContinue(query, call, callArgs, [], null);
+    };
+    
+    this._getLanglinksContinue = function (query, call, callArgs, langlinks, iwmap) {
+        WM.MW.callAPIGet(query, null, function (res) {
+            var page = Alib.Obj.getFirstItem(res.query.pages);
+            langlinks = langlinks.concat(page.langlinks);
+            iwmap = res.query.interwikimap;
+            
+            if (query.meta) {
+                delete query.meta;
+                delete query.siprop;
+                delete query.sifilteriw;
+            }
+            
+            if (res["query-continue"]) {
+                query.llcontinue = res["query-continue"].langlinks.llcontinue;
+                this._getLanglinksContinue(query, call, callArgs, langlinks, iwmap);
+            }
+            else {
+                call(langlinks, iwmap, callArgs);
+            }
+        });
+    };
+    
+    this.getInterwikiMap = function (title, call, callArgs) {
+        var query = 
+        
+        WM.MW.callAPIGet(
+            {
+                action: "query",
+                meta: "siteinfo",
+                siprop: "interwikimap",
+                sifilteriw: "local",
+            },
+            null,
+            function (res) {
+                call(res.query.interwikimap, callArgs);
+            }
+        );
     };
 };
 
-WM.Tables = new function () {
-    this.appendRow = function (source, mark, values) {
-        var lastId = source.lastIndexOf('|}<!--' + mark);
-        var endtable = (lastId > -1) ? lastId : source.lastIndexOf('|}');
+WM.Parser = new function () {
+    this.convertUnderscoresToSpaces = function (title) {
+        return title.replace(/_/g, " ");
+    };
+    
+    this.convertSpacesToUnderscores = function (title) {
+        return title.replace(/ /g, "_");
+    };
+    
+    this.neutralizeNowikiTags = function (source) {
+        // /<nowiki>[.\s]+?<\/nowiki>/gi doesn't work
+        var tags = Alib.RegEx.matchAll(source, /<nowiki>(.?\s?)+?<\/nowiki>/gi);
+        for (var t in tags) {
+            var filler = Alib.Str.padRight("", "x", tags[t].length);
+            source = Alib.Str.overwriteAt(source, filler, tags[t].index);
+        }
+        return source;
+    };
+    
+    var prepareTitleCasing = function (pattern) {
+        var firstChar = pattern.charAt(0);
+        var fcUpper = firstChar.toUpperCase();
+        var fcLower = firstChar.toLowerCase();
+        if (fcUpper != fcLower) {
+            pattern = "[" + fcUpper + fcLower + "]" + pattern.substr(1);
+        }
+        return pattern;
+    };
+    
+    this.findBehaviorSwitches = function (source, word) {
+        source = this.neutralizeNowikiTags(source);
+        var regExp;
+        if (word) {
+            // Behavior switches aren't case-sensitive
+            regExp = new RegExp("__" + Alib.RegEx.escapePattern(word) + "__", "gi");
+        }
+        else {
+            // Behavior switches aren't case-sensitive
+            regExp = /__(TOC|NOTOC|FORCETOC|NOEDITSECTION|NEWSECTIONLINK|NONEWSECTIONLINK|NOGALLERY|HIDDENCAT|NOCONTENTCONVERT|NOCC|NOTITLECONVERT|NOTC|INDEX|NOINDEX|STATICREDIRECT|START|END)__/gi;
+        }
+        return Alib.RegEx.matchAll(source, regExp);
+    };
+    
+    this.findInternalLinks = function (source, namespace) {
+        source = this.neutralizeNowikiTags(source);
+        var regExp;
+        if (namespace) {
+            // Namespaces aren't case-sensitive
+            regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*((" + Alib.RegEx.escapePattern(namespace) + ")[ _]*:[ _]*(.+?)(?:[ _]*\\|\\s*(.+?))?)\\s*\\]\\]", "gi");
+        }
+        else {
+            // Namespaces aren't case-sensitive
+            regExp = /\[\[:?[ _]*:?[ _]*((?:(.+?)[ _]*:[ _]*)?(.+?)(?:[ _]*\|\s*(.+?))?)\s*\]\]/gi;
+        }
+        return Alib.RegEx.matchAll(source, regExp);
+    };
+    
+    this.findInterwikiLinks = function (source, wiki) {
+        return this.findInternalLinks(source, wiki);
+    };
+    
+    this.findSpecialLinks = function (source, pattern) {
+        // See also WM.ArchWiki.findAllInterlanguageLinks!!!
+        source = this.neutralizeNowikiTags(source);
+        // Categories and language tags aren't case-sensitive
+        var regExp = new RegExp("\\[\\[(?:[ _]+:)?[ _]*((?:(" + pattern + ")[ _]*:[ _]*)(.+?)(?:[ _]*\\|\\s*(.+?))?)\\s*\\]\\]", "gi");
+        return Alib.RegEx.matchAll(source, regExp);
+    };
+    
+    this.findCategories = function (source) {
+        return this.findSpecialLinks(source, "Category");
+    };
+    
+    this.findInterlanguageLinks = function (source, language) {
+        // See also WM.ArchWiki.findAllInterlanguageLinks!!!
+        return this.findSpecialLinks(source, Alib.RegEx.escapePattern(language));
+    };
+    
+    this.findVariables = function (source, variable) {
+        source = this.neutralizeNowikiTags(source);
+        // Variables are case-sensitive
+        // There can't be an underscore before the variable name
+        // There can't be a whitespace between the variable name and the colon
+        var regExp = new RegExp("\\{\\{\\s*((" + Alib.RegEx.escapePattern(variable) + ")(?:\\:[_\\s]*((?:.(?!\\{\\{)[_\\s]*?)+?))?)[_\\s]*\\}\\}", "g");
+        return Alib.RegEx.matchAll(source, regExp);
+    };
+    
+    var findTransclusionsEngine = function (source, regExp) {
+        var nSource = WM.Parser.neutralizeNowikiTags(source);
+        var transclusions = [];
         
-        var part1 = source.substring(0, endtable);
-        var part2 = source.substring(endtable);
-        
-        return part1 + "|-\n|" + values.join("\n|") + "\n" + part2;
-    };
-};
-
-WM.UI = new function () {
-    var editor = null;
-    
-    this.setEditor = function(rows) {
-        editor = rows;
-    };
-    
-    var diff = null;
-    
-    this.setDiff = function(rows) {
-        diff = rows;
-    };
-    
-    var category = null;
-    
-    this.setCategory = function(rows) {
-        category = rows;
-    };
-    
-    var whatLinksHere = null;
-    
-    this.setWhatLinksHere = function(rows) {
-        whatLinksHere = rows;
-    };
-    
-    var linkSearch = null;
-    
-    this.setLinkSearch = function(rows) {
-        linkSearch = rows;
-    };
-    
-    var special = null;
-    
-    this.setSpecial = function(rows) {
-        special = rows;
-    };
-    
-    var specialList = null;
-    
-    this.setSpecialList = function(rows) {
-        specialList = rows;
-    };
-    
-    var makeButtons = function (functions) {
-        var divContainer = document.createElement('div');
-        divContainer.id = 'WikiMonkeyButtons';
-        
-        GM_addStyle("#WikiMonkeyButtons div.shortcut {position:absolute;} " +
-                    "#WikiMonkeyButtons div.shortcut > input, #WikiMonkeyButtonAll {font-weight:bold;} " +
-                    "#WikiMonkeyButtons div.row {margin-bottom:0.67em;} " +
-                    "#WikiMonkeyButtons div.plugins {margin-left:9em;} " +
-                    "#WikiMonkeyButtons div.pluginUI {display:inline-block; margin-right:0.33em;}");
-        
-        var buttonAll = document.createElement('input');
-        buttonAll.setAttribute('type', 'button');
-        buttonAll.setAttribute('value', 'Execute all');
-        buttonAll.id = "WikiMonkeyButtonAll";
-        
-        var row, buttonsN, divRow, pRow, buttonRow, divPlugins, divFunction, buttonFunction, ff, buttons, makeUI;
-        var rowsN = 0;
-        
-        for (var r in functions) {
-            row = functions[r];
+        do {
+            var res = Alib.RegEx.matchAll(nSource, regExp);
             
-            buttonRow = document.createElement('input');
-            buttonRow.setAttribute('type', 'button');
-            buttonRow.setAttribute('value', 'Execute row');
-            
-            pRow = document.createElement('div');
-            pRow.className = "shortcut";
-            pRow.appendChild(buttonRow);
-            
-            divPlugins = document.createElement('div');
-            divPlugins.className = "plugins";
-            
-            divRow = document.createElement('div');
-            divRow.className = "row";
-            divRow.appendChild(pRow);
-            
-            buttonsN = 0;
-            
-            for (var f in row) {
-                ff = row[f];
-                
-                buttonFunction = document.createElement('input');
-                buttonFunction.setAttribute('type', 'button');
-                buttonFunction.setAttribute('value', ff[1]);
-                
-                buttons = [buttonFunction, buttonRow, buttonAll];
-                
-                for (var button in buttons) {
-                    buttons[button].addEventListener("click", (function (fn, arg) {
-                        return function () {
-                            // window[string] doesn't work
-                            eval("WM.Plugins." + fn + ".main")(arg);
+            for (var t in res) {
+                var match = res[t].match;
+                var index = res[t].index;
+                var L = res[t].length;
+                var arguments = [];
+                if (match[3]) {
+                    var args = match[3].split("|");
+                    // 1 is the length of |
+                    var argId = index + match[1].length + 1;
+                    
+                    for (var a in args) {
+                        var argL = args[a].length;
+                        var eqId = args[a].indexOf("=");
+                        // eqId must be > 0, not -1, in fact the key must not be empty
+                        if (eqId > 0) {
+                            var rawKey = args[a].substring(0, eqId);
+                            var reKey = /^(\s*)(.+?)\s*$/;
+                            var keyMatches = reKey.exec(rawKey);
+                            var key = keyMatches[2];
+                            var keyId = argId + ((keyMatches[1]) ? keyMatches[1].length : 0);
+                            
+                            // 1 is the length of =
+                            var nValue = args[a].substr(eqId + 1);
+                            var valueId = argId + keyMatches[0].length + 1;
+                            var valueL = argL - eqId - 1;
                         }
-                    })(ff[0], ff[2]), false);
-                };
-                
-                divFunction = document.createElement('div');
-                divFunction.className = 'pluginUI';
-                divFunction.appendChild(buttonFunction);
-                
-                makeUI = eval("WM.Plugins." + ff[0] + ".makeUI");
-                if (makeUI instanceof Function) {
-                    divFunction.appendChild(makeUI(ff[2]));
+                        else {
+                            var key = null;
+                            var keyId = null;
+                            var nValue = args[a];
+                            var valueId = argId;
+                            var valueL = argL;
+                        }
+                        
+                        var value = source.substr(valueId, valueL);
+                        
+                        arguments.push({key: key,
+                                        key_index: keyId,
+                                        value: value,
+                                        value_index: valueId});
+                        
+                        // 1 is the length of |
+                        argId = argId + argL + 1;
+                    }
                 }
                 
-                divPlugins.appendChild(divFunction);
+                transclusions.push({
+                    title: match[2],
+                    match: match,
+                    index: index,
+                    length: L,
+                    arguments: arguments,
+                });
                 
-                buttonsN++;
+                var filler = Alib.Str.padRight("", "x", L);
+                nSource = Alib.Str.overwriteAt(nSource, filler, res[t].index);
             }
-            
-            divRow.appendChild(divPlugins);
-            divContainer.appendChild(divRow);
-            
-            if (buttonsN <= 1) {
-                buttonRow.disabled = true;
-            }
-            
-            rowsN++;
-        }
+        // Find also nested transclusions
+        } while (res.length);
         
-        if (rowsN > 1) {
-            divRow = document.createElement('div');
-            divRow.className = "row";
-            divRow.appendChild(buttonAll);
-            divContainer.appendChild(divRow);
-        }
-        
-        return divContainer;
+        return transclusions;
     };
     
-    this.makeUI = function () {
-        var nextNode, UI;
-        
-        if (document.getElementById('editform')) {
-            nextNode = document.getElementById('wpSummaryLabel').parentNode.nextSibling;
-            UI = (editor) ? makeButtons(editor) : null;
-        }
-        else if (document.getElementById('mw-diff-otitle1')) {
-            nextNode = document.getElementById('bodyContent').getElementsByTagName('h2')[0];
-            UI = (diff) ? makeButtons(diff) : null;
-        }
-        else if (document.getElementById('mw-subcategories') || document.getElementById('mw-pages')) {
-            nextNode = document.getElementById('bodyContent');
-            UI = (category) ? WM.Bot.makeUI(category, [[document.getElementById('mw-pages'), 0, "Pages"], [document.getElementById('mw-subcategories'), 0, "Subcategories"]]) : null;
-        }
-        else if (document.getElementById('mw-whatlinkshere-list')) {
-            nextNode = document.getElementById('bodyContent').getElementsByTagName('form')[0].nextSibling;
-            UI = (whatLinksHere) ? WM.Bot.makeUI(whatLinksHere, [[document.getElementById('mw-whatlinkshere-list'), 0, "Pages"]]) : null;
-        }
-        else if (document.getElementById('mw-linksearch-form') && document.getElementById('bodyContent').getElementsByTagName('ol')[0]) {
-            nextNode = document.getElementById('mw-linksearch-form').nextSibling;
-            UI = (linkSearch) ? WM.Bot.makeUI(linkSearch, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 1, "Pages"]]) : null;
-        }
-        else if (location.href.indexOf(WM.MW.getArticlesBaseUrl() + "/Special:SpecialPages") > -1) {
-            nextNode = document.getElementById('bodyContent');
-            UI = (special) ? makeButtons(special) : null;
+    this.findTemplates = function (source, template) {
+        // Templates can't be transcluded with a colon before the title
+        // The title must not be broken by new line characters
+        if (template) {
+            var pattern = Alib.RegEx.escapePattern(template);
+            pattern = prepareTitleCasing(pattern);
         }
         else {
-            nextNode = document.getElementById('bodyContent');
-            var nextNodeDivs = nextNode.getElementsByTagName('div');
-            // Using for...in to loop through node lists is not supported by Chrome
-            for (var div = 0; div < nextNodeDivs.length; div++) {
-                if (nextNodeDivs[div].className == 'mw-spcontent') {
-                    UI = (specialList) ? WM.Bot.makeUI(specialList, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
-                    break;
-                }
-            }
+            var pattern = ".+?";
         }
-        
-        if (UI) {
-            var main = document.createElement('fieldset');
-            main.id = 'WikiMonkey';
-            
-            GM_addStyle("#WikiMonkey {position:relative;} " +
-                        "#WikiMonkey fieldset {margin:0 0 1em 0;} " +
-                        "#WikiMonkeyHelp {position:absolute; top:1em; right:0.6em;}");
-            
-            var legend = document.createElement('legend');
-            legend.innerHTML = 'Wiki Monkey';
-            main.appendChild(legend);
-    
-            var help = document.createElement('p');
-            help.id = 'WikiMonkeyHelp';
-            var helpln = document.createElement('a');
-            helpln.href = 'https://github.com/kynikos/wiki-monkey/wiki'
-            helpln.innerHTML = 'help';
-            help.appendChild(helpln);
-            main.appendChild(help);
-            
-            main.appendChild(UI);
-            main.appendChild(WM.Log.makeLogArea());
-            nextNode.parentNode.insertBefore(main, nextNode);
-        }
-    };
-};
-WM.Plugins.ArchWikiFixHeader = new function () {
-    var storeMatches = function (source, regExp, single) {
-        var match, L, i;
-        var result = [];
-        while (true) {
-            match = regExp.exec(source);
-            if (match) {
-                L = match[0].length;
-                result.push(match);
-                i = regExp.lastIndex;
-                source = source.substring(0, i - L) + source.substring(i);
-                regExp.lastIndex = i - L;
-                if (single) {
-                    break;
-                }
-            }
-            else {
-                break;
-            }
-        }
-        return [source, result];
+        var regExp = new RegExp("(\\{\\{\\s*[_ ]*(" + pattern + ")[_\\s]*)(?:\\|((?:\\s*.(?!\\{\\{)\\s*)*?))?\\}\\}", "g");
+        return findTransclusionsEngine(source, regExp);
     };
     
-    this.main = function (args) {
-        var source = WM.Editor.readSource();
-        
-        var elements = {};
-        
-        // Note that all patterns get only left-side white space
-        
-        var res = storeMatches(source, /^\s*(<noinclude>)/g, true);
-        elements.noinclude = res[1];
-        
-        res = storeMatches(res[0], /\s*(\{\{(DISPLAYTITLE:(.+?)|[Ll]owercase title)\}\})/g, false);
-        elements.displaytitle = res[1];
-        
-        // Ignore __TOC__, __START__ and __END__
-        res = storeMatches(res[0], /\s*(__(NOTOC|FORCETOC|NOEDITSECTION|NEWSECTIONLINK|NONEWSECTIONLINK|NOGALLERY|HIDDENCAT|NOCONTENTCONVERT|NOCC|NOTITLECONVERT|NOTC|INDEX|NOINDEX|STATICREDIRECT)__)/g, false);
-        elements.behaviorswitches = res[1];
-        
-        res = storeMatches(res[0], /\s*(\[\[[Cc]ategory:(.+?([ _]\(([^\(]+?)\))?)\]\])/g, false);
-        elements.categories = res[1];
-        
-        var interwikiLanguages = WM.ArchWiki.getInterwikiLanguages();
-        var regExp = new RegExp("\\s*(\\[\\[(" + interwikiLanguages.join("|") + "):(.+?)\\]\\])", "g");
-        res = storeMatches(res[0], regExp, false);
-        elements.interwiki = res[1];
-        
-        res = storeMatches(res[0], /\s*(\{\{[Ii]18n\|(.+?)\}\})/g, true);
-        elements.i18n = res[1];
-        
-        var content = res[0];
-        
-        var newtext = "";
-        
-        // if (elements.noinclude) is always true
-        if (elements.noinclude.length) {
-            newtext += elements.noinclude[0][1];
+    this.findTransclusions = function (source, namespace, title) {
+        // The difference from templates is the possibility of a colon before
+        // the title which forces the transclusion of a page instead of a
+        // template
+        // The title must not be broken by newline characters
+        if (namespace) {
+            var namespacePattern = Alib.RegEx.escapePattern(namespace);
+            namespacePattern = prepareTitleCasing(namespacePattern);
+        }
+        if (title) {
+            var titlePattern = Alib.RegEx.escapePattern(title);
+            titlePattern = prepareTitleCasing(titlePattern);
         }
         
-        var L = elements.displaytitle.length;
-        if (L) {
-            newtext += elements.displaytitle[elements.displaytitle.length - 1][1];
-            if (L > 1) {
-                WM.Log.logWarning("Found multiple instances of {{DISPLAYTITLE:...}} or {{Lowercase title}}: only the last one has been used, the others have been deleted");
-            }
+        if (namespacePattern && titlePattern) {
+            var pattern = namespacePattern + "[ _]*:[ _]*" + titlePattern;
         }
-        
-        var sw;
-        var behaviorSwitches = [];
-        for (var s in elements.behaviorswitches) {
-            sw = elements.behaviorswitches[s];
-            if (behaviorSwitches.indexOf(sw[1]) == -1) {
-                behaviorSwitches.push(sw[1]);
-            }
-            else {
-                WM.Log.logWarning("Removed duplicate of " + sw[1]);
-            }
+        else if (!namespacePattern && titlePattern) {
+            var pattern = titlePattern;
         }
-        
-        // if (behaviorSwitches) is always true
-        if (behaviorSwitches.length) {
-            if (newtext) {
-                newtext += " ";
-            }
-            newtext += behaviorSwitches.join(" ");
-        }
-        
-        if (newtext) {
-            newtext += "\n";
-        }
-        
-        var title = WM.Editor.getTitle().match(/^(.+?)([ _]\(([^\(]+)\))?$/);
-        var detectedLanguage = decodeURIComponent(title[3]);
-        var pureTitle;
-        if (!detectedLanguage || !WM.ArchWiki.isCategoryLanguage(detectedLanguage)) {
-            detectedLanguage = "English";
-            pureTitle = decodeURIComponent(title[0]);
+        else if (namespacePattern && !titlePattern) {
+            var pattern = namespacePattern + "[ _]*:.+?";
         }
         else {
-            pureTitle = decodeURIComponent(title[1]);
+            var pattern = ".+?";
         }
         
-        var categories = [];
-        var cat, lang;
-        for (var c in elements.categories) {
-            cat = elements.categories[c];
-            lang = decodeURIComponent(cat[2]);
-            if (!WM.ArchWiki.isCategoryLanguage(lang)) {
-                lang = decodeURIComponent(cat[4]);
-                if (!lang || !WM.ArchWiki.isCategoryLanguage(lang)) {
-                    lang = "English";
-                }
-            }
-            
-            if (detectedLanguage != lang) {
-                WM.Log.logWarning(cat[1] + " belongs to a different language than the one of the title (" + detectedLanguage + ")");
-            }
-            
-            if (categories.indexOf(cat[1]) == -1) {
-                categories.push(cat[1]);
-            }
-            else {
-                WM.Log.logWarning("Removed duplicate of " + cat[1]);
-            }
-        }
-        
-        // if (categories) is always true
-        if (categories.length) {
-            newtext += categories.join("\n");
-            newtext += "\n";
-        }
-        else {
-            WM.Log.logWarning("The article is not categorized");
-        }
-        
-        var link;
-        var interwiki = [];
-        for (var l in elements.interwiki) {
-            link = elements.interwiki[l];
-            if (interwiki.indexOf(link[1]) == -1) {
-                interwiki.push(link[1]);
-            }
-            else {
-                WM.Log.logWarning("Removed duplicate of " + link[1]);
-            }
-        }
-        
-        // if (interwiki) is always true
-        if (interwiki.length) {
-            newtext += interwiki.join("\n");
-            newtext += "\n";
-        }
-        
-        var L = elements.i18n.length;
-        if (L) {
-            if (L > 1) {
-                WM.Log.logWarning("Found multiple instances of {{i18n|...}}: only the first one has been used, the others have been ignored");
-            }
-            
-            var parsedTitle = elements.i18n[0][2].replace(/_/g, " ");
-            var test1 = pureTitle.substr(0, 1).toLowerCase() != parsedTitle.substr(0, 1).toLowerCase();
-            var test2 = pureTitle.substr(1) != parsedTitle.substr(1);
-            
-            if (test1 || test2) {
-                newtext += "{{i18n|" + pureTitle + "}}";
-                WM.Log.logWarning("Updated Template:i18n since it wasn't matching the current article title");
-            }
-            else {
-                newtext += "{{i18n|" + parsedTitle + "}}";
-            }
-        }
-        else {
-            newtext += "{{i18n|" + pureTitle + "}}";
-            WM.Log.logInfo("Added Template:i18n");
-        }
-        newtext += "\n";
-        
-        var firstChar = content.search(/[^\s]/);
-        content = content.substr(firstChar);
-        
-        // This workaround shouldn't be necessary anymore
-        //var test = content.substr(0, 2);
-        //if (test != "{{" && test != "[[") {
-            newtext += "\n";  // This line should be merged with the previous `newtext += "\n"`;
-        //}
-        
-        newtext += content;
-        
-        if (newtext != source) {
-            WM.Editor.writeSource(newtext);
-            WM.Log.logInfo("Fixed header");
-        }
+        // There can't be an underscore before the colon
+        var regExp = new RegExp("(\\{\\{\\s*:?[ _]*(" + pattern + ")[_\\s]*)(?:\\|((?:\\s*.(?!\\{\\{)\\s*)*?))?\\}\\}", "g");
+        return findTransclusionsEngine(source, regExp);
     };
-};
-
-WM.Plugins.ArchWikiFixHeadings = new function () {
-    var findSections = function (source) {
+        
+    this.findSectionHeadings = function (source) {
         // ======Title====== is the deepest level supported
         var MAXLEVEL = 6;
         
@@ -1613,7 +2223,6 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
                     else {
                         if (level > MAXLEVEL) {
                             level = MAXLEVEL;
-                            WM.Log.logWarning('"' + line + '"' + " is considered a level-" + MAXLEVEL + " heading");
                         }
                         else if (level < minLevel) {
                             minLevel = level;
@@ -1677,11 +2286,430 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
                 minLevel: minLevel,
                 maxTocLevel: maxTocLevel};
     };
+};
+
+WM.Tables = new function () {
+    this.appendRow = function (source, mark, values) {
+        var lastId = source.lastIndexOf('|}<!--' + mark);
+        var endtable = (lastId > -1) ? lastId : source.lastIndexOf('|}');
+        
+        var row = "|-\n|" + values.join("\n|") + "\n";
+        
+        var newText = Alib.Str.insert(source, row, endtable);
+        
+        return newText;
+    };
+};
+
+WM.UI = new function () {
+    var editor = null;
     
-    this.main = function (args) {
+    this.setEditor = function(rows) {
+        editor = rows;
+    };
+    
+    var diff = null;
+    
+    this.setDiff = function(rows) {
+        diff = rows;
+    };
+    
+    var category = null;
+    
+    this.setCategory = function(rows) {
+        category = rows;
+    };
+    
+    var whatLinksHere = null;
+    
+    this.setWhatLinksHere = function(rows) {
+        whatLinksHere = rows;
+    };
+    
+    var linkSearch = null;
+    
+    this.setLinkSearch = function(rows) {
+        linkSearch = rows;
+    };
+    
+    var special = null;
+    
+    this.setSpecial = function(rows) {
+        special = rows;
+    };
+    
+    var specialList = null;
+    
+    this.setSpecialList = function(rows) {
+        specialList = rows;
+    };
+    
+    this._executeAsync = function (functions, id) {
+        id++;
+        if (functions[id]) {
+            var fid = functions[id];
+            var callContinue = function () {
+                WM.UI._executeAsync(functions, id);
+            };
+            fid[0](fid[1], callContinue);
+        }
+    };
+    
+    var makeButtons = function (functions) {
+        var divContainer = document.createElement('div');
+        divContainer.id = 'WikiMonkeyButtons';
+        
+        GM_addStyle("#WikiMonkeyButtons div.shortcut {position:absolute;} " +
+                    "#WikiMonkeyButtons div.shortcut > input, #WikiMonkeyButtonAll {font-weight:bold;} " +
+                    "#WikiMonkeyButtons div.row {margin-bottom:0.67em;} " +
+                    "#WikiMonkeyButtons div.plugins {margin-left:9em;} " +
+                    "#WikiMonkeyButtons div.pluginUI {display:inline-block; margin-right:0.33em;}");
+        
+        var buttonAll = document.createElement('input');
+        buttonAll.setAttribute('type', 'button');
+        buttonAll.setAttribute('value', 'Execute all');
+        buttonAll.id = "WikiMonkeyButtonAll";
+        
+        var allFunctions = [];
+        var rowsN = 0;
+        
+        for (var r in functions) {
+            var row = functions[r];
+            
+            var buttonRow = document.createElement('input');
+            buttonRow.setAttribute('type', 'button');
+            buttonRow.setAttribute('value', 'Execute row');
+            
+            var pRow = document.createElement('div');
+            pRow.className = "shortcut";
+            pRow.appendChild(buttonRow);
+            
+            var divPlugins = document.createElement('div');
+            divPlugins.className = "plugins";
+            
+            var divRow = document.createElement('div');
+            divRow.className = "row";
+            divRow.appendChild(pRow);
+            
+            var rowFunctions = [];
+            var buttonsN = 0;
+            
+            for (var f in row) {
+                var ff = row[f];
+                
+                var buttonFunction = document.createElement('input');
+                buttonFunction.setAttribute('type', 'button');
+                buttonFunction.setAttribute('value', ff[1]);
+                
+                buttonFunction.addEventListener("click", (function (fn, arg) {
+                    return function () {
+                        // window[string] doesn't work
+                        eval("WM.Plugins." + fn + ".main")(arg, null);
+                    }
+                })(ff[0], ff[2]), false);
+                
+                // window[string] doesn't work
+                var exFunction = eval("WM.Plugins." + ff[0] + ".main");
+                rowFunctions.push([exFunction, ff[2]]);
+                allFunctions.push([exFunction, ff[2]]);
+                
+                var divFunction = document.createElement('div');
+                divFunction.className = 'pluginUI';
+                divFunction.appendChild(buttonFunction);
+                
+                var makeUI = eval("WM.Plugins." + ff[0] + ".makeUI");
+                if (makeUI instanceof Function) {
+                    divFunction.appendChild(makeUI(ff[2]));
+                }
+                
+                divPlugins.appendChild(divFunction);
+                
+                buttonsN++;
+            }
+            
+            buttonRow.addEventListener("click", (function (rowFunctions) {
+                return function () {
+                    WM.UI._executeAsync(rowFunctions, -1);
+                };
+            })(rowFunctions), false);
+            
+            divRow.appendChild(divPlugins);
+            divContainer.appendChild(divRow);
+            
+            if (buttonsN <= 1) {
+                buttonRow.disabled = true;
+            }
+            
+            rowsN++;
+        }
+        
+        buttonAll.addEventListener("click", (function (allFunctions) {
+            return function () {
+                WM.UI._executeAsync(allFunctions, -1);
+            };
+        })(allFunctions), false);
+        
+        if (rowsN > 1) {
+            divRow = document.createElement('div');
+            divRow.className = "row";
+            divRow.appendChild(buttonAll);
+            divContainer.appendChild(divRow);
+        }
+        
+        return divContainer;
+    };
+    
+    this._makeUI = function () {
+        var nextNode, UI;
+        
+        if (document.getElementById('editform')) {
+            nextNode = document.getElementById('wpSummaryLabel').parentNode.nextSibling;
+            UI = (editor) ? makeButtons(editor) : null;
+        }
+        else if (document.getElementById('mw-diff-otitle1')) {
+            nextNode = document.getElementById('bodyContent').getElementsByTagName('h2')[0];
+            UI = (diff) ? makeButtons(diff) : null;
+        }
+        else if (document.getElementById('mw-subcategories') || document.getElementById('mw-pages')) {
+            nextNode = document.getElementById('bodyContent');
+            UI = (category) ? WM.Bot._makeUI(category, [[document.getElementById('mw-pages'), 0, "Pages"], [document.getElementById('mw-subcategories'), 0, "Subcategories"]]) : null;
+        }
+        else if (document.getElementById('mw-whatlinkshere-list')) {
+            nextNode = document.getElementById('bodyContent').getElementsByTagName('form')[0].nextSibling;
+            UI = (whatLinksHere) ? WM.Bot._makeUI(whatLinksHere, [[document.getElementById('mw-whatlinkshere-list'), 0, "Pages"]]) : null;
+        }
+        else if (document.getElementById('mw-linksearch-form') && document.getElementById('bodyContent').getElementsByTagName('ol')[0]) {
+            nextNode = document.getElementById('mw-linksearch-form').nextSibling;
+            UI = (linkSearch) ? WM.Bot._makeUI(linkSearch, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 1, "Pages"]]) : null;
+        }
+        else if (location.href.indexOf(WM.MW.getWikiPaths().articles + "Special:SpecialPages") > -1) {
+            nextNode = document.getElementById('bodyContent');
+            UI = (special) ? makeButtons(special) : null;
+        }
+        else {
+            nextNode = document.getElementById('bodyContent');
+            var nextNodeDivs = nextNode.getElementsByTagName('div');
+            // Using for...in to loop through node lists is not supported by Chrome
+            for (var div = 0; div < nextNodeDivs.length; div++) {
+                if (nextNodeDivs[div].className == 'mw-spcontent') {
+                    UI = (specialList) ? WM.Bot._makeUI(specialList, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
+                    break;
+                }
+            }
+        }
+        
+        if (UI) {
+            var main = document.createElement('fieldset');
+            main.id = 'WikiMonkey';
+            
+            GM_addStyle("#WikiMonkey {position:relative;} " +
+                        "#WikiMonkey fieldset {margin:0 0 1em 0;} " +
+                        "#WikiMonkeyHelp {position:absolute; top:1em; right:0.6em;}");
+            
+            var legend = document.createElement('legend');
+            legend.innerHTML = 'Wiki Monkey';
+            main.appendChild(legend);
+    
+            var help = document.createElement('p');
+            help.id = 'WikiMonkeyHelp';
+            var helpln = document.createElement('a');
+            helpln.href = 'https://github.com/kynikos/wiki-monkey/wiki'
+            helpln.innerHTML = 'help';
+            help.appendChild(helpln);
+            main.appendChild(help);
+            
+            main.appendChild(UI);
+            main.appendChild(WM.Log._makeLogArea());
+            nextNode.parentNode.insertBefore(main, nextNode);
+        }
+    };
+};
+WM.Plugins.ArchWikiFixHeader = new function () {
+    this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         
-        var info = findSections(source);
+        var detLang = WM.ArchWiki.detectLanguage(WM.Editor.getTitle());
+        var pureTitle = detLang[0];
+        var language = detLang[1];
+        
+        var header = "";
+        var content = source;
+        
+        // <noinclude>
+        var content = content.replace(/^\s*<noinclude>/, "");
+        if (content != source) {
+            header += "<noinclude>\n";
+        }
+        
+        // DISPLAYTITLE and Template:Lowercase_title
+        var displaytitle = WM.Parser.findVariables(content, "DISPLAYTITLE");
+        var lowercasetitle = WM.Parser.findTemplates(content, "Lowercase title");
+        var titlemods = displaytitle.concat(lowercasetitle);
+        titlemods.sort(function (a, b) {
+            return a.index - b.index;
+        });
+        var tempcontent = "";
+        var contentId = 0;
+        for (var t in titlemods) {
+            tempcontent += content.substring(contentId, titlemods[t].index);
+            contentId = titlemods[t].index + titlemods[t].length;
+        }
+        tempcontent += content.substring(contentId);
+        content = tempcontent;
+        var dt = displaytitle.pop();
+        var lct = lowercasetitle.pop();
+        var dlct = "";
+        if (dt && !lct) {
+            var dlct = "{{DISPLAYTITLE:" + dt.match[2] + "}}";
+        }
+        else if (!dt && lct) {
+            var dlct = "{{Lowercase title}}";
+        }
+        else if (dt && lct) {
+            var dlct = (dt.index < lct.index) ? "{{Lowercase title}}" : "{{DISPLAYTITLE:" + dt.match[2] + "}}";
+        }
+        if (displaytitle.length || lowercasetitle.length) {
+            WM.Log.logWarning("Found multiple instances of {{DISPLAYTITLE:...}} or {{Lowercase title}}: only the last one has been used, the others have been deleted");
+        }
+        
+        // Behavior switches
+        var behaviorswitches = WM.Parser.findBehaviorSwitches(content);
+        var bslist = [];
+        var tempcontent = "";
+        var contentId = 0;
+        for (var b in behaviorswitches) {
+            var bs = behaviorswitches[b].match[1];
+            if (bs == "TOC" || bs == "START" || bs == "END") {
+                behaviorswitches.splice(b, 1);
+            }
+            else {
+                if (bslist.indexOf(behaviorswitches[b].match[0]) == -1) {
+                    bslist.push(behaviorswitches[b].match[0]);
+                }
+                else {
+                    WM.Log.logWarning("Removed duplicate of " + behaviorswitches[b].match[0]);
+                }
+                tempcontent += content.substring(contentId, behaviorswitches[b].index);
+                contentId = behaviorswitches[b].index + behaviorswitches[b].length;
+            }
+        }
+        tempcontent += content.substring(contentId);
+        content = tempcontent;
+        
+        if (!dlct && bslist.length) {
+            header += bslist.join(" ") + "\n";
+        }
+        else if (dlct && !bslist.length) {
+            header += dlct + "\n";
+        }
+        else if (dlct && bslist.length) {
+            header += dlct + " " + bslist.join(" ") + "\n";
+        }
+        
+        // Categories
+        var categories = WM.Parser.findCategories(content);
+        var catlist = [];
+        var tempcontent = "";
+        var contentId = 0;
+        for (var c in categories) {
+            var cat = categories[c];
+            var catlang = WM.ArchWiki.detectLanguage(cat.match[1])[1];
+            if (language != catlang) {
+                WM.Log.logWarning(cat.match[1] + " belongs to a different language than the one of the title (" + language + ")");
+            }
+            if (catlist.indexOf(cat.match[0]) == -1) {
+                catlist.push(cat.match[0]);
+            }
+            else {
+                WM.Log.logWarning("Removed duplicate of " + cat.match[1]);
+            }
+            tempcontent += content.substring(contentId, cat.index);
+            contentId = cat.index + cat.length;
+        }
+        if (catlist.length) {
+            header += catlist.join("\n") + "\n";
+        }
+        else {
+            WM.Log.logWarning("The article is not categorized");
+        }
+        tempcontent += content.substring(contentId);
+        content = tempcontent;
+        
+        // Interlanguage links
+        var interlanguage = WM.ArchWiki.findAllInterlanguageLinks(content);
+        var iwlist = [];
+        var tempcontent = "";
+        var contentId = 0;
+        for (var l in interlanguage) {
+            var link = interlanguage[l];
+            if (iwlist.indexOf(link.match[0]) == -1) {
+                // Remove also dead interlanguage links
+                if (WM.ArchWiki.isAliveInterwikiLanguage(link.match[2])) {
+                    iwlist.push(link.match[0]);
+                }
+                else {
+                    WM.Log.logWarning("Removed dead interlanguage link: " + link.match[1]);
+                }
+            }
+            else {
+                WM.Log.logWarning("Removed duplicate of " + link.match[1]);
+            }
+            tempcontent += content.substring(contentId, link.index);
+            contentId = link.index + link.length;
+        }
+        if (iwlist.length) {
+            header += iwlist.join("\n") + "\n";
+        }
+        tempcontent += content.substring(contentId);
+        content = tempcontent;
+        
+        // Template:i18n
+        var i18ns = WM.Parser.findTemplates(content, "i18n");
+        var i18n = i18ns.pop();
+        if (i18ns.length) {
+            WM.Log.logWarning("Found multiple instances of Template:i18n : only the first one has been used, the others have been ignored");
+        }
+        if (i18n) {
+            var parsedTitle = WM.Parser.convertUnderscoresToSpaces(i18n.arguments[0].value);
+            var test1 = pureTitle.substr(0, 1).toLowerCase() != parsedTitle.substr(0, 1).toLowerCase();
+            var test2 = pureTitle.substr(1) != parsedTitle.substr(1);
+            
+            if (test1 || test2) {
+                header += "{{i18n|" + pureTitle + "}}";
+                WM.Log.logWarning("Updated Template:i18n since it wasn't matching the current article title");
+            }
+            else {
+                header += "{{i18n|" + parsedTitle + "}}";
+            }
+            content = Alib.Str.removeFor(content, i18n.index, i18n.length);
+        }
+        else {
+            header += "{{i18n|" + pureTitle + "}}";
+            WM.Log.logInfo("Added Template:i18n");
+        }
+        header += "\n\n";
+        
+        var firstChar = content.search(/[^\s]/);
+        content = content.substr(firstChar);
+        
+        var newText = header + content;
+        
+        if (newText != source) {
+            WM.Editor.writeSource(newText);
+            WM.Log.logInfo("Fixed header");
+        }
+        
+        if (callNext) {
+            callNext();
+        }
+    };
+};
+
+WM.Plugins.ArchWikiFixHeadings = new function () {
+    this.main = function (args, callNext) {
+        var source = WM.Editor.readSource();
+        
+        var info = WM.Parser.findSectionHeadings(source);
         
         var increaseLevel;
         if (info.maxTocLevel < 6) {
@@ -1710,11 +2738,15 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Fixed section headings");
         }
+        
+        if (callNext) {
+            callNext();
+        }
     };
 };
 
 WM.Plugins.ArchWikiNewTemplates = new function () {
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         var newtext = source;
         
@@ -1758,6 +2790,150 @@ WM.Plugins.ArchWikiNewTemplates = new function () {
                 WM.Log.logWarning(tests[test][1].length + ' ' + tests[test][0] + ' instances require manual intervention');
             }
         }
+        
+        if (callNext) {
+            callNext();
+        }
+    };
+};
+
+WM.Plugins.ArchWikiTemplateAUR = new function () {
+    var doReplace = function (source, call, callArgs) {
+        var regExp = /\[(https?\:\/\/aur\.archlinux\.org\/packages\.php\?ID\=[0-9]+) ([^\]]+?)\]/g;
+        var links = [];
+        
+        while (true) {
+            var match = regExp.exec(source);
+            if (match) {
+                links.push(match);
+            }
+            else {
+                break;
+            }
+        }
+        
+        var newText = source;
+        
+        WM.Plugins.ArchWikiTemplateAUR.doReplaceContinue(source, newText, links, 0, call, callArgs);
+    };
+    
+    this.doReplaceContinue = function (source, newText, links, index, call, callArgs) {
+        if (links[index]) {
+            WM.Log.logInfo("Processing " + links[index][0] + "...");
+            var query = {
+                method: "GET",
+                url: links[index][1],
+                onload: function (res) {
+                    var parser = new DOMParser();
+                    var page = parser.parseFromString(res.responseText, "text/xml");
+                    var divs = page.getElementsByTagName('div');
+                    for (var i = 0; i < divs.length; i++) {
+                        if (divs[i].className == "pgboxbody") {
+                            var span = divs[i].getElementsByTagName('span')[0];
+                            var pkgname = span.innerHTML.split(" ")[0];
+                            if (links[index][2] == pkgname) {
+                                newText = newText.replace(links[index][0],
+                                                          "{{AUR|" + pkgname + "}}");
+                            }
+                            break;
+                        }
+                    }
+                    index++;
+                    WM.Plugins.ArchWikiTemplateAUR.doReplaceContinue(source, newText, links, index, call, callArgs);
+                },
+                onerror: function (res) {
+                    WM.Log.logError("Failed query: " + res.finalUrl + "\nYou may " +
+                                    "have tried to use a plugin which requires " +
+                                    "cross-origin HTTP requests, but you are not " +
+                                    "using Scriptish (Firefox), Greasemonkey " +
+                                    "(Firefox), Tampermonkey (Chrome/Chromium) " +
+                                    "or a similar extension");
+                },
+            };
+            try {
+                GM_xmlhttpRequest(query);
+            }
+            catch (err) {
+                WM.Log.logError("Failed HTTP request - " + err + "\nYou may have " +
+                                "tried to use a plugin which requires cross-origin " +
+                                "HTTP requests, but you are not using Scriptish " +
+                                "(Firefox), Greasemonkey (Firefox), Tampermonkey " +
+                                "(Chrome/Chromium) or a similar extension");
+            }
+        }
+        else {
+            call(source, newText, callArgs);
+        }
+    };
+    
+    this.main = function (args, callNext) {
+        var source = WM.Editor.readSource();
+        WM.Log.logInfo("Replacing direct AUR package links...");
+        doReplace(source, WM.Plugins.ArchWikiTemplateAUR.mainEnd, callNext);
+    };
+    
+    this.mainEnd = function (source, newtext, callNext) {
+        if (newtext != source) {
+            WM.Editor.writeSource(newtext);
+            WM.Log.logInfo("Replaced direct AUR package links");
+        }
+        else {
+            WM.Log.logInfo("No replaceable AUR package links found");
+        }
+        
+        if (callNext) {
+            callNext();
+        }
+    };
+    
+    this.mainAuto = function (args, title, callBot) {
+        var summary = args[0];
+        
+        WM.MW.callQueryEdit(title,
+                            WM.Plugins.ArchWikiTemplateAUR.mainAutoReplace,
+                            [summary, callBot]);
+    };
+    
+    this.mainAutoReplace = function (title, source, timestamp, edittoken, args) {
+        var summary = args[0];
+        var callBot = args[1];
+        
+        doReplace(source,
+                  WM.Plugins.ArchWikiTemplateAUR.mainAutoWrite,
+                  [title, edittoken, timestamp, summary, callBot]);
+    };
+    
+    this.mainAutoWrite = function (source, newtext, args) {
+        var title = args[0];
+        var edittoken = args[1];
+        var timestamp = args[2];
+        var summary = args[3];
+        var callBot = args[4];
+        
+        if (newtext != source) {
+            WM.MW.callAPIPost({action: "edit",
+                               bot: "1",
+                               title: title,
+                               summary: summary,
+                               text: newtext,
+                               basetimestamp: timestamp,
+                               token: edittoken},
+                               null,
+                               WM.Plugins.ArchWikiTemplateAUR.mainAutoEnd,
+                               callBot);
+        }
+        else {
+            callBot(true);
+        }
+    };
+    
+    this.mainAutoEnd = function (res, callBot) {
+        if (res.edit && res.edit.result == 'Success') {
+            callBot(true);
+        }
+        else {
+            callBot(false);
+        }
     };
 };
 
@@ -1770,7 +2946,7 @@ WM.Plugins.ExpandContractions = new function () {
         return newtext;
     };
     
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         var newtext = source;
         
@@ -1789,6 +2965,7 @@ WM.Plugins.ExpandContractions = new function () {
         // Replacing he's, she's, that's, what's, where's, who's ... may be too dangerous
         newtext = replace(newtext, /([a-z])'s (been)/ig, '$1 has $2', "'s been", ["has been"]);
         newtext = replace(newtext, /(let)'s/ig, '$1 us', "let's", ["let us"]);
+        newtext = replace(newtext, /(it)'(s own)/ig, '$1$2', "it's own", ["its own"]);
         
         var ss = newtext.match(/[a-z]'s/gi);
         if (ss) {
@@ -1799,11 +2976,15 @@ WM.Plugins.ExpandContractions = new function () {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Expanded contractions");
         }
+        
+        if (callNext) {
+            callNext();
+        }
     };
 };
 
 WM.Plugins.MultipleLineBreaks = new function () {
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         var newtext = source;
         
@@ -1812,6 +2993,10 @@ WM.Plugins.MultipleLineBreaks = new function () {
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Removed multiple line breaks");
+        }
+        
+        if (callNext) {
+            callNext();
         }
     };
 };
@@ -1899,7 +3084,7 @@ WM.Plugins.SimpleReplace = new function () {
         return source.replace(regexp, newString);
     };
     
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var id = args[0];
         
         var source = WM.Editor.readSource();
@@ -1908,43 +3093,218 @@ WM.Plugins.SimpleReplace = new function () {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Text substituted");
         }
+        
+        if (callNext) {
+            callNext();
+        }
     };
     
-    this.mainAuto = function (args, title) {
+    this.mainAuto = function (args, title, callBot) {
         var id = args[0];
         
-        var pageid = WM.MW.callQuery({prop: "info|revisions",
-                                    rvprop: "content|timestamp",
-                                    intoken: "edit",
-                                    titles: encodeURIComponent(title)});
+        WM.MW.callQueryEdit(title,
+                            WM.Plugins.SimpleReplace.mainAutoWrite,
+                            [id, callBot]);
+    };
         
-        var edittoken = pageid.edittoken;
-        var timestamp = pageid.revisions[0].timestamp;
-        var source = pageid.revisions[0]["*"];
+    this.mainAutoWrite = function (title, source, timestamp, edittoken, args) {
+        var id = args[0];
+        var callBot = args[1];
         
         var newtext = doReplace(source, id);
         
         if (newtext != source) {
             var summary = document.getElementById("WikiMonkey-SimpleReplace-Summary-" + id).value;
             
-            var res = WM.MW.callAPIPost({action: "edit",
-                                     bot: "1",
-                                     title: encodeURIComponent(title),
-                                     summary: encodeURIComponent(summary),
-                                     text: encodeURIComponent(newtext),
-                                     basetimestamp: timestamp,
-                                     token: encodeURIComponent(edittoken)});
+            WM.MW.callAPIPost({action: "edit",
+                               bot: "1",
+                               title: title,
+                               summary: summary,
+                               text: newtext,
+                               basetimestamp: timestamp,
+                               token: edittoken},
+                               null,
+                               WM.Plugins.SimpleReplace.mainAutoEnd,
+                               callBot);
+        }
+        else {
+            callBot(true);
+        }
+    };
+    
+    this.mainAutoEnd = function (res, callBot) {
+        if (res.edit && res.edit.result == 'Success') {
+            callBot(true);
+        }
+        else {
+            WM.Log.logError(res['error']['info'] + " (" + res['error']['code'] + ")");
+            callBot(false);
+        }
+    };
+};
+
+WM.Plugins.SynchronizeInterlanguageLinks = new function () {
+    this.main = function (args, callNext) {
+        var tag = args[0]();
+        var whitelist = args[1];
         
-            if (res.edit && res.edit.result == 'Success') {
-                return true;
+        WM.Log.logInfo("Synchronizing interlanguage links...");
+        
+        var title = WM.Editor.getTitle();
+        
+        WM.MW.getInterwikiMap(
+            title,
+            WM.Plugins.SynchronizeInterlanguageLinks.mainContinue,
+            [tag, whitelist, title, callNext]
+        );
+    };
+    
+    this.mainContinue = function (iwmap, args) {
+        var tag = args[0];
+        var whitelist = args[1];
+        var title = args[2];
+        var callNext = args[3];
+        
+        var source = WM.Editor.readSource();
+        
+        var langlinks = WM.Interlanguage.parseLinks(whitelist, source, iwmap);
+        
+        var paths = WM.MW.getWikiPaths();
+        var url = paths.articles + WM.Parser.convertSpacesToUnderscores(title);
+        var api = paths.api;
+        
+        var visitedlinks = {};
+        visitedlinks[tag] = WM.Interlanguage.createVisitedLink(title, url, iwmap, api, source, null, null, langlinks);
+        
+        var newlinks = {};
+        
+        WM.Log.logInfo("Reading " + url + "...");
+        
+        if (langlinks) {
+            var conflict = false;
+            for (var l in langlinks) {
+                var link = langlinks[l];
+                if (!visitedlinks[link.lang] && !newlinks[link.lang]) {
+                    newlinks[link.lang] = WM.Interlanguage.createNewLink(link.title, link.url);
+                }
+                else if ((visitedlinks[link.lang] && visitedlinks[link.lang].url != link.url) ||
+                         (newlinks[link.lang] && newlinks[link.lang].url != link.url)) {
+                    conflict = true;
+                    WM.Log.logError("Conflicting interlanguage links: [[" + link.lang + ":" + link.title + "]]");
+                    break;
+                }
             }
-            else {
-                WM.Log.logError(res['error']['info'] + " (" + res['error']['code'] + ")");
-                return false;
+        
+            if (!conflict) {
+                WM.Interlanguage.collectLinks(
+                    visitedlinks,
+                    newlinks,
+                    whitelist,
+                    false,
+                    WM.Plugins.SynchronizeInterlanguageLinks.mainEnd,
+                    [tag, url, source, langlinks, iwmap, callNext]
+                );
             }
         }
         else {
-            return true;
+            WM.Log.logInfo("No interlanguage links found");
+            if (callNext) {
+                callNext();
+            }
+        }
+    };
+    
+    this.mainEnd = function (links, args) {
+        var tag = args[0];
+        var url = args[1];
+        var source = args[2];
+        var langlinks = args[3];
+        var iwmap = args[4];
+        var callNext = args[5];
+        
+        if (links != "conflict") {
+            var newText = WM.Interlanguage.updateLinks(tag, url, iwmap, source, langlinks, links);
+            
+            if (newText != source) {
+                WM.Editor.writeSource(newText);
+                WM.Log.logInfo("Synchronized interlanguage links");
+            }
+            else {
+                WM.Log.logInfo("Interlanguage links were already synchronized");
+            }
+        
+            if (callNext) {
+                callNext();
+            }
+        }
+    };
+    
+    this.mainAuto = function (args, title, callBot) {
+        var tag = args[0](title);
+        var whitelist = args[1];
+        var summary = args[2];
+        
+        var paths = WM.MW.getWikiPaths();
+        var url = paths.articles + WM.Parser.convertSpacesToUnderscores(title);
+        
+        var visitedlinks = {};
+        
+        var newlinks = {};
+        newlinks[tag] = WM.Interlanguage.createNewLink(title, url);
+        
+        WM.Interlanguage.collectLinks(
+            visitedlinks,
+            newlinks,
+            whitelist,
+            false,
+            WM.Plugins.SynchronizeInterlanguageLinks.mainAutoWrite,
+            [title, url, tag, summary, callBot]
+        );
+    };
+    
+    this.mainAutoWrite = function (links, args) {
+        var title = args[0];
+        var url = args[1];
+        var tag = args[2];
+        var summary = args[3];
+        var callBot = args[4];
+        
+        if (links != "conflict") {
+            var iwmap = links[tag].iwmap;
+            var source = links[tag].source;
+            var langlinks = links[tag].links;
+            var timestamp = links[tag].timestamp;
+            var edittoken = links[tag].edittoken;
+            
+            var newText = WM.Interlanguage.updateLinks(tag, url, iwmap, source, langlinks, links);
+            
+            if (newText != source) {
+                WM.MW.callAPIPost({action: "edit",
+                                   bot: "1",
+                                   title: title,
+                                   summary: summary,
+                                   text: newText,
+                                   basetimestamp: timestamp,
+                                   token: edittoken},
+                                   null,
+                                   WM.Plugins.SynchronizeInterlanguageLinks.mainAutoEnd,
+                                   callBot);
+            }
+            else {
+                callBot(true);
+            }
+        }
+        else {
+            callBot(false);
+        }
+    };
+    
+    this.mainAutoEnd = function (res, callBot) {
+        if (res.edit && res.edit.result == 'Success') {
+            callBot(true);
+        }
+        else {
+            callBot(false);
         }
     };
 };

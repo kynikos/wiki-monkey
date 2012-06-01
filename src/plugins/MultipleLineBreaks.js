@@ -1,5 +1,5 @@
 WM.Plugins.MultipleLineBreaks = new function () {
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         var newtext = source;
         
@@ -8,6 +8,10 @@ WM.Plugins.MultipleLineBreaks = new function () {
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Removed multiple line breaks");
+        }
+        
+        if (callNext) {
+            callNext();
         }
     };
 };

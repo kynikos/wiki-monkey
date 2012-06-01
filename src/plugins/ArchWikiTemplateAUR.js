@@ -1,31 +1,12 @@
 WM.Plugins.ArchWikiTemplateAUR = new function () {
-    var doReplace = function (source) {
+    var doReplace = function (source, call, callArgs) {
         var regExp = /\[(https?\:\/\/aur\.archlinux\.org\/packages\.php\?ID\=[0-9]+) ([^\]]+?)\]/g;
-        var match, res, page;
-        var links = {};
+        var links = [];
         
         while (true) {
-            match = regExp.exec(source);
-            
+            var match = regExp.exec(source);
             if (match) {
-                links[match[0]] = match;
-                res = $.ajax({
-                    async: false,
-                    url: "https://wiki.archlinux.org/index.php/Main_Page",
-                    //url: "https://aur.archlinux.org/",
-                    //url: match[1],
-                    //type: 'GET',
-                    //type: 'POST',
-                    //dataType: 'html'
-                });
-                
-                var parser = new DOMParser();
-                page = parser.parseFromString(res.responseText, "text/xml");
-                //page = $.parseXML(res.responseText);
-                var nodes = page.childNodes[0].childNodes;
-                for (var aaa = 0; nodes.length; aaa++) {
-                    WM.Log.logDebug(aaa);  // ****************************************
-                }
+                links.push(match);
             }
             else {
                 break;
@@ -34,58 +15,125 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
         
         var newText = source;
         
-        for (var link in links) {
-            if (links[link]) {
-                //newText = newText.replace(link, links[link]);  // ****************
+        WM.Plugins.ArchWikiTemplateAUR.doReplaceContinue(source, newText, links, 0, call, callArgs);
+    };
+    
+    this.doReplaceContinue = function (source, newText, links, index, call, callArgs) {
+        if (links[index]) {
+            WM.Log.logInfo("Processing " + links[index][0] + "...");
+            var query = {
+                method: "GET",
+                url: links[index][1],
+                onload: function (res) {
+                    var parser = new DOMParser();
+                    var page = parser.parseFromString(res.responseText, "text/xml");
+                    var divs = page.getElementsByTagName('div');
+                    for (var i = 0; i < divs.length; i++) {
+                        if (divs[i].className == "pgboxbody") {
+                            var span = divs[i].getElementsByTagName('span')[0];
+                            var pkgname = span.innerHTML.split(" ")[0];
+                            if (links[index][2] == pkgname) {
+                                newText = newText.replace(links[index][0],
+                                                          "{{AUR|" + pkgname + "}}");
+                            }
+                            break;
+                        }
+                    }
+                    index++;
+                    WM.Plugins.ArchWikiTemplateAUR.doReplaceContinue(source, newText, links, index, call, callArgs);
+                },
+                onerror: function (res) {
+                    WM.Log.logError("Failed query: " + res.finalUrl + "\nYou may " +
+                                    "have tried to use a plugin which requires " +
+                                    "cross-origin HTTP requests, but you are not " +
+                                    "using Scriptish (Firefox), Greasemonkey " +
+                                    "(Firefox), Tampermonkey (Chrome/Chromium) " +
+                                    "or a similar extension");
+                },
+            };
+            try {
+                GM_xmlhttpRequest(query);
+            }
+            catch (err) {
+                WM.Log.logError("Failed HTTP request - " + err + "\nYou may have " +
+                                "tried to use a plugin which requires cross-origin " +
+                                "HTTP requests, but you are not using Scriptish " +
+                                "(Firefox), Greasemonkey (Firefox), Tampermonkey " +
+                                "(Chrome/Chromium) or a similar extension");
             }
         }
-        
-        return newText;
+        else {
+            call(source, newText, callArgs);
+        }
     };
     
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
-        var newtext = doReplace(source);
+        WM.Log.logInfo("Replacing direct AUR package links...");
+        doReplace(source, WM.Plugins.ArchWikiTemplateAUR.mainEnd, callNext);
+    };
+    
+    this.mainEnd = function (source, newtext, callNext) {
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
-            WM.Log.logInfo("Replaced direct package links");
+            WM.Log.logInfo("Replaced direct AUR package links");
+        }
+        else {
+            WM.Log.logInfo("No replaceable AUR package links found");
+        }
+        
+        if (callNext) {
+            callNext();
         }
     };
     
-    this.mainAuto = function (args, title) {
+    this.mainAuto = function (args, title, callBot) {
         var summary = args[0];
         
-        var res = WM.MW.callAPIGet({action: "query",
-                                    prop: "info|revisions",
-                                    rvprop: "content|timestamp",
-                                    intoken: "edit",
-                                    titles: encodeURIComponent(title)});
-        var pages = res.query.pages;
+        WM.MW.callQueryEdit(title,
+                            WM.Plugins.ArchWikiTemplateAUR.mainAutoReplace,
+                            [summary, callBot]);
+    };
+    
+    this.mainAutoReplace = function (title, source, timestamp, edittoken, args) {
+        var summary = args[0];
+        var callBot = args[1];
         
-        var pageid;
-        for each (pageid in pages) {
-            break;
-        }
-        
-        var edittoken = pageid.edittoken;
-        var timestamp = pageid.revisions[0].timestamp;
-        var source = pageid.revisions[0]["*"];
-        
-        var newtext = doReplace(source);
+        doReplace(source,
+                  WM.Plugins.ArchWikiTemplateAUR.mainAutoWrite,
+                  [title, edittoken, timestamp, summary, callBot]);
+    };
+    
+    this.mainAutoWrite = function (source, newtext, args) {
+        var title = args[0];
+        var edittoken = args[1];
+        var timestamp = args[2];
+        var summary = args[3];
+        var callBot = args[4];
         
         if (newtext != source) {
-            res = WM.MW.callAPIPost({action: "edit",
-                                     bot: "1",
-                                     title: encodeURIComponent(title),
-                                     summary: encodeURIComponent(summary),
-                                     text: encodeURIComponent(newtext),
-                                     basetimestamp: timestamp,
-                                     token: encodeURIComponent(edittoken)});
-        
-            return (res.edit && res.edit.result == 'Success') ? true : false;
+            WM.MW.callAPIPost({action: "edit",
+                               bot: "1",
+                               title: title,
+                               summary: summary,
+                               text: newtext,
+                               basetimestamp: timestamp,
+                               token: edittoken},
+                               null,
+                               WM.Plugins.ArchWikiTemplateAUR.mainAutoEnd,
+                               callBot);
         }
         else {
-            return true;
+            callBot(true);
+        }
+    };
+    
+    this.mainAutoEnd = function (res, callBot) {
+        if (res.edit && res.edit.result == 'Success') {
+            callBot(true);
+        }
+        else {
+            callBot(false);
         }
     };
 };

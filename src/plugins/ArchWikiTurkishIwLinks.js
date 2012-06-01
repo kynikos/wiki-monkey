@@ -1,8 +1,10 @@
 WM.Plugins.ArchWikiTurkishIwLinks = new function () {
     this.mainAuto = function (args, title) {
-        var pageid = WM.MW.callQuery({prop: "revisions",
+        // OUT OF DATE ***********************************************************
+        
+        var pageid = WM.MW.callQuerySync({prop: "revisions",
                                       rvprop: "content",
-                                      titles: encodeURIComponent(title)});
+                                      titles: title});
         
         var trSource = pageid.revisions[0]["*"];
         
@@ -10,10 +12,10 @@ WM.Plugins.ArchWikiTurkishIwLinks = new function () {
         
         var enTitle = title.match(/^(.+?) \(Türkçe\)$/)[1];
         
-        var page = WM.MW.callQuery({prop: "info|revisions",
+        var page = WM.MW.callQuerySync({prop: "info|revisions",
                                       rvprop: "content|timestamp",
                                       intoken: "edit",
-                                      titles: encodeURIComponent(enTitle)});
+                                      titles: enTitle});
         
         var edittoken = page.edittoken;
         var timestamp = page.revisions[0].timestamp;
@@ -24,13 +26,13 @@ WM.Plugins.ArchWikiTurkishIwLinks = new function () {
         if (newText != enSource) {
             var summary = "add Turkish interlanguage link";
             
-            var res = WM.MW.callAPIPost({action: "edit",
+            var res = WM.MW.callAPIPostSync({action: "edit",
                                      bot: "1",
-                                     title: encodeURIComponent(enTitle),
-                                     summary: encodeURIComponent(summary),
-                                     text: encodeURIComponent(newText),
+                                     title: enTitle,
+                                     summary: summary,
+                                     text: newText,
                                      basetimestamp: timestamp,
-                                     token: encodeURIComponent(edittoken)});
+                                     token: edittoken});
             
             if (res.edit && res.edit.result == 'Success') {
                 return true;

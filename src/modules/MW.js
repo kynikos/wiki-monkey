@@ -19,81 +19,267 @@
  */
 
 WM.MW = new function () {
-    var wikiUrls = (function () {
-        var paths = {DEFAULT: {articles: "index.php",
-                               api: "api.php"},
-                     "archlinux.org": {articles: "index.php",
-                                       api: "api.php"},
-                     "wikipedia.org": {articles: "wiki",
-                                       api: "w/api.php"}};
-        
-        var urls = paths[location.hostname.split(".").slice(1).join(".")];
-        
-        if (!urls) {
-            urls = paths.DEFAULT;
+    var wikiPaths = {
+        known: {
+            "^https?://[^\.]+\.wikipedia\.org": {
+                articles: "/wiki/",
+                api: "/w/api.php"
+            },
+            "^https?://wiki\.archlinux\.org": {
+                articles: "/index.php/",
+                api: "/api.php"
+            },
+            "^https?://wiki\.archlinux\.de": {
+                articles: "/title/",
+                api: "/api.php"
+            },
+            "^http://wiki\.archlinux\.fr": {
+                articles: "/",
+                api: "/api.php"
+            },
+            "^http://wiki\.archlinux\.ro": {
+                articles: "/index.php/",
+                api: "/api.php"
+            },
+            "^http://(?:www\.)?archlinux\.fi": {
+                articles: "/wiki/",
+                api: "/w/api.php"
+            },
+            "^http://wiki\.archlinux\.se": {
+                articles: "/index.php?title=",
+                api: "/api.php"
+            },
+            "^http://(?:www\.)?archtr\.org": {
+                articles: "/index.php?title=",
+                api: "/wiki/api.php"
+            },
+            "^http://wiki\.archlinux\.ir": {
+                articles: "/index.php/",
+                api: "/api.php"
+            },
+        },
+        default_: {
+            articles: "/index.php?title=",
+            api: "/api.php"
+        },
+        local: {},
+    };
+    
+    var getWikiPaths = function (href) {
+        // It's necessary to keep this function in a private attribute,
+        // otherwise wikiPaths.local cannot be initialized
+        if (href) {
+            for (var r in wikiPaths.known) {
+                var re = new RegExp(r, "i");
+                var match = re.exec(href);
+                if (match) {
+                    var hostname = match[0];
+                    var paths = {};
+                    for (var p in wikiPaths.known[r]) {
+                        paths[p] = wikiPaths.known[r][p];
+                    }
+                    break;
+                }
+            }
+            if (!paths) {
+                var hostname = Alib.HTTP.getURLParts(href).hostname;
+                var paths = {};
+                for (var p in wikiPaths.default_) {
+                    paths[p] = wikiPaths.default_[p];
+                }
+            }
+            for (var key in paths) {
+                paths[key] = hostname + paths[key];
+            }
         }
-        
-        for (var key in urls) {
-            urls[key] = location.protocol + "//" + location.hostname + "/" + urls[key];
+        else {
+            var paths = {};
+            for (var p in wikiPaths.local) {
+                paths[p] = wikiPaths.local[p];
+            }
         }
-        
-        return urls;
+        return paths;
+    };
+    
+    wikiPaths.local = (function () {
+        return getWikiPaths(location.href);
     })();
     
-    this.getArticlesBaseUrl = function () {
-        return wikiUrls.articles;
+    this.getWikiPaths = function (href) {
+        return getWikiPaths(href);
     };
     
-    this.callAPIGet = function (params) {
-        var id = WM.HTTP.sendGetSyncRequest(wikiUrls.api + "?format=json" + joinParams(params));
-        return JSON.parse(WM.HTTP.getResponseText(id));
+    this.callAPIGet = function (params, api, call, callArgs) {
+        if (!api) {
+            api = wikiPaths.local.api;
+        }
+        var query = {
+            method: "GET",
+            url: api + "?format=json" + joinParams(params),
+            onload: function (res) {
+                try {
+                    // Currently only Scriptish supports the responseJSON method
+                    var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
+                }
+                catch (err) {
+                    WM.Log.logError("It is likely that the API for this wiki is disabled, see " + api);
+                }
+                if (json) {
+                    // Don't put this into the try block or all its exceptions
+                    // will be catched printing the same API error
+                    call(json, callArgs);
+                }
+            },
+            onerror: function (res) {
+                WM.Log.logError("Failed query: " + res.finalUrl + "\nYou may " +
+                                "have tried to use a plugin which requires " +
+                                "cross-origin HTTP requests, but you are not " +
+                                "using Scriptish (Firefox), Greasemonkey " +
+                                "(Firefox), Tampermonkey (Chrome/Chromium) " +
+                                "or a similar extension");
+            }
+        };
+        
+        try {
+            GM_xmlhttpRequest(query);
+        }
+        catch (err) {
+            WM.Log.logError("Failed HTTP request - " + err + "\nYou may have " +
+                            "tried to use a plugin which requires cross-origin " +
+                            "HTTP requests, but you are not using Scriptish " +
+                            "(Firefox), Greasemonkey (Firefox), Tampermonkey " +
+                            "(Chrome/Chromium) or a similar extension");
+        }
     };
     
-    this.callAPIPost = function (params) {
-        var id = WM.HTTP.sendPostSyncRequest(wikiUrls.api, "format=json" + joinParams(params), "Content-type", "application/x-www-form-urlencoded");
-        return JSON.parse(WM.HTTP.getResponseText(id));
+    this.callAPIPost = function (params, api, call, callArgs) {
+        if (!api) {
+            api = wikiPaths.local.api;
+        }
+        var query = {
+            method: "POST",
+            url: api,
+            onload: function (res) {
+                try {
+                    // Currently only Scriptish supports the responseJSON method
+                    var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
+                }
+                catch (err) {
+                    WM.Log.logError("It is likely that the API for this wiki is disabled, see " + api);
+                }
+                if (json) {
+                    // Don't put this into the try block or all its exceptions
+                    // will be catched printing the same API error
+                    call(json, callArgs);
+                }
+            },
+            onerror: function (res) {
+                WM.Log.logError("Failed query: " + res.finalUrl + "\nYou may " +
+                                "have tried to use a plugin which requires " +
+                                "cross-origin HTTP requests, but you are not " +
+                                "using Scriptish (Firefox), Greasemonkey " +
+                                "(Firefox), Tampermonkey (Chrome/Chromium) " +
+                                "or a similar extension");
+            }
+        };
+        
+        var string = "format=json" + joinParams(params);
+        
+        // It's necessary to use try...catch because some browsers don't
+        // support FormData yet and will throw an exception
+        try {
+            // Temporarily disable multipart/form-data requests ******************
+            // because Tampermonkey doesn't support them, see ********************
+            // http://forum.tampermonkey.net/viewtopic.php?f=17&t=271 ************
+            throw "Temporarily disabled, see bug #91";  // ***********************
+            
+            if (string.length > 8000) {
+                query.data = new FormData();
+                query.data.append("format", "json");
+                for (var p in params) {
+                    query.data.append(p, params[p]);
+                }
+                // Do not add "multipart/form-data" explicitly or the query will fail
+                //query.headers = {"Content-type": "multipart/form-data"};
+            }
+            else {
+                throw "string < 8000 characters";
+            }
+        }
+        catch (err) {
+            query.data = string;
+            query.headers = {"Content-type": "application/x-www-form-urlencoded"};
+        }
+        
+        try {
+            GM_xmlhttpRequest(query);
+        }
+        catch (err) {
+            WM.Log.logError("Failed HTTP request - " + err + "\nYou may have " +
+                            "tried to use a plugin which requires cross-origin " +
+                            "HTTP requests, but you are not using Scriptish " +
+                            "(Firefox), Greasemonkey (Firefox), Tampermonkey " +
+                            "(Chrome/Chromium) or a similar extension");
+        }
     };
     
     var joinParams = function (params) {
         var string = "";
         for (var key in params) {
-            string += ("&" + key + "=" + params[key]);
+            string += ("&" + key + "=" + encodeURIComponent(params[key]));
         }
         return string;
     };
     
-    this.callQuery = function (params) {
+    this.callQuery = function (params, call, callArgs) {
         params.action = "query";
-        var res = this.callAPIGet(params);
-        var pages = res.query.pages;
-        for (var id in pages) {
-            break;
-        }
-        return pages[id];
+        var callBack = function (res) {
+            var page = Alib.Obj.getFirstItem(res.query.pages);
+            call(page, callArgs);
+        };
+        this.callAPIGet(params, null, callBack);
     };
     
-    // Never use this attribute directly, always use getUserInfo!!!
+    this.callQueryEdit = function (title, call, callArgs) {
+        var callBack = function (page, args) {
+            source = page.revisions[0]["*"];
+            timestamp = page.revisions[0].timestamp;
+            edittoken = page.edittoken;
+            call(title, source, timestamp, edittoken, callArgs);
+        };
+        this.callQuery({prop: "info|revisions",
+                        rvprop: "content|timestamp",
+                        intoken: "edit",
+                        titles: title},
+                        callBack);
+    };
+    
     var userInfo;
     
-    this.getUserInfo = function () {
-        if (!userInfo) {
-            userInfo = this.callAPIGet({action: "query",
-                                        meta: "userinfo",
-                                        uiprop: "groups"});
-        }
-        return userInfo;
+    this._storeUserInfo = function (call) {
+        userInfo = this.callAPIGet({action: "query",
+                                    meta: "userinfo",
+                                    uiprop: "groups"},
+                                    null,
+                                    WM.MW._storeUserInfoEnd,
+                                    call);
     };
     
+    this._storeUserInfoEnd = function (res, call) {
+        userInfo = res;
+        call();
+    }
+    
     this.isLoggedIn = function () {
-        return this.getUserInfo().query.userinfo.id != 0;
+        return userInfo.query.userinfo.id != 0;
     };
     
     this.getUserName = function () {
-        return this.getUserInfo().query.userinfo.name;
+        return userInfo.query.userinfo.name;
     };
     
     this.isUserBot = function () {
-        var groups = this.getUserInfo().query.userinfo.groups;
+        var groups = userInfo.query.userinfo.groups;
         for (var g in groups) {
             if (groups[g] == 'bot') {
                 return true;
@@ -102,31 +288,85 @@ WM.MW = new function () {
         return false;
     };
     
-    this.getBacklinks = function (bltitle, blnamespace, blcontinue) {
+    this.getBacklinks = function (bltitle, blnamespace, call, callArgs) {
         var query = {action: "query",
                      list: "backlinks",
-                     bltitle: encodeURIComponent(bltitle),
-                     bllimit: 5000};
+                     bltitle: bltitle,
+                     bllimit: 500};
         
         if (blnamespace) {
             query.blnamespace = blnamespace;
         }
         
-        if (blcontinue) {
-            query.blcontinue = blcontinue;
-        }
-        
-        var res = WM.MW.callAPIGet(query);
-        var backlinks = res.query.backlinks;
-        
-        if (res["query-continue"]) {
-            blcontinue = res["query-continue"].backlinks.blcontinue;
-            var cont = this.getBacklinks(bltitle, blnamespace, blcontinue);
-            for (var sub in cont) {
-                backlinks[sub] = cont[sub];
+        this._getBacklinksContinue(query, call, callArgs, []);
+    };
+    
+    this._getBacklinksContinue = function (query, call, callArgs, backlinks) {
+        WM.MW.callAPIGet(query, null, function (res) {
+            backlinks = backlinks.concat(res.query.backlinks);
+            if (res["query-continue"]) {
+                query.blcontinue = res["query-continue"].backlinks.blcontinue;
+                this._getBacklinksContinue(query, call, callArgs, backlinks);
             }
+            else {
+                call(backlinks, callArgs);
+            }
+        });
+    };
+    
+    this.getLanglinks = function (title, iwmap, call, callArgs) {
+        var query = {action: "query",
+                     prop: "langlinks",
+                     titles: title,
+                     lllimit: 500,
+                     llurl: "1",
+                     redirects: "1"};
+        
+        if (iwmap) {
+            query.meta = "siteinfo";
+            query.siprop = "interwikimap";
+            query.sifilteriw = "local";
         }
         
-        return backlinks;
+        this._getLanglinksContinue(query, call, callArgs, [], null);
+    };
+    
+    this._getLanglinksContinue = function (query, call, callArgs, langlinks, iwmap) {
+        WM.MW.callAPIGet(query, null, function (res) {
+            var page = Alib.Obj.getFirstItem(res.query.pages);
+            langlinks = langlinks.concat(page.langlinks);
+            iwmap = res.query.interwikimap;
+            
+            if (query.meta) {
+                delete query.meta;
+                delete query.siprop;
+                delete query.sifilteriw;
+            }
+            
+            if (res["query-continue"]) {
+                query.llcontinue = res["query-continue"].langlinks.llcontinue;
+                this._getLanglinksContinue(query, call, callArgs, langlinks, iwmap);
+            }
+            else {
+                call(langlinks, iwmap, callArgs);
+            }
+        });
+    };
+    
+    this.getInterwikiMap = function (title, call, callArgs) {
+        var query = 
+        
+        WM.MW.callAPIGet(
+            {
+                action: "query",
+                meta: "siteinfo",
+                siprop: "interwikimap",
+                sifilteriw: "local",
+            },
+            null,
+            function (res) {
+                call(res.query.interwikimap, callArgs);
+            }
+        );
     };
 };

@@ -31,48 +31,74 @@ WM.Plugins.ArchWikiQuickReport = new function () {
         return span;
     };
     
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var id = args[0];
         var article = args[1];
         var summary = args[2];
         
         WM.Log.logInfo('Appending diff to ' + article + "...");
         
-        var title = WM.getURIParameter('title');
-        var enddate = WM.Diff.getEndTimestamp();
         var select = document.getElementById("ArchWikiQuickReport-select-" + id);
         var type = select.options[select.selectedIndex].value;
-        var notes = document.getElementById("ArchWikiQuickReport-input-" + id).value;
         
         if (type != 'content' && type != 'style') {
             WM.Log.logError('Select a valid report type');
         }
         else {
-            var pageid = WM.MW.callQuery({prop: "info|revisions",
-                                          rvprop: "content|timestamp",
-                                          intoken: "edit",
-                                          titles: encodeURIComponent(article)});
-            
-            var edittoken = pageid.edittoken;
-            var timestamp = pageid.revisions[0].timestamp;
-            var source = pageid.revisions[0]["*"];
-            
-            var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", enddate, type, notes]);
-            
-            var res = WM.MW.callAPIPost({action: "edit",
-                                     bot: "1",
-                                     title: encodeURIComponent(article),
-                                     summary: encodeURIComponent(summary),
-                                     text: encodeURIComponent(newtext),
-                                     basetimestamp: timestamp,
-                                     token: encodeURIComponent(edittoken)});
-            
-            if (res.edit && res.edit.result == 'Success') {
-                WM.Log.logInfo('Diff correctly appended to ' + article);
+            WM.Diff.getEndTimestamp(WM.Plugins.ArchWikiQuickReport.mainGetEndTimestamp,
+                                    [id, article, type, summary, callNext]);
+        }
+    };
+    
+    this.mainGetEndTimestamp = function (enddate, args) {
+        var id = args[0];
+        var article = args[1];
+        var type = args[2];
+        var summary = args[3];
+        var callNext = args[4];
+        
+        WM.MW.callQueryEdit(article,
+                            WM.Plugins.ArchWikiQuickReport.mainWrite,
+                            [id, type, summary, enddate, callNext]);
+    };
+    
+    this.mainWrite = function (article, source, timestamp, edittoken, args) {
+        var id = args[0];
+        var type = args[1];
+        var summary = args[2];
+        var enddate = args[3];
+        var callNext = args[4];
+        
+        var title = Alib.HTTP.getURIParameter('title');
+        var pEnddate = enddate.substr(0, 10) + " " + enddate.substr(11, 8);
+        var notes = document.getElementById("ArchWikiQuickReport-input-" + id).value;
+        
+        var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", pEnddate, type, notes]);
+        
+        WM.MW.callAPIPost({action: "edit",
+                           bot: "1",
+                           title: article,
+                           summary: summary,
+                           text: newtext,
+                           basetimestamp: timestamp,
+                           token: edittoken},
+                           null,
+                           WM.Plugins.ArchWikiQuickReport.mainEnd,
+                           [article, callNext]);
+    };
+    
+    this.mainEnd = function (res, args) {
+        var article = args[0];
+        var callNext = args[1];
+        
+        if (res.edit && res.edit.result == 'Success') {
+            WM.Log.logInfo('Diff correctly appended to ' + article);
+            if (callNext) {
+                callNext();
             }
-            else {
-                WM.Log.logError('The diff has not been appended!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
-            }
+        }
+        else {
+            WM.Log.logError('The diff has not been appended!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
         }
     };
 };

@@ -2,7 +2,7 @@
 // @id wiki-monkey-local
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
-// @author Dario Giovannetti <dev@dariogiovannetti.com>
+// @author Dario Giovannetti <dev@dariogiovannetti.net>
 // @version local
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
@@ -14,15 +14,22 @@
 // @match http://*.wikipedia.org/*
 // @match https://wiki.archlinux.org/*
 // @require http://code.jquery.com/jquery-1.7.2.min.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/js-aux-lib/src/Async.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/js-aux-lib/src/Compatibility.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/js-aux-lib/src/HTTP.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/js-aux-lib/src/Obj.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/js-aux-lib/src/RegEx.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/js-aux-lib/src/Str.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/WikiMonkey.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/ArchWiki.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/Bot.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/Cat.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/Diff.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/Editor.js
-// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/HTTP.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/Interlanguage.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/Log.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/MW.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/Parser.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/Tables.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/UI.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiFixHeader.js
@@ -35,6 +42,7 @@
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ExpandContractions.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/MultipleLineBreaks.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/SimpleReplace.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/SynchronizeInterlanguageLinks.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/UpdateCategoryTree.js
 // ==/UserScript==
 
@@ -50,6 +58,14 @@ WM.UI.setEditor([
         ["SimpleReplace", "RegExp substitution", ["1"]]
     ],
     [
+        ["SynchronizeInterlanguageLinks", "Sync interlanguage links",
+         [function () {
+             var title = WM.Editor.getTitle();
+             var language = WM.ArchWiki.detectLanguage(title)[1];
+             // The language must correspond to a working interwiki tag
+             return WM.ArchWiki.getInterlanguageTag(language);
+         },
+         WM.ArchWiki.getAliveInterwikiLanguages()]],
         ["ArchWikiTemplateAUR", "Use Template:AUR", null]
     ]
 ]);
@@ -66,15 +82,39 @@ WM.UI.setDiff([
 ]);
 
 WM.UI.setCategory([
-    ["SimpleReplace", "RegExp substitution", ["1"]]
+    ["SimpleReplace", "RegExp substitution", ["1"]],
+    ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
+     [function (title) {
+         var language = WM.ArchWiki.detectLanguage(title)[1];
+         // The language must correspond to a working interwiki tag
+         return WM.ArchWiki.getInterlanguageTag(language);
+     },
+     WM.ArchWiki.getAliveInterwikiLanguages(),
+     "synchronized interlanguage links with the other wikis"]]
 ]);
 
 WM.UI.setWhatLinksHere([
-    ["SimpleReplace", "RegExp substitution", ["1"]]
+    ["SimpleReplace", "RegExp substitution", ["1"]],
+    ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
+     [function (title) {
+         var language = WM.ArchWiki.detectLanguage(title)[1];
+         // The language must correspond to a working interwiki tag
+         return WM.ArchWiki.getInterlanguageTag(language);
+     },
+     WM.ArchWiki.getAliveInterwikiLanguages(),
+     "synchronized interlanguage links with the other wikis"]]
 ]);
 
 WM.UI.setLinkSearch([
     ["SimpleReplace", "RegExp substitution", ["1"]],
+    ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
+     [function (title) {
+         var language = WM.ArchWiki.detectLanguage(title)[1];
+         // The language must correspond to a working interwiki tag
+         return WM.ArchWiki.getInterlanguageTag(language);
+     },
+     WM.ArchWiki.getAliveInterwikiLanguages(),
+     "synchronized interlanguage links with the other wikis"]],
     ["ArchWikiTemplateAUR", "Replace direct AUR package links with Template:AUR", ["replace direct package links with Pkg/AUR templates"]]
 ]);
 
@@ -263,6 +303,14 @@ WM.UI.setSpecial([
 
 WM.UI.setSpecialList([
     ["SimpleReplace", "RegExp substitution", ["1"]],
+    ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
+     [function (title) {
+         var language = WM.ArchWiki.detectLanguage(title)[1];
+         // The language must correspond to a working interwiki tag
+         return WM.ArchWiki.getInterlanguageTag(language);
+     },
+     WM.ArchWiki.getAliveInterwikiLanguages(),
+     "synchronized interlanguage links with the other wikis"]],
     ["ArchWikiWantedCategories", "Create wanted categories", null]
 ]);
 

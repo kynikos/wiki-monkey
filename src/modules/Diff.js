@@ -19,34 +19,39 @@
  */
 
 WM.Diff = new function () {
-    this.getEndTimestamp = function () {
-        var title = WM.getURIParameter('title');
-        var diff = WM.getURIParameter('diff');
-        var oldid = WM.getURIParameter('oldid');
-        var pageid, enddate;
+    this.getEndTimestamp = function (call, callArgs) {
+        var title = Alib.HTTP.getURIParameter('title');
+        var diff = Alib.HTTP.getURIParameter('diff');
+        var oldid = Alib.HTTP.getURIParameter('oldid');
+        
+        var giveEndTimestamp = function (page, id) {
+            call(page.revisions[id].timestamp, callArgs);
+        };
         
         switch (diff) {
             case 'next':
-                pageid = WM.MW.callQuery({prop: "revisions",
-                                         titles: title,
-                                         rvlimit: "2",
-                                         rvprop: "timestamp",
-                                         rvdir: "newer",
-                                         rvstartid: oldid});
-                enddate = pageid.revisions[1].timestamp;
+                WM.MW.callQuery({prop: "revisions",
+                                 titles: title,
+                                 rvlimit: "2",
+                                 rvprop: "timestamp",
+                                 rvdir: "newer",
+                                 rvstartid: oldid},
+                                 giveEndTimestamp,
+                                 1);
                 break;
             case 'prev':
-                pageid = WM.MW.callQuery({prop: "revisions",
-                                         revids: oldid,
-                                         rvprop: "timestamp"});
-                enddate = pageid.revisions[0].timestamp;
+                WM.MW.callQuery({prop: "revisions",
+                                 revids: oldid,
+                                 rvprop: "timestamp"},
+                                 giveEndTimestamp,
+                                 0);
                 break;
             default:
-                pageid = WM.MW.callQuery({prop: "revisions",
-                                         revids: diff,
-                                         rvprop: "timestamp"});
-                enddate = pageid.revisions[0].timestamp;
+                WM.MW.callQuery({prop: "revisions",
+                                 revids: diff,
+                                 rvprop: "timestamp"},
+                                 giveEndTimestamp,
+                                 0);
         }
-        return enddate;
     };
 };

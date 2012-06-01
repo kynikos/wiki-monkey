@@ -20,63 +20,51 @@ WM.Plugins.UpdateCategoryTree = new function () {
     };
     
     var readToC = function (args) {
-        var params = args[0];
-        var tocs = args[1];
-        var index = args[2];
-        var summary = args[3];
-        var timeout = args[4];
+        WM.Log.logInfo('Updating ' + args.params.page + "...");
+        WM.MW.callQueryEdit(args.params.page,
+                            WM.Plugins.UpdateCategoryTree.processToC,
+                            args);
+    };
+    
+    this.processToC = function (title, source, timestamp, edittoken, args) {
+        args.source = source;
+        args.timestamp = timestamp;
+        args.edittoken = edittoken;
         
-        WM.Log.logInfo('Updating ' + params.page + "...");
-        
-        var minInterval;
-        if (WM.MW.isUserBot()) {
-            minInterval = 60000;
-        }
-        else {
-            minInterval = 21600000;
-        }
-        
-        var startMark = "START AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK-->";
-        var endMark = "<!--END AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK";
-        
-        var pageid = WM.MW.callQuery({prop: "info|revisions",
-                                      rvprop: "content|timestamp",
-                                      intoken: "edit",
-                                      titles: encodeURIComponent(params.page)});
-        
-        var edittoken = pageid.edittoken;
-        var timestamp = pageid.revisions[0].timestamp;
-        var source = pageid.revisions[0]["*"];
+        var minInterval = (WM.MW.isUserBot()) ? 60000 : 21600000;
         
         var now = new Date();
-        var msTimestamp = Date.parse(timestamp);
+        var msTimestamp = Date.parse(args.timestamp);
         if (now.getTime() - msTimestamp >= minInterval) {
-            var start = source.indexOf(startMark) + startMark.length;
-            var end = source.lastIndexOf(endMark);
+            var start = args.source.indexOf(args.startMark) + args.startMark.length;
+            var end = args.source.lastIndexOf(args.endMark);
             
             if (start > -1 && end > -1) {
-                var part1 = source.substring(0, start);
-                var part2 = source.substring(end);
-                setTimeout(getTree, timeout, [params, tocs, index, summary, timeout, timestamp, edittoken, source, part1, part2]);
+                args.startId = start;
+                args.endId = end;
+                args.treeText = "";
+                args.altNames = (args.params.keepAltName) ? storeAlternativeNames(args.source) : {};
+                WM.Cat.recurseTree({node: args.params.root,
+                                    callNode: WM.Plugins.UpdateCategoryTree.processCategory,
+                                    callEnd: WM.Plugins.UpdateCategoryTree.writeToC,
+                                    callArgs: args});
             }
             else {
-                WM.Log.logError("Cannot find insertion marks in " + params.page);
-                iterateTocs(tocs, index, summary, timeout);
+                WM.Log.logError("Cannot find insertion marks in " + args.params.page);
+                iterateTocs(args);
             }
         }
         else {
-            WM.Log.logWarning(params.page + ' has been updated too recently');
-            iterateTocs(tocs, index, summary, timeout);
+            WM.Log.logWarning(args.params.page + ' has been updated too recently');
+            iterateTocs(args);
         }
     };
     
     var storeAlternativeNames = function (source) {
         var dict = {};
         var regExp = /\[\[\:([Cc]ategory\:.+?)\|(.+?)\]\]/gm;
-        var match;
-        
         while (true) {
-            match = regExp.exec(source);
+            var match = regExp.exec(source);
             if (match) {
                 dict[match[1]] = match[2];
             }
@@ -84,43 +72,97 @@ WM.Plugins.UpdateCategoryTree = new function () {
                 break;
             }
         }
-        
         return dict;
     };
     
-    var getTree = function (args) {
-        var params = args[0];
-        var tocs = args[1];
-        var index = args[2];
-        var summary = args[3];
-        var timeout = args[4];
-        var timestamp = args[5];
-        var edittoken = args[6];
-        var source = args[7];
-        var part1 = args[8];
-        var part2 = args[9];
+    this.processCategory = function (params) {
+        var args = params.callArgs;
         
-        var tree = WM.Cat.getTree(params.root);
-        setTimeout(recurseTree, timeout, [params, tocs, index, summary, timeout, timestamp, edittoken, source, part1, part2, tree]);
+        WM.Log.logInfo("Processing " + params.node + "...");
+        
+        var text = "";
+        
+        for (var i = 0; i < params.ancestors.length; i++) {
+            text += args.params.indentType;
+        }
+        
+        if (args.params.showIndices) {
+            var indices = [];
+            var node = params;
+            while (node.parentIndex != null) {
+                indices.push(node.siblingIndex + 1);
+                node = params.nodesList[node.parentIndex];
+            }
+            if (indices.length) {
+                text += "<small>" + indices.reverse().join(".") + ".</small> ";
+            }
+        }
+        
+        var altName = (args.altNames[params.node]) ? args.altNames[params.node] : null;
+        text += createCatLink(params.node, args.params.replace, altName) + " ";
+        
+        if (params.children == "loop") {
+            text += "'''[LOOP]'''\n";
+            WM.Log.logWarning("Loop in " + params.node);
+            WM.Plugins.UpdateCategoryTree.processCategoryEnd(params, args, text);
+        }
+        else {
+            WM.Cat.getInfo(params.node,
+                           WM.Plugins.UpdateCategoryTree.processCategoryGetParents,
+                           [params, args, text, altName]);
+        }
     };
     
-    var recurseTree = function (args) {
-        var params = args[0];
-        var tocs = args[1];
-        var index = args[2];
-        var summary = args[3];
-        var timeout = args[4];
-        var timestamp = args[5];
-        var edittoken = args[6];
-        var source = args[7];
-        var part1 = args[8];
-        var part2 = args[9];
-        var tree = args[10];
+    this.processCategoryGetParents = function (info, args_) {
+        var params = args_[0];
+        var args = args_[1];
+        var text = args_[2];
+        var altName = args_[3];
         
-        var altNames = (params.keepAltName) ? storeAlternativeNames(source) : {};
-        var treeText = recurse(tree, params, altNames, "", "", false, {});
-        var newtext = part1 + "\n" + treeText + part2;
-        setTimeout(writeToC, timeout, [params, tocs, index, summary, timeout, timestamp, edittoken, source, newtext]);
+        WM.Cat.getParents(params.node,
+                          WM.Plugins.UpdateCategoryTree.processCategoryAddSuffix,
+                          [params, args, text, altName, info]);
+    }
+    
+    this.processCategoryAddSuffix = function (parents, args_) {
+        var params = args_[0];
+        var args = args_[1];
+        var text = args_[2];
+        var altName = args_[3];
+        var info = args_[4];
+        
+        text += "<small>(" + ((info) ? info.pages : 0) + ")";
+        
+        if (parents.length > 1) {
+            outer_loop:
+            for (var p in parents) {
+                var par = parents[p];
+                for (var a in params.ancestors) {
+                    var anc = params.ancestors[a];
+                    if (par == anc) {
+                        parents.splice(p, 1);
+                        break outer_loop;
+                    }
+                }
+            }
+            for (var i in parents) {
+                altName = (args.altNames[parents[i]]) ? args.altNames[parents[i]] : null;
+                parents[i] = createCatLink(parents[i], args.params.replace, altName);
+            }
+            text += " (" + args.params.alsoIn + " " + parents.join(", ") + ")";
+        }
+        
+        text += "</small>\n";
+        
+        WM.Plugins.UpdateCategoryTree.processCategoryEnd(params, args, text);
+    };
+    
+    this.processCategoryEnd = function (params, args, text) {
+        args.treeText += text;
+        
+        params.callArgs = args;
+        
+        WM.Cat.recurseTreeContinue(params);
     };
     
     var createCatLink = function (cat, replace, altName) {
@@ -138,125 +180,76 @@ WM.Plugins.UpdateCategoryTree = new function () {
         return "[[:" + cat + "|" + catName + "]]";
     };
     
-    var recurse = function (tree, params, altNames, indent, baseIndex, showIndex, ancestors) {
-        var altName, info, parents, subAncestors, subIndent, index, idString, subIndex, par;
-        var id = 1;
-        var text = "";
+    this.writeToC = function (params) {
+        var args = params.callArgs;
         
-        for (var cat in tree) {
-            WM.Log.logInfo("Processing " + cat + "...");
-            
-            index = (showIndex) ? (baseIndex + id + ".") : "";
-            
-            idString = (index) ? ("<small>" + index + "</small> ") : "";
-            altName = (altNames[cat]) ? altNames[cat] : null;
-            text += indent + idString + createCatLink(cat, params.replace, altName) + " ";
-            
-            if (tree[cat] == "loop") {
-                text += "'''[LOOP]'''\n";
-                WM.Log.logWarning("Loop in " + cat);
-            }
-            else {
-                info = WM.Cat.getInfo(cat);
-                parents = WM.Cat.getParents(cat);
-                
-                text += "<small>(" + ((info) ? info.pages : 0) + ")";
-                
-                if (parents.length > 1) {
-                    outer_loop:
-                    for (var p in parents) {
-                        par = parents[p];
-                        for (var anc in ancestors) {
-                            if (par == anc) {
-                                parents.splice(parents.indexOf(par), 1);
-                                break outer_loop;
-                            }
-                        }
-                    }
-                    for (var i in parents) {
-                        altName = (altNames[parents[i]]) ? altNames[parents[i]] : null;
-                        parents[i] = createCatLink(parents[i], params.replace, altName);
-                    }
-                    text += " (" + params.alsoIn + " " + parents.join(", ") + ")";
-                }
-                
-                text += "</small>\n";
-                
-                // Create a copy of the object, not just a new reference
-                subAncestors = JSON.parse(JSON.stringify(ancestors));
-                
-                subAncestors[cat] = true;
-                subIndent = indent + params.indentType;
-                subIndex = (index) ? index : baseIndex;
-                
-                text += recurse(tree[cat], params, altNames, subIndent, subIndex, params.showIndices, subAncestors);
-            }
-            
-            id++;
-        }
+        args.treeText = "\n" + args.treeText;
+        var newtext = Alib.Str.overwriteBetween(args.source, args.treeText, args.startId, args.endId);
         
-        return text
-    };
-    
-    var writeToC = function (args) {
-        var params = args[0];
-        var tocs = args[1];
-        var index = args[2];
-        var summary = args[3];
-        var timeout = args[4];
-        var timestamp = args[5];
-        var edittoken = args[6];
-        var source = args[7];
-        var newtext = args[8];
-        
-        if (newtext != source) {
-            var res = WM.MW.callAPIPost({action: "edit",
-                                     bot: "1",
-                                     title: encodeURIComponent(params.page),
-                                     summary: encodeURIComponent(summary),
-                                     text: encodeURIComponent(newtext),
-                                     basetimestamp: timestamp,
-                                     token: encodeURIComponent(edittoken)});
-            
-            if (res.edit && res.edit.result == 'Success') {
-                WM.Log.logInfo(params.page + ' correctly updated');
-            }
-            else {
-                WM.Log.logError(params.page + ' has not been updated!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
-            }
+        if (newtext != args.source) {
+            WM.MW.callAPIPost({action: "edit",
+                               bot: "1",
+                               title: args.params.page,
+                               summary: args.summary,
+                               text: newtext,
+                               basetimestamp: args.timestamp,
+                               token: args.edittoken},
+                              null,
+                              WM.Plugins.UpdateCategoryTree.checkWrite,
+                              args);
         }
         else {
-            WM.Log.logInfo(params.page + ' is already up to date');
+            WM.Log.logInfo(args.params.page + ' is already up to date');
+            iterateTocs(args)
         }
-        
-        iterateTocs(tocs, index, summary, timeout)
     };
     
-    var iterateTocs = function (tocs, index, summary, timeout) {
-        index++;
-        if (tocs[index]) {
-            setTimeout(readToC, timeout, [tocs[index], tocs, index, summary, timeout]);
+    this.checkWrite = function (res, args) {
+        if (res.edit && res.edit.result == 'Success') {
+            WM.Log.logInfo(args.params.page + ' correctly updated');
+            iterateTocs(args);
+        }
+        else {
+            WM.Log.logError(args.params.page + ' has not been updated!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
+        }
+    };
+    
+    var iterateTocs = function (args) {
+        args.index++;
+        args.params = args.tocs[args.index];
+        if (args.tocs[args.index]) {
+            readToC(args);
         }
         else {
             WM.Log.logInfo("Operations completed, check the log for warnings or errors");
+            if (args.callNext) {
+                args.callNext();
+            }
         }
     };
     
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var tocs = args[0];
         var summary = args[1];
-        
-        var timeout = 100;
         
         var select = document.getElementById("UpdateCategoryTree-select");
         var value = select.options[select.selectedIndex].value;
         
-        if (value == '*') {
-            iterateTocs(tocs, -1, summary, timeout);
-        }
-        else {
-            var rtocs = [tocs[select.selectedIndex]];
-            iterateTocs(rtocs, -1, summary, timeout);
-        }
+        iterateTocs({
+            tocs: (value == '*') ? tocs : [tocs[select.selectedIndex]],
+            index: -1,
+            params: {},
+            edittoken: "",
+            timestamp: "",
+            source: "",
+            startId: 0,
+            endId: 0,
+            treeText: "",
+            startMark: "START AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK-->",
+            endMark: "<!--END AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK",
+            altNames: {},
+            summary: args[1],
+            callNext: callNext,
+        });
     };
 };

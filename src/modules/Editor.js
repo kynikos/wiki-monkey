@@ -20,16 +20,17 @@
 
 WM.Editor = new function () {
     this.getTitle = function () {
-        var title = WM.getURIParameter('title').replace(/_/g, " ");
-        return title;
+        return WM.Parser.convertUnderscoresToSpaces(decodeURIComponent(Alib.HTTP.getURIParameter('title')));
     };
     
     this.isSection = function () {
-        return (WM.getURIParameter('section')) ? true : false;
+        return (Alib.HTTP.getURIParameter('section')) ? true : false;
     };
     
     this.readSource = function () {
-        return document.getElementById('wpTextbox1').value;
+        var value = document.getElementById('wpTextbox1').value;
+        // For compatibility with Opera and IE
+        return Alib.Compatibility.normalizeCarriageReturns(value);
     };
     
     this.writeSource = function (text) {

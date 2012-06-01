@@ -1,9 +1,11 @@
 WM.Plugins.ArchWikiPkgAUR = new function () {
     this.mainAuto = function (args, title) {
-        var pageid = WM.MW.callQuery({prop: "info|revisions",
+        // Out of date, should use WM.Parser *************************************
+        
+        var pageid = WM.MW.callQuerySync({prop: "info|revisions",
                                      rvprop: "content|timestamp",
                                      intoken: "edit",
-                                     titles: encodeURIComponent(title)});
+                                     titles: title});
         
         var edittoken = pageid.edittoken;
         var timestamp = pageid.revisions[0].timestamp;
@@ -15,13 +17,13 @@ WM.Plugins.ArchWikiPkgAUR = new function () {
         if (newtext != source) {
             var summary = "use new package templates, see [[Help:Style]]";
             
-            var res = WM.MW.callAPIPost({action: "edit",
+            var res = WM.MW.callAPIPostSync({action: "edit",
                                      bot: "1",
-                                     title: encodeURIComponent(title),
-                                     summary: encodeURIComponent(summary),
-                                     text: encodeURIComponent(newtext),
+                                     title: title,
+                                     summary: summary,
+                                     text: newtext,
                                      basetimestamp: timestamp,
-                                     token: encodeURIComponent(edittoken)});
+                                     token: edittoken});
         
             if (res.edit && res.edit.result == 'Success') {
                 return true;

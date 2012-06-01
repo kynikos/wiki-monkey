@@ -19,40 +19,9 @@
  */
 
 var WM = new function () {
-    var queryString = (function () {
-        var qa = location.search.substr(1).split('&');
-        var qd = new Object();
-        var s = new Array();
-        for (var p in qa) {
-            s = qa[p].split('=');
-            qd[s[0]] = s[1];
-        }
-        return qd;
-    })();
-    
-    this.getURIParameter = function (name) {
-        return queryString[name];
-    };
-    
-    this.getLongTextNode = function (element) {
-        // DEPRECATED, no longer used anywhere: delete?
-        
-        // Firefox and other browsers split long text into multiple text nodes
-        var text = "";
-        var nodes = element.childNodes;
-        var child;
-        for (var c = 0; c < nodes.length; c++) {
-            child = nodes[c];
-            if (child.nodeType == 3) {
-                text += child.nodeValue;
-            }
-        }
-        return text;
-    };
-    
     this.Plugins = {};
     
     this.main = function () {
-        this.UI.makeUI();
+        this.MW._storeUserInfo(WM.UI._makeUI);
     };
 };

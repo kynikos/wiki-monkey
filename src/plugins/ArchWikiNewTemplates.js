@@ -1,5 +1,5 @@
 WM.Plugins.ArchWikiNewTemplates = new function () {
-    this.main = function (args) {
+    this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         var newtext = source;
         
@@ -42,6 +42,10 @@ WM.Plugins.ArchWikiNewTemplates = new function () {
             if (tests[test][1]) {
                 WM.Log.logWarning(tests[test][1].length + ' ' + tests[test][0] + ' instances require manual intervention');
             }
+        }
+        
+        if (callNext) {
+            callNext();
         }
     };
 };
