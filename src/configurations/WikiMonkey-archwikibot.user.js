@@ -55,8 +55,7 @@ WM.UI.setEditor([
     ],
     [
         ["SynchronizeInterlanguageLinks", "Sync interlanguage links",
-         [function () {
-             var title = WM.Editor.getTitle();
+         [function (title) {
              var language = WM.ArchWiki.detectLanguage(title)[1];
             // The language must correspond to a working interwiki tag
              return WM.ArchWiki.getInterlanguageTag(language);

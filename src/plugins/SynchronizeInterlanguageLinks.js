@@ -1,11 +1,11 @@
 WM.Plugins.SynchronizeInterlanguageLinks = new function () {
     this.main = function (args, callNext) {
-        var tag = args[0]();
+        var title = WM.Editor.getTitle();
+        
+        var tag = args[0](title);
         var whitelist = args[1];
         
         WM.Log.logInfo("Synchronizing interlanguage links...");
-        
-        var title = WM.Editor.getTitle();
         
         WM.MW.getInterwikiMap(
             title,
