@@ -195,7 +195,7 @@ WM.Interlanguage = new function () {
     };
     
     this.updateLinks = function (lang, url, iwmap, source, oldlinks, newlinks) {
-        var linkList = "";
+        var linkList = [];
         
         for (var tag in newlinks) {
             if (tag != lang) {
@@ -204,7 +204,7 @@ WM.Interlanguage = new function () {
                 for (var iw in iwmap) {
                     if (iwmap[iw].prefix == tag) {
                         if (WM.MW.getWikiPaths(iwmap[iw].url).api == link.api) {
-                            linkList += "[[" + tag + ":" + link.title + "]]\n";
+                            linkList.push("[[" + tag + ":" + link.title + "]]\n");
                         }
                         else {
                             WM.Log.logWarning("On " + url + ", " + tag + " interlanguage links point to a different wiki than the others, ignoring them");
@@ -218,6 +218,8 @@ WM.Interlanguage = new function () {
                 }
             }
         }
+        
+        linkList.sort();
         
         var cleanText = "";
         var textId = 0;
@@ -241,7 +243,7 @@ WM.Interlanguage = new function () {
         var firstChar = part2a.search(/[^\s]/);
         var part2b = part2a.substr(firstChar);
         
-        var newText = part1 + linkList + part2b;
+        var newText = part1 + linkList.join("") + part2b;
         
         return newText;
     };

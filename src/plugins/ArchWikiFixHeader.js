@@ -126,6 +126,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
             contentId = link.index + link.length;
         }
         if (iwlist.length) {
+            iwlist.sort();
             header += iwlist.join("\n") + "\n";
         }
         tempcontent += content.substring(contentId);
