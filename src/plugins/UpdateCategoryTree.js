@@ -200,7 +200,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
         }
         else {
             WM.Log.logInfo(args.params.page + ' is already up to date');
-            iterateTocs(args)
+            iterateTocs(args);
         }
     };
     

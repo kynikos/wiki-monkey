@@ -139,7 +139,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         
         // Template:i18n
         var i18ns = WM.Parser.findTemplates(content, "i18n");
-        var i18n = i18ns.pop();
+        var i18n = i18ns.shift();
         if (i18ns.length) {
             WM.Log.logWarning("Found multiple instances of Template:i18n : only the first one has been used, the others have been ignored");
         }
