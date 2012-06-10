@@ -59,7 +59,7 @@ WM.UI.setEditor([
             // The language must correspond to a working interwiki tag
              return WM.ArchWiki.getInterlanguageTag(language);
          },
-         WM.ArchWiki.getAliveInterwikiLanguages()]],
+         WM.ArchWiki.getInterwikiLanguages()]],
         ["ArchWikiTemplateAUR", "Use Template:AUR", null]
     ]
 ]);

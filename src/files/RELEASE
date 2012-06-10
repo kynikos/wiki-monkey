@@ -1,7 +1,7 @@
 * Make sure to be on the development branch
 * Adapt the main configurations for creating the compatibility versions:
-  * Restrict SynchronizeInterlanguageLinks's whitelist to only local languages
-    or remove the plugin altogether
+  * Use WM.ArchWiki.getInternalInterwikiLanguages() in
+    SynchronizeInterlanguageLinks configuration 
   * Remove the ArchWikiTemplateAUR plugin
 * Run compatibility.py
 * Restore the main configurations to their original state

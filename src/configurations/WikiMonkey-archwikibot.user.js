@@ -60,7 +60,7 @@ WM.UI.setEditor([
             // The language must correspond to a working interwiki tag
              return WM.ArchWiki.getInterlanguageTag(language);
          },
-         WM.ArchWiki.getAliveInterwikiLanguages()]],
+         WM.ArchWiki.getInterwikiLanguages()]],
         ["ArchWikiTemplateAUR", "Use Template:AUR", null]
     ]
 ]);
@@ -80,7 +80,7 @@ WM.UI.setCategory([
          // The language must correspond to a working interwiki tag
          return WM.ArchWiki.getInterlanguageTag(language);
      },
-     WM.ArchWiki.getAliveInterwikiLanguages(),
+     WM.ArchWiki.getInterwikiLanguages(),
      "synchronized interlanguage links with the other wikis"]]
 ]);
 
@@ -92,7 +92,7 @@ WM.UI.setWhatLinksHere([
          // The language must correspond to a working interwiki tag
          return WM.ArchWiki.getInterlanguageTag(language);
      },
-     WM.ArchWiki.getAliveInterwikiLanguages(),
+     WM.ArchWiki.getInterwikiLanguages(),
      "synchronized interlanguage links with the other wikis"]]
 ]);
 
@@ -104,7 +104,7 @@ WM.UI.setLinkSearch([
          // The language must correspond to a working interwiki tag
          return WM.ArchWiki.getInterlanguageTag(language);
      },
-     WM.ArchWiki.getAliveInterwikiLanguages(),
+     WM.ArchWiki.getInterwikiLanguages(),
      "synchronized interlanguage links with the other wikis"]],
     ["ArchWikiTemplateAUR", "Replace direct AUR package links with Template:AUR", ["replace direct package links with Pkg/AUR templates"]]
 ]);
@@ -300,7 +300,7 @@ WM.UI.setSpecialList([
          // The language must correspond to a working interwiki tag
          return WM.ArchWiki.getInterlanguageTag(language);
      },
-     WM.ArchWiki.getAliveInterwikiLanguages(),
+     WM.ArchWiki.getInterwikiLanguages(),
      "synchronized interlanguage links with the other wikis"]]
 ]);
 

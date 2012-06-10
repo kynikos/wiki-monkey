@@ -117,13 +117,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         for (var l in interlanguage) {
             var link = interlanguage[l];
             if (iwlist.indexOf(link.match[0]) == -1) {
-                // Remove also dead interlanguage links
-                if (WM.ArchWiki.isAliveInterwikiLanguage(link.match[2])) {
-                    iwlist.push(link.match[0]);
-                }
-                else {
-                    WM.Log.logWarning("Removed dead interlanguage link: " + link.match[1]);
-                }
+                iwlist.push(link.match[0]);
             }
             else {
                 WM.Log.logWarning("Removed duplicate of " + link.match[1]);
