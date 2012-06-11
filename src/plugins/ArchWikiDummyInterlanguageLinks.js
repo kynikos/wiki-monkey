@@ -31,13 +31,15 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
                         }
                         visitedTitles[languages[index]][title] = page;
                         
-                        var i18n = WM.Parser.findTemplates(content, "i18n")[0];
-                        if (i18n) {
-                            for (var arg in i18n.arguments) {
-                                var argument = i18n.arguments[arg];
-                                var pureI18n = WM.Parser.convertUnderscoresToSpaces(WM.ArchWiki.detectLanguage(argument.value)[0]);
-                                if (pureTitle != pureI18n) {
-                                    newTitles[pureI18n] = true;
+                        if (page.revisions) {
+                            var i18n = WM.Parser.findTemplates(page.revisions[0]["*"], "i18n")[0];
+                            if (i18n) {
+                                for (var arg in i18n.arguments) {
+                                    var argument = i18n.arguments[arg];
+                                    var pureI18n = WM.Parser.convertUnderscoresToSpaces(WM.ArchWiki.detectLanguage(argument.value)[0]);
+                                    if (pureTitle != pureI18n) {
+                                        newTitles[pureI18n] = true;
+                                    }
                                 }
                             }
                         }
@@ -82,7 +84,7 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
                     if (!conflict) {
                         conflict = true;
                         
-                        var tempTemplates = WM.Parser.findTemplates(content, "Temporary i18n");
+                        var tempTemplates = WM.Parser.findTemplates(titles[language][title].revisions[0]["*"], "Temporary i18n");
                         if (tempTemplates.length) {
                             WM.Log.logError("Found temporary template in " + title);
                             return callBot(false);
@@ -165,7 +167,8 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
                 var newText = WM.Plugins.ArchWikiDummyInterlanguageLinks.composeLinks(ring[index][0], source, ring[index][2], links);
                 
                 if (newText != source) {
-                    setInterval(
+                    WM.Log.logInfo("Waiting 6 seconds...");
+                    setTimeout(
                         function () {
                             WM.MW.callAPIPost(
                                 {
@@ -247,8 +250,12 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
         linksText += "{{Temporary i18n}}\n\n";
         
         if (oldLinks.length) {
-            // Insert the new links at the index of the first previous link
-            var firstLink = oldLinks[0].index;
+            if (i18n) {
+                var firstLink = Math.min(oldLinks[0].index, i18n.index);
+            }
+            else {
+                var firstLink = oldLinks[0].index;
+            }
         }
         else if (i18n) {
             var firstLink = i18n.index;
@@ -330,6 +337,7 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
             WM.Plugins.ArchWikiDummyInterlanguageLinks.queryTitle(detLang[0], languages, 0, visitedTitles, {}, callBot);
         }
         else {
+            WM.Log.logInfo("Use only English articles as roots");
             callBot(true);
         }
     };
