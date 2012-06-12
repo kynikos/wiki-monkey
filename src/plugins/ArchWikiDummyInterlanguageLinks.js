@@ -32,6 +32,15 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
                         visitedTitles[languages[index]][title] = page;
                         
                         if (page.revisions) {
+                            var parsedLinks = WM.ArchWiki.findInternalInterlanguageLinks(page.revisions[0]["*"]);
+                            for (var p in parsedLinks) {
+                                var ltitle = parsedLinks[p].match[3];
+                                var pureLink = WM.Parser.convertUnderscoresToSpaces(WM.ArchWiki.detectLanguage(ltitle)[0]);
+                                if (pureTitle != pureLink) {
+                                    newTitles[pureLink] = true;
+                                }
+                            }
+                            
                             var i18n = WM.Parser.findTemplates(page.revisions[0]["*"], "i18n")[0];
                             if (i18n) {
                                 for (var arg in i18n.arguments) {
@@ -83,18 +92,16 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
                 if (titles[language][title].pageid) {
                     if (!conflict) {
                         conflict = true;
-                        
-                        var tempTemplates = WM.Parser.findTemplates(titles[language][title].revisions[0]["*"], "Temporary i18n");
-                        if (tempTemplates.length) {
-                            WM.Log.logError("Found temporary template in " + title);
-                            return callBot(false);
-                        }
-                        else {
-                            ring.push([language, titles[language][title]]);
-                        }
+                        ring.push([language, titles[language][title]]);
                     }
                     else {
-                        WM.Log.logError("Conflict: " + JSON.stringify(Alib.Obj.getKeys(titles[language])));
+                        var conflict = [];
+                        for (var k in titles[language]) {
+                            if (titles[language][k].pageid) {
+                                conflict.push(k);
+                            }
+                        }
+                        WM.Log.logError("Conflict: " + conflict.join(", "));
                         return callBot(false);
                     }
                 }
@@ -109,12 +116,13 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
         
         for (var page in ring) {
             var tag = WM.ArchWiki.getInterlanguageTag(ring[page][0]);
+            var title = WM.ArchWiki.detectLanguage(ring[page][1].title)[0];
             
             if (!links[tag]) {
-                links[tag] = WM.ArchWiki.detectLanguage(ring[page][1].title)[0];
+                links[tag] = title;
             }
-            else if (links[tag] != ring[page][1].title) {
-                WM.Log.logError("Conflicting interlanguage links: [[" + tag + ":" + links[tag] + "]], [[" + tag + ":" + WM.ArchWiki.detectLanguage(ring[page][1].title)[0] + "]]");
+            else if (links[tag] != title) {
+                WM.Log.logError("Conflicting interlanguage links: [[" + tag + ":" + links[tag] + "]], [[" + tag + ":" + title + "]]");
                 return callBot(false);
             }
             
@@ -162,12 +170,13 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
                 var timestamp = ring[index][1].revisions[0].timestamp;
                 var edittoken = ring[index][1].edittoken;
                 
+                var interval = 5000;
                 var summary = "[[Template:i18n]] is deprecated, use intelanguage links, see [[Help talk:I18n#\"Dummy\" interlanguage links and deprecation of Template:i18n]]";
                 
                 var newText = WM.Plugins.ArchWikiDummyInterlanguageLinks.composeLinks(ring[index][0], source, ring[index][2], links);
                 
                 if (newText != source) {
-                    WM.Log.logInfo("Waiting 6 seconds...");
+                    WM.Log.logInfo("Waiting " + interval / 1000 + " seconds...");
                     setTimeout(
                         function () {
                             WM.MW.callAPIPost(
@@ -185,7 +194,7 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
                                 [ring, index, links, callBot]
                             )
                         },
-                        6000
+                        interval
                     );
                 }
                 else {
@@ -237,17 +246,21 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
             cleanText = Alib.Str.removeFor(cleanText, i18n.index, i18n.length);
         }
         
+        var linksText = [];
         var tag = WM.ArchWiki.getInterlanguageTag(lang);
-        var linksText = "";
+        
         for (var l in links) {
             var ltag = links[l][0];
             if (ltag != tag) {
                 var ltitle = links[l][1];
-                linksText += "[[" + ltag + ":" + ltitle + "]]\n";
+                linksText.push("[[" + ltag + ":" + ltitle + "]]\n");
             }
         }
         
-        linksText += "{{Temporary i18n}}\n\n";
+        var tempTemplates = WM.Parser.findTemplates(source, "Temporary i18n");
+        if (!tempTemplates.length && i18n && linksText.length > 3) {
+            linksText.push("{{Temporary i18n}}\n");
+        }
         
         if (oldLinks.length) {
             if (i18n) {
@@ -269,7 +282,7 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
         var firstChar = part2a.search(/[^\s]/);
         var part2b = part2a.substr(firstChar);
         
-        var newText = part1 + linksText + part2b;
+        var newText = part1 + linksText.join("") + part2b;
         
         return newText;
     };
