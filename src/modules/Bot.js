@@ -373,7 +373,13 @@ WM.Bot = new function () {
     };
     
     this._startAutomatic = function () {
-        var items = WM.Bot.selections.list.current[0].getElementsByTagName('li');
+        var itemsDOM = WM.Bot.selections.list.current[0].getElementsByTagName('li');
+        // Passing the live collection with the callback function was causing
+        // it to be lost in an apparently random manner
+        var items = [];
+        for (var i = 0; i < itemsDOM.length; i++) {
+            items.push(itemsDOM[i]);
+        }
         var linkId = WM.Bot.selections.list.current[1];
         if (WM.Bot._checkOtherBotsRunning() && !WM.Bot._canForceStart()) {
             WM.Log.logError('Another bot is running, aborting...');
@@ -412,20 +418,22 @@ WM.Bot = new function () {
                         if (!WM.Bot._checkOtherBotsRunning()) {
                             ln.className = "WikiMonkeyBotProcessing";
                             WM.Log.logInfo("Processing " + article + "...");
-                            WM.Bot.selections.function_(article, function (res) {
-                                if (res === true) {
-                                    ln.className = "WikiMonkeyBotProcessed";
-                                    WM.Log.logInfo(article + " processed");
-                                    // Do not increment directly in the function's call!
-                                    id++;
-                                    WM.Bot._processItem(lis, id, linkId);
-                                }
-                                else {
-                                    ln.className = "WikiMonkeyBotFailed";
-                                    WM.Log.logError("Error processing " + article + ", stopping the bot");
-                                    WM.Bot._endAutomatic(true);
-                                }
-                            });
+                            WM.Bot.selections.function_(article, (function (lis, id, linkId, ln, article) {
+                                return function (res) {
+                                    if (res === true) {
+                                        ln.className = "WikiMonkeyBotProcessed";
+                                        WM.Log.logInfo(article + " processed");
+                                        // Do not increment directly in the function's call!
+                                        id++;
+                                        WM.Bot._processItem(lis, id, linkId);
+                                    }
+                                    else {
+                                        ln.className = "WikiMonkeyBotFailed";
+                                        WM.Log.logError("Error processing " + article + ", stopping the bot");
+                                        WM.Bot._endAutomatic(true);
+                                    }
+                                };
+                            })(lis, id, linkId, ln, article));
                         }
                         else {
                             WM.Log.logError('Another bot has been force-started, stopping...');

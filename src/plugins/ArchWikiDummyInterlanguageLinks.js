@@ -36,7 +36,9 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
                             for (var p in parsedLinks) {
                                 var ltitle = parsedLinks[p].match[3];
                                 var pureLink = WM.Parser.convertUnderscoresToSpaces(WM.ArchWiki.detectLanguage(ltitle)[0]);
-                                if (pureTitle != pureLink) {
+                                var test1 = pureTitle.substr(0, 1).toLowerCase() != pureLink.substr(0, 1).toLowerCase();
+                                var test2 = pureTitle.substr(1) != pureLink.substr(1);
+                                if (test1 || test2) {
                                     newTitles[pureLink] = true;
                                 }
                             }
@@ -46,7 +48,9 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
                                 for (var arg in i18n.arguments) {
                                     var argument = i18n.arguments[arg];
                                     var pureI18n = WM.Parser.convertUnderscoresToSpaces(WM.ArchWiki.detectLanguage(argument.value)[0]);
-                                    if (pureTitle != pureI18n) {
+                                    var test1 = pureTitle.substr(0, 1).toLowerCase() != pureI18n.substr(0, 1).toLowerCase();
+                                    var test2 = pureTitle.substr(1) != pureI18n.substr(1);
+                                    if (test1 || test2) {
                                         newTitles[pureI18n] = true;
                                     }
                                 }
@@ -171,7 +175,7 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
                 var edittoken = ring[index][1].edittoken;
                 
                 var interval = 5000;
-                var summary = "[[Template:i18n]] is deprecated, use intelanguage links, see [[Help talk:I18n#\"Dummy\" interlanguage links and deprecation of Template:i18n]]";
+                var summary = "[[Template:i18n]] is deprecated, use interlanguage links, see [[Help talk:I18n#\"Dummy\" interlanguage links and deprecation of Template:i18n]]";
                 
                 var newText = WM.Plugins.ArchWikiDummyInterlanguageLinks.composeLinks(ring[index][0], source, ring[index][2], links);
                 
