@@ -208,7 +208,7 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
                 }
             }
             else {
-                WM.Log.logInfo(title + ' won\'t be updated');
+                WM.Log.logWarning(title + ' won\'t be updated');
                 index++;
                 WM.Plugins.ArchWikiDummyInterlanguageLinks.editPage(ring, index, links, callBot);
             }

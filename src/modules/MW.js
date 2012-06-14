@@ -203,7 +203,7 @@ WM.MW = new function () {
                 //query.headers = {"Content-type": "multipart/form-data"};
             }
             else {
-                throw "string < 8000 characters";
+                throw "string <= 8000 characters";
             }
         }
         catch (err) {

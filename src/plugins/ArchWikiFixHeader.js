@@ -2,9 +2,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
     this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         
-        var detLang = WM.ArchWiki.detectLanguage(WM.Editor.getTitle());
-        var pureTitle = detLang[0];
-        var language = detLang[1];
+        var language = WM.ArchWiki.detectLanguage(WM.Editor.getTitle())[1];
         
         var header = "";
         var content = source;
@@ -131,32 +129,6 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         }
         tempcontent += content.substring(contentId);
         content = tempcontent;
-        
-        // Template:i18n
-        var i18ns = WM.Parser.findTemplates(content, "i18n");
-        var i18n = i18ns.shift();
-        if (i18ns.length) {
-            WM.Log.logWarning("Found multiple instances of Template:i18n : only the first one has been used, the others have been ignored");
-        }
-        if (i18n) {
-            var parsedTitle = WM.Parser.convertUnderscoresToSpaces(i18n.arguments[0].value);
-            var test1 = pureTitle.substr(0, 1).toLowerCase() != parsedTitle.substr(0, 1).toLowerCase();
-            var test2 = pureTitle.substr(1) != parsedTitle.substr(1);
-            
-            if (test1 || test2) {
-                header += "{{i18n|" + pureTitle + "}}";
-                WM.Log.logWarning("Updated Template:i18n since it wasn't matching the current article title");
-            }
-            else {
-                header += "{{i18n|" + parsedTitle + "}}";
-            }
-            content = Alib.Str.removeFor(content, i18n.index, i18n.length);
-        }
-        else {
-            header += "{{i18n|" + pureTitle + "}}";
-            WM.Log.logInfo("Added Template:i18n");
-        }
-        header += "\n\n";
         
         var firstChar = content.search(/[^\s]/);
         content = content.substr(firstChar);

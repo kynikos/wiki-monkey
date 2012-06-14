@@ -398,7 +398,7 @@ WM.Bot = new function () {
     this._processItem = function (items, index, linkId) {
         var interval;
         if (WM.MW.isUserBot()) {
-            interval = 10000;
+            interval = 8000;
         }
         else {
             interval = 90000;

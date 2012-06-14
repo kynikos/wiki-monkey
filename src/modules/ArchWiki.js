@@ -84,10 +84,10 @@ WM.ArchWiki = new function () {
             "正體中文"
         ],
         interlanguage: {
-            external: ["de", "en", "fa", "fi", "fr", "ro", "sv", "tr"],
-            internal: ["bg", "cs", "da", "el", "es", "he", "hr", "hu", "id",
-                       "it", "ja", "ko", "lt", "nl", "pl", "pt", "ru", "sk",
-                       "sr", "th", "uk", "zh-cn", "zh-tw"],
+            external: ["de", "fa", "fi", "fr", "ro", "sv", "tr"],
+            internal: ["bg", "cs", "da", "el", "en", "es", "he", "hr", "hu",
+                       "id", "it", "ja", "ko", "lt", "nl", "pl", "pt", "ru",
+                       "sk", "sr", "th", "uk", "zh-cn", "zh-tw"],
         }
     };
     
