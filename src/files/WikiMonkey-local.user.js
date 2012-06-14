@@ -32,7 +32,6 @@
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/Parser.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/Tables.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/UI.js
-// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiDummyInterlanguageLinks.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiFixHeader.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiFixHeadings.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiNewTemplates.js
@@ -91,8 +90,6 @@ WM.UI.setCategory([
      },
      WM.ArchWiki.getInterwikiLanguages(),
      "synchronized interlanguage links with the other wikis"]],
-    ["ArchWikiDummyInterlanguageLinks",
-     "Replace Template:i18n with dummy interlanguage links", null],
 ]);
 
 WM.UI.setWhatLinksHere([
@@ -105,8 +102,6 @@ WM.UI.setWhatLinksHere([
      },
      WM.ArchWiki.getInterwikiLanguages(),
      "synchronized interlanguage links with the other wikis"]],
-    ["ArchWikiDummyInterlanguageLinks",
-     "Replace Template:i18n with dummy interlanguage links", null],
 ]);
 
 WM.UI.setLinkSearch([
@@ -316,8 +311,6 @@ WM.UI.setSpecialList([
      WM.ArchWiki.getInterwikiLanguages(),
      "synchronized interlanguage links with the other wikis"]],
     ["ArchWikiWantedCategories", "Create wanted categories", null],
-    ["ArchWikiDummyInterlanguageLinks",
-     "Replace Template:i18n with dummy interlanguage links", null],
 ]);
 
 WM.main();
