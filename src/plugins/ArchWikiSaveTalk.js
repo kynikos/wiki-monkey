@@ -37,18 +37,22 @@ WM.Plugins.ArchWikiSaveTalk = new function () {
         var title = Alib.HTTP.getURIParameter('title');
         var pEnddate = enddate.substr(0, 10) + "&nbsp;" + enddate.substr(11, 8);
         
-        var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", pEnddate]);
+        var newtext = WM.Tables.appendRow(source, "<!-- REPLY TABLE -->", ["[" + location.href + " " + title + "]", pEnddate]);
         
-        WM.MW.callAPIPost({action: "edit",
-                           bot: "1",
-                           title: article,
-                           summary: summary,
-                           text: newtext,
-                           basetimestamp: timestamp,
-                           token: edittoken},
-                           null,
-                           WM.Plugins.ArchWikiSaveTalk.mainEnd,
-                           [article, callNext]);
+        WM.MW.callAPIPost(
+            {
+                action: "edit",
+                bot: "1",
+                title: article,
+                summary: summary,
+                text: newtext,
+                basetimestamp: timestamp,
+                token: edittoken
+            },
+            null,
+            WM.Plugins.ArchWikiSaveTalk.mainEnd,
+            [article, callNext]
+        );
     };
     
     this.mainEnd = function (res, args) {
