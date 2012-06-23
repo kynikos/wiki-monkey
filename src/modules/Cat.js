@@ -73,16 +73,16 @@ WM.Cat = new function () {
         });
     };
     
-    this.getParents = function (name, call, callArgs) {
+    this.getParentsAndInfo = function (name, call, callArgs) {
         var query = {action: "query",
-                     prop: "categories",
+                     prop: "categories|categoryinfo",
                      titles: name,
                      cllimit: 500};
         
-        this._getParentsContinue(query, call, callArgs, []);
+        this._getParentsAndInfoContinue(query, call, callArgs, [], null);
     };
     
-    this._getParentsContinue = function (query, call, callArgs, parents) {
+    this._getParentsAndInfoContinue = function (query, call, callArgs, parents, info) {
         WM.MW.callAPIGet(query, null, function (res) {
             var page = Alib.Obj.getFirstItem(res.query.pages);
             
@@ -90,30 +90,19 @@ WM.Cat = new function () {
                 parents = parents.concat(page.categories);
             }
             
+            if (page.categoryinfo) {
+                info = page.categoryinfo;
+            }
+            
             if (res["query-continue"]) {
+                // Request categoryinfo only once
+                query.prop = "categories";
                 query.clcontinue = res["query-continue"].categories.clcontinue;
-                this._getParentsContinue(query, call, callArgs, parents);
+                this._getParentsAndInfoContinue(query, call, callArgs, parents, info);
             }
             else {
-                var parentTitles = [];
-                
-                for (var par in parents) {
-                    parentTitles.push(parents[par].title);
-                }
-                
-                call(parentTitles, callArgs);
+                call(parents, info, callArgs);
             }
         });
-    };
-    
-    this.getInfo = function (name, call, callArgs) {
-        WM.MW.callQuery({prop: "categoryinfo",
-                         titles: name},
-                         WM.Cat._getInfoContinue,
-                         [call, callArgs]);
-    };
-    
-    this._getInfoContinue = function (page, args) {
-        args[0](page.categoryinfo, args[1]);
     };
 };

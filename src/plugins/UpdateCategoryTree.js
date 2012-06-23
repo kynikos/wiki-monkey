@@ -107,36 +107,26 @@ WM.Plugins.UpdateCategoryTree = new function () {
             WM.Plugins.UpdateCategoryTree.processCategoryEnd(params, args, text);
         }
         else {
-            WM.Cat.getInfo(params.node,
-                           WM.Plugins.UpdateCategoryTree.processCategoryGetParents,
-                           [params, args, text, altName]);
+            WM.Cat.getParentsAndInfo(
+                params.node,
+                WM.Plugins.UpdateCategoryTree.processCategoryAddSuffix,
+                [params, args, text, altName]
+            );
         }
     };
     
-    this.processCategoryGetParents = function (info, args_) {
+    this.processCategoryAddSuffix = function (parents, info, args_) {
         var params = args_[0];
         var args = args_[1];
         var text = args_[2];
         var altName = args_[3];
-        
-        WM.Cat.getParents(params.node,
-                          WM.Plugins.UpdateCategoryTree.processCategoryAddSuffix,
-                          [params, args, text, altName, info]);
-    }
-    
-    this.processCategoryAddSuffix = function (parents, args_) {
-        var params = args_[0];
-        var args = args_[1];
-        var text = args_[2];
-        var altName = args_[3];
-        var info = args_[4];
         
         text += "<small>(" + ((info) ? info.pages : 0) + ")";
         
         if (parents.length > 1) {
             outer_loop:
             for (var p in parents) {
-                var par = parents[p];
+                var par = parents[p].title;
                 for (var a in params.ancestors) {
                     var anc = params.ancestors[a];
                     if (par == anc) {
@@ -145,11 +135,12 @@ WM.Plugins.UpdateCategoryTree = new function () {
                     }
                 }
             }
+            var parentTitles = [];
             for (var i in parents) {
-                altName = (args.altNames[parents[i]]) ? args.altNames[parents[i]] : null;
-                parents[i] = createCatLink(parents[i], args.params.replace, altName);
+                altName = (args.altNames[parents[i].title]) ? args.altNames[parents[i].title] : null;
+                parentTitles.push(createCatLink(parents[i].title, args.params.replace, altName));
             }
-            text += " (" + args.params.alsoIn + " " + parents.join(", ") + ")";
+            text += " (" + args.params.alsoIn + " " + parentTitles.join(", ") + ")";
         }
         
         text += "</small>\n";
