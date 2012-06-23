@@ -3,6 +3,7 @@
 	<name>JavaScript - Wiki Monkey</name>
 	<comment></comment>
 	<projects>
+		<project>JavaScript - Auxiliary library</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
