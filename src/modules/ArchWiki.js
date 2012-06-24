@@ -77,7 +77,6 @@ WM.ArchWiki = new function () {
             "Русский",
             "Slovenský",
             "Српски",
-            "Svenska",
             "ไทย",
             "Українська",
             "简体中文",
