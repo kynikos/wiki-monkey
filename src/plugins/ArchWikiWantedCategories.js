@@ -29,7 +29,7 @@ WM.Plugins.ArchWikiWantedCategories = new function () {
                                createonly: "1",
                                token: edittoken},
                                null,
-                               WM.Plugins.ArchWikiWantedCategories.mainAutoWrite,
+                               WM.Plugins.ArchWikiWantedCategories.mainAutoEnd,
                                callBot);
         }
         else {
