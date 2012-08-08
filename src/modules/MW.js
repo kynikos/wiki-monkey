@@ -188,11 +188,6 @@ WM.MW = new function () {
         // It's necessary to use try...catch because some browsers don't
         // support FormData yet and will throw an exception
         try {
-            // Temporarily disable multipart/form-data requests ******************
-            // because Tampermonkey doesn't support them, see ********************
-            // http://forum.tampermonkey.net/viewtopic.php?f=17&t=271 ************
-            throw "Temporarily disabled, see bug #91";  // ***********************
-            
             if (string.length > 8000) {
                 query.data = new FormData();
                 query.data.append("format", "json");
