@@ -10,7 +10,8 @@
   supported browser
 * Run release.py VERSION ALIB_VERSION (check that the ALIB_VERSION tag exists)
 * Commit
-* Adapt the main configurations for creating the compatibility versions
+* Adapt the main configurations for creating the compatibility versions (see
+  above)
 * Run compatibility.py
 * Restore the main configurations to their original state
 * Commit
