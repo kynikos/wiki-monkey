@@ -1,3 +1,3 @@
 // ==UserScript==
-// @version 1.11-dev-editor
+// @version 1.11.1-editor
 // ==/UserScript==
