@@ -499,27 +499,6 @@ var WM = new function () {
 };
 
 WM.ArchWiki = new function () {
-    var namespaces = {
-        "Media": -2,
-        "Special": -1,
-        "": 0,
-        "Talk": 1,
-        "User": 2,
-        "User talk": 3,
-        "ArchWiki": 4,
-        "ArchWiki talk": 5,
-        "File": 6,
-        "File talk": 7,
-        "MediaWiki": 8,
-        "MediaWiki talk": 9,
-        "Template": 10,
-        "Template talk": 11,
-        "Help": 12,
-        "Help talk": 13,
-        "Category": 14,
-        "Category talk": 15,
-    };
-    
     var languages = {
         local: "English",
         names: {
@@ -578,64 +557,17 @@ WM.ArchWiki = new function () {
             "Русский",
             "Slovenský",
             "Српски",
-            "Svenska",
             "ไทย",
             "Українська",
             "简体中文",
             "正體中文"
         ],
-        i18n: [
-            "Български",
-            "Česky",
-            "Dansk",
-            "Ελληνικά",
-            "English",
-            "Español",
-            "עברית",
-            "Hrvatski",
-            "Magyar",
-            "Indonesia",
-            "Italiano",
-            "日本語",
-            "한국어",
-            "Lietuviškai",
-            "Nederlands",
-            "Polski",
-            "Português",
-            "Русский",
-            "Slovenský",
-            "Српски",
-            "Svenska",
-            "ไทย",
-            "Українська",
-            "简体中文",
-            "正體中文"
-        ],
-        interwiki: {
-            all: ["de", "en", "es", "fa", "fi", "fr", "pl", "pt-br", "ro",
-                  "sv", "tr", "uk"],
-            alive: ["de", "en", "fa", "fi", "fr", "ro", "sv", "tr"],
-            dead: ["es", "pl", "pt-br", "uk"],
-            languages: {
-                "Deutsch": "de",
-                "English": "en",
-                "Español": "es",
-                "فارسی": "fa",
-                "Suomi": "fi",
-                "Français": "fr",
-                "Polski": "pl",
-                "Português": "pt-br",
-                "Română": "ro",
-                "Svenska": "sv",
-                "Türkçe": "tr",
-                "Українська": "uk",
-                
-            }
+        interlanguage: {
+            external: ["de", "fa", "fi", "fr", "ro", "sv", "tr"],
+            internal: ["bg", "cs", "da", "el", "en", "es", "he", "hr", "hu",
+                       "id", "it", "ja", "ko", "lt", "nl", "pl", "pt", "ru",
+                       "sk", "sr", "th", "uk", "zh-cn", "zh-tw"],
         }
-    };
-    
-    this.getNamespaceId = function (name) {
-        return namespaces[name];
     };
     
     this.getLocalLanguage = function () {
@@ -650,40 +582,24 @@ WM.ArchWiki = new function () {
         return languages.categories.indexOf(lang) > -1;
     };
     
-    this.getI18nLanguages = function () {
-        return languages.i18n;
-    };
-    
-    this.isI18nLanguage = function (lang) {
-        return languages.i18n.indexOf(lang) > -1;
-    };
-    
     this.getInterwikiLanguages = function () {
-        return languages.interwiki.all;
+        return languages.interlanguage.external.concat(languages.interlanguage.internal);
     };
     
     this.isInterwikiLanguage = function (lang) {
-        return languages.interwiki.all.indexOf(lang) > -1;
+        return this.getInterwikiLanguages().indexOf(lang) > -1;
     };
     
-    this.getAliveInterwikiLanguages = function () {
-        return languages.interwiki.alive;
+    this.getInternalInterwikiLanguages = function () {
+        return languages.interlanguage.internal;
     };
     
-    this.isAliveInterwikiLanguage = function (lang) {
-        return languages.interwiki.alive.indexOf(lang) > -1;
-    };
-    
-    this.getDeadInterwikiLanguages = function () {
-        return languages.interwiki.dead;
-    };
-    
-    this.isDeadInterwikiLanguage = function (lang) {
-        return languages.interwiki.dead.indexOf(lang) > -1;
+    this.isInternalInterwikiLanguage = function (lang) {
+        return languages.interlanguage.internal.indexOf(lang) > -1;
     };
     
     this.getInterlanguageTag = function (language) {
-        return languages.interwiki.languages[language];
+        return languages.names[language].subtag;
     };
         
     this.detectLanguage = function (title) {
@@ -698,7 +614,7 @@ WM.ArchWiki = new function () {
                 pureTitle = matches[1];
             }
             else {
-                detectedLanguage = languages.local;
+                detectedLanguage = this.getLocalLanguage();
                 pureTitle = matches[0];
             }
         }
@@ -710,8 +626,12 @@ WM.ArchWiki = new function () {
     
     this.findAllInterlanguageLinks = function (source) {
         // See also WM.Parser.findInterlanguageLinks!!!
-        var interwikiLanguages = this.getInterwikiLanguages();
-        return WM.Parser.findSpecialLinks(source, interwikiLanguages.join("|"));
+        return WM.Parser.findSpecialLinks(source, this.getInterwikiLanguages().join("|"));
+    };
+    
+    this.findInternalInterlanguageLinks = function (source) {
+        // See also WM.Parser.findInterlanguageLinks!!!
+        return WM.Parser.findSpecialLinks(source, this.getInternalInterwikiLanguages().join("|"));
     };
 };
 
@@ -1070,7 +990,13 @@ WM.Bot = new function () {
     };
     
     this._startAutomatic = function () {
-        var items = WM.Bot.selections.list.current[0].getElementsByTagName('li');
+        var itemsDOM = WM.Bot.selections.list.current[0].getElementsByTagName('li');
+        // Passing the live collection with the callback function was causing
+        // it to be lost in an apparently random manner
+        var items = [];
+        for (var i = 0; i < itemsDOM.length; i++) {
+            items.push(itemsDOM[i]);
+        }
         var linkId = WM.Bot.selections.list.current[1];
         if (WM.Bot._checkOtherBotsRunning() && !WM.Bot._canForceStart()) {
             WM.Log.logError('Another bot is running, aborting...');
@@ -1089,7 +1015,7 @@ WM.Bot = new function () {
     this._processItem = function (items, index, linkId) {
         var interval;
         if (WM.MW.isUserBot()) {
-            interval = 10000;
+            interval = 8000;
         }
         else {
             interval = 90000;
@@ -1109,20 +1035,22 @@ WM.Bot = new function () {
                         if (!WM.Bot._checkOtherBotsRunning()) {
                             ln.className = "WikiMonkeyBotProcessing";
                             WM.Log.logInfo("Processing " + article + "...");
-                            WM.Bot.selections.function_(article, function (res) {
-                                if (res === true) {
-                                    ln.className = "WikiMonkeyBotProcessed";
-                                    WM.Log.logInfo(article + " processed");
-                                    // Do not increment directly in the function's call!
-                                    id++;
-                                    WM.Bot._processItem(lis, id, linkId);
-                                }
-                                else {
-                                    ln.className = "WikiMonkeyBotFailed";
-                                    WM.Log.logError("Error processing " + article + ", stopping the bot");
-                                    WM.Bot._endAutomatic(true);
-                                }
-                            });
+                            WM.Bot.selections.function_(article, (function (lis, id, linkId, ln, article) {
+                                return function (res) {
+                                    if (res === true) {
+                                        ln.className = "WikiMonkeyBotProcessed";
+                                        WM.Log.logInfo(article + " processed");
+                                        // Do not increment directly in the function's call!
+                                        id++;
+                                        WM.Bot._processItem(lis, id, linkId);
+                                    }
+                                    else {
+                                        ln.className = "WikiMonkeyBotFailed";
+                                        WM.Log.logError("Error processing " + article + ", stopping the bot");
+                                        WM.Bot._endAutomatic(true);
+                                    }
+                                };
+                            })(lis, id, linkId, ln, article));
                         }
                         else {
                             WM.Log.logError('Another bot has been force-started, stopping...');
@@ -1206,16 +1134,16 @@ WM.Cat = new function () {
         });
     };
     
-    this.getParents = function (name, call, callArgs) {
+    this.getParentsAndInfo = function (name, call, callArgs) {
         var query = {action: "query",
-                     prop: "categories",
+                     prop: "categories|categoryinfo",
                      titles: name,
                      cllimit: 500};
         
-        this._getParentsContinue(query, call, callArgs, []);
+        this._getParentsAndInfoContinue(query, call, callArgs, [], null);
     };
     
-    this._getParentsContinue = function (query, call, callArgs, parents) {
+    this._getParentsAndInfoContinue = function (query, call, callArgs, parents, info) {
         WM.MW.callAPIGet(query, null, function (res) {
             var page = Alib.Obj.getFirstItem(res.query.pages);
             
@@ -1223,31 +1151,20 @@ WM.Cat = new function () {
                 parents = parents.concat(page.categories);
             }
             
+            if (page.categoryinfo) {
+                info = page.categoryinfo;
+            }
+            
             if (res["query-continue"]) {
+                // Request categoryinfo only once
+                query.prop = "categories";
                 query.clcontinue = res["query-continue"].categories.clcontinue;
-                this._getParentsContinue(query, call, callArgs, parents);
+                this._getParentsAndInfoContinue(query, call, callArgs, parents, info);
             }
             else {
-                var parentTitles = [];
-                
-                for (var par in parents) {
-                    parentTitles.push(parents[par].title);
-                }
-                
-                call(parentTitles, callArgs);
+                call(parents, info, callArgs);
             }
         });
-    };
-    
-    this.getInfo = function (name, call, callArgs) {
-        WM.MW.callQuery({prop: "categoryinfo",
-                         titles: name},
-                         WM.Cat._getInfoContinue,
-                         [call, callArgs]);
-    };
-    
-    this._getInfoContinue = function (page, args) {
-        args[0](page.categoryinfo, args[1]);
     };
 };
 
@@ -1443,7 +1360,7 @@ WM.Interlanguage = new function () {
                     api,
                     title,
                     whitelist,
-                    WM.Interlanguage.collectLinksContinue,
+                    WM.Interlanguage._collectLinksContinue,
                     [url, tag, visitedlinks, newlinks, callEnd, callArgs]
                 );
             }
@@ -1456,7 +1373,7 @@ WM.Interlanguage = new function () {
         }
     };
     
-    this.collectLinksContinue = function (api, title, whitelist, langlinks, iwmap, source, timestamp, edittoken, args) {
+    this._collectLinksContinue = function (api, title, whitelist, langlinks, iwmap, source, timestamp, edittoken, args) {
         var url = args[0];
         var tag = args[1];
         var visitedlinks = args[2];
@@ -1498,7 +1415,7 @@ WM.Interlanguage = new function () {
     };
     
     this.updateLinks = function (lang, url, iwmap, source, oldlinks, newlinks) {
-        var linkList = "";
+        var linkList = [];
         
         for (var tag in newlinks) {
             if (tag != lang) {
@@ -1507,7 +1424,7 @@ WM.Interlanguage = new function () {
                 for (var iw in iwmap) {
                     if (iwmap[iw].prefix == tag) {
                         if (WM.MW.getWikiPaths(iwmap[iw].url).api == link.api) {
-                            linkList += "[[" + tag + ":" + link.title + "]]\n";
+                            linkList.push("[[" + tag + ":" + link.title + "]]\n");
                         }
                         else {
                             WM.Log.logWarning("On " + url + ", " + tag + " interlanguage links point to a different wiki than the others, ignoring them");
@@ -1521,6 +1438,8 @@ WM.Interlanguage = new function () {
                 }
             }
         }
+        
+        linkList.sort();
         
         var cleanText = "";
         var textId = 0;
@@ -1544,7 +1463,7 @@ WM.Interlanguage = new function () {
         var firstChar = part2a.search(/[^\s]/);
         var part2b = part2a.substr(firstChar);
         
-        var newText = part1 + linkList + part2b;
+        var newText = part1 + linkList.join("") + part2b;
         
         return newText;
     };
@@ -1782,11 +1701,6 @@ WM.MW = new function () {
         // It's necessary to use try...catch because some browsers don't
         // support FormData yet and will throw an exception
         try {
-            // Temporarily disable multipart/form-data requests ******************
-            // because Tampermonkey doesn't support them, see ********************
-            // http://forum.tampermonkey.net/viewtopic.php?f=17&t=271 ************
-            throw "Temporarily disabled, see bug #91";  // ***********************
-            
             if (string.length > 8000) {
                 query.data = new FormData();
                 query.data.append("format", "json");
@@ -1797,7 +1711,7 @@ WM.MW = new function () {
                 //query.headers = {"Content-type": "multipart/form-data"};
             }
             else {
-                throw "string < 8000 characters";
+                throw "string <= 8000 characters";
             }
         }
         catch (err) {
@@ -2276,7 +2190,7 @@ WM.Parser = new function () {
 
 WM.Tables = new function () {
     this.appendRow = function (source, mark, values) {
-        var lastId = source.lastIndexOf('|}<!--' + mark);
+        var lastId = source.lastIndexOf('|}' + mark);
         var endtable = (lastId > -1) ? lastId : source.lastIndexOf('|}');
         
         var row = "|-\n|" + values.join("\n|") + "\n";
@@ -2514,9 +2428,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
     this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         
-        var detLang = WM.ArchWiki.detectLanguage(WM.Editor.getTitle());
-        var pureTitle = detLang[0];
-        var language = detLang[1];
+        var language = WM.ArchWiki.detectLanguage(WM.Editor.getTitle())[1];
         
         var header = "";
         var content = source;
@@ -2629,13 +2541,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         for (var l in interlanguage) {
             var link = interlanguage[l];
             if (iwlist.indexOf(link.match[0]) == -1) {
-                // Remove also dead interlanguage links
-                if (WM.ArchWiki.isAliveInterwikiLanguage(link.match[2])) {
-                    iwlist.push(link.match[0]);
-                }
-                else {
-                    WM.Log.logWarning("Removed dead interlanguage link: " + link.match[1]);
-                }
+                iwlist.push(link.match[0]);
             }
             else {
                 WM.Log.logWarning("Removed duplicate of " + link.match[1]);
@@ -2644,36 +2550,11 @@ WM.Plugins.ArchWikiFixHeader = new function () {
             contentId = link.index + link.length;
         }
         if (iwlist.length) {
+            iwlist.sort();
             header += iwlist.join("\n") + "\n";
         }
         tempcontent += content.substring(contentId);
         content = tempcontent;
-        
-        // Template:i18n
-        var i18ns = WM.Parser.findTemplates(content, "i18n");
-        var i18n = i18ns.pop();
-        if (i18ns.length) {
-            WM.Log.logWarning("Found multiple instances of Template:i18n : only the first one has been used, the others have been ignored");
-        }
-        if (i18n) {
-            var parsedTitle = WM.Parser.convertUnderscoresToSpaces(i18n.arguments[0].value);
-            var test1 = pureTitle.substr(0, 1).toLowerCase() != parsedTitle.substr(0, 1).toLowerCase();
-            var test2 = pureTitle.substr(1) != parsedTitle.substr(1);
-            
-            if (test1 || test2) {
-                header += "{{i18n|" + pureTitle + "}}";
-                WM.Log.logWarning("Updated Template:i18n since it wasn't matching the current article title");
-            }
-            else {
-                header += "{{i18n|" + parsedTitle + "}}";
-            }
-            content = Alib.Str.removeFor(content, i18n.index, i18n.length);
-        }
-        else {
-            header += "{{i18n|" + pureTitle + "}}";
-            WM.Log.logInfo("Added Template:i18n");
-        }
-        header += "\n\n";
         
         var firstChar = content.search(/[^\s]/);
         content = content.substr(firstChar);
@@ -2855,7 +2736,7 @@ WM.Plugins.ArchWikiQuickReport = new function () {
         var callNext = args[4];
         
         var title = Alib.HTTP.getURIParameter('title');
-        var pEnddate = enddate.substr(0, 10) + " " + enddate.substr(11, 8);
+        var pEnddate = enddate.substr(0, 10) + "&nbsp;" + enddate.substr(11, 8);
         var notes = document.getElementById("ArchWikiQuickReport-input-" + id).value;
         
         var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", pEnddate, type, notes]);
@@ -2884,146 +2765,6 @@ WM.Plugins.ArchWikiQuickReport = new function () {
         }
         else {
             WM.Log.logError('The diff has not been appended!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
-        }
-    };
-};
-
-WM.Plugins.ArchWikiTemplateAUR = new function () {
-    var doReplace = function (source, call, callArgs) {
-        var regExp = /\[(https?\:\/\/aur\.archlinux\.org\/packages\.php\?ID\=[0-9]+) ([^\]]+?)\]/g;
-        var links = [];
-        
-        while (true) {
-            var match = regExp.exec(source);
-            if (match) {
-                links.push(match);
-            }
-            else {
-                break;
-            }
-        }
-        
-        var newText = source;
-        
-        WM.Plugins.ArchWikiTemplateAUR.doReplaceContinue(source, newText, links, 0, call, callArgs);
-    };
-    
-    this.doReplaceContinue = function (source, newText, links, index, call, callArgs) {
-        if (links[index]) {
-            WM.Log.logInfo("Processing " + links[index][0] + "...");
-            var query = {
-                method: "GET",
-                url: links[index][1],
-                onload: function (res) {
-                    var parser = new DOMParser();
-                    var page = parser.parseFromString(res.responseText, "text/xml");
-                    var divs = page.getElementsByTagName('div');
-                    for (var i = 0; i < divs.length; i++) {
-                        if (divs[i].className == "pgboxbody") {
-                            var span = divs[i].getElementsByTagName('span')[0];
-                            var pkgname = span.innerHTML.split(" ")[0];
-                            if (links[index][2] == pkgname) {
-                                newText = newText.replace(links[index][0],
-                                                          "{{AUR|" + pkgname + "}}");
-                            }
-                            break;
-                        }
-                    }
-                    index++;
-                    WM.Plugins.ArchWikiTemplateAUR.doReplaceContinue(source, newText, links, index, call, callArgs);
-                },
-                onerror: function (res) {
-                    WM.Log.logError("Failed query: " + res.finalUrl + "\nYou may " +
-                                    "have tried to use a plugin which requires " +
-                                    "cross-origin HTTP requests, but you are not " +
-                                    "using Scriptish (Firefox), Greasemonkey " +
-                                    "(Firefox), Tampermonkey (Chrome/Chromium) " +
-                                    "or a similar extension");
-                },
-            };
-            try {
-                GM_xmlhttpRequest(query);
-            }
-            catch (err) {
-                WM.Log.logError("Failed HTTP request - " + err + "\nYou may have " +
-                                "tried to use a plugin which requires cross-origin " +
-                                "HTTP requests, but you are not using Scriptish " +
-                                "(Firefox), Greasemonkey (Firefox), Tampermonkey " +
-                                "(Chrome/Chromium) or a similar extension");
-            }
-        }
-        else {
-            call(source, newText, callArgs);
-        }
-    };
-    
-    this.main = function (args, callNext) {
-        var source = WM.Editor.readSource();
-        WM.Log.logInfo("Replacing direct AUR package links...");
-        doReplace(source, WM.Plugins.ArchWikiTemplateAUR.mainEnd, callNext);
-    };
-    
-    this.mainEnd = function (source, newtext, callNext) {
-        if (newtext != source) {
-            WM.Editor.writeSource(newtext);
-            WM.Log.logInfo("Replaced direct AUR package links");
-        }
-        else {
-            WM.Log.logInfo("No replaceable AUR package links found");
-        }
-        
-        if (callNext) {
-            callNext();
-        }
-    };
-    
-    this.mainAuto = function (args, title, callBot) {
-        var summary = args[0];
-        
-        WM.MW.callQueryEdit(title,
-                            WM.Plugins.ArchWikiTemplateAUR.mainAutoReplace,
-                            [summary, callBot]);
-    };
-    
-    this.mainAutoReplace = function (title, source, timestamp, edittoken, args) {
-        var summary = args[0];
-        var callBot = args[1];
-        
-        doReplace(source,
-                  WM.Plugins.ArchWikiTemplateAUR.mainAutoWrite,
-                  [title, edittoken, timestamp, summary, callBot]);
-    };
-    
-    this.mainAutoWrite = function (source, newtext, args) {
-        var title = args[0];
-        var edittoken = args[1];
-        var timestamp = args[2];
-        var summary = args[3];
-        var callBot = args[4];
-        
-        if (newtext != source) {
-            WM.MW.callAPIPost({action: "edit",
-                               bot: "1",
-                               title: title,
-                               summary: summary,
-                               text: newtext,
-                               basetimestamp: timestamp,
-                               token: edittoken},
-                               null,
-                               WM.Plugins.ArchWikiTemplateAUR.mainAutoEnd,
-                               callBot);
-        }
-        else {
-            callBot(true);
-        }
-    };
-    
-    this.mainAutoEnd = function (res, callBot) {
-        if (res.edit && res.edit.result == 'Success') {
-            callBot(true);
-        }
-        else {
-            callBot(false);
         }
     };
 };
@@ -3236,12 +2977,12 @@ WM.Plugins.SimpleReplace = new function () {
 
 WM.Plugins.SynchronizeInterlanguageLinks = new function () {
     this.main = function (args, callNext) {
-        var tag = args[0]();
+        var title = WM.Editor.getTitle();
+        
+        var tag = args[0](title);
         var whitelist = args[1];
         
         WM.Log.logInfo("Synchronizing interlanguage links...");
-        
-        var title = WM.Editor.getTitle();
         
         WM.MW.getInterwikiMap(
             title,
@@ -3509,36 +3250,26 @@ WM.Plugins.UpdateCategoryTree = new function () {
             WM.Plugins.UpdateCategoryTree.processCategoryEnd(params, args, text);
         }
         else {
-            WM.Cat.getInfo(params.node,
-                           WM.Plugins.UpdateCategoryTree.processCategoryGetParents,
-                           [params, args, text, altName]);
+            WM.Cat.getParentsAndInfo(
+                params.node,
+                WM.Plugins.UpdateCategoryTree.processCategoryAddSuffix,
+                [params, args, text, altName]
+            );
         }
     };
     
-    this.processCategoryGetParents = function (info, args_) {
+    this.processCategoryAddSuffix = function (parents, info, args_) {
         var params = args_[0];
         var args = args_[1];
         var text = args_[2];
         var altName = args_[3];
-        
-        WM.Cat.getParents(params.node,
-                          WM.Plugins.UpdateCategoryTree.processCategoryAddSuffix,
-                          [params, args, text, altName, info]);
-    }
-    
-    this.processCategoryAddSuffix = function (parents, args_) {
-        var params = args_[0];
-        var args = args_[1];
-        var text = args_[2];
-        var altName = args_[3];
-        var info = args_[4];
         
         text += "<small>(" + ((info) ? info.pages : 0) + ")";
         
         if (parents.length > 1) {
             outer_loop:
             for (var p in parents) {
-                var par = parents[p];
+                var par = parents[p].title;
                 for (var a in params.ancestors) {
                     var anc = params.ancestors[a];
                     if (par == anc) {
@@ -3547,11 +3278,12 @@ WM.Plugins.UpdateCategoryTree = new function () {
                     }
                 }
             }
+            var parentTitles = [];
             for (var i in parents) {
-                altName = (args.altNames[parents[i]]) ? args.altNames[parents[i]] : null;
-                parents[i] = createCatLink(parents[i], args.params.replace, altName);
+                altName = (args.altNames[parents[i].title]) ? args.altNames[parents[i].title] : null;
+                parentTitles.push(createCatLink(parents[i].title, args.params.replace, altName));
             }
-            text += " (" + args.params.alsoIn + " " + parents.join(", ") + ")";
+            text += " (" + args.params.alsoIn + " " + parentTitles.join(", ") + ")";
         }
         
         text += "</small>\n";
@@ -3602,7 +3334,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
         }
         else {
             WM.Log.logInfo(args.params.page + ' is already up to date');
-            iterateTocs(args)
+            iterateTocs(args);
         }
     };
     
@@ -3667,6 +3399,15 @@ WM.UI.setEditor([
     ],
     [
         ["SimpleReplace", "RegExp substitution", ["1"]]
+    ],
+    [
+        ["SynchronizeInterlanguageLinks", "Sync interlanguage links",
+         [function (title) {
+             var language = WM.ArchWiki.detectLanguage(title)[1];
+            // The language must correspond to a working interwiki tag
+             return WM.ArchWiki.getInterlanguageTag(language);
+         },
+         WM.ArchWiki.getInternalInterwikiLanguages()]]
     ]
 ]);
 
@@ -3678,15 +3419,39 @@ WM.UI.setDiff([
 ]);
 
 WM.UI.setCategory([
-    ["SimpleReplace", "RegExp substitution", ["1"]]
+    ["SimpleReplace", "RegExp substitution", ["1"]],
+    ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
+     [function (title) {
+         var language = WM.ArchWiki.detectLanguage(title)[1];
+         // The language must correspond to a working interwiki tag
+         return WM.ArchWiki.getInterlanguageTag(language);
+     },
+     WM.ArchWiki.getInternalInterwikiLanguages(),
+     "synchronized interlanguage links with the other wikis"]]
 ]);
 
 WM.UI.setWhatLinksHere([
-    ["SimpleReplace", "RegExp substitution", ["1"]]
+    ["SimpleReplace", "RegExp substitution", ["1"]],
+    ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
+     [function (title) {
+         var language = WM.ArchWiki.detectLanguage(title)[1];
+         // The language must correspond to a working interwiki tag
+         return WM.ArchWiki.getInterlanguageTag(language);
+     },
+     WM.ArchWiki.getInternalInterwikiLanguages(),
+     "synchronized interlanguage links with the other wikis"]]
 ]);
 
 WM.UI.setLinkSearch([
-    ["SimpleReplace", "RegExp substitution", ["1"]]
+    ["SimpleReplace", "RegExp substitution", ["1"]],
+    ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
+     [function (title) {
+         var language = WM.ArchWiki.detectLanguage(title)[1];
+         // The language must correspond to a working interwiki tag
+         return WM.ArchWiki.getInterlanguageTag(language);
+     },
+     WM.ArchWiki.getInternalInterwikiLanguages(),
+     "synchronized interlanguage links with the other wikis"]]
 ]);
 
 WM.UI.setSpecial([
@@ -3774,13 +3539,6 @@ WM.UI.setSpecial([
             alsoIn: "also in",
             indentType: ":",
             replace: ["[ _]\\(Slovenský\\)", "", ""],
-            keepAltName: true,
-            showIndices: true},
-           {page: "Table of Contents (Svenska)",
-            root: "Category:Svenska",
-            alsoIn: "also in",
-            indentType: ":",
-            replace: ["[ _]\\(Svenska\\)", "", ""],
             keepAltName: true,
             showIndices: true},
            {page: "Table of Contents (Česky)",
@@ -3873,7 +3631,15 @@ WM.UI.setSpecial([
 ]);
 
 WM.UI.setSpecialList([
-    ["SimpleReplace", "RegExp substitution", ["1"]]
+    ["SimpleReplace", "RegExp substitution", ["1"]],
+    ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
+     [function (title) {
+         var language = WM.ArchWiki.detectLanguage(title)[1];
+         // The language must correspond to a working interwiki tag
+         return WM.ArchWiki.getInterlanguageTag(language);
+     },
+     WM.ArchWiki.getInternalInterwikiLanguages(),
+     "synchronized interlanguage links with the other wikis"]]
 ]);
 
 WM.main();

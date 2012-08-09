@@ -854,7 +854,13 @@ WM.Bot = new function () {
     };
     
     this._startAutomatic = function () {
-        var items = WM.Bot.selections.list.current[0].getElementsByTagName('li');
+        var itemsDOM = WM.Bot.selections.list.current[0].getElementsByTagName('li');
+        // Passing the live collection with the callback function was causing
+        // it to be lost in an apparently random manner
+        var items = [];
+        for (var i = 0; i < itemsDOM.length; i++) {
+            items.push(itemsDOM[i]);
+        }
         var linkId = WM.Bot.selections.list.current[1];
         if (WM.Bot._checkOtherBotsRunning() && !WM.Bot._canForceStart()) {
             WM.Log.logError('Another bot is running, aborting...');
@@ -873,7 +879,7 @@ WM.Bot = new function () {
     this._processItem = function (items, index, linkId) {
         var interval;
         if (WM.MW.isUserBot()) {
-            interval = 10000;
+            interval = 8000;
         }
         else {
             interval = 90000;
@@ -893,20 +899,22 @@ WM.Bot = new function () {
                         if (!WM.Bot._checkOtherBotsRunning()) {
                             ln.className = "WikiMonkeyBotProcessing";
                             WM.Log.logInfo("Processing " + article + "...");
-                            WM.Bot.selections.function_(article, function (res) {
-                                if (res === true) {
-                                    ln.className = "WikiMonkeyBotProcessed";
-                                    WM.Log.logInfo(article + " processed");
-                                    // Do not increment directly in the function's call!
-                                    id++;
-                                    WM.Bot._processItem(lis, id, linkId);
-                                }
-                                else {
-                                    ln.className = "WikiMonkeyBotFailed";
-                                    WM.Log.logError("Error processing " + article + ", stopping the bot");
-                                    WM.Bot._endAutomatic(true);
-                                }
-                            });
+                            WM.Bot.selections.function_(article, (function (lis, id, linkId, ln, article) {
+                                return function (res) {
+                                    if (res === true) {
+                                        ln.className = "WikiMonkeyBotProcessed";
+                                        WM.Log.logInfo(article + " processed");
+                                        // Do not increment directly in the function's call!
+                                        id++;
+                                        WM.Bot._processItem(lis, id, linkId);
+                                    }
+                                    else {
+                                        ln.className = "WikiMonkeyBotFailed";
+                                        WM.Log.logError("Error processing " + article + ", stopping the bot");
+                                        WM.Bot._endAutomatic(true);
+                                    }
+                                };
+                            })(lis, id, linkId, ln, article));
                         }
                         else {
                             WM.Log.logError('Another bot has been force-started, stopping...');
@@ -990,16 +998,16 @@ WM.Cat = new function () {
         });
     };
     
-    this.getParents = function (name, call, callArgs) {
+    this.getParentsAndInfo = function (name, call, callArgs) {
         var query = {action: "query",
-                     prop: "categories",
+                     prop: "categories|categoryinfo",
                      titles: name,
                      cllimit: 500};
         
-        this._getParentsContinue(query, call, callArgs, []);
+        this._getParentsAndInfoContinue(query, call, callArgs, [], null);
     };
     
-    this._getParentsContinue = function (query, call, callArgs, parents) {
+    this._getParentsAndInfoContinue = function (query, call, callArgs, parents, info) {
         WM.MW.callAPIGet(query, null, function (res) {
             var page = Alib.Obj.getFirstItem(res.query.pages);
             
@@ -1007,31 +1015,20 @@ WM.Cat = new function () {
                 parents = parents.concat(page.categories);
             }
             
+            if (page.categoryinfo) {
+                info = page.categoryinfo;
+            }
+            
             if (res["query-continue"]) {
+                // Request categoryinfo only once
+                query.prop = "categories";
                 query.clcontinue = res["query-continue"].categories.clcontinue;
-                this._getParentsContinue(query, call, callArgs, parents);
+                this._getParentsAndInfoContinue(query, call, callArgs, parents, info);
             }
             else {
-                var parentTitles = [];
-                
-                for (var par in parents) {
-                    parentTitles.push(parents[par].title);
-                }
-                
-                call(parentTitles, callArgs);
+                call(parents, info, callArgs);
             }
         });
-    };
-    
-    this.getInfo = function (name, call, callArgs) {
-        WM.MW.callQuery({prop: "categoryinfo",
-                         titles: name},
-                         WM.Cat._getInfoContinue,
-                         [call, callArgs]);
-    };
-    
-    this._getInfoContinue = function (page, args) {
-        args[0](page.categoryinfo, args[1]);
     };
 };
 
@@ -1227,7 +1224,7 @@ WM.Interlanguage = new function () {
                     api,
                     title,
                     whitelist,
-                    WM.Interlanguage.collectLinksContinue,
+                    WM.Interlanguage._collectLinksContinue,
                     [url, tag, visitedlinks, newlinks, callEnd, callArgs]
                 );
             }
@@ -1240,7 +1237,7 @@ WM.Interlanguage = new function () {
         }
     };
     
-    this.collectLinksContinue = function (api, title, whitelist, langlinks, iwmap, source, timestamp, edittoken, args) {
+    this._collectLinksContinue = function (api, title, whitelist, langlinks, iwmap, source, timestamp, edittoken, args) {
         var url = args[0];
         var tag = args[1];
         var visitedlinks = args[2];
@@ -1282,7 +1279,7 @@ WM.Interlanguage = new function () {
     };
     
     this.updateLinks = function (lang, url, iwmap, source, oldlinks, newlinks) {
-        var linkList = "";
+        var linkList = [];
         
         for (var tag in newlinks) {
             if (tag != lang) {
@@ -1291,7 +1288,7 @@ WM.Interlanguage = new function () {
                 for (var iw in iwmap) {
                     if (iwmap[iw].prefix == tag) {
                         if (WM.MW.getWikiPaths(iwmap[iw].url).api == link.api) {
-                            linkList += "[[" + tag + ":" + link.title + "]]\n";
+                            linkList.push("[[" + tag + ":" + link.title + "]]\n");
                         }
                         else {
                             WM.Log.logWarning("On " + url + ", " + tag + " interlanguage links point to a different wiki than the others, ignoring them");
@@ -1305,6 +1302,8 @@ WM.Interlanguage = new function () {
                 }
             }
         }
+        
+        linkList.sort();
         
         var cleanText = "";
         var textId = 0;
@@ -1328,7 +1327,7 @@ WM.Interlanguage = new function () {
         var firstChar = part2a.search(/[^\s]/);
         var part2b = part2a.substr(firstChar);
         
-        var newText = part1 + linkList + part2b;
+        var newText = part1 + linkList.join("") + part2b;
         
         return newText;
     };
@@ -1566,11 +1565,6 @@ WM.MW = new function () {
         // It's necessary to use try...catch because some browsers don't
         // support FormData yet and will throw an exception
         try {
-            // Temporarily disable multipart/form-data requests ******************
-            // because Tampermonkey doesn't support them, see ********************
-            // http://forum.tampermonkey.net/viewtopic.php?f=17&t=271 ************
-            throw "Temporarily disabled, see bug #91";  // ***********************
-            
             if (string.length > 8000) {
                 query.data = new FormData();
                 query.data.append("format", "json");
@@ -1581,7 +1575,7 @@ WM.MW = new function () {
                 //query.headers = {"Content-type": "multipart/form-data"};
             }
             else {
-                throw "string < 8000 characters";
+                throw "string <= 8000 characters";
             }
         }
         catch (err) {
@@ -2060,7 +2054,7 @@ WM.Parser = new function () {
 
 WM.Tables = new function () {
     this.appendRow = function (source, mark, values) {
-        var lastId = source.lastIndexOf('|}<!--' + mark);
+        var lastId = source.lastIndexOf('|}' + mark);
         var endtable = (lastId > -1) ? lastId : source.lastIndexOf('|}');
         
         var row = "|-\n|" + values.join("\n|") + "\n";
