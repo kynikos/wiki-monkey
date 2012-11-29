@@ -119,7 +119,9 @@ WM.MW = new function () {
             onload: function (res) {
                 try {
                     // Currently only Scriptish supports the responseJSON method
-                    var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
+                    //var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
+                    // ... or not?
+                    var json = (Alib.Obj.getFirstItem(res.responseJSON)) ? res.responseJSON : JSON.parse(res.responseText);
                 }
                 catch (err) {
                     WM.Log.logError("It is likely that the API for this wiki is disabled, see " + api);
@@ -162,7 +164,9 @@ WM.MW = new function () {
             onload: function (res) {
                 try {
                     // Currently only Scriptish supports the responseJSON method
-                    var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
+                    //var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
+                    // ... or not?
+                    var json = (Alib.Obj.getFirstItem(res.responseJSON)) ? res.responseJSON : JSON.parse(res.responseText);
                 }
                 catch (err) {
                     WM.Log.logError("It is likely that the API for this wiki is disabled, see " + api);
