@@ -29,7 +29,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         var api = paths.api;
         
         var visitedlinks = {};
-        visitedlinks[tag] = WM.Interlanguage.createVisitedLink(title, url, iwmap, api, source, null, null, langlinks);
+        visitedlinks[tag.toLowerCase()] = WM.Interlanguage.createVisitedLink(tag, encodeURIComponent(title), encodeURI(url), iwmap, api, source, null, null, langlinks);
         
         var newlinks = {};
         
@@ -39,11 +39,11 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
             var conflict = false;
             for (var l in langlinks) {
                 var link = langlinks[l];
-                if (!visitedlinks[link.lang] && !newlinks[link.lang]) {
-                    newlinks[link.lang] = WM.Interlanguage.createNewLink(link.title, link.url);
+                if (!visitedlinks[link.lang.toLowerCase()] && !newlinks[link.lang.toLowerCase()]) {
+                    newlinks[link.lang.toLowerCase()] = WM.Interlanguage.createNewLink(link.lang, link.title, link.url);
                 }
-                else if ((visitedlinks[link.lang] && visitedlinks[link.lang].url != link.url) ||
-                         (newlinks[link.lang] && newlinks[link.lang].url != link.url)) {
+                else if ((visitedlinks[link.lang.toLowerCase()] && visitedlinks[link.lang.toLowerCase()].url != link.url) ||
+                         (newlinks[link.lang.toLowerCase()] && newlinks[link.lang.toLowerCase()].url != link.url)) {
                     conflict = true;
                     WM.Log.logError("Conflicting interlanguage links: [[" + link.lang + ":" + link.title + "]]");
                     break;
@@ -105,7 +105,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         var visitedlinks = {};
         
         var newlinks = {};
-        newlinks[tag] = WM.Interlanguage.createNewLink(title, url);
+        newlinks[tag.toLowerCase()] = WM.Interlanguage.createNewLink(tag, title, url);
         
         WM.Interlanguage.collectLinks(
             visitedlinks,
