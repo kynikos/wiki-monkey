@@ -1,4 +1,4 @@
-WM.Plugins.ArchWikiTemplateAUR = new function () {
+WM.Plugins.ArchWikiOldAURLinks = new function () {
     var doReplace = function (source, call, callArgs) {
         var regExp = /\[(https?\:\/\/aur\.archlinux\.org\/packages\.php\?ID\=[0-9]+) ([^\]]+?)\]/g;
         var links = [];
@@ -15,7 +15,7 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
         
         var newText = source;
         
-        WM.Plugins.ArchWikiTemplateAUR.doReplaceContinue(source, newText, links, 0, call, callArgs);
+        WM.Plugins.ArchWikiOldAURLinks.doReplaceContinue(source, newText, links, 0, call, callArgs);
     };
     
     this.doReplaceContinue = function (source, newText, links, index, call, callArgs) {
@@ -27,20 +27,21 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
                 onload: function (res) {
                     var parser = new DOMParser();
                     var page = parser.parseFromString(res.responseText, "text/xml");
-                    var divs = page.getElementsByTagName('div');
-                    for (var i = 0; i < divs.length; i++) {
-                        if (divs[i].className == "pgboxbody") {
-                            var span = divs[i].getElementsByTagName('span')[0];
-                            var pkgname = span.innerHTML.split(" ")[0];
-                            if (links[index][2] == pkgname) {
-                                newText = newText.replace(links[index][0],
-                                                          "{{AUR|" + pkgname + "}}");
-                            }
-                            break;
+                    if (page.getElementById('pkgdetails')) {
+                        var h2 = page.getElementById('pkgdetails').getElementsByTagName('h2')[0];
+                        var pkgname = h2.innerHTML.split(" ")[2];
+                        if (links[index][2] == pkgname) {
+                            newText = newText.replace(links[index][0], "{{AUR|" + pkgname + "}}");
+                        }
+                        else {
+                            WM.Log.logWarning("Couldn't replace: the link doesn't use the package name as the anchor text");
                         }
                     }
+                    else {
+                        WM.Log.logWarning("Couldn't replace: the package doesn't exist anymore");
+                    }
                     index++;
-                    WM.Plugins.ArchWikiTemplateAUR.doReplaceContinue(source, newText, links, index, call, callArgs);
+                    WM.Plugins.ArchWikiOldAURLinks.doReplaceContinue(source, newText, links, index, call, callArgs);
                 },
                 onerror: function (res) {
                     WM.Log.logError("Failed query: " + res.finalUrl + "\nYou may " +
@@ -69,17 +70,17 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
     
     this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
-        WM.Log.logInfo("Replacing direct AUR package links...");
-        doReplace(source, WM.Plugins.ArchWikiTemplateAUR.mainEnd, callNext);
+        WM.Log.logInfo("Replacing old-style direct AUR package links...");
+        doReplace(source, WM.Plugins.ArchWikiOldAURLinks.mainEnd, callNext);
     };
     
     this.mainEnd = function (source, newtext, callNext) {
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
-            WM.Log.logInfo("Replaced direct AUR package links");
+            WM.Log.logInfo("Replaced old-style direct AUR package links");
         }
         else {
-            WM.Log.logInfo("No replaceable AUR package links found");
+            WM.Log.logInfo("No replaceable old-style AUR package links found");
         }
         
         if (callNext) {
@@ -91,7 +92,7 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
         var summary = args[0];
         
         WM.MW.callQueryEdit(title,
-                            WM.Plugins.ArchWikiTemplateAUR.mainAutoReplace,
+                            WM.Plugins.ArchWikiOldAURLinks.mainAutoReplace,
                             [summary, callBot]);
     };
     
@@ -100,7 +101,7 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
         var callBot = args[1];
         
         doReplace(source,
-                  WM.Plugins.ArchWikiTemplateAUR.mainAutoWrite,
+                  WM.Plugins.ArchWikiOldAURLinks.mainAutoWrite,
                   [title, edittoken, timestamp, summary, callBot]);
     };
     
@@ -120,7 +121,7 @@ WM.Plugins.ArchWikiTemplateAUR = new function () {
                                basetimestamp: timestamp,
                                token: edittoken},
                                null,
-                               WM.Plugins.ArchWikiTemplateAUR.mainAutoEnd,
+                               WM.Plugins.ArchWikiOldAURLinks.mainAutoEnd,
                                callBot);
         }
         else {

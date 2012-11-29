@@ -37,7 +37,7 @@
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiNewTemplates.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiQuickReport.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiSaveTalk.js
-// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiTemplateAUR.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiOldAURLinks.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiWantedCategories.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ExpandContractions.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/MultipleLineBreaks.js
@@ -65,7 +65,7 @@ WM.UI.setEditor([
              return WM.ArchWiki.getInterlanguageTag(language);
          },
          WM.ArchWiki.getInterwikiLanguages()]],
-        ["ArchWikiTemplateAUR", "Use Template:AUR", null]
+        ["ArchWikiOldAURLinks", "Fix old AUR links", null]
     ]
 ]);
 
@@ -114,7 +114,7 @@ WM.UI.setLinkSearch([
      },
      WM.ArchWiki.getInterwikiLanguages(),
      "synchronized interlanguage links with the other wikis"]],
-    ["ArchWikiTemplateAUR", "Replace direct AUR package links with Template:AUR", ["replace direct package links with Pkg/AUR templates"]]
+    ["ArchWikiOldAURLinks", "Replace old-style direct AUR package links with Template:AUR", ["replace old-style direct package links with Pkg/AUR templates"]]
 ]);
 
 WM.UI.setSpecial([

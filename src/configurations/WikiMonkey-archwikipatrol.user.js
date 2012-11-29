@@ -34,7 +34,7 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiFixHeadings.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiNewTemplates.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiQuickReport.js
-// @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiTemplateAUR.js
+// @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiOldAURLinks.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ExpandContractions.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/MultipleLineBreaks.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/SimpleReplace.js
@@ -60,7 +60,7 @@ WM.UI.setEditor([
              return WM.ArchWiki.getInterlanguageTag(language);
          },
          WM.ArchWiki.getInterwikiLanguages()]],
-        ["ArchWikiTemplateAUR", "Use Template:AUR", null]
+        ["ArchWikiOldAURLinks", "Fix old AUR links", null]
     ]
 ]);
 
