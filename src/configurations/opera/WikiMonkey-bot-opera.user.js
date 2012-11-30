@@ -3,7 +3,7 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.11.1-bot-opera
+// @version 1.11.2-bot-opera
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
@@ -1126,10 +1126,12 @@ WM.Interlanguage = new function () {
         var langlinks = [];
         for (var p in parsedLinks) {
             var link = parsedLinks[p];
+            // Do not store the tag lowercased, since it should be kept as
+            // original if there are no conflicts
             var ltag = link.match[2];
             var ltitle = link.match[3];
             for (var iw in iwmap) {
-                if (iwmap[iw].prefix == ltag) {
+                if (iwmap[iw].prefix.toLowerCase() == ltag.toLowerCase()) {
                     var lurl = iwmap[iw].url.replace("$1", WM.Parser.convertSpacesToUnderscores(ltitle));
                     break;
                 }
@@ -1193,15 +1195,17 @@ WM.Interlanguage = new function () {
         );
     };
     
-    this.createNewLink = function (title, url) {
+    this.createNewLink = function (origTag, title, url) {
         return {
+            origTag: origTag,
             title: title,
             url: url,
         };
     };
     
-    this.createVisitedLink = function (title, url, iwmap, api, source, timestamp, edittoken, links) {
+    this.createVisitedLink = function (origTag, title, url, iwmap, api, source, timestamp, edittoken, links) {
         var entry = {
+            origTag: origTag,
             title: title,
             url: url,
             iwmap: iwmap,
@@ -1226,6 +1230,7 @@ WM.Interlanguage = new function () {
             }
             
             if (link) {
+                var origTag = link.origTag;
                 var title = link.title;
                 var url = link.url;
                 var api = WM.MW.getWikiPaths(url).api;
@@ -1239,7 +1244,7 @@ WM.Interlanguage = new function () {
                     title,
                     whitelist,
                     WM.Interlanguage._collectLinksContinue,
-                    [url, tag, visitedlinks, newlinks, callEnd, callArgs]
+                    [url, tag, origTag, visitedlinks, newlinks, callEnd, callArgs]
                 );
             }
             else {
@@ -1254,25 +1259,30 @@ WM.Interlanguage = new function () {
     this._collectLinksContinue = function (api, title, whitelist, langlinks, iwmap, source, timestamp, edittoken, args) {
         var url = args[0];
         var tag = args[1];
-        var visitedlinks = args[2];
-        var newlinks = args[3];
-        var callEnd = args[4];
-        var callArgs = args[5];
+        var origTag = args[2];
+        var visitedlinks = args[3];
+        var newlinks = args[4];
+        var callEnd = args[5];
+        var callArgs = args[6];
             
         var error = "";
         
         if (langlinks != "missing") {
-            visitedlinks[tag] = WM.Interlanguage.createVisitedLink(title, url, iwmap, api, source, timestamp, edittoken, langlinks);
+            visitedlinks[tag] = WM.Interlanguage.createVisitedLink(origTag, title, url, iwmap, api, source, timestamp, edittoken, langlinks);
             
             for (var l in langlinks) {
                 var link = langlinks[l];
-                if (!visitedlinks[link.lang] && !newlinks[link.lang]) {
-                    newlinks[link.lang] = WM.Interlanguage.createNewLink(link.title, link.url);
+                if (!visitedlinks[link.lang.toLowerCase()] && !newlinks[link.lang.toLowerCase()]) {
+                    newlinks[link.lang.toLowerCase()] = WM.Interlanguage.createNewLink(link.lang, link.title, link.url);
                 }
-                else if ((visitedlinks[link.lang] && visitedlinks[link.lang].url != link.url) ||
-                         (newlinks[link.lang] && newlinks[link.lang].url != link.url)) {
+                else if (visitedlinks[link.lang.toLowerCase()] && visitedlinks[link.lang.toLowerCase()].url != link.url) {
                     error = "conflict";
-                    WM.Log.logError("Conflicting interlanguage links: [[" + link.lang + ":" + link.title + "]]");
+                    WM.Log.logError("Conflicting interlanguage links: [[" + link.lang + ":" + link.title + "]] and [[" + link.lang + ":" + visitedlinks[link.lang].title + "]]");
+                    break;
+                }
+                else if (newlinks[link.lang.toLowerCase()] && newlinks[link.lang.toLowerCase()].url != link.url) {
+                    error = "conflict";
+                    WM.Log.logError("Conflicting interlanguage links: [[" + link.lang + ":" + link.title + "]] and [[" + link.lang + ":" + newlinks[link.lang].title + "]]");
                     break;
                 }
             }
@@ -1293,6 +1303,7 @@ WM.Interlanguage = new function () {
     };
     
     this.updateLinks = function (lang, url, iwmap, source, oldlinks, newlinks) {
+        lang = lang.toLowerCase();
         var linkList = [];
         
         for (var tag in newlinks) {
@@ -1300,9 +1311,9 @@ WM.Interlanguage = new function () {
                 var link = newlinks[tag];
                 var tagFound = false;
                 for (var iw in iwmap) {
-                    if (iwmap[iw].prefix == tag) {
+                    if (iwmap[iw].prefix.toLowerCase() == tag.toLowerCase()) {
                         if (WM.MW.getWikiPaths(iwmap[iw].url).api == link.api) {
-                            linkList.push("[[" + tag + ":" + link.title + "]]\n");
+                            linkList.push("[[" + link.origTag + ":" + link.title + "]]\n");
                         }
                         else {
                             WM.Log.logWarning("On " + url + ", " + tag + " interlanguage links point to a different wiki than the others, ignoring them");
@@ -1317,7 +1328,17 @@ WM.Interlanguage = new function () {
             }
         }
         
-        linkList.sort();
+        linkList.sort(
+            function (a, b) {
+                // Sorting is case sensitive by default
+                if (a.toLowerCase() > b.toLowerCase())
+                    return 1;
+                if (b.toLowerCase() > a.toLowerCase())
+                    return -1;
+                else
+                    return 0;
+            }
+        );
         
         var cleanText = "";
         var textId = 0;
@@ -1510,7 +1531,9 @@ WM.MW = new function () {
             onload: function (res) {
                 try {
                     // Currently only Scriptish supports the responseJSON method
-                    var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
+                    //var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
+                    // ... or not?
+                    var json = (Alib.Obj.getFirstItem(res.responseJSON)) ? res.responseJSON : JSON.parse(res.responseText);
                 }
                 catch (err) {
                     WM.Log.logError("It is likely that the API for this wiki is disabled, see " + api);
@@ -1553,7 +1576,9 @@ WM.MW = new function () {
             onload: function (res) {
                 try {
                     // Currently only Scriptish supports the responseJSON method
-                    var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
+                    //var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
+                    // ... or not?
+                    var json = (Alib.Obj.getFirstItem(res.responseJSON)) ? res.responseJSON : JSON.parse(res.responseText);
                 }
                 catch (err) {
                     WM.Log.logError("It is likely that the API for this wiki is disabled, see " + api);
