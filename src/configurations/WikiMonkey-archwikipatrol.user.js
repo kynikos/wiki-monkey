@@ -32,6 +32,7 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/UI.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiFixHeader.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiFixHeadings.js
+// @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiFixLinks.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiNewTemplates.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiQuickReport.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiOldAURLinks.js
@@ -45,6 +46,7 @@ WM.UI.setEditor([
     [
         ["ArchWikiFixHeader", "Fix header", null],
         ["ArchWikiFixHeadings", "Fix headings", null],
+        ["ArchWikiFixLinks", "Fix links", null],
         ["ArchWikiNewTemplates", "Use code templates", null],
         ["ExpandContractions", "Expand contractions", null],
         ["MultipleLineBreaks", "Multiple line breaks", null]

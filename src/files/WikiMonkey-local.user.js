@@ -34,6 +34,7 @@
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/modules/UI.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiFixHeader.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiFixHeadings.js
+// @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiFixLinks.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiNewTemplates.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiQuickReport.js
 // @require file:///home/dario/Documents/eclipse-workspace/javascript/wiki-monkey/src/plugins/ArchWikiSaveTalk.js
@@ -50,6 +51,7 @@ WM.UI.setEditor([
     [
         ["ArchWikiFixHeader", "Fix header", null],
         ["ArchWikiFixHeadings", "Fix headings", null],
+        ["ArchWikiFixLinks", "Fix links", null],
         ["ArchWikiNewTemplates", "Use code templates", null],
         ["ExpandContractions", "Expand contractions", null],
         ["MultipleLineBreaks", "Multiple line breaks", null]
@@ -114,6 +116,7 @@ WM.UI.setLinkSearch([
      },
      WM.ArchWiki.getInterwikiLanguages(),
      "synchronized interlanguage links with the other wikis"]],
+    ["ArchWikiFixLinks", "Replace direct links with appropriate internal/interwiki links or templates", null],
     ["ArchWikiOldAURLinks", "Replace old-style direct AUR package links with Template:AUR", ["replace old-style direct package links with Pkg/AUR templates"]]
 ]);
 
