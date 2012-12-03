@@ -116,7 +116,7 @@ WM.UI.setLinkSearch([
      },
      WM.ArchWiki.getInterwikiLanguages(),
      "synchronized interlanguage links with the other wikis"]],
-    ["ArchWikiFixLinks", "Replace direct links with appropriate internal/interwiki links or templates", null],
+    ["ArchWikiFixLinks", "Replace direct links with appropriate internal/interwiki links or templates", ["wikify some external links, use https for archlinux.org"]],
     ["ArchWikiOldAURLinks", "Replace old-style direct AUR package links with Template:AUR", ["replace old-style direct package links with Pkg/AUR templates"]]
 ]);
 
