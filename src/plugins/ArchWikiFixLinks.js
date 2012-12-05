@@ -104,43 +104,8 @@ WM.Plugins.ArchWikiFixLinks = new function () {
         }
     };
     
-    this.mainAuto = function (args, title, callBot) {
-        var summary = args[0];
-        
-        WM.MW.callQueryEdit(title,
-                            WM.Plugins.ArchWikiFixLinks.mainAutoWrite,
-                            [summary, callBot]);
-    };
-    
-    this.mainAutoWrite = function (title, source, timestamp, edittoken, args) {
-        var summary = args[0];
-        var callBot = args[1];
-        
-        var newtext = doReplace(source);
-        
-        if (newtext != source) {
-            WM.MW.callAPIPost({action: "edit",
-                               bot: "1",
-                               title: title,
-                               summary: summary,
-                               text: newtext,
-                               basetimestamp: timestamp,
-                               token: edittoken},
-                               null,
-                               WM.Plugins.ArchWikiFixLinks.mainAutoEnd,
-                               callBot);
-        }
-        else {
-            callBot(true);
-        }
-    };
-    
-    this.mainAutoEnd = function (res, callBot) {
-        if (res.edit && res.edit.result == 'Success') {
-            callBot(true);
-        }
-        else {
-            callBot(false);
-        }
-    };
+    /*
+     * Note that it's too dangerous to use this plugin with the bot, in fact
+     * some full URLs are correctly used in code blocks (e.g. wget lines)
+     */
 };
