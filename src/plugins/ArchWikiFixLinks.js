@@ -2,11 +2,8 @@ WM.Plugins.ArchWikiFixLinks = new function () {
     var doReplace = function (txt) {
         // archlinux.org HTTP -> HTTPS
         
-        var re = /http:\/\/archlinux\.org(?!\.)/ig;
-        txt = txt.replace(re, 'https://archlinux.org');
-        
-        re = /http:\/\/([a-z]+?)\.archlinux\.org(?!\.)/ig;
-        txt = txt.replace(re, 'https://$1.archlinux.org');
+        var re = /http:\/\/([a-z]+\.)?archlinux\.org(?!\.[a-z])/ig;
+        txt = txt.replace(re, 'https://$1archlinux.org');
         
         // wiki.archlinux.org -> Internal link
         
