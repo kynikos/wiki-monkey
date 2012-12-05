@@ -7,7 +7,7 @@ WM.Plugins.ArchWikiFixLinks = new function () {
         
         // wiki.archlinux.org -> Internal link
         
-        re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/(.+?) (.+?)\]/ig;
+        re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/([^\]]+?) (.+?)\]/ig;
         txt = txt.replace(re, '[[$1|$2]]');
         
         re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/(.+?)\]/ig;
@@ -24,7 +24,7 @@ WM.Plugins.ArchWikiFixLinks = new function () {
         
         // Wikipedia -> wikipedia: interlink
         
-        re = /\[https?:\/\/en\.wikipedia\.org\/wiki\/(.+?) (.+?)\]/ig;
+        re = /\[https?:\/\/en\.wikipedia\.org\/wiki\/([^\]]+?) (.+?)\]/ig;
         txt = txt.replace(re, '[[wikipedia:$1|$2]]');
         
         re = /\[https?:\/\/en\.wikipedia\.org\/wiki\/(.+?)\]/ig;
