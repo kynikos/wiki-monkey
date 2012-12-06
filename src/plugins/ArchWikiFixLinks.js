@@ -7,6 +7,15 @@ WM.Plugins.ArchWikiFixLinks = new function () {
         
         // wiki.archlinux.org -> Internal link
         
+        re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/Category:([^\]]+?) (.+?)\]/ig;
+        txt = txt.replace(re, '[[:Category:$1|$2]]');
+        
+        re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/Category:(.+?)\]/ig;
+        txt = txt.replace(re, '[[:Category:$1]]');
+        
+        re = /https?:\/\/wiki\.archlinux\.org\/index\.php\/Category:([^\s]+)/ig;
+        txt = txt.replace(re, '[[:Category:$1]]');
+        
         re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/([^\]]+?) (.+?)\]/ig;
         txt = txt.replace(re, '[[$1|$2]]');
         
