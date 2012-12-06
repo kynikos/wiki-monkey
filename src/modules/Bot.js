@@ -99,7 +99,8 @@ WM.Bot = new function () {
     
     this.selections = {function_: function () {},
                        list: {current: null,
-                              previous: null}};
+                              previous: null},
+                       visited: []};
     
     var makeListSelector = function (lists) {
         var selectLists = document.createElement('select');
@@ -150,17 +151,24 @@ WM.Bot = new function () {
         preview.type = 'button';
         preview.value = 'Preview';
         
+        var duplicates = document.createElement('input');
+        duplicates.type = 'checkbox';
+        duplicates.id = 'WikiMonkeyBotDuplicates';
+        
         var inverse = document.createElement('input');
         inverse.type = 'checkbox';
         inverse.id = 'WikiMonkeyBotInverse';
         
-        var elems = [filter, inverse];
+        var elems = [filter, duplicates, inverse];
         
         for (var e in elems) {
             elems[e].addEventListener("change", function () {
                 WM.Bot._disableStartBot('Filters have changed, preview the selection');
             }, false);
         }
+        
+        var duplicatestag = document.createElement('span');
+        duplicatestag.innerHTML = 'Duplicates';
         
         var inversetag = document.createElement('span');
         inversetag.innerHTML = 'Inverse';
@@ -173,6 +181,8 @@ WM.Bot = new function () {
         }
         fieldset.appendChild(filter);
         fieldset.appendChild(preview);
+        fieldset.appendChild(duplicates);
+        fieldset.appendChild(duplicatestag);
         fieldset.appendChild(inverse);
         fieldset.appendChild(inversetag);
         
@@ -283,29 +293,36 @@ WM.Bot = new function () {
     
     var canProcessPage = function (title) {
         var rules = document.getElementById('WikiMonkeyBotFilter').value.split('\n');
+        var duplicates = document.getElementById('WikiMonkeyBotDuplicates').checked;
         var inverse = document.getElementById('WikiMonkeyBotInverse').checked;
-        var response = (inverse) ? true : false;
-        var rule, firstSlash, lastSlash, pattern, modifiers, regexp, test, negative;
-        for (var r in rules) {
-            rule = rules[r];
-            if (rule) {
-                firstSlash = rule.indexOf('/');
-                lastSlash = rule.lastIndexOf('/');
-                pattern = rule.substring(firstSlash + 1, lastSlash);
-                modifiers = rule.substring(lastSlash + 1);
-                negative = rule.charAt(0) == '!';
-                try {
-                    regexp = new RegExp(pattern, modifiers);
-                }
-                catch (exc) {
-                    WM.Log.logError('Invalid regexp: ' + exc);
-                    break;
-                }
-                test = regexp.test(title);
-                if (!negative != !test) {
-                    response = (inverse) ? false : true;
-                    // Do not break, so that if among the rules there's
-                    // an invalid regexp the function returns false
+        var response = false;
+        if (duplicates || WM.Bot.selections.visited.indexOf(title) == -1) {
+            WM.Bot.selections.visited.push(title);
+            if (inverse) {
+                response = true;
+            }
+            var rule, firstSlash, lastSlash, pattern, modifiers, regexp, test, negative;
+            for (var r in rules) {
+                rule = rules[r];
+                if (rule) {
+                    firstSlash = rule.indexOf('/');
+                    lastSlash = rule.lastIndexOf('/');
+                    pattern = rule.substring(firstSlash + 1, lastSlash);
+                    modifiers = rule.substring(lastSlash + 1);
+                    negative = rule.charAt(0) == '!';
+                    try {
+                        regexp = new RegExp(pattern, modifiers);
+                    }
+                    catch (exc) {
+                        WM.Log.logError('Invalid regexp: ' + exc);
+                        break;
+                    }
+                    test = regexp.test(title);
+                    if (!negative != !test) {
+                        response = (inverse) ? false : true;
+                        // Do not break, so that if among the rules there's
+                        // an invalid regexp the function returns false
+                    }
                 }
             }
         }
@@ -326,6 +343,7 @@ WM.Bot = new function () {
                 link.className = '';
             }
         }
+        WM.Bot.selections.visited = [];
         
         items = WM.Bot.selections.list.current[0].getElementsByTagName('li');
         linkId = WM.Bot.selections.list.current[1];
@@ -391,6 +409,7 @@ WM.Bot = new function () {
             WM.Log.logInfo('Starting bot...');
             WM.Bot._disableStartBot('Bot is running...');
             WM.Bot._disableControls();
+            WM.Bot.selections.visited = [];
             WM.Bot._processItem(items, 0, linkId);
         }
     };
