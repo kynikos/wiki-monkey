@@ -47,6 +47,8 @@ WM.Bot = new function () {
         var selectFunctions = document.createElement('select');
         selectFunctions.id = 'WikiMonkeyBot-PluginSelect';
         
+        var option;
+        
         for (var f in functions) {
             option = document.createElement('option');
             option.innerHTML = functions[f][1];
@@ -105,6 +107,8 @@ WM.Bot = new function () {
     var makeListSelector = function (lists) {
         var selectLists = document.createElement('select');
         selectLists.id = 'WikiMonkeyBot-ListSelect';
+        
+        var option;
         
         for (var l in lists) {
             if (lists[l][0]) {

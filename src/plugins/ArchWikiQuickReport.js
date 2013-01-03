@@ -5,7 +5,7 @@ WM.Plugins.ArchWikiQuickReport = new function () {
         
         var select = document.createElement('select');
         var types = ["&lt;TYPE&gt;", "content", "style"];
-        var value;
+        var value, option;
         for (var v in types) {
             value = types[v];
             option = document.createElement('option');
