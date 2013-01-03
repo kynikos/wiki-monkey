@@ -20,7 +20,7 @@
 
 WM.Log = new function () {
     this._makeLogArea = function () {
-        log = document.createElement('div');
+        var log = document.createElement('div');
         log.id = 'WikiMonkeyLog';
         
         GM_addStyle("#WikiMonkeyLog {height:10em; border:2px solid #07b; padding:0.5em; overflow:auto; resize:vertical; background-color:#111;} " +

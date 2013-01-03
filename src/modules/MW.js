@@ -139,6 +139,10 @@ WM.MW = new function () {
                                 "using Scriptish (Firefox), Greasemonkey " +
                                 "(Firefox), Tampermonkey (Chrome/Chromium) " +
                                 "or a similar extension");
+                if (confirm("Wiki Monkey error: Failed query\n\nDo you want to retry?")) {
+                    WM.Log.logInfo("Retrying...");
+                    WM.MW.callAPIGet(params, api, call, callArgs);
+                }
             }
         };
         
@@ -184,6 +188,10 @@ WM.MW = new function () {
                                 "using Scriptish (Firefox), Greasemonkey " +
                                 "(Firefox), Tampermonkey (Chrome/Chromium) " +
                                 "or a similar extension");
+                if (confirm("Wiki Monkey error: Failed query\n\nDo you want to retry?")) {
+                    WM.Log.logInfo("Retrying...");
+                    WM.MW.callAPIPost(params, api, call, callArgs);
+                }
             }
         };
         
@@ -241,9 +249,9 @@ WM.MW = new function () {
     
     this.callQueryEdit = function (title, call, callArgs) {
         var callBack = function (page, args) {
-            source = page.revisions[0]["*"];
-            timestamp = page.revisions[0].timestamp;
-            edittoken = page.edittoken;
+            var source = page.revisions[0]["*"];
+            var timestamp = page.revisions[0].timestamp;
+            var edittoken = page.edittoken;
             call(title, source, timestamp, edittoken, callArgs);
         };
         this.callQuery({prop: "info|revisions",
