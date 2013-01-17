@@ -31,6 +31,7 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Tables.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/UI.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ExpandContractions.js
+// @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/FixDoubleRedirects.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/MultipleLineBreaks.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/SimpleReplace.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/UpdateCategoryTree.js
@@ -63,7 +64,10 @@ WM.UI.setLinkSearch([
 WM.UI.setSpecial([
     [
         ["UpdateCategoryTree", "Update main ToC",
-         [{}, "[[Wiki Monkey]]: automatic update"]]
+         [{}, "automatic update"]]
+    ],
+    [
+        ["FixDoubleRedirects", "Fix double redirects", "fix double redirect"]
     ]
 ]);
 

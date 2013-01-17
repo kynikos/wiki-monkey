@@ -34,9 +34,10 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiFixHeadings.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiFixLinks.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiNewTemplates.js
-// @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiQuickReport.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiOldAURLinks.js
+// @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ArchWikiQuickReport.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ExpandContractions.js
+// @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/FixDoubleRedirects.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/MultipleLineBreaks.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/SimpleReplace.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/SynchronizeInterlanguageLinks.js
@@ -283,7 +284,10 @@ WM.UI.setSpecial([
             replace: ["[ _]\\(正體中文\\)", "", ""],
             keepAltName: true,
             showIndices: true}],
-         "[[Wiki Monkey]]: automatic update"]]
+         "automatic update"]]
+    ],
+    [
+        ["FixDoubleRedirects", "Fix double redirects", "fix double redirect"]
     ]
 ]);
 

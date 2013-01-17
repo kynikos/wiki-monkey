@@ -342,7 +342,10 @@ WM.MW = new function () {
         WM.MW.callAPIGet(query, null, function (res) {
             var page = Alib.Obj.getFirstItem(res.query.pages);
             langlinks = langlinks.concat(page.langlinks);
-            iwmap = res.query.interwikimap;
+            
+            if (res.query.interwikimap) {
+                iwmap = res.query.interwikimap;
+            }
             
             if (query.meta) {
                 delete query.meta;
@@ -364,16 +367,53 @@ WM.MW = new function () {
         var query = 
         
         WM.MW.callAPIGet(
-            {
-                action: "query",
-                meta: "siteinfo",
-                siprop: "interwikimap",
-                sifilteriw: "local",
-            },
+            {action: "query",
+             meta: "siteinfo",
+             siprop: "interwikimap",
+             sifilteriw: "local"},
             null,
             function (res) {
                 call(res.query.interwikimap, callArgs);
             }
         );
+    };
+    
+    this.getSpecialList = function (qppage, siprop, call, callArgs) {
+        var query = {action: "query",
+                     list: "querypage",
+                     qppage: qppage,
+                     qplimit: 500};
+        
+        if (siprop) {
+            query.meta = "siteinfo";
+            query.siprop = siprop;
+        }
+        
+        this._getSpecialListContinue(query, call, callArgs, [], {});
+    };
+    
+    this._getSpecialListContinue = function (query, call, callArgs, results, siteinfo) {
+        WM.MW.callAPIGet(query, null, function (res) {
+            results = results.concat(res.query.querypage.results);
+            
+            for (var key in res.query) {
+                if (key != "querypage") {
+                    siteinfo[key] = res.query[key];
+                }
+            }
+            
+            if (query.meta) {
+                delete query.meta;
+                delete query.siprop;
+            }
+            
+            if (res["query-continue"]) {
+                query.qpoffset = res["query-continue"].querypage.qpoffset;
+                this._getSpecialListContinue(query, call, callArgs, results, siteinfo);
+            }
+            else {
+                call(results, siteinfo, callArgs);
+            }
+        });
     };
 };
