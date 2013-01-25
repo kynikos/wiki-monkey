@@ -23,10 +23,10 @@ CONFIG = {
 def process_line(line):
     replaces = (
         (
-            '// @require https://raw\.github\.com/kynikos/wiki-monkey/'
-            '[^/]+(/.+\.js)',
-            "// @require https://raw.github.com/kynikos/wiki-monkey/"
-            "{REPO_VERSION}{g0}\n",
+            '// @(require|icon(?:64)?) https://raw\.github\.com/kynikos/'
+            'wiki-monkey/[^/]+(/.+\.(?:js|png))',
+            "// @{g0} https://raw.github.com/kynikos/wiki-monkey/"
+            "{REPO_VERSION}{g1}\n",
         ),
         (
             '// @require https://raw\.github\.com/kynikos/js-aux-lib/'
@@ -39,16 +39,10 @@ def process_line(line):
             "// @version {VERSION}-{g0}\n",
         ),
         (
-            '// @updateURL https://raw\.github\.com/kynikos/wiki-monkey/'
-            '[^/]+(/.+\.meta\.js)',
-            "// @updateURL https://raw.github.com/kynikos/wiki-monkey/"
-            "{UPDATE}{g0}\n",
-        ),
-        (
-            '// @downloadURL https://raw\.github\.com/kynikos/wiki-monkey/'
-            '[^/]+(/.+\.user\.js)',
-            "// @downloadURL https://raw.github.com/kynikos/wiki-monkey/"
-            "{UPDATE}{g0}\n",
+            '// @(update|download)URL https://raw\.github\.com/kynikos/'
+            'wiki-monkey/[^/]+(/.+\.(?:meta|user)\.js)',
+            "// @{g0}URL https://raw.github.com/kynikos/wiki-monkey/"
+            "{UPDATE}{g1}\n",
         ),
     )
     for replace in replaces:
