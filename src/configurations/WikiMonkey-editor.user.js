@@ -15,6 +15,7 @@
 // @match https://wiki.archlinux.org/*
 // @require https://raw.github.com/kynikos/js-aux-lib/master/src/Async.js
 // @require https://raw.github.com/kynikos/js-aux-lib/master/src/Compatibility.js
+// @require file:///raw.github.com/kynikos/js-aux-lib/master/src/DOM.js
 // @require https://raw.github.com/kynikos/js-aux-lib/master/src/HTTP.js
 // @require https://raw.github.com/kynikos/js-aux-lib/master/src/Obj.js
 // @require https://raw.github.com/kynikos/js-aux-lib/master/src/RegEx.js
@@ -28,6 +29,7 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Log.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/MW.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Parser.js
+// @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/RecentChanges.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/Tables.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/modules/UI.js
 // @require https://raw.github.com/kynikos/wiki-monkey/development/src/plugins/ExpandContractions.js
@@ -54,6 +56,8 @@ WM.UI.setWhatLinksHere(null);
 WM.UI.setLinkSearch(null);
 
 WM.UI.setSpecial(null);
+
+WM.UI.setRecentChanges(null);
 
 WM.UI.setSpecialList(null);
 

@@ -1,184 +1,180 @@
 /*
  *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
  *  Copyright (C) 2011-2013 Dario Giovannetti <dev@dariogiovannetti.net>
- * 
+ *
  *  This file is part of Wiki Monkey.
- * 
+ *
  *  Wiki Monkey is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  Wiki Monkey is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- * 
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 WM.UI = new function () {
     var editor = null;
-    
+
     this.setEditor = function(rows) {
         editor = rows;
     };
-    
+
     var diff = null;
-    
+
     this.setDiff = function(rows) {
         diff = rows;
     };
-    
+
     var category = null;
-    
+
     this.setCategory = function(rows) {
         category = rows;
     };
-    
+
     var whatLinksHere = null;
-    
+
     this.setWhatLinksHere = function(rows) {
         whatLinksHere = rows;
     };
-    
+
     var linkSearch = null;
-    
+
     this.setLinkSearch = function(rows) {
         linkSearch = rows;
     };
-    
+
     var special = null;
-    
+
     this.setSpecial = function(rows) {
         special = rows;
     };
-    
+
+    var recentChanges = null;
+
+    this.setRecentChanges = function(rows) {
+        recentChanges = rows;
+    };
+
     var specialList = null;
-    
+
     this.setSpecialList = function(rows) {
         specialList = rows;
     };
-    
-    this._executeAsync = function (functions, id) {
-        id++;
-        if (functions[id]) {
-            var fid = functions[id];
-            var callContinue = function () {
-                WM.UI._executeAsync(functions, id);
-            };
-            fid[0](fid[1], callContinue);
-        }
-    };
-    
+
     var makeButtons = function (functions) {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyButtons';
-        
+
         GM_addStyle("#WikiMonkeyButtons div.shortcut {position:absolute;} " +
                     "#WikiMonkeyButtons div.shortcut > input, #WikiMonkeyButtonAll {font-weight:bold;} " +
                     "#WikiMonkeyButtons div.row {margin-bottom:0.67em;} " +
                     "#WikiMonkeyButtons div.plugins {margin-left:9em;} " +
                     "#WikiMonkeyButtons div.pluginUI {display:inline-block; margin-right:0.33em;}");
-        
+
         var buttonAll = document.createElement('input');
         buttonAll.setAttribute('type', 'button');
         buttonAll.setAttribute('value', 'Execute all');
         buttonAll.id = "WikiMonkeyButtonAll";
-        
+
         var allFunctions = [];
         var rowsN = 0;
-        
+
         for (var r in functions) {
             var row = functions[r];
-            
+
             var buttonRow = document.createElement('input');
             buttonRow.setAttribute('type', 'button');
             buttonRow.setAttribute('value', 'Execute row');
-            
+
             var pRow = document.createElement('div');
             pRow.className = "shortcut";
             pRow.appendChild(buttonRow);
-            
+
             var divPlugins = document.createElement('div');
             divPlugins.className = "plugins";
-            
+
             var divRow = document.createElement('div');
             divRow.className = "row";
             divRow.appendChild(pRow);
-            
+
             var rowFunctions = [];
             var buttonsN = 0;
-            
+
             for (var f in row) {
                 var ff = row[f];
-                
+
                 var buttonFunction = document.createElement('input');
                 buttonFunction.setAttribute('type', 'button');
                 buttonFunction.setAttribute('value', ff[1]);
-                
+
                 buttonFunction.addEventListener("click", (function (fn, arg) {
                     return function () {
                         // window[string] doesn't work
                         eval("WM.Plugins." + fn + ".main")(arg, null);
                     }
                 })(ff[0], ff[2]), false);
-                
+
                 // window[string] doesn't work
                 var exFunction = eval("WM.Plugins." + ff[0] + ".main");
                 rowFunctions.push([exFunction, ff[2]]);
                 allFunctions.push([exFunction, ff[2]]);
-                
+
                 var divFunction = document.createElement('div');
                 divFunction.className = 'pluginUI';
                 divFunction.appendChild(buttonFunction);
-                
+
                 var makeUI = eval("WM.Plugins." + ff[0] + ".makeUI");
                 if (makeUI instanceof Function) {
                     divFunction.appendChild(makeUI(ff[2]));
                 }
-                
+
                 divPlugins.appendChild(divFunction);
-                
+
                 buttonsN++;
             }
-            
+
             buttonRow.addEventListener("click", (function (rowFunctions) {
                 return function () {
-                    WM.UI._executeAsync(rowFunctions, -1);
+                    Alib.Async.executeAsync(rowFunctions, -1);
                 };
             })(rowFunctions), false);
-            
+
             divRow.appendChild(divPlugins);
             divContainer.appendChild(divRow);
-            
+
             if (buttonsN <= 1) {
                 buttonRow.disabled = true;
             }
-            
+
             rowsN++;
         }
-        
+
         buttonAll.addEventListener("click", (function (allFunctions) {
             return function () {
-                WM.UI._executeAsync(allFunctions, -1);
+                Alib.Async.executeAsync(allFunctions, -1);
             };
         })(allFunctions), false);
-        
+
         if (rowsN > 1) {
             divRow = document.createElement('div');
             divRow.className = "row";
             divRow.appendChild(buttonAll);
             divContainer.appendChild(divRow);
         }
-        
+
         return divContainer;
     };
-    
+
     this._makeUI = function () {
         var nextNode, UI;
-        
+        var displayLog = true;
+
         if (document.getElementById('editform')) {
             nextNode = document.getElementById('wpSummaryLabel').parentNode.nextSibling;
             UI = (editor) ? makeButtons(editor) : null;
@@ -203,6 +199,11 @@ WM.UI = new function () {
             nextNode = document.getElementById('bodyContent');
             UI = (special) ? makeButtons(special) : null;
         }
+        else if (location.href.indexOf(WM.MW.getWikiPaths().articles + "Special:RecentChanges") > -1) {
+            nextNode = document.getElementById('mw-content-text').getElementsByTagName('h4')[0];
+            UI = (recentChanges) ? WM.RecentChanges._makeUI(recentChanges) : null;
+            displayLog = false;
+        }
         else {
             nextNode = document.getElementById('bodyContent');
             var nextNodeDivs = nextNode.getElementsByTagName('div');
@@ -214,19 +215,19 @@ WM.UI = new function () {
                 }
             }
         }
-        
+
         if (UI) {
             var main = document.createElement('fieldset');
             main.id = 'WikiMonkey';
-            
+
             GM_addStyle("#WikiMonkey {position:relative;} " +
                         "#WikiMonkey fieldset {margin:0 0 1em 0;} " +
                         "#WikiMonkeyHelp {position:absolute; top:1em; right:0.6em;}");
-            
+
             var legend = document.createElement('legend');
             legend.innerHTML = 'Wiki Monkey';
             main.appendChild(legend);
-    
+
             var help = document.createElement('p');
             help.id = 'WikiMonkeyHelp';
             var helpln = document.createElement('a');
@@ -234,9 +235,15 @@ WM.UI = new function () {
             helpln.innerHTML = 'help';
             help.appendChild(helpln);
             main.appendChild(help);
-            
+
             main.appendChild(UI);
-            main.appendChild(WM.Log._makeLogArea());
+
+            var logArea = WM.Log._makeLogArea();
+            if (!displayLog) {
+                logArea.style.display = 'none';
+            }
+            main.appendChild(logArea);
+
             nextNode.parentNode.insertBefore(main, nextNode);
         }
     };

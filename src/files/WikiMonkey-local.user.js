@@ -16,6 +16,7 @@
 // @require http://code.jquery.com/jquery-1.7.2.min.js
 // @require file:///mnt/archive/Development/js-aux-lib/src/Async.js
 // @require file:///mnt/archive/Development/js-aux-lib/src/Compatibility.js
+// @require file:///mnt/archive/Development/js-aux-lib/src/DOM.js
 // @require file:///mnt/archive/Development/js-aux-lib/src/HTTP.js
 // @require file:///mnt/archive/Development/js-aux-lib/src/Obj.js
 // @require file:///mnt/archive/Development/js-aux-lib/src/RegEx.js
@@ -30,6 +31,7 @@
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/Log.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/MW.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/Parser.js
+// @require file:///mnt/archive/Development/wiki-monkey/src/modules/RecentChanges.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/Tables.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/UI.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiFixHeader.js
@@ -38,6 +40,7 @@
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiNewTemplates.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiOldAURLinks.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiQuickReport.js
+// @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiRCFilter.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiSaveTalk.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiWantedCategories.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ExpandContractions.js
@@ -296,6 +299,16 @@ WM.UI.setSpecial([
     ],
     [
         ["FixDoubleRedirects", "Fix double redirects", "fix double redirect"]
+    ]
+]);
+
+WM.UI.setRecentChanges([
+    [
+        "ArchWikiRCFilter",
+        "Default filter",
+        {
+            language: "English",
+        }
     ]
 ]);
 
