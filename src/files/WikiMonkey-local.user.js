@@ -295,7 +295,7 @@ WM.UI.setSpecial([
             replace: ["[ _]\\(正體中文\\)", "", ""],
             keepAltName: true,
             showIndices: true}],
-         "[automatic update"]]
+         "automatic update"]]
     ],
     [
         ["FixDoubleRedirects", "Fix double redirects", "fix double redirect"]
