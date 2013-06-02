@@ -133,6 +133,14 @@ WM.UI.setSpecial([
             replace: null,
             keepAltName: false,
             showIndices: true},
+           // rtl scripts create buggy output
+           /*{page: "Table of Contents (العربية)",
+              root: "Category:العربية",
+              alsoIn: "also in",
+              indentType: ":",
+              replace: ["[ _]\\(العربية\\)", "", ""],
+              keepAltName: true,
+              showIndices: true},*/
            {page: "Table of Contents (Български)",
             root: "Category:Български",
             alsoIn: "also in",
