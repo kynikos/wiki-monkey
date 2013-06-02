@@ -1,7 +1,7 @@
 WM.Plugins.UpdateCategoryTree = new function () {
     this.makeUI = function (args) {
         var tocs = args[0];
-        
+
         var select = document.createElement('select');
         var option;
         for (var key in tocs) {
@@ -15,30 +15,30 @@ WM.Plugins.UpdateCategoryTree = new function () {
         option.innerHTML = 'UPDATE ALL';
         select.appendChild(option);
         select.id = "UpdateCategoryTree-select";
-        
+
         return select;
     };
-    
+
     var readToC = function (args) {
         WM.Log.logInfo('Updating ' + args.params.page + "...");
         WM.MW.callQueryEdit(args.params.page,
                             WM.Plugins.UpdateCategoryTree.processToC,
                             args);
     };
-    
+
     this.processToC = function (title, source, timestamp, edittoken, args) {
         args.source = source;
         args.timestamp = timestamp;
         args.edittoken = edittoken;
-        
+
         var minInterval = (WM.MW.isUserBot()) ? 60000 : 21600000;
-        
+
         var now = new Date();
         var msTimestamp = Date.parse(args.timestamp);
         if (now.getTime() - msTimestamp >= minInterval) {
             var start = args.source.indexOf(args.startMark) + args.startMark.length;
             var end = args.source.lastIndexOf(args.endMark);
-            
+
             if (start > -1 && end > -1) {
                 args.startId = start;
                 args.endId = end;
@@ -59,7 +59,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
             iterateTocs(args);
         }
     };
-    
+
     var storeAlternativeNames = function (source) {
         var dict = {};
         var regExp = /\[\[\:([Cc]ategory\:.+?)\|(.+?)\]\]/gm;
@@ -74,18 +74,18 @@ WM.Plugins.UpdateCategoryTree = new function () {
         }
         return dict;
     };
-    
+
     this.processCategory = function (params) {
         var args = params.callArgs;
-        
+
         WM.Log.logInfo("Processing " + params.node + "...");
-        
+
         var text = "";
-        
+
         for (var i = 0; i < params.ancestors.length; i++) {
             text += args.params.indentType;
         }
-        
+
         if (args.params.showIndices) {
             var indices = [];
             var node = params;
@@ -97,10 +97,12 @@ WM.Plugins.UpdateCategoryTree = new function () {
                 text += "<small>" + indices.reverse().join(".") + ".</small> ";
             }
         }
-        
+
         var altName = (args.altNames[params.node]) ? args.altNames[params.node] : null;
-        text += createCatLink(params.node, args.params.replace, altName) + " ";
-        
+        text += createCatLink(params.node, args.params.replace, altName);
+
+        text += (args.params.rightToLeft) ? "&lrm; " : " ";
+
         if (params.children == "loop") {
             text += "'''[LOOP]'''\n";
             WM.Log.logWarning("Loop in " + params.node);
@@ -114,15 +116,15 @@ WM.Plugins.UpdateCategoryTree = new function () {
             );
         }
     };
-    
+
     this.processCategoryAddSuffix = function (parents, info, args_) {
         var params = args_[0];
         var args = args_[1];
         var text = args_[2];
         var altName = args_[3];
-        
+
         text += "<small>(" + ((info) ? info.pages : 0) + ")";
-        
+
         if (parents.length > 1) {
             outer_loop:
             for (var p in parents) {
@@ -142,20 +144,20 @@ WM.Plugins.UpdateCategoryTree = new function () {
             }
             text += " (" + args.params.alsoIn + " " + parentTitles.join(", ") + ")";
         }
-        
+
         text += "</small>\n";
-        
+
         WM.Plugins.UpdateCategoryTree.processCategoryEnd(params, args, text);
     };
-    
+
     this.processCategoryEnd = function (params, args, text) {
         args.treeText += text;
-        
+
         params.callArgs = args;
-        
+
         WM.Cat.recurseTreeContinue(params);
     };
-    
+
     var createCatLink = function (cat, replace, altName) {
         var catName;
         if (altName) {
@@ -170,13 +172,13 @@ WM.Plugins.UpdateCategoryTree = new function () {
         }
         return "[[:" + cat + "|" + catName + "]]";
     };
-    
+
     this.writeToC = function (params) {
         var args = params.callArgs;
-        
+
         args.treeText = "\n" + args.treeText;
         var newtext = Alib.Str.overwriteBetween(args.source, args.treeText, args.startId, args.endId);
-        
+
         if (newtext != args.source) {
             WM.MW.callAPIPost({action: "edit",
                                bot: "1",
@@ -194,7 +196,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
             iterateTocs(args);
         }
     };
-    
+
     this.checkWrite = function (res, args) {
         if (res.edit && res.edit.result == 'Success') {
             WM.Log.logInfo(args.params.page + ' correctly updated');
@@ -204,7 +206,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
             WM.Log.logError(args.params.page + ' has not been updated!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
         }
     };
-    
+
     var iterateTocs = function (args) {
         args.index++;
         args.params = args.tocs[args.index];
@@ -218,14 +220,14 @@ WM.Plugins.UpdateCategoryTree = new function () {
             }
         }
     };
-    
+
     this.main = function (args, callNext) {
         var tocs = args[0];
         var summary = args[1];
-        
+
         var select = document.getElementById("UpdateCategoryTree-select");
         var value = select.options[select.selectedIndex].value;
-        
+
         iterateTocs({
             tocs: (value == '*') ? tocs : [tocs[select.selectedIndex]],
             index: -1,
