@@ -82,7 +82,7 @@ WM.UI.setDiff([
     ],
     [
         ["ArchWikiSaveTalk", "Save discussion",
-         ["User:Kynikos/Todo", "add reply"]]
+         ["User:Kynikos/Tasks", "add discussion"]]
     ]
 ]);
 
