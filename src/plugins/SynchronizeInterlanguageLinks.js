@@ -1,40 +1,40 @@
 WM.Plugins.SynchronizeInterlanguageLinks = new function () {
     this.main = function (args, callNext) {
         var title = WM.Editor.getTitle();
-        
+
         var tag = args[0](title);
         var whitelist = args[1];
-        
+
         WM.Log.logInfo("Synchronizing interlanguage links...");
-        
+
         WM.MW.getInterwikiMap(
             title,
             WM.Plugins.SynchronizeInterlanguageLinks.mainContinue,
             [tag, whitelist, title, callNext]
         );
     };
-    
+
     this.mainContinue = function (iwmap, args) {
         var tag = args[0];
         var whitelist = args[1];
         var title = args[2];
         var callNext = args[3];
-        
+
         var source = WM.Editor.readSource();
-        
+
         var langlinks = WM.Interlanguage.parseLinks(whitelist, source, iwmap);
-        
+
         var paths = WM.MW.getWikiPaths();
-        var url = paths.articles + WM.Parser.convertSpacesToUnderscores(title);
+        var url = paths.short + WM.Parser.convertSpacesToUnderscores(title);
         var api = paths.api;
-        
+
         var visitedlinks = {};
         visitedlinks[tag.toLowerCase()] = WM.Interlanguage.createVisitedLink(tag, encodeURIComponent(title), encodeURI(url), iwmap, api, source, null, null, langlinks);
-        
+
         var newlinks = {};
-        
+
         WM.Log.logInfo("Reading " + url + "...");
-        
+
         if (langlinks) {
             var conflict = false;
             for (var l in langlinks) {
@@ -49,7 +49,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
                     break;
                 }
             }
-        
+
             if (!conflict) {
                 WM.Interlanguage.collectLinks(
                     visitedlinks,
@@ -68,7 +68,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
             }
         }
     };
-    
+
     this.mainEnd = function (links, args) {
         var tag = args[0];
         var url = args[1];
@@ -76,10 +76,10 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         var langlinks = args[3];
         var iwmap = args[4];
         var callNext = args[5];
-        
+
         if (links != "conflict") {
             var newText = WM.Interlanguage.updateLinks(tag, url, iwmap, source, langlinks, links);
-            
+
             if (newText != source) {
                 WM.Editor.writeSource(newText);
                 WM.Log.logInfo("Synchronized interlanguage links");
@@ -87,26 +87,26 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
             else {
                 WM.Log.logInfo("Interlanguage links were already synchronized");
             }
-        
+
             if (callNext) {
                 callNext();
             }
         }
     };
-    
+
     this.mainAuto = function (args, title, callBot) {
         var tag = args[0](title);
         var whitelist = args[1];
         var summary = args[2];
-        
+
         var paths = WM.MW.getWikiPaths();
-        var url = paths.articles + WM.Parser.convertSpacesToUnderscores(title);
-        
+        var url = paths.short + WM.Parser.convertSpacesToUnderscores(title);
+
         var visitedlinks = {};
-        
+
         var newlinks = {};
         newlinks[tag.toLowerCase()] = WM.Interlanguage.createNewLink(tag, title, url);
-        
+
         WM.Interlanguage.collectLinks(
             visitedlinks,
             newlinks,
@@ -116,23 +116,23 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
             [title, url, tag, summary, callBot]
         );
     };
-    
+
     this.mainAutoWrite = function (links, args) {
         var title = args[0];
         var url = args[1];
         var tag = args[2];
         var summary = args[3];
         var callBot = args[4];
-        
+
         if (links != "conflict") {
             var iwmap = links[tag].iwmap;
             var source = links[tag].source;
             var langlinks = links[tag].links;
             var timestamp = links[tag].timestamp;
             var edittoken = links[tag].edittoken;
-            
+
             var newText = WM.Interlanguage.updateLinks(tag, url, iwmap, source, langlinks, links);
-            
+
             if (newText != source) {
                 WM.MW.callAPIPost({action: "edit",
                                    bot: "1",
@@ -153,7 +153,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
             callBot(false);
         }
     };
-    
+
     this.mainAutoEnd = function (res, callBot) {
         if (res.edit && res.edit.result == 'Success') {
             callBot(true);

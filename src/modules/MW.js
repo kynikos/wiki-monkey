@@ -22,48 +22,59 @@ WM.MW = new function () {
     var wikiPaths = {
         known: {
             "^https?://[^\.]+\.wikipedia\.org": {
-                articles: "/wiki/",
+                short: "/wiki/",
+                full: "/w/index.php",
                 api: "/w/api.php"
             },
             "^https?://wiki\.archlinux\.org": {
-                articles: "/index.php/",
+                short: "/index.php/",
+                full: "/index.php",
                 api: "/api.php"
             },
             "^https?://wiki\.archlinux\.de": {
-                articles: "/title/",
+                short: "/title/",
+                full: "/index.php",
                 api: "/api.php"
             },
             "^http://wiki\.archlinux\.fr": {
-                articles: "/",
+                short: "/",
+                full: "/index.php",
                 api: "/api.php"
             },
             "^http://wiki\.archlinux\.ro": {
-                articles: "/index.php/",
+                short: "/index.php/",
+                full: "/index.php",
                 api: "/api.php"
             },
             "^http://(?:www\.)?archlinux\.fi": {
-                articles: "/wiki/",
+                short: "/wiki/",
+                full: "/w/index.php",
                 api: "/w/api.php"
             },
             "^http://wiki\.archlinux\.se": {
-                articles: "/index.php?title=",
+                short: "/index.php?title=",
+                full: "/index.php",
                 api: "/api.php"
             },
             "^http://(?:www\.)?archtr\.org": {
-                articles: "/index.php?title=",
+                short: "/index.php?title=",
+                full: "/wiki/index.php",
                 api: "/wiki/api.php"
             },
             "^http://wiki\.archlinux\.rs": {
-                articles: "/index.php/",
+                short: "/index.php/",
+                full: "/index.php",
                 api: "/api.php"
             },
             "^http://wiki\.archlinux\.ir": {
-                articles: "/index.php/",
+                short: "/index.php/",
+                full: "/index.php",
                 api: "/api.php"
             },
         },
         default_: {
-            articles: "/index.php?title=",
+            short: "/index.php?title=",
+            full: "/index.php",
             api: "/api.php"
         },
         local: {},

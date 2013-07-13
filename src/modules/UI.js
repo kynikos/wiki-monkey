@@ -195,23 +195,30 @@ WM.UI = new function () {
             nextNode = document.getElementById('mw-linksearch-form').nextSibling;
             UI = (linkSearch) ? WM.Bot._makeUI(linkSearch, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 1, "Pages"]]) : null;
         }
-        else if (location.href.indexOf(WM.MW.getWikiPaths().articles + "Special:SpecialPages") > -1) {
-            nextNode = document.getElementById('bodyContent');
-            UI = (special) ? makeButtons(special) : null;
-        }
-        else if (location.href.indexOf(WM.MW.getWikiPaths().articles + "Special:RecentChanges") > -1) {
-            nextNode = document.getElementById('mw-content-text').getElementsByTagName('h4')[0];
-            UI = (recentChanges) ? WM.RecentChanges._makeUI(recentChanges) : null;
-            displayLog = false;
-        }
         else {
-            nextNode = document.getElementById('bodyContent');
-            var nextNodeDivs = nextNode.getElementsByTagName('div');
-            // Using for...in to loop through node lists is not supported by Chrome
-            for (var div = 0; div < nextNodeDivs.length; div++) {
-                if (nextNodeDivs[div].className == 'mw-spcontent') {
-                    UI = (specialList) ? WM.Bot._makeUI(specialList, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
-                    break;
+            var patt1 = new RegExp(Alib.RegEx.escapePattern(WM.MW.getWikiPaths().full) + "\?.*?" + "title\=Special\:SpecialPages", '');
+            var patt2 = new RegExp(Alib.RegEx.escapePattern(WM.MW.getWikiPaths().full) + "\?.*?" + "title\=Special\:RecentChanges", '');
+
+            if (location.href.indexOf(WM.MW.getWikiPaths().short + "Special:SpecialPages") > -1 ||
+                location.href.search(patt1) > -1) {
+                nextNode = document.getElementById('bodyContent');
+                UI = (special) ? makeButtons(special) : null;
+            }
+            else if (location.href.indexOf(WM.MW.getWikiPaths().short + "Special:RecentChanges") > -1 ||
+                     location.href.search(patt2) > -1) {
+                nextNode = document.getElementById('mw-content-text').getElementsByTagName('h4')[0];
+                UI = (recentChanges) ? WM.RecentChanges._makeUI(recentChanges) : null;
+                displayLog = false;
+            }
+            else {
+                nextNode = document.getElementById('bodyContent');
+                var nextNodeDivs = nextNode.getElementsByTagName('div');
+                // Using for...in to loop through node lists is not supported by Chrome
+                for (var div = 0; div < nextNodeDivs.length; div++) {
+                    if (nextNodeDivs[div].className == 'mw-spcontent') {
+                        UI = (specialList) ? WM.Bot._makeUI(specialList, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
+                        break;
+                    }
                 }
             }
         }
