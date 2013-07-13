@@ -2,6 +2,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
     this.makeUI = function (args) {
         var tocs = args[0];
 
+        GM_addStyle("#UpdateCategoryTree-select {margin-left:0.33em;}");
+
         var select = document.createElement('select');
         var option;
         for (var key in tocs) {
