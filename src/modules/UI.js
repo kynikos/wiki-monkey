@@ -173,6 +173,7 @@ WM.UI = new function () {
 
     this._makeUI = function () {
         var nextNode, UI;
+        var display = true;
         var displayLog = true;
 
         if (document.getElementById('editform')) {
@@ -186,14 +187,17 @@ WM.UI = new function () {
         else if (document.getElementById('mw-subcategories') || document.getElementById('mw-pages')) {
             nextNode = document.getElementById('bodyContent');
             UI = (category) ? WM.Bot._makeUI(category, [[document.getElementById('mw-pages'), 0, "Pages"], [document.getElementById('mw-subcategories'), 0, "Subcategories"]]) : null;
+            display = false;
         }
         else if (document.getElementById('mw-whatlinkshere-list')) {
             nextNode = document.getElementById('bodyContent').getElementsByTagName('form')[0].nextSibling;
             UI = (whatLinksHere) ? WM.Bot._makeUI(whatLinksHere, [[document.getElementById('mw-whatlinkshere-list'), 0, "Pages"]]) : null;
+            display = false;
         }
         else if (document.getElementById('mw-linksearch-form') && document.getElementById('bodyContent').getElementsByTagName('ol')[0]) {
             nextNode = document.getElementById('mw-linksearch-form').nextSibling;
             UI = (linkSearch) ? WM.Bot._makeUI(linkSearch, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 1, "Pages"]]) : null;
+            display = false;
         }
         else {
             var patt1 = new RegExp(Alib.RegEx.escapePattern(WM.MW.getWikiPaths().full) + "\?.*?" + "title\=Special\:SpecialPages", '');
@@ -217,6 +221,7 @@ WM.UI = new function () {
                 for (var div = 0; div < nextNodeDivs.length; div++) {
                     if (nextNodeDivs[div].className == 'mw-spcontent') {
                         UI = (specialList) ? WM.Bot._makeUI(specialList, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
+                        display = false;
                         break;
                     }
                 }
@@ -224,32 +229,57 @@ WM.UI = new function () {
         }
 
         if (UI) {
+            GM_addStyle("#WikiMonkey {position:relative;} " +
+                        "#WikiMonkey fieldset {margin:0 0 1em 0;}");
+
             var main = document.createElement('fieldset');
             main.id = 'WikiMonkey';
 
-            GM_addStyle("#WikiMonkey {position:relative;} " +
-                        "#WikiMonkey fieldset {margin:0 0 1em 0;} " +
-                        "#WikiMonkeyHelp {position:absolute; top:1em; right:0.6em;}");
-
             var legend = document.createElement('legend');
-            legend.innerHTML = 'Wiki Monkey';
+            legend.appendChild(document.createTextNode('Wiki Monkey '));
+
+            var hide = document.createElement('a');
+            hide.href = '#WikiMonkey';
+            hide.innerHTML = '[hide]';
+            hide.addEventListener("click", function () {
+                var wmmain = document.getElementById('WikiMonkeyMain');
+                if (wmmain.style.display == 'none') {
+                    wmmain.style.display = 'block';
+                    this.innerHTML = '[hide]';
+                }
+                else {
+                    wmmain.style.display = 'none';
+                    this.innerHTML = '[show]';
+                }
+                return false;
+            }, false);
+            legend.appendChild(hide);
+
+            legend.appendChild(document.createTextNode(' '));
+
+            var help = document.createElement('a');
+            help.href = 'https://github.com/kynikos/wiki-monkey/wiki'
+            help.innerHTML = '[help]';
+            legend.appendChild(help);
+
             main.appendChild(legend);
 
-            var help = document.createElement('p');
-            help.id = 'WikiMonkeyHelp';
-            var helpln = document.createElement('a');
-            helpln.href = 'https://github.com/kynikos/wiki-monkey/wiki'
-            helpln.innerHTML = 'help';
-            help.appendChild(helpln);
-            main.appendChild(help);
+            var main2 = document.createElement('div');
+            main2.id = 'WikiMonkeyMain';
 
-            main.appendChild(UI);
+            main2.appendChild(UI);
 
             var logArea = WM.Log._makeLogArea();
             if (!displayLog) {
                 logArea.style.display = 'none';
             }
-            main.appendChild(logArea);
+            main2.appendChild(logArea);
+
+            if (!display) {
+                main2.style.display = 'none';
+                hide.innerHTML = '[show]';
+            }
+            main.appendChild(main2);
 
             nextNode.parentNode.insertBefore(main, nextNode);
         }
