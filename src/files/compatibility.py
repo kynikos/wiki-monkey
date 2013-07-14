@@ -45,7 +45,7 @@ def get_GM_API_emulation():
         return get_script(s)
 
 
-def process_line(m, g, functions, match_urls, header, line):
+def process_header_line(m, g, functions, match_urls, header, line):
     id = re.match('^// @id ([^ \n]+)', line)
     version = re.match('^// @version ([^ \n]+)', line)
     update_url = re.match('^// @updateURL (.+/configurations)(/.+)'
@@ -101,7 +101,7 @@ def process_line_aux(m1, g, functions, header, line, id, version, update_url,
         else:
             line += "\n" + get_licence() + get_GM_API_emulation() + functions
         g.write(line)
-    else:
+    elif header:
         g.write(line)
 
     return header
@@ -122,10 +122,30 @@ def process_line_standalone(m, g, functions, match_urls, header, line, matches):
                             [STANDALONE["match"].format(m) for m in match_urls])
                                         ) + get_GM_API_emulation() + functions)
         g.write(line)
-    elif not header:
-        g.write(line)
 
     return header
+
+
+def adapt_configuration(f):
+    """
+    Adapt features that wouldn't work correctly in
+    """
+    code = f.read()
+    match = re.match('// ==/UserScript==\s*(.+)', code, re.DOTALL)
+    if match:
+        code = match.group(1)
+
+    # ArchWikiOldAURLinks would require cross-origin HTTP requests
+    code = re.sub(",?\s*\[[\"']ArchWikiOldAURLinks[\"'].*?(,?\n)", "\1", code,
+                                                                flags=re.DOTALL)
+
+    # SynchronizeInterlanguageLinks would require cross-origin HTTP requests,
+    # use WM.ArchWiki.getInternalInterwikiLanguages()
+    code = re.sub("(,?\s*\[[\"']SynchronizeInterlanguageLinks[\"'].*?)"
+                                      "WM\.ArchWiki\.getInterwikiLanguages\(\)",
+         "\1WM.ArchWiki.getInternalInterwikiLanguages()", code, flags=re.DOTALL)
+
+    return code
 
 
 def main():
@@ -146,11 +166,16 @@ def main():
                         match_urls = []
                         header = True
                         for line in f:
-                            functions, header = process_line(m, g, functions,
-                                                       match_urls, header, line)
-                        else:
-                            if m[1] == "standalone":
-                                g.write(STANDALONE["end"])
+                            functions, header = process_header_line(m, g,
+                                            functions, match_urls, header, line)
+
+                            if not header:
+                                break
+
+                        g.write(adapt_configuration(f))
+
+                        if m[1] == "standalone":
+                            g.write(STANDALONE["end"])
 
 if __name__ == '__main__':
     main()
