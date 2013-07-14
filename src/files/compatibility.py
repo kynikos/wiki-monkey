@@ -131,19 +131,36 @@ def adapt_configuration(f):
     Adapt features that wouldn't work correctly in
     """
     code = f.read()
-    match = re.match('// ==/UserScript==\s*(.+)', code, re.DOTALL)
+    match = re.match("// ==/UserScript==\s*(.+)", code, re.DOTALL)
     if match:
         code = match.group(1)
 
     # ArchWikiOldAURLinks would require cross-origin HTTP requests
-    code = re.sub(",?\s*\[[\"']ArchWikiOldAURLinks[\"'].*?(,?\n)", "\1", code,
-                                                                flags=re.DOTALL)
+    code = re.sub(",\s*\[[\"']ArchWikiOldAURLinks[\"'].*?,\n", ",\n", code)
+    code = re.sub("\s*\[[\"']ArchWikiOldAURLinks[\"'].*?,\n", "\n", code)
+    code = re.sub(",\s*\[[\"']ArchWikiOldAURLinks[\"'].*?\n", "\n", code)
+    code = re.sub("\s*\[[\"']ArchWikiOldAURLinks[\"'].*?\n", "\n", code)
+    try:
+        code.index("ArchWikiOldAURLinks")
+    except ValueError:
+        pass
+    else:
+        raise UserWarning("An instance of ArchWikiOldAURLinks has not been "
+                                                                      "removed")
 
     # SynchronizeInterlanguageLinks would require cross-origin HTTP requests,
     # use WM.ArchWiki.getInternalInterwikiLanguages()
-    code = re.sub("(,?\s*\[[\"']SynchronizeInterlanguageLinks[\"'].*?)"
+    code = re.sub("(\[[\"']SynchronizeInterlanguageLinks[\"'].*?)"
                                       "WM\.ArchWiki\.getInterwikiLanguages\(\)",
-         "\1WM.ArchWiki.getInternalInterwikiLanguages()", code, flags=re.DOTALL)
+                             "\g<1>WM.ArchWiki.getInternalInterwikiLanguages()",
+                                                          code, flags=re.DOTALL)
+    try:
+        code.index("WM.ArchWiki.getInterwikiLanguages")
+    except ValueError:
+        pass
+    else:
+        raise UserWarning("An instance of WM.ArchWiki.getInterwikiLanguages "
+                                                        "has not been replaced")
 
     return code
 

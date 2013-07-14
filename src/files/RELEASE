@@ -1,20 +1,13 @@
 * Make sure to be on the development branch
-* Adapt the main configurations for creating the compatibility versions:
-  * Adapt features that require cross-origin requests:
-      * Use WM.ArchWiki.getInternalInterwikiLanguages() in
-        SynchronizeInterlanguageLinks configuration
-      * Remove the ArchWikiOldAURLinks plugin
-* Run compatibility.py
-* Restore the main configurations to their original state
+* Add to compatibility.py (adapt_configuration function) any new adaptations
+  that must be done to the compatibility versions
+* Run compatibility.py (check for errors)
 * Commit and push to the remote repository
 * Install all the configurations and check that they work correctly in every
   supported browser
 * Run release.py VERSION ALIB_VERSION (check that the ALIB_VERSION tag exists)
 * Commit
-* Adapt the main configurations for creating the compatibility versions (see
-  above)
 * Run compatibility.py
-* Restore the main configurations to their original state
 * Commit
 * Checkout the master branch and merge the development branch
 * Tag the release commit with the new version number
