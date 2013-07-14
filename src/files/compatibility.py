@@ -28,7 +28,7 @@ STANDALONE = {
 
 def get_script(s):
     code = s.read()
-    match = re.match('^.*?/\*.+?\*/.*?\n(.+?)\n*$', code, re.DOTALL)
+    match = re.match('^\s*?/\*.+?\*/.*?\n(.+?)\n*$', code, re.DOTALL)
     if match:
         code = match.group(1)
     return code + "\n"
@@ -36,7 +36,7 @@ def get_script(s):
 
 def get_licence():
     with open(MAIN_SCRIPT, 'r') as s:
-        match = re.match('.*?(/\*.+?\*/)', s.read(), re.DOTALL)
+        match = re.match('\s*?(/\*.+?\*/)', s.read(), re.DOTALL)
         return match.group(1) + "\n"
 
 
@@ -57,7 +57,7 @@ def process_line(m, g, functions, match_urls, header, line):
                              'js-aux-lib/[^/]+/src/(.+\.js)', line)
     requires = re.match('^// @require https://raw\.github\.com/kynikos/'
                         'wiki-monkey/[^/]+/src/(.+\.js)', line)
-    
+
     if alib_requires:
         source = os.path.join(ALIB_SRC_PATH, alib_requires.group(1))
         with open(source, 'r') as s:
@@ -100,7 +100,7 @@ def process_line(m, g, functions, match_urls, header, line):
         g.write(line)
     elif m[1] != "standalone" or not header:
         g.write(line)
-    
+
     return functions, header
 
 
