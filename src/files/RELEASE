@@ -1,8 +1,9 @@
 * Make sure to be on the development branch
 * Adapt the main configurations for creating the compatibility versions:
-  * Use WM.ArchWiki.getInternalInterwikiLanguages() in
-    SynchronizeInterlanguageLinks configuration 
-  * Remove the ArchWikiOldAURLinks plugin
+  * Adapt features that require cross-origin requests:
+      * Use WM.ArchWiki.getInternalInterwikiLanguages() in
+        SynchronizeInterlanguageLinks configuration
+      * Remove the ArchWikiOldAURLinks plugin
 * Run compatibility.py
 * Restore the main configurations to their original state
 * Commit and push to the remote repository
