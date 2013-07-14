@@ -66,53 +66,66 @@ def process_line(m, g, functions, match_urls, header, line):
         source = os.path.join(SRC_PATH, requires.group(1))
         with open(source, 'r') as s:
             functions += get_script(s)
+    elif m[1] in ("chromium", "opera"):
+        header = process_line_aux(m[1], g, functions, header, line, id, version,
+                                              update_url, download_url, matches)
     elif m[1] == "standalone":
-        if matches:
-            match_urls.append(STANDALONE["conditions"][matches.group(1)])
-        elif line[:18] == "// ==/UserScript==":
-            header = False
-            # If functions is empty it means it's a meta file
-            if functions == "":
-                pass
-            else:
-                # Not +=
-                line = (get_licence() + STANDALONE["start"].format(
-                                                        STANDALONE["join"].join(
-                            [STANDALONE["match"].format(m) for m in match_urls])
-                                         ) + get_GM_API_emulation() + functions)
-            g.write(line)
-        elif not header:
-            g.write(line)
-    else:
-        if id:
-            g.write("// @id " + id.group(1) + "-" + m[1] + "\n")
-        elif version:
-            g.write("// @version " + version.group(1) + "-" + m[1] + "\n")
-        elif update_url:
-            g.write("// @updateURL " + update_url.group(1) + "/" + m[1] +
-                  update_url.group(2) + "-" + m[1] + update_url.group(3) + "\n")
-        elif download_url:
-            g.write("// @downloadURL " + download_url.group(1) + "/" + m[1] +
-                                            download_url.group(2) + "-" + m[1] +
-                                                   download_url.group(3) + "\n")
-        elif matches:
-            if m[1] == "chromium":
-                g.write(line)
-            elif m[1] == "opera":
-                g.write("// @include " + matches.group(1) + "\n")
-        elif line[:18] == "// ==/UserScript==":
-            header = False
-            # If functions is empty it means it's a meta file
-            if functions == "":
-                pass
-            else:
-                line += "\n" + get_licence() + get_GM_API_emulation() + \
-                                                                       functions
-            g.write(line)
-        else:
-            g.write(line)
+        header = process_line_standalone(m, g, functions, match_urls, header,
+                                                                  line, matches)
 
     return functions, header
+
+
+def process_line_aux(m1, g, functions, header, line, id, version, update_url,
+                                                         download_url, matches):
+    if id:
+        g.write("// @id " + id.group(1) + "-" + m1 + "\n")
+    elif version:
+        g.write("// @version " + version.group(1) + "-" + m1 + "\n")
+    elif update_url:
+        g.write("// @updateURL " + update_url.group(1) + "/" + m1 +
+                    update_url.group(2) + "-" + m1 + update_url.group(3) + "\n")
+    elif download_url:
+        g.write("// @downloadURL " + download_url.group(1) + "/" + m1 +
+                download_url.group(2) + "-" + m1 + download_url.group(3) + "\n")
+    elif matches:
+        if m1 == "chromium":
+            g.write(line)
+        elif m1 == "opera":
+            g.write("// @include " + matches.group(1) + "\n")
+    elif line[:18] == "// ==/UserScript==":
+        header = False
+        # If functions is empty it means it's a meta file
+        if functions == "":
+            pass
+        else:
+            line += "\n" + get_licence() + get_GM_API_emulation() + functions
+        g.write(line)
+    else:
+        g.write(line)
+
+    return header
+
+
+def process_line_standalone(m, g, functions, match_urls, header, line, matches):
+    if matches:
+        match_urls.append(STANDALONE["conditions"][matches.group(1)])
+    elif line[:18] == "// ==/UserScript==":
+        header = False
+        # If functions is empty it means it's a meta file
+        if functions == "":
+            pass
+        else:
+            # Not +=
+            line = (get_licence() + STANDALONE["start"].format(
+                                                        STANDALONE["join"].join(
+                            [STANDALONE["match"].format(m) for m in match_urls])
+                                        ) + get_GM_API_emulation() + functions)
+        g.write(line)
+    elif not header:
+        g.write(line)
+
+    return header
 
 
 def main():
