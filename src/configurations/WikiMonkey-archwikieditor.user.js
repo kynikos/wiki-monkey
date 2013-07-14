@@ -14,7 +14,7 @@
 // @match https://wiki.archlinux.org/*
 // @require https://raw.github.com/kynikos/js-aux-lib/master/src/Async.js
 // @require https://raw.github.com/kynikos/js-aux-lib/master/src/Compatibility.js
-// @require file:///raw.github.com/kynikos/js-aux-lib/master/src/DOM.js
+// @require https://raw.github.com/kynikos/js-aux-lib/master/src/DOM.js
 // @require https://raw.github.com/kynikos/js-aux-lib/master/src/HTTP.js
 // @require https://raw.github.com/kynikos/js-aux-lib/master/src/Obj.js
 // @require https://raw.github.com/kynikos/js-aux-lib/master/src/RegEx.js
