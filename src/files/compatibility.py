@@ -66,40 +66,51 @@ def process_line(m, g, functions, match_urls, header, line):
         source = os.path.join(SRC_PATH, requires.group(1))
         with open(source, 'r') as s:
             functions += get_script(s)
-    elif m[1] != "standalone" and id:
-        g.write("// @id " + id.group(1) + "-" + m[1] + "\n")
-    elif m[1] != "standalone" and version:
-        g.write("// @version " + version.group(1) + "-" + m[1] + "\n")
-    elif m[1] != "standalone" and update_url:
-        g.write("// @updateURL " + update_url.group(1) + "/" + m[1] +
-                update_url.group(2) + "-" + m[1] + update_url.group(3) + "\n")
-    elif m[1] != "standalone" and download_url:
-        g.write("// @downloadURL " + download_url.group(1) + "/" + m[1] +
-                download_url.group(2) + "-" + m[1] + download_url.group(3) +
-                "\n")
-    elif matches:
-        if m[1] == "opera":
-            g.write("// @include " + matches.group(1) + "\n")
-        elif m[1] == "standalone":
+    elif m[1] == "standalone":
+        if matches:
             match_urls.append(STANDALONE["conditions"][matches.group(1)])
+        elif line[:18] == "// ==/UserScript==":
+            header = False
+            # If functions is empty it means it's a meta file
+            if functions == "":
+                pass
+            else:
+                # Not +=
+                line = (get_licence() + STANDALONE["start"].format(
+                                                        STANDALONE["join"].join(
+                            [STANDALONE["match"].format(m) for m in match_urls])
+                                         ) + get_GM_API_emulation() + functions)
+            g.write(line)
+        elif not header:
+            g.write(line)
+    else:
+        if id:
+            g.write("// @id " + id.group(1) + "-" + m[1] + "\n")
+        elif version:
+            g.write("// @version " + version.group(1) + "-" + m[1] + "\n")
+        elif update_url:
+            g.write("// @updateURL " + update_url.group(1) + "/" + m[1] +
+                  update_url.group(2) + "-" + m[1] + update_url.group(3) + "\n")
+        elif download_url:
+            g.write("// @downloadURL " + download_url.group(1) + "/" + m[1] +
+                                            download_url.group(2) + "-" + m[1] +
+                                                   download_url.group(3) + "\n")
+        elif matches:
+            if m[1] == "chromium":
+                g.write(line)
+            elif m[1] == "opera":
+                g.write("// @include " + matches.group(1) + "\n")
+        elif line[:18] == "// ==/UserScript==":
+            header = False
+            # If functions is empty it means it's a meta file
+            if functions == "":
+                pass
+            else:
+                line += "\n" + get_licence() + get_GM_API_emulation() + \
+                                                                       functions
+            g.write(line)
         else:
             g.write(line)
-    elif line[:18] == "// ==/UserScript==":
-        header = False
-        # If functions is empty it means it's a meta file
-        if functions == "":
-            pass
-        elif m[1] in ("chromium", "opera"):
-            line += "\n" + get_licence() + get_GM_API_emulation() + functions
-        elif m[1] == "standalone":
-            # Not +=
-            line = (get_licence() + STANDALONE["start"].format(
-                        STANDALONE["join"].join(
-                           [STANDALONE["match"].format(m) for m in match_urls])
-                    ) + get_GM_API_emulation() + functions)
-        g.write(line)
-    elif m[1] != "standalone" or not header:
-        g.write(line)
 
     return functions, header
 
@@ -110,11 +121,11 @@ def main():
         file = os.path.join(CFG_PATH, name)
         ext = name[-8:]
         for m in EXTENSIONS:
-            if ext == ".user.js" or (ext == ".meta.js" and
-                                     m[1] != "standalone"):
+            if ext == ".user.js" or (ext == ".meta.js" and m[1] != "standalone"
+                                                                              ):
                 with open(file, 'r') as f:
                     cfile = os.path.join(m[0], name[:-8] + "-" + m[1] +
-                                   name[-3 if (m[1] == "standalone") else -8:])
+                                    name[-3 if (m[1] == "standalone") else -8:])
                     with open(cfile, 'w'):
                         pass
                     with open(cfile, 'a') as g:
@@ -123,7 +134,7 @@ def main():
                         header = True
                         for line in f:
                             functions, header = process_line(m, g, functions,
-                                                      match_urls, header, line)
+                                                       match_urls, header, line)
                         else:
                             if m[1] == "standalone":
                                 g.write(STANDALONE["end"])
