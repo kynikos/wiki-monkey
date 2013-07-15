@@ -6,7 +6,6 @@
 * Install all the configurations and check that they work correctly in every
   supported browser
 * Run release.py VERSION ALIB_VERSION (check that the ALIB_VERSION tag exists)
-* Commit
 * Run compatibility.py
 * Commit
 * Checkout the master branch and merge the development branch
