@@ -1,3 +1,3 @@
 // ==UserScript==
-// @version 1.11.2-archwikipatrollite-chromium
+// @version 1.11.2dev-archwikipatrollite-chromium
 // ==/UserScript==

@@ -1,6 +1,6 @@
 /*
  *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
- *  Copyright (C) 2011-2012 Dario Giovannetti <dev@dariogiovannetti.net>
+ *  Copyright (C) 2011-2013 Dario Giovannetti <dev@dariogiovannetti.net>
  * 
  *  This file is part of Wiki Monkey.
  * 
@@ -185,6 +185,17 @@ if (!GM_xmlhttpRequest) {
 if (!Alib) var Alib = {};
 
 Alib.Async = new function () {
+    this.executeAsync = function (functions, id) {
+        id++;
+        if (functions[id]) {
+            var fid = functions[id];
+            var callContinue = function () {
+                Alib.Async.executeAsync(functions, id);
+            };
+            fid[0](fid[1], callContinue);
+        }
+    };
+    
     this.recurseTreeAsync = function (params) {
         /*
          * params = {
@@ -312,6 +323,95 @@ Alib.Compatibility = new function () {
     this.normalizeCarriageReturns = function (source) {
         // Opera and IE use \r\n instead of \n
         return source.replace(/\r\n/g, '\n');
+    };
+};
+
+if (!Alib) var Alib = {};
+
+Alib.DOM = new function () {
+    this.getPreviousElementSibling = function (node) {
+        while (node.previousSibling.nodeType != 1) {
+            var node = node.previousSibling;
+        }
+        return node.previousSibling;
+    }
+
+    this.getNextElementSibling = function (node) {
+        while (node.nextSibling.nodeType != 1) {
+            var node = node.nextSibling;
+        }
+        return node.nextSibling;
+    }
+
+    this.getFirstElementChild = function (node) {
+        return (node.firstChild.nodeType == 1) ? node.firstChild : this.getNextElementSibling(node.firstChild);
+    }
+
+    this.getLastElementChild = function (node) {
+        return (node.lastChild.nodeType == 1) ? node.lastChild : this.getPreviousElementSibling(node.lastChild);
+    }
+
+    this.getChildElements = function (node) {
+        var list = element.childNodes;
+        var children = [];
+        for (var i = 0; i < list.length; i++) {
+            if (list[i].nodeType == 1) {
+                children.push(list[i]);
+            }
+        }
+        return children;
+    }
+
+    this.getChildrenByTagName = function (element, tag) {
+        var list = element.childNodes;
+        var children = [];
+        for (var i = 0; i < list.length; i++) {
+            var localName = list[i].localName;
+            if (localName && localName.toLowerCase() == tag.toLowerCase()) {
+                children.push(list[i]);
+            }
+        }
+        return children;
+    }
+
+    this.isDescendantOf = function (descendant, ancestor, identity) {
+        var response = false;
+        if (identity && descendant.isSameNode(ancestor)) {
+            response = true;
+        }
+        else {
+            while (descendant != document.body) {
+                if (descendant.parentNode.isSameNode(ancestor)) {
+                    response = true;
+                    break;
+                }
+                descendant = descendant.parentNode;
+            }
+        }
+        return response;
+    }
+
+    this.getSiblingPositionByTagName = function (element) {
+        var i = 0;
+        var siblings = this.getChildrenByTagName(element.parentNode, element.localName);
+        while (!siblings[i].isSameNode(element)) {
+            i++;
+        }
+        return (i < siblings.length) ? i : -1;
+    }
+
+    this.getLongTextNode = function (element) {
+        // Firefox and other browsers split long text into multiple text nodes
+        var text = "";
+        var nodes = element.childNodes;
+        var child;
+        for (var c = 0; c < nodes.length; c++) {
+            child = nodes[c];
+            if (child.nodeType == 3) {
+                text += child.nodeValue;
+            }
+        }
+        return text;
     };
 };
 
@@ -446,9 +546,14 @@ Alib.Str = new function () {
         return string.substring(0, id) + newString + string.substr(id);
     };
     
-    this.overwriteAt = function (string, newString, id) {
+    this.overwriteFor = function (string, newString, id, length) {
         if (!id) id = 0;
-        return string.substring(0, id) + newString + string.substr(id + newString.length);
+        if (!length || length < 0) length = 0;
+        return string.substring(0, id) + newString + string.substr(id + length);
+    };
+    
+    this.overwriteAt = function (string, newString, id) {
+        return this.overwriteFor(string, newString, id, newString.length);
     };
     
     this.overwriteBetween = function (string, newString, id1, id2) {
@@ -462,18 +567,12 @@ Alib.Str = new function () {
         return string.substring(0, id1) + newString + string.substr(id2);
     };
     
-    this.overwriteFor = function (string, newString, id, length) {
-        if (!id) id = 0;
-        if (!length || length < 0) length = 0;
-        return string.substring(0, id) + newString + string.substr(id + length);
+    this.removeFor = function (string, id, length) {
+        return this.overwriteFor(string, "", id, length);
     };
     
     this.removeBetween = function (string, id1, id2) {
         return this.overwriteBetween(string, "", id1, id2);
-    };
-    
-    this.removeFor = function (string, id, length) {
-        return this.overwriteFor(string, "", id, length);
     };
     
     this.padLeft = function (string, filler, length) {
@@ -528,6 +627,8 @@ WM.Bot = new function () {
         var selectFunctions = document.createElement('select');
         selectFunctions.id = 'WikiMonkeyBot-PluginSelect';
         
+        var option;
+        
         for (var f in functions) {
             option = document.createElement('option');
             option.innerHTML = functions[f][1];
@@ -580,11 +681,14 @@ WM.Bot = new function () {
     
     this.selections = {function_: function () {},
                        list: {current: null,
-                              previous: null}};
+                              previous: null},
+                       visited: []};
     
     var makeListSelector = function (lists) {
         var selectLists = document.createElement('select');
         selectLists.id = 'WikiMonkeyBot-ListSelect';
+        
+        var option;
         
         for (var l in lists) {
             if (lists[l][0]) {
@@ -631,17 +735,24 @@ WM.Bot = new function () {
         preview.type = 'button';
         preview.value = 'Preview';
         
+        var duplicates = document.createElement('input');
+        duplicates.type = 'checkbox';
+        duplicates.id = 'WikiMonkeyBotDuplicates';
+        
         var inverse = document.createElement('input');
         inverse.type = 'checkbox';
         inverse.id = 'WikiMonkeyBotInverse';
         
-        var elems = [filter, inverse];
+        var elems = [filter, duplicates, inverse];
         
         for (var e in elems) {
             elems[e].addEventListener("change", function () {
                 WM.Bot._disableStartBot('Filters have changed, preview the selection');
             }, false);
         }
+        
+        var duplicatestag = document.createElement('span');
+        duplicatestag.innerHTML = 'Duplicates';
         
         var inversetag = document.createElement('span');
         inversetag.innerHTML = 'Inverse';
@@ -654,6 +765,8 @@ WM.Bot = new function () {
         }
         fieldset.appendChild(filter);
         fieldset.appendChild(preview);
+        fieldset.appendChild(duplicates);
+        fieldset.appendChild(duplicatestag);
         fieldset.appendChild(inverse);
         fieldset.appendChild(inversetag);
         
@@ -764,29 +877,36 @@ WM.Bot = new function () {
     
     var canProcessPage = function (title) {
         var rules = document.getElementById('WikiMonkeyBotFilter').value.split('\n');
+        var duplicates = document.getElementById('WikiMonkeyBotDuplicates').checked;
         var inverse = document.getElementById('WikiMonkeyBotInverse').checked;
-        var response = (inverse) ? true : false;
-        var rule, firstSlash, lastSlash, pattern, modifiers, regexp, test, negative;
-        for (var r in rules) {
-            rule = rules[r];
-            if (rule) {
-                firstSlash = rule.indexOf('/');
-                lastSlash = rule.lastIndexOf('/');
-                pattern = rule.substring(firstSlash + 1, lastSlash);
-                modifiers = rule.substring(lastSlash + 1);
-                negative = rule.charAt(0) == '!';
-                try {
-                    regexp = new RegExp(pattern, modifiers);
-                }
-                catch (exc) {
-                    WM.Log.logError('Invalid regexp: ' + exc);
-                    break;
-                }
-                test = regexp.test(title);
-                if (!negative != !test) {
-                    response = (inverse) ? false : true;
-                    // Do not break, so that if among the rules there's
-                    // an invalid regexp the function returns false
+        var response = false;
+        if (duplicates || WM.Bot.selections.visited.indexOf(title) == -1) {
+            WM.Bot.selections.visited.push(title);
+            if (inverse) {
+                response = true;
+            }
+            var rule, firstSlash, lastSlash, pattern, modifiers, regexp, test, negative;
+            for (var r in rules) {
+                rule = rules[r];
+                if (rule) {
+                    firstSlash = rule.indexOf('/');
+                    lastSlash = rule.lastIndexOf('/');
+                    pattern = rule.substring(firstSlash + 1, lastSlash);
+                    modifiers = rule.substring(lastSlash + 1);
+                    negative = rule.charAt(0) == '!';
+                    try {
+                        regexp = new RegExp(pattern, modifiers);
+                    }
+                    catch (exc) {
+                        WM.Log.logError('Invalid regexp: ' + exc);
+                        break;
+                    }
+                    test = regexp.test(title);
+                    if (!negative != !test) {
+                        response = (inverse) ? false : true;
+                        // Do not break, so that if among the rules there's
+                        // an invalid regexp the function returns false
+                    }
                 }
             }
         }
@@ -807,6 +927,7 @@ WM.Bot = new function () {
                 link.className = '';
             }
         }
+        WM.Bot.selections.visited = [];
         
         items = WM.Bot.selections.list.current[0].getElementsByTagName('li');
         linkId = WM.Bot.selections.list.current[1];
@@ -872,6 +993,7 @@ WM.Bot = new function () {
             WM.Log.logInfo('Starting bot...');
             WM.Bot._disableStartBot('Bot is running...');
             WM.Bot._disableControls();
+            WM.Bot.selections.visited = [];
             WM.Bot._processItem(items, 0, linkId);
         }
     };
@@ -1356,61 +1478,61 @@ WM.Interlanguage = new function () {
 
 WM.Log = new function () {
     this._makeLogArea = function () {
-        log = document.createElement('div');
+        var log = document.createElement('div');
         log.id = 'WikiMonkeyLog';
-        
+
         GM_addStyle("#WikiMonkeyLog {height:10em; border:2px solid #07b; padding:0.5em; overflow:auto; resize:vertical; background-color:#111;} " +
-                    "#WikiMonkeyLog pre.timestamp, #WikiMonkeyLog pre.message {overflow:visible; resize:none;} " +
-                    "#WikiMonkeyLog pre.timestamp {float:left; width:5em; margin:0; border:none; padding:0; font-size:0.9em; color:#eee; background-color:transparent;} " +
-                    "#WikiMonkeyLog pre.message {margin:0 0 0.5em 5em; border:none; padding:0; color:#eee; background-color:transparent;} " +
-                    "#WikiMonkeyLog pre.mdebug {color:cyan;} " +
+                    "#WikiMonkeyLog p.timestamp, #WikiMonkeyLog p.message {border:none; padding:0; font-family:monospace; color:#eee;} " +
+                    "#WikiMonkeyLog p.timestamp {float:left; width:5em; margin:0 -5em 0 0; font-size:0.9em;} " +
+                    "#WikiMonkeyLog p.message {margin:0 0 0.5em 5em;} " +
+                    "#WikiMonkeyLog p.mdebug {color:cyan;} " +
                     // The .warning and .error classes are already used by
                     // MediaWiki, without associating them with an id and a tag
-                    "#WikiMonkeyLog pre.mwarning {color:gold;} " +
-                    "#WikiMonkeyLog pre.merror {color:red;}");
-        
+                    "#WikiMonkeyLog p.mwarning {color:gold;} " +
+                    "#WikiMonkeyLog p.merror {color:red;}");
+
         return log;
     };
-    
+
     var appendMessage = function (text, type) {
-        var tstamp = document.createElement('pre');
+        var tstamp = document.createElement('p');
         tstamp.className = 'timestamp';
         var now = new Date();
         tstamp.innerHTML = now.toLocaleTimeString();
-        
-        var msg = document.createElement('pre');
+
+        var msg = document.createElement('p');
         msg.className = 'message' + ((type) ? " " + type : "");
         // Do not allow the empty string, otherwise the resulting html element
         // may not be rendered by the browser
         msg.innerHTML = (text) ? text : " ";
-        
+
         var line = document.createElement('div');
         line.appendChild(tstamp);
         line.appendChild(msg);
-        
+
         var log = document.getElementById('WikiMonkeyLog');
-        
+
         test = log.scrollTop + log.clientHeight == log.scrollHeight;
-        
+
         log.appendChild(line);
-        
+
         if (test) {
             log.scrollTop = log.scrollHeight - log.clientHeight;
         }
     };
-    
+
     this.logDebug = function (text) {
         appendMessage(text, 'mdebug');
     };
-    
+
     this.logInfo = function (text) {
         appendMessage(text);
     };
-    
+
     this.logWarning = function (text) {
         appendMessage(text, 'mwarning');
     };
-    
+
     this.logError = function (text) {
         appendMessage(text, 'merror');
     };
@@ -1420,49 +1542,64 @@ WM.MW = new function () {
     var wikiPaths = {
         known: {
             "^https?://[^\.]+\.wikipedia\.org": {
-                articles: "/wiki/",
+                short: "/wiki/",
+                full: "/w/index.php",
                 api: "/w/api.php"
             },
             "^https?://wiki\.archlinux\.org": {
-                articles: "/index.php/",
+                short: "/index.php/",
+                full: "/index.php",
                 api: "/api.php"
             },
             "^https?://wiki\.archlinux\.de": {
-                articles: "/title/",
+                short: "/title/",
+                full: "/index.php",
                 api: "/api.php"
             },
             "^http://wiki\.archlinux\.fr": {
-                articles: "/",
+                short: "/",
+                full: "/index.php",
                 api: "/api.php"
             },
             "^http://wiki\.archlinux\.ro": {
-                articles: "/index.php/",
+                short: "/index.php/",
+                full: "/index.php",
                 api: "/api.php"
             },
             "^http://(?:www\.)?archlinux\.fi": {
-                articles: "/wiki/",
+                short: "/wiki/",
+                full: "/w/index.php",
                 api: "/w/api.php"
             },
             "^http://wiki\.archlinux\.se": {
-                articles: "/index.php?title=",
+                short: "/index.php?title=",
+                full: "/index.php",
                 api: "/api.php"
             },
             "^http://(?:www\.)?archtr\.org": {
-                articles: "/index.php?title=",
+                short: "/index.php?title=",
+                full: "/wiki/index.php",
                 api: "/wiki/api.php"
             },
+            "^http://wiki\.archlinux\.rs": {
+                short: "/index.php/",
+                full: "/index.php",
+                api: "/api.php"
+            },
             "^http://wiki\.archlinux\.ir": {
-                articles: "/index.php/",
+                short: "/index.php/",
+                full: "/index.php",
                 api: "/api.php"
             },
         },
         default_: {
-            articles: "/index.php?title=",
+            short: "/index.php?title=",
+            full: "/index.php",
             api: "/api.php"
         },
         local: {},
     };
-    
+
     var getWikiPaths = function (href) {
         // It's necessary to keep this function in a private attribute,
         // otherwise wikiPaths.local cannot be initialized
@@ -1498,15 +1635,15 @@ WM.MW = new function () {
         }
         return paths;
     };
-    
+
     wikiPaths.local = (function () {
         return getWikiPaths(location.href);
     })();
-    
+
     this.getWikiPaths = function (href) {
         return getWikiPaths(href);
     };
-    
+
     this.callAPIGet = function (params, api, call, callArgs) {
         if (!api) {
             api = wikiPaths.local.api;
@@ -1537,9 +1674,13 @@ WM.MW = new function () {
                                 "using Scriptish (Firefox), Greasemonkey " +
                                 "(Firefox), Tampermonkey (Chrome/Chromium) " +
                                 "or a similar extension");
+                if (confirm("Wiki Monkey error: Failed query\n\nDo you want to retry?")) {
+                    WM.Log.logInfo("Retrying...");
+                    WM.MW.callAPIGet(params, api, call, callArgs);
+                }
             }
         };
-        
+
         try {
             GM_xmlhttpRequest(query);
         }
@@ -1551,7 +1692,7 @@ WM.MW = new function () {
                             "(Chrome/Chromium) or a similar extension");
         }
     };
-    
+
     this.callAPIPost = function (params, api, call, callArgs) {
         if (!api) {
             api = wikiPaths.local.api;
@@ -1582,11 +1723,15 @@ WM.MW = new function () {
                                 "using Scriptish (Firefox), Greasemonkey " +
                                 "(Firefox), Tampermonkey (Chrome/Chromium) " +
                                 "or a similar extension");
+                if (confirm("Wiki Monkey error: Failed query\n\nDo you want to retry?")) {
+                    WM.Log.logInfo("Retrying...");
+                    WM.MW.callAPIPost(params, api, call, callArgs);
+                }
             }
         };
-        
+
         var string = "format=json" + joinParams(params);
-        
+
         // It's necessary to use try...catch because some browsers don't
         // support FormData yet and will throw an exception
         try {
@@ -1607,7 +1752,7 @@ WM.MW = new function () {
             query.data = string;
             query.headers = {"Content-type": "application/x-www-form-urlencoded"};
         }
-        
+
         try {
             GM_xmlhttpRequest(query);
         }
@@ -1619,7 +1764,7 @@ WM.MW = new function () {
                             "(Chrome/Chromium) or a similar extension");
         }
     };
-    
+
     var joinParams = function (params) {
         var string = "";
         for (var key in params) {
@@ -1627,7 +1772,7 @@ WM.MW = new function () {
         }
         return string;
     };
-    
+
     this.callQuery = function (params, call, callArgs) {
         params.action = "query";
         var callBack = function (res) {
@@ -1636,12 +1781,12 @@ WM.MW = new function () {
         };
         this.callAPIGet(params, null, callBack);
     };
-    
+
     this.callQueryEdit = function (title, call, callArgs) {
         var callBack = function (page, args) {
-            source = page.revisions[0]["*"];
-            timestamp = page.revisions[0].timestamp;
-            edittoken = page.edittoken;
+            var source = page.revisions[0]["*"];
+            var timestamp = page.revisions[0].timestamp;
+            var edittoken = page.edittoken;
             call(title, source, timestamp, edittoken, callArgs);
         };
         this.callQuery({prop: "info|revisions",
@@ -1650,9 +1795,9 @@ WM.MW = new function () {
                         titles: title},
                         callBack);
     };
-    
+
     var userInfo;
-    
+
     this._storeUserInfo = function (call) {
         userInfo = this.callAPIGet({action: "query",
                                     meta: "userinfo",
@@ -1661,20 +1806,20 @@ WM.MW = new function () {
                                     WM.MW._storeUserInfoEnd,
                                     call);
     };
-    
+
     this._storeUserInfoEnd = function (res, call) {
         userInfo = res;
         call();
     }
-    
+
     this.isLoggedIn = function () {
         return userInfo.query.userinfo.id != 0;
     };
-    
+
     this.getUserName = function () {
         return userInfo.query.userinfo.name;
     };
-    
+
     this.isUserBot = function () {
         var groups = userInfo.query.userinfo.groups;
         for (var g in groups) {
@@ -1684,20 +1829,20 @@ WM.MW = new function () {
         }
         return false;
     };
-    
+
     this.getBacklinks = function (bltitle, blnamespace, call, callArgs) {
         var query = {action: "query",
                      list: "backlinks",
                      bltitle: bltitle,
                      bllimit: 500};
-        
+
         if (blnamespace) {
             query.blnamespace = blnamespace;
         }
-        
+
         this._getBacklinksContinue(query, call, callArgs, []);
     };
-    
+
     this._getBacklinksContinue = function (query, call, callArgs, backlinks) {
         WM.MW.callAPIGet(query, null, function (res) {
             backlinks = backlinks.concat(res.query.backlinks);
@@ -1710,7 +1855,7 @@ WM.MW = new function () {
             }
         });
     };
-    
+
     this.getLanglinks = function (title, iwmap, call, callArgs) {
         var query = {action: "query",
                      prop: "langlinks",
@@ -1718,28 +1863,31 @@ WM.MW = new function () {
                      lllimit: 500,
                      llurl: "1",
                      redirects: "1"};
-        
+
         if (iwmap) {
             query.meta = "siteinfo";
             query.siprop = "interwikimap";
             query.sifilteriw = "local";
         }
-        
+
         this._getLanglinksContinue(query, call, callArgs, [], null);
     };
-    
+
     this._getLanglinksContinue = function (query, call, callArgs, langlinks, iwmap) {
         WM.MW.callAPIGet(query, null, function (res) {
             var page = Alib.Obj.getFirstItem(res.query.pages);
             langlinks = langlinks.concat(page.langlinks);
-            iwmap = res.query.interwikimap;
-            
+
+            if (res.query.interwikimap) {
+                iwmap = res.query.interwikimap;
+            }
+
             if (query.meta) {
                 delete query.meta;
                 delete query.siprop;
                 delete query.sifilteriw;
             }
-            
+
             if (res["query-continue"]) {
                 query.llcontinue = res["query-continue"].langlinks.llcontinue;
                 this._getLanglinksContinue(query, call, callArgs, langlinks, iwmap);
@@ -1749,22 +1897,59 @@ WM.MW = new function () {
             }
         });
     };
-    
+
     this.getInterwikiMap = function (title, call, callArgs) {
-        var query = 
-        
+        var query =
+
         WM.MW.callAPIGet(
-            {
-                action: "query",
-                meta: "siteinfo",
-                siprop: "interwikimap",
-                sifilteriw: "local",
-            },
+            {action: "query",
+             meta: "siteinfo",
+             siprop: "interwikimap",
+             sifilteriw: "local"},
             null,
             function (res) {
                 call(res.query.interwikimap, callArgs);
             }
         );
+    };
+
+    this.getSpecialList = function (qppage, siprop, call, callArgs) {
+        var query = {action: "query",
+                     list: "querypage",
+                     qppage: qppage,
+                     qplimit: 500};
+
+        if (siprop) {
+            query.meta = "siteinfo";
+            query.siprop = siprop;
+        }
+
+        this._getSpecialListContinue(query, call, callArgs, [], {});
+    };
+
+    this._getSpecialListContinue = function (query, call, callArgs, results, siteinfo) {
+        WM.MW.callAPIGet(query, null, function (res) {
+            results = results.concat(res.query.querypage.results);
+
+            for (var key in res.query) {
+                if (key != "querypage") {
+                    siteinfo[key] = res.query[key];
+                }
+            }
+
+            if (query.meta) {
+                delete query.meta;
+                delete query.siprop;
+            }
+
+            if (res["query-continue"]) {
+                query.qpoffset = res["query-continue"].querypage.qpoffset;
+                this._getSpecialListContinue(query, call, callArgs, results, siteinfo);
+            }
+            else {
+                call(results, siteinfo, callArgs);
+            }
+        });
     };
 };
 
@@ -2077,6 +2262,102 @@ WM.Parser = new function () {
     };
 };
 
+WM.RecentChanges = new function () {
+    this._makeUI = function (filters) {
+        var divContainer = document.createElement('div');
+        divContainer.id = 'WikiMonkeyRCFilter';
+
+        GM_addStyle("#WikiMonkeyRCFilter-Select, #WikiMonkeyRCFilter-Apply {float:left;} " +
+                    "#WikiMonkeyRCFilter-Select {width:100%; margin-right:-16em;} " +
+                    "#WikiMonkeyRCFilter-Select > p {margin:0 17em 0 0;} " +
+                    "#WikiMonkeyRCFilter-Select > p > select {width:100%;} " +
+                    "#WikiMonkeyRCFilter-Apply > input[type='button'] {margin-right:1em;} " +
+                    "#WikiMonkeyRCFilter-Apply > input[type='checkbox'] {margin-right:0.4em;} " +
+                    "#WikiMonkeyRCFilter-Options {clear:both;}");
+
+        var selectFilterDiv = document.createElement('div');
+        selectFilterDiv.id = 'WikiMonkeyRCFilter-Select';
+
+        var selectFilterP = document.createElement('p');
+
+        var selectFilter = document.createElement('select');
+
+        var option;
+
+        for (var f in filters) {
+            option = document.createElement('option');
+            option.innerHTML = filters[f][1];
+            selectFilter.appendChild(option);
+        }
+
+        selectFilter.addEventListener("change", (function (filters) {
+            return function () {
+                var id = document.getElementById('WikiMonkeyRCFilter-Select').getElementsByTagName('select')[0].selectedIndex;
+                var UI = document.getElementById('WikiMonkeyRCFilter-Options');
+                // [1] Note that this must also be executed immediately, see [2]
+                var makeUI = eval("WM.Plugins." + filters[id][0] + ".makeUI");
+                if (makeUI instanceof Function) {
+                    UI.replaceChild(makeUI(filters[id][2]), UI.firstChild);
+                }
+                else {
+                    // Don't removeChild, otherwise if another plugin with
+                    // interface is selected, replaceChild won't work
+                    UI.replaceChild(document.createElement('div'), UI.firstChild);
+                }
+            }
+        })(filters), false);
+
+        selectFilterP.appendChild(selectFilter);
+        selectFilterDiv.appendChild(selectFilterP);
+
+        var applyFilterDiv = document.createElement('div');
+        applyFilterDiv.id = 'WikiMonkeyRCFilter-Apply';
+
+        var applyFilter = document.createElement('input');
+        applyFilter.type = 'button';
+        applyFilter.value = 'Apply filter';
+        applyFilter.addEventListener("click", function () {
+            var id = document.getElementById('WikiMonkeyRCFilter-Select').getElementsByTagName('select')[0].selectedIndex;
+            eval("WM.Plugins." + filters[id][0] + ".main")(filters[id][2]);
+            this.disabled = true;
+        }, false);
+
+        applyFilterDiv.appendChild(applyFilter);
+
+        var showLog = document.createElement('input');
+        showLog.type = 'checkbox';
+        showLog.addEventListener("change", function () {
+            document.getElementById('WikiMonkeyLog').style.display = (this.checked) ? 'block' : 'none';
+            document.getElementById('WikiMonkeyRCFilter').style.marginBottom = (this.checked) ? '1em' : '0';
+        }, false);
+
+        applyFilterDiv.appendChild(showLog);
+
+        var showLogLabel = document.createElement('span');
+        showLogLabel.innerHTML = 'Show Log';
+
+        applyFilterDiv.appendChild(showLogLabel);
+
+        var divFilter = document.createElement('div');
+        divFilter.id = "WikiMonkeyRCFilter-Options";
+
+        // [2] Note that this is also executed onchange, see [1]
+        var makeUI = eval("WM.Plugins." + filters[0][0] + ".makeUI");
+        if (makeUI instanceof Function) {
+            divFilter.appendChild(makeUI(filters[0][2]));
+        }
+        else {
+            divFilter.appendChild(document.createElement('div'));
+        }
+
+        divContainer.appendChild(selectFilterDiv);
+        divContainer.appendChild(applyFilterDiv);
+        divContainer.appendChild(divFilter);
+
+        return divContainer;
+    };
+};
+
 WM.Tables = new function () {
     this.appendRow = function (source, mark, values) {
         var lastId = source.lastIndexOf('|}' + mark);
@@ -2092,165 +2373,162 @@ WM.Tables = new function () {
 
 WM.UI = new function () {
     var editor = null;
-    
+
     this.setEditor = function(rows) {
         editor = rows;
     };
-    
+
     var diff = null;
-    
+
     this.setDiff = function(rows) {
         diff = rows;
     };
-    
+
     var category = null;
-    
+
     this.setCategory = function(rows) {
         category = rows;
     };
-    
+
     var whatLinksHere = null;
-    
+
     this.setWhatLinksHere = function(rows) {
         whatLinksHere = rows;
     };
-    
+
     var linkSearch = null;
-    
+
     this.setLinkSearch = function(rows) {
         linkSearch = rows;
     };
-    
+
     var special = null;
-    
+
     this.setSpecial = function(rows) {
         special = rows;
     };
-    
+
+    var recentChanges = null;
+
+    this.setRecentChanges = function(rows) {
+        recentChanges = rows;
+    };
+
     var specialList = null;
-    
+
     this.setSpecialList = function(rows) {
         specialList = rows;
     };
-    
-    this._executeAsync = function (functions, id) {
-        id++;
-        if (functions[id]) {
-            var fid = functions[id];
-            var callContinue = function () {
-                WM.UI._executeAsync(functions, id);
-            };
-            fid[0](fid[1], callContinue);
-        }
-    };
-    
+
     var makeButtons = function (functions) {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyButtons';
-        
+
         GM_addStyle("#WikiMonkeyButtons div.shortcut {position:absolute;} " +
                     "#WikiMonkeyButtons div.shortcut > input, #WikiMonkeyButtonAll {font-weight:bold;} " +
                     "#WikiMonkeyButtons div.row {margin-bottom:0.67em;} " +
                     "#WikiMonkeyButtons div.plugins {margin-left:9em;} " +
                     "#WikiMonkeyButtons div.pluginUI {display:inline-block; margin-right:0.33em;}");
-        
+
         var buttonAll = document.createElement('input');
         buttonAll.setAttribute('type', 'button');
         buttonAll.setAttribute('value', 'Execute all');
         buttonAll.id = "WikiMonkeyButtonAll";
-        
+
         var allFunctions = [];
         var rowsN = 0;
-        
+
         for (var r in functions) {
             var row = functions[r];
-            
+
             var buttonRow = document.createElement('input');
             buttonRow.setAttribute('type', 'button');
             buttonRow.setAttribute('value', 'Execute row');
-            
+
             var pRow = document.createElement('div');
             pRow.className = "shortcut";
             pRow.appendChild(buttonRow);
-            
+
             var divPlugins = document.createElement('div');
             divPlugins.className = "plugins";
-            
+
             var divRow = document.createElement('div');
             divRow.className = "row";
             divRow.appendChild(pRow);
-            
+
             var rowFunctions = [];
             var buttonsN = 0;
-            
+
             for (var f in row) {
                 var ff = row[f];
-                
+
                 var buttonFunction = document.createElement('input');
                 buttonFunction.setAttribute('type', 'button');
                 buttonFunction.setAttribute('value', ff[1]);
-                
+
                 buttonFunction.addEventListener("click", (function (fn, arg) {
                     return function () {
                         // window[string] doesn't work
                         eval("WM.Plugins." + fn + ".main")(arg, null);
                     }
                 })(ff[0], ff[2]), false);
-                
+
                 // window[string] doesn't work
                 var exFunction = eval("WM.Plugins." + ff[0] + ".main");
                 rowFunctions.push([exFunction, ff[2]]);
                 allFunctions.push([exFunction, ff[2]]);
-                
+
                 var divFunction = document.createElement('div');
                 divFunction.className = 'pluginUI';
                 divFunction.appendChild(buttonFunction);
-                
+
                 var makeUI = eval("WM.Plugins." + ff[0] + ".makeUI");
                 if (makeUI instanceof Function) {
                     divFunction.appendChild(makeUI(ff[2]));
                 }
-                
+
                 divPlugins.appendChild(divFunction);
-                
+
                 buttonsN++;
             }
-            
+
             buttonRow.addEventListener("click", (function (rowFunctions) {
                 return function () {
-                    WM.UI._executeAsync(rowFunctions, -1);
+                    Alib.Async.executeAsync(rowFunctions, -1);
                 };
             })(rowFunctions), false);
-            
+
             divRow.appendChild(divPlugins);
             divContainer.appendChild(divRow);
-            
+
             if (buttonsN <= 1) {
                 buttonRow.disabled = true;
             }
-            
+
             rowsN++;
         }
-        
+
         buttonAll.addEventListener("click", (function (allFunctions) {
             return function () {
-                WM.UI._executeAsync(allFunctions, -1);
+                Alib.Async.executeAsync(allFunctions, -1);
             };
         })(allFunctions), false);
-        
+
         if (rowsN > 1) {
             divRow = document.createElement('div');
             divRow.className = "row";
             divRow.appendChild(buttonAll);
             divContainer.appendChild(divRow);
         }
-        
+
         return divContainer;
     };
-    
+
     this._makeUI = function () {
         var nextNode, UI;
-        
+        var display = true;
+        var displayLog = true;
+
         if (document.getElementById('editform')) {
             nextNode = document.getElementById('wpSummaryLabel').parentNode.nextSibling;
             UI = (editor) ? makeButtons(editor) : null;
@@ -2262,53 +2540,100 @@ WM.UI = new function () {
         else if (document.getElementById('mw-subcategories') || document.getElementById('mw-pages')) {
             nextNode = document.getElementById('bodyContent');
             UI = (category) ? WM.Bot._makeUI(category, [[document.getElementById('mw-pages'), 0, "Pages"], [document.getElementById('mw-subcategories'), 0, "Subcategories"]]) : null;
+            display = false;
         }
         else if (document.getElementById('mw-whatlinkshere-list')) {
             nextNode = document.getElementById('bodyContent').getElementsByTagName('form')[0].nextSibling;
             UI = (whatLinksHere) ? WM.Bot._makeUI(whatLinksHere, [[document.getElementById('mw-whatlinkshere-list'), 0, "Pages"]]) : null;
+            display = false;
         }
         else if (document.getElementById('mw-linksearch-form') && document.getElementById('bodyContent').getElementsByTagName('ol')[0]) {
             nextNode = document.getElementById('mw-linksearch-form').nextSibling;
             UI = (linkSearch) ? WM.Bot._makeUI(linkSearch, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 1, "Pages"]]) : null;
-        }
-        else if (location.href.indexOf(WM.MW.getWikiPaths().articles + "Special:SpecialPages") > -1) {
-            nextNode = document.getElementById('bodyContent');
-            UI = (special) ? makeButtons(special) : null;
+            display = false;
         }
         else {
-            nextNode = document.getElementById('bodyContent');
-            var nextNodeDivs = nextNode.getElementsByTagName('div');
-            // Using for...in to loop through node lists is not supported by Chrome
-            for (var div = 0; div < nextNodeDivs.length; div++) {
-                if (nextNodeDivs[div].className == 'mw-spcontent') {
-                    UI = (specialList) ? WM.Bot._makeUI(specialList, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
-                    break;
+            var patt1 = new RegExp(Alib.RegEx.escapePattern(WM.MW.getWikiPaths().full) + "\?.*?" + "title\=Special\:SpecialPages", '');
+            var patt2 = new RegExp(Alib.RegEx.escapePattern(WM.MW.getWikiPaths().full) + "\?.*?" + "title\=Special\:RecentChanges", '');
+
+            if (location.href.indexOf(WM.MW.getWikiPaths().short + "Special:SpecialPages") > -1 ||
+                location.href.search(patt1) > -1) {
+                nextNode = document.getElementById('bodyContent');
+                UI = (special) ? makeButtons(special) : null;
+            }
+            else if (location.href.indexOf(WM.MW.getWikiPaths().short + "Special:RecentChanges") > -1 ||
+                     location.href.search(patt2) > -1) {
+                nextNode = document.getElementById('mw-content-text').getElementsByTagName('h4')[0];
+                UI = (recentChanges) ? WM.RecentChanges._makeUI(recentChanges) : null;
+                displayLog = false;
+            }
+            else {
+                nextNode = document.getElementById('bodyContent');
+                var nextNodeDivs = nextNode.getElementsByTagName('div');
+                // Using for...in to loop through node lists is not supported by Chrome
+                for (var div = 0; div < nextNodeDivs.length; div++) {
+                    if (nextNodeDivs[div].className == 'mw-spcontent') {
+                        UI = (specialList) ? WM.Bot._makeUI(specialList, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
+                        display = false;
+                        break;
+                    }
                 }
             }
         }
-        
+
         if (UI) {
+            GM_addStyle("#WikiMonkey {position:relative;} " +
+                        "#WikiMonkey fieldset {margin:0 0 1em 0;}");
+
             var main = document.createElement('fieldset');
             main.id = 'WikiMonkey';
-            
-            GM_addStyle("#WikiMonkey {position:relative;} " +
-                        "#WikiMonkey fieldset {margin:0 0 1em 0;} " +
-                        "#WikiMonkeyHelp {position:absolute; top:1em; right:0.6em;}");
-            
+
             var legend = document.createElement('legend');
-            legend.innerHTML = 'Wiki Monkey';
+            legend.appendChild(document.createTextNode('Wiki Monkey '));
+
+            var hide = document.createElement('a');
+            hide.href = '#WikiMonkey';
+            hide.innerHTML = '[hide]';
+            hide.addEventListener("click", function () {
+                var wmmain = document.getElementById('WikiMonkeyMain');
+                if (wmmain.style.display == 'none') {
+                    wmmain.style.display = 'block';
+                    this.innerHTML = '[hide]';
+                }
+                else {
+                    wmmain.style.display = 'none';
+                    this.innerHTML = '[show]';
+                }
+                return false;
+            }, false);
+            legend.appendChild(hide);
+
+            legend.appendChild(document.createTextNode(' '));
+
+            var help = document.createElement('a');
+            help.href = 'https://github.com/kynikos/wiki-monkey/wiki'
+            help.innerHTML = '[help]';
+            legend.appendChild(help);
+
             main.appendChild(legend);
-    
-            var help = document.createElement('p');
-            help.id = 'WikiMonkeyHelp';
-            var helpln = document.createElement('a');
-            helpln.href = 'https://github.com/kynikos/wiki-monkey/wiki'
-            helpln.innerHTML = 'help';
-            help.appendChild(helpln);
-            main.appendChild(help);
-            
-            main.appendChild(UI);
-            main.appendChild(WM.Log._makeLogArea());
+
+            var main2 = document.createElement('div');
+            main2.id = 'WikiMonkeyMain';
+
+            main2.appendChild(UI);
+
+            var logArea = WM.Log._makeLogArea();
+            if (!displayLog) {
+                logArea.style.display = 'none';
+            }
+            main2.appendChild(logArea);
+
+            if (!display) {
+                main2.style.display = 'none';
+                hide.innerHTML = '[show]';
+            }
+            main.appendChild(main2);
+
             nextNode.parentNode.insertBefore(main, nextNode);
         }
     };
@@ -2539,6 +2864,8 @@ WM.UI.setWhatLinksHere(null);
 WM.UI.setLinkSearch(null);
 
 WM.UI.setSpecial(null);
+
+WM.UI.setRecentChanges(null);
 
 WM.UI.setSpecialList(null);
 
