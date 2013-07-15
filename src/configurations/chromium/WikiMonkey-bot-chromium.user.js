@@ -3,14 +3,14 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.11.2dev-bot-chromium
+// @version 1.12.0-bot-chromium
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/chromium/WikiMonkey-bot-chromium.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/development/src/configurations/chromium/WikiMonkey-bot-chromium.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/development/src/files/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/development/src/files/wiki-monkey-64.png
+// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-bot-chromium.meta.js
+// @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-bot-chromium.user.js
+// @icon https://raw.github.com/kynikos/wiki-monkey/1.12.0/src/files/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.12.0/src/files/wiki-monkey-64.png
 // @match http://*.wikipedia.org/*
 // @match https://wiki.archlinux.org/*
 // ==/UserScript==
