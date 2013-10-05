@@ -5,15 +5,15 @@ import os
 import re
 
 # Usage:
-# ./release.py development
+# ./release.py DEVELOP_VERSION
 # ./release.py VERSION ALIB_VERSION
 
 development = re.search("(^|[^a-z])dev", sys.argv[1], re.I)
 
 CONFIG = {
     "VERSION": sys.argv[1],
-    "REPO_VERSION": "development" if development else sys.argv[1],
-    "UPDATE": "development" if development else "master",
+    "REPO_VERSION": "develop" if development else sys.argv[1],
+    "UPDATE": "develop" if development else "master",
     "PATH": "../configurations",
     "ALIB_VERSION": "master" if development else sys.argv[2],
     "ALIB_PATH": "../../../js-aux-lib/src",
