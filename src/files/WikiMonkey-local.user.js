@@ -46,6 +46,7 @@
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiWantedCategories.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ExpandContractions.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/FixBacklinkFragments.js
+// @require file:///mnt/archive/Development/wiki-monkey/src/plugins/FixFragments.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/FixDoubleRedirects.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/MultipleLineBreaks.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/SimpleReplace.js
@@ -59,6 +60,7 @@ WM.UI.setEditor([
         ["ArchWikiFixHeadings", "Fix headings", null],
         ["ArchWikiFixLinks", "Fix links", null],
         ["ArchWikiNewTemplates", "Use code templates", null],
+        ["FixFragments", "Fix section links", null],
         ["ExpandContractions", "Expand contractions", null],
         ["MultipleLineBreaks", "Multiple line breaks", null]
     ],

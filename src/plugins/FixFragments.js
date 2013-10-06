@@ -1,0 +1,75 @@
+WM.Plugins.FixFragments = new function () {
+    var fixLinks = function (title, source) {
+        var sections = WM.Parser.findSectionHeadings(source).sections;
+
+        var slinks = WM.Parser.findSectionLinks(source);
+        var newtext1 = "";
+        var prevId = 0;
+
+        for (var l = 0; l < slinks.length; l++) {
+            var link = slinks[l];
+            newtext1 += source.substring(prevId, link.index);
+            newtext1 += fixLink(source, sections, link.match[0], link.match[1], link.match[2]);
+            prevId = link.index + link.length;
+        }
+        newtext1 += source.substr(prevId);
+
+        // Note that it's impossible to recognize any namespaces in the title without querying the server
+        // Alternatively, a list of the known namespaces could be maintained for each wiki
+        // Recognizing namespaces would let recognize more liberal link syntaxes (e.g. spaces around the colon)
+        var ilinks = WM.Parser.findInternalLinks(newtext1, null, title);
+        var newtext2 = "";
+        var prevId = 0;
+
+        for (var l = 0; l < ilinks.length; l++) {
+            var link = ilinks[l];
+            newtext2 += newtext1.substring(prevId, link.index);
+            var rawfragment = link.match[5];
+
+            if (rawfragment) {
+                newtext2 += fixLink(newtext1, sections, link.match[0], rawfragment, link.match[6]);
+            }
+            else {
+                newtext2 += link.match[0];
+            }
+
+            prevId = link.index + link.length;
+        }
+        newtext2 += newtext1.substr(prevId);
+
+        return newtext2;
+    };
+
+    var fixLink = function (source, sections, rawlink, rawfragment, lalt) {
+        var fragment = WM.Parser.convertUnderscoresToSpaces(rawfragment).trim();
+
+        for (var s = 0; s < sections.length; s++) {
+            var heading = WM.Parser.convertUnderscoresToSpaces(sections[s].heading);
+
+            if (heading.toLowerCase() == fragment.toLowerCase()) {
+                return newlink = "[[#" + heading + ((lalt) ? "|" + lalt : "") + "]]";
+            }
+        }
+
+        WM.Log.logWarning("Cannot fix broken section link: " + rawlink);
+        return rawlink;
+    };
+
+    this.main = function (args, callNext) {
+        var title = WM.Editor.getTitle();
+        var source = WM.Editor.readSource();
+        var newtext = fixLinks(title, source);
+
+        if (newtext != source) {
+            WM.Editor.writeSource(newtext);
+            WM.Log.logInfo("Fixed section links");
+        }
+        else {
+            WM.Log.logInfo("No fixable section links found");
+        }
+
+        if (callNext) {
+            callNext();
+        }
+    };
+};
