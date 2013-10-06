@@ -200,16 +200,16 @@ WM.UI = new function () {
             display = false;
         }
         else {
-            var patt1 = new RegExp(Alib.RegEx.escapePattern(WM.MW.getWikiPaths().full) + "\?.*?" + "title\=Special\:SpecialPages", '');
-            var patt2 = new RegExp(Alib.RegEx.escapePattern(WM.MW.getWikiPaths().full) + "\?.*?" + "title\=Special\:RecentChanges", '');
+            var patt1 = new RegExp(Alib.RegEx.escapePattern(WM.MW.getWikiPaths().full) + "\?.*?" + "title\\=Special(\\:|%3[Aa])SpecialPages", '');
+            var patt2 = new RegExp(Alib.RegEx.escapePattern(WM.MW.getWikiPaths().short) + "Special(\\:|%3[Aa])SpecialPages", '');
+            var patt3 = new RegExp(Alib.RegEx.escapePattern(WM.MW.getWikiPaths().full) + "\?.*?" + "title\\=Special(\\:|%3[Aa])RecentChanges", '');
+            var patt4 = new RegExp(Alib.RegEx.escapePattern(WM.MW.getWikiPaths().short) + "Special(\\:|%3[Aa])RecentChanges", '');
 
-            if (location.href.indexOf(WM.MW.getWikiPaths().short + "Special:SpecialPages") > -1 ||
-                location.href.search(patt1) > -1) {
+            if (location.href.search(patt1) > -1 || location.href.search(patt2) > -1) {
                 nextNode = document.getElementById('bodyContent');
                 UI = (special) ? makeButtons(special) : null;
             }
-            else if (location.href.indexOf(WM.MW.getWikiPaths().short + "Special:RecentChanges") > -1 ||
-                     location.href.search(patt2) > -1) {
+            else if (location.href.search(patt3) > -1 || location.href.search(patt4) > -1) {
                 nextNode = document.getElementById('mw-content-text').getElementsByTagName('h4')[0];
                 UI = (recentChanges) ? WM.RecentChanges._makeUI(recentChanges) : null;
                 displayLog = false;
