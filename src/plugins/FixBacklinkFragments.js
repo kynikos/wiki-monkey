@@ -100,7 +100,7 @@ WM.Plugins.FixBacklinkFragments = new function () {
                                [callBot, sections]);
         }
         else {
-            callBot(true, sections);
+            callBot(0, sections);
         }
     };
 
@@ -109,7 +109,7 @@ WM.Plugins.FixBacklinkFragments = new function () {
         var sections = args[1];
 
         if (res.edit && res.edit.result == 'Success') {
-            callBot(true, sections);
+            callBot(1, sections);
         }
         else {
             WM.Log.logError(res['error']['info'] + " (" + res['error']['code'] + ")");

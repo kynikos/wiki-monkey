@@ -33,13 +33,13 @@ WM.Plugins.ArchWikiWantedCategories = new function () {
                                callBot);
         }
         else {
-            callBot(true, null);
+            callBot(0, null);
         }
     };
 
     this.mainAutoEnd = function (res, callBot) {
         if (res.edit && res.edit.result == 'Success') {
-            callBot(true, null);
+            callBot(1, null);
         }
         else {
             WM.Log.logError(res['error']['info'] + " (" + res['error']['code'] + ")");

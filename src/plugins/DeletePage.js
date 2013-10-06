@@ -73,7 +73,7 @@ WM.Plugins.DeletePage = new function () {
             callBot(false, null);
         }
         else {
-            callBot(true, null);
+            callBot(1, null);
         }
     };
 };

@@ -414,46 +414,62 @@ WM.Bot = new function () {
             WM.Bot._disableStartBot('Bot is running...');
             WM.Bot._disableControls();
             WM.Bot.selections.visited = [];
-            WM.Bot._processItem(items, 0, linkId, null);
+            WM.Bot._processItem(0, items, 0, linkId, null);
         }
     };
 
-    this._processItem = function (items, index, linkId, chainArgs) {
-        var interval;
-        if (WM.MW.isUserBot()) {
-            interval = 8000;
-        }
-        else {
-            interval = 90000;
-        }
-
+    this._processItem = function (status, items, index, linkId, chainArgs) {
         if (items[index]) {
             var link = items[index].getElementsByTagName('a')[linkId];
             var title = link.title;
+
             if (canProcessPage(title)) {
+                var interval;
+
+                if (status === 0) {
+                    interval = 1000;
+                }
+                else if (WM.MW.isUserBot()) {
+                    interval = 3000;
+                }
+                else {
+                    interval = 30000;
+                }
+
                 WM.Log.logInfo('Waiting ' + (interval / 1000) + ' seconds...');
+
                 var stopId = setTimeout((function (lis, id, ln, article, chainArgs) {
                     return function () {
                         // Stop must be disabled before any check is performed
                         WM.Bot._disableStopBot();
+
                         // Check here if other bots have been started,
                         // _not_ before setTimeout!
                         if (!WM.Bot._checkOtherBotsRunning()) {
                             ln.className = "WikiMonkeyBotProcessing";
                             WM.Log.logInfo("Processing " + article + "...");
+
                             WM.Bot.selections.function_(article, (function (lis, id, linkId, ln, article) {
-                                return function (res, resArgs) {
-                                    if (res === true) {
-                                        ln.className = "WikiMonkeyBotProcessed";
-                                        WM.Log.logInfo(article + " processed");
-                                        // Do not increment directly in the function's call!
-                                        id++;
-                                        WM.Bot._processItem(lis, id, linkId, resArgs);
-                                    }
-                                    else {
-                                        ln.className = "WikiMonkeyBotFailed";
-                                        WM.Log.logError("Error processing " + article + ", stopping the bot");
-                                        WM.Bot._endAutomatic(true);
+                                return function (status, resArgs) {
+                                    switch (status) {
+                                        case 0:
+                                            ln.className = "WikiMonkeyBotProcessed";
+                                            WM.Log.logInfo(article + " processed");
+                                            // Do not increment directly in the function's call!
+                                            id++;
+                                            WM.Bot._processItem(status, lis, id, linkId, resArgs);
+                                            break;
+                                        case 1:
+                                            ln.className = "WikiMonkeyBotProcessed";
+                                            WM.Log.logInfo(article + " processed");
+                                            // Do not increment directly in the function's call!
+                                            id++;
+                                            WM.Bot._processItem(status, lis, id, linkId, resArgs);
+                                            break;
+                                        default:
+                                            ln.className = "WikiMonkeyBotFailed";
+                                            WM.Log.logError("Error processing " + article + ", stopping the bot");
+                                            WM.Bot._endAutomatic(true);
                                     }
                                 };
                             })(lis, id, linkId, ln, article), chainArgs);
@@ -464,12 +480,13 @@ WM.Bot = new function () {
                         }
                     };
                 })(items, index, link, title, chainArgs), interval);
+
                 this._enableStopBot(stopId);
             }
             else {
                 // Do not increment directly in the function's call!
                 index++;
-                WM.Bot._processItem(items, index, linkId, chainArgs);
+                WM.Bot._processItem(status, items, index, linkId, chainArgs);
             }
         }
         else {

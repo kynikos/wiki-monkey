@@ -146,7 +146,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
                                    callBot);
             }
             else {
-                callBot(true, null);
+                callBot(0, null);
             }
         }
         else {
@@ -156,7 +156,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
 
     this.mainAutoEnd = function (res, callBot) {
         if (res.edit && res.edit.result == 'Success') {
-            callBot(true, null);
+            callBot(1, null);
         }
         else {
             callBot(false, null);
