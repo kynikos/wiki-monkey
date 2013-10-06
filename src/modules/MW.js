@@ -255,11 +255,11 @@ WM.MW = new function () {
 
     this.callQuery = function (params, call, callArgs) {
         params.action = "query";
-        var callBack = function (res) {
+        var callBack = function (res, args) {
             var page = Alib.Obj.getFirstItem(res.query.pages);
-            call(page, callArgs);
+            call(page, args);
         };
-        this.callAPIGet(params, null, callBack);
+        this.callAPIGet(params, null, callBack, callArgs);
     };
 
     this.callQueryEdit = function (title, call, callArgs) {
@@ -267,13 +267,14 @@ WM.MW = new function () {
             var source = page.revisions[0]["*"];
             var timestamp = page.revisions[0].timestamp;
             var edittoken = page.edittoken;
-            call(title, source, timestamp, edittoken, callArgs);
+            call(title, source, timestamp, edittoken, args);
         };
         this.callQuery({prop: "info|revisions",
                         rvprop: "content|timestamp",
                         intoken: "edit",
                         titles: title},
-                        callBack);
+                        callBack,
+                        callArgs);
     };
 
     var userInfo;
@@ -324,16 +325,17 @@ WM.MW = new function () {
     };
 
     this._getBacklinksContinue = function (query, call, callArgs, backlinks) {
-        WM.MW.callAPIGet(query, null, function (res) {
+        WM.MW.callAPIGet(query, null, function (res, args) {
             backlinks = backlinks.concat(res.query.backlinks);
             if (res["query-continue"]) {
                 query.blcontinue = res["query-continue"].backlinks.blcontinue;
-                this._getBacklinksContinue(query, call, callArgs, backlinks);
+                this._getBacklinksContinue(query, call, args, backlinks);
             }
             else {
-                call(backlinks, callArgs);
+                call(backlinks, args);
             }
-        });
+        },
+        callArgs);
     };
 
     this.getLanglinks = function (title, iwmap, call, callArgs) {
@@ -354,7 +356,7 @@ WM.MW = new function () {
     };
 
     this._getLanglinksContinue = function (query, call, callArgs, langlinks, iwmap) {
-        WM.MW.callAPIGet(query, null, function (res) {
+        WM.MW.callAPIGet(query, null, function (res, args) {
             var page = Alib.Obj.getFirstItem(res.query.pages);
             langlinks = langlinks.concat(page.langlinks);
 
@@ -370,12 +372,13 @@ WM.MW = new function () {
 
             if (res["query-continue"]) {
                 query.llcontinue = res["query-continue"].langlinks.llcontinue;
-                this._getLanglinksContinue(query, call, callArgs, langlinks, iwmap);
+                this._getLanglinksContinue(query, call, args, langlinks, iwmap);
             }
             else {
-                call(langlinks, iwmap, callArgs);
+                call(langlinks, iwmap, args);
             }
-        });
+        },
+        callArgs);
     };
 
     this.getInterwikiMap = function (title, call, callArgs) {
@@ -387,9 +390,10 @@ WM.MW = new function () {
              siprop: "interwikimap",
              sifilteriw: "local"},
             null,
-            function (res) {
-                call(res.query.interwikimap, callArgs);
-            }
+            function (res, args) {
+                call(res.query.interwikimap, args);
+            },
+            callArgs
         );
     };
 
@@ -408,7 +412,7 @@ WM.MW = new function () {
     };
 
     this._getSpecialListContinue = function (query, call, callArgs, results, siteinfo) {
-        WM.MW.callAPIGet(query, null, function (res) {
+        WM.MW.callAPIGet(query, null, function (res, args) {
             results = results.concat(res.query.querypage.results);
 
             for (var key in res.query) {
@@ -424,11 +428,12 @@ WM.MW = new function () {
 
             if (res["query-continue"]) {
                 query.qpoffset = res["query-continue"].querypage.qpoffset;
-                this._getSpecialListContinue(query, call, callArgs, results, siteinfo);
+                this._getSpecialListContinue(query, call, args, results, siteinfo);
             }
             else {
-                call(results, siteinfo, callArgs);
+                call(results, siteinfo, args);
             }
-        });
+        },
+        callArgs);
     };
 };

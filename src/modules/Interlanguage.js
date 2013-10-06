@@ -1,19 +1,19 @@
 /*
  *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
  *  Copyright (C) 2011-2013 Dario Giovannetti <dev@dariogiovannetti.net>
- * 
+ *
  *  This file is part of Wiki Monkey.
- * 
+ *
  *  Wiki Monkey is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  Wiki Monkey is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- * 
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -24,7 +24,7 @@ WM.Interlanguage = new function () {
             source,
             whitelist.join("|")
         );
-        
+
         var langlinks = [];
         for (var p in parsedLinks) {
             var link = parsedLinks[p];
@@ -46,10 +46,10 @@ WM.Interlanguage = new function () {
                 length: link.length,
             });
         }
-        
+
         return langlinks;
     };
-    
+
     this.queryLinks = function (api, title, whitelist, callEnd, callArgs) {
         WM.MW.callAPIGet(
             {
@@ -81,7 +81,7 @@ WM.Interlanguage = new function () {
                     var iwmap = res.query.interwikimap;
                     var langlinks = "missing";
                 }
-                
+
                 callEnd(
                     api,
                     title,
@@ -91,12 +91,13 @@ WM.Interlanguage = new function () {
                     source,
                     timestamp,
                     edittoken,
-                    callArgs
+                    args
                 );
-            }
+            },
+            callArgs
         );
     };
-    
+
     this.createNewLink = function (origTag, title, url) {
         return {
             origTag: origTag,
@@ -104,7 +105,7 @@ WM.Interlanguage = new function () {
             url: url,
         };
     };
-    
+
     this.createVisitedLink = function (origTag, title, url, iwmap, api, source, timestamp, edittoken, links) {
         var entry = {
             origTag: origTag,
@@ -122,7 +123,7 @@ WM.Interlanguage = new function () {
         }
         return entry;
     };
-    
+
     this.collectLinks = function (visitedlinks, newlinks, whitelist, error, callEnd, callArgs) {
         // If error is "missing" it should be possible to continue safely
         if (error != "conflict") {
@@ -130,17 +131,17 @@ WM.Interlanguage = new function () {
                 var link = newlinks[tag];
                 break;
             }
-            
+
             if (link) {
                 var origTag = link.origTag;
                 var title = link.title;
                 var url = link.url;
                 var api = WM.MW.getWikiPaths(url).api;
-                
+
                 delete newlinks[tag];
-                
+
                 WM.Log.logInfo("Reading " + url + "...");
-                
+
                 this.queryLinks(
                     api,
                     title,
@@ -157,7 +158,7 @@ WM.Interlanguage = new function () {
             callEnd(error, callArgs);
         }
     };
-    
+
     this._collectLinksContinue = function (api, title, whitelist, langlinks, iwmap, source, timestamp, edittoken, args) {
         var url = args[0];
         var tag = args[1];
@@ -166,12 +167,12 @@ WM.Interlanguage = new function () {
         var newlinks = args[4];
         var callEnd = args[5];
         var callArgs = args[6];
-            
+
         var error = "";
-        
+
         if (langlinks != "missing") {
             visitedlinks[tag] = WM.Interlanguage.createVisitedLink(origTag, title, url, iwmap, api, source, timestamp, edittoken, langlinks);
-            
+
             for (var l in langlinks) {
                 var link = langlinks[l];
                 if (!visitedlinks[link.lang.toLowerCase()] && !newlinks[link.lang.toLowerCase()]) {
@@ -193,7 +194,7 @@ WM.Interlanguage = new function () {
             error = "missing";
             WM.Log.logWarning("[[" + tag + ":" + title + "]] seems to point to a non-existing article, removing it");
         }
-        
+
         WM.Interlanguage.collectLinks(
             visitedlinks,
             newlinks,
@@ -203,11 +204,11 @@ WM.Interlanguage = new function () {
             callArgs
         );
     };
-    
+
     this.updateLinks = function (lang, url, iwmap, source, oldlinks, newlinks) {
         lang = lang.toLowerCase();
         var linkList = [];
-        
+
         for (var tag in newlinks) {
             if (tag != lang) {
                 var link = newlinks[tag];
@@ -229,7 +230,7 @@ WM.Interlanguage = new function () {
                 }
             }
         }
-        
+
         linkList.sort(
             function (a, b) {
                 // Sorting is case sensitive by default
@@ -241,7 +242,7 @@ WM.Interlanguage = new function () {
                     return 0;
             }
         );
-        
+
         var cleanText = "";
         var textId = 0;
         for (var l in oldlinks) {
@@ -250,7 +251,7 @@ WM.Interlanguage = new function () {
             textId = link.index + link.length;
         }
         cleanText += source.substring(textId);
-        
+
         if (oldlinks.length) {
             // Insert the new links at the index of the first previous link
             var firstLink = oldlinks[0].index;
@@ -258,14 +259,14 @@ WM.Interlanguage = new function () {
         else {
             var firstLink = 0;
         }
-        
+
         var part1 = cleanText.substring(0, firstLink);
         var part2a = cleanText.substr(firstLink);
         var firstChar = part2a.search(/[^\s]/);
         var part2b = part2a.substr(firstChar);
-        
+
         var newText = part1 + linkList.join("") + part2b;
-        
+
         return newText;
     };
 };
