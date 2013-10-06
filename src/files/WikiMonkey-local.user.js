@@ -34,6 +34,7 @@
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/RecentChanges.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/Tables.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/UI.js
+// @require file:///mnt/archive/Development/wiki-monkey/src/modules/WhatLinksHere.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiFixHeader.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiFixHeadings.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiFixLinks.js
