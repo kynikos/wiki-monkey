@@ -61,6 +61,12 @@ WM.Parser = new function () {
         return Alib.RegEx.matchAll(source, regExp);
     };
 
+    this.findSectionLinks = function (source) {
+        source = this.neutralizeNowikiTags(source);
+        var regExp = /\[\[:?[ _]*:?[ _]*#(.+?)(?:[ _]*\|\s*(.+?))?\s*\]\]/g;
+        return Alib.RegEx.matchAll(source, regExp);
+    }
+
     this.findInternalLinks = function (source, namespace, title) {
         source = this.neutralizeNowikiTags(source);
         var regExp;
