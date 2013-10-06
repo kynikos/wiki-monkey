@@ -45,6 +45,7 @@
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiSaveTalk.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiWantedCategories.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ExpandContractions.js
+// @require file:///mnt/archive/Development/wiki-monkey/src/plugins/FixBacklinkFragments.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/FixDoubleRedirects.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/MultipleLineBreaks.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/SimpleReplace.js
@@ -101,6 +102,7 @@ WM.UI.setCategory([
 
 WM.UI.setWhatLinksHere([
     ["SimpleReplace", "RegExp substitution", ["1"]],
+    ["FixBacklinkFragments", "Fix backlink fragments", "fix link to section"],
     ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
      [function (title) {
          var language = WM.ArchWiki.detectLanguage(title)[1];
