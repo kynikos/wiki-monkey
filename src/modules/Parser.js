@@ -240,8 +240,8 @@ WM.Parser = new function () {
         var minLevel = MAXLEVEL;
         var maxTocLevel = 0;
         var tocLevel = 1;
-        var regExp = /^(\=+ *.+? *\=+)[ \t]*$/gm;
-        var match, line, L0, L1, level, prevLevels, start, end, tocPeer;
+        var regExp = /^(\=+( *(.+?) *)\=+)[ \t]*$/gm;
+        var match, line, rawheading, heading, L0, L1, level, prevLevels, start, end, tocPeer;
 
         while (true) {
             match = regExp.exec(source);
@@ -249,6 +249,8 @@ WM.Parser = new function () {
             if (match) {
                 L0 = match[0].length;
                 line = match[1];
+                rawheading = match[2];
+                heading = match[3];
                 L1 = line.length;
                 level = 1;
                 start = "=";
@@ -316,6 +318,8 @@ WM.Parser = new function () {
                 }
 
                 sections.push({line: line,
+                               rawheading: rawheading,
+                               heading: heading,
                                level: level,
                                tocLevel: tocLevel,
                                index: (regExp.lastIndex - L0),
