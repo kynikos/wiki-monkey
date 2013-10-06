@@ -77,6 +77,7 @@ WM.MW = new function () {
             full: "/index.php",
             api: "/api.php"
         },
+        // This attribute is generated further below in this module
         local: {},
     };
 
