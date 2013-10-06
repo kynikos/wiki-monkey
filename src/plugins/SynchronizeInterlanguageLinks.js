@@ -94,7 +94,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         }
     };
 
-    this.mainAuto = function (args, title, callBot) {
+    this.mainAuto = function (args, title, callBot, chainArgs) {
         var tag = args[0](title);
         var whitelist = args[1];
         var summary = args[2];
@@ -146,20 +146,20 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
                                    callBot);
             }
             else {
-                callBot(true);
+                callBot(true, null);
             }
         }
         else {
-            callBot(false);
+            callBot(false, null);
         }
     };
 
     this.mainAutoEnd = function (res, callBot) {
         if (res.edit && res.edit.result == 'Success') {
-            callBot(true);
+            callBot(true, null);
         }
         else {
-            callBot(false);
+            callBot(false, null);
         }
     };
 };

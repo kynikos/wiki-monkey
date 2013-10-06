@@ -2,7 +2,7 @@ WM.Plugins.ArchWikiOldAURLinks = new function () {
     var doReplace = function (source, call, callArgs) {
         var regExp = /\[(https?\:\/\/aur\.archlinux\.org\/packages\.php\?ID\=[0-9]+) ([^\]]+?)\]/g;
         var links = [];
-        
+
         while (true) {
             var match = regExp.exec(source);
             if (match) {
@@ -12,12 +12,12 @@ WM.Plugins.ArchWikiOldAURLinks = new function () {
                 break;
             }
         }
-        
+
         var newText = source;
-        
+
         WM.Plugins.ArchWikiOldAURLinks.doReplaceContinue(source, newText, links, 0, call, callArgs);
     };
-    
+
     this.doReplaceContinue = function (source, newText, links, index, call, callArgs) {
         if (links[index]) {
             WM.Log.logInfo("Processing " + links[index][0] + "...");
@@ -67,13 +67,13 @@ WM.Plugins.ArchWikiOldAURLinks = new function () {
             call(source, newText, callArgs);
         }
     };
-    
+
     this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         WM.Log.logInfo("Replacing old-style direct AUR package links...");
         doReplace(source, WM.Plugins.ArchWikiOldAURLinks.mainEnd, callNext);
     };
-    
+
     this.mainEnd = function (source, newtext, callNext) {
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
@@ -82,36 +82,36 @@ WM.Plugins.ArchWikiOldAURLinks = new function () {
         else {
             WM.Log.logInfo("No replaceable old-style AUR package links found");
         }
-        
+
         if (callNext) {
             callNext();
         }
     };
-    
-    this.mainAuto = function (args, title, callBot) {
+
+    this.mainAuto = function (args, title, callBot, chainArgs) {
         var summary = args[0];
-        
+
         WM.MW.callQueryEdit(title,
                             WM.Plugins.ArchWikiOldAURLinks.mainAutoReplace,
                             [summary, callBot]);
     };
-    
+
     this.mainAutoReplace = function (title, source, timestamp, edittoken, args) {
         var summary = args[0];
         var callBot = args[1];
-        
+
         doReplace(source,
                   WM.Plugins.ArchWikiOldAURLinks.mainAutoWrite,
                   [title, edittoken, timestamp, summary, callBot]);
     };
-    
+
     this.mainAutoWrite = function (source, newtext, args) {
         var title = args[0];
         var edittoken = args[1];
         var timestamp = args[2];
         var summary = args[3];
         var callBot = args[4];
-        
+
         if (newtext != source) {
             WM.MW.callAPIPost({action: "edit",
                                bot: "1",
@@ -125,16 +125,16 @@ WM.Plugins.ArchWikiOldAURLinks = new function () {
                                callBot);
         }
         else {
-            callBot(true);
+            callBot(true, null);
         }
     };
-    
+
     this.mainAutoEnd = function (res, callBot) {
         if (res.edit && res.edit.result == 'Success') {
-            callBot(true);
+            callBot(true, null);
         }
         else {
-            callBot(false);
+            callBot(false, null);
         }
     };
 };
