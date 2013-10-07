@@ -1,10 +1,12 @@
 * Make sure to be on the develop branch
+* Check that the basic configurations are up to date
 * Add to compatibility.py (adapt_configuration function) any new adaptations
   that must be done to the compatibility versions
 * Run compatibility.py (check for errors)
 * Commit and push to the remote repository
 * Install all the configurations and check that they work correctly in every
   supported browser
+* Release a new version of Alib if necessary
 * Run release.py VERSION ALIB_VERSION (check that the ALIB_VERSION tag exists)
 * Run compatibility.py
 * Commit
