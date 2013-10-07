@@ -22,6 +22,7 @@
 // @require file:///mnt/archive/Development/js-aux-lib/src/RegEx.js
 // @require file:///mnt/archive/Development/js-aux-lib/src/Str.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/WikiMonkey.js
+// @require file:///mnt/archive/Development/wiki-monkey/src/modules/ArchPackages.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/ArchWiki.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/Bot.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/Cat.js
