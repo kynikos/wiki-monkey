@@ -125,6 +125,20 @@ WM.MW = new function () {
         return getWikiPaths(href);
     };
 
+    this.failedQueryError = function (finalUrl) {
+        return "Failed query: " + finalUrl + "\nYou may have tried to use a " +
+            "plugin which requires cross-origin HTTP requests, but you are " +
+            "not using Scriptish (Firefox), Greasemonkey (Firefox), " +
+            "Tampermonkey (Chrome/Chromium) or a similar extension";
+    };
+
+    this.failedHTTPRequestError = function (err) {
+        return "Failed HTTP request - " + err + "\nYou may have tried to use " +
+            "a plugin which requires cross-origin HTTP requests, but you are " +
+            "not using Scriptish (Firefox), Greasemonkey (Firefox), " +
+            "Tampermonkey (Chrome/Chromium) or a similar extension";
+    };
+
     this.callAPIGet = function (params, api, call, callArgs) {
         if (!api) {
             api = wikiPaths.local.api;
@@ -144,17 +158,12 @@ WM.MW = new function () {
                 }
                 if (json) {
                     // Don't put this into the try block or all its exceptions
-                    // will be catched printing the same API error
+                    // will be caught printing the same API error
                     call(json, callArgs);
                 }
             },
             onerror: function (res) {
-                WM.Log.logError("Failed query: " + res.finalUrl + "\nYou may " +
-                                "have tried to use a plugin which requires " +
-                                "cross-origin HTTP requests, but you are not " +
-                                "using Scriptish (Firefox), Greasemonkey " +
-                                "(Firefox), Tampermonkey (Chrome/Chromium) " +
-                                "or a similar extension");
+                WM.Log.logError(WM.MW.failedQueryError(res.finalUrl));
                 if (confirm("Wiki Monkey error: Failed query\n\nDo you want to retry?")) {
                     WM.Log.logInfo("Retrying...");
                     WM.MW.callAPIGet(params, api, call, callArgs);
@@ -166,11 +175,7 @@ WM.MW = new function () {
             GM_xmlhttpRequest(query);
         }
         catch (err) {
-            WM.Log.logError("Failed HTTP request - " + err + "\nYou may have " +
-                            "tried to use a plugin which requires cross-origin " +
-                            "HTTP requests, but you are not using Scriptish " +
-                            "(Firefox), Greasemonkey (Firefox), Tampermonkey " +
-                            "(Chrome/Chromium) or a similar extension");
+            WM.Log.logError(WM.MW.failedHTTPRequestError(err));
         }
     };
 
@@ -193,17 +198,12 @@ WM.MW = new function () {
                 }
                 if (json) {
                     // Don't put this into the try block or all its exceptions
-                    // will be catched printing the same API error
+                    // will be caught printing the same API error
                     call(json, callArgs);
                 }
             },
             onerror: function (res) {
-                WM.Log.logError("Failed query: " + res.finalUrl + "\nYou may " +
-                                "have tried to use a plugin which requires " +
-                                "cross-origin HTTP requests, but you are not " +
-                                "using Scriptish (Firefox), Greasemonkey " +
-                                "(Firefox), Tampermonkey (Chrome/Chromium) " +
-                                "or a similar extension");
+                WM.Log.logError(WM.MW.failedQueryError(res.finalUrl));
                 if (confirm("Wiki Monkey error: Failed query\n\nDo you want to retry?")) {
                     WM.Log.logInfo("Retrying...");
                     WM.MW.callAPIPost(params, api, call, callArgs);
@@ -238,11 +238,7 @@ WM.MW = new function () {
             GM_xmlhttpRequest(query);
         }
         catch (err) {
-            WM.Log.logError("Failed HTTP request - " + err + "\nYou may have " +
-                            "tried to use a plugin which requires cross-origin " +
-                            "HTTP requests, but you are not using Scriptish " +
-                            "(Firefox), Greasemonkey (Firefox), Tampermonkey " +
-                            "(Chrome/Chromium) or a similar extension");
+            WM.Log.logError(WM.MW.failedHTTPRequestError(err));
         }
     };
 

@@ -44,23 +44,14 @@ WM.Plugins.ArchWikiOldAURLinks = new function () {
                     WM.Plugins.ArchWikiOldAURLinks.doReplaceContinue(source, newText, links, index, call, callArgs);
                 },
                 onerror: function (res) {
-                    WM.Log.logError("Failed query: " + res.finalUrl + "\nYou may " +
-                                    "have tried to use a plugin which requires " +
-                                    "cross-origin HTTP requests, but you are not " +
-                                    "using Scriptish (Firefox), Greasemonkey " +
-                                    "(Firefox), Tampermonkey (Chrome/Chromium) " +
-                                    "or a similar extension");
+                    WM.Log.logError(WM.MW.failedQueryError(res.finalUrl));
                 },
             };
             try {
                 GM_xmlhttpRequest(query);
             }
             catch (err) {
-                WM.Log.logError("Failed HTTP request - " + err + "\nYou may have " +
-                                "tried to use a plugin which requires cross-origin " +
-                                "HTTP requests, but you are not using Scriptish " +
-                                "(Firefox), Greasemonkey (Firefox), Tampermonkey " +
-                                "(Chrome/Chromium) or a similar extension");
+                WM.Log.logError(WM.MW.failedHTTPRequestError(err));
             }
         }
         else {
