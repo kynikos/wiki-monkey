@@ -1,3 +1,3 @@
 // ==UserScript==
-// @version 1.12.0-editor-chromium
+// @version 1.13.0-editor-chromium
 // ==/UserScript==

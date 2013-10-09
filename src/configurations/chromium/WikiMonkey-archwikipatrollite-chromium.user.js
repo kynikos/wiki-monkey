@@ -3,14 +3,14 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.12.0-archwikipatrollite-chromium
+// @version 1.13.0-archwikipatrollite-chromium
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
 // @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-archwikipatrollite-chromium.meta.js
 // @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-archwikipatrollite-chromium.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/1.12.0/src/files/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.12.0/src/files/wiki-monkey-64.png
+// @icon https://raw.github.com/kynikos/wiki-monkey/1.13.0/src/files/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.13.0/src/files/wiki-monkey-64.png
 // @match https://wiki.archlinux.org/*
 // ==/UserScript==
 
@@ -441,22 +441,23 @@ Alib.HTTP = new function () {
         }
         return qd;
     })();
-    
+
     this.getURIParameter = function (name) {
         return queryString[name];
     };
-    
+
     this.getURLParts = function (url) {
-        var re = /^(.+?\:\/\/)([^\/]+)(.+?)(\?.+)$/i;
+        var re = /^(.+?\:\/\/)([^\/]+)(.+?)(\#.+?)?(\?.+)$/i;
         var match = re.match(url);
         return {
             protocol: match[1],
             hostname: match[2],
             path: match[3],
-            query: match[4],
+            fragment: match[4],
+            query: match[5],
         };
     };
-    
+
     this.sendGetAsyncRequest = function (url, call) {
         var req = new XMLHttpRequest();
         req.onreadystatechange = function () {
@@ -467,14 +468,14 @@ Alib.HTTP = new function () {
         req.open("GET", url, true);
         req.send();
     };
-    
+
     this.sendGetSyncRequest = function (url) {
         var req = new XMLHttpRequest();
         req.open("GET", url, false);
         req.send();
         return req;
     };
-    
+
     this.sendPostAsyncRequest = function (url, call, query, header, headervalue) {
         var req = new XMLHttpRequest();
         req.onreadystatechange = function() {
@@ -488,7 +489,7 @@ Alib.HTTP = new function () {
         }
         req.send(query);
     };
-    
+
     this.sendPostSyncRequest = function (url, query, header, headervalue) {
         var req = new XMLHttpRequest();
         req.open("POST", url, false);
@@ -661,7 +662,6 @@ WM.ArchWiki = new function () {
             "Esperanto",
             "Español",
             "Suomi",
-            "Français",
             "עברית",
             "Hrvatski",
             "Magyar",
@@ -755,11 +755,95 @@ WM.ArchWiki = new function () {
     };
 };
 
+WM.ArchPackages = new function () {
+    this.getAURInfo = function (arg, call, callArgs) {
+        // arg can be either an exact package name (string) or an ID (integer)
+        var query = {
+            method: "GET",
+            url: "https://aur.archlinux.org/rpc.php?type=info&arg=" + encodeURIComponent(arg),
+            onload: function (res) {
+                try {
+                    // Currently only Scriptish supports the responseJSON method
+                    //var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
+                    // ... or not?
+                    var json = (Alib.Obj.getFirstItem(res.responseJSON)) ? res.responseJSON : JSON.parse(res.responseText);
+                }
+                catch (err) {
+                    WM.Log.logError("The AUR's RPC interface returned an unexpected object");
+                }
+
+                if (json) {
+                    // Don't put this into the try block or all its exceptions
+                    // will be caught printing the same error
+                    call(json, callArgs);
+                }
+            },
+            onerror: function (res) {
+                WM.Log.logError(WM.MW.failedQueryError(res.finalUrl));
+            },
+        };
+
+        try {
+            GM_xmlhttpRequest(query);
+        }
+        catch (err) {
+            WM.Log.logError(WM.MW.failedHTTPRequestError(err));
+        }
+    };
+
+    this.isOfficialPackage = function (pkg, call, callArgs) {
+        var query = {
+            method: "GET",
+            url: "https://www.archlinux.org/packages/?name=" + encodeURIComponent(pkg),
+            onload: function (res) {
+                // Cannot use the DOMParser because Scriptish/GreaseMonkey
+                // doesn't support XrayWrapper well
+                // See http://www.oreillynet.com/pub/a/network/2005/11/01/avoid-common-greasemonkey-pitfalls.html?page=3
+                // and https://developer.mozilla.org/en/docs/XPConnect_wrappers#XPCNativeWrapper_%28XrayWrapper%29
+                if (res.responseText.search(/<div[^>]+id\=["']pkglist-results["']/) > -1) {
+                    call(true, callArgs);
+                }
+                else {
+                    call(false, callArgs);
+                }
+            },
+            onerror: function (res) {
+                WM.Log.logError(WM.MW.failedQueryError(res.finalUrl));
+            },
+        };
+
+        try {
+            GM_xmlhttpRequest(query);
+        }
+        catch (err) {
+            WM.Log.logError(WM.MW.failedHTTPRequestError(err));
+        }
+    };
+
+    this.isAURPackage = function (pkg, call, callArgs) {
+        var call2 = function (res, args) {
+            if (res.type == "error") {
+                WM.Log.logError("The AUR's RPC interface returned an error: " + res.results);
+            }
+            else {
+                if (res.resultcount > 0) {
+                    call(true, args);
+                }
+                else {
+                    call(false, args);
+                }
+            }
+        }
+
+        WM.ArchPackages.getAURInfo(pkg, call2, callArgs);
+    };
+};
+
 WM.Bot = new function () {
     this._makeUI = function (functions, lists) {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyBot';
-        
+
         GM_addStyle("#WikiMonkeyBot-PluginSelect {width:100%; margin-bottom:1em;} " +
                     "#WikiMonkeyBot-ListSelect {margin-bottom:1em;} " +
                     "#WikiMonkeyBotFilter {height:6em; margin-bottom:1em; resize:vertical;} " +
@@ -768,30 +852,30 @@ WM.Bot = new function () {
                     "a.WikiMonkeyBotProcessing {background-color:#ff8; padding:0.2em 0.4em;} " +
                     "a.WikiMonkeyBotProcessed {background-color:#afa; padding:0.2em 0.4em;} " +
                     "a.WikiMonkeyBotFailed {background-color:orangered; padding:0.2em 0.4em;}");
-        
+
         divContainer.appendChild(makeFunctionUI(functions));
         divContainer.appendChild(makeConfUI(lists));
-        
+
         return divContainer;
     };
-    
+
     var makeFunctionUI = function (functions) {
         var fieldset = document.createElement('fieldset');
-        
+
         var legend = document.createElement('legend');
         legend.innerHTML = 'Plugin';
-        
+
         var selectFunctions = document.createElement('select');
         selectFunctions.id = 'WikiMonkeyBot-PluginSelect';
-        
+
         var option;
-        
+
         for (var f in functions) {
             option = document.createElement('option');
             option.innerHTML = functions[f][1];
             selectFunctions.appendChild(option);
         }
-        
+
         selectFunctions.addEventListener("change", (function (fns) {
             return function () {
                 var select = document.getElementById('WikiMonkeyBot-PluginSelect');
@@ -807,15 +891,15 @@ WM.Bot = new function () {
                     // interface is selected, replaceChild won't work
                     UI.replaceChild(document.createElement('div'), UI.firstChild);
                 }
-                WM.Bot.selections.function_ = function (title, callContinue) {
-                    eval("WM.Plugins." + fns[id][0] + ".mainAuto")(fns[id][2], title, callContinue);
+                WM.Bot.selections.function_ = function (title, callContinue, chainArgs) {
+                    eval("WM.Plugins." + fns[id][0] + ".mainAuto")(fns[id][2], title, callContinue, chainArgs);
                 };
             }
         })(functions), false);
-        
+
         var divFunction = document.createElement('div');
         divFunction.id = "WikiMonkeyBotFunction";
-        
+
         // [2] Note that this is also executed onchange, see [1]
         var makeUI = eval("WM.Plugins." + functions[0][0] + ".makeBotUI");
         if (makeUI instanceof Function) {
@@ -825,34 +909,34 @@ WM.Bot = new function () {
             divFunction.appendChild(document.createElement('div'));
         }
         // Don't use "this.selections"
-        WM.Bot.selections.function_ = function (title, callContinue) {
-            eval("WM.Plugins." + functions[0][0] + ".mainAuto")(functions[0][2], title, callContinue);
+        WM.Bot.selections.function_ = function (title, callContinue, chainArgs) {
+            eval("WM.Plugins." + functions[0][0] + ".mainAuto")(functions[0][2], title, callContinue, chainArgs);
         };
-        
+
         fieldset.appendChild(legend);
         fieldset.appendChild(selectFunctions);
         fieldset.appendChild(divFunction);
-        
+
         return fieldset;
     };
-    
+
     this.selections = {function_: function () {},
                        list: {current: null,
                               previous: null},
                        visited: []};
-    
+
     var makeListSelector = function (lists) {
         var selectLists = document.createElement('select');
         selectLists.id = 'WikiMonkeyBot-ListSelect';
-        
+
         var option;
-        
+
         for (var l in lists) {
             if (lists[l][0]) {
                 option = document.createElement('option');
                 option.innerHTML = lists[l][2];
                 selectLists.appendChild(option);
-                
+
                 if (!WM.Bot.selections.list.current) {
                     // [1] Note that this is also executed onchange, see [2]
                     // Don't use "this.selections"
@@ -860,7 +944,7 @@ WM.Bot = new function () {
                 }
             }
         }
-        
+
         selectLists.addEventListener("change", (function (lss) {
             return function () {
                 var select = document.getElementById('WikiMonkeyBot-ListSelect');
@@ -870,52 +954,52 @@ WM.Bot = new function () {
                 WM.Bot.selections.list.current = lss[id];
             }
         })(lists), false);
-        
+
         return selectLists;
     };
-    
+
     var makeConfUI = function (lists) {
         var bot = document.createElement('div');
-        
+
         var fieldset = document.createElement('fieldset');
-        
+
         var legend = document.createElement('legend');
         legend.innerHTML = 'Filter';
-        
+
         var listSelect = makeListSelector(lists);
-        
+
         var filter = document.createElement('textarea');
         filter.id = 'WikiMonkeyBotFilter';
-        
+
         var preview = document.createElement('input');
         preview.id = 'WikiMonkeyBotPreview';
         preview.type = 'button';
         preview.value = 'Preview';
-        
+
         var duplicates = document.createElement('input');
         duplicates.type = 'checkbox';
         duplicates.id = 'WikiMonkeyBotDuplicates';
-        
+
         var inverse = document.createElement('input');
         inverse.type = 'checkbox';
         inverse.id = 'WikiMonkeyBotInverse';
-        
+
         var elems = [filter, duplicates, inverse];
-        
+
         for (var e in elems) {
             elems[e].addEventListener("change", function () {
                 WM.Bot._disableStartBot('Filters have changed, preview the selection');
             }, false);
         }
-        
+
         var duplicatestag = document.createElement('span');
         duplicatestag.innerHTML = 'Duplicates';
-        
+
         var inversetag = document.createElement('span');
         inversetag.innerHTML = 'Inverse';
-        
+
         preview.addEventListener("click", WM.Bot._previewFilter, false);
-        
+
         fieldset.appendChild(legend);
         if (listSelect.length > 1) {
             fieldset.appendChild(listSelect);
@@ -926,58 +1010,58 @@ WM.Bot = new function () {
         fieldset.appendChild(duplicatestag);
         fieldset.appendChild(inverse);
         fieldset.appendChild(inversetag);
-        
+
         var start = document.createElement('input');
         start.type = 'button';
         start.value = 'Start bot';
         start.id = 'WikiMonkeyBotStart';
-        
+
         start.addEventListener("click", WM.Bot._startAutomatic, false);
-        
+
         start.disabled = true;
-        
+
         var startMsg = document.createElement('span');
         startMsg.innerHTML = 'Set and preview the filter first';
         startMsg.id = 'WikiMonkeyBotStartMsg';
-        
+
         var forceStart = document.createElement('span');
         forceStart.id = 'WikiMonkeyBotForceStart';
-        
+
         var forceStartCB = document.createElement('input');
         forceStartCB.type = 'checkbox';
         forceStartCB.disabled = true;
-        
+
         var forceStartLabel = document.createElement('span');
         forceStartLabel.innerHTML = 'Force start, stopping the currently running bot';
-        
+
         forceStart.style.display = "none";
         forceStart.appendChild(forceStartCB);
         forceStart.appendChild(forceStartLabel);
-        
+
         bot.appendChild(fieldset);
         bot.appendChild(start);
         bot.appendChild(startMsg);
         bot.appendChild(forceStart);
-        
+
         return bot;
     };
-    
+
     this._enableStartBot = function () {
         document.getElementById('WikiMonkeyBotStartMsg').innerHTML = '';
         document.getElementById('WikiMonkeyBotStart').disabled = false;
     };
-    
+
     this._disableStartBot = function (message) {
         document.getElementById('WikiMonkeyBotStartMsg').innerHTML = message;
         document.getElementById('WikiMonkeyBotStart').disabled = true;
     };
-    
+
     this._enableStopBot = function (stopId) {
         var stop = document.createElement('input');
         stop.type = 'button';
         stop.value = 'Stop bot';
         stop.id = 'WikiMonkeyBotStop';
-        
+
         stop.addEventListener("click", (function (id) {
             return function () {
                 clearTimeout(id);
@@ -987,26 +1071,26 @@ WM.Bot = new function () {
                 WM.Log.logInfo('Bot stopped manually');
             }
         })(stopId), false);
-        
+
         var start = document.getElementById('WikiMonkeyBotStart');
         start.parentNode.insertBefore(stop, start);
         start.style.display = 'none';
     };
-    
+
     this._disableStopBot = function () {
         var stop = document.getElementById('WikiMonkeyBotStop');
         stop.parentNode.removeChild(stop);
         document.getElementById('WikiMonkeyBotStart').style.display = 'inline';
     };
-    
+
     this._disableControls = function () {
         this._setEnableControls(true);
     };
-    
+
     this._reEnableControls = function () {
         this._setEnableControls(false);
     };
-    
+
     this._setEnableControls = function (flag) {
         var fsets = document.getElementById('WikiMonkeyBot').getElementsByTagName('fieldset');
         for (var f = 0; f < fsets.length; f++) {
@@ -1014,24 +1098,24 @@ WM.Bot = new function () {
             fsets[f].disabled = flag;
         }
     };
-    
+
     this._enableForceStart = function () {
         var force = document.getElementById('WikiMonkeyBotForceStart');
         force.getElementsByTagName('input')[0].disabled = false;
         force.style.display = 'inline';
     };
-    
+
     this._disableForceStart = function () {
         var force = document.getElementById('WikiMonkeyBotForceStart');
         force.getElementsByTagName('input')[0].checked = false;
         force.getElementsByTagName('input')[0].disabled = true;
         force.style.display = 'none';
     };
-    
+
     this._canForceStart = function () {
         return document.getElementById('WikiMonkeyBotForceStart').getElementsByTagName('input')[0].checked;
     };
-    
+
     var canProcessPage = function (title) {
         var rules = document.getElementById('WikiMonkeyBotFilter').value.split('\n');
         var duplicates = document.getElementById('WikiMonkeyBotDuplicates').checked;
@@ -1069,13 +1153,13 @@ WM.Bot = new function () {
         }
         return response;
     };
-    
+
     this._previewFilter = function () {
         WM.Log.logInfo('Updating filter preview, please wait...');
         WM.Bot._disableStartBot('Updating filter preview...');
-        
+
         var items, linkId, link;
-        
+
         if (WM.Bot.selections.list.previous) {
             items = WM.Bot.selections.list.previous[0].getElementsByTagName('li');
             linkId = WM.Bot.selections.list.previous[1];
@@ -1085,7 +1169,7 @@ WM.Bot = new function () {
             }
         }
         WM.Bot.selections.visited = [];
-        
+
         items = WM.Bot.selections.list.current[0].getElementsByTagName('li');
         linkId = WM.Bot.selections.list.current[1];
         var enable = false;
@@ -1104,33 +1188,33 @@ WM.Bot = new function () {
         WM.Log.logInfo('Preview updated (' + N + ' pages selected)');
         (enable) ? WM.Bot._enableStartBot() : WM.Bot._disableStartBot('No pages selected, reset and preview the filter');
     };
-    
+
     // GM_setValue can only store strings, bool and 32-bit integers (no 64-bit)
     this.botToken = "0";
-    
+
     this._setBotToken = function () {
         var date = new Date();
         var token = date.getTime() + "";
         this.botToken = token;
         GM_setValue('BotToken', token);
     };
-    
+
     this._resetBotToken = function (reset) {
         this.botToken = "0";
         if (reset) {
             GM_setValue('BotToken', "0");
         }
     };
-    
+
     this._getBotToken = function () {
         return this.botToken;
     };
-    
+
     this._checkOtherBotsRunning = function () {
         GMValue = GM_getValue('BotToken', "0");
         return (GMValue != "0") && (GMValue != this._getBotToken());
     };
-    
+
     this._startAutomatic = function () {
         var itemsDOM = WM.Bot.selections.list.current[0].getElementsByTagName('li');
         // Passing the live collection with the callback function was causing
@@ -1151,69 +1235,86 @@ WM.Bot = new function () {
             WM.Bot._disableStartBot('Bot is running...');
             WM.Bot._disableControls();
             WM.Bot.selections.visited = [];
-            WM.Bot._processItem(items, 0, linkId);
+            WM.Bot._processItem(0, items, 0, linkId, null);
         }
     };
-    
-    this._processItem = function (items, index, linkId) {
-        var interval;
-        if (WM.MW.isUserBot()) {
-            interval = 8000;
-        }
-        else {
-            interval = 90000;
-        }
-        
+
+    this._processItem = function (status, items, index, linkId, chainArgs) {
         if (items[index]) {
             var link = items[index].getElementsByTagName('a')[linkId];
             var title = link.title;
+
             if (canProcessPage(title)) {
+                var interval;
+
+                if (status === 0) {
+                    interval = 1000;
+                }
+                else if (WM.MW.isUserBot()) {
+                    interval = 3000;
+                }
+                else {
+                    interval = 30000;
+                }
+
                 WM.Log.logInfo('Waiting ' + (interval / 1000) + ' seconds...');
-                var stopId = setTimeout((function (lis, id, ln, article) {
+
+                var stopId = setTimeout((function (lis, id, ln, article, chainArgs) {
                     return function () {
                         // Stop must be disabled before any check is performed
                         WM.Bot._disableStopBot();
+
                         // Check here if other bots have been started,
-                        // _not_ before setTimeout! 
+                        // _not_ before setTimeout!
                         if (!WM.Bot._checkOtherBotsRunning()) {
                             ln.className = "WikiMonkeyBotProcessing";
                             WM.Log.logInfo("Processing " + article + "...");
+
                             WM.Bot.selections.function_(article, (function (lis, id, linkId, ln, article) {
-                                return function (res) {
-                                    if (res === true) {
-                                        ln.className = "WikiMonkeyBotProcessed";
-                                        WM.Log.logInfo(article + " processed");
-                                        // Do not increment directly in the function's call!
-                                        id++;
-                                        WM.Bot._processItem(lis, id, linkId);
-                                    }
-                                    else {
-                                        ln.className = "WikiMonkeyBotFailed";
-                                        WM.Log.logError("Error processing " + article + ", stopping the bot");
-                                        WM.Bot._endAutomatic(true);
+                                return function (status, resArgs) {
+                                    switch (status) {
+                                        case 0:
+                                            ln.className = "WikiMonkeyBotProcessed";
+                                            WM.Log.logInfo(article + " processed");
+                                            // Do not increment directly in the function's call!
+                                            id++;
+                                            WM.Bot._processItem(status, lis, id, linkId, resArgs);
+                                            break;
+                                        case 1:
+                                            ln.className = "WikiMonkeyBotProcessed";
+                                            WM.Log.logInfo(article + " processed");
+                                            // Do not increment directly in the function's call!
+                                            id++;
+                                            WM.Bot._processItem(status, lis, id, linkId, resArgs);
+                                            break;
+                                        default:
+                                            ln.className = "WikiMonkeyBotFailed";
+                                            WM.Log.logError("Error processing " + article + ", stopping the bot");
+                                            WM.Bot._endAutomatic(true);
                                     }
                                 };
-                            })(lis, id, linkId, ln, article));
+                            })(lis, id, linkId, ln, article), chainArgs);
                         }
                         else {
                             WM.Log.logError('Another bot has been force-started, stopping...');
                             WM.Bot._endAutomatic(false);
                         }
                     };
-                })(items, index, link, title), interval);
+                })(items, index, link, title, chainArgs), interval);
+
                 this._enableStopBot(stopId);
             }
             else {
                 // Do not increment directly in the function's call!
                 index++;
-                WM.Bot._processItem(items, index, linkId);
+                WM.Bot._processItem(status, items, index, linkId, chainArgs);
             }
         }
         else {
             this._endAutomatic(true);
         }
     };
-    
+
     this._endAutomatic = function (reset) {
         this._resetBotToken(reset);
         WM.Log.logInfo('Bot operations completed (check the log for warnings or errors)');
@@ -1227,87 +1328,89 @@ WM.Cat = new function () {
         params.callChildren = WM.Cat._recurseTreeCallChildren;
         Alib.Async.recurseTreeAsync(params);
     };
-    
+
     this.recurseTreeContinue = function (params) {
         Alib.Async.recurseTreeAsync(params);
     };
-    
+
     this._recurseTreeCallChildren = function (params) {
         WM.Cat.getSubCategories(params.node, WM.Cat._recurseTreeCallChildrenContinue, params);
     };
-    
+
     this._recurseTreeCallChildrenContinue = function (subCats, params) {
         for (var s in subCats) {
             params.children.push(subCats[s].title);
         }
         Alib.Async.recurseTreeAsync(params);
     };
-    
+
     this.getSubCategories = function (parent, call, callArgs) {
         WM.Cat._getMembers(parent, "subcat", call, callArgs);
     };
-    
+
     this.getAllMembers = function (parent, call, callArgs) {
         WM.Cat._getMembers(parent, null, call, callArgs);
     };
-    
+
     this._getMembers = function (name, cmtype, call, callArgs) {
         var query = {action: "query",
                      list: "categorymembers",
                      cmtitle: name,
                      cmlimit: 500};
-        
+
         if (cmtype) {
             query.cmtype = cmtype;
         }
-        
+
         this._getMembersContinue(query, call, callArgs, []);
     };
-    
+
     this._getMembersContinue = function (query, call, callArgs, members) {
-        WM.MW.callAPIGet(query, null, function (res) {
+        WM.MW.callAPIGet(query, null, function (res, args) {
             members = members.concat(res.query.categorymembers);
             if (res["query-continue"]) {
                 query.cmcontinue = res["query-continue"].categorymembers.cmcontinue;
-                this._getMembersContinue(query, call, callArgs, members);
+                this._getMembersContinue(query, call, args, members);
             }
             else {
-                call(members, callArgs);
+                call(members, args);
             }
-        });
+        },
+        callArgs);
     };
-    
+
     this.getParentsAndInfo = function (name, call, callArgs) {
         var query = {action: "query",
                      prop: "categories|categoryinfo",
                      titles: name,
                      cllimit: 500};
-        
+
         this._getParentsAndInfoContinue(query, call, callArgs, [], null);
     };
-    
+
     this._getParentsAndInfoContinue = function (query, call, callArgs, parents, info) {
-        WM.MW.callAPIGet(query, null, function (res) {
+        WM.MW.callAPIGet(query, null, function (res, args) {
             var page = Alib.Obj.getFirstItem(res.query.pages);
-            
+
             if (page.categories) {
                 parents = parents.concat(page.categories);
             }
-            
+
             if (page.categoryinfo) {
                 info = page.categoryinfo;
             }
-            
+
             if (res["query-continue"]) {
                 // Request categoryinfo only once
                 query.prop = "categories";
                 query.clcontinue = res["query-continue"].categories.clcontinue;
-                this._getParentsAndInfoContinue(query, call, callArgs, parents, info);
+                this._getParentsAndInfoContinue(query, call, args, parents, info);
             }
             else {
-                call(parents, info, callArgs);
+                call(parents, info, args);
             }
-        });
+        },
+        callArgs);
     };
 };
 
@@ -1387,7 +1490,7 @@ WM.Interlanguage = new function () {
             source,
             whitelist.join("|")
         );
-        
+
         var langlinks = [];
         for (var p in parsedLinks) {
             var link = parsedLinks[p];
@@ -1409,10 +1512,10 @@ WM.Interlanguage = new function () {
                 length: link.length,
             });
         }
-        
+
         return langlinks;
     };
-    
+
     this.queryLinks = function (api, title, whitelist, callEnd, callArgs) {
         WM.MW.callAPIGet(
             {
@@ -1444,7 +1547,7 @@ WM.Interlanguage = new function () {
                     var iwmap = res.query.interwikimap;
                     var langlinks = "missing";
                 }
-                
+
                 callEnd(
                     api,
                     title,
@@ -1454,12 +1557,13 @@ WM.Interlanguage = new function () {
                     source,
                     timestamp,
                     edittoken,
-                    callArgs
+                    args
                 );
-            }
+            },
+            callArgs
         );
     };
-    
+
     this.createNewLink = function (origTag, title, url) {
         return {
             origTag: origTag,
@@ -1467,7 +1571,7 @@ WM.Interlanguage = new function () {
             url: url,
         };
     };
-    
+
     this.createVisitedLink = function (origTag, title, url, iwmap, api, source, timestamp, edittoken, links) {
         var entry = {
             origTag: origTag,
@@ -1485,7 +1589,7 @@ WM.Interlanguage = new function () {
         }
         return entry;
     };
-    
+
     this.collectLinks = function (visitedlinks, newlinks, whitelist, error, callEnd, callArgs) {
         // If error is "missing" it should be possible to continue safely
         if (error != "conflict") {
@@ -1493,17 +1597,17 @@ WM.Interlanguage = new function () {
                 var link = newlinks[tag];
                 break;
             }
-            
+
             if (link) {
                 var origTag = link.origTag;
                 var title = link.title;
                 var url = link.url;
                 var api = WM.MW.getWikiPaths(url).api;
-                
+
                 delete newlinks[tag];
-                
+
                 WM.Log.logInfo("Reading " + url + "...");
-                
+
                 this.queryLinks(
                     api,
                     title,
@@ -1520,7 +1624,7 @@ WM.Interlanguage = new function () {
             callEnd(error, callArgs);
         }
     };
-    
+
     this._collectLinksContinue = function (api, title, whitelist, langlinks, iwmap, source, timestamp, edittoken, args) {
         var url = args[0];
         var tag = args[1];
@@ -1529,12 +1633,12 @@ WM.Interlanguage = new function () {
         var newlinks = args[4];
         var callEnd = args[5];
         var callArgs = args[6];
-            
+
         var error = "";
-        
+
         if (langlinks != "missing") {
             visitedlinks[tag] = WM.Interlanguage.createVisitedLink(origTag, title, url, iwmap, api, source, timestamp, edittoken, langlinks);
-            
+
             for (var l in langlinks) {
                 var link = langlinks[l];
                 if (!visitedlinks[link.lang.toLowerCase()] && !newlinks[link.lang.toLowerCase()]) {
@@ -1556,7 +1660,7 @@ WM.Interlanguage = new function () {
             error = "missing";
             WM.Log.logWarning("[[" + tag + ":" + title + "]] seems to point to a non-existing article, removing it");
         }
-        
+
         WM.Interlanguage.collectLinks(
             visitedlinks,
             newlinks,
@@ -1566,11 +1670,11 @@ WM.Interlanguage = new function () {
             callArgs
         );
     };
-    
+
     this.updateLinks = function (lang, url, iwmap, source, oldlinks, newlinks) {
         lang = lang.toLowerCase();
         var linkList = [];
-        
+
         for (var tag in newlinks) {
             if (tag != lang) {
                 var link = newlinks[tag];
@@ -1592,7 +1696,7 @@ WM.Interlanguage = new function () {
                 }
             }
         }
-        
+
         linkList.sort(
             function (a, b) {
                 // Sorting is case sensitive by default
@@ -1604,7 +1708,7 @@ WM.Interlanguage = new function () {
                     return 0;
             }
         );
-        
+
         var cleanText = "";
         var textId = 0;
         for (var l in oldlinks) {
@@ -1613,7 +1717,7 @@ WM.Interlanguage = new function () {
             textId = link.index + link.length;
         }
         cleanText += source.substring(textId);
-        
+
         if (oldlinks.length) {
             // Insert the new links at the index of the first previous link
             var firstLink = oldlinks[0].index;
@@ -1621,14 +1725,14 @@ WM.Interlanguage = new function () {
         else {
             var firstLink = 0;
         }
-        
+
         var part1 = cleanText.substring(0, firstLink);
         var part2a = cleanText.substr(firstLink);
         var firstChar = part2a.search(/[^\s]/);
         var part2b = part2a.substr(firstChar);
-        
+
         var newText = part1 + linkList.join("") + part2b;
-        
+
         return newText;
     };
 };
@@ -1754,6 +1858,7 @@ WM.MW = new function () {
             full: "/index.php",
             api: "/api.php"
         },
+        // This attribute is generated further below in this module
         local: {},
     };
 
@@ -1801,6 +1906,20 @@ WM.MW = new function () {
         return getWikiPaths(href);
     };
 
+    this.failedQueryError = function (finalUrl) {
+        return "Failed query: " + finalUrl + "\nYou may have tried to use a " +
+            "plugin which requires cross-origin HTTP requests, but you are " +
+            "not using Scriptish (Firefox), Greasemonkey (Firefox), " +
+            "Tampermonkey (Chrome/Chromium) or a similar extension";
+    };
+
+    this.failedHTTPRequestError = function (err) {
+        return "Failed HTTP request - " + err + "\nYou may have tried to use " +
+            "a plugin which requires cross-origin HTTP requests, but you are " +
+            "not using Scriptish (Firefox), Greasemonkey (Firefox), " +
+            "Tampermonkey (Chrome/Chromium) or a similar extension";
+    };
+
     this.callAPIGet = function (params, api, call, callArgs) {
         if (!api) {
             api = wikiPaths.local.api;
@@ -1820,17 +1939,12 @@ WM.MW = new function () {
                 }
                 if (json) {
                     // Don't put this into the try block or all its exceptions
-                    // will be catched printing the same API error
+                    // will be caught printing the same API error
                     call(json, callArgs);
                 }
             },
             onerror: function (res) {
-                WM.Log.logError("Failed query: " + res.finalUrl + "\nYou may " +
-                                "have tried to use a plugin which requires " +
-                                "cross-origin HTTP requests, but you are not " +
-                                "using Scriptish (Firefox), Greasemonkey " +
-                                "(Firefox), Tampermonkey (Chrome/Chromium) " +
-                                "or a similar extension");
+                WM.Log.logError(WM.MW.failedQueryError(res.finalUrl));
                 if (confirm("Wiki Monkey error: Failed query\n\nDo you want to retry?")) {
                     WM.Log.logInfo("Retrying...");
                     WM.MW.callAPIGet(params, api, call, callArgs);
@@ -1842,11 +1956,7 @@ WM.MW = new function () {
             GM_xmlhttpRequest(query);
         }
         catch (err) {
-            WM.Log.logError("Failed HTTP request - " + err + "\nYou may have " +
-                            "tried to use a plugin which requires cross-origin " +
-                            "HTTP requests, but you are not using Scriptish " +
-                            "(Firefox), Greasemonkey (Firefox), Tampermonkey " +
-                            "(Chrome/Chromium) or a similar extension");
+            WM.Log.logError(WM.MW.failedHTTPRequestError(err));
         }
     };
 
@@ -1869,17 +1979,12 @@ WM.MW = new function () {
                 }
                 if (json) {
                     // Don't put this into the try block or all its exceptions
-                    // will be catched printing the same API error
+                    // will be caught printing the same API error
                     call(json, callArgs);
                 }
             },
             onerror: function (res) {
-                WM.Log.logError("Failed query: " + res.finalUrl + "\nYou may " +
-                                "have tried to use a plugin which requires " +
-                                "cross-origin HTTP requests, but you are not " +
-                                "using Scriptish (Firefox), Greasemonkey " +
-                                "(Firefox), Tampermonkey (Chrome/Chromium) " +
-                                "or a similar extension");
+                WM.Log.logError(WM.MW.failedQueryError(res.finalUrl));
                 if (confirm("Wiki Monkey error: Failed query\n\nDo you want to retry?")) {
                     WM.Log.logInfo("Retrying...");
                     WM.MW.callAPIPost(params, api, call, callArgs);
@@ -1914,11 +2019,7 @@ WM.MW = new function () {
             GM_xmlhttpRequest(query);
         }
         catch (err) {
-            WM.Log.logError("Failed HTTP request - " + err + "\nYou may have " +
-                            "tried to use a plugin which requires cross-origin " +
-                            "HTTP requests, but you are not using Scriptish " +
-                            "(Firefox), Greasemonkey (Firefox), Tampermonkey " +
-                            "(Chrome/Chromium) or a similar extension");
+            WM.Log.logError(WM.MW.failedHTTPRequestError(err));
         }
     };
 
@@ -1932,11 +2033,11 @@ WM.MW = new function () {
 
     this.callQuery = function (params, call, callArgs) {
         params.action = "query";
-        var callBack = function (res) {
+        var callBack = function (res, args) {
             var page = Alib.Obj.getFirstItem(res.query.pages);
-            call(page, callArgs);
+            call(page, args);
         };
-        this.callAPIGet(params, null, callBack);
+        this.callAPIGet(params, null, callBack, callArgs);
     };
 
     this.callQueryEdit = function (title, call, callArgs) {
@@ -1944,13 +2045,14 @@ WM.MW = new function () {
             var source = page.revisions[0]["*"];
             var timestamp = page.revisions[0].timestamp;
             var edittoken = page.edittoken;
-            call(title, source, timestamp, edittoken, callArgs);
+            call(title, source, timestamp, edittoken, args);
         };
         this.callQuery({prop: "info|revisions",
                         rvprop: "content|timestamp",
                         intoken: "edit",
                         titles: title},
-                        callBack);
+                        callBack,
+                        callArgs);
     };
 
     var userInfo;
@@ -2001,16 +2103,17 @@ WM.MW = new function () {
     };
 
     this._getBacklinksContinue = function (query, call, callArgs, backlinks) {
-        WM.MW.callAPIGet(query, null, function (res) {
+        WM.MW.callAPIGet(query, null, function (res, args) {
             backlinks = backlinks.concat(res.query.backlinks);
             if (res["query-continue"]) {
                 query.blcontinue = res["query-continue"].backlinks.blcontinue;
-                this._getBacklinksContinue(query, call, callArgs, backlinks);
+                this._getBacklinksContinue(query, call, args, backlinks);
             }
             else {
-                call(backlinks, callArgs);
+                call(backlinks, args);
             }
-        });
+        },
+        callArgs);
     };
 
     this.getLanglinks = function (title, iwmap, call, callArgs) {
@@ -2031,7 +2134,7 @@ WM.MW = new function () {
     };
 
     this._getLanglinksContinue = function (query, call, callArgs, langlinks, iwmap) {
-        WM.MW.callAPIGet(query, null, function (res) {
+        WM.MW.callAPIGet(query, null, function (res, args) {
             var page = Alib.Obj.getFirstItem(res.query.pages);
             langlinks = langlinks.concat(page.langlinks);
 
@@ -2047,12 +2150,13 @@ WM.MW = new function () {
 
             if (res["query-continue"]) {
                 query.llcontinue = res["query-continue"].langlinks.llcontinue;
-                this._getLanglinksContinue(query, call, callArgs, langlinks, iwmap);
+                this._getLanglinksContinue(query, call, args, langlinks, iwmap);
             }
             else {
-                call(langlinks, iwmap, callArgs);
+                call(langlinks, iwmap, args);
             }
-        });
+        },
+        callArgs);
     };
 
     this.getInterwikiMap = function (title, call, callArgs) {
@@ -2064,9 +2168,10 @@ WM.MW = new function () {
              siprop: "interwikimap",
              sifilteriw: "local"},
             null,
-            function (res) {
-                call(res.query.interwikimap, callArgs);
-            }
+            function (res, args) {
+                call(res.query.interwikimap, args);
+            },
+            callArgs
         );
     };
 
@@ -2085,7 +2190,7 @@ WM.MW = new function () {
     };
 
     this._getSpecialListContinue = function (query, call, callArgs, results, siteinfo) {
-        WM.MW.callAPIGet(query, null, function (res) {
+        WM.MW.callAPIGet(query, null, function (res, args) {
             results = results.concat(res.query.querypage.results);
 
             for (var key in res.query) {
@@ -2101,12 +2206,13 @@ WM.MW = new function () {
 
             if (res["query-continue"]) {
                 query.qpoffset = res["query-continue"].querypage.qpoffset;
-                this._getSpecialListContinue(query, call, callArgs, results, siteinfo);
+                this._getSpecialListContinue(query, call, args, results, siteinfo);
             }
             else {
-                call(results, siteinfo, callArgs);
+                call(results, siteinfo, args);
             }
-        });
+        },
+        callArgs);
     };
 };
 
@@ -2114,11 +2220,11 @@ WM.Parser = new function () {
     this.convertUnderscoresToSpaces = function (title) {
         return title.replace(/_/g, " ");
     };
-    
+
     this.convertSpacesToUnderscores = function (title) {
         return title.replace(/ /g, "_");
     };
-    
+
     this.neutralizeNowikiTags = function (source) {
         // /<nowiki>[.\s]+?<\/nowiki>/gi doesn't work
         var tags = Alib.RegEx.matchAll(source, /<nowiki>(.?\s?)+?<\/nowiki>/gi);
@@ -2128,7 +2234,7 @@ WM.Parser = new function () {
         }
         return source;
     };
-    
+
     var prepareTitleCasing = function (pattern) {
         var firstChar = pattern.charAt(0);
         var fcUpper = firstChar.toUpperCase();
@@ -2138,7 +2244,7 @@ WM.Parser = new function () {
         }
         return pattern;
     };
-    
+
     this.findBehaviorSwitches = function (source, word) {
         source = this.neutralizeNowikiTags(source);
         var regExp;
@@ -2152,42 +2258,59 @@ WM.Parser = new function () {
         }
         return Alib.RegEx.matchAll(source, regExp);
     };
-    
-    this.findInternalLinks = function (source, namespace) {
+
+    this.findSectionLinks = function (source) {
+        source = this.neutralizeNowikiTags(source);
+        var regExp = /\[\[:?[ _]*:?[ _]*#(.+?)(?:[ _]*\|\s*(.+?))?\s*\]\]/g;
+        return Alib.RegEx.matchAll(source, regExp);
+    }
+
+    this.findInternalLinks = function (source, namespace, title) {
         source = this.neutralizeNowikiTags(source);
         var regExp;
+
         if (namespace) {
-            // Namespaces aren't case-sensitive
-            regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*((" + Alib.RegEx.escapePattern(namespace) + ")[ _]*:[ _]*(.+?)(?:[ _]*\\|\\s*(.+?))?)\\s*\\]\\]", "gi");
+            if (title) {
+                // Namespaces wouldn't be case-sensitive, but titles are, so be safe and use only the g flag
+                regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*((" + Alib.RegEx.escapePattern(namespace) + ")[ _]*:[ _]*((" + Alib.RegEx.escapePattern(title) + ")(?:[ _]*#(.+?))?)(?:[ _]*\\|\\s*(.+?))?)\\s*\\]\\]", "g");
+            }
+            else {
+                // Namespaces aren't case-sensitive
+                regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*((" + Alib.RegEx.escapePattern(namespace) + ")[ _]*:[ _]*((.+?)(?:[ _]*#(.+?))?)(?:[ _]*\\|\\s*(.+?))?)\\s*\\]\\]", "gi");
+            }
+        }
+        else if (title) {
+            // Titles are case-sensitive
+            // Note the () that represents the missing namespace in order to keep the match indices consistent with the other regular expressions
+            regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*(()((" + Alib.RegEx.escapePattern(title) + ")(?:[ _]*#(.+?))?)(?:[ _]*\\|\\s*(.+?))?)\\s*\\]\\]", "g");
         }
         else {
-            // Namespaces aren't case-sensitive
-            regExp = /\[\[:?[ _]*:?[ _]*((?:(.+?)[ _]*:[ _]*)?(.+?)(?:[ _]*\|\s*(.+?))?)\s*\]\]/gi;
+            regExp = /\[\[:?[ _]*:?[ _]*((?:(.+?)[ _]*:[ _]*)?((.+?)(?:[ _]*#(.+?))?)(?:[ _]*\|\s*(.+?))?)\s*\]\]/g;
         }
         return Alib.RegEx.matchAll(source, regExp);
     };
-    
+
     this.findInterwikiLinks = function (source, wiki) {
         return this.findInternalLinks(source, wiki);
     };
-    
+
     this.findSpecialLinks = function (source, pattern) {
         // See also WM.ArchWiki.findAllInterlanguageLinks!!!
         source = this.neutralizeNowikiTags(source);
         // Categories and language tags aren't case-sensitive
-        var regExp = new RegExp("\\[\\[(?:[ _]+:)?[ _]*((?:(" + pattern + ")[ _]*:[ _]*)(.+?)(?:[ _]*\\|\\s*(.+?))?)\\s*\\]\\]", "gi");
+        var regExp = new RegExp("\\[\\[(?:[ _]+:)?[ _]*((?:(" + pattern + ")[ _]*:[ _]*)((.+?)(?:[ _]*#(.+?))?)(?:[ _]*\\|\\s*(.+?))?)\\s*\\]\\]", "gi");
         return Alib.RegEx.matchAll(source, regExp);
     };
-    
+
     this.findCategories = function (source) {
         return this.findSpecialLinks(source, "Category");
     };
-    
+
     this.findInterlanguageLinks = function (source, language) {
         // See also WM.ArchWiki.findAllInterlanguageLinks!!!
         return this.findSpecialLinks(source, Alib.RegEx.escapePattern(language));
     };
-    
+
     this.findVariables = function (source, variable) {
         source = this.neutralizeNowikiTags(source);
         // Variables are case-sensitive
@@ -2196,14 +2319,14 @@ WM.Parser = new function () {
         var regExp = new RegExp("\\{\\{\\s*((" + Alib.RegEx.escapePattern(variable) + ")(?:\\:[_\\s]*((?:.(?!\\{\\{)[_\\s]*?)+?))?)[_\\s]*\\}\\}", "g");
         return Alib.RegEx.matchAll(source, regExp);
     };
-    
+
     var findTransclusionsEngine = function (source, regExp) {
         var nSource = WM.Parser.neutralizeNowikiTags(source);
         var transclusions = [];
-        
+
         do {
             var res = Alib.RegEx.matchAll(nSource, regExp);
-            
+
             for (var t in res) {
                 var match = res[t].match;
                 var index = res[t].index;
@@ -2213,7 +2336,7 @@ WM.Parser = new function () {
                     var args = match[3].split("|");
                     // 1 is the length of |
                     var argId = index + match[1].length + 1;
-                    
+
                     for (var a in args) {
                         var argL = args[a].length;
                         var eqId = args[a].indexOf("=");
@@ -2224,7 +2347,7 @@ WM.Parser = new function () {
                             var keyMatches = reKey.exec(rawKey);
                             var key = keyMatches[2];
                             var keyId = argId + ((keyMatches[1]) ? keyMatches[1].length : 0);
-                            
+
                             // 1 is the length of =
                             var nValue = args[a].substr(eqId + 1);
                             var valueId = argId + keyMatches[0].length + 1;
@@ -2237,19 +2360,19 @@ WM.Parser = new function () {
                             var valueId = argId;
                             var valueL = argL;
                         }
-                        
+
                         var value = source.substr(valueId, valueL);
-                        
+
                         arguments.push({key: key,
                                         key_index: keyId,
                                         value: value,
                                         value_index: valueId});
-                        
+
                         // 1 is the length of |
                         argId = argId + argL + 1;
                     }
                 }
-                
+
                 transclusions.push({
                     title: match[2],
                     match: match,
@@ -2257,19 +2380,17 @@ WM.Parser = new function () {
                     length: L,
                     arguments: arguments,
                 });
-                
+
                 var filler = Alib.Str.padRight("", "x", L);
                 nSource = Alib.Str.overwriteAt(nSource, filler, res[t].index);
             }
         // Find also nested transclusions
         } while (res.length);
-        
+
         return transclusions;
     };
-    
+
     this.findTemplates = function (source, template) {
-        // Templates can't be transcluded with a colon before the title
-        // The title must not be broken by new line characters
         if (template) {
             var pattern = Alib.RegEx.escapePattern(template);
             pattern = prepareTitleCasing(pattern);
@@ -2277,10 +2398,17 @@ WM.Parser = new function () {
         else {
             var pattern = ".+?";
         }
+        return this.findTemplatesPattern(source, pattern);
+    };
+
+    this.findTemplatesPattern = function (source, pattern) {
+        // pattern must be a string and IT MUST NOT HAVE ANY CAPTURING GROUPS!!!
+        // Templates can't be transcluded with a colon before the title
+        // The title must not be broken by new line characters
         var regExp = new RegExp("(\\{\\{\\s*[_ ]*(" + pattern + ")[_\\s]*)(?:\\|((?:\\s*.(?!\\{\\{)\\s*)*?))?\\}\\}", "g");
         return findTransclusionsEngine(source, regExp);
     };
-    
+
     this.findTransclusions = function (source, namespace, title) {
         // The difference from templates is the possibility of a colon before
         // the title which forces the transclusion of a page instead of a
@@ -2294,7 +2422,7 @@ WM.Parser = new function () {
             var titlePattern = Alib.RegEx.escapePattern(title);
             titlePattern = prepareTitleCasing(titlePattern);
         }
-        
+
         if (namespacePattern && titlePattern) {
             var pattern = namespacePattern + "[ _]*:[ _]*" + titlePattern;
         }
@@ -2307,47 +2435,49 @@ WM.Parser = new function () {
         else {
             var pattern = ".+?";
         }
-        
+
         // There can't be an underscore before the colon
         var regExp = new RegExp("(\\{\\{\\s*:?[ _]*(" + pattern + ")[_\\s]*)(?:\\|((?:\\s*.(?!\\{\\{)\\s*)*?))?\\}\\}", "g");
         return findTransclusionsEngine(source, regExp);
     };
-        
+
     this.findSectionHeadings = function (source) {
         // ======Title====== is the deepest level supported
         var MAXLEVEL = 6;
-        
+
         var sections = [];
         var minLevel = MAXLEVEL;
         var maxTocLevel = 0;
         var tocLevel = 1;
-        var regExp = /^(\=+ *.+? *\=+)[ \t]*$/gm;
-        var match, line, L0, L1, level, prevLevels, start, end, tocPeer;
-        
+        var regExp = /^(\=+( *(.+?) *)\=+)[ \t]*$/gm;
+        var match, line, rawheading, heading, L0, L1, level, prevLevels, start, end, tocPeer;
+
         while (true) {
             match = regExp.exec(source);
-            
+
             if (match) {
                 L0 = match[0].length;
                 line = match[1];
+                rawheading = match[2];
+                heading = match[3];
                 L1 = line.length;
                 level = 1;
                 start = "=";
                 end = "=";
-                
+
                 // ==Title=== and ===Title== are both 2nd levels and so on
                 // (the shortest sequence of = between the two sides is
                 //  considered)
-                
+
                 // = and == are not titles
                 // === is read as =(=)=, ==== is read as =(==)= (both 1st
                 //                                               levels)
                 // ===== is read as ==(=)== (2nd level) and so on
-                
+
                 while (true) {
                     start = line.substr(level, 1);
                     end = line.substr(L1 - level - 1, 1);
-                    
+
                     if (L1 - level * 2 > 2 && start == "=" && end == "=") {
                         level++;
                     }
@@ -2361,7 +2491,7 @@ WM.Parser = new function () {
                         break;
                     }
                 }
-                
+
                 if (level == minLevel) {
                     tocLevel = 1;
                     prevLevels = {};
@@ -2395,8 +2525,10 @@ WM.Parser = new function () {
                     }
                     prevLevels.relMax = level;
                 }
-                
+
                 sections.push({line: line,
+                               rawheading: rawheading,
+                               heading: heading,
                                level: level,
                                tocLevel: tocLevel,
                                index: (regExp.lastIndex - L0),
@@ -2407,12 +2539,12 @@ WM.Parser = new function () {
                 break;
             }
         }
-        
+
         // Articles without sections
         if (maxTocLevel == 0) {
             minLevel = 0;
         }
-        
+
         return {sections: sections,
                 minLevel: minLevel,
                 maxTocLevel: maxTocLevel};
@@ -2710,16 +2842,16 @@ WM.UI = new function () {
             display = false;
         }
         else {
-            var patt1 = new RegExp(Alib.RegEx.escapePattern(WM.MW.getWikiPaths().full) + "\?.*?" + "title\=Special\:SpecialPages", '');
-            var patt2 = new RegExp(Alib.RegEx.escapePattern(WM.MW.getWikiPaths().full) + "\?.*?" + "title\=Special\:RecentChanges", '');
+            var patt1 = new RegExp(Alib.RegEx.escapePattern(WM.MW.getWikiPaths().full) + "\?.*?" + "title\\=Special(\\:|%3[Aa])SpecialPages", '');
+            var patt2 = new RegExp(Alib.RegEx.escapePattern(WM.MW.getWikiPaths().short) + "Special(\\:|%3[Aa])SpecialPages", '');
+            var patt3 = new RegExp(Alib.RegEx.escapePattern(WM.MW.getWikiPaths().full) + "\?.*?" + "title\\=Special(\\:|%3[Aa])RecentChanges", '');
+            var patt4 = new RegExp(Alib.RegEx.escapePattern(WM.MW.getWikiPaths().short) + "Special(\\:|%3[Aa])RecentChanges", '');
 
-            if (location.href.indexOf(WM.MW.getWikiPaths().short + "Special:SpecialPages") > -1 ||
-                location.href.search(patt1) > -1) {
+            if (location.href.search(patt1) > -1 || location.href.search(patt2) > -1) {
                 nextNode = document.getElementById('bodyContent');
                 UI = (special) ? makeButtons(special) : null;
             }
-            else if (location.href.indexOf(WM.MW.getWikiPaths().short + "Special:RecentChanges") > -1 ||
-                     location.href.search(patt2) > -1) {
+            else if (location.href.search(patt3) > -1 || location.href.search(patt4) > -1) {
                 nextNode = document.getElementById('mw-content-text').getElementsByTagName('h4')[0];
                 UI = (recentChanges) ? WM.RecentChanges._makeUI(recentChanges) : null;
                 displayLog = false;
@@ -2793,6 +2925,12 @@ WM.UI = new function () {
 
             nextNode.parentNode.insertBefore(main, nextNode);
         }
+    };
+};
+
+WM.WhatLinksHere = new function () {
+    this.getTitle = function () {
+        return document.getElementById('contentSub').getElementsByTagName('a')[0].title;
     };
 };
 WM.Plugins.ArchWikiQuickReport = new function () {
