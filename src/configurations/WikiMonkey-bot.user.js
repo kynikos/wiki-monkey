@@ -61,7 +61,7 @@ WM.UI.setCategory([
 
 WM.UI.setWhatLinksHere([
     ["SimpleReplace", "RegExp substitution", ["1"]],
-    ["FixBacklinkFragments", "Fix backlink fragments", "fix link to section"]
+    ["FixBacklinkFragments", "Fix links to specific sections of the target article", "fix links to specific sections"]
 ]);
 
 WM.UI.setLinkSearch([
