@@ -21,6 +21,7 @@
 // @require https://raw.github.com/kynikos/js-aux-lib/master/src/Str.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/WikiMonkey.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/ArchWiki.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/ArchPackages.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Bot.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Cat.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Diff.js
@@ -32,6 +33,7 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/RecentChanges.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Tables.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/UI.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/WhatLinksHere.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/ArchWikiQuickReport.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/ArchWikiRCFilter.js
 // ==/UserScript==

@@ -20,6 +20,7 @@
 // @require https://raw.github.com/kynikos/js-aux-lib/master/src/RegEx.js
 // @require https://raw.github.com/kynikos/js-aux-lib/master/src/Str.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/WikiMonkey.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/ArchPackages.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/ArchWiki.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Bot.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Cat.js
@@ -32,6 +33,7 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/RecentChanges.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Tables.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/UI.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/WhatLinksHere.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/ArchWikiFixHeader.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/ArchWikiFixHeadings.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/ArchWikiFixLinks.js
@@ -39,8 +41,11 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/ArchWikiOldAURLinks.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/ArchWikiQuickReport.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/ArchWikiRCFilter.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/ArchWikiUpdatePackageTemplates.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/ExpandContractions.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/FixBacklinkFragments.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/FixDoubleRedirects.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/FixFragments.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/MultipleLineBreaks.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/SimpleReplace.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/SynchronizeInterlanguageLinks.js
@@ -53,6 +58,7 @@ WM.UI.setEditor([
         ["ArchWikiFixHeadings", "Fix headings", null],
         ["ArchWikiFixLinks", "Fix links", null],
         ["ArchWikiNewTemplates", "Use code templates", null],
+        ["FixFragments", "Fix section links", null],
         ["ExpandContractions", "Expand contractions", null],
         ["MultipleLineBreaks", "Multiple line breaks", null]
     ],
@@ -67,7 +73,8 @@ WM.UI.setEditor([
              return WM.ArchWiki.getInterlanguageTag(language);
          },
          WM.ArchWiki.getInterwikiLanguages()]],
-        ["ArchWikiOldAURLinks", "Fix old AUR links", null]
+        ["ArchWikiOldAURLinks", "Fix old AUR links", null],
+        ["ArchWikiUpdatePackageTemplates", "Update package templates", null]
     ]
 ]);
 
@@ -92,6 +99,7 @@ WM.UI.setCategory([
 
 WM.UI.setWhatLinksHere([
     ["SimpleReplace", "RegExp substitution", ["1"]],
+    ["FixBacklinkFragments", "Fix backlink fragments", "fix link to section"],
     ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
      [function (title) {
          var language = WM.ArchWiki.detectLanguage(title)[1];
@@ -99,7 +107,8 @@ WM.UI.setWhatLinksHere([
          return WM.ArchWiki.getInterlanguageTag(language);
      },
      WM.ArchWiki.getInterwikiLanguages(),
-     "synchronized interlanguage links with the other wikis"]]
+     "synchronized interlanguage links with the other wikis"]],
+    ["ArchWikiUpdatePackageTemplates", "Check packages linked with Pkg/AUR templates and possibly update them", ["update Pkg/AUR templates to reflect new package status"]]
 ]);
 
 WM.UI.setLinkSearch([

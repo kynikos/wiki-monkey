@@ -32,8 +32,11 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/RecentChanges.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Tables.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/UI.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/WhatLinksHere.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/ExpandContractions.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/FixBacklinkFragments.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/FixDoubleRedirects.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/FixFragments.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/MultipleLineBreaks.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/SimpleReplace.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/UpdateCategoryTree.js
@@ -41,6 +44,7 @@
 
 WM.UI.setEditor([
     [
+        ["FixFragments", "Fix section links", null],
         ["ExpandContractions", "Expand contractions", null],
         ["MultipleLineBreaks", "Multiple line breaks", null]
     ],
@@ -56,7 +60,8 @@ WM.UI.setCategory([
 ]);
 
 WM.UI.setWhatLinksHere([
-    ["SimpleReplace", "RegExp substitution", ["1"]]
+    ["SimpleReplace", "RegExp substitution", ["1"]],
+    ["FixBacklinkFragments", "Fix backlink fragments", "fix link to section"]
 ]);
 
 WM.UI.setLinkSearch([

@@ -32,13 +32,16 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/RecentChanges.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Tables.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/UI.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/WhatLinksHere.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/ExpandContractions.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/FixFragments.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/MultipleLineBreaks.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/SimpleReplace.js
 // ==/UserScript==
 
 WM.UI.setEditor([
     [
+        ["FixFragments", "Fix section links", null],
         ["ExpandContractions", "Expand contractions", null],
         ["MultipleLineBreaks", "Multiple line breaks", null]
     ],
