@@ -67,27 +67,27 @@ def process_header_line(m, g, functions, match_urls, header, line):
         with open(source, 'r') as s:
             functions += get_script(s)
     elif m[1] in ("chromium", "opera"):
-        header = process_line_aux(m[1], g, functions, header, line, id, version,
-                                              update_url, download_url, matches)
+        header = process_line_aux(m[1], g, functions, header, line, id,
+                                    version, update_url, download_url, matches)
     elif m[1] == "standalone":
         header = process_line_standalone(m, g, functions, match_urls, header,
-                                                                  line, matches)
+                                                                 line, matches)
 
     return functions, header
 
 
 def process_line_aux(m1, g, functions, header, line, id, version, update_url,
-                                                         download_url, matches):
+                                                        download_url, matches):
     if id:
         g.write("// @id " + id.group(1) + "-" + m1 + "\n")
     elif version:
         g.write("// @version " + version.group(1) + "-" + m1 + "\n")
     elif update_url:
         g.write("// @updateURL " + update_url.group(1) + "/" + m1 +
-                    update_url.group(2) + "-" + m1 + update_url.group(3) + "\n")
+                   update_url.group(2) + "-" + m1 + update_url.group(3) + "\n")
     elif download_url:
         g.write("// @downloadURL " + download_url.group(1) + "/" + m1 +
-                download_url.group(2) + "-" + m1 + download_url.group(3) + "\n")
+               download_url.group(2) + "-" + m1 + download_url.group(3) + "\n")
     elif matches:
         if m1 == "chromium":
             g.write(line)
@@ -107,7 +107,8 @@ def process_line_aux(m1, g, functions, header, line, id, version, update_url,
     return header
 
 
-def process_line_standalone(m, g, functions, match_urls, header, line, matches):
+def process_line_standalone(m, g, functions, match_urls, header, line,
+                                                                      matches):
     if matches:
         match_urls.append(STANDALONE["conditions"][matches.group(1)])
     elif line[:18] == "// ==/UserScript==":
@@ -118,8 +119,8 @@ def process_line_standalone(m, g, functions, match_urls, header, line, matches):
         else:
             # Not +=
             line = (get_licence() + STANDALONE["start"].format(
-                                                        STANDALONE["join"].join(
-                            [STANDALONE["match"].format(m) for m in match_urls])
+                                                       STANDALONE["join"].join(
+                           [STANDALONE["match"].format(m) for m in match_urls])
                                         ) + get_GM_API_emulation() + functions)
         g.write(line)
 
@@ -146,21 +147,38 @@ def adapt_configuration(f):
         pass
     else:
         raise UserWarning("An instance of ArchWikiOldAURLinks has not been "
-                                                                      "removed")
+                                                                     "removed")
+
+    # ArchWikiUpdatePackageTemplates would require cross-origin HTTP requests
+    code = re.sub(",\s*\[[\"']ArchWikiUpdatePackageTemplates[\"'].*?,\n",
+                                                                   ",\n", code)
+    code = re.sub("\s*\[[\"']ArchWikiUpdatePackageTemplates[\"'].*?,\n", "\n",
+                                                                          code)
+    code = re.sub(",\s*\[[\"']ArchWikiUpdatePackageTemplates[\"'].*?\n", "\n",
+                                                                          code)
+    code = re.sub("\s*\[[\"']ArchWikiUpdatePackageTemplates[\"'].*?\n", "\n",
+                                                                          code)
+    try:
+        code.index("ArchWikiUpdatePackageTemplates")
+    except ValueError:
+        pass
+    else:
+        raise UserWarning("An instance of ArchWikiUpdatePackageTemplates has "
+                                                            "not been removed")
 
     # SynchronizeInterlanguageLinks would require cross-origin HTTP requests,
     # use WM.ArchWiki.getInternalInterwikiLanguages()
     code = re.sub("(\[[\"']SynchronizeInterlanguageLinks[\"'].*?)"
-                                      "WM\.ArchWiki\.getInterwikiLanguages\(\)",
-                             "\g<1>WM.ArchWiki.getInternalInterwikiLanguages()",
-                                                          code, flags=re.DOTALL)
+                                     "WM\.ArchWiki\.getInterwikiLanguages\(\)",
+                            "\g<1>WM.ArchWiki.getInternalInterwikiLanguages()",
+                                                         code, flags=re.DOTALL)
     try:
         code.index("WM.ArchWiki.getInterwikiLanguages")
     except ValueError:
         pass
     else:
         raise UserWarning("An instance of WM.ArchWiki.getInterwikiLanguages "
-                                                        "has not been replaced")
+                                                       "has not been replaced")
 
     return code
 
@@ -172,10 +190,10 @@ def main():
         ext = name[-8:]
         for m in EXTENSIONS:
             if ext == ".user.js" or (ext == ".meta.js" and m[1] != "standalone"
-                                                                              ):
+                                                                             ):
                 with open(file, 'r') as f:
                     cfile = os.path.join(m[0], name[:-8] + "-" + m[1] +
-                                    name[-3 if (m[1] == "standalone") else -8:])
+                                   name[-3 if (m[1] == "standalone") else -8:])
                     with open(cfile, 'w'):
                         pass
                     with open(cfile, 'a') as g:
@@ -184,7 +202,7 @@ def main():
                         header = True
                         for line in f:
                             functions, header = process_header_line(m, g,
-                                            functions, match_urls, header, line)
+                                           functions, match_urls, header, line)
 
                             if not header:
                                 break

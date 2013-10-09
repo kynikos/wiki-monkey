@@ -44,6 +44,7 @@
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiQuickReport.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiRCFilter.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiSaveTalk.js
+// @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiUpdatePackageTemplates.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiWantedCategories.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ExpandContractions.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/FixBacklinkFragments.js
@@ -76,7 +77,8 @@ WM.UI.setEditor([
              return WM.ArchWiki.getInterlanguageTag(language);
          },
          WM.ArchWiki.getInterwikiLanguages()]],
-        ["ArchWikiOldAURLinks", "Fix old AUR links", null]
+        ["ArchWikiOldAURLinks", "Fix old AUR links", null],
+        ["ArchWikiUpdatePackageTemplates", "Update package templates", null]
     ]
 ]);
 
@@ -114,6 +116,7 @@ WM.UI.setWhatLinksHere([
      },
      WM.ArchWiki.getInterwikiLanguages(),
      "synchronized interlanguage links with the other wikis"]],
+    ["ArchWikiUpdatePackageTemplates", "Check packages linked with Pkg/AUR templates and possibly update them", ["update Pkg/AUR templates to reflect new package status"]]
 ]);
 
 WM.UI.setLinkSearch([
