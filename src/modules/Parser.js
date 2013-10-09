@@ -193,8 +193,6 @@ WM.Parser = new function () {
     };
 
     this.findTemplates = function (source, template) {
-        // Templates can't be transcluded with a colon before the title
-        // The title must not be broken by new line characters
         if (template) {
             var pattern = Alib.RegEx.escapePattern(template);
             pattern = prepareTitleCasing(pattern);
@@ -202,6 +200,13 @@ WM.Parser = new function () {
         else {
             var pattern = ".+?";
         }
+        return this.findTemplatesPattern(source, pattern);
+    };
+
+    this.findTemplatesPattern = function (source, pattern) {
+        // pattern must be a string and IT MUST NOT HAVE ANY CAPTURING GROUPS!!!
+        // Templates can't be transcluded with a colon before the title
+        // The title must not be broken by new line characters
         var regExp = new RegExp("(\\{\\{\\s*[_ ]*(" + pattern + ")[_\\s]*)(?:\\|((?:\\s*.(?!\\{\\{)\\s*)*?))?\\}\\}", "g");
         return findTransclusionsEngine(source, regExp);
     };
