@@ -1,9 +1,29 @@
+/*
+ *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
+ *  Copyright (C) 2011-2013 Dario Giovannetti <dev@dariogiovannetti.net>
+ *
+ *  This file is part of Wiki Monkey.
+ *
+ *  Wiki Monkey is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  Wiki Monkey is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
     this.queryTitle = function (pureTitle, languages, index, visitedTitles, newTitles, callBot) {
         var title = (languages[index] == "English") ? pureTitle : (pureTitle + " (" + languages[index] + ")");
-        
+
         WM.Log.logInfo("Querying " + title + "...");
-        
+
         if (!visitedTitles[languages[index]][title]) {
             WM.MW.callAPIGet(
                 {
@@ -30,7 +50,7 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
                             break;
                         }
                         visitedTitles[languages[index]][title] = page;
-                        
+
                         if (page.revisions) {
                             var parsedLinks = WM.ArchWiki.findInternalInterlanguageLinks(page.revisions[0]["*"]);
                             for (var p in parsedLinks) {
@@ -42,7 +62,7 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
                                     newTitles[pureLink] = true;
                                 }
                             }
-                            
+
                             var i18n = WM.Parser.findTemplates(page.revisions[0]["*"], "i18n")[0];
                             if (i18n) {
                                 for (var arg in i18n.arguments) {
@@ -57,7 +77,7 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
                             }
                         }
                     }
-                    
+
                     WM.Plugins.ArchWikiDummyInterlanguageLinks.queryTitleContinue(pureTitle, languages, index, visitedTitles, newTitles, callBot);
                 }
             );
@@ -66,7 +86,7 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
             WM.Plugins.ArchWikiDummyInterlanguageLinks.queryTitleContinue(pureTitle, languages, index, visitedTitles, newTitles, callBot);
         }
     };
-    
+
     this.queryTitleContinue = function (pureTitle, languages, index, visitedTitles, newTitles, callBot) {
         index++;
         if (languages[index]) {
@@ -84,13 +104,13 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
             }
         }
     };
-    
+
     this.detectRing = function (titles, callBot) {
         var ring = [];
-        
+
         for (var language in titles) {
             var conflict = false;
-            
+
             for (var title in titles[language]) {
                 // Check is not a redirect or a missing article
                 if (titles[language][title].pageid) {
@@ -111,17 +131,17 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
                 }
             }
         }
-        
+
         WM.Plugins.ArchWikiDummyInterlanguageLinks.collectLinks(ring, callBot);
     };
-    
+
     this.collectLinks = function (ring, callBot) {
         var links = {};
-        
+
         for (var page in ring) {
             var tag = WM.ArchWiki.getInterlanguageTag(ring[page][0]);
             var title = WM.ArchWiki.detectLanguage(ring[page][1].title)[0];
-            
+
             if (!links[tag]) {
                 links[tag] = title;
             }
@@ -129,9 +149,9 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
                 WM.Log.logError("Conflicting interlanguage links: [[" + tag + ":" + links[tag] + "]], [[" + tag + ":" + title + "]]");
                 return callBot(false);
             }
-            
+
             var parsedLinks = WM.ArchWiki.findAllInterlanguageLinks(ring[page][1].revisions[0]['*']);
-            
+
             for (var p in parsedLinks) {
                 var link = parsedLinks[p];
                 var ltag = link.match[2];
@@ -144,10 +164,10 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
                     return callBot(false);
                 }
             }
-            
+
             ring[page].push(parsedLinks);
         }
-        
+
         var linksOrd = [];
         for (var l in links) {
             linksOrd.push([l, links[l]]);
@@ -161,10 +181,10 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
                 else return 0;
             }
         );
-        
+
         WM.Plugins.ArchWikiDummyInterlanguageLinks.editPage(ring, 0, linksOrd, callBot);
     };
-    
+
     this.editPage = function (ring, index, links, callBot) {
         if (ring[index]) {
             var namespaces = [0, 1, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
@@ -173,12 +193,12 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
                 var source = ring[index][1].revisions[0]['*'];
                 var timestamp = ring[index][1].revisions[0].timestamp;
                 var edittoken = ring[index][1].edittoken;
-                
+
                 var interval = 5000;
                 var summary = "[[Template:i18n]] is deprecated, use interlanguage links, see [[Help talk:I18n#\"Dummy\" interlanguage links and deprecation of Template:i18n]]";
-                
+
                 var newText = WM.Plugins.ArchWikiDummyInterlanguageLinks.composeLinks(ring[index][0], source, ring[index][2], links);
-                
+
                 if (newText != source) {
                     WM.Log.logInfo("Waiting " + interval / 1000 + " seconds...");
                     setTimeout(
@@ -217,13 +237,13 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
             callBot(true);
         }
     };
-    
+
     this.editPageContinue = function (res, args) {
         var ring = args[0];
         var index = args[1];
         var links = args[2];
         var callBot = args[3];
-        
+
         if (res.edit && res.edit.result == 'Success') {
             WM.Log.logInfo(ring[index][1].title + ' correctly updated');
             index++;
@@ -234,7 +254,7 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
             callBot(false);
         }
     };
-    
+
     this.composeLinks = function (lang, source, oldLinks, links) {
         var cleanText = "";
         var textId = 0;
@@ -244,15 +264,15 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
             textId = link.index + link.length;
         }
         cleanText += source.substring(textId);
-        
+
         var i18n = WM.Parser.findTemplates(cleanText, "i18n")[0];
         if (i18n) {
             cleanText = Alib.Str.removeFor(cleanText, i18n.index, i18n.length);
         }
-        
+
         var linksText = [];
         var tag = WM.ArchWiki.getInterlanguageTag(lang);
-        
+
         for (var l in links) {
             var ltag = links[l][0];
             if (ltag != tag) {
@@ -260,12 +280,12 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
                 linksText.push("[[" + ltag + ":" + ltitle + "]]\n");
             }
         }
-        
+
         var tempTemplates = WM.Parser.findTemplates(source, "Temporary i18n");
         if (!tempTemplates.length && i18n && linksText.length > 3) {
             linksText.push("{{Temporary i18n}}\n");
         }
-        
+
         if (oldLinks.length) {
             if (i18n) {
                 var firstLink = Math.min(oldLinks[0].index, i18n.index);
@@ -280,20 +300,20 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
         else {
             var firstLink = 0;
         }
-        
+
         var part1 = cleanText.substring(0, firstLink);
         var part2a = cleanText.substr(firstLink);
         var firstChar = part2a.search(/[^\s]/);
         var part2b = part2a.substr(firstChar);
-        
+
         var newText = part1 + linksText.join("") + part2b;
-        
+
         return newText;
     };
-    
+
     this.mainAuto = function (args, title, callBot) {
         WM.Log.logInfo("Replacing Template:i18n with dummy interlanguage links...");
-        
+
         var languages = [
             "Български",
             "Česky",
@@ -320,7 +340,7 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
             "简体中文",
             "正體中文",
         ];
-        
+
         var visitedTitles = {
             "Български": {},
             "Česky": {},
@@ -347,9 +367,9 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
             "简体中文": {},
             "正體中文": {},
         };
-        
+
         var detLang = WM.ArchWiki.detectLanguage(title);
-        
+
         if (detLang[1] == "English") {
             WM.Plugins.ArchWikiDummyInterlanguageLinks.queryTitle(detLang[0], languages, 0, visitedTitles, {}, callBot);
         }

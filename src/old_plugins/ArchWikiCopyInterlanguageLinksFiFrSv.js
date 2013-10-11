@@ -1,3 +1,23 @@
+/*
+ *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
+ *  Copyright (C) 2011-2013 Dario Giovannetti <dev@dariogiovannetti.net>
+ *
+ *  This file is part of Wiki Monkey.
+ *
+ *  Wiki Monkey is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  Wiki Monkey is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 WM.Plugins.ArchWikiCopyInterlanguageLinksFiFrSv = new function () {
     this.queryEnglishTitle = function (title, pureTitle, callBot) {
         WM.MW.callQuery(
@@ -15,7 +35,7 @@ WM.Plugins.ArchWikiCopyInterlanguageLinksFiFrSv = new function () {
                     for (var p in parsedLinks) {
                         links[parsedLinks[p].match[0]] = true;
                     }
-                    
+
                     WM.Plugins.ArchWikiCopyInterlanguageLinksFiFrSv.queryTitle(title, links, callBot);
                 }
                 else {
@@ -25,7 +45,7 @@ WM.Plugins.ArchWikiCopyInterlanguageLinksFiFrSv = new function () {
             }
         );
     };
-    
+
     this.queryTitle = function (title, links, callBot) {
         WM.MW.callQueryEdit(
             title,
@@ -34,20 +54,20 @@ WM.Plugins.ArchWikiCopyInterlanguageLinksFiFrSv = new function () {
                 for (var p in parsedLinks) {
                     links[parsedLinks[p].match[0]] = true;
                 }
-                
+
                 var linksOrd = Alib.Obj.getKeys(links);
                 linksOrd.sort();
-                
+
                 WM.Plugins.ArchWikiCopyInterlanguageLinksFiFrSv.editPage(title, linksOrd, source, timestamp, edittoken, callBot);
             }
         );
     };
-    
+
     this.editPage = function (title, links, source, timestamp, edittoken, callBot) {
         var summary = "[[Template:i18n]] is deprecated, use interlanguage links, see [[Help talk:I18n#\"Dummy\" interlanguage links and deprecation of Template:i18n]]";
-        
+
         var newText = WM.Plugins.ArchWikiCopyInterlanguageLinksFiFrSv.composeLinks(source, links);
-        
+
         if (newText != source) {
             WM.MW.callAPIPost(
                 {
@@ -69,11 +89,11 @@ WM.Plugins.ArchWikiCopyInterlanguageLinksFiFrSv = new function () {
             callBot(true);
         }
     };
-    
+
     this.editPageContinue = function (res, args) {
         var title = args[0];
         var callBot = args[1];
-        
+
         if (res.edit && res.edit.result == 'Success') {
             WM.Log.logInfo(title + ' correctly updated');
             callBot(true);
@@ -83,10 +103,10 @@ WM.Plugins.ArchWikiCopyInterlanguageLinksFiFrSv = new function () {
             callBot(false);
         }
     };
-    
+
     this.composeLinks = function (source, links) {
         var oldLinks = WM.ArchWiki.findAllInterlanguageLinks(source);
-        
+
         var cleanText = "";
         var textId = 0;
         for (var l in oldLinks) {
@@ -95,12 +115,12 @@ WM.Plugins.ArchWikiCopyInterlanguageLinksFiFrSv = new function () {
             textId = link.index + link.length;
         }
         cleanText += source.substring(textId);
-        
+
         var i18n = WM.Parser.findTemplates(cleanText, "i18n")[0];
         if (i18n) {
             cleanText = Alib.Str.removeFor(cleanText, i18n.index, i18n.length);
         }
-        
+
         if (oldLinks.length) {
             if (i18n) {
                 var firstLink = Math.min(oldLinks[0].index, i18n.index);
@@ -115,21 +135,21 @@ WM.Plugins.ArchWikiCopyInterlanguageLinksFiFrSv = new function () {
         else {
             var firstLink = 0;
         }
-        
+
         var part1 = cleanText.substring(0, firstLink);
         var part2a = cleanText.substr(firstLink);
         var firstChar = part2a.search(/[^\s]/);
         var part2b = part2a.substr(firstChar);
-        
+
         var newText = part1 + links.join("\n") + "\n" + part2b;
-        
+
         return newText;
     };
-    
+
     this.mainAuto = function (args, title, callBot) {
         var languages = ["Français", "Suomi", "Svenska"];
         var detLang = WM.ArchWiki.detectLanguage(title);
-        
+
         if (languages.indexOf(detLang[1]) > -1) {
             WM.Plugins.ArchWikiCopyInterlanguageLinksFiFrSv.queryEnglishTitle(title, detLang[0], callBot);
         }

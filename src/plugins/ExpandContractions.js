@@ -1,3 +1,23 @@
+/*
+ *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
+ *  Copyright (C) 2011-2013 Dario Giovannetti <dev@dariogiovannetti.net>
+ *
+ *  This file is part of Wiki Monkey.
+ *
+ *  Wiki Monkey is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  Wiki Monkey is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 WM.Plugins.ExpandContractions = new function () {
     var replace = function (source, regExp, newString, checkString, checkStrings) {
         var newtext = source.replace(regExp, newString);
@@ -6,15 +26,15 @@ WM.Plugins.ExpandContractions = new function () {
         }
         return newtext;
     };
-    
+
     this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         var newtext = source;
-        
+
         // Ignoring "I" since writing in 1st person isn't formal anyway
         // Note that JavaScript doesn't support look behind :(
         // Pay attention to preserve the original capitalization
-        
+
         newtext = replace(newtext, /([a-z])'re/ig, '$1 are', "'re", ["are"]);
         newtext = replace(newtext, /([a-z])'ve/ig, '$1 have', "'ve", ["have"]);
         newtext = replace(newtext, /([a-z])'ll/ig, '$1 will', "'ll", ["will", "shall"]);
@@ -27,17 +47,17 @@ WM.Plugins.ExpandContractions = new function () {
         newtext = replace(newtext, /([a-z])'s (been)/ig, '$1 has $2', "'s been", ["has been"]);
         newtext = replace(newtext, /(let)'s/ig, '$1 us', "let's", ["let us"]);
         newtext = replace(newtext, /(it)'(s own)/ig, '$1$2', "it's own", ["its own"]);
-        
+
         var ss = newtext.match(/[a-z]'s/gi);
         if (ss) {
             WM.Log.logWarning("Found " + ss.length + " instances of \"'s\": check if they can be replaced with \"is\", \"has\", ...");
         }
-        
+
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Expanded contractions");
         }
-        
+
         if (callNext) {
             callNext();
         }

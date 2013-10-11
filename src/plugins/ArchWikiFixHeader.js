@@ -1,18 +1,38 @@
+/*
+ *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
+ *  Copyright (C) 2011-2013 Dario Giovannetti <dev@dariogiovannetti.net>
+ *
+ *  This file is part of Wiki Monkey.
+ *
+ *  Wiki Monkey is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  Wiki Monkey is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 WM.Plugins.ArchWikiFixHeader = new function () {
     this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
-        
+
         var language = WM.ArchWiki.detectLanguage(WM.Editor.getTitle())[1];
-        
+
         var header = "";
         var content = source;
-        
+
         // <noinclude>
         var content = content.replace(/^\s*<noinclude>/, "");
         if (content != source) {
             header += "<noinclude>\n";
         }
-        
+
         // DISPLAYTITLE and Template:Lowercase_title
         var displaytitle = WM.Parser.findVariables(content, "DISPLAYTITLE");
         var lowercasetitle = WM.Parser.findTemplates(content, "Lowercase title");
@@ -43,7 +63,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         if (displaytitle.length || lowercasetitle.length) {
             WM.Log.logWarning("Found multiple instances of {{DISPLAYTITLE:...}} or {{Lowercase title}}: only the last one has been used, the others have been deleted");
         }
-        
+
         // Behavior switches
         var behaviorswitches = WM.Parser.findBehaviorSwitches(content);
         var bslist = [];
@@ -67,7 +87,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         }
         tempcontent += content.substring(contentId);
         content = tempcontent;
-        
+
         if (!dlct && bslist.length) {
             header += bslist.join(" ") + "\n";
         }
@@ -77,7 +97,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         else if (dlct && bslist.length) {
             header += dlct + " " + bslist.join(" ") + "\n";
         }
-        
+
         // Categories
         var categories = WM.Parser.findCategories(content);
         var catlist = [];
@@ -106,7 +126,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         }
         tempcontent += content.substring(contentId);
         content = tempcontent;
-        
+
         // Interlanguage links
         var interlanguage = WM.ArchWiki.findAllInterlanguageLinks(content);
         var iwlist = [];
@@ -129,17 +149,17 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         }
         tempcontent += content.substring(contentId);
         content = tempcontent;
-        
+
         var firstChar = content.search(/[^\s]/);
         content = content.substr(firstChar);
-        
+
         var newText = header + content;
-        
+
         if (newText != source) {
             WM.Editor.writeSource(newText);
             WM.Log.logInfo("Fixed header");
         }
-        
+
         if (callNext) {
             callNext();
         }
