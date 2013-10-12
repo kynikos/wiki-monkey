@@ -16,7 +16,9 @@
 * Run release.py DEVELOP_VERSION
 * Commit
 * Push to the remote repository
-* Update documentation
+* Update documentation:
+  - GitHub wiki
+  - ArchWiki article: https://wiki.archlinux.org/index.php/Wiki_Monkey
 
 NOTES:
 * To force merge "theirs" branch: `git merge -X theirs branch`
