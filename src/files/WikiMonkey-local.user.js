@@ -60,11 +60,11 @@ WM.UI.setEditor([
     [
         ["ArchWikiFixHeader", "Fix header", null],
         ["ArchWikiFixHeadings", "Fix headings", null],
-        ["ArchWikiFixLinks", "Fix links", null],
-        ["ArchWikiNewTemplates", "Use code templates", null],
+        ["ArchWikiFixLinks", "Fix external links", null],
         ["FixFragments", "Fix section links", null],
+        ["ArchWikiNewTemplates", "Use code templates", null],
         ["ExpandContractions", "Expand contractions", null],
-        ["MultipleLineBreaks", "Multiple line breaks", null]
+        ["MultipleLineBreaks", "Squash multiple line breaks", null]
     ],
     [
         ["SimpleReplace", "RegExp substitution", ["1"]]

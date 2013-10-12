@@ -46,7 +46,7 @@ WM.UI.setEditor([
     [
         ["FixFragments", "Fix section links", null],
         ["ExpandContractions", "Expand contractions", null],
-        ["MultipleLineBreaks", "Multiple line breaks", null]
+        ["MultipleLineBreaks", "Squash multiple line breaks", null]
     ],
     [
         ["SimpleReplace", "RegExp substitution", ["1"]]
