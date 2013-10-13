@@ -70,7 +70,7 @@ WM.UI.setLinkSearch([
 
 WM.UI.setSpecial([
     [
-        ["UpdateCategoryTree", "Update main ToC",
+        ["UpdateCategoryTree", "Update category tree",
          [{}, "automatic update"]]
     ],
     [

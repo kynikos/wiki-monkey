@@ -126,7 +126,7 @@ WM.UI.setLinkSearch([
 
 WM.UI.setSpecial([
     [
-        ["UpdateCategoryTree", "Update main ToC",
+        ["UpdateCategoryTree", "Update category tree",
          [[{page: "Table of Contents",
             root: "Category:English",
             alsoIn: "also in",
