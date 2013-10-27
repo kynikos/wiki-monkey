@@ -663,6 +663,48 @@ WM.ArchPackages = new function () {
         }
     };
 
+    var isPackageGroup = function (arch, grp, call, callArgs) {
+        var query = {
+            method: "GET",
+            url: "https://www.archlinux.org/groups/" + encodeURIComponent(arch) + "/" + encodeURIComponent(grp),
+            onload: function (res) {
+                // Cannot use the DOMParser because Scriptish/GreaseMonkey
+                // doesn't support XrayWrapper well
+                // See http://www.oreillynet.com/pub/a/network/2005/11/01/avoid-common-greasemonkey-pitfalls.html?page=3
+                // and https://developer.mozilla.org/en/docs/XPConnect_wrappers#XPCNativeWrapper_%28XrayWrapper%29
+                var escgrp = Alib.RegEx.escapePattern(grp);
+                var escarch = Alib.RegEx.escapePattern(arch);
+
+                var regExp = new RegExp("<h2>\\s*Group Details -\\s*" + escgrp + "\\s*\\(" + escarch + "\\)\\s*</h2>", "");
+
+                if (res.responseText.search(regExp) > -1) {
+                    call(true, callArgs);
+                }
+                else {
+                    call(false, callArgs);
+                }
+            },
+            onerror: function (res) {
+                WM.Log.logError(WM.MW.failedQueryError(res.finalUrl));
+            },
+        };
+
+        try {
+            GM_xmlhttpRequest(query);
+        }
+        catch (err) {
+            WM.Log.logError(WM.MW.failedHTTPRequestError(err));
+        }
+    };
+
+    this.isPackageGroup64 = function (grp, call, callArgs) {
+        isPackageGroup('x86_64', grp, call, callArgs);
+    };
+
+    this.isPackageGroup32 = function (grp, call, callArgs) {
+        isPackageGroup('i686', grp, call, callArgs);
+    };
+
     this.isAURPackage = function (pkg, call, callArgs) {
         var call2 = function (res, args) {
             if (res.type == "error") {
@@ -2919,21 +2961,22 @@ WM.WhatLinksHere = new function () {
         return document.getElementById('contentSub').getElementsByTagName('a')[0].title;
     };
 };
+
 WM.Plugins.ArchWikiFixHeader = new function () {
     this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
-        
+
         var language = WM.ArchWiki.detectLanguage(WM.Editor.getTitle())[1];
-        
+
         var header = "";
         var content = source;
-        
+
         // <noinclude>
         var content = content.replace(/^\s*<noinclude>/, "");
         if (content != source) {
             header += "<noinclude>\n";
         }
-        
+
         // DISPLAYTITLE and Template:Lowercase_title
         var displaytitle = WM.Parser.findVariables(content, "DISPLAYTITLE");
         var lowercasetitle = WM.Parser.findTemplates(content, "Lowercase title");
@@ -2964,7 +3007,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         if (displaytitle.length || lowercasetitle.length) {
             WM.Log.logWarning("Found multiple instances of {{DISPLAYTITLE:...}} or {{Lowercase title}}: only the last one has been used, the others have been deleted");
         }
-        
+
         // Behavior switches
         var behaviorswitches = WM.Parser.findBehaviorSwitches(content);
         var bslist = [];
@@ -2988,7 +3031,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         }
         tempcontent += content.substring(contentId);
         content = tempcontent;
-        
+
         if (!dlct && bslist.length) {
             header += bslist.join(" ") + "\n";
         }
@@ -2998,7 +3041,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         else if (dlct && bslist.length) {
             header += dlct + " " + bslist.join(" ") + "\n";
         }
-        
+
         // Categories
         var categories = WM.Parser.findCategories(content);
         var catlist = [];
@@ -3027,7 +3070,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         }
         tempcontent += content.substring(contentId);
         content = tempcontent;
-        
+
         // Interlanguage links
         var interlanguage = WM.ArchWiki.findAllInterlanguageLinks(content);
         var iwlist = [];
@@ -3050,17 +3093,17 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         }
         tempcontent += content.substring(contentId);
         content = tempcontent;
-        
+
         var firstChar = content.search(/[^\s]/);
         content = content.substr(firstChar);
-        
+
         var newText = header + content;
-        
+
         if (newText != source) {
             WM.Editor.writeSource(newText);
             WM.Log.logInfo("Fixed header");
         }
-        
+
         if (callNext) {
             callNext();
         }
@@ -3168,8 +3211,8 @@ WM.Plugins.ArchWikiFixLinks = new function () {
         re = /\[https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s]+?)\/?\]/ig;
         txt = txt.replace(re, '{{Pkg|$1}}');
 
-        re = /(?:[^\[])https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s\/]+)\/?/ig;
-        txt = txt.replace(re, '{{Pkg|$1}}');
+        re = /([^\[])https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s\/]+)\/?/ig;
+        txt = txt.replace(re, '$1{{Pkg|$2}}');
 
         re = /https?:\/\/(?:www\.)?archlinux\.org\/packages(?!\/?\s)/ig;
 
@@ -3188,8 +3231,8 @@ WM.Plugins.ArchWikiFixLinks = new function () {
         re = /\[https?:\/\/aur\.archlinux\.org\/packages\/([^\s]+?)\/?\]/ig;
         txt = txt.replace(re, '{{AUR|$1}}');
 
-        re = /(?:[^\[])https?:\/\/aur\.archlinux\.org\/packages\/([^\s\/]+)\/?/ig;
-        txt = txt.replace(re, '{{AUR|$1}}');
+        re = /([^\[])https?:\/\/aur\.archlinux\.org\/packages\/([^\s\/]+)\/?/ig;
+        txt = txt.replace(re, '$1{{AUR|$2}}');
 
         re = /https?:\/\/aur\.archlinux\.org(?!(?:\.|(?:\/?packages)?\/?\s))/ig;
 
@@ -3208,8 +3251,8 @@ WM.Plugins.ArchWikiFixLinks = new function () {
         re = /\[https?:\/\/bugs\.archlinux\.org\/task\/([^\s]+?)\/?\]/ig;
         txt = txt.replace(re, '{{Bug|$1}}');
 
-        re = /(?:[^\[])https?:\/\/bugs\.archlinux\.org\/task\/([^\s\/]+)\/?/ig;
-        txt = txt.replace(re, '{{Bug|$1}}');
+        re = /([^\[])https?:\/\/bugs\.archlinux\.org\/task\/([^\s\/]+)\/?/ig;
+        txt = txt.replace(re, '$1{{Bug|$2}}');
 
         re = /https?:\/\/bugs\.archlinux\.org\/task/ig;
 
@@ -3247,48 +3290,48 @@ WM.Plugins.ArchWikiNewTemplates = new function () {
     this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         var newtext = source;
-        
+
         var re8 = /<pre>(((?!<(pre|nowiki)>)[^\=\|])*?((?!<(pre|nowiki)>)[^\=\|\}]))<\/pre>/ig;
         var re9 = /<pre>(((?!<(pre|nowiki)>)[^\|])*?((?!<(pre|nowiki)>)[^\|\}]))<\/pre>/ig;
         var re10 = /<pre>(\n*((?!<(pre|nowiki)>).\n*)+?)<\/pre>/ig;
-        
+
         var re11 = /<code>(((?!<(code|nowiki)>)[^\=\|\n])*?((?!<(code|nowiki)>)[^\=\|\}\n]))<\/code>/ig;
         var re12 = /<code>(((?!<(code|nowiki)>)[^\|\n])*?((?!<(code|nowiki)>)[^\|\}\n]))<\/code>/ig;
         var re13 = /<code>(((?!<(code|nowiki)>)[^\n])+?)<\/code>/ig;
-        
+
         var re14 = /<tt>(((?!<(tt|nowiki)>)[^\=\|\n])*?((?!<(tt|nowiki)>)[^\=\|\}\n]))<\/tt>/ig;
         var re15 = /<tt>(((?!<(tt|nowiki)>)[^\|\n])*?((?!<(tt|nowiki)>)[^\|\}\n]))<\/tt>/ig;
         var re16 = /<tt>(((?!<(tt|nowiki)>)[^\n])+?)<\/tt>/ig;
-        
+
         newtext = newtext.replace(re8, '{{bc|$1}}');
         newtext = newtext.replace(re9, '{{bc|1=$1}}'); // Must come after re8
         newtext = newtext.replace(re10, '{{bc|<nowiki>$1</nowiki>}}'); // Must come after re9
-        
+
         newtext = newtext.replace(re11, '{{ic|$1}}');
         newtext = newtext.replace(re12, '{{ic|1=$1}}'); // Must come after re11
         newtext = newtext.replace(re13, '{{ic|<nowiki>$1</nowiki>}}'); // Must come after re12
-        
+
         newtext = newtext.replace(re14, '{{ic|$1}}');
         newtext = newtext.replace(re15, '{{ic|1=$1}}'); // Must come after re14
         newtext = newtext.replace(re16, '{{ic|<nowiki>$1</nowiki>}}'); // Must come after re15
-        
+
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Turned HTML tags into proper templates");
         }
-        
+
         var tests = [
             ['&lt;pre>', newtext.match(/<pre/ig)],
             ['&lt;code>', newtext.match(/<code/ig)],
             ['&lt;tt>', newtext.match(/<tt/ig)]
         ];
-        
-        for (var test in tests) { 
+
+        for (var test in tests) {
             if (tests[test][1]) {
                 WM.Log.logWarning(tests[test][1].length + ' ' + tests[test][0] + ' instances require manual intervention');
             }
         }
-        
+
         if (callNext) {
             callNext();
         }
@@ -3470,7 +3513,7 @@ WM.Plugins.ArchWikiOldAURLinks = new function () {
 WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
     var doUpdate = function (source, call, callArgs) {
         // Note that findTemplatesPattern puts the pattern in a capturing group (parentheses) by itself
-        var templates = WM.Parser.findTemplatesPattern(source, "[Pp]kg|[Aa]ur|AUR");
+        var templates = WM.Parser.findTemplatesPattern(source, "[Pp]kg|[Aa]ur|AUR|[Gg]rp");
         var newText = "";
 
         if (templates.length > 0) {
@@ -3491,7 +3534,11 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
             case 'pkg':
                 WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(
                     // Checks must be in reversed order because they are popped
-                    [WM.Plugins.ArchWikiUpdatePackageTemplates.checkAURlc,
+                    [WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup32lc,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup32,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup64lc,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup64,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkAURlc,
                      WM.Plugins.ArchWikiUpdatePackageTemplates.checkAUR,
                      WM.Plugins.ArchWikiUpdatePackageTemplates.checkOfficiallc,
                      WM.Plugins.ArchWikiUpdatePackageTemplates.checkOfficial],
@@ -3500,10 +3547,27 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
             case 'aur':
                 WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(
                     // Checks must be in reversed order because they are popped
-                    [WM.Plugins.ArchWikiUpdatePackageTemplates.checkOfficiallc,
+                    [WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup32lc,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup32,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup64lc,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup64,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkOfficiallc,
                      WM.Plugins.ArchWikiUpdatePackageTemplates.checkOfficial,
                      WM.Plugins.ArchWikiUpdatePackageTemplates.checkAURlc,
                      WM.Plugins.ArchWikiUpdatePackageTemplates.checkAUR],
+                    source, newText, templates, index, call, callArgs);
+                break;
+            case 'grp':
+                WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(
+                    // Checks must be in reversed order because they are popped
+                    [WM.Plugins.ArchWikiUpdatePackageTemplates.checkAURlc,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkAUR,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkOfficiallc,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkOfficial,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup32lc,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup32,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup64lc,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup64],
                     source, newText, templates, index, call, callArgs);
                 break;
             default:
@@ -3520,7 +3584,7 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
             check(checks, source, newText, templates, index, call, callArgs);
         }
         else {
-            WM.Log.logWarning(templates[index].arguments[0].value.trim() + " hasn't been found neither in the official repositories nor in the AUR");
+            WM.Log.logWarning(templates[index].arguments[0].value.trim() + " hasn't been found neither in the official repositories nor in the AUR nor as a package group");
 
             newText += templates[index].match[0];
 
@@ -3570,6 +3634,54 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
             WM.ArchPackages.isAURPackage(pkgname.toLowerCase(),
                                          WM.Plugins.ArchWikiUpdatePackageTemplates.checkAURlc2,
                                          [checks, source, newText, templates, index, call, callArgs]);
+        }
+        else {
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+        }
+    };
+
+    this.checkGroup64 = function (checks, source, newText, templates, index, call, callArgs) {
+        var grpname = templates[index].arguments[0].value.trim();
+        WM.Log.logInfo("Looking for " + grpname + " as an x86_64 package group...");
+
+        WM.ArchPackages.isPackageGroup64(grpname,
+                                          WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup64_2,
+                                          [checks, source, newText, templates, index, call, callArgs]);
+    };
+
+    this.checkGroup64lc = function (checks, source, newText, templates, index, call, callArgs) {
+        var grpname = templates[index].arguments[0].value.trim();
+
+        if (grpname.toLowerCase() != grpname) {
+            WM.Log.logInfo("Looking for " + grpname.toLowerCase() + " (lowercase) as an x86_64 package group...");
+
+            WM.ArchPackages.isPackageGroup64(grpname.toLowerCase(),
+                                              WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup64lc2,
+                                              [checks, source, newText, templates, index, call, callArgs]);
+        }
+        else {
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+        }
+    };
+
+    this.checkGroup32 = function (checks, source, newText, templates, index, call, callArgs) {
+        var grpname = templates[index].arguments[0].value.trim();
+        WM.Log.logInfo("Looking for " + grpname + " as an i686 package group...");
+
+        WM.ArchPackages.isPackageGroup32(grpname,
+                                          WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup32_2,
+                                          [checks, source, newText, templates, index, call, callArgs]);
+    };
+
+    this.checkGroup32lc = function (checks, source, newText, templates, index, call, callArgs) {
+        var grpname = templates[index].arguments[0].value.trim();
+
+        if (grpname.toLowerCase() != grpname) {
+            WM.Log.logInfo("Looking for " + grpname.toLowerCase() + " (lowercase) as an i686 package group...");
+
+            WM.ArchPackages.isPackageGroup32(grpname.toLowerCase(),
+                                              WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup32lc2,
+                                              [checks, source, newText, templates, index, call, callArgs]);
         }
         else {
             WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
@@ -3682,6 +3794,103 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
         }
     };
 
+    this.checkGroup64_2 = function (res, args) {
+        var checks = args[0];
+        var source = args[1];
+        var newText = args[2];
+        var templates = args[3];
+        var index = args[4];
+        var call = args[5];
+        var callArgs = args[6];
+
+        var template = templates[index];
+        var grpname = template.arguments[0].value.trim();
+
+        if (res) {
+            if (template.title.toLowerCase() != 'grp') {
+                var newtemplate = "{{Grp|" + grpname + "}}";
+                newText += newtemplate;
+                WM.Log.logInfo("Replacing template with " + newtemplate);
+            }
+            else {
+                newText += template.match[0];
+            }
+
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+        }
+        else {
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+        }
+    };
+
+    this.checkGroup64lc2 = function (res, args) {
+        var checks = args[0];
+        var source = args[1];
+        var newText = args[2];
+        var templates = args[3];
+        var index = args[4];
+        var call = args[5];
+        var callArgs = args[6];
+
+        var template = templates[index];
+        var grpname = template.arguments[0].value.trim();
+
+        if (res) {
+            var newtemplate = "{{Grp|" + grpname.toLowerCase() + "}}";
+            newText += newtemplate;
+            WM.Log.logInfo("Replacing template with " + newtemplate);
+
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+        }
+        else {
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+        }
+    };
+
+    this.checkGroup32_2 = function (res, args) {
+        var checks = args[0];
+        var source = args[1];
+        var newText = args[2];
+        var templates = args[3];
+        var index = args[4];
+        var call = args[5];
+        var callArgs = args[6];
+
+        var template = templates[index];
+        var grpname = template.arguments[0].value.trim();
+
+        if (res) {
+            newText += template.match[0];
+            WM.Log.logWarning(grpname + " is a package group for i686 only, and Template:Grp only supports x86_64");
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+        }
+        else {
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+        }
+    };
+
+    this.checkGroup32lc2 = function (res, args) {
+        var checks = args[0];
+        var source = args[1];
+        var newText = args[2];
+        var templates = args[3];
+        var index = args[4];
+        var call = args[5];
+        var callArgs = args[6];
+
+        var template = templates[index];
+        var grpname = template.arguments[0].value.trim();
+
+        if (res) {
+            newText += template.match[0];
+            WM.Log.logWarning(grpname + " is a package group for i686 only, and Template:Grp only supports x86_64");
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+        }
+        else {
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+        }
+    };
+
     this.doUpdateContinue3 = function (source, newText, templates, index, call, callArgs) {
         index++;
 
@@ -3773,15 +3982,15 @@ WM.Plugins.ExpandContractions = new function () {
         }
         return newtext;
     };
-    
+
     this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         var newtext = source;
-        
+
         // Ignoring "I" since writing in 1st person isn't formal anyway
         // Note that JavaScript doesn't support look behind :(
         // Pay attention to preserve the original capitalization
-        
+
         newtext = replace(newtext, /([a-z])'re/ig, '$1 are', "'re", ["are"]);
         newtext = replace(newtext, /([a-z])'ve/ig, '$1 have', "'ve", ["have"]);
         newtext = replace(newtext, /([a-z])'ll/ig, '$1 will', "'ll", ["will", "shall"]);
@@ -3794,17 +4003,17 @@ WM.Plugins.ExpandContractions = new function () {
         newtext = replace(newtext, /([a-z])'s (been)/ig, '$1 has $2', "'s been", ["has been"]);
         newtext = replace(newtext, /(let)'s/ig, '$1 us', "let's", ["let us"]);
         newtext = replace(newtext, /(it)'(s own)/ig, '$1$2', "it's own", ["its own"]);
-        
+
         var ss = newtext.match(/[a-z]'s/gi);
         if (ss) {
             WM.Log.logWarning("Found " + ss.length + " instances of \"'s\": check if they can be replaced with \"is\", \"has\", ...");
         }
-        
+
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Expanded contractions");
         }
-        
+
         if (callNext) {
             callNext();
         }
@@ -3891,14 +4100,14 @@ WM.Plugins.MultipleLineBreaks = new function () {
     this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         var newtext = source;
-        
+
         newtext = newtext.replace(/[\n]{3,}/g, '\n\n');
-        
+
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Removed multiple line breaks");
         }
-        
+
         if (callNext) {
             callNext();
         }
@@ -3906,11 +4115,9 @@ WM.Plugins.MultipleLineBreaks = new function () {
 };
 
 WM.Plugins.SimpleReplace = new function () {
-    this.makeUI = function (args) {
-        var id = args[0];
-
+    var makeUI = function (id) {
         GM_addStyle("#WikiMonkey-SimpleReplace {display:inline-block;} " +
-                    "#WikiMonkey-SimpleReplace div {display:inline-block; margin-right:2em;} " +
+                    "#WikiMonkey-SimpleReplace div {display:inline-block;} " +
                     "#WikiMonkey-SimpleReplace input[type='text'] {margin-left:0.33em;}");
 
         var divMain = document.createElement('div');
@@ -3955,11 +4162,22 @@ WM.Plugins.SimpleReplace = new function () {
         return divMain;
     };
 
+    this.makeUI = function (args) {
+        var id = args[0];
+
+        var divMain = makeUI(id);
+
+        GM_addStyle("#WikiMonkey-SimpleReplace div {margin-left:1em;}");
+
+        return divMain;
+    };
+
     this.makeBotUI = function (args) {
         var id = args[0];
 
-        // this.makeUI doesn't work
-        var divMain = WM.Plugins.SimpleReplace.makeUI(args);
+        var divMain = makeUI(id);
+
+        GM_addStyle("#WikiMonkey-SimpleReplace div {margin-right:2em;}");
 
         var par3 = document.createElement('div');
 
@@ -4213,16 +4431,15 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
     };
 };
 
-
 WM.UI.setEditor([
     [
         ["ArchWikiFixHeader", "Fix header", null],
         ["ArchWikiFixHeadings", "Fix headings", null],
-        ["ArchWikiFixLinks", "Fix links", null],
-        ["ArchWikiNewTemplates", "Use code templates", null],
+        ["ArchWikiFixLinks", "Fix external links", null],
         ["FixFragments", "Fix section links", null],
+        ["ArchWikiNewTemplates", "Use code templates", null],
         ["ExpandContractions", "Expand contractions", null],
-        ["MultipleLineBreaks", "Multiple line breaks", null]
+        ["MultipleLineBreaks", "Squash multiple line breaks", null]
     ],
     [
         ["SimpleReplace", "RegExp substitution", ["1"]]
@@ -4231,7 +4448,7 @@ WM.UI.setEditor([
         ["SynchronizeInterlanguageLinks", "Sync interlanguage links",
          [function (title) {
              var language = WM.ArchWiki.detectLanguage(title)[1];
-            // The language must correspond to a working interwiki tag
+             // The language must correspond to a working interwiki tag
              return WM.ArchWiki.getInterlanguageTag(language);
          },
          WM.ArchWiki.getInternalInterwikiLanguages()]]

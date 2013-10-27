@@ -2693,6 +2693,7 @@ WM.WhatLinksHere = new function () {
         return document.getElementById('contentSub').getElementsByTagName('a')[0].title;
     };
 };
+
 WM.Plugins.ExpandContractions = new function () {
     var replace = function (source, regExp, newString, checkString, checkStrings) {
         var newtext = source.replace(regExp, newString);
@@ -2701,15 +2702,15 @@ WM.Plugins.ExpandContractions = new function () {
         }
         return newtext;
     };
-    
+
     this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         var newtext = source;
-        
+
         // Ignoring "I" since writing in 1st person isn't formal anyway
         // Note that JavaScript doesn't support look behind :(
         // Pay attention to preserve the original capitalization
-        
+
         newtext = replace(newtext, /([a-z])'re/ig, '$1 are', "'re", ["are"]);
         newtext = replace(newtext, /([a-z])'ve/ig, '$1 have', "'ve", ["have"]);
         newtext = replace(newtext, /([a-z])'ll/ig, '$1 will', "'ll", ["will", "shall"]);
@@ -2722,17 +2723,17 @@ WM.Plugins.ExpandContractions = new function () {
         newtext = replace(newtext, /([a-z])'s (been)/ig, '$1 has $2', "'s been", ["has been"]);
         newtext = replace(newtext, /(let)'s/ig, '$1 us', "let's", ["let us"]);
         newtext = replace(newtext, /(it)'(s own)/ig, '$1$2', "it's own", ["its own"]);
-        
+
         var ss = newtext.match(/[a-z]'s/gi);
         if (ss) {
             WM.Log.logWarning("Found " + ss.length + " instances of \"'s\": check if they can be replaced with \"is\", \"has\", ...");
         }
-        
+
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Expanded contractions");
         }
-        
+
         if (callNext) {
             callNext();
         }
@@ -2862,32 +2863,32 @@ WM.Plugins.FixBacklinkFragments = new function () {
 WM.Plugins.FixDoubleRedirects = new function () {
     this.main = function (args, callNext) {
         var summary = args;
-        
+
         WM.Log.logInfo("Fixing double redirects...");
-        
+
         WM.MW.getSpecialList("DoubleRedirects",
                              "namespaces",
                              WM.Plugins.FixDoubleRedirects.reverseResults,
                              [summary, callNext]);
     };
-    
+
     this.reverseResults = function (results, siteinfo, args) {
         var summary = args[0];
         var callNext = args[1];
-        
+
         var namespaces = siteinfo.namespaces;
-        
+
         results.reverse();
-        
+
         WM.Plugins.FixDoubleRedirects.iterateList(results, namespaces, [summary, callNext]);
     };
-    
+
     this.iterateList = function (results, namespaces, args) {
         var summary = args[0];
         var callNext = args[1];
-        
+
         var page = results.pop();
-        
+
         if (page) {
             WM.MW.callQueryEdit(page.title,
                                 WM.Plugins.FixDoubleRedirects.processPage,
@@ -2900,25 +2901,25 @@ WM.Plugins.FixDoubleRedirects = new function () {
             }
         }
     };
-    
+
     this.processPage = function (title, source, timestamp, edittoken, args) {
         var page = args[0];
         var results = args[1];
         var namespaces = args[2];
         var summary = args[3];
         var callNext = args[4];
-        
+
         WM.Log.logInfo("Processing " + title + "...");
-        
+
         var rawTarget = source.match(/\s*#redirect *[^\n]+/i);
-        
+
         if (source.indexOf(rawTarget[0]) == 0) {
             var target = WM.Parser.findInternalLinks(rawTarget[0], null)[0];
-            
+
             var targetEnd = target.index + target.length;
             var newTarget = "#REDIRECT [[" + ((namespaces[page.databaseResult.nsc]["*"]) ? WM.Parser.convertUnderscoresToSpaces(namespaces[page.databaseResult.nsc]["*"]) + ":" : "") + WM.Parser.convertUnderscoresToSpaces(page.databaseResult.tc) + "]]";
             var newtext = Alib.Str.overwriteFor(source, newTarget, 0, targetEnd);
-            
+
             if (newtext != source) {
                 WM.MW.callAPIPost({action: "edit",
                                    bot: "1",
@@ -2941,13 +2942,13 @@ WM.Plugins.FixDoubleRedirects = new function () {
             WM.Plugins.FixDoubleRedirects.iterateList(results, namespaces, [summary, callNext]);
         }
     };
-    
+
     this.processPageEnd = function (res, args) {
         var results = args[0];
         var namespaces = args[1];
         var summary = args[2];
         var callNext = args[3];
-        
+
         if (res.edit && res.edit.result == 'Success') {
             WM.Plugins.FixDoubleRedirects.iterateList(results, namespaces, [summary, callNext]);
         }
@@ -3037,14 +3038,14 @@ WM.Plugins.MultipleLineBreaks = new function () {
     this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         var newtext = source;
-        
+
         newtext = newtext.replace(/[\n]{3,}/g, '\n\n');
-        
+
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Removed multiple line breaks");
         }
-        
+
         if (callNext) {
             callNext();
         }
@@ -3052,11 +3053,9 @@ WM.Plugins.MultipleLineBreaks = new function () {
 };
 
 WM.Plugins.SimpleReplace = new function () {
-    this.makeUI = function (args) {
-        var id = args[0];
-
+    var makeUI = function (id) {
         GM_addStyle("#WikiMonkey-SimpleReplace {display:inline-block;} " +
-                    "#WikiMonkey-SimpleReplace div {display:inline-block; margin-right:2em;} " +
+                    "#WikiMonkey-SimpleReplace div {display:inline-block;} " +
                     "#WikiMonkey-SimpleReplace input[type='text'] {margin-left:0.33em;}");
 
         var divMain = document.createElement('div');
@@ -3101,11 +3100,22 @@ WM.Plugins.SimpleReplace = new function () {
         return divMain;
     };
 
+    this.makeUI = function (args) {
+        var id = args[0];
+
+        var divMain = makeUI(id);
+
+        GM_addStyle("#WikiMonkey-SimpleReplace div {margin-left:1em;}");
+
+        return divMain;
+    };
+
     this.makeBotUI = function (args) {
         var id = args[0];
 
-        // this.makeUI doesn't work
-        var divMain = WM.Plugins.SimpleReplace.makeUI(args);
+        var divMain = makeUI(id);
+
+        GM_addStyle("#WikiMonkey-SimpleReplace div {margin-right:2em;}");
 
         var par3 = document.createElement('div');
 
@@ -3444,12 +3454,11 @@ WM.Plugins.UpdateCategoryTree = new function () {
     };
 };
 
-
 WM.UI.setEditor([
     [
         ["FixFragments", "Fix section links", null],
         ["ExpandContractions", "Expand contractions", null],
-        ["MultipleLineBreaks", "Multiple line breaks", null]
+        ["MultipleLineBreaks", "Squash multiple line breaks", null]
     ],
     [
         ["SimpleReplace", "RegExp substitution", ["1"]]
@@ -3464,7 +3473,7 @@ WM.UI.setCategory([
 
 WM.UI.setWhatLinksHere([
     ["SimpleReplace", "RegExp substitution", ["1"]],
-    ["FixBacklinkFragments", "Fix backlink fragments", "fix link to section"]
+    ["FixBacklinkFragments", "Fix links to specific sections of the target article", "fix links to specific sections"]
 ]);
 
 WM.UI.setLinkSearch([
@@ -3473,7 +3482,7 @@ WM.UI.setLinkSearch([
 
 WM.UI.setSpecial([
     [
-        ["UpdateCategoryTree", "Update main ToC",
+        ["UpdateCategoryTree", "Update category tree",
          [{}, "automatic update"]]
     ],
     [

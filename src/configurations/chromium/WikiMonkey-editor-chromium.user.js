@@ -3,14 +3,14 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.13.0-editor-chromium
+// @version 1.13.0-dev-editor-chromium
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-editor-chromium.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-editor-chromium.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/1.13.0/src/files/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.13.0/src/files/wiki-monkey-64.png
+// @updateURL https://raw.github.com/kynikos/wiki-monkey/develop/src/configurations/chromium/WikiMonkey-editor-chromium.meta.js
+// @downloadURL https://raw.github.com/kynikos/wiki-monkey/develop/src/configurations/chromium/WikiMonkey-editor-chromium.user.js
+// @icon https://raw.github.com/kynikos/wiki-monkey/develop/src/files/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/develop/src/files/wiki-monkey-64.png
 // @match http://*.wikipedia.org/*
 // @match https://wiki.archlinux.org/*
 // ==/UserScript==
@@ -2707,6 +2707,7 @@ WM.WhatLinksHere = new function () {
         return document.getElementById('contentSub').getElementsByTagName('a')[0].title;
     };
 };
+
 WM.Plugins.ExpandContractions = new function () {
     var replace = function (source, regExp, newString, checkString, checkStrings) {
         var newtext = source.replace(regExp, newString);
@@ -2715,15 +2716,15 @@ WM.Plugins.ExpandContractions = new function () {
         }
         return newtext;
     };
-    
+
     this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         var newtext = source;
-        
+
         // Ignoring "I" since writing in 1st person isn't formal anyway
         // Note that JavaScript doesn't support look behind :(
         // Pay attention to preserve the original capitalization
-        
+
         newtext = replace(newtext, /([a-z])'re/ig, '$1 are', "'re", ["are"]);
         newtext = replace(newtext, /([a-z])'ve/ig, '$1 have', "'ve", ["have"]);
         newtext = replace(newtext, /([a-z])'ll/ig, '$1 will', "'ll", ["will", "shall"]);
@@ -2736,17 +2737,17 @@ WM.Plugins.ExpandContractions = new function () {
         newtext = replace(newtext, /([a-z])'s (been)/ig, '$1 has $2', "'s been", ["has been"]);
         newtext = replace(newtext, /(let)'s/ig, '$1 us', "let's", ["let us"]);
         newtext = replace(newtext, /(it)'(s own)/ig, '$1$2', "it's own", ["its own"]);
-        
+
         var ss = newtext.match(/[a-z]'s/gi);
         if (ss) {
             WM.Log.logWarning("Found " + ss.length + " instances of \"'s\": check if they can be replaced with \"is\", \"has\", ...");
         }
-        
+
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Expanded contractions");
         }
-        
+
         if (callNext) {
             callNext();
         }
@@ -2833,14 +2834,14 @@ WM.Plugins.MultipleLineBreaks = new function () {
     this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         var newtext = source;
-        
+
         newtext = newtext.replace(/[\n]{3,}/g, '\n\n');
-        
+
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Removed multiple line breaks");
         }
-        
+
         if (callNext) {
             callNext();
         }
@@ -2848,11 +2849,9 @@ WM.Plugins.MultipleLineBreaks = new function () {
 };
 
 WM.Plugins.SimpleReplace = new function () {
-    this.makeUI = function (args) {
-        var id = args[0];
-
+    var makeUI = function (id) {
         GM_addStyle("#WikiMonkey-SimpleReplace {display:inline-block;} " +
-                    "#WikiMonkey-SimpleReplace div {display:inline-block; margin-right:2em;} " +
+                    "#WikiMonkey-SimpleReplace div {display:inline-block;} " +
                     "#WikiMonkey-SimpleReplace input[type='text'] {margin-left:0.33em;}");
 
         var divMain = document.createElement('div');
@@ -2897,11 +2896,22 @@ WM.Plugins.SimpleReplace = new function () {
         return divMain;
     };
 
+    this.makeUI = function (args) {
+        var id = args[0];
+
+        var divMain = makeUI(id);
+
+        GM_addStyle("#WikiMonkey-SimpleReplace div {margin-left:1em;}");
+
+        return divMain;
+    };
+
     this.makeBotUI = function (args) {
         var id = args[0];
 
-        // this.makeUI doesn't work
-        var divMain = WM.Plugins.SimpleReplace.makeUI(args);
+        var divMain = makeUI(id);
+
+        GM_addStyle("#WikiMonkey-SimpleReplace div {margin-right:2em;}");
 
         var par3 = document.createElement('div');
 
@@ -2989,12 +2999,11 @@ WM.Plugins.SimpleReplace = new function () {
     };
 };
 
-
 WM.UI.setEditor([
     [
         ["FixFragments", "Fix section links", null],
         ["ExpandContractions", "Expand contractions", null],
-        ["MultipleLineBreaks", "Multiple line breaks", null]
+        ["MultipleLineBreaks", "Squash multiple line breaks", null]
     ],
     [
         ["SimpleReplace", "RegExp substitution", ["1"]]

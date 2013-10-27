@@ -806,6 +806,48 @@ WM.ArchPackages = new function () {
         }
     };
 
+    var isPackageGroup = function (arch, grp, call, callArgs) {
+        var query = {
+            method: "GET",
+            url: "https://www.archlinux.org/groups/" + encodeURIComponent(arch) + "/" + encodeURIComponent(grp),
+            onload: function (res) {
+                // Cannot use the DOMParser because Scriptish/GreaseMonkey
+                // doesn't support XrayWrapper well
+                // See http://www.oreillynet.com/pub/a/network/2005/11/01/avoid-common-greasemonkey-pitfalls.html?page=3
+                // and https://developer.mozilla.org/en/docs/XPConnect_wrappers#XPCNativeWrapper_%28XrayWrapper%29
+                var escgrp = Alib.RegEx.escapePattern(grp);
+                var escarch = Alib.RegEx.escapePattern(arch);
+
+                var regExp = new RegExp("<h2>\\s*Group Details -\\s*" + escgrp + "\\s*\\(" + escarch + "\\)\\s*</h2>", "");
+
+                if (res.responseText.search(regExp) > -1) {
+                    call(true, callArgs);
+                }
+                else {
+                    call(false, callArgs);
+                }
+            },
+            onerror: function (res) {
+                WM.Log.logError(WM.MW.failedQueryError(res.finalUrl));
+            },
+        };
+
+        try {
+            GM_xmlhttpRequest(query);
+        }
+        catch (err) {
+            WM.Log.logError(WM.MW.failedHTTPRequestError(err));
+        }
+    };
+
+    this.isPackageGroup64 = function (grp, call, callArgs) {
+        isPackageGroup('x86_64', grp, call, callArgs);
+    };
+
+    this.isPackageGroup32 = function (grp, call, callArgs) {
+        isPackageGroup('i686', grp, call, callArgs);
+    };
+
     this.isAURPackage = function (pkg, call, callArgs) {
         var call2 = function (res, args) {
             if (res.type == "error") {
@@ -2919,11 +2961,12 @@ WM.WhatLinksHere = new function () {
         return document.getElementById('contentSub').getElementsByTagName('a')[0].title;
     };
 };
+
 WM.Plugins.ArchWikiQuickReport = new function () {
     this.makeUI = function (args) {
         var id = args[0];
         var article = args[1];
-        
+
         var select = document.createElement('select');
         var types = ["&lt;TYPE&gt;", "content", "style"];
         var value, option;
@@ -2935,33 +2978,33 @@ WM.Plugins.ArchWikiQuickReport = new function () {
             select.appendChild(option);
         }
         select.id = "ArchWikiQuickReport-select-" + id;
-        
+
         var input = document.createElement('input');
         input.setAttribute('type', 'text');
         input.id = "ArchWikiQuickReport-input-" + id;
-        
+
         var link = document.createElement('a');
         link.href = "/index.php/" + article;
         link.innerHTML = article;
-        
+
         var span = document.createElement('span');
         span.appendChild(select);
         span.appendChild(input);
         span.appendChild(link);
-        
+
         return span;
     };
-    
+
     this.main = function (args, callNext) {
         var id = args[0];
         var article = args[1];
         var summary = args[2];
-        
+
         WM.Log.logInfo('Appending diff to ' + article + "...");
-        
+
         var select = document.getElementById("ArchWikiQuickReport-select-" + id);
         var type = select.options[select.selectedIndex].value;
-        
+
         if (type != 'content' && type != 'style') {
             WM.Log.logError('Select a valid report type');
         }
@@ -2970,32 +3013,32 @@ WM.Plugins.ArchWikiQuickReport = new function () {
                                     [id, article, type, summary, callNext]);
         }
     };
-    
+
     this.mainGetEndTimestamp = function (enddate, args) {
         var id = args[0];
         var article = args[1];
         var type = args[2];
         var summary = args[3];
         var callNext = args[4];
-        
+
         WM.MW.callQueryEdit(article,
                             WM.Plugins.ArchWikiQuickReport.mainWrite,
                             [id, type, summary, enddate, callNext]);
     };
-    
+
     this.mainWrite = function (article, source, timestamp, edittoken, args) {
         var id = args[0];
         var type = args[1];
         var summary = args[2];
         var enddate = args[3];
         var callNext = args[4];
-        
+
         var title = Alib.HTTP.getURIParameter('title');
         var pEnddate = enddate.substr(0, 10) + "&nbsp;" + enddate.substr(11, 8);
         var notes = document.getElementById("ArchWikiQuickReport-input-" + id).value;
-        
+
         var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", pEnddate, type, notes]);
-        
+
         WM.MW.callAPIPost({action: "edit",
                            bot: "1",
                            title: article,
@@ -3007,11 +3050,11 @@ WM.Plugins.ArchWikiQuickReport = new function () {
                            WM.Plugins.ArchWikiQuickReport.mainEnd,
                            [article, callNext]);
     };
-    
+
     this.mainEnd = function (res, args) {
         var article = args[0];
         var callNext = args[1];
-        
+
         if (res.edit && res.edit.result == 'Success') {
             WM.Log.logInfo('Diff correctly appended to ' + article);
             if (callNext) {
@@ -3087,7 +3130,6 @@ WM.Plugins.ArchWikiRCFilter = new function () {
         }
     }
 };
-
 
 WM.UI.setEditor(null);
 
