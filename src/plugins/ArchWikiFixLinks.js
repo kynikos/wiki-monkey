@@ -79,8 +79,8 @@ WM.Plugins.ArchWikiFixLinks = new function () {
         re = /\[https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s]+?)\/?\]/ig;
         txt = txt.replace(re, '{{Pkg|$1}}');
 
-        re = /(?:[^\[])https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s\/]+)\/?/ig;
-        txt = txt.replace(re, '{{Pkg|$1}}');
+        re = /([^\[])https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s\/]+)\/?/ig;
+        txt = txt.replace(re, '$1{{Pkg|$2}}');
 
         re = /https?:\/\/(?:www\.)?archlinux\.org\/packages(?!\/?\s)/ig;
 
@@ -99,8 +99,8 @@ WM.Plugins.ArchWikiFixLinks = new function () {
         re = /\[https?:\/\/aur\.archlinux\.org\/packages\/([^\s]+?)\/?\]/ig;
         txt = txt.replace(re, '{{AUR|$1}}');
 
-        re = /(?:[^\[])https?:\/\/aur\.archlinux\.org\/packages\/([^\s\/]+)\/?/ig;
-        txt = txt.replace(re, '{{AUR|$1}}');
+        re = /([^\[])https?:\/\/aur\.archlinux\.org\/packages\/([^\s\/]+)\/?/ig;
+        txt = txt.replace(re, '$1{{AUR|$2}}');
 
         re = /https?:\/\/aur\.archlinux\.org(?!(?:\.|(?:\/?packages)?\/?\s))/ig;
 
@@ -119,8 +119,8 @@ WM.Plugins.ArchWikiFixLinks = new function () {
         re = /\[https?:\/\/bugs\.archlinux\.org\/task\/([^\s]+?)\/?\]/ig;
         txt = txt.replace(re, '{{Bug|$1}}');
 
-        re = /(?:[^\[])https?:\/\/bugs\.archlinux\.org\/task\/([^\s\/]+)\/?/ig;
-        txt = txt.replace(re, '{{Bug|$1}}');
+        re = /([^\[])https?:\/\/bugs\.archlinux\.org\/task\/([^\s\/]+)\/?/ig;
+        txt = txt.replace(re, '$1{{Bug|$2}}');
 
         re = /https?:\/\/bugs\.archlinux\.org\/task/ig;
 
