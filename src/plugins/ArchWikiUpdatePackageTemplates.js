@@ -21,7 +21,7 @@
 WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
     var doUpdate = function (source, call, callArgs) {
         // Note that findTemplatesPattern puts the pattern in a capturing group (parentheses) by itself
-        var templates = WM.Parser.findTemplatesPattern(source, "[Pp]kg|[Aa]ur|AUR");
+        var templates = WM.Parser.findTemplatesPattern(source, "[Pp]kg|[Aa]ur|AUR|[Gg]rp");
         var newText = "";
 
         if (templates.length > 0) {
@@ -42,7 +42,11 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
             case 'pkg':
                 WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(
                     // Checks must be in reversed order because they are popped
-                    [WM.Plugins.ArchWikiUpdatePackageTemplates.checkAURlc,
+                    [WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup32lc,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup32,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup64lc,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup64,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkAURlc,
                      WM.Plugins.ArchWikiUpdatePackageTemplates.checkAUR,
                      WM.Plugins.ArchWikiUpdatePackageTemplates.checkOfficiallc,
                      WM.Plugins.ArchWikiUpdatePackageTemplates.checkOfficial],
@@ -51,10 +55,27 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
             case 'aur':
                 WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(
                     // Checks must be in reversed order because they are popped
-                    [WM.Plugins.ArchWikiUpdatePackageTemplates.checkOfficiallc,
+                    [WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup32lc,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup32,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup64lc,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup64,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkOfficiallc,
                      WM.Plugins.ArchWikiUpdatePackageTemplates.checkOfficial,
                      WM.Plugins.ArchWikiUpdatePackageTemplates.checkAURlc,
                      WM.Plugins.ArchWikiUpdatePackageTemplates.checkAUR],
+                    source, newText, templates, index, call, callArgs);
+                break;
+            case 'grp':
+                WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(
+                    // Checks must be in reversed order because they are popped
+                    [WM.Plugins.ArchWikiUpdatePackageTemplates.checkAURlc,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkAUR,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkOfficiallc,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkOfficial,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup32lc,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup32,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup64lc,
+                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup64],
                     source, newText, templates, index, call, callArgs);
                 break;
             default:
@@ -71,7 +92,7 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
             check(checks, source, newText, templates, index, call, callArgs);
         }
         else {
-            WM.Log.logWarning(templates[index].arguments[0].value.trim() + " hasn't been found neither in the official repositories nor in the AUR");
+            WM.Log.logWarning(templates[index].arguments[0].value.trim() + " hasn't been found neither in the official repositories nor in the AUR nor as a package group");
 
             newText += templates[index].match[0];
 
@@ -121,6 +142,54 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
             WM.ArchPackages.isAURPackage(pkgname.toLowerCase(),
                                          WM.Plugins.ArchWikiUpdatePackageTemplates.checkAURlc2,
                                          [checks, source, newText, templates, index, call, callArgs]);
+        }
+        else {
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+        }
+    };
+
+    this.checkGroup64 = function (checks, source, newText, templates, index, call, callArgs) {
+        var grpname = templates[index].arguments[0].value.trim();
+        WM.Log.logInfo("Looking for " + grpname + " as an x86_64 package group...");
+
+        WM.ArchPackages.isPackageGroup64(grpname,
+                                          WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup64_2,
+                                          [checks, source, newText, templates, index, call, callArgs]);
+    };
+
+    this.checkGroup64lc = function (checks, source, newText, templates, index, call, callArgs) {
+        var grpname = templates[index].arguments[0].value.trim();
+
+        if (grpname.toLowerCase() != grpname) {
+            WM.Log.logInfo("Looking for " + grpname.toLowerCase() + " (lowercase) as an x86_64 package group...");
+
+            WM.ArchPackages.isPackageGroup64(grpname.toLowerCase(),
+                                              WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup64lc2,
+                                              [checks, source, newText, templates, index, call, callArgs]);
+        }
+        else {
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+        }
+    };
+
+    this.checkGroup32 = function (checks, source, newText, templates, index, call, callArgs) {
+        var grpname = templates[index].arguments[0].value.trim();
+        WM.Log.logInfo("Looking for " + grpname + " as an i686 package group...");
+
+        WM.ArchPackages.isPackageGroup32(grpname,
+                                          WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup32_2,
+                                          [checks, source, newText, templates, index, call, callArgs]);
+    };
+
+    this.checkGroup32lc = function (checks, source, newText, templates, index, call, callArgs) {
+        var grpname = templates[index].arguments[0].value.trim();
+
+        if (grpname.toLowerCase() != grpname) {
+            WM.Log.logInfo("Looking for " + grpname.toLowerCase() + " (lowercase) as an i686 package group...");
+
+            WM.ArchPackages.isPackageGroup32(grpname.toLowerCase(),
+                                              WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup32lc2,
+                                              [checks, source, newText, templates, index, call, callArgs]);
         }
         else {
             WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
@@ -226,6 +295,103 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
             newText += newtemplate;
             WM.Log.logInfo("Replacing template with " + newtemplate);
 
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+        }
+        else {
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+        }
+    };
+
+    this.checkGroup64_2 = function (res, args) {
+        var checks = args[0];
+        var source = args[1];
+        var newText = args[2];
+        var templates = args[3];
+        var index = args[4];
+        var call = args[5];
+        var callArgs = args[6];
+
+        var template = templates[index];
+        var grpname = template.arguments[0].value.trim();
+
+        if (res) {
+            if (template.title.toLowerCase() != 'grp') {
+                var newtemplate = "{{Grp|" + grpname + "}}";
+                newText += newtemplate;
+                WM.Log.logInfo("Replacing template with " + newtemplate);
+            }
+            else {
+                newText += template.match[0];
+            }
+
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+        }
+        else {
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+        }
+    };
+
+    this.checkGroup64lc2 = function (res, args) {
+        var checks = args[0];
+        var source = args[1];
+        var newText = args[2];
+        var templates = args[3];
+        var index = args[4];
+        var call = args[5];
+        var callArgs = args[6];
+
+        var template = templates[index];
+        var grpname = template.arguments[0].value.trim();
+
+        if (res) {
+            var newtemplate = "{{Grp|" + grpname.toLowerCase() + "}}";
+            newText += newtemplate;
+            WM.Log.logInfo("Replacing template with " + newtemplate);
+
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+        }
+        else {
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+        }
+    };
+
+    this.checkGroup32_2 = function (res, args) {
+        var checks = args[0];
+        var source = args[1];
+        var newText = args[2];
+        var templates = args[3];
+        var index = args[4];
+        var call = args[5];
+        var callArgs = args[6];
+
+        var template = templates[index];
+        var grpname = template.arguments[0].value.trim();
+
+        if (res) {
+            newText += template.match[0];
+            WM.Log.logWarning(grpname + " is a package group for i686 only, and Template:Grp only supports x86_64");
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+        }
+        else {
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+        }
+    };
+
+    this.checkGroup32lc2 = function (res, args) {
+        var checks = args[0];
+        var source = args[1];
+        var newText = args[2];
+        var templates = args[3];
+        var index = args[4];
+        var call = args[5];
+        var callArgs = args[6];
+
+        var template = templates[index];
+        var grpname = template.arguments[0].value.trim();
+
+        if (res) {
+            newText += template.match[0];
+            WM.Log.logWarning(grpname + " is a package group for i686 only, and Template:Grp only supports x86_64");
             WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source, newText, templates, index, call, callArgs);
         }
         else {

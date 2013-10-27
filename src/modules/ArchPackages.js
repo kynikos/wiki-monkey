@@ -83,6 +83,48 @@ WM.ArchPackages = new function () {
         }
     };
 
+    var isPackageGroup = function (arch, grp, call, callArgs) {
+        var query = {
+            method: "GET",
+            url: "https://www.archlinux.org/groups/" + encodeURIComponent(arch) + "/" + encodeURIComponent(grp),
+            onload: function (res) {
+                // Cannot use the DOMParser because Scriptish/GreaseMonkey
+                // doesn't support XrayWrapper well
+                // See http://www.oreillynet.com/pub/a/network/2005/11/01/avoid-common-greasemonkey-pitfalls.html?page=3
+                // and https://developer.mozilla.org/en/docs/XPConnect_wrappers#XPCNativeWrapper_%28XrayWrapper%29
+                var escgrp = Alib.RegEx.escapePattern(grp);
+                var escarch = Alib.RegEx.escapePattern(arch);
+
+                var regExp = new RegExp("<h2>\\s*Group Details -\\s*" + escgrp + "\\s*\\(" + escarch + "\\)\\s*</h2>", "");
+
+                if (res.responseText.search(regExp) > -1) {
+                    call(true, callArgs);
+                }
+                else {
+                    call(false, callArgs);
+                }
+            },
+            onerror: function (res) {
+                WM.Log.logError(WM.MW.failedQueryError(res.finalUrl));
+            },
+        };
+
+        try {
+            GM_xmlhttpRequest(query);
+        }
+        catch (err) {
+            WM.Log.logError(WM.MW.failedHTTPRequestError(err));
+        }
+    };
+
+    this.isPackageGroup64 = function (grp, call, callArgs) {
+        isPackageGroup('x86_64', grp, call, callArgs);
+    };
+
+    this.isPackageGroup32 = function (grp, call, callArgs) {
+        isPackageGroup('i686', grp, call, callArgs);
+    };
+
     this.isAURPackage = function (pkg, call, callArgs) {
         var call2 = function (res, args) {
             if (res.type == "error") {
