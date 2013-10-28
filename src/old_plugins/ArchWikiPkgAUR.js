@@ -20,7 +20,7 @@
 
 WM.Plugins.ArchWikiPkgAUR = new function () {
     this.mainAuto = function (args, title) {
-        // Out of date, should use WM.Parser *************************************
+        // Out of date, should use WM.Parser ########################################################
 
         var pageid = WM.MW.callQuerySync({prop: "info|revisions",
                                      rvprop: "content|timestamp",

@@ -20,7 +20,7 @@
 
 WM.Plugins.ArchWikiTurkishIwLinks = new function () {
     this.mainAuto = function (args, title) {
-        // OUT OF DATE ***********************************************************
+        // OUT OF DATE #####################################################################
 
         var pageid = WM.MW.callQuerySync({prop: "revisions",
                                       rvprop: "content",

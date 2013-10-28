@@ -20,7 +20,7 @@
 
 WM.Plugins.ArchWikiFile2Hc = new function () {
     this.main = function (args) {
-        // Out of date, should use WM.Parser *************************************
+        // Out of date, should use WM.Parser #############################################
 
         var source = WM.Editor.readSource();
 

@@ -20,7 +20,7 @@
 
 WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
     this.createCategory = function (params) {
-        // OUT OF DATE ***********************************************************
+        // OUT OF DATE #######################################################################
 
         WM.Log.logInfo("Processing category " + cat + "...");
 
@@ -33,8 +33,8 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
                                            rvprop: 'content',
                                            titles: cat});
 
-            // CHECK THE CATEGORY STILL EXISTS, IT MAY HAVE BEEN DELETED *********
-            // IN A PREVIOUS LOOP ************************************************
+            // CHECK THE CATEGORY STILL EXISTS, IT MAY HAVE BEEN DELETED ##############
+            // IN A PREVIOUS LOOP #####################################################
 
             var text = oldpage.revisions[0]['*'];
             var info = oldpage.categoryinfo;
