@@ -52,13 +52,13 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         var lct = lowercasetitle.pop();
         var dlct = "";
         if (dt && !lct) {
-            var dlct = "{{DISPLAYTITLE:" + dt.match[2] + "}}";
+            var dlct = "{{DISPLAYTITLE:" + dt.match[3] + "}}";
         }
         else if (!dt && lct) {
             var dlct = "{{Lowercase title}}";
         }
         else if (dt && lct) {
-            var dlct = (dt.index < lct.index) ? "{{Lowercase title}}" : "{{DISPLAYTITLE:" + dt.match[2] + "}}";
+            var dlct = (dt.index < lct.index) ? "{{Lowercase title}}" : "{{DISPLAYTITLE:" + dt.match[3] + "}}";
         }
         if (displaytitle.length || lowercasetitle.length) {
             WM.Log.logWarning("Found multiple instances of {{DISPLAYTITLE:...}} or {{Lowercase title}}: only the last one has been used, the others have been deleted");
@@ -101,25 +101,33 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         // Categories
         var categories = WM.Parser.findCategories(content);
         var catlist = [];
+        var catlinks = [];
         var tempcontent = "";
         var contentId = 0;
         for (var c in categories) {
             var cat = categories[c];
-            var catlang = WM.ArchWiki.detectLanguage(cat.match[1])[1];
-            if (language != catlang) {
-                WM.Log.logWarning(cat.match[1] + " belongs to a different language than the one of the title (" + language + ")");
+            if (cat.match[5]) {
+                WM.Log.logWarning(cat.match[0] + " contains a fragment reference, but it doesn't make sense in categories and will be removed");
             }
-            if (catlist.indexOf(cat.match[0]) == -1) {
-                catlist.push(cat.match[0]);
+            var cleantitle = WM.Parser.squashContiguousWhitespace(cat.match[4]);
+            var catlang = WM.ArchWiki.detectLanguage(cleantitle)[1];
+            var cattext = "Category:" + cleantitle;
+            var catlink = "[[" + cattext + ((cat.match[6]) ? "|" + cat.match[6] : "") + "]]";
+            if (language != catlang) {
+                WM.Log.logWarning(cattext + " belongs to a different language than the one of the title (" + language + ")");
+            }
+            if (catlist.indexOf(cattext) < 0) {
+                catlist.push(cattext);
+                catlinks.push(catlink);
             }
             else {
-                WM.Log.logWarning("Removed duplicate of " + cat.match[1]);
+                WM.Log.logWarning("Removed duplicate of " + cattext);
             }
             tempcontent += content.substring(contentId, cat.index);
             contentId = cat.index + cat.length;
         }
         if (catlist.length) {
-            header += catlist.join("\n") + "\n";
+            header += catlinks.join("\n") + "\n";
         }
         else {
             WM.Log.logWarning("The article is not categorized");
@@ -130,22 +138,33 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         // Interlanguage links
         var interlanguage = WM.ArchWiki.findAllInterlanguageLinks(content);
         var iwlist = [];
+        var iwlinks = [];
         var tempcontent = "";
         var contentId = 0;
         for (var l in interlanguage) {
             var link = interlanguage[l];
-            if (iwlist.indexOf(link.match[0]) == -1) {
-                iwlist.push(link.match[0]);
+            if (link.match[6]) {
+                WM.Log.logWarning(link.match[0] + " contains an alternative text, but it doesn't make sense in interlanguage links and will be removed");
+            }
+            // Applying WM.Parser.squashContiguousWhitespace is dangerous here because
+            // we don't know how the target server handles whitespace
+            var linktitle = link.match[4];
+            var linklang = link.match[2];
+            var linktext = linklang + ":" + linktitle;
+            var fulllink = "[[" + linktext + ((link.match[5]) ? "#" + link.match[5] : "") + "]]";
+            if (iwlist.indexOf(linktext) < 0) {
+                iwlist.push(linktext);
+                iwlinks.push(fulllink);
             }
             else {
-                WM.Log.logWarning("Removed duplicate of " + link.match[1]);
+                WM.Log.logWarning("Removed duplicate of " + linktext);
             }
             tempcontent += content.substring(contentId, link.index);
             contentId = link.index + link.length;
         }
         if (iwlist.length) {
-            iwlist.sort();
-            header += iwlist.join("\n") + "\n";
+            iwlinks.sort();
+            header += iwlinks.join("\n") + "\n";
         }
         tempcontent += content.substring(contentId);
         content = tempcontent;
