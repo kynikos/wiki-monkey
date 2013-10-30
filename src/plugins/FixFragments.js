@@ -19,7 +19,8 @@
  */
 
 WM.Plugins.FixFragments = new function () {
-    var fixLinks = function (title, source) {
+    var fixLinks = function (source) {
+        var title = WM.Editor.getTitle();
         var sections = WM.Parser.findSectionHeadings(source).sections;
 
         var slinks = WM.Parser.findSectionLinks(source);
@@ -61,10 +62,10 @@ WM.Plugins.FixFragments = new function () {
     };
 
     var fixLink = function (source, sections, rawlink, rawfragment, lalt) {
-        var fragment = WM.Parser.convertUnderscoresToSpaces(rawfragment).trim();
+        var fragment = WM.Parser.squashContiguousWhitespace(rawfragment).trim();
 
         for (var s = 0; s < sections.length; s++) {
-            var heading = WM.Parser.convertUnderscoresToSpaces(sections[s].heading);
+            var heading = sections[s].cleanheading;
 
             if (heading.toLowerCase() == fragment.toLowerCase()) {
                 return newlink = "[[#" + heading + ((lalt) ? "|" + lalt : "") + "]]";
@@ -76,9 +77,8 @@ WM.Plugins.FixFragments = new function () {
     };
 
     this.main = function (args, callNext) {
-        var title = WM.Editor.getTitle();
         var source = WM.Editor.readSource();
-        var newtext = fixLinks(title, source);
+        var newtext = fixLinks(source);
 
         if (newtext != source) {
             WM.Editor.writeSource(newtext);

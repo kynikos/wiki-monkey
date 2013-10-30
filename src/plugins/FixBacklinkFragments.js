@@ -32,7 +32,7 @@ WM.Plugins.FixBacklinkFragments = new function () {
             var rawfragment = link.match[5];
 
             if (rawfragment) {
-                var fragment = WM.Parser.convertUnderscoresToSpaces(rawfragment);
+                var fragment = WM.Parser.squashContiguousWhitespace(rawfragment).trim();
 
                 if (sections.indexOf(fragment) < 0) {
                     var fixed = false;
@@ -41,7 +41,7 @@ WM.Plugins.FixBacklinkFragments = new function () {
                         var section = sections[s];
 
                         if (section.toLowerCase() == fragment.toLowerCase()) {
-                            var newlink = "[[" + link.match[4] + "#" + section + ((link.match[6]) ? "|" + link.match[6] : "") + "]]";
+                            var newlink = "[[" + target + "#" + section + ((link.match[6]) ? "|" + link.match[6] : "") + "]]";
                             newString = Alib.Str.overwriteFor(newString, newlink, link.index, link.length);
                             WM.Log.logInfo("Fixed broken link fragment: " + link.match[0] + " -> " + newlink);
                             fixed = true;
@@ -87,7 +87,7 @@ WM.Plugins.FixBacklinkFragments = new function () {
         var sections = [];
 
         for (var s = 0; s < res.parse.sections.length; s++) {
-            sections.push(res.parse.sections[s].line);
+            sections.push(WM.Parser.squashContiguousWhitespace(res.parse.sections[s].line).trim());
         }
 
         WM.Plugins.FixBacklinkFragments.mainAutoRead(target, sections, title, summary, callBot);
