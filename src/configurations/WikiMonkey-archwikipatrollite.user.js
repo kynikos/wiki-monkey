@@ -3,39 +3,39 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.13.1-dev-archwikipatrollite
+// @version 1.13.2-archwikipatrollite
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/develop/src/configurations/WikiMonkey-archwikipatrollite.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/develop/src/configurations/WikiMonkey-archwikipatrollite.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/develop/src/files/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/develop/src/files/wiki-monkey-64.png
+// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-archwikipatrollite.meta.js
+// @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-archwikipatrollite.user.js
+// @icon https://raw.github.com/kynikos/wiki-monkey/1.13.2/src/files/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.13.2/src/files/wiki-monkey-64.png
 // @match https://wiki.archlinux.org/*
-// @require https://raw.github.com/kynikos/js-aux-lib/master/src/Async.js
-// @require https://raw.github.com/kynikos/js-aux-lib/master/src/Compatibility.js
-// @require https://raw.github.com/kynikos/js-aux-lib/master/src/DOM.js
-// @require https://raw.github.com/kynikos/js-aux-lib/master/src/HTTP.js
-// @require https://raw.github.com/kynikos/js-aux-lib/master/src/Obj.js
-// @require https://raw.github.com/kynikos/js-aux-lib/master/src/RegEx.js
-// @require https://raw.github.com/kynikos/js-aux-lib/master/src/Str.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/WikiMonkey.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/ArchWiki.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/ArchPackages.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Bot.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Cat.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Diff.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Editor.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Interlanguage.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Log.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/MW.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Parser.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/RecentChanges.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Tables.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/UI.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/WhatLinksHere.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/ArchWikiQuickReport.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/ArchWikiRCFilter.js
+// @require https://raw.github.com/kynikos/js-aux-lib/1.3/src/Async.js
+// @require https://raw.github.com/kynikos/js-aux-lib/1.3/src/Compatibility.js
+// @require https://raw.github.com/kynikos/js-aux-lib/1.3/src/DOM.js
+// @require https://raw.github.com/kynikos/js-aux-lib/1.3/src/HTTP.js
+// @require https://raw.github.com/kynikos/js-aux-lib/1.3/src/Obj.js
+// @require https://raw.github.com/kynikos/js-aux-lib/1.3/src/RegEx.js
+// @require https://raw.github.com/kynikos/js-aux-lib/1.3/src/Str.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.13.2/src/WikiMonkey.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.13.2/src/modules/ArchWiki.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.13.2/src/modules/ArchPackages.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.13.2/src/modules/Bot.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.13.2/src/modules/Cat.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.13.2/src/modules/Diff.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.13.2/src/modules/Editor.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.13.2/src/modules/Interlanguage.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.13.2/src/modules/Log.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.13.2/src/modules/MW.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.13.2/src/modules/Parser.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.13.2/src/modules/RecentChanges.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.13.2/src/modules/Tables.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.13.2/src/modules/UI.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.13.2/src/modules/WhatLinksHere.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.13.2/src/plugins/ArchWikiQuickReport.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.13.2/src/plugins/ArchWikiRCFilter.js
 // ==/UserScript==
 
 WM.UI.setEditor(null);

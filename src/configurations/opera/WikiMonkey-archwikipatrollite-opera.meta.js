@@ -1,3 +1,3 @@
 // ==UserScript==
-// @version 1.13.1-dev-archwikipatrollite-opera
+// @version 1.13.2-archwikipatrollite-opera
 // ==/UserScript==
