@@ -3,14 +3,14 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.13.1-archwikipatrol-chromium
+// @version 1.13.1-dev-archwikipatrol-chromium
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-archwikipatrol-chromium.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-archwikipatrol-chromium.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/1.13.1/src/files/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.13.1/src/files/wiki-monkey-64.png
+// @updateURL https://raw.github.com/kynikos/wiki-monkey/develop/src/configurations/chromium/WikiMonkey-archwikipatrol-chromium.meta.js
+// @downloadURL https://raw.github.com/kynikos/wiki-monkey/develop/src/configurations/chromium/WikiMonkey-archwikipatrol-chromium.user.js
+// @icon https://raw.github.com/kynikos/wiki-monkey/develop/src/files/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/develop/src/files/wiki-monkey-64.png
 // @match https://wiki.archlinux.org/*
 // ==/UserScript==
 
@@ -531,9 +531,21 @@ if (!Alib) var Alib = {};
 
 Alib.RegEx = new function () {
     this.escapePattern = function (string) {
-        return string.replace(/[-[\]{}()*+?.,:!=\\^$|#\s]/g, "\\$&");
+        /*
+         * Escaping any other characters is not necessary, references:
+         * - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
+         * - http://stackoverflow.com/questions/3561493/is-there-a-regexp-escape-function-in-javascript
+         * - http://stackoverflow.com/questions/2593637/how-to-escape-regular-expression-in-javascript
+         * - http://stackoverflow.com/questions/494035/how-do-you-pass-a-variable-to-a-regular-expression-javascript
+         * - http://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
+         * - http://stackoverflow.com/questions/399078/what-special-characters-must-be-escaped-in-regular-expressions
+         *
+         * Note for Wiki Monkey: do *not* escape '\s' here so that it will be
+         * safe to use prepareRegexpWhitespace in WM.Parser
+         */
+        return string.replace(/[-[\]{}()^$*+?.|\\]/g, "\\$&");
     };
-    
+
     this.matchAll = function (source, regExp) {
         var result = [];
         while (true) {
@@ -612,7 +624,60 @@ var WM = new function () {
     };
 };
 
+/*
+ * References:
+ * - https://wiki.archlinux.org/index.php/Official_Repositories_Web_Interface
+ * - https://wiki.archlinux.org/index.php/AurJson
+ */
+
 WM.ArchPackages = new function () {
+    this.searchOfficialPackagesByExactName = function (name, call, callArgs) {
+        var query = {
+            method: "GET",
+            url: "https://www.archlinux.org/packages/search/json/?name=" + encodeURIComponent(name),
+            onload: function (res) {
+                try {
+                    // Currently only Scriptish supports the responseJSON method
+                    //var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
+                    // ... or not?
+                    var json = (Alib.Obj.getFirstItem(res.responseJSON)) ? res.responseJSON : JSON.parse(res.responseText);
+                }
+                catch (err) {
+                    WM.Log.logError("The Official Repositories web interface returned an unexpected object");
+                }
+
+                if (json) {
+                    // Don't put this into the try block or all its exceptions
+                    // will be caught printing the same error
+                    call(json, callArgs);
+                }
+            },
+            onerror: function (res) {
+                WM.Log.logError(WM.MW.failedQueryError(res.finalUrl));
+            },
+        };
+
+        try {
+            GM_xmlhttpRequest(query);
+        }
+        catch (err) {
+            WM.Log.logError(WM.MW.failedHTTPRequestError(err));
+        }
+    };
+
+    this.isOfficialPackage = function (pkg, call, callArgs) {
+        var call2 = function (res, args) {
+            if (res.results.length) {
+                call(true, args);
+            }
+            else {
+                call(false, args);
+            }
+        }
+
+        WM.ArchPackages.searchOfficialPackagesByExactName(pkg, call2, callArgs);
+    };
+
     this.getAURInfo = function (arg, call, callArgs) {
         // arg can be either an exact package name (string) or an ID (integer)
         var query = {
@@ -648,33 +713,22 @@ WM.ArchPackages = new function () {
         }
     };
 
-    this.isOfficialPackage = function (pkg, call, callArgs) {
-        var query = {
-            method: "GET",
-            url: "https://www.archlinux.org/packages/?name=" + encodeURIComponent(pkg),
-            onload: function (res) {
-                // Cannot use the DOMParser because Scriptish/GreaseMonkey
-                // doesn't support XrayWrapper well
-                // See http://www.oreillynet.com/pub/a/network/2005/11/01/avoid-common-greasemonkey-pitfalls.html?page=3
-                // and https://developer.mozilla.org/en/docs/XPConnect_wrappers#XPCNativeWrapper_%28XrayWrapper%29
-                if (res.responseText.search(/<div[^>]+id\=["']pkglist-results["']/) > -1) {
-                    call(true, callArgs);
+    this.isAURPackage = function (pkg, call, callArgs) {
+        var call2 = function (res, args) {
+            if (res.type == "error") {
+                WM.Log.logError("The AUR's RPC interface returned an error: " + res.results);
+            }
+            else {
+                if (res.resultcount > 0) {
+                    call(true, args);
                 }
                 else {
-                    call(false, callArgs);
+                    call(false, args);
                 }
-            },
-            onerror: function (res) {
-                WM.Log.logError(WM.MW.failedQueryError(res.finalUrl));
-            },
-        };
+            }
+        }
 
-        try {
-            GM_xmlhttpRequest(query);
-        }
-        catch (err) {
-            WM.Log.logError(WM.MW.failedHTTPRequestError(err));
-        }
+        WM.ArchPackages.getAURInfo(pkg, call2, callArgs);
     };
 
     var isPackageGroup = function (arch, grp, call, callArgs) {
@@ -717,24 +771,6 @@ WM.ArchPackages = new function () {
 
     this.isPackageGroup32 = function (grp, call, callArgs) {
         isPackageGroup('i686', grp, call, callArgs);
-    };
-
-    this.isAURPackage = function (pkg, call, callArgs) {
-        var call2 = function (res, args) {
-            if (res.type == "error") {
-                WM.Log.logError("The AUR's RPC interface returned an error: " + res.results);
-            }
-            else {
-                if (res.resultcount > 0) {
-                    call(true, args);
-                }
-                else {
-                    call(false, args);
-                }
-            }
-        }
-
-        WM.ArchPackages.getAURInfo(pkg, call2, callArgs);
     };
 };
 
@@ -1496,31 +1532,31 @@ WM.Diff = new function () {
 
 WM.Editor = new function () {
     this.getTitle = function () {
-        return WM.Parser.convertUnderscoresToSpaces(decodeURIComponent(Alib.HTTP.getURIParameter('title')));
+        return WM.Parser.squashContiguousWhitespace(decodeURIComponent(Alib.HTTP.getURIParameter('title')));
     };
-    
+
     this.isSection = function () {
         return (Alib.HTTP.getURIParameter('section')) ? true : false;
     };
-    
+
     this.readSource = function () {
         var value = document.getElementById('wpTextbox1').value;
         // For compatibility with Opera and IE
         return Alib.Compatibility.normalizeCarriageReturns(value);
     };
-    
+
     this.writeSource = function (text) {
         document.getElementById('wpTextbox1').value = text;
     };
-    
+
     this.readSummary = function () {
         return document.getElementById('wpSummary').getAttribute("value");
     };
-    
+
     this.writeSummary = function (text) {
         document.getElementById('wpSummary').setAttribute("value", text);
     };
-    
+
     this.appendToSummary = function (text) {
         document.getElementById('wpSummary').setAttribute("value", this.readSummary() + text);
     };
@@ -1542,7 +1578,9 @@ WM.Interlanguage = new function () {
             var ltitle = link.match[3];
             for (var iw in iwmap) {
                 if (iwmap[iw].prefix.toLowerCase() == ltag.toLowerCase()) {
-                    var lurl = iwmap[iw].url.replace("$1", WM.Parser.convertSpacesToUnderscores(ltitle));
+                    // Fix the url _before_ replacing $1
+                    var lurl = WM.MW.fixInterwikiUrl(iwmap[iw].url);
+                    lurl = lurl.replace("$1", encodeURIComponent(WM.Parser.squashContiguousWhitespace(ltitle)));
                     break;
                 }
             }
@@ -1648,7 +1686,7 @@ WM.Interlanguage = new function () {
 
                 delete newlinks[tag];
 
-                WM.Log.logInfo("Reading " + url + "...");
+                WM.Log.logInfo("Reading " + decodeURI(url) + "...");
 
                 this.queryLinks(
                     api,
@@ -1727,14 +1765,14 @@ WM.Interlanguage = new function () {
                             linkList.push("[[" + link.origTag + ":" + link.title + "]]\n");
                         }
                         else {
-                            WM.Log.logWarning("On " + url + ", " + tag + " interlanguage links point to a different wiki than the others, ignoring them");
+                            WM.Log.logWarning("On " + decodeURI(url) + ", " + tag + " interlanguage links point to a different wiki than the others, ignoring them");
                         }
                         tagFound = true;
                         break;
                     }
                 }
                 if (!tagFound) {
-                    WM.Log.logWarning(tag + " interlanguage links are not supported in " + url + ", ignoring them");
+                    WM.Log.logWarning(tag + " interlanguage links are not supported in " + decodeURI(url) + ", ignoring them");
                 }
             }
         }
@@ -1903,6 +1941,10 @@ WM.MW = new function () {
         // This attribute is generated further below in this module
         local: {},
     };
+
+    var interwikiFixes = [
+        ["https://wiki.archlinux.org/index.php/$1_(", "https://wiki.archlinux.org/index.php/$1%20("]
+    ];
 
     var getWikiPaths = function (href) {
         // It's necessary to keep this function in a private attribute,
@@ -2217,6 +2259,19 @@ WM.MW = new function () {
         );
     };
 
+    this.fixInterwikiUrl = function (url) {
+        for (var f = 0; f < interwikiFixes.length; f++) {
+            var furl = url.replace(interwikiFixes[f][0], interwikiFixes[f][1]);
+
+            if (furl != url) {
+                return furl;
+            }
+        }
+
+        // Return the unmodified url if no replacement has been done
+        return url;
+    };
+
     this.getSpecialList = function (qppage, siprop, call, callArgs) {
         var query = {action: "query",
                      list: "querypage",
@@ -2259,12 +2314,11 @@ WM.MW = new function () {
 };
 
 WM.Parser = new function () {
-    this.convertUnderscoresToSpaces = function (title) {
-        return title.replace(/_/g, " ");
-    };
-
-    this.convertSpacesToUnderscores = function (title) {
-        return title.replace(/ /g, "_");
+    this.squashContiguousWhitespace = function (title) {
+        // MediaWiki treats consecutive whitespace characters in titles and section names as one
+        // For example [[Main __ Page#First _ _section]] is the same as [[Main Page#First section]]
+        // Consider trimming the returned text
+        return title.replace(/[_ ]+/g, " ");
     };
 
     this.neutralizeNowikiTags = function (source) {
@@ -2275,6 +2329,13 @@ WM.Parser = new function () {
             source = Alib.Str.overwriteAt(source, filler, tags[t].index);
         }
         return source;
+    };
+
+    var prepareRegexpWhitespace = function (title) {
+        // MediaWiki treats consecutive whitespace characters in titles and section names as one
+        // For example [[Main __ Page#First _ _section]] is the same as [[Main Page#First section]]
+        // Consider trimming the title before passing it here
+        return title.replace(/[_ ]+/g, "[_ ]+");
     };
 
     var prepareTitleCasing = function (pattern) {
@@ -2313,18 +2374,25 @@ WM.Parser = new function () {
 
         if (namespace) {
             if (title) {
+                var rens = prepareRegexpWhitespace(Alib.RegEx.escapePattern(namespace));
+                var retitle = prepareRegexpWhitespace(Alib.RegEx.escapePattern(title));
+
                 // Namespaces wouldn't be case-sensitive, but titles are, so be safe and use only the g flag
-                regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*((" + Alib.RegEx.escapePattern(namespace) + ")[ _]*:[ _]*((" + Alib.RegEx.escapePattern(title) + ")(?:[ _]*#(.+?))?)(?:[ _]*\\|\\s*(.+?))?)\\s*\\]\\]", "g");
+                regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*((" + rens + ")[ _]*:[ _]*((" + retitle + ")(?:[ _]*#(.+?))?)(?:[ _]*\\|\\s*(.+?))?)\\s*\\]\\]", "g");
             }
             else {
+                var rens = prepareRegexpWhitespace(Alib.RegEx.escapePattern(namespace));
+
                 // Namespaces aren't case-sensitive
-                regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*((" + Alib.RegEx.escapePattern(namespace) + ")[ _]*:[ _]*((.+?)(?:[ _]*#(.+?))?)(?:[ _]*\\|\\s*(.+?))?)\\s*\\]\\]", "gi");
+                regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*((" + rens + ")[ _]*:[ _]*((.+?)(?:[ _]*#(.+?))?)(?:[ _]*\\|\\s*(.+?))?)\\s*\\]\\]", "gi");
             }
         }
         else if (title) {
+            var retitle = prepareRegexpWhitespace(Alib.RegEx.escapePattern(title));
+
             // Titles are case-sensitive
             // Note the () that represents the missing namespace in order to keep the match indices consistent with the other regular expressions
-            regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*(()((" + Alib.RegEx.escapePattern(title) + ")(?:[ _]*#(.+?))?)(?:[ _]*\\|\\s*(.+?))?)\\s*\\]\\]", "g");
+            regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*(()((" + retitle + ")(?:[ _]*#(.+?))?)(?:[ _]*\\|\\s*(.+?))?)\\s*\\]\\]", "g");
         }
         else {
             regExp = /\[\[:?[ _]*:?[ _]*((?:(.+?)[ _]*:[ _]*)?((.+?)(?:[ _]*#(.+?))?)(?:[ _]*\|\s*(.+?))?)\s*\]\]/g;
@@ -2337,6 +2405,7 @@ WM.Parser = new function () {
     };
 
     this.findSpecialLinks = function (source, pattern) {
+        // Make sure to prepare whitespace in pattern like in prepareRegexpWhitespace
         // See also WM.ArchWiki.findAllInterlanguageLinks!!!
         source = this.neutralizeNowikiTags(source);
         // Categories and language tags aren't case-sensitive
@@ -2358,11 +2427,15 @@ WM.Parser = new function () {
         // Variables are case-sensitive
         // There can't be an underscore before the variable name
         // There can't be a whitespace between the variable name and the colon
+        // There don't seem to exist variable names with whitespace, applying
+        //   prepareRegexpWhitespace could be dangerous in this case
         var regExp = new RegExp("\\{\\{\\s*((" + Alib.RegEx.escapePattern(variable) + ")(?:\\:[_\\s]*((?:.(?!\\{\\{)[_\\s]*?)+?))?)[_\\s]*\\}\\}", "g");
+
         return Alib.RegEx.matchAll(source, regExp);
     };
 
     var findTransclusionsEngine = function (source, regExp) {
+        // Make sure to prepare whitespace in regExp like in prepareRegexpWhitespace
         var nSource = WM.Parser.neutralizeNowikiTags(source);
         var transclusions = [];
 
@@ -2435,6 +2508,7 @@ WM.Parser = new function () {
     this.findTemplates = function (source, template) {
         if (template) {
             var pattern = Alib.RegEx.escapePattern(template);
+            pattern = prepareRegexpWhitespace(pattern);
             pattern = prepareTitleCasing(pattern);
         }
         else {
@@ -2445,6 +2519,7 @@ WM.Parser = new function () {
 
     this.findTemplatesPattern = function (source, pattern) {
         // pattern must be a string and IT MUST NOT HAVE ANY CAPTURING GROUPS!!!
+        // Make sure to prepare whitespace in pattern like in prepareRegexpWhitespace
         // Templates can't be transcluded with a colon before the title
         // The title must not be broken by new line characters
         var regExp = new RegExp("(\\{\\{\\s*[_ ]*(" + pattern + ")[_\\s]*)(?:\\|((?:\\s*.(?!\\{\\{)\\s*)*?))?\\}\\}", "g");
@@ -2458,10 +2533,12 @@ WM.Parser = new function () {
         // The title must not be broken by newline characters
         if (namespace) {
             var namespacePattern = Alib.RegEx.escapePattern(namespace);
+            namespacePattern = prepareRegexpWhitespace(namespacePattern);
             namespacePattern = prepareTitleCasing(namespacePattern);
         }
         if (title) {
             var titlePattern = Alib.RegEx.escapePattern(title);
+            titlePattern = prepareRegexpWhitespace(titlePattern);
             titlePattern = prepareTitleCasing(titlePattern);
         }
 
@@ -2491,8 +2568,8 @@ WM.Parser = new function () {
         var minLevel = MAXLEVEL;
         var maxTocLevel = 0;
         var tocLevel = 1;
-        var regExp = /^(\=+( *(.+?) *)\=+)[ \t]*$/gm;
-        var match, line, rawheading, heading, L0, L1, level, prevLevels, start, end, tocPeer;
+        var regExp = /^(\=+([ _]*(.+?)[ _]*)\=+)[ \t]*$/gm;
+        var match, line, rawheading, heading, cleanheading, L0, L1, level, prevLevels, start, end, tocPeer;
 
         while (true) {
             match = regExp.exec(source);
@@ -2502,6 +2579,7 @@ WM.Parser = new function () {
                 line = match[1];
                 rawheading = match[2];
                 heading = match[3];
+                cleanheading = WM.Parser.squashContiguousWhitespace(heading);
                 L1 = line.length;
                 level = 1;
                 start = "=";
@@ -2571,6 +2649,7 @@ WM.Parser = new function () {
                 sections.push({line: line,
                                rawheading: rawheading,
                                heading: heading,
+                               cleanheading: cleanheading,
                                level: level,
                                tocLevel: tocLevel,
                                index: (regExp.lastIndex - L0),
@@ -3010,13 +3089,13 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         var lct = lowercasetitle.pop();
         var dlct = "";
         if (dt && !lct) {
-            var dlct = "{{DISPLAYTITLE:" + dt.match[2] + "}}";
+            var dlct = "{{DISPLAYTITLE:" + dt.match[3] + "}}";
         }
         else if (!dt && lct) {
             var dlct = "{{Lowercase title}}";
         }
         else if (dt && lct) {
-            var dlct = (dt.index < lct.index) ? "{{Lowercase title}}" : "{{DISPLAYTITLE:" + dt.match[2] + "}}";
+            var dlct = (dt.index < lct.index) ? "{{Lowercase title}}" : "{{DISPLAYTITLE:" + dt.match[3] + "}}";
         }
         if (displaytitle.length || lowercasetitle.length) {
             WM.Log.logWarning("Found multiple instances of {{DISPLAYTITLE:...}} or {{Lowercase title}}: only the last one has been used, the others have been deleted");
@@ -3059,25 +3138,33 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         // Categories
         var categories = WM.Parser.findCategories(content);
         var catlist = [];
+        var catlinks = [];
         var tempcontent = "";
         var contentId = 0;
         for (var c in categories) {
             var cat = categories[c];
-            var catlang = WM.ArchWiki.detectLanguage(cat.match[1])[1];
-            if (language != catlang) {
-                WM.Log.logWarning(cat.match[1] + " belongs to a different language than the one of the title (" + language + ")");
+            if (cat.match[5]) {
+                WM.Log.logWarning(cat.match[0] + " contains a fragment reference, but it doesn't make sense in categories and will be removed");
             }
-            if (catlist.indexOf(cat.match[0]) == -1) {
-                catlist.push(cat.match[0]);
+            var cleantitle = WM.Parser.squashContiguousWhitespace(cat.match[4]);
+            var catlang = WM.ArchWiki.detectLanguage(cleantitle)[1];
+            var cattext = "Category:" + cleantitle;
+            var catlink = "[[" + cattext + ((cat.match[6]) ? "|" + cat.match[6] : "") + "]]";
+            if (language != catlang) {
+                WM.Log.logWarning(cattext + " belongs to a different language than the one of the title (" + language + ")");
+            }
+            if (catlist.indexOf(cattext) < 0) {
+                catlist.push(cattext);
+                catlinks.push(catlink);
             }
             else {
-                WM.Log.logWarning("Removed duplicate of " + cat.match[1]);
+                WM.Log.logWarning("Removed duplicate of " + cattext);
             }
             tempcontent += content.substring(contentId, cat.index);
             contentId = cat.index + cat.length;
         }
         if (catlist.length) {
-            header += catlist.join("\n") + "\n";
+            header += catlinks.join("\n") + "\n";
         }
         else {
             WM.Log.logWarning("The article is not categorized");
@@ -3088,22 +3175,33 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         // Interlanguage links
         var interlanguage = WM.ArchWiki.findAllInterlanguageLinks(content);
         var iwlist = [];
+        var iwlinks = [];
         var tempcontent = "";
         var contentId = 0;
         for (var l in interlanguage) {
             var link = interlanguage[l];
-            if (iwlist.indexOf(link.match[0]) == -1) {
-                iwlist.push(link.match[0]);
+            if (link.match[6]) {
+                WM.Log.logWarning(link.match[0] + " contains an alternative text, but it doesn't make sense in interlanguage links and will be removed");
+            }
+            // Applying WM.Parser.squashContiguousWhitespace is dangerous here because
+            // we don't know how the target server handles whitespace
+            var linktitle = link.match[4];
+            var linklang = link.match[2];
+            var linktext = linklang + ":" + linktitle;
+            var fulllink = "[[" + linktext + ((link.match[5]) ? "#" + link.match[5] : "") + "]]";
+            if (iwlist.indexOf(linktext) < 0) {
+                iwlist.push(linktext);
+                iwlinks.push(fulllink);
             }
             else {
-                WM.Log.logWarning("Removed duplicate of " + link.match[1]);
+                WM.Log.logWarning("Removed duplicate of " + linktext);
             }
             tempcontent += content.substring(contentId, link.index);
             contentId = link.index + link.length;
         }
         if (iwlist.length) {
-            iwlist.sort();
-            header += iwlist.join("\n") + "\n";
+            iwlinks.sort();
+            header += iwlinks.join("\n") + "\n";
         }
         tempcontent += content.substring(contentId);
         content = tempcontent;
@@ -4204,7 +4302,8 @@ WM.Plugins.ExpandContractions = new function () {
 };
 
 WM.Plugins.FixFragments = new function () {
-    var fixLinks = function (title, source) {
+    var fixLinks = function (source) {
+        var title = WM.Editor.getTitle();
         var sections = WM.Parser.findSectionHeadings(source).sections;
 
         var slinks = WM.Parser.findSectionLinks(source);
@@ -4246,10 +4345,10 @@ WM.Plugins.FixFragments = new function () {
     };
 
     var fixLink = function (source, sections, rawlink, rawfragment, lalt) {
-        var fragment = WM.Parser.convertUnderscoresToSpaces(rawfragment).trim();
+        var fragment = WM.Parser.squashContiguousWhitespace(rawfragment).trim();
 
         for (var s = 0; s < sections.length; s++) {
-            var heading = WM.Parser.convertUnderscoresToSpaces(sections[s].heading);
+            var heading = sections[s].cleanheading;
 
             if (heading.toLowerCase() == fragment.toLowerCase()) {
                 return newlink = "[[#" + heading + ((lalt) ? "|" + lalt : "") + "]]";
@@ -4261,9 +4360,8 @@ WM.Plugins.FixFragments = new function () {
     };
 
     this.main = function (args, callNext) {
-        var title = WM.Editor.getTitle();
         var source = WM.Editor.readSource();
-        var newtext = fixLinks(title, source);
+        var newtext = fixLinks(source);
 
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
@@ -4475,15 +4573,15 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         var langlinks = WM.Interlanguage.parseLinks(whitelist, source, iwmap);
 
         var paths = WM.MW.getWikiPaths();
-        var url = paths.short + WM.Parser.convertSpacesToUnderscores(title);
+        var url = paths.short + encodeURIComponent(WM.Parser.squashContiguousWhitespace(title));
         var api = paths.api;
 
         var visitedlinks = {};
-        visitedlinks[tag.toLowerCase()] = WM.Interlanguage.createVisitedLink(tag, encodeURIComponent(title), encodeURI(url), iwmap, api, source, null, null, langlinks);
+        visitedlinks[tag.toLowerCase()] = WM.Interlanguage.createVisitedLink(tag, title, url, iwmap, api, source, null, null, langlinks);
 
         var newlinks = {};
 
-        WM.Log.logInfo("Reading " + url + "...");
+        WM.Log.logInfo("Reading " + decodeURI(url) + "...");
 
         if (langlinks) {
             var conflict = false;
@@ -4550,7 +4648,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         var summary = args[2];
 
         var paths = WM.MW.getWikiPaths();
-        var url = paths.short + WM.Parser.convertSpacesToUnderscores(title);
+        var url = paths.short + encodeURIComponent(WM.Parser.squashContiguousWhitespace(title));
 
         var visitedlinks = {};
 
