@@ -34,7 +34,9 @@ WM.Interlanguage = new function () {
             var ltitle = link.match[3];
             for (var iw in iwmap) {
                 if (iwmap[iw].prefix.toLowerCase() == ltag.toLowerCase()) {
-                    var lurl = iwmap[iw].url.replace("$1", WM.Parser.convertSpacesToUnderscores(ltitle));
+                    // Fix the url _before_ replacing $1
+                    var lurl = WM.MW.fixInterwikiUrl(iwmap[iw].url);
+                    lurl = lurl.replace("$1", encodeURIComponent(WM.Parser.squashContiguousWhitespace(ltitle)));
                     break;
                 }
             }
@@ -140,7 +142,7 @@ WM.Interlanguage = new function () {
 
                 delete newlinks[tag];
 
-                WM.Log.logInfo("Reading " + url + "...");
+                WM.Log.logInfo("Reading " + decodeURI(url) + "...");
 
                 this.queryLinks(
                     api,
@@ -219,14 +221,14 @@ WM.Interlanguage = new function () {
                             linkList.push("[[" + link.origTag + ":" + link.title + "]]\n");
                         }
                         else {
-                            WM.Log.logWarning("On " + url + ", " + tag + " interlanguage links point to a different wiki than the others, ignoring them");
+                            WM.Log.logWarning("On " + decodeURI(url) + ", " + tag + " interlanguage links point to a different wiki than the others, ignoring them");
                         }
                         tagFound = true;
                         break;
                     }
                 }
                 if (!tagFound) {
-                    WM.Log.logWarning(tag + " interlanguage links are not supported in " + url + ", ignoring them");
+                    WM.Log.logWarning(tag + " interlanguage links are not supported in " + decodeURI(url) + ", ignoring them");
                 }
             }
         }

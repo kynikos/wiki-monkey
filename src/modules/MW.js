@@ -81,6 +81,10 @@ WM.MW = new function () {
         local: {},
     };
 
+    var interwikiFixes = [
+        ["https://wiki.archlinux.org/index.php/$1_(", "https://wiki.archlinux.org/index.php/$1%20("]
+    ];
+
     var getWikiPaths = function (href) {
         // It's necessary to keep this function in a private attribute,
         // otherwise wikiPaths.local cannot be initialized
@@ -392,6 +396,19 @@ WM.MW = new function () {
             },
             callArgs
         );
+    };
+
+    this.fixInterwikiUrl = function (url) {
+        for (var f = 0; f < interwikiFixes.length; f++) {
+            var furl = url.replace(interwikiFixes[f][0], interwikiFixes[f][1]);
+
+            if (furl != url) {
+                return furl;
+            }
+        }
+
+        // Return the unmodified url if no replacement has been done
+        return url;
     };
 
     this.getSpecialList = function (qppage, siprop, call, callArgs) {

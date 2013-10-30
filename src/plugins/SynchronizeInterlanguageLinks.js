@@ -45,15 +45,15 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         var langlinks = WM.Interlanguage.parseLinks(whitelist, source, iwmap);
 
         var paths = WM.MW.getWikiPaths();
-        var url = paths.short + WM.Parser.convertSpacesToUnderscores(title);
+        var url = paths.short + encodeURIComponent(WM.Parser.squashContiguousWhitespace(title));
         var api = paths.api;
 
         var visitedlinks = {};
-        visitedlinks[tag.toLowerCase()] = WM.Interlanguage.createVisitedLink(tag, encodeURIComponent(title), encodeURI(url), iwmap, api, source, null, null, langlinks);
+        visitedlinks[tag.toLowerCase()] = WM.Interlanguage.createVisitedLink(tag, title, url, iwmap, api, source, null, null, langlinks);
 
         var newlinks = {};
 
-        WM.Log.logInfo("Reading " + url + "...");
+        WM.Log.logInfo("Reading " + decodeURI(url) + "...");
 
         if (langlinks) {
             var conflict = false;
@@ -120,7 +120,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         var summary = args[2];
 
         var paths = WM.MW.getWikiPaths();
-        var url = paths.short + WM.Parser.convertSpacesToUnderscores(title);
+        var url = paths.short + encodeURIComponent(WM.Parser.squashContiguousWhitespace(title));
 
         var visitedlinks = {};
 
