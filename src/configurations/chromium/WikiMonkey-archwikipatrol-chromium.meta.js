@@ -1,3 +1,3 @@
 // ==UserScript==
-// @version 1.13.2-archwikipatrol-chromium
+// @version 1.13.3-archwikipatrol-chromium
 // ==/UserScript==

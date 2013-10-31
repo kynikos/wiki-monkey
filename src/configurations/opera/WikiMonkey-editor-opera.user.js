@@ -3,14 +3,14 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.13.2-editor-opera
+// @version 1.13.3-editor-opera
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
 // @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/opera/WikiMonkey-editor-opera.meta.js
 // @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/opera/WikiMonkey-editor-opera.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/1.13.2/src/files/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.13.2/src/files/wiki-monkey-64.png
+// @icon https://raw.github.com/kynikos/wiki-monkey/1.13.3/src/files/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.13.3/src/files/wiki-monkey-64.png
 // @include http://*.wikipedia.org/*
 // @include https://wiki.archlinux.org/*
 // ==/UserScript==
@@ -2030,8 +2030,8 @@ WM.Parser = new function () {
     };
 
     this.neutralizeNowikiTags = function (source) {
-        // /<nowiki>[.\s]+?<\/nowiki>/gi doesn't work
-        var tags = Alib.RegEx.matchAll(source, /<nowiki>(.?\s?)+?<\/nowiki>/gi);
+        // [.\s] doesn't work; (?:.|\s) would work instead, but [\s\S] is best
+        var tags = Alib.RegEx.matchAll(source, /<nowiki>[\s\S]*?<\/nowiki>/gi);
         for (var t in tags) {
             var filler = Alib.Str.padRight("", "x", tags[t].length);
             source = Alib.Str.overwriteAt(source, filler, tags[t].index);

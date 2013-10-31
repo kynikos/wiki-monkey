@@ -2016,8 +2016,8 @@ WM.Parser = new function () {
     };
 
     this.neutralizeNowikiTags = function (source) {
-        // /<nowiki>[.\s]+?<\/nowiki>/gi doesn't work
-        var tags = Alib.RegEx.matchAll(source, /<nowiki>(.?\s?)+?<\/nowiki>/gi);
+        // [.\s] doesn't work; (?:.|\s) would work instead, but [\s\S] is best
+        var tags = Alib.RegEx.matchAll(source, /<nowiki>[\s\S]*?<\/nowiki>/gi);
         for (var t in tags) {
             var filler = Alib.Str.padRight("", "x", tags[t].length);
             source = Alib.Str.overwriteAt(source, filler, tags[t].index);
