@@ -3,14 +3,14 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.13.3-bot-opera
+// @version 1.13.4-bot-opera
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
 // @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/opera/WikiMonkey-bot-opera.meta.js
 // @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/opera/WikiMonkey-bot-opera.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/1.13.3/src/files/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.13.3/src/files/wiki-monkey-64.png
+// @icon https://raw.github.com/kynikos/wiki-monkey/1.13.4/src/files/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.13.4/src/files/wiki-monkey-64.png
 // @include http://*.wikipedia.org/*
 // @include https://wiki.archlinux.org/*
 // ==/UserScript==
@@ -1789,6 +1789,12 @@ WM.MW = new function () {
         // It's necessary to use try...catch because some browsers don't
         // support FormData yet and will throw an exception
         try {
+            // Temporarily disable multipart/form-data requests
+            // because Tampermonkey doesn't support them, see
+            // http://forum.tampermonkey.net/viewtopic.php?f=17&t=271
+            // http://forum.tampermonkey.net/viewtopic.php?f=17&t=774
+            throw "Temporarily disabled, see bug #91";
+
             if (string.length > 8000) {
                 query.data = new FormData();
                 query.data.append("format", "json");
@@ -2030,6 +2036,9 @@ WM.Parser = new function () {
     };
 
     this.neutralizeNowikiTags = function (source) {
+        // Empty nowiki tags (<nowiki></nowiki>) must be neutralized as well,
+        //   otherwise Tampermonkey will hang, see also
+        //   https://github.com/kynikos/wiki-monkey/issues/133
         // [.\s] doesn't work; (?:.|\s) would work instead, but [\s\S] is best
         var tags = Alib.RegEx.matchAll(source, /<nowiki>[\s\S]*?<\/nowiki>/gi);
         for (var t in tags) {
