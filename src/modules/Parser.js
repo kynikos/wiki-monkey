@@ -27,6 +27,9 @@ WM.Parser = new function () {
     };
 
     this.neutralizeNowikiTags = function (source) {
+        // Empty nowiki tags (<nowiki></nowiki>) must be neutralized as well,
+        //   otherwise Tampermonkey will hang, see also
+        //   https://github.com/kynikos/wiki-monkey/issues/133
         // [.\s] doesn't work; (?:.|\s) would work instead, but [\s\S] is best
         var tags = Alib.RegEx.matchAll(source, /<nowiki>[\s\S]*?<\/nowiki>/gi);
         for (var t in tags) {
