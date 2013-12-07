@@ -39,6 +39,21 @@ WM.Parser = new function () {
         return source;
     };
 
+    this.dotEncode = function (text) {
+        return encodeURIComponent(text).replace(/%/g, ".");
+    };
+
+    this.dotEncodeLinkBreakingFragmentCharacters = function (fragment) {
+        // These characters are known to break internal links if found in fragments
+        // This function is not tested on link paths or anchors!
+        fragment = fragment.replace(/\[/g, ".5B");
+        fragment = fragment.replace(/\]/g, ".5D");
+        fragment = fragment.replace(/\{/g, ".7B");
+        fragment = fragment.replace(/\}/g, ".7D");
+        fragment = fragment.replace(/\|/g, ".7C");
+        return fragment;
+    };
+
     var prepareRegexpWhitespace = function (title) {
         // MediaWiki treats consecutive whitespace characters in titles and section names as one
         // For example [[Main __ Page#First _ _section]] is the same as [[Main Page#First section]]
