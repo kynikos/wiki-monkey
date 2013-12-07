@@ -56,6 +56,14 @@ WM.Parser = new function () {
         return pattern;
     };
 
+    this.compareArticleTitles = function (title1, title2) {
+        // Actually also namespaces should be kept into account,
+        // e.g. 'Help:Title' and 'Help:title' should return true
+        var t1 = prepareTitleCasing(this.squashContiguousWhitespace(title1).trim());
+        var t2 = prepareTitleCasing(this.squashContiguousWhitespace(title2).trim());
+        return t1 == t2;
+    };
+
     this.findBehaviorSwitches = function (source, word) {
         source = this.neutralizeNowikiTags(source);
         var regExp;
