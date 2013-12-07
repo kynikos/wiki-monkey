@@ -140,9 +140,10 @@ WM.Plugins.FixBacklinkFragments = new function () {
                 for (var s = 0; s < sections.length; s++) {
                     var section = sections[s];
 
-                    // The FixFragments plugin also tries to fix dot-encoded fragments
-                    // however it's too dangerous to do it with this bot plugin,
-                    // have the user fix fragments manually
+                    // The FixFragments and FixLinkFragments plugins also try
+                    // to fix dot-encoded fragments however it's too dangerous
+                    // to do it with this bot plugin, have the user fix
+                    // fragments manually
                     if (section.toLowerCase() == fragment.toLowerCase()) {
                         return section;
                     }

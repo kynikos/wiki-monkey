@@ -50,6 +50,7 @@
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/FixBacklinkFragments.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/FixDoubleRedirects.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/FixFragments.js
+// @require file:///mnt/archive/Development/wiki-monkey/src/plugins/FixLinkFragments.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/MultipleLineBreaks.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/SimpleReplace.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/SynchronizeInterlanguageLinks.js
@@ -70,6 +71,7 @@ WM.UI.setEditor([
         ["SimpleReplace", "RegExp substitution", ["1"]]
     ],
     [
+        ["FixLinkFragments", "Fix external section links", null],
         ["SynchronizeInterlanguageLinks", "Sync interlanguage links",
          [function (title) {
              var language = WM.ArchWiki.detectLanguage(title)[1];
