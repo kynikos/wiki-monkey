@@ -140,6 +140,9 @@ WM.Plugins.FixBacklinkFragments = new function () {
                 for (var s = 0; s < sections.length; s++) {
                     var section = sections[s];
 
+                    // The FixFragments plugin also tries to fix dot-encoded fragments
+                    // however it's too dangerous to do it with this bot plugin,
+                    // have the user fix fragments manually
                     if (section.toLowerCase() == fragment.toLowerCase()) {
                         return section;
                     }
@@ -156,13 +159,13 @@ WM.Plugins.FixBacklinkFragments = new function () {
     };
 
     this.mainAuto = function (args, title, callBot, chainArgs) {
-        var target =  WM.WhatLinksHere.getTitle();
+        var target = WM.WhatLinksHere.getTitle();
 
         if (chainArgs === null) {
             var params = {
                 'action': 'parse',
                 'prop': 'sections',
-                'page':target,
+                'page': target,
                 'redirects': 1,
             };
             WM.Log.logWarning("If some articles in the list are linking to this article " +

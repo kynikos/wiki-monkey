@@ -66,9 +66,33 @@ WM.Plugins.FixFragments = new function () {
 
         for (var s = 0; s < sections.length; s++) {
             var heading = sections[s].cleanheading;
+            var dotHeading = WM.Parser.dotEncode(heading);
+            var dotFragment = WM.Parser.dotEncode(fragment);
 
-            if (heading.toLowerCase() == fragment.toLowerCase()) {
-                return newlink = "[[#" + heading + ((lalt) ? "|" + lalt : "") + "]]";
+            if (dotHeading.toLowerCase() == dotFragment.toLowerCase()) {
+                if (fragment == dotFragment) {
+                    // If the fragment was encoded, re-encode it because it
+                    // could contain link-breaking characters (e.g. []|{})
+                    // The condition would also be true if the fragment doesn't
+                    // contain any encodable characters, but since heading and
+                    // fragment at most differ by capitalization, encoding the
+                    // heading won't have any effect
+                    return newlink = "[[#" + dotHeading + ((lalt) ? "|" + lalt : "") + "]]";
+                }
+                else {
+                    // If the fragment was not encoded, if the fragment
+                    // contained link-breaking characters the link was already
+                    // broken, and replacing it with heading wouldn't make
+                    // things worse; if the fragment didn't contain
+                    // link-breaking characters, the heading doesn't either,
+                    // since heading and fragment at most differ by
+                    // capitalization, so it's safe to replace it
+                    // If the fragment was *partially* encoded instead, a
+                    // link-breaking character may have been encoded, so all
+                    // link-breaking characters must be re-encoded here!
+                    var escHeading = WM.Parser.dotEncodeLinkBreakingFragmentCharacters(heading);
+                    return newlink = "[[#" + escHeading + ((lalt) ? "|" + lalt : "") + "]]";
+                }
             }
         }
 
