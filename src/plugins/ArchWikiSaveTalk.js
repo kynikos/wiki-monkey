@@ -20,9 +20,12 @@
 
 WM.Plugins.ArchWikiSaveTalk = new function () {
     this.makeUI = function (args) {
+        GM_addStyle("#WikiMonkey-ArchWikiSaveTalk {margin-left:0.33em;}");
+
         var article = args[0];
 
         var link = document.createElement('a');
+        link.id = "WikiMonkey-ArchWikiSaveTalk";
         link.href = "/index.php/" + article;
         link.innerHTML = article;
 

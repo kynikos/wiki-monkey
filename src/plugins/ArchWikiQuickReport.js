@@ -20,6 +20,11 @@
 
 WM.Plugins.ArchWikiQuickReport = new function () {
     this.makeUI = function (args) {
+        GM_addStyle("#WikiMonkey-ArchWikiQuickReport > select, " +
+                    "#WikiMonkey-ArchWikiQuickReport > input, " +
+                    "#WikiMonkey-ArchWikiQuickReport > a " +
+                    "{margin-left:0.33em;}");
+
         var id = args[0];
         var article = args[1];
 
@@ -33,17 +38,18 @@ WM.Plugins.ArchWikiQuickReport = new function () {
             option.innerHTML = value;
             select.appendChild(option);
         }
-        select.id = "ArchWikiQuickReport-select-" + id;
+        select.id = "WikiMonkey-ArchWikiQuickReport-select-" + id;
 
         var input = document.createElement('input');
         input.setAttribute('type', 'text');
-        input.id = "ArchWikiQuickReport-input-" + id;
+        input.id = "WikiMonkey-ArchWikiQuickReport-input-" + id;
 
         var link = document.createElement('a');
         link.href = "/index.php/" + article;
         link.innerHTML = article;
 
         var span = document.createElement('span');
+        span.id = "WikiMonkey-ArchWikiQuickReport";
         span.appendChild(select);
         span.appendChild(input);
         span.appendChild(link);
@@ -58,7 +64,7 @@ WM.Plugins.ArchWikiQuickReport = new function () {
 
         WM.Log.logInfo('Appending diff to ' + article + "...");
 
-        var select = document.getElementById("ArchWikiQuickReport-select-" + id);
+        var select = document.getElementById("WikiMonkey-ArchWikiQuickReport-select-" + id);
         var type = select.options[select.selectedIndex].value;
 
         if (type != 'content' && type != 'style') {
@@ -91,7 +97,7 @@ WM.Plugins.ArchWikiQuickReport = new function () {
 
         var title = Alib.HTTP.getURIParameter('title');
         var pEnddate = enddate.substr(0, 10) + "&nbsp;" + enddate.substr(11, 8);
-        var notes = document.getElementById("ArchWikiQuickReport-input-" + id).value;
+        var notes = document.getElementById("WikiMonkey-ArchWikiQuickReport-input-" + id).value;
 
         var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", pEnddate, type, notes]);
 
