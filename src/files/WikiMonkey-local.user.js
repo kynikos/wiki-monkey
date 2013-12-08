@@ -44,6 +44,7 @@
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiQuickReport.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiRCFilter.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiSaveTalk.js
+// @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiSummaryToRelated.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiUpdatePackageTemplates.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiWantedCategories.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ExpandContractions.js
@@ -65,7 +66,8 @@ WM.UI.setEditor([
         ["FixFragments", "Fix section links", null],
         ["ArchWikiNewTemplates", "Use code templates", null],
         ["ExpandContractions", "Expand contractions", null],
-        ["MultipleLineBreaks", "Squash multiple line breaks", null]
+        ["MultipleLineBreaks", "Squash multiple line breaks", null],
+        ["ArchWikiSummaryToRelated", "Convert summary to related", null]
     ],
     [
         ["SimpleReplace", "RegExp substitution", ["1"]]
