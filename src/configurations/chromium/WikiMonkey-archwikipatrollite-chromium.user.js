@@ -3,14 +3,14 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.13.4-archwikipatrollite-chromium
+// @version 1.13.4-dev-archwikipatrollite-chromium
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-archwikipatrollite-chromium.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-archwikipatrollite-chromium.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/1.13.4/src/files/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.13.4/src/files/wiki-monkey-64.png
+// @updateURL https://raw.github.com/kynikos/wiki-monkey/develop/src/configurations/chromium/WikiMonkey-archwikipatrollite-chromium.meta.js
+// @downloadURL https://raw.github.com/kynikos/wiki-monkey/develop/src/configurations/chromium/WikiMonkey-archwikipatrollite-chromium.user.js
+// @icon https://raw.github.com/kynikos/wiki-monkey/develop/src/files/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/develop/src/files/wiki-monkey-64.png
 // @match https://wiki.archlinux.org/*
 // ==/UserScript==
 
@@ -928,7 +928,8 @@ WM.Bot = new function () {
                     "#WikiMonkeyBotStart, #WikiMonkeyBotStop {margin-right:0.33em; margin-bottom:1em; font-weight:bold;} " +
                     "a.WikiMonkeyBotSelected {background-color:#faa; padding:0.2em 0.4em;} " +
                     "a.WikiMonkeyBotProcessing {background-color:#ff8; padding:0.2em 0.4em;} " +
-                    "a.WikiMonkeyBotProcessed {background-color:#afa; padding:0.2em 0.4em;} " +
+                    "a.WikiMonkeyBotChanged {background-color:#afa; padding:0.2em 0.4em;} " +
+                    "a.WikiMonkeyBotUnchanged {background-color:#aaf; padding:0.2em 0.4em;} " +
                     "a.WikiMonkeyBotFailed {background-color:orangered; padding:0.2em 0.4em;}");
 
         divContainer.appendChild(makeFunctionUI(functions));
@@ -1351,20 +1352,23 @@ WM.Bot = new function () {
                             WM.Bot.selections.function_(article, (function (lis, id, linkId, ln, article) {
                                 return function (status, resArgs) {
                                     switch (status) {
+                                        // The article hasn't been saved
                                         case 0:
-                                            ln.className = "WikiMonkeyBotProcessed";
-                                            WM.Log.logInfo(article + " processed");
+                                            ln.className = "WikiMonkeyBotUnchanged";
+                                            WM.Log.logInfo(article + " processed (unchanged)");
                                             // Do not increment directly in the function's call!
                                             id++;
                                             WM.Bot._processItem(status, lis, id, linkId, resArgs);
                                             break;
+                                        // The article has been saved
                                         case 1:
-                                            ln.className = "WikiMonkeyBotProcessed";
-                                            WM.Log.logInfo(article + " processed");
+                                            ln.className = "WikiMonkeyBotChanged";
+                                            WM.Log.logInfo(article + " processed (changed)");
                                             // Do not increment directly in the function's call!
                                             id++;
                                             WM.Bot._processItem(status, lis, id, linkId, resArgs);
                                             break;
+                                        // The plugin has encountered a critical error
                                         default:
                                             ln.className = "WikiMonkeyBotFailed";
                                             WM.Log.logError("Error processing " + article + ", stopping the bot");
@@ -2081,12 +2085,6 @@ WM.MW = new function () {
         // It's necessary to use try...catch because some browsers don't
         // support FormData yet and will throw an exception
         try {
-            // Temporarily disable multipart/form-data requests
-            // because Tampermonkey doesn't support them, see
-            // http://forum.tampermonkey.net/viewtopic.php?f=17&t=271
-            // http://forum.tampermonkey.net/viewtopic.php?f=17&t=774
-            throw "Temporarily disabled, see bug #91";
-
             if (string.length > 8000) {
                 query.data = new FormData();
                 query.data.append("format", "json");
@@ -2340,6 +2338,21 @@ WM.Parser = new function () {
         return source;
     };
 
+    this.dotEncode = function (text) {
+        return encodeURIComponent(text).replace(/%/g, ".");
+    };
+
+    this.dotEncodeLinkBreakingFragmentCharacters = function (fragment) {
+        // These characters are known to break internal links if found in fragments
+        // This function is not tested on link paths or anchors!
+        fragment = fragment.replace(/\[/g, ".5B");
+        fragment = fragment.replace(/\]/g, ".5D");
+        fragment = fragment.replace(/\{/g, ".7B");
+        fragment = fragment.replace(/\}/g, ".7D");
+        fragment = fragment.replace(/\|/g, ".7C");
+        return fragment;
+    };
+
     var prepareRegexpWhitespace = function (title) {
         // MediaWiki treats consecutive whitespace characters in titles and section names as one
         // For example [[Main __ Page#First _ _section]] is the same as [[Main Page#First section]]
@@ -2355,6 +2368,14 @@ WM.Parser = new function () {
             pattern = "[" + fcUpper + fcLower + "]" + pattern.substr(1);
         }
         return pattern;
+    };
+
+    this.compareArticleTitles = function (title1, title2) {
+        // Actually also namespaces should be kept into account,
+        // e.g. 'Help:Title' and 'Help:title' should return true
+        var t1 = prepareTitleCasing(this.squashContiguousWhitespace(title1).trim());
+        var t2 = prepareTitleCasing(this.squashContiguousWhitespace(title2).trim());
+        return t1 == t2;
     };
 
     this.findBehaviorSwitches = function (source, word) {
@@ -2843,11 +2864,11 @@ WM.UI = new function () {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyButtons';
 
-        GM_addStyle("#WikiMonkeyButtons div.shortcut {position:absolute;} " +
-                    "#WikiMonkeyButtons div.shortcut > input, #WikiMonkeyButtonAll {font-weight:bold;} " +
-                    "#WikiMonkeyButtons div.row {margin-bottom:0.67em;} " +
+        GM_addStyle("#WikiMonkeyButtons div.row {position:relative; margin-bottom:0.33em;} " +
+                    "#WikiMonkeyButtons div.shortcut {position:absolute;} " +
+                    "#WikiMonkeyButtons div.shortcut > input, #WikiMonkeyButtonAll {width:8.33em; margin-bottom:0.33em; font-weight:bold;} " +
                     "#WikiMonkeyButtons div.plugins {margin-left:9em;} " +
-                    "#WikiMonkeyButtons div.pluginUI {display:inline-block; margin-right:0.33em;}");
+                    "#WikiMonkeyButtons div.pluginUI {display:inline-block; margin-bottom:0.33em; margin-right:0.33em;}");
 
         var buttonAll = document.createElement('input');
         buttonAll.setAttribute('type', 'button');
@@ -3066,6 +3087,11 @@ WM.WhatLinksHere = new function () {
 
 WM.Plugins.ArchWikiQuickReport = new function () {
     this.makeUI = function (args) {
+        GM_addStyle("#WikiMonkey-ArchWikiQuickReport > select, " +
+                    "#WikiMonkey-ArchWikiQuickReport > input, " +
+                    "#WikiMonkey-ArchWikiQuickReport > a " +
+                    "{margin-left:0.33em;}");
+
         var id = args[0];
         var article = args[1];
 
@@ -3079,17 +3105,18 @@ WM.Plugins.ArchWikiQuickReport = new function () {
             option.innerHTML = value;
             select.appendChild(option);
         }
-        select.id = "ArchWikiQuickReport-select-" + id;
+        select.id = "WikiMonkey-ArchWikiQuickReport-select-" + id;
 
         var input = document.createElement('input');
         input.setAttribute('type', 'text');
-        input.id = "ArchWikiQuickReport-input-" + id;
+        input.id = "WikiMonkey-ArchWikiQuickReport-input-" + id;
 
         var link = document.createElement('a');
         link.href = "/index.php/" + article;
         link.innerHTML = article;
 
         var span = document.createElement('span');
+        span.id = "WikiMonkey-ArchWikiQuickReport";
         span.appendChild(select);
         span.appendChild(input);
         span.appendChild(link);
@@ -3104,7 +3131,7 @@ WM.Plugins.ArchWikiQuickReport = new function () {
 
         WM.Log.logInfo('Appending diff to ' + article + "...");
 
-        var select = document.getElementById("ArchWikiQuickReport-select-" + id);
+        var select = document.getElementById("WikiMonkey-ArchWikiQuickReport-select-" + id);
         var type = select.options[select.selectedIndex].value;
 
         if (type != 'content' && type != 'style') {
@@ -3137,7 +3164,7 @@ WM.Plugins.ArchWikiQuickReport = new function () {
 
         var title = Alib.HTTP.getURIParameter('title');
         var pEnddate = enddate.substr(0, 10) + "&nbsp;" + enddate.substr(11, 8);
-        var notes = document.getElementById("ArchWikiQuickReport-input-" + id).value;
+        var notes = document.getElementById("WikiMonkey-ArchWikiQuickReport-input-" + id).value;
 
         var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", pEnddate, type, notes]);
 

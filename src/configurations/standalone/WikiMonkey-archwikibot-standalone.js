@@ -914,7 +914,8 @@ WM.Bot = new function () {
                     "#WikiMonkeyBotStart, #WikiMonkeyBotStop {margin-right:0.33em; margin-bottom:1em; font-weight:bold;} " +
                     "a.WikiMonkeyBotSelected {background-color:#faa; padding:0.2em 0.4em;} " +
                     "a.WikiMonkeyBotProcessing {background-color:#ff8; padding:0.2em 0.4em;} " +
-                    "a.WikiMonkeyBotProcessed {background-color:#afa; padding:0.2em 0.4em;} " +
+                    "a.WikiMonkeyBotChanged {background-color:#afa; padding:0.2em 0.4em;} " +
+                    "a.WikiMonkeyBotUnchanged {background-color:#aaf; padding:0.2em 0.4em;} " +
                     "a.WikiMonkeyBotFailed {background-color:orangered; padding:0.2em 0.4em;}");
 
         divContainer.appendChild(makeFunctionUI(functions));
@@ -1337,20 +1338,23 @@ WM.Bot = new function () {
                             WM.Bot.selections.function_(article, (function (lis, id, linkId, ln, article) {
                                 return function (status, resArgs) {
                                     switch (status) {
+                                        // The article hasn't been saved
                                         case 0:
-                                            ln.className = "WikiMonkeyBotProcessed";
-                                            WM.Log.logInfo(article + " processed");
+                                            ln.className = "WikiMonkeyBotUnchanged";
+                                            WM.Log.logInfo(article + " processed (unchanged)");
                                             // Do not increment directly in the function's call!
                                             id++;
                                             WM.Bot._processItem(status, lis, id, linkId, resArgs);
                                             break;
+                                        // The article has been saved
                                         case 1:
-                                            ln.className = "WikiMonkeyBotProcessed";
-                                            WM.Log.logInfo(article + " processed");
+                                            ln.className = "WikiMonkeyBotChanged";
+                                            WM.Log.logInfo(article + " processed (changed)");
                                             // Do not increment directly in the function's call!
                                             id++;
                                             WM.Bot._processItem(status, lis, id, linkId, resArgs);
                                             break;
+                                        // The plugin has encountered a critical error
                                         default:
                                             ln.className = "WikiMonkeyBotFailed";
                                             WM.Log.logError("Error processing " + article + ", stopping the bot");
@@ -2067,12 +2071,6 @@ WM.MW = new function () {
         // It's necessary to use try...catch because some browsers don't
         // support FormData yet and will throw an exception
         try {
-            // Temporarily disable multipart/form-data requests
-            // because Tampermonkey doesn't support them, see
-            // http://forum.tampermonkey.net/viewtopic.php?f=17&t=271
-            // http://forum.tampermonkey.net/viewtopic.php?f=17&t=774
-            throw "Temporarily disabled, see bug #91";
-
             if (string.length > 8000) {
                 query.data = new FormData();
                 query.data.append("format", "json");
@@ -2326,6 +2324,21 @@ WM.Parser = new function () {
         return source;
     };
 
+    this.dotEncode = function (text) {
+        return encodeURIComponent(text).replace(/%/g, ".");
+    };
+
+    this.dotEncodeLinkBreakingFragmentCharacters = function (fragment) {
+        // These characters are known to break internal links if found in fragments
+        // This function is not tested on link paths or anchors!
+        fragment = fragment.replace(/\[/g, ".5B");
+        fragment = fragment.replace(/\]/g, ".5D");
+        fragment = fragment.replace(/\{/g, ".7B");
+        fragment = fragment.replace(/\}/g, ".7D");
+        fragment = fragment.replace(/\|/g, ".7C");
+        return fragment;
+    };
+
     var prepareRegexpWhitespace = function (title) {
         // MediaWiki treats consecutive whitespace characters in titles and section names as one
         // For example [[Main __ Page#First _ _section]] is the same as [[Main Page#First section]]
@@ -2341,6 +2354,14 @@ WM.Parser = new function () {
             pattern = "[" + fcUpper + fcLower + "]" + pattern.substr(1);
         }
         return pattern;
+    };
+
+    this.compareArticleTitles = function (title1, title2) {
+        // Actually also namespaces should be kept into account,
+        // e.g. 'Help:Title' and 'Help:title' should return true
+        var t1 = prepareTitleCasing(this.squashContiguousWhitespace(title1).trim());
+        var t2 = prepareTitleCasing(this.squashContiguousWhitespace(title2).trim());
+        return t1 == t2;
     };
 
     this.findBehaviorSwitches = function (source, word) {
@@ -2829,11 +2850,11 @@ WM.UI = new function () {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyButtons';
 
-        GM_addStyle("#WikiMonkeyButtons div.shortcut {position:absolute;} " +
-                    "#WikiMonkeyButtons div.shortcut > input, #WikiMonkeyButtonAll {font-weight:bold;} " +
-                    "#WikiMonkeyButtons div.row {margin-bottom:0.67em;} " +
+        GM_addStyle("#WikiMonkeyButtons div.row {position:relative; margin-bottom:0.33em;} " +
+                    "#WikiMonkeyButtons div.shortcut {position:absolute;} " +
+                    "#WikiMonkeyButtons div.shortcut > input, #WikiMonkeyButtonAll {width:8.33em; margin-bottom:0.33em; font-weight:bold;} " +
                     "#WikiMonkeyButtons div.plugins {margin-left:9em;} " +
-                    "#WikiMonkeyButtons div.pluginUI {display:inline-block; margin-right:0.33em;}");
+                    "#WikiMonkeyButtons div.pluginUI {display:inline-block; margin-bottom:0.33em; margin-right:0.33em;}");
 
         var buttonAll = document.createElement('input');
         buttonAll.setAttribute('type', 'button');
@@ -3619,6 +3640,11 @@ WM.Plugins.ArchWikiOldAURLinks = new function () {
 
 WM.Plugins.ArchWikiQuickReport = new function () {
     this.makeUI = function (args) {
+        GM_addStyle("#WikiMonkey-ArchWikiQuickReport > select, " +
+                    "#WikiMonkey-ArchWikiQuickReport > input, " +
+                    "#WikiMonkey-ArchWikiQuickReport > a " +
+                    "{margin-left:0.33em;}");
+
         var id = args[0];
         var article = args[1];
 
@@ -3632,17 +3658,18 @@ WM.Plugins.ArchWikiQuickReport = new function () {
             option.innerHTML = value;
             select.appendChild(option);
         }
-        select.id = "ArchWikiQuickReport-select-" + id;
+        select.id = "WikiMonkey-ArchWikiQuickReport-select-" + id;
 
         var input = document.createElement('input');
         input.setAttribute('type', 'text');
-        input.id = "ArchWikiQuickReport-input-" + id;
+        input.id = "WikiMonkey-ArchWikiQuickReport-input-" + id;
 
         var link = document.createElement('a');
         link.href = "/index.php/" + article;
         link.innerHTML = article;
 
         var span = document.createElement('span');
+        span.id = "WikiMonkey-ArchWikiQuickReport";
         span.appendChild(select);
         span.appendChild(input);
         span.appendChild(link);
@@ -3657,7 +3684,7 @@ WM.Plugins.ArchWikiQuickReport = new function () {
 
         WM.Log.logInfo('Appending diff to ' + article + "...");
 
-        var select = document.getElementById("ArchWikiQuickReport-select-" + id);
+        var select = document.getElementById("WikiMonkey-ArchWikiQuickReport-select-" + id);
         var type = select.options[select.selectedIndex].value;
 
         if (type != 'content' && type != 'style') {
@@ -3690,7 +3717,7 @@ WM.Plugins.ArchWikiQuickReport = new function () {
 
         var title = Alib.HTTP.getURIParameter('title');
         var pEnddate = enddate.substr(0, 10) + "&nbsp;" + enddate.substr(11, 8);
-        var notes = document.getElementById("ArchWikiQuickReport-input-" + id).value;
+        var notes = document.getElementById("WikiMonkey-ArchWikiQuickReport-input-" + id).value;
 
         var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", pEnddate, type, notes]);
 
@@ -3784,6 +3811,47 @@ WM.Plugins.ArchWikiRCFilter = new function () {
             }
         }
     }
+};
+
+WM.Plugins.ArchWikiSummaryToRelated = new function () {
+    this.main = function (args, callNext) {
+        var source = WM.Editor.readSource();
+
+        var asstarts = WM.Parser.findTemplates(source, 'Article summary start');
+        var asends = WM.Parser.findTemplates(source, 'Article summary end');
+
+        if (asstarts.length && asends.length && asstarts[0].index < asends[0].index) {
+            var asstart = asstarts[0];
+            var asend = asends[0];
+            var newText = source.substring(0, asstart.index).trim();
+
+            var aswikis = WM.Parser.findTemplates(source, 'Article summary wiki');
+
+            if (aswikis.length) {
+                var language = WM.ArchWiki.detectLanguage(WM.Editor.getTitle())[1];
+                var suffix = ((language == "English") ? "" : " (" + language + ")");
+                newText += "\n{{Related articles start" + suffix + "}}\n";
+
+                for (var w = 0; w < aswikis.length; w++) {
+                    var link = aswikis[w].arguments[0].value;
+                    newText += "{{Related|" + link + "}}\n";
+                }
+                newText += "{{Related articles end}}";
+            }
+
+            newText += "\n\n-----------------------------------------------------------\n";
+            newText += source.substring(asstart.index, asend.index + asend.length).trim();
+            newText += "\n-----------------------------------------------------------\n\n";
+            newText += source.substr(asend.index + asend.length).trim();
+
+            WM.Editor.writeSource(newText);
+            WM.Log.logWarning("Started converting Article summary to Related articles, but manual intervention is required.");
+        }
+
+        if (callNext) {
+            callNext();
+        }
+    };
 };
 
 WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
@@ -4298,54 +4366,161 @@ WM.Plugins.ExpandContractions = new function () {
 
 WM.Plugins.FixBacklinkFragments = new function () {
     var fixLinks = function (source, target, sections) {
-        var newString = source;
-
         // Note that it's impossible to recognize any namespaces in the title without querying the server
         // Alternatively, a list of the known namespaces could be maintained for each wiki
         // Recognizing namespaces would let recognize more liberal link syntaxes (e.g. spaces around the colon)
         var links = WM.Parser.findInternalLinks(source, null, target);
 
+        var newText = "";
+        var prevId = 0;
+
         for (var l = 0; l < links.length; l++) {
             var link = links[l];
+
+            newText += source.substring(prevId, link.index);
+            var newlink = link.match[0];
+
             var rawfragment = link.match[5];
 
             if (rawfragment) {
-                var fragment = WM.Parser.squashContiguousWhitespace(rawfragment).trim();
+                var fixedFragment = fixFragment(rawfragment, sections);
 
-                if (sections.indexOf(fragment) < 0) {
-                    var fixed = false;
+                if (fixedFragment === true) {}
+                else if (fixedFragment) {
+                    var oldlink = newlink;
+                    newlink = "[[" + target + "#" + fixedFragment + ((link.match[6]) ? "|" + link.match[6] : "") + "]]";
+                    WM.Log.logInfo("Fixed broken link fragment: " + oldlink + " -> " + newlink);
+                }
+                else {
+                    WM.Log.logWarning("Cannot fix broken link fragment: " + newlink);
+                }
+            }
 
-                    for (var s = 0; s < sections.length; s++) {
-                        var section = sections[s];
+            newText += newlink;
+            prevId = link.index + link.length;
+        }
+        newText += source.substr(prevId);
 
-                        if (section.toLowerCase() == fragment.toLowerCase()) {
-                            var newlink = "[[" + target + "#" + section + ((link.match[6]) ? "|" + link.match[6] : "") + "]]";
-                            newString = Alib.Str.overwriteFor(newString, newlink, link.index, link.length);
-                            WM.Log.logInfo("Fixed broken link fragment: " + link.match[0] + " -> " + newlink);
-                            fixed = true;
-                            break;
-                        }
+        // Without this check this plugin would be specific to ArchWiki
+        if (location.hostname == 'wiki.archlinux.org') {
+            newText = fixArchWikiLinks(newText, target, sections);
+        }
+
+        return newText;
+    };
+
+    var fixArchWikiLinks = function (source, target, sections) {
+        var links = WM.Parser.findTemplates(source, 'Related');
+
+        var newText1 = "";
+        var prevId = 0;
+
+        for (var l = 0; l < links.length; l++) {
+            newText1 += source.substring(prevId, links[l].index);
+            newText1 += fixArchWikiLink(target, sections, links[l], 1);
+            prevId = links[l].index + links[l].length;
+        }
+        newText1 += source.substr(prevId);
+
+        var links2 = WM.Parser.findTemplates(newText1, 'Related2');
+
+        var newText2 = "";
+        var prevId = 0;
+
+        for (var l = 0; l < links2.length; l++) {
+            newText2 += newText1.substring(prevId, links2[l].index);
+            newText2 += fixArchWikiLink(target, sections, links2[l], 2);
+            prevId = links2[l].index + links2[l].length;
+        }
+        newText2 += newText1.substr(prevId);
+
+        return newText2;
+    };
+
+    var fixArchWikiLink = function (target, sections, template, expectedArgs) {
+        var args = template.arguments;
+
+        // Don't crash in case of malformed templates
+        if (args.length == expectedArgs) {
+            var link = args[0].value;
+            var fragId = link.indexOf('#');
+
+            if (fragId > -1) {
+                var ltitle = link.substring(0, fragId);
+
+                // Note that it's impossible to recognize any namespaces in the title without querying the server
+                // Alternatively, a list of the known namespaces could be maintained for each wiki
+                // Recognizing namespaces would let recognize more liberal link syntaxes (e.g. spaces around the colon)
+                if (WM.Parser.compareArticleTitles(ltitle, target)) {
+                    var rawfragment = link.substr(fragId + 1);
+                    var fixedFragment = fixFragment(rawfragment, sections);
+
+                    if (fixedFragment === true) {
+                        // Don't do anything in this case
                     }
-
-                    if (!fixed) {
-                        WM.Log.logWarning("Cannot fix broken link fragment: " + link.match[0]);
+                    else if (fixedFragment) {
+                        var anchor = (args[1]) ? ("|" + args[1].value) : "";
+                        var newlink = "{{" + template.title + "|" + target + "#" + fixedFragment  + anchor + "}}";
+                        WM.Log.logInfo("Fixed broken link fragment: " + template.match[0] + " -> " + newlink);
+                        return newlink;
+                    }
+                    else {
+                        WM.Log.logWarning("Cannot fix broken link fragment: " + template.match[0]);
                     }
                 }
             }
         }
+        else {
+            WM.Log.logWarning("Template:" + template.title + " must have " + expectedArgs + " and only " +
+            expectedArgs + ((expectedArgs > 1) ? " arguments: " : " argument: ") + template.match[0]);
+        }
 
-        return newString;
+        return template.match[0];
+    };
+
+    var fixFragment = function (rawfragment, sections) {
+        if (rawfragment) {
+            var fragment = WM.Parser.squashContiguousWhitespace(rawfragment).trim();
+
+            if (sections.indexOf(fragment) < 0) {
+                for (var s = 0; s < sections.length; s++) {
+                    var section = sections[s];
+
+                    // The FixFragments and FixLinkFragments plugins also try
+                    // to fix dot-encoded fragments however it's too dangerous
+                    // to do it with this bot plugin, have the user fix
+                    // fragments manually
+                    if (section.toLowerCase() == fragment.toLowerCase()) {
+                        return section;
+                    }
+                }
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+        else {
+            return true;
+        }
     };
 
     this.mainAuto = function (args, title, callBot, chainArgs) {
-        var target =  WM.WhatLinksHere.getTitle();
+        var target = WM.WhatLinksHere.getTitle();
 
         if (chainArgs === null) {
             var params = {
                 'action': 'parse',
                 'prop': 'sections',
-                'page':target
+                'page': target,
+                'redirects': 1,
             };
+            WM.Log.logWarning("If some articles in the list are linking to this article " +
+                              "through a redirect, you should process the backlinks of that " +
+                              "redirect page separately through its Special:WhatLinksHere " +
+                              "page, as this plugin can only fix links that exactly match " +
+                              "the title of this article.\nIn order to save time you are " +
+                              "advised to hide the redirects in this list.");
 
             WM.MW.callAPIGet(params,
                              null,
@@ -4562,9 +4737,33 @@ WM.Plugins.FixFragments = new function () {
 
         for (var s = 0; s < sections.length; s++) {
             var heading = sections[s].cleanheading;
+            var dotHeading = WM.Parser.dotEncode(heading);
+            var dotFragment = WM.Parser.dotEncode(fragment);
 
-            if (heading.toLowerCase() == fragment.toLowerCase()) {
-                return newlink = "[[#" + heading + ((lalt) ? "|" + lalt : "") + "]]";
+            if (dotHeading.toLowerCase() == dotFragment.toLowerCase()) {
+                if (fragment == dotFragment) {
+                    // If the fragment was encoded, re-encode it because it
+                    // could contain link-breaking characters (e.g. []|{})
+                    // The condition would also be true if the fragment doesn't
+                    // contain any encodable characters, but since heading and
+                    // fragment at most differ by capitalization, encoding the
+                    // heading won't have any effect
+                    return newlink = "[[#" + dotHeading + ((lalt) ? "|" + lalt : "") + "]]";
+                }
+                else {
+                    // If the fragment was not encoded, if the fragment
+                    // contained link-breaking characters the link was already
+                    // broken, and replacing it with heading wouldn't make
+                    // things worse; if the fragment didn't contain
+                    // link-breaking characters, the heading doesn't either,
+                    // since heading and fragment at most differ by
+                    // capitalization, so it's safe to replace it
+                    // If the fragment was *partially* encoded instead, a
+                    // link-breaking character may have been encoded, so all
+                    // link-breaking characters must be re-encoded here!
+                    var escHeading = WM.Parser.dotEncodeLinkBreakingFragmentCharacters(heading);
+                    return newlink = "[[#" + escHeading + ((lalt) ? "|" + lalt : "") + "]]";
+                }
             }
         }
 
@@ -4582,6 +4781,281 @@ WM.Plugins.FixFragments = new function () {
         }
         else {
             WM.Log.logInfo("No fixable section links found");
+        }
+
+        if (callNext) {
+            callNext();
+        }
+    };
+};
+
+WM.Plugins.FixLinkFragments = new function () {
+    this.processLink = function (title, links, index, source, newText, prevId, call, callArgs) {
+        if (links[index]) {
+            var link = links[index];
+            var rawfragment = link.match[5];
+
+            if (rawfragment) {
+                WM.Log.logInfo("Processing " + link.match[0] + "...");
+
+                var target = ((link.match[2]) ? link.match[2] + ":" : "") + link.match[4];
+
+                // Note that it's impossible to recognize any namespaces in the title without querying the server
+                // Alternatively, a list of the known namespaces could be maintained for each wiki
+                // Recognizing namespaces would let recognize more liberal link syntaxes (e.g. spaces around the colon)
+                if (!WM.Parser.compareArticleTitles(target, title)) {
+                    var params = {
+                        'action': 'parse',
+                        'prop': 'sections',
+                        'page': target,
+                        'redirects': 1,
+                    };
+
+                    WM.MW.callAPIGet(params,
+                                     null,
+                                     WM.Plugins.FixLinkFragments.processLinkContinue,
+                                     [link, target, rawfragment, links, index, source, newText, prevId, title, call, callArgs]);
+                }
+                else {
+                    index++;
+                    WM.Plugins.FixLinkFragments.processLink(title, links, index, source, newText, prevId, call, callArgs);
+                }
+            }
+            else {
+                index++;
+                WM.Plugins.FixLinkFragments.processLink(title, links, index, source, newText, prevId, call, callArgs);
+            }
+        }
+        else {
+            newText += source.substr(prevId);
+            call(newText, callArgs);
+        }
+    };
+
+    this.processLinkContinue = function (res, args) {
+        var link = args[0];
+        var target = args[1];
+        var rawfragment = args[2];
+        var links = args[3];
+        var index = args[4];
+        var source = args[5];
+        var newText = args[6];
+        var prevId = args[7];
+        var title = args[8];
+        var call = args[9];
+        var callArgs = args[10];
+
+        var sections = [];
+
+        for (var s = 0; s < res.parse.sections.length; s++) {
+            sections.push(WM.Parser.squashContiguousWhitespace(res.parse.sections[s].line).trim());
+        }
+
+        var fixedFragment = fixFragment(rawfragment, sections);
+
+        newText += source.substring(prevId, link.index);
+
+        if (fixedFragment === true) {
+            newText += link.match[0];
+        }
+        else if (fixedFragment) {
+            newText += "[[" + target + "#" + fixedFragment  + ((link.match[6]) ? "|" + link.match[6] : "") + "]]";
+        }
+        else {
+            WM.Log.logWarning("Cannot fix broken link fragment: " + link.match[0]);
+            newText += link.match[0];
+        }
+
+        prevId = link.index + link.length;
+
+        index++;
+        WM.Plugins.FixLinkFragments.processLink(title, links, index, source, newText, prevId, call, callArgs);
+    };
+
+    var fixFragment = function (rawfragment, sections) {
+        var fragment = WM.Parser.squashContiguousWhitespace(rawfragment).trim();
+
+        if (sections.indexOf(fragment) < 0) {
+            for (var s = 0; s < sections.length; s++) {
+                var section = sections[s];
+                var dotSection = WM.Parser.dotEncode(section);
+                var dotFragment = WM.Parser.dotEncode(fragment);
+
+                if (dotSection.toLowerCase() == dotFragment.toLowerCase()) {
+                    if (fragment == dotFragment) {
+                        // If the fragment was encoded, re-encode it because it
+                        // could contain link-breaking characters (e.g. []|{})
+                        // The condition would also be true if the fragment doesn't
+                        // contain any encodable characters, but since section and
+                        // fragment at most differ by capitalization, encoding the
+                        // section won't have any effect
+                        return dotSection;
+                    }
+                    else {
+                        // If the fragment was not encoded, if the fragment
+                        // contained link-breaking characters the link was already
+                        // broken, and replacing it with section wouldn't make
+                        // things worse; if the fragment didn't contain
+                        // link-breaking characters, the section doesn't either,
+                        // since section and fragment at most differ by
+                        // capitalization, so it's safe to replace it
+                        // If the fragment was *partially* encoded instead, a
+                        // link-breaking character may have been encoded, so all
+                        // link-breaking characters must be re-encoded here!
+                        return WM.Parser.dotEncodeLinkBreakingFragmentCharacters(section);
+                    }
+                }
+            }
+            return false;
+        }
+        else {
+            return true;
+        }
+    };
+
+    this.findArchWikiLinks = function (newText, callArgs) {
+        var templates = WM.Parser.findTemplates(newText, 'Related');
+        var title = WM.Editor.getTitle();
+        WM.Plugins.FixLinkFragments.processArchWikiLink(title, templates, 1, 0, newText, "", 0, WM.Plugins.FixLinkFragments.findArchWikiLinks2, callArgs);
+    };
+
+    this.findArchWikiLinks2 = function (newText, callArgs) {
+        var templates = WM.Parser.findTemplates(newText, 'Related2');
+        var title = WM.Editor.getTitle();
+        WM.Plugins.FixLinkFragments.processArchWikiLink(title, templates, 2, 0, newText, "", 0, WM.Plugins.FixLinkFragments.mainEnd, callArgs);
+    };
+
+    this.processArchWikiLink = function (title, templates, expectedArgs, index, source, newText, prevId, call, callArgs) {
+        if (templates[index]) {
+            var template = templates[index];
+            var args = template.arguments;
+
+            // Don't crash in case of malformed templates
+            if (args.length == expectedArgs) {
+                var link = args[0].value;
+                var fragId = link.indexOf('#');
+
+                if (fragId > -1) {
+                    var rawtarget = link.substring(0, fragId);
+                    var target = WM.Parser.squashContiguousWhitespace(rawtarget).trim();
+                    var rawfragment = link.substr(fragId + 1);
+
+                    if (rawfragment) {
+                        // Note that it's impossible to recognize any namespaces in the title without querying the server
+                        // Alternatively, a list of the known namespaces could be maintained for each wiki
+                        // Recognizing namespaces would let recognize more liberal link syntaxes (e.g. spaces around the colon)
+                        if (!WM.Parser.compareArticleTitles(target, title)) {
+                            WM.Log.logInfo("Processing " + template.match[0] + "...");
+
+                            var params = {
+                                'action': 'parse',
+                                'prop': 'sections',
+                                'page': target,
+                                'redirects': 1,
+                            };
+
+                            WM.MW.callAPIGet(params,
+                                             null,
+                                             WM.Plugins.FixLinkFragments.processArchWikiLinkContinue,
+                                             [template, target, rawfragment, templates, expectedArgs, index, source, newText, prevId, title, call, callArgs]);
+                        }
+                        else {
+                            index++;
+                            WM.Plugins.FixLinkFragments.processArchWikiLink(title, templates, expectedArgs, index, source, newText, prevId, call, callArgs);
+                        }
+                    }
+                    else {
+                        index++;
+                        WM.Plugins.FixLinkFragments.processArchWikiLink(title, templates, expectedArgs, index, source, newText, prevId, call, callArgs);
+                    }
+                }
+                else {
+                    index++;
+                    WM.Plugins.FixLinkFragments.processArchWikiLink(title, templates, expectedArgs, index, source, newText, prevId, call, callArgs);
+                }
+            }
+            else {
+                WM.Log.logWarning("Template:" + template.title + " must have " + expectedArgs + " and only " +
+                expectedArgs + ((expectedArgs > 1) ? " arguments: " : " argument: ") + template.match[0]);
+                index++;
+                WM.Plugins.FixLinkFragments.processArchWikiLink(title, templates, expectedArgs, index, source, newText, prevId, call, callArgs);
+            }
+        }
+        else {
+            newText += source.substr(prevId);
+            call(newText, callArgs);
+        }
+    };
+
+    this.processArchWikiLinkContinue = function (res, args) {
+        var template = args[0];
+        var target = args[1];
+        var rawfragment = args[2];
+        var templates = args[3];
+        var expectedArgs = args[4];
+        var index = args[5];
+        var source = args[6];
+        var newText = args[7];
+        var prevId = args[8];
+        var title = args[9];
+        var call = args[10];
+        var callArgs = args[11];
+
+        var sections = [];
+
+        for (var s = 0; s < res.parse.sections.length; s++) {
+            sections.push(WM.Parser.squashContiguousWhitespace(res.parse.sections[s].line).trim());
+        }
+
+        var fixedFragment = fixFragment(rawfragment, sections);
+
+        newText += source.substring(prevId, template.index);
+
+        if (fixedFragment === true) {
+            newText += template.match[0];
+        }
+        else if (fixedFragment) {
+            var anchor = (template.arguments[1]) ? ("|" + template.arguments[1].value) : "";
+            newText += "{{" + template.title + "|" + target + "#" + fixedFragment  + anchor + "}}";
+        }
+        else {
+            WM.Log.logWarning("Cannot fix broken link fragment: " + template.match[0]);
+            newText += template.match[0];
+        }
+
+        prevId = template.index + template.length;
+
+        index++;
+        WM.Plugins.FixLinkFragments.processArchWikiLink(title, templates, expectedArgs, index, source, newText, prevId, call, callArgs);
+    };
+
+    this.main = function (args, callNext) {
+        var source = WM.Editor.readSource();
+        WM.Log.logInfo("Fixing links to sections of other articles...");
+        var links = WM.Parser.findInternalLinks(source, null, null);
+        var title = WM.Editor.getTitle();
+        WM.Plugins.FixLinkFragments.processLink(title, links, 0, source, "", 0, WM.Plugins.FixLinkFragments.mainContinue, callNext);
+    };
+
+    this.mainContinue = function (newText, callNext) {
+        // Without this check this plugin would be specific to ArchWiki
+        if (location.hostname == 'wiki.archlinux.org') {
+            var templates = WM.Plugins.FixLinkFragments.findArchWikiLinks(newText, callNext);
+        }
+        else {
+            WM.Plugins.FixLinkFragments.mainEnd(newText, callNext);
+        }
+    };
+
+    this.mainEnd = function (newText, callNext) {
+        var source = WM.Editor.readSource();
+
+        if (newText != source) {
+            WM.Editor.writeSource(newText);
+            WM.Log.logInfo("Replaced links to sections of other articles");
+        }
+        else {
+            WM.Log.logInfo("No fixable links to sections of other articles found");
         }
 
         if (callNext) {
@@ -5184,12 +5658,14 @@ WM.UI.setEditor([
         ["FixFragments", "Fix section links", null],
         ["ArchWikiNewTemplates", "Use code templates", null],
         ["ExpandContractions", "Expand contractions", null],
-        ["MultipleLineBreaks", "Squash multiple line breaks", null]
+        ["MultipleLineBreaks", "Squash multiple line breaks", null],
+        ["ArchWikiSummaryToRelated", "Convert summary to related", null]
     ],
     [
         ["SimpleReplace", "RegExp substitution", ["1"]]
     ],
     [
+        ["FixLinkFragments", "Fix external section links", null],
         ["SynchronizeInterlanguageLinks", "Sync interlanguage links",
          [function (title) {
              var language = WM.ArchWiki.detectLanguage(title)[1];
