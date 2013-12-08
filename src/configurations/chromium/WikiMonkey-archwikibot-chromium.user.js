@@ -3,14 +3,14 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.13.4-dev-archwikibot-chromium
+// @version 1.14.0-archwikibot-chromium
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/develop/src/configurations/chromium/WikiMonkey-archwikibot-chromium.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/develop/src/configurations/chromium/WikiMonkey-archwikibot-chromium.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/develop/src/files/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/develop/src/files/wiki-monkey-64.png
+// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-archwikibot-chromium.meta.js
+// @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-archwikibot-chromium.user.js
+// @icon https://raw.github.com/kynikos/wiki-monkey/1.14.0/src/files/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.14.0/src/files/wiki-monkey-64.png
 // @match https://wiki.archlinux.org/*
 // ==/UserScript==
 
@@ -2085,6 +2085,12 @@ WM.MW = new function () {
         // It's necessary to use try...catch because some browsers don't
         // support FormData yet and will throw an exception
         try {
+            // Temporarily disable multipart/form-data requests
+            // because Tampermonkey doesn't support them, see
+            // http://forum.tampermonkey.net/viewtopic.php?f=17&t=271
+            // http://forum.tampermonkey.net/viewtopic.php?f=17&t=774
+            throw "Temporarily disabled, see bug #91";
+
             if (string.length > 8000) {
                 query.data = new FormData();
                 query.data.append("format", "json");
@@ -4859,28 +4865,31 @@ WM.Plugins.FixLinkFragments = new function () {
         var call = args[9];
         var callArgs = args[10];
 
-        var sections = [];
+        // Check that the page is in the wiki (e.g. it's not an interwiki link)
+        if (res.parse) {
+            var sections = [];
 
-        for (var s = 0; s < res.parse.sections.length; s++) {
-            sections.push(WM.Parser.squashContiguousWhitespace(res.parse.sections[s].line).trim());
+            for (var s = 0; s < res.parse.sections.length; s++) {
+                sections.push(WM.Parser.squashContiguousWhitespace(res.parse.sections[s].line).trim());
+            }
+
+            var fixedFragment = fixFragment(rawfragment, sections);
+
+            newText += source.substring(prevId, link.index);
+
+            if (fixedFragment === true) {
+                newText += link.match[0];
+            }
+            else if (fixedFragment) {
+                newText += "[[" + target + "#" + fixedFragment  + ((link.match[6]) ? "|" + link.match[6] : "") + "]]";
+            }
+            else {
+                WM.Log.logWarning("Cannot fix broken link fragment: " + link.match[0]);
+                newText += link.match[0];
+            }
+
+            prevId = link.index + link.length;
         }
-
-        var fixedFragment = fixFragment(rawfragment, sections);
-
-        newText += source.substring(prevId, link.index);
-
-        if (fixedFragment === true) {
-            newText += link.match[0];
-        }
-        else if (fixedFragment) {
-            newText += "[[" + target + "#" + fixedFragment  + ((link.match[6]) ? "|" + link.match[6] : "") + "]]";
-        }
-        else {
-            WM.Log.logWarning("Cannot fix broken link fragment: " + link.match[0]);
-            newText += link.match[0];
-        }
-
-        prevId = link.index + link.length;
 
         index++;
         WM.Plugins.FixLinkFragments.processLink(title, links, index, source, newText, prevId, call, callArgs);
@@ -5015,29 +5024,32 @@ WM.Plugins.FixLinkFragments = new function () {
         var call = args[10];
         var callArgs = args[11];
 
-        var sections = [];
+        // Check that the page is in the wiki (e.g. it's not an interwiki link)
+        if (res.parse) {
+            var sections = [];
 
-        for (var s = 0; s < res.parse.sections.length; s++) {
-            sections.push(WM.Parser.squashContiguousWhitespace(res.parse.sections[s].line).trim());
+            for (var s = 0; s < res.parse.sections.length; s++) {
+                sections.push(WM.Parser.squashContiguousWhitespace(res.parse.sections[s].line).trim());
+            }
+
+            var fixedFragment = fixFragment(rawfragment, sections);
+
+            newText += source.substring(prevId, template.index);
+
+            if (fixedFragment === true) {
+                newText += template.match[0];
+            }
+            else if (fixedFragment) {
+                var anchor = (template.arguments[1]) ? ("|" + template.arguments[1].value) : "";
+                newText += "{{" + template.title + "|" + target + "#" + fixedFragment  + anchor + "}}";
+            }
+            else {
+                WM.Log.logWarning("Cannot fix broken link fragment: " + template.match[0]);
+                newText += template.match[0];
+            }
+
+            prevId = template.index + template.length;
         }
-
-        var fixedFragment = fixFragment(rawfragment, sections);
-
-        newText += source.substring(prevId, template.index);
-
-        if (fixedFragment === true) {
-            newText += template.match[0];
-        }
-        else if (fixedFragment) {
-            var anchor = (template.arguments[1]) ? ("|" + template.arguments[1].value) : "";
-            newText += "{{" + template.title + "|" + target + "#" + fixedFragment  + anchor + "}}";
-        }
-        else {
-            WM.Log.logWarning("Cannot fix broken link fragment: " + template.match[0]);
-            newText += template.match[0];
-        }
-
-        prevId = template.index + template.length;
 
         index++;
         WM.Plugins.FixLinkFragments.processArchWikiLink(title, templates, expectedArgs, index, source, newText, prevId, call, callArgs);

@@ -3,14 +3,14 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.13.4-dev-archwikipatrollite-chromium
+// @version 1.14.0-archwikipatrollite-chromium
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/develop/src/configurations/chromium/WikiMonkey-archwikipatrollite-chromium.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/develop/src/configurations/chromium/WikiMonkey-archwikipatrollite-chromium.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/develop/src/files/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/develop/src/files/wiki-monkey-64.png
+// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-archwikipatrollite-chromium.meta.js
+// @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-archwikipatrollite-chromium.user.js
+// @icon https://raw.github.com/kynikos/wiki-monkey/1.14.0/src/files/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.14.0/src/files/wiki-monkey-64.png
 // @match https://wiki.archlinux.org/*
 // ==/UserScript==
 
@@ -2085,6 +2085,12 @@ WM.MW = new function () {
         // It's necessary to use try...catch because some browsers don't
         // support FormData yet and will throw an exception
         try {
+            // Temporarily disable multipart/form-data requests
+            // because Tampermonkey doesn't support them, see
+            // http://forum.tampermonkey.net/viewtopic.php?f=17&t=271
+            // http://forum.tampermonkey.net/viewtopic.php?f=17&t=774
+            throw "Temporarily disabled, see bug #91";
+
             if (string.length > 8000) {
                 query.data = new FormData();
                 query.data.append("format", "json");
