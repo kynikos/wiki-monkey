@@ -269,7 +269,7 @@ WM.Plugins.FixLinkFragments = new function () {
     this.mainContinue = function (newText, callNext) {
         // Without this check this plugin would be specific to ArchWiki
         if (location.hostname == 'wiki.archlinux.org') {
-            var templates = WM.Plugins.FixLinkFragments.findArchWikiLinks(newText, "", callNext);
+            var templates = WM.Plugins.FixLinkFragments.findArchWikiLinks(newText, callNext);
         }
         else {
             WM.Plugins.FixLinkFragments.mainEnd(newText, callNext);
