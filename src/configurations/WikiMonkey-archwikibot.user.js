@@ -41,11 +41,13 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/ArchWikiOldAURLinks.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/ArchWikiQuickReport.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/ArchWikiRCFilter.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/ArchWikiSummaryToRelated.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/ArchWikiUpdatePackageTemplates.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/ExpandContractions.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/FixBacklinkFragments.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/FixDoubleRedirects.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/FixFragments.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/FixLinkFragments.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/MultipleLineBreaks.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/SimpleReplace.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/SynchronizeInterlanguageLinks.js
@@ -60,12 +62,14 @@ WM.UI.setEditor([
         ["FixFragments", "Fix section links", null],
         ["ArchWikiNewTemplates", "Use code templates", null],
         ["ExpandContractions", "Expand contractions", null],
-        ["MultipleLineBreaks", "Squash multiple line breaks", null]
+        ["MultipleLineBreaks", "Squash multiple line breaks", null],
+        ["ArchWikiSummaryToRelated", "Convert summary to related", null]
     ],
     [
         ["SimpleReplace", "RegExp substitution", ["1"]]
     ],
     [
+        ["FixLinkFragments", "Fix external section links", null],
         ["SynchronizeInterlanguageLinks", "Sync interlanguage links",
          [function (title) {
              var language = WM.ArchWiki.detectLanguage(title)[1];

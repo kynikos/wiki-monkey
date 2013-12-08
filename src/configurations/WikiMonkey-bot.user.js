@@ -37,6 +37,7 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/FixBacklinkFragments.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/FixDoubleRedirects.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/FixFragments.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/FixLinkFragments.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/MultipleLineBreaks.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/SimpleReplace.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/UpdateCategoryTree.js
@@ -50,6 +51,9 @@ WM.UI.setEditor([
     ],
     [
         ["SimpleReplace", "RegExp substitution", ["1"]]
+    ],
+    [
+        ["FixLinkFragments", "Fix external section links", null]
     ]
 ]);
 
