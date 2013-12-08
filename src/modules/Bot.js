@@ -29,7 +29,8 @@ WM.Bot = new function () {
                     "#WikiMonkeyBotStart, #WikiMonkeyBotStop {margin-right:0.33em; margin-bottom:1em; font-weight:bold;} " +
                     "a.WikiMonkeyBotSelected {background-color:#faa; padding:0.2em 0.4em;} " +
                     "a.WikiMonkeyBotProcessing {background-color:#ff8; padding:0.2em 0.4em;} " +
-                    "a.WikiMonkeyBotProcessed {background-color:#afa; padding:0.2em 0.4em;} " +
+                    "a.WikiMonkeyBotChanged {background-color:#afa; padding:0.2em 0.4em;} " +
+                    "a.WikiMonkeyBotUnchanged {background-color:#aaf; padding:0.2em 0.4em;} " +
                     "a.WikiMonkeyBotFailed {background-color:orangered; padding:0.2em 0.4em;}");
 
         divContainer.appendChild(makeFunctionUI(functions));
@@ -452,20 +453,23 @@ WM.Bot = new function () {
                             WM.Bot.selections.function_(article, (function (lis, id, linkId, ln, article) {
                                 return function (status, resArgs) {
                                     switch (status) {
+                                        // The article hasn't been saved
                                         case 0:
-                                            ln.className = "WikiMonkeyBotProcessed";
-                                            WM.Log.logInfo(article + " processed");
+                                            ln.className = "WikiMonkeyBotUnchanged";
+                                            WM.Log.logInfo(article + " processed (unchanged)");
                                             // Do not increment directly in the function's call!
                                             id++;
                                             WM.Bot._processItem(status, lis, id, linkId, resArgs);
                                             break;
+                                        // The article has been saved
                                         case 1:
-                                            ln.className = "WikiMonkeyBotProcessed";
-                                            WM.Log.logInfo(article + " processed");
+                                            ln.className = "WikiMonkeyBotChanged";
+                                            WM.Log.logInfo(article + " processed (changed)");
                                             // Do not increment directly in the function's call!
                                             id++;
                                             WM.Bot._processItem(status, lis, id, linkId, resArgs);
                                             break;
+                                        // The plugin has encountered a critical error
                                         default:
                                             ln.className = "WikiMonkeyBotFailed";
                                             WM.Log.logError("Error processing " + article + ", stopping the bot");
