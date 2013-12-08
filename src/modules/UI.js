@@ -71,11 +71,11 @@ WM.UI = new function () {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyButtons';
 
-        GM_addStyle("#WikiMonkeyButtons div.shortcut {position:absolute;} " +
-                    "#WikiMonkeyButtons div.shortcut > input, #WikiMonkeyButtonAll {font-weight:bold;} " +
-                    "#WikiMonkeyButtons div.row {margin-bottom:0.67em;} " +
+        GM_addStyle("#WikiMonkeyButtons div.row {position:relative; margin-bottom:0.33em;} " +
+                    "#WikiMonkeyButtons div.shortcut {position:absolute;} " +
+                    "#WikiMonkeyButtons div.shortcut > input, #WikiMonkeyButtonAll {width:8.33em; margin-bottom:0.33em; font-weight:bold;} " +
                     "#WikiMonkeyButtons div.plugins {margin-left:9em;} " +
-                    "#WikiMonkeyButtons div.pluginUI {display:inline-block; margin-right:0.33em;}");
+                    "#WikiMonkeyButtons div.pluginUI {display:inline-block; margin-bottom:0.33em; margin-right:0.33em;}");
 
         var buttonAll = document.createElement('input');
         buttonAll.setAttribute('type', 'button');
