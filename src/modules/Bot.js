@@ -296,42 +296,86 @@ WM.Bot = new function () {
         return document.getElementById('WikiMonkeyBotForceStart').getElementsByTagName('input')[0].checked;
     };
 
-    var canProcessPage = function (title) {
-        var rules = document.getElementById('WikiMonkeyBotFilter').value.split('\n');
-        var duplicates = document.getElementById('WikiMonkeyBotDuplicates').checked;
-        var inverse = document.getElementById('WikiMonkeyBotInverse').checked;
+    var canProcessPage = function (link) {
         var response = false;
-        if (duplicates || WM.Bot.selections.visited.indexOf(title) == -1) {
-            WM.Bot.selections.visited.push(title);
-            if (inverse) {
-                response = true;
-            }
-            var rule, firstSlash, lastSlash, pattern, modifiers, regexp, test, negative;
-            for (var r in rules) {
-                rule = rules[r];
-                if (rule) {
-                    firstSlash = rule.indexOf('/');
-                    lastSlash = rule.lastIndexOf('/');
-                    pattern = rule.substring(firstSlash + 1, lastSlash);
-                    modifiers = rule.substring(lastSlash + 1);
-                    negative = rule.charAt(0) == '!';
-                    try {
-                        regexp = new RegExp(pattern, modifiers);
-                    }
-                    catch (exc) {
-                        WM.Log.logError('Invalid regexp: ' + exc);
-                        break;
-                    }
-                    test = regexp.test(title);
-                    if (!negative != !test) {
-                        response = (inverse) ? false : true;
-                        // Do not break, so that if among the rules there's
-                        // an invalid regexp the function returns false
+
+        // Exclude red links (they can be found in some special pages)
+        if (link.className.split(" ").indexOf("new") < 0) {
+            var title = link.title;
+            var duplicates = document.getElementById('WikiMonkeyBotDuplicates').checked;
+
+            if (duplicates || WM.Bot.selections.visited.indexOf(title) == -1) {
+                WM.Bot.selections.visited.push(title);
+                var inverse = document.getElementById('WikiMonkeyBotInverse').checked;
+
+                if (inverse) {
+                    response = true;
+                }
+
+                var rules = document.getElementById('WikiMonkeyBotFilter').value.split('\n');
+                var rule, firstSlash, lastSlash, pattern, modifiers, regexp, test, negative;
+
+                for (var r in rules) {
+                    rule = rules[r];
+
+                    if (rule) {
+                        firstSlash = rule.indexOf('/');
+                        lastSlash = rule.lastIndexOf('/');
+                        pattern = rule.substring(firstSlash + 1, lastSlash);
+                        modifiers = rule.substring(lastSlash + 1);
+                        negative = rule.charAt(0) == '!';
+
+                        try {
+                            regexp = new RegExp(pattern, modifiers);
+                        }
+                        catch (exc) {
+                            WM.Log.logError('Invalid regexp: ' + exc);
+                            break;
+                        }
+
+                        test = regexp.test(title);
+
+                        if (!negative != !test) {
+                            response = (inverse) ? false : true;
+                            // Do not break, so that if among the rules there's
+                            // an invalid regexp the function returns false
+                        }
                     }
                 }
             }
         }
+
         return response;
+    };
+
+    var changeWikiMonkeyLinkClassName = function (className, newClass) {
+        var classes = className.split(" ");
+        var newClasses = [];
+
+        for (var c = 0; c < classes.length; c++) {
+            if (classes[c].indexOf("WikiMonkey") < 0) {
+                newClasses.push(classes[c]);
+            }
+        }
+
+        // Don't push in an else block inside the loop, so that if there was
+        // no WikiMonkey class set, it will be added
+        newClasses.push(newClass);
+
+        return newClasses.join(" ");
+    };
+
+    var restoreOriginalLinkClassName = function (className) {
+        var classes = className.split(" ");
+        var origClasses = [];
+
+        for (var c = 0; c < classes.length; c++) {
+            if (classes[c].indexOf("WikiMonkey") < 0) {
+                origClasses.push(classes[c]);
+            }
+        }
+
+        return origClasses.join(" ");
     };
 
     this._previewFilter = function () {
@@ -343,28 +387,33 @@ WM.Bot = new function () {
         if (WM.Bot.selections.list.previous) {
             items = WM.Bot.selections.list.previous[0].getElementsByTagName('li');
             linkId = WM.Bot.selections.list.previous[1];
+
             for (var i = 0; i < items.length; i++) {
                 link = items[i].getElementsByTagName('a')[linkId];
-                link.className = '';
+                link.className = restoreOriginalLinkClassName(link.className);
             }
         }
+
         WM.Bot.selections.visited = [];
 
         items = WM.Bot.selections.list.current[0].getElementsByTagName('li');
         linkId = WM.Bot.selections.list.current[1];
         var enable = false;
         var N = 0;
+
         for (var i = 0; i < items.length; i++) {
             link = items[i].getElementsByTagName('a')[linkId];
-            if (canProcessPage(link.title)) {
-                link.className = 'WikiMonkeyBotSelected';
+
+            if (canProcessPage(link)) {
+                link.className = changeWikiMonkeyLinkClassName(link.className, 'WikiMonkeyBotSelected');
                 enable = true;
                 N++;
             }
             else {
-                link.className = '';
+                link.className = restoreOriginalLinkClassName(link.className);
             }
         }
+
         WM.Log.logInfo('Preview updated (' + N + ' pages selected)');
         (enable) ? WM.Bot._enableStartBot() : WM.Bot._disableStartBot('No pages selected, reset and preview the filter');
     };
@@ -422,9 +471,9 @@ WM.Bot = new function () {
     this._processItem = function (status, items, index, linkId, chainArgs) {
         if (items[index]) {
             var link = items[index].getElementsByTagName('a')[linkId];
-            var title = link.title;
 
-            if (canProcessPage(title)) {
+            if (canProcessPage(link)) {
+                var title = link.title;
                 var interval;
 
                 if (status === 0) {
@@ -447,7 +496,7 @@ WM.Bot = new function () {
                         // Check here if other bots have been started,
                         // _not_ before setTimeout!
                         if (!WM.Bot._checkOtherBotsRunning()) {
-                            ln.className = "WikiMonkeyBotProcessing";
+                            ln.className = changeWikiMonkeyLinkClassName(ln.className, 'WikiMonkeyBotProcessing');
                             WM.Log.logInfo("Processing " + article + "...");
 
                             WM.Bot.selections.function_(article, (function (lis, id, linkId, ln, article) {
@@ -455,7 +504,7 @@ WM.Bot = new function () {
                                     switch (status) {
                                         // The article hasn't been saved
                                         case 0:
-                                            ln.className = "WikiMonkeyBotUnchanged";
+                                            ln.className = changeWikiMonkeyLinkClassName(ln.className, 'WikiMonkeyBotUnchanged');
                                             WM.Log.logInfo(article + " processed (unchanged)");
                                             // Do not increment directly in the function's call!
                                             id++;
@@ -463,7 +512,7 @@ WM.Bot = new function () {
                                             break;
                                         // The article has been saved
                                         case 1:
-                                            ln.className = "WikiMonkeyBotChanged";
+                                            ln.className = changeWikiMonkeyLinkClassName(ln.className, 'WikiMonkeyBotChanged');
                                             WM.Log.logInfo(article + " processed (changed)");
                                             // Do not increment directly in the function's call!
                                             id++;
@@ -471,7 +520,7 @@ WM.Bot = new function () {
                                             break;
                                         // The plugin has encountered a critical error
                                         default:
-                                            ln.className = "WikiMonkeyBotFailed";
+                                            ln.className = changeWikiMonkeyLinkClassName(ln.className, 'WikiMonkeyBotFailed');
                                             WM.Log.logError("Error processing " + article + ", stopping the bot");
                                             WM.Bot._endAutomatic(true);
                                     }
