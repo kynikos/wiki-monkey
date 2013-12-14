@@ -95,7 +95,7 @@ WM.Parser = new function () {
 
     this.findSectionLinks = function (source) {
         source = this.neutralizeNowikiTags(source);
-        var regExp = /\[\[:?[ _]*:?[ _]*#(.+?)(?:[ _]*\|\s*(.+?))?\s*\]\]/g;
+        var regExp = /\[\[:?[ _]*:?[ _]*#(.+?)(?:[ _]*\|[_\s]*(.+?)[_\s]*)?[ _]*\]\]/g;
         return Alib.RegEx.matchAll(source, regExp);
     }
 
@@ -109,13 +109,13 @@ WM.Parser = new function () {
                 var retitle = prepareRegexpWhitespace(Alib.RegEx.escapePattern(title));
 
                 // Namespaces wouldn't be case-sensitive, but titles are, so be safe and use only the g flag
-                regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*((" + rens + ")[ _]*:[ _]*((" + retitle + ")(?:[ _]*#(.+?))?)(?:[ _]*\\|\\s*(.+?))?)\\s*\\]\\]", "g");
+                regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*((" + rens + ")[ _]*:[ _]*((" + retitle + ")(?:[ _]*#(.+?))?)(?:[ _]*\\|[_\\s]*(.+?)[_\\s]*)?)[ _]*\\]\\]", "g");
             }
             else {
                 var rens = prepareRegexpWhitespace(Alib.RegEx.escapePattern(namespace));
 
                 // Namespaces aren't case-sensitive
-                regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*((" + rens + ")[ _]*:[ _]*((.+?)(?:[ _]*#(.+?))?)(?:[ _]*\\|\\s*(.+?))?)\\s*\\]\\]", "gi");
+                regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*((" + rens + ")[ _]*:[ _]*((.+?)(?:[ _]*#(.+?))?)(?:[ _]*\\|[_\\s]*(.+?)[_\\s]*)?)[ _]*\\]\\]", "gi");
             }
         }
         else if (title) {
@@ -123,10 +123,10 @@ WM.Parser = new function () {
 
             // Titles are case-sensitive
             // Note the () that represents the missing namespace in order to keep the match indices consistent with the other regular expressions
-            regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*(()((" + retitle + ")(?:[ _]*#(.+?))?)(?:[ _]*\\|\\s*(.+?))?)\\s*\\]\\]", "g");
+            regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*(()((" + retitle + ")(?:[ _]*#(.+?))?)(?:[ _]*\\|[_\\s]*(.+?)[_\\s]*)?)[ _]*\\]\\]", "g");
         }
         else {
-            regExp = /\[\[:?[ _]*:?[ _]*((?:(.+?)[ _]*:[ _]*)?((.+?)(?:[ _]*#(.+?))?)(?:[ _]*\|\s*(.+?))?)\s*\]\]/g;
+            regExp = /\[\[:?[ _]*:?[ _]*((?:([^\]]+?)[ _]*:[ _]*)?((.+?)(?:[ _]*#(.+?))?)(?:[ _]*\|[_\s]*(.+?)[_\s]*)?)[ _]*\]\]/g;
         }
         return Alib.RegEx.matchAll(source, regExp);
     };
@@ -140,7 +140,7 @@ WM.Parser = new function () {
         // See also WM.ArchWiki.findAllInterlanguageLinks!!!
         source = this.neutralizeNowikiTags(source);
         // Categories and language tags aren't case-sensitive
-        var regExp = new RegExp("\\[\\[(?:[ _]+:)?[ _]*((?:(" + pattern + ")[ _]*:[ _]*)((.+?)(?:[ _]*#(.+?))?)(?:[ _]*\\|\\s*(.+?))?)\\s*\\]\\]", "gi");
+        var regExp = new RegExp("\\[\\[(?:[ _]+:)?[ _]*((?:(" + pattern + ")[ _]*:[ _]*)((.+?)(?:[ _]*#(.+?))?)(?:[ _]*\\|[_\\s]*(.+?)[_\\s]*)?)[ _]*\\]\\]", "gi");
         return Alib.RegEx.matchAll(source, regExp);
     };
 
