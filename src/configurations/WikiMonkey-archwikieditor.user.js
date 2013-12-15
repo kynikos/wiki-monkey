@@ -67,9 +67,10 @@ WM.UI.setEditor([
         ["FixLinkFragments", "Fix external section links", null],
         ["SynchronizeInterlanguageLinks", "Sync interlanguage links",
          [function (title) {
-             var language = WM.ArchWiki.detectLanguage(title)[1];
+             var detect = WM.ArchWiki.detectLanguage(title);
+             var tag = WM.ArchWiki.getInterlanguageTag(detect[1]);
              // The language must correspond to a working interwiki tag
-             return WM.ArchWiki.getInterlanguageTag(language);
+             return [tag, detect[0]];
          },
          WM.ArchWiki.getInterwikiLanguages()]],
         ["ArchWikiOldAURLinks", "Fix old AUR links", null],
