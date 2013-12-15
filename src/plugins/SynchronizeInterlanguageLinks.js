@@ -79,6 +79,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
                 visitedlinks,
                 newlinks,
                 whitelist,
+                true,
                 WM.Plugins.SynchronizeInterlanguageLinks.mainEnd,
                 [tag, url, source, langlinks, iwmap, callNext]
             );
@@ -135,6 +136,9 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
             visitedlinks,
             newlinks,
             whitelist,
+            // When called by the bot, if the start page is a redirect itself,
+            // it shoudln't be resolved
+            false,
             WM.Plugins.SynchronizeInterlanguageLinks.mainAutoWrite,
             [title, url, tag, summary, callBot]
         );
