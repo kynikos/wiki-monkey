@@ -76,57 +76,66 @@ WM.MW = new function () {
             short: "/index.php?title=",
             full: "/index.php",
             api: "/api.php"
-        },
-        // This attribute is generated further below in this module
-        local: {},
+        }
     };
 
     var interwikiFixes = [
         ["https://wiki.archlinux.org/index.php/$1_(", "https://wiki.archlinux.org/index.php/$1%20("]
     ];
 
-    var getWikiPaths = function (href) {
+    var getWikiUrls = function (href) {
         // It's necessary to keep this function in a private attribute,
-        // otherwise wikiPaths.local cannot be initialized
+        // otherwise localWikiUrls cannot be initialized
         if (href) {
             for (var r in wikiPaths.known) {
                 var re = new RegExp(r, "i");
                 var match = re.exec(href);
+
                 if (match) {
                     var hostname = match[0];
                     var paths = {};
+
                     for (var p in wikiPaths.known[r]) {
                         paths[p] = wikiPaths.known[r][p];
                     }
+
                     break;
                 }
             }
+
             if (!paths) {
                 var hostname = Alib.HTTP.getUrlLocation(href).hostname;
                 var paths = {};
+
                 for (var p in wikiPaths.default_) {
                     paths[p] = wikiPaths.default_[p];
                 }
             }
+
+            var urls = {};
+
             for (var key in paths) {
-                paths[key] = hostname + paths[key];
+                urls[key] = hostname + paths[key];
             }
         }
         else {
-            var paths = {};
-            for (var p in wikiPaths.local) {
-                paths[p] = wikiPaths.local[p];
+            var urls = {};
+
+            for (var p in localWikiUrls) {
+                urls[p] = localWikiUrls[p];
             }
         }
-        return paths;
+
+        return urls;
     };
 
-    wikiPaths.local = (function () {
-        return getWikiPaths(location.href);
+    // This variable must be assigned *after* getWikiUrls (!= this.getWikiUrls)
+    var localWikiUrls = (function () {
+        return getWikiUrls(location.href);
     })();
 
-    this.getWikiPaths = function (href) {
-        return getWikiPaths(href);
+    this.getWikiUrls = function (href) {
+        return getWikiUrls(href);
     };
 
     this.failedQueryError = function (finalUrl) {
@@ -145,7 +154,7 @@ WM.MW = new function () {
 
     this.callAPIGet = function (params, api, call, callArgs) {
         if (!api) {
-            api = wikiPaths.local.api;
+            api = localWikiUrls.api;
         }
         var query = {
             method: "GET",
@@ -185,7 +194,7 @@ WM.MW = new function () {
 
     this.callAPIPost = function (params, api, call, callArgs) {
         if (!api) {
-            api = wikiPaths.local.api;
+            api = localWikiUrls.api;
         }
         var query = {
             method: "POST",
