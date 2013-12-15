@@ -57,7 +57,7 @@ WM.Plugins.ArchWikiSaveTalk = new function () {
         var enddate = args[1];
         var callNext = args[2];
 
-        var title = Alib.HTTP.getURIParameter('title');
+        var title = Alib.HTTP.getURIParameter(null, 'title');
         var pEnddate = enddate.substr(0, 10) + "&nbsp;" + enddate.substr(11, 8);
 
         var newtext = WM.Tables.appendRow(source, "<!-- REPLY TABLE -->", ["[" + location.href + " " + title + "]", pEnddate]);

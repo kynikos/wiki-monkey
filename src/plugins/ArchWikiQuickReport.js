@@ -95,7 +95,7 @@ WM.Plugins.ArchWikiQuickReport = new function () {
         var enddate = args[3];
         var callNext = args[4];
 
-        var title = Alib.HTTP.getURIParameter('title');
+        var title = Alib.HTTP.getURIParameter(null, 'title');
         var pEnddate = enddate.substr(0, 10) + "&nbsp;" + enddate.substr(11, 8);
         var notes = document.getElementById("WikiMonkey-ArchWikiQuickReport-input-" + id).value;
 

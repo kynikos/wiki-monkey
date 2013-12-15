@@ -20,11 +20,11 @@
 
 WM.Editor = new function () {
     this.getTitle = function () {
-        return WM.Parser.squashContiguousWhitespace(decodeURIComponent(Alib.HTTP.getURIParameter('title')));
+        return WM.Parser.squashContiguousWhitespace(decodeURIComponent(Alib.HTTP.getURIParameter(null, 'title')));
     };
 
     this.isSection = function () {
-        return (Alib.HTTP.getURIParameter('section')) ? true : false;
+        return (Alib.HTTP.getURIParameter(null, 'section')) ? true : false;
     };
 
     this.readSource = function () {

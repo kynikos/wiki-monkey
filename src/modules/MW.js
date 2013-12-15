@@ -102,7 +102,7 @@ WM.MW = new function () {
                 }
             }
             if (!paths) {
-                var hostname = Alib.HTTP.getURLParts(href).hostname;
+                var hostname = Alib.HTTP.getUrlLocation(href).hostname;
                 var paths = {};
                 for (var p in wikiPaths.default_) {
                     paths[p] = wikiPaths.default_[p];
