@@ -138,6 +138,43 @@ WM.MW = new function () {
         return getWikiUrls(href);
     };
 
+    this.getTitleFromWikiUrl = function (url) {
+        var title = Alib.HTTP.getURIParameters(url).title;
+
+        // Test this *before* the short paths, in fact a short path may just be
+        // the full one with the "title" parameter pre-added
+        if (!title) {
+            var pathname = Alib.HTTP.getUrlLocation(url).pathname;
+
+            for (var r in wikiPaths.known) {
+                var re = new RegExp(r, "i");
+                var match = re.exec(url);
+
+                if (match) {
+                    if (pathname.indexOf(wikiPaths.known[r].short) == 0) {
+                        title = pathname.substr(wikiPaths.known[r].short.length);
+                    }
+                    else {
+                        title = false;
+                    }
+
+                    break;
+                }
+            }
+
+            if (!title) {
+                if (pathname.indexOf(wikiPaths.default_.short) == 0) {
+                    title = pathname.substr(wikiPaths.default_.short.length);
+                }
+                else {
+                    title = false;
+                }
+            }
+        }
+
+        return title;
+    };
+
     this.failedQueryError = function (finalUrl) {
         return "Failed query: " + finalUrl + "\nYou may have tried to use a " +
             "plugin which requires cross-origin HTTP requests, but you are " +
