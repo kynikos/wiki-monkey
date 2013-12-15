@@ -151,11 +151,12 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         var summary = args[3];
         var callBot = args[4];
 
-        var iwmap = links[tag].iwmap;
-        var source = links[tag].source;
-        var langlinks = links[tag].links;
-        var timestamp = links[tag].timestamp;
-        var edittoken = links[tag].edittoken;
+        var lcTag = tag.toLowerCase();
+        var iwmap = links[lcTag].iwmap;
+        var source = links[lcTag].source;
+        var langlinks = links[lcTag].links;
+        var timestamp = links[lcTag].timestamp;
+        var edittoken = links[lcTag].edittoken;
 
         var newText = WM.Interlanguage.updateLinks(tag, url, iwmap, source, langlinks, links);
 
