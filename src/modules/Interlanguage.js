@@ -29,7 +29,7 @@ WM.Interlanguage = new function () {
         for (var p in parsedLinks) {
             var link = parsedLinks[p];
             // Do not store the tag lowercased, since it should be kept as
-            // original if there are no conflicts
+            // original
             var ltag = link.match[2];
             var ltitle = link.match[3];
             for (var iw in iwmap) {
@@ -77,11 +77,11 @@ WM.Interlanguage = new function () {
                 }
                 else {
                     // The requested article doesn't exist
-                    var source = "missing";
-                    var timestamp = null;
-                    var edittoken = null;
+                    var source = false;
+                    var timestamp = false;
+                    var edittoken = false;
                     var iwmap = res.query.interwikimap;
-                    var langlinks = "missing";
+                    var langlinks = false;
                 }
 
                 callEnd(
@@ -126,58 +126,51 @@ WM.Interlanguage = new function () {
         return entry;
     };
 
-    this.collectLinks = function (visitedlinks, newlinks, whitelist, error, callEnd, callArgs) {
-        // If error is "missing" it should be possible to continue safely
-        if (error != "conflict") {
-            for (var tag in newlinks) {
-                var link = newlinks[tag];
-                break;
-            }
+    this.collectLinks = function (visitedlinks, newlinks, whitelist, callEnd, callArgs) {
+        for (var tag in newlinks) {
+            var link = newlinks[tag];
+            break;
+        }
 
-            if (link) {
-                delete newlinks[tag];
+        if (link) {
+            delete newlinks[tag];
 
-                var url = link.url;
+            var url = link.url;
 
-                // Don't use WM.MW.getTitleFromWikiUrl(decodeURI(url)) because
-                // it wouldn't decode some characters like colons, which are
-                // required to be decoded instead when making an API call
-                var queryTitle = decodeURIComponent(WM.MW.getTitleFromWikiUrl(url));
+            // Don't use WM.MW.getTitleFromWikiUrl(decodeURI(url)) because
+            // it wouldn't decode some characters like colons, which are
+            // required to be decoded instead when making an API call
+            var queryTitle = decodeURIComponent(WM.MW.getTitleFromWikiUrl(url));
 
-                if (queryTitle) {
-                    WM.Log.logInfo("Reading " + decodeURI(url) + "...");
+            if (queryTitle) {
+                WM.Log.logInfo("Reading " + decodeURI(url) + "...");
 
-                    var origTag = link.origTag;
-                    var title = link.title;
-                    var api = WM.MW.getWikiUrls(url).api;
+                var origTag = link.origTag;
+                var title = link.title;
+                var api = WM.MW.getWikiUrls(url).api;
 
-                    this.queryLinks(
-                        api,
-                        queryTitle,
-                        title,
-                        whitelist,
-                        WM.Interlanguage._collectLinksContinue,
-                        [url, tag, origTag, visitedlinks, newlinks, callEnd, callArgs]
-                    );
-                }
-                else {
-                    WM.Log.logWarning("Cannot extract the page title from " + decodeURI(url));
-                    WM.Interlanguage.collectLinks(
-                        visitedlinks,
-                        newlinks,
-                        whitelist,
-                        "",
-                        callEnd,
-                        callArgs
-                    );
-                }
+                this.queryLinks(
+                    api,
+                    queryTitle,
+                    title,
+                    whitelist,
+                    WM.Interlanguage._collectLinksContinue,
+                    [url, tag, origTag, visitedlinks, newlinks, callEnd, callArgs]
+                );
             }
             else {
-                callEnd(visitedlinks, callArgs);
+                WM.Log.logWarning("Cannot extract the page title from " + decodeURI(url));
+                WM.Interlanguage.collectLinks(
+                    visitedlinks,
+                    newlinks,
+                    whitelist,
+                    callEnd,
+                    callArgs
+                );
             }
         }
         else {
-            callEnd(error, callArgs);
+            callEnd(visitedlinks, callArgs);
         }
     };
 
@@ -190,38 +183,39 @@ WM.Interlanguage = new function () {
         var callEnd = args[5];
         var callArgs = args[6];
 
-        var error = "";
-
-        if (langlinks != "missing") {
+        if (langlinks === false) {
+            WM.Log.logWarning("[[" + tag + ":" + title + "]] seems to point to a non-existing article, removing it if it was linked from the processed article");
+        }
+        else {
             visitedlinks[tag] = WM.Interlanguage.createVisitedLink(origTag, title, url, iwmap, api, source, timestamp, edittoken, langlinks);
 
             for (var l in langlinks) {
                 var link = langlinks[l];
-                if (!visitedlinks[link.lang.toLowerCase()] && !newlinks[link.lang.toLowerCase()]) {
+                var nlink = newlinks[link.lang.toLowerCase()];
+                var vlink = visitedlinks[link.lang.toLowerCase()];
+
+                if (!vlink && !nlink) {
                     newlinks[link.lang.toLowerCase()] = WM.Interlanguage.createNewLink(link.lang, link.title, link.url);
                 }
-                else if (visitedlinks[link.lang.toLowerCase()] && visitedlinks[link.lang.toLowerCase()].url != link.url) {
-                    error = "conflict";
-                    WM.Log.logError("Conflicting interlanguage links: [[" + link.lang + ":" + link.title + "]] and [[" + link.lang + ":" + visitedlinks[link.lang].title + "]]");
-                    break;
+                else if (vlink && vlink.url != link.url) {
+                    // Just ignore any conflicting links and warn the user:
+                    // if it's a real conflict, the user will investigate it,
+                    // otherwise the user will ignore it
+                    WM.Log.logWarning("Possibly conflicting interlanguage links: [[" + link.lang + ":" + link.title + "]] and [[" + link.lang + ":" + visitedlinks[link.lang.toLowerCase()].title + "]]");
                 }
-                else if (newlinks[link.lang.toLowerCase()] && newlinks[link.lang.toLowerCase()].url != link.url) {
-                    error = "conflict";
-                    WM.Log.logError("Conflicting interlanguage links: [[" + link.lang + ":" + link.title + "]] and [[" + link.lang + ":" + newlinks[link.lang].title + "]]");
-                    break;
+                else if (nlink && nlink.url != link.url) {
+                    // Just ignore any conflicting links and warn the user:
+                    // if it's a real conflict, the user will investigate it,
+                    // otherwise the user will ignore it
+                    WM.Log.logWarning("Possibly conflicting interlanguage links: [[" + link.lang + ":" + link.title + "]] and [[" + link.lang + ":" + newlinks[link.lang.toLowerCase()].title + "]]");
                 }
             }
-        }
-        else {
-            error = "missing";
-            WM.Log.logWarning("[[" + tag + ":" + title + "]] seems to point to a non-existing article, removing it if it was linked from the processed article");
         }
 
         WM.Interlanguage.collectLinks(
             visitedlinks,
             newlinks,
             whitelist,
-            error,
             callEnd,
             callArgs
         );

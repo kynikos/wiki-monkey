@@ -76,9 +76,10 @@ WM.UI.setEditor([
         ["FixLinkFragments", "Fix external section links", null],
         ["SynchronizeInterlanguageLinks", "Sync interlanguage links",
          [function (title) {
-             var language = WM.ArchWiki.detectLanguage(title)[1];
+             var detect = WM.ArchWiki.detectLanguage(title);
+             var tag = WM.ArchWiki.getInterlanguageTag(detect[1]);
              // The language must correspond to a working interwiki tag
-             return WM.ArchWiki.getInterlanguageTag(language);
+             return [tag, detect[0]];
          },
          WM.ArchWiki.getInterwikiLanguages()]],
         ["ArchWikiOldAURLinks", "Fix old AUR links", null],
@@ -101,9 +102,10 @@ WM.UI.setCategory([
     ["SimpleReplace", "RegExp substitution", ["1"]],
     ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
      [function (title) {
-         var language = WM.ArchWiki.detectLanguage(title)[1];
+         var detect = WM.ArchWiki.detectLanguage(title);
+         var tag = WM.ArchWiki.getInterlanguageTag(detect[1]);
          // The language must correspond to a working interwiki tag
-         return WM.ArchWiki.getInterlanguageTag(language);
+         return [tag, detect[0]];
      },
      WM.ArchWiki.getInterwikiLanguages(),
      "synchronized interlanguage links with the other wikis"]],
@@ -114,9 +116,10 @@ WM.UI.setWhatLinksHere([
     ["FixBacklinkFragments", "Fix links to specific sections of the target article", "fix links to specific sections"],
     ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
      [function (title) {
-         var language = WM.ArchWiki.detectLanguage(title)[1];
+         var detect = WM.ArchWiki.detectLanguage(title);
+         var tag = WM.ArchWiki.getInterlanguageTag(detect[1]);
          // The language must correspond to a working interwiki tag
-         return WM.ArchWiki.getInterlanguageTag(language);
+         return [tag, detect[0]];
      },
      WM.ArchWiki.getInterwikiLanguages(),
      "synchronized interlanguage links with the other wikis"]],
@@ -127,9 +130,10 @@ WM.UI.setLinkSearch([
     ["SimpleReplace", "RegExp substitution", ["1"]],
     ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
      [function (title) {
-         var language = WM.ArchWiki.detectLanguage(title)[1];
+         var detect = WM.ArchWiki.detectLanguage(title);
+         var tag = WM.ArchWiki.getInterlanguageTag(detect[1]);
          // The language must correspond to a working interwiki tag
-         return WM.ArchWiki.getInterlanguageTag(language);
+         return [tag, detect[0]];
      },
      WM.ArchWiki.getInterwikiLanguages(),
      "synchronized interlanguage links with the other wikis"]],
@@ -360,9 +364,10 @@ WM.UI.setSpecialList([
     ["SimpleReplace", "RegExp substitution", ["1"]],
     ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
      [function (title) {
-         var language = WM.ArchWiki.detectLanguage(title)[1];
+         var detect = WM.ArchWiki.detectLanguage(title);
+         var tag = WM.ArchWiki.getInterlanguageTag(detect[1]);
          // The language must correspond to a working interwiki tag
-         return WM.ArchWiki.getInterlanguageTag(language);
+         return [tag, detect[0]];
      },
      WM.ArchWiki.getInterwikiLanguages(),
      "synchronized interlanguage links with the other wikis"]],
