@@ -52,14 +52,14 @@ WM.Interlanguage = new function () {
         return langlinks;
     };
 
-    this.queryLinks = function (api, title, whitelist, callEnd, callArgs) {
+    this.queryLinks = function (api, queryTitle, title, whitelist, callEnd, callArgs) {
         WM.MW.callAPIGet(
             {
                 action: "query",
                 prop: "info|revisions",
                 rvprop: "content|timestamp",
                 intoken: "edit",
-                titles: title,
+                titles: queryTitle,
                 redirects: "1",
                 meta: "siteinfo",
                 siprop: "interwikimap",
@@ -135,22 +135,42 @@ WM.Interlanguage = new function () {
             }
 
             if (link) {
-                var origTag = link.origTag;
-                var title = link.title;
-                var url = link.url;
-                var api = WM.MW.getWikiPaths(url).api;
-
                 delete newlinks[tag];
 
-                WM.Log.logInfo("Reading " + decodeURI(url) + "...");
+                var url = link.url;
 
-                this.queryLinks(
-                    api,
-                    title,
-                    whitelist,
-                    WM.Interlanguage._collectLinksContinue,
-                    [url, tag, origTag, visitedlinks, newlinks, callEnd, callArgs]
-                );
+                // Don't use WM.MW.getTitleFromWikiUrl(decodeURI(url)) because
+                // it wouldn't decode some characters like colons, which are
+                // required to be decoded instead when making an API call
+                var queryTitle = decodeURIComponent(WM.MW.getTitleFromWikiUrl(url));
+
+                if (queryTitle) {
+                    WM.Log.logInfo("Reading " + decodeURI(url) + "...");
+
+                    var origTag = link.origTag;
+                    var title = link.title;
+                    var api = WM.MW.getWikiUrls(url).api;
+
+                    this.queryLinks(
+                        api,
+                        queryTitle,
+                        title,
+                        whitelist,
+                        WM.Interlanguage._collectLinksContinue,
+                        [url, tag, origTag, visitedlinks, newlinks, callEnd, callArgs]
+                    );
+                }
+                else {
+                    WM.Log.logWarning("Cannot extract the page title from " + decodeURI(url));
+                    WM.Interlanguage.collectLinks(
+                        visitedlinks,
+                        newlinks,
+                        whitelist,
+                        "",
+                        callEnd,
+                        callArgs
+                    );
+                }
             }
             else {
                 callEnd(visitedlinks, callArgs);
@@ -194,7 +214,7 @@ WM.Interlanguage = new function () {
         }
         else {
             error = "missing";
-            WM.Log.logWarning("[[" + tag + ":" + title + "]] seems to point to a non-existing article, removing it");
+            WM.Log.logWarning("[[" + tag + ":" + title + "]] seems to point to a non-existing article, removing it if it was linked from the processed article");
         }
 
         WM.Interlanguage.collectLinks(
@@ -217,7 +237,7 @@ WM.Interlanguage = new function () {
                 var tagFound = false;
                 for (var iw in iwmap) {
                     if (iwmap[iw].prefix.toLowerCase() == tag.toLowerCase()) {
-                        if (WM.MW.getWikiPaths(iwmap[iw].url).api == link.api) {
+                        if (WM.MW.getWikiUrls(iwmap[iw].url).api == link.api) {
                             linkList.push("[[" + link.origTag + ":" + link.title + "]]\n");
                         }
                         else {
