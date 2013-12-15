@@ -200,10 +200,11 @@ WM.UI = new function () {
             display = false;
         }
         else {
-            var patt1 = new RegExp(Alib.RegEx.escapePattern(WM.MW.getWikiPaths().full) + "\?.*?" + "title\\=Special(\\:|%3[Aa])SpecialPages", '');
-            var patt2 = new RegExp(Alib.RegEx.escapePattern(WM.MW.getWikiPaths().short) + "Special(\\:|%3[Aa])SpecialPages", '');
-            var patt3 = new RegExp(Alib.RegEx.escapePattern(WM.MW.getWikiPaths().full) + "\?.*?" + "title\\=Special(\\:|%3[Aa])RecentChanges", '');
-            var patt4 = new RegExp(Alib.RegEx.escapePattern(WM.MW.getWikiPaths().short) + "Special(\\:|%3[Aa])RecentChanges", '');
+            var wikiUrls = WM.MW.getWikiUrls();
+            var patt1 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.full) + "\?.*?" + "title\\=Special(\\:|%3[Aa])SpecialPages", '');
+            var patt2 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) + "Special(\\:|%3[Aa])SpecialPages", '');
+            var patt3 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.full) + "\?.*?" + "title\\=Special(\\:|%3[Aa])RecentChanges", '');
+            var patt4 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) + "Special(\\:|%3[Aa])RecentChanges", '');
 
             if (location.href.search(patt1) > -1 || location.href.search(patt2) > -1) {
                 nextNode = document.getElementById('bodyContent');
