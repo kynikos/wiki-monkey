@@ -390,7 +390,13 @@ WM.Bot = new function () {
 
             for (var i = 0; i < items.length; i++) {
                 link = items[i].getElementsByTagName('a')[linkId];
-                link.className = restoreOriginalLinkClassName(link.className);
+
+                // The list item could refer to an invalid title, represented
+                // by e.g. <span class="mw-invalidtitle">Invalid title with
+                // namespace "Category" and text ""</span>
+                if (link) {
+                    link.className = restoreOriginalLinkClassName(link.className);
+                }
             }
         }
 
@@ -404,13 +410,19 @@ WM.Bot = new function () {
         for (var i = 0; i < items.length; i++) {
             link = items[i].getElementsByTagName('a')[linkId];
 
-            if (canProcessPage(link)) {
-                link.className = changeWikiMonkeyLinkClassName(link.className, 'WikiMonkeyBotSelected');
-                enable = true;
-                N++;
-            }
-            else {
-                link.className = restoreOriginalLinkClassName(link.className);
+            // Also test 'link' itself, because the list item could refer to an
+            // invalid title, represented by e.g.
+            // <span class="mw-invalidtitle">Invalid title with namespace
+            // "Category" and text ""</span>
+            if (link) {
+                if (canProcessPage(link)) {
+                    link.className = changeWikiMonkeyLinkClassName(link.className, 'WikiMonkeyBotSelected');
+                    enable = true;
+                    N++;
+                }
+                else {
+                    link.className = restoreOriginalLinkClassName(link.className);
+                }
             }
         }
 
@@ -472,7 +484,11 @@ WM.Bot = new function () {
         if (items[index]) {
             var link = items[index].getElementsByTagName('a')[linkId];
 
-            if (canProcessPage(link)) {
+            // Also test 'link' itself, because the list item could refer to an
+            // invalid title, represented by e.g.
+            // <span class="mw-invalidtitle">Invalid title with namespace
+            // "Category" and text ""</span>
+            if (link && canProcessPage(link)) {
                 var title = link.title;
                 var interval;
 
