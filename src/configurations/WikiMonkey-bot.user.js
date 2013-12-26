@@ -59,19 +59,6 @@ WM.UI.setEditor([
 
 WM.UI.setDiff(null);
 
-WM.UI.setCategory([
-    ["SimpleReplace", "RegExp substitution", ["1"]]
-]);
-
-WM.UI.setWhatLinksHere([
-    ["SimpleReplace", "RegExp substitution", ["1"]],
-    ["FixBacklinkFragments", "Fix links to specific sections of the target article", "fix links to specific sections"]
-]);
-
-WM.UI.setLinkSearch([
-    ["SimpleReplace", "RegExp substitution", ["1"]]
-]);
-
 WM.UI.setSpecial([
     [
         ["UpdateCategoryTree", "Update category tree",
@@ -84,8 +71,9 @@ WM.UI.setSpecial([
 
 WM.UI.setRecentChanges(null);
 
-WM.UI.setSpecialList([
-    ["SimpleReplace", "RegExp substitution", ["1"]]
+WM.UI.setBot([
+    ["SimpleReplace", "RegExp substitution", ["1"]],
+    ["FixBacklinkFragments", "Fix links to specific sections of the target article", "fix links to specific sections"]
 ]);
 
 WM.main();
