@@ -98,48 +98,6 @@ WM.UI.setDiff([
     ]
 ]);
 
-WM.UI.setCategory([
-    ["SimpleReplace", "RegExp substitution", ["1"]],
-    ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
-     [function (title) {
-         var detect = WM.ArchWiki.detectLanguage(title);
-         var tag = WM.ArchWiki.getInterlanguageTag(detect[1]);
-         // The language must correspond to a working interwiki tag
-         return [tag, detect[0]];
-     },
-     WM.ArchWiki.getInterwikiLanguages(),
-     "synchronized interlanguage links with the other wikis"]],
-]);
-
-WM.UI.setWhatLinksHere([
-    ["SimpleReplace", "RegExp substitution", ["1"]],
-    ["FixBacklinkFragments", "Fix links to specific sections of the target article", "fix links to specific sections"],
-    ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
-     [function (title) {
-         var detect = WM.ArchWiki.detectLanguage(title);
-         var tag = WM.ArchWiki.getInterlanguageTag(detect[1]);
-         // The language must correspond to a working interwiki tag
-         return [tag, detect[0]];
-     },
-     WM.ArchWiki.getInterwikiLanguages(),
-     "synchronized interlanguage links with the other wikis"]],
-    ["ArchWikiUpdatePackageTemplates", "Check packages linked with Pkg/AUR templates and possibly update them", ["update Pkg/AUR templates to reflect new package status"]]
-]);
-
-WM.UI.setLinkSearch([
-    ["SimpleReplace", "RegExp substitution", ["1"]],
-    ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
-     [function (title) {
-         var detect = WM.ArchWiki.detectLanguage(title);
-         var tag = WM.ArchWiki.getInterlanguageTag(detect[1]);
-         // The language must correspond to a working interwiki tag
-         return [tag, detect[0]];
-     },
-     WM.ArchWiki.getInterwikiLanguages(),
-     "synchronized interlanguage links with the other wikis"]],
-    ["ArchWikiOldAURLinks", "Replace old-style direct AUR package links with Template:AUR", ["replace old-style direct package links with Pkg/AUR templates"]]
-]);
-
 WM.UI.setSpecial([
     [
         ["UpdateCategoryTree", "Update category tree",
@@ -360,8 +318,9 @@ WM.UI.setRecentChanges([
     ]
 ]);
 
-WM.UI.setSpecialList([
+WM.UI.setBot([
     ["SimpleReplace", "RegExp substitution", ["1"]],
+    ["FixBacklinkFragments", "Fix links to specific sections of the target article", "fix links to specific sections"],
     ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
      [function (title) {
          var detect = WM.ArchWiki.detectLanguage(title);
@@ -371,6 +330,8 @@ WM.UI.setSpecialList([
      },
      WM.ArchWiki.getInterwikiLanguages(),
      "synchronized interlanguage links with the other wikis"]],
+    ["ArchWikiUpdatePackageTemplates", "Check packages linked with Pkg/AUR templates and possibly update them", ["update Pkg/AUR templates to reflect new package status"]],
+    ["ArchWikiOldAURLinks", "Replace old-style direct AUR package links with Template:AUR", ["replace old-style direct package links with Pkg/AUR templates"]],
     ["ArchWikiWantedCategories", "Create wanted categories", null],
 ]);
 
