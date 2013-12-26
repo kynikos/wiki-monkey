@@ -152,7 +152,7 @@ WM.Interlanguage = new function () {
             var queryTitle = decodeURIComponent(WM.MW.getTitleFromWikiUrl(url));
 
             if (queryTitle) {
-                WM.Log.logInfo("Reading " + decodeURI(url) + "...");
+                WM.Log.logInfo("Reading " + decodeURI(url) + " ...");
 
                 var origTag = link.origTag;
                 var title = link.title;
@@ -247,14 +247,14 @@ WM.Interlanguage = new function () {
                             linkList.push("[[" + link.origTag + ":" + link.title + "]]");
                         }
                         else {
-                            WM.Log.logWarning("On " + decodeURI(url) + ", " + tag + " interlanguage links point to a different wiki than the others, ignoring them");
+                            WM.Log.logWarning("On " + decodeURI(url) + " , " + tag + " interlanguage links point to a different wiki than the others, ignoring them");
                         }
                         tagFound = true;
                         break;
                     }
                 }
                 if (!tagFound) {
-                    WM.Log.logWarning(tag + " interlanguage links are not supported in " + decodeURI(url) + ", ignoring them");
+                    WM.Log.logWarning(tag + " interlanguage links are not supported in " + decodeURI(url) + " , ignoring them");
                 }
             }
         }

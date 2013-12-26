@@ -56,7 +56,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
 
         var newlinks = {};
 
-        WM.Log.logInfo("Reading " + decodeURI(url) + "...");
+        WM.Log.logInfo("Reading " + decodeURI(url) + " ...");
 
         if (langlinks) {
             for (var l in langlinks) {
