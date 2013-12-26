@@ -212,7 +212,7 @@ WM.Bot = new function () {
         forceStartCB.disabled = true;
 
         var forceStartLabel = document.createElement('span');
-        forceStartLabel.innerHTML = 'Force start, stopping the currently running bot';
+        forceStartLabel.innerHTML = 'Force start, stopping any other currently running bots';
 
         forceStart.style.display = "none";
         forceStart.appendChild(forceStartCB);
@@ -466,7 +466,11 @@ WM.Bot = new function () {
         }
         var linkId = WM.Bot.selections.list.current[1];
         if (WM.Bot._checkOtherBotsRunning() && !WM.Bot._canForceStart()) {
-            WM.Log.logError('Another bot is running, aborting...');
+            WM.Log.logError('It\'s not possible to start the bot (without forcing it) for one of the following reasons:<br>' +
+                            '* another bot instance is currently running<br>' +
+                            '* a previously running bot has stopped due to a page processing error<br>' +
+                            '* a previously running bot has stopped due to a Javascript error<br>' +
+                            '* a previously running bot has been interrupted by a browser page refresh');
             WM.Bot._enableForceStart();
         }
         else {
