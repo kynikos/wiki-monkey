@@ -24,6 +24,7 @@ WM.ArchWiki = new function () {
         names: {
             "العربية": {subtag: "ar", english: "Arabic"},
             "Български": {subtag: "bg", english: "Bulgarian"},
+            "Català": {subtag: "ca", english: "Catalan"},
             "Česky": {subtag: "cs", english: "Czech"},
             "Dansk": {subtag: "da", english: "Danish"},
             "Deutsch": {subtag: "de", english: "German"},
@@ -61,6 +62,7 @@ WM.ArchWiki = new function () {
         categories: [
             "العربية",
             "Български",
+            "Català",
             "Česky",
             "Dansk",
             "Ελληνικά",
