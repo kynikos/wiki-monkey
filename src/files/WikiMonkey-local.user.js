@@ -101,7 +101,7 @@ WM.UI.setDiff([
 WM.UI.setSpecial([
     [
         ["UpdateCategoryTree", "Update category tree",
-         [[{page: "Table of Contents",
+         [[{page: "Table of contents",
             root: "Category:English",
             alsoIn: "also in",
             indentType: ":",
