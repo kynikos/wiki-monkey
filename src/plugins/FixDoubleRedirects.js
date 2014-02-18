@@ -73,10 +73,20 @@ WM.Plugins.FixDoubleRedirects = new function () {
 
         if (source.indexOf(rawTarget[0]) == 0) {
             var target = WM.Parser.findInternalLinks(rawTarget[0], null)[0];
-
+            var namespace = (namespaces[page.databaseResult.nsc]["*"]) ?
+                                        WM.Parser.squashContiguousWhitespace(
+                                        namespaces[page.databaseResult.nsc][
+                                        "*"]) + ":" : "";
+            var newTitle = WM.Parser.squashContiguousWhitespace(
+                                                    page.databaseResult.tc);
+            var fragment = (target.match[5]) ? ("#" + target.match[5]) : "";
+            var altAnchor = (target.match[6]) ? ("|" + target.match[6]) : "";
             var targetEnd = target.index + target.length;
-            var newTarget = "#REDIRECT [[" + ((namespaces[page.databaseResult.nsc]["*"]) ? WM.Parser.squashContiguousWhitespace(namespaces[page.databaseResult.nsc]["*"]) + ":" : "") + WM.Parser.squashContiguousWhitespace(page.databaseResult.tc) + "]]";
-            var newtext = Alib.Str.overwriteFor(source, newTarget, 0, targetEnd);
+
+            var newTarget = "#REDIRECT [[" + namespace + newTitle + fragment +
+                                                            altAnchor + "]]";
+            var newtext = Alib.Str.overwriteFor(source, newTarget, 0,
+                                                                    targetEnd);
 
             if (newtext != source) {
                 WM.MW.callAPIPost({action: "edit",
