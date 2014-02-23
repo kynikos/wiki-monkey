@@ -1,6 +1,6 @@
 /*
  *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
- *  Copyright (C) 2011-2013 Dario Giovannetti <dev@dariogiovannetti.net>
+ *  Copyright (C) 2011-2014 Dario Giovannetti <dev@dariogiovannetti.net>
  *
  *  This file is part of Wiki Monkey.
  *
