@@ -88,9 +88,14 @@ WM.Plugins.DeletePage = new function () {
     };
 
     this.mainAutoEnd = function (res, callBot) {
-        if (!res['delete']) {
-            WM.Log.logError(cat + " has not been deleted!\n" + res['error']['info'] + " (" + res['error']['code'] + ")");
-            callBot(false, null);
+        if (!res.delete) {
+            if (res.error) {
+                WM.Log.logError(cat + " has not been deleted!\n" + res.error.info + " (" + res.error.code + ")");
+                callBot(res.error.code, null);
+            }
+            else {
+                callBot(false, null);
+            }
         }
         else {
             callBot(1, null);

@@ -31,7 +31,8 @@ WM.Bot = new function () {
                     "a.WikiMonkeyBotProcessing {background-color:#ff8; padding:0.2em 0.4em;} " +
                     "a.WikiMonkeyBotChanged {background-color:#afa; padding:0.2em 0.4em;} " +
                     "a.WikiMonkeyBotUnchanged {background-color:#aaf; padding:0.2em 0.4em;} " +
-                    "a.WikiMonkeyBotFailed {background-color:orangered; padding:0.2em 0.4em;}");
+                    "a.WikiMonkeyBotBypassed {background-color:orangered; padding:0.2em 0.4em;} " +
+                    "a.WikiMonkeyBotFailed {background-color:red; padding:0.2em 0.4em;}");
 
         divContainer.appendChild(makeFunctionUI(functions));
         divContainer.appendChild(makeConfUI(lists));
@@ -535,6 +536,14 @@ WM.Bot = new function () {
                                             WM.Log.logInfo(article + " processed (changed)");
                                             id++;
                                             WM.Bot._processItem(status, lis, id, linkId, resArgs);
+                                            break;
+                                        // The plugin has encountered a protectedpage error
+                                        case 'protectedpage':
+                                            ln.className = changeWikiMonkeyLinkClassName(ln.className, 'WikiMonkeyBotBypassed');
+                                            WM.Log.logWarning("This user doesn't have the rights to edit " + article + ", bypassing it...");
+                                            id++;
+                                            // Change status to 0 (page not changed)
+                                            WM.Bot._processItem(0, lis, id, linkId, resArgs);
                                             break;
                                         // The plugin has encountered a critical error
                                         default:

@@ -61,8 +61,11 @@ WM.Plugins.ArchWikiWantedCategories = new function () {
         if (res.edit && res.edit.result == 'Success') {
             callBot(1, null);
         }
+        else if (res.error) {
+            WM.Log.logError(res.error.info + " (" + res.error.code + ")");
+            callBot(res.error.code, null);
+        }
         else {
-            WM.Log.logError(res['error']['info'] + " (" + res['error']['code'] + ")");
             callBot(false, null);
         }
     };
