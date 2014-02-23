@@ -288,16 +288,28 @@ WM.Interlanguage = new function () {
             var firstLink = 0;
         }
 
-        var parts = [
-            cleanText.substring(0, firstLink).trim(),
-            linkList.join("\n"),
-            cleanText.substr(firstLink).trim()
-        ]
-
         var newText = "";
 
-        for (var p = 0; p < 3; p++) {
-            newText += parts[p] + ((parts[p]) ? "\n" : "");
+        var head = cleanText.substring(0, firstLink).trim();
+
+        if (head) {
+            newText += head + "\n";
+        }
+
+        var links = linkList.join("\n");
+
+        if (links) {
+            newText += links + "\n";
+        }
+
+        // Trim the tail part only to the left, because the source text may or
+        // may not have a trailing newline, and always adding a trailing
+        // newline would often make the final (newText != source) return true
+        // even when no actual change has been made
+        var tail = cleanText.substr(firstLink).replace(/^\s+/, "");
+
+        if (tail) {
+            newText += tail;
         }
 
         return newText;
