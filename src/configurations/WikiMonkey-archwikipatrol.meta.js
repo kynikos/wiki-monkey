@@ -1,3 +1,3 @@
 // ==UserScript==
-// @version 1.14.4-dev-archwikipatrol
+// @version 1.14.5-archwikipatrol
 // ==/UserScript==
