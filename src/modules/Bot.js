@@ -526,7 +526,6 @@ WM.Bot = new function () {
                                         case 0:
                                             ln.className = changeWikiMonkeyLinkClassName(ln.className, 'WikiMonkeyBotUnchanged');
                                             WM.Log.logInfo(article + " processed (unchanged)");
-                                            // Do not increment directly in the function's call!
                                             id++;
                                             WM.Bot._processItem(status, lis, id, linkId, resArgs);
                                             break;
@@ -534,7 +533,6 @@ WM.Bot = new function () {
                                         case 1:
                                             ln.className = changeWikiMonkeyLinkClassName(ln.className, 'WikiMonkeyBotChanged');
                                             WM.Log.logInfo(article + " processed (changed)");
-                                            // Do not increment directly in the function's call!
                                             id++;
                                             WM.Bot._processItem(status, lis, id, linkId, resArgs);
                                             break;
@@ -557,7 +555,6 @@ WM.Bot = new function () {
                 this._enableStopBot(stopId);
             }
             else {
-                // Do not increment directly in the function's call!
                 index++;
                 WM.Bot._processItem(status, items, index, linkId, chainArgs);
             }
