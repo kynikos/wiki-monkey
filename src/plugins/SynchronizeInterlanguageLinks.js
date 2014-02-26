@@ -25,27 +25,29 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         var detect = args[0](title);
         var tag = detect[0];
         var pureTitle = detect[1];
-        var whitelist = args[1];
+        var supportedLangs = args[1];
+        var whitelist = args[2];
 
         WM.Log.logInfo("Synchronizing interlanguage links...");
 
         WM.MW.getInterwikiMap(
             title,
             WM.Plugins.SynchronizeInterlanguageLinks.mainContinue,
-            [tag, pureTitle, whitelist, title, callNext]
+            [tag, pureTitle, supportedLangs, whitelist, title, callNext]
         );
     };
 
     this.mainContinue = function (iwmap, args) {
         var tag = args[0];
         var pureTitle = args[1];
-        var whitelist = args[2];
-        var title = args[3];
-        var callNext = args[4];
+        var supportedLangs = args[2];
+        var whitelist = args[3];
+        var title = args[4];
+        var callNext = args[5];
 
         var source = WM.Editor.readSource();
 
-        var langlinks = WM.Interlanguage.parseLinks(whitelist, source, iwmap);
+        var langlinks = WM.Interlanguage.parseLinks(supportedLangs, source, iwmap);
 
         var wikiUrls = WM.MW.getWikiUrls();
         var url = wikiUrls.short + encodeURIComponent(WM.Parser.squashContiguousWhitespace(title));
@@ -78,6 +80,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
             WM.Interlanguage.collectLinks(
                 visitedlinks,
                 newlinks,
+                supportedLangs,
                 whitelist,
                 true,
                 WM.Plugins.SynchronizeInterlanguageLinks.mainEnd,
@@ -121,8 +124,9 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         var tag = detect[0];
         var pureTitle = detect[1];
 
-        var whitelist = args[1];
-        var summary = args[2];
+        var supportedLangs = args[1];
+        var whitelist = args[2];
+        var summary = args[3];
 
         var wikiUrls = WM.MW.getWikiUrls();
         var url = wikiUrls.short + encodeURIComponent(WM.Parser.squashContiguousWhitespace(title));
@@ -135,6 +139,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         WM.Interlanguage.collectLinks(
             visitedlinks,
             newlinks,
+            supportedLangs,
             whitelist,
             // When called by the bot, if the start page is a redirect itself,
             // it shoudln't be resolved

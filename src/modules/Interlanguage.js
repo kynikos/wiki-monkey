@@ -19,10 +19,10 @@
  */
 
 WM.Interlanguage = new function () {
-    this.parseLinks = function (whitelist, source, iwmap) {
+    this.parseLinks = function (supportedLangs, source, iwmap) {
         var parsedLinks = WM.Parser.findSpecialLinks(
             source,
-            whitelist.join("|")
+            supportedLangs.join("|")
         );
 
         var langlinks = [];
@@ -52,7 +52,7 @@ WM.Interlanguage = new function () {
         return langlinks;
     };
 
-    this.queryLinks = function (api, queryTitle, title, whitelist, redirects, callEnd, callArgs) {
+    this.queryLinks = function (api, queryTitle, title, supportedLangs, whitelist, redirects, callEnd, callArgs) {
         var query = {
             action: "query",
             prop: "info|revisions",
@@ -80,7 +80,7 @@ WM.Interlanguage = new function () {
                     var timestamp = page.revisions[0].timestamp;
                     var edittoken = page.edittoken;
                     var iwmap = res.query.interwikimap;
-                    var langlinks = WM.Interlanguage.parseLinks(whitelist, source, iwmap);
+                    var langlinks = WM.Interlanguage.parseLinks(supportedLangs, source, iwmap);
                 }
                 else {
                     // The requested article doesn't exist
@@ -94,6 +94,7 @@ WM.Interlanguage = new function () {
                 callEnd(
                     api,
                     title,
+                    supportedLangs,
                     whitelist,
                     // From now on, redirects can be followed
                     true,
@@ -135,7 +136,7 @@ WM.Interlanguage = new function () {
         return entry;
     };
 
-    this.collectLinks = function (visitedlinks, newlinks, whitelist, redirects, callEnd, callArgs) {
+    this.collectLinks = function (visitedlinks, newlinks, supportedLangs, whitelist, redirects, callEnd, callArgs) {
         for (var tag in newlinks) {
             var link = newlinks[tag];
             break;
@@ -162,6 +163,7 @@ WM.Interlanguage = new function () {
                     api,
                     queryTitle,
                     title,
+                    supportedLangs,
                     whitelist,
                     redirects,
                     WM.Interlanguage._collectLinksContinue,
@@ -173,6 +175,7 @@ WM.Interlanguage = new function () {
                 WM.Interlanguage.collectLinks(
                     visitedlinks,
                     newlinks,
+                    supportedLangs,
                     whitelist,
                     redirects,
                     callEnd,
@@ -185,7 +188,7 @@ WM.Interlanguage = new function () {
         }
     };
 
-    this._collectLinksContinue = function (api, title, whitelist, redirects, langlinks, iwmap, source, timestamp, edittoken, args) {
+    this._collectLinksContinue = function (api, title, supportedLangs, whitelist, redirects, langlinks, iwmap, source, timestamp, edittoken, args) {
         var url = args[0];
         var tag = args[1];
         var origTag = args[2];
@@ -226,6 +229,7 @@ WM.Interlanguage = new function () {
         WM.Interlanguage.collectLinks(
             visitedlinks,
             newlinks,
+            supportedLangs,
             whitelist,
             redirects,
             callEnd,
