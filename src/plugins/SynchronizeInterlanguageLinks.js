@@ -47,14 +47,18 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
 
         var source = WM.Editor.readSource();
 
-        var langlinks = WM.Interlanguage.parseLinks(supportedLangs, source, iwmap);
+        var langlinks = WM.Interlanguage.parseLinks(supportedLangs, source,
+                                                                        iwmap);
 
         var wikiUrls = WM.MW.getWikiUrls();
-        var url = wikiUrls.short + encodeURIComponent(WM.Parser.squashContiguousWhitespace(title));
+        var url = wikiUrls.short + encodeURIComponent(
+                                WM.Parser.squashContiguousWhitespace(title));
         var api = wikiUrls.api;
 
         var visitedlinks = {};
-        visitedlinks[tag.toLowerCase()] = WM.Interlanguage.createVisitedLink(tag, pureTitle, url, iwmap, api, source, null, null, langlinks);
+        visitedlinks[tag.toLowerCase()] = WM.Interlanguage.createVisitedLink(
+                                            tag, pureTitle, url, iwmap, api,
+                                            source, null, null, langlinks);
 
         var newlinks = {};
 
@@ -67,13 +71,17 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
                 var vlink = visitedlinks[link.lang.toLowerCase()];
 
                 if (!vlink && !nlink) {
-                    newlinks[link.lang.toLowerCase()] = WM.Interlanguage.createNewLink(link.lang, link.title, link.url);
+                    newlinks[link.lang.toLowerCase()] =
+                                            WM.Interlanguage.createNewLink(
+                                            link.lang, link.title, link.url);
                 }
-                else if ((vlink && vlink.url != link.url) || (nlink && nlink.url != link.url)) {
+                else if ((vlink && vlink.url != link.url) ||
+                                            (nlink && nlink.url != link.url)) {
                     // Just ignore any conflicting links and warn the user:
                     // if it's a real conflict, the user will investigate it,
                     // otherwise the user will ignore it
-                    WM.Log.logWarning("Possibly conflicting interlanguage links: [[" + link.lang + ":" + link.title + "]]");
+                    WM.Log.logWarning("Possibly conflicting interlanguage " +
+                            "links: [[" + link.lang + ":" + link.title + "]]");
                 }
             }
 
@@ -104,7 +112,8 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         var iwmap = args[4];
         var callNext = args[5];
 
-        var newText = WM.Interlanguage.updateLinks(tag, url, iwmap, source, langlinks, links);
+        var newText = WM.Interlanguage.updateLinks(tag, url, iwmap, source,
+                                                            langlinks, links);
 
         if (newText != source) {
             WM.Editor.writeSource(newText);
@@ -129,12 +138,14 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         var summary = args[3];
 
         var wikiUrls = WM.MW.getWikiUrls();
-        var url = wikiUrls.short + encodeURIComponent(WM.Parser.squashContiguousWhitespace(title));
+        var url = wikiUrls.short + encodeURIComponent(
+                                WM.Parser.squashContiguousWhitespace(title));
 
         var visitedlinks = {};
 
         var newlinks = {};
-        newlinks[tag.toLowerCase()] = WM.Interlanguage.createNewLink(tag, pureTitle, url);
+        newlinks[tag.toLowerCase()] = WM.Interlanguage.createNewLink(tag,
+                                                            pureTitle, url);
 
         WM.Interlanguage.collectLinks(
             visitedlinks,
@@ -163,19 +174,22 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         var timestamp = links[lcTag].timestamp;
         var edittoken = links[lcTag].edittoken;
 
-        var newText = WM.Interlanguage.updateLinks(tag, url, iwmap, source, langlinks, links);
+        var newText = WM.Interlanguage.updateLinks(tag, url, iwmap, source,
+                                                            langlinks, links);
 
         if (newText != source) {
-            WM.MW.callAPIPost({action: "edit",
-                               bot: "1",
-                               title: title,
-                               summary: summary,
-                               text: newText,
-                               basetimestamp: timestamp,
-                               token: edittoken},
-                               null,
-                               WM.Plugins.SynchronizeInterlanguageLinks.mainAutoEnd,
-                               callBot);
+            WM.MW.callAPIPost(
+                {action: "edit",
+                 bot: "1",
+                 title: title,
+                 summary: summary,
+                 text: newText,
+                 basetimestamp: timestamp,
+                 token: edittoken},
+                null,
+                WM.Plugins.SynchronizeInterlanguageLinks.mainAutoEnd,
+                callBot
+            );
         }
         else {
             callBot(0, null);
