@@ -159,23 +159,50 @@ WM.Interlanguage = new function () {
                                                                         url));
 
             if (queryTitle) {
-                WM.Log.logInfo("Reading " + decodeURI(url) + " ...");
-
                 var origTag = link.origTag;
                 var title = link.title;
                 var api = WM.MW.getWikiUrls(url).api;
 
-                this.queryLinks(
-                    api,
-                    queryTitle,
-                    title,
-                    supportedLangs,
-                    whitelist,
-                    redirects,
-                    WM.Interlanguage._collectLinksContinue,
-                    [url, tag, origTag, visitedlinks, newlinks, callEnd,
+                // tag is already lower-cased
+                if (whitelist.indexOf(tag) > -1) {
+                    WM.Log.logInfo("Reading " + decodeURI(url) + " ...");
+
+                    this.queryLinks(
+                        api,
+                        queryTitle,
+                        title,
+                        supportedLangs,
+                        whitelist,
+                        redirects,
+                        WM.Interlanguage._collectLinksContinue,
+                        [url, tag, origTag, visitedlinks, newlinks, callEnd,
                                                                     callArgs]
-                );
+                    );
+                }
+                else {
+                    WM.Log.logWarning("[[" + tag + ":" + title + "]] will " +
+                            "not be checked because " + tag + " is not " +
+                            "included in the whitelist defined in the " +
+                            "configuration");
+                    WM.Interlanguage._collectLinksContinue(
+                        api,
+                        title,
+                        supportedLangs,
+                        whitelist,
+                        redirects,
+                        // Don't pass a false value as langlinks because this
+                        // link would be interpreted as pointing to a
+                        // non-existing article
+                        [],
+                        false,
+                        null,
+                        null,
+                        null,
+                        [url, tag, origTag, visitedlinks, newlinks, callEnd,
+                                                                    callArgs]
+                    );
+
+                }
             }
             else {
                 WM.Log.logWarning("Cannot extract the page title from " +
@@ -269,6 +296,11 @@ WM.Interlanguage = new function () {
             if (tag != lang) {
                 var link = newlinks[tag];
                 var tagFound = false;
+
+                // New links that were not in the white list will have the
+                // "iwmap" attribute false, "timestamp" and "edittoken" null
+                // and "links" as an empty array
+                // Note the difference between 'iwmap' and 'link.iwmap'
                 for (var iw in iwmap) {
                     if (iwmap[iw].prefix.toLowerCase() == tag.toLowerCase()) {
                         if (WM.MW.getWikiUrls(iwmap[iw].url).api == link.api) {
@@ -281,10 +313,12 @@ WM.Interlanguage = new function () {
                                         "to a different wiki than the " +
                                         "others, ignoring them");
                         }
+
                         tagFound = true;
                         break;
                     }
                 }
+
                 if (!tagFound) {
                     WM.Log.logWarning(tag + " interlanguage links are not " +
                         "supported in " + decodeURI(url) + " , ignoring them");

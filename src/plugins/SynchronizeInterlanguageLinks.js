@@ -168,6 +168,9 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         var callBot = args[4];
 
         var lcTag = tag.toLowerCase();
+        // New links that were not in the white list will have the "iwmap"
+        // attribute false, "timestamp" and "edittoken" null and "links" as an
+        // empty array, however links[lcTag] should always be safe
         var iwmap = links[lcTag].iwmap;
         var source = links[lcTag].source;
         var langlinks = links[lcTag].links;
