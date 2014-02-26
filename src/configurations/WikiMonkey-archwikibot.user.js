@@ -77,6 +77,7 @@ WM.UI.setEditor([
              // The language must correspond to a working interwiki tag
              return [tag, detect[0]];
          },
+         WM.ArchWiki.getInterwikiLanguages(),
          WM.ArchWiki.getInterwikiLanguages()]],
         ["ArchWikiOldAURLinks", "Fix old AUR links", null],
         ["ArchWikiUpdatePackageTemplates", "Update package templates", null]
@@ -320,6 +321,7 @@ WM.UI.setBot([
          // The language must correspond to a working interwiki tag
          return [tag, detect[0]];
      },
+     WM.ArchWiki.getInterwikiLanguages(),
      WM.ArchWiki.getInterwikiLanguages(),
      "synchronized interlanguage links with the other wikis"]],
     ["ArchWikiUpdatePackageTemplates", "Check packages linked with Pkg/AUR templates and possibly update them", ["update Pkg/AUR templates to reflect new package status"]],

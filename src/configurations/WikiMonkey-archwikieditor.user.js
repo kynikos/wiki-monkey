@@ -72,6 +72,7 @@ WM.UI.setEditor([
              // The language must correspond to a working interwiki tag
              return [tag, detect[0]];
          },
+         WM.ArchWiki.getInterwikiLanguages(),
          WM.ArchWiki.getInterwikiLanguages()]],
         ["ArchWikiOldAURLinks", "Fix old AUR links", null],
         ["ArchWikiUpdatePackageTemplates", "Update package templates", null]
