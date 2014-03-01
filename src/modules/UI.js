@@ -208,17 +208,10 @@ WM.UI = new function () {
                 UI = (newPages) ? WM.RecentChanges._makeUI(newPages) : null;
                 displayLog = false;
             }
-            else {
-                nextNode = document.getElementById('bodyContent');
-                var nextNodeDivs = nextNode.getElementsByTagName('div');
-                // Using for...in to loop through node lists is not supported by Chrome
-                for (var div = 0; div < nextNodeDivs.length; div++) {
-                    if (nextNodeDivs[div].className == 'mw-spcontent') {
-                        UI = (bot) ? WM.Bot._makeUI(bot, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
-                        display = false;
-                        break;
-                    }
-                }
+            else if (document.getElementsByClassName('mw-spcontent').length > 0) {
+                nextNode = document.getElementsByClassName('mw-spcontent')[0];
+                UI = (bot) ? WM.Bot._makeUI(bot, [[nextNode.getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
+                display = false;
             }
         }
 
