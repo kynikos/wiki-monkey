@@ -386,7 +386,12 @@ WM.Bot = new function () {
         var items, linkId, link;
 
         if (WM.Bot.selections.list.previous) {
-            items = WM.Bot.selections.list.previous[0].getElementsByTagName('li');
+            if (WM.Bot.selections.list.current[0].nodeName == 'TBODY') {
+                items = WM.Bot.selections.list.previous[0].getElementsByTagName('td');
+            }
+            else {
+                items = WM.Bot.selections.list.previous[0].getElementsByTagName('li');
+            }
             linkId = WM.Bot.selections.list.previous[1];
 
             for (var i = 0; i < items.length; i++) {
@@ -403,7 +408,12 @@ WM.Bot = new function () {
 
         WM.Bot.selections.visited = [];
 
-        items = WM.Bot.selections.list.current[0].getElementsByTagName('li');
+        if (WM.Bot.selections.list.current[0].nodeName == 'TBODY') {
+            items = WM.Bot.selections.list.current[0].getElementsByTagName('td');
+        }
+        else {
+            items = WM.Bot.selections.list.current[0].getElementsByTagName('li');
+        }
         linkId = WM.Bot.selections.list.current[1];
         var enable = false;
         var N = 0;
@@ -458,7 +468,12 @@ WM.Bot = new function () {
     };
 
     this._startAutomatic = function () {
-        var itemsDOM = WM.Bot.selections.list.current[0].getElementsByTagName('li');
+        if (WM.Bot.selections.list.current[0].nodeName == 'TBODY') {
+            var itemsDOM = WM.Bot.selections.list.current[0].getElementsByTagName('td');
+        }
+        else {
+            var itemsDOM = WM.Bot.selections.list.current[0].getElementsByTagName('li');
+        }
         // Passing the live collection with the callback function was causing
         // it to be lost in an apparently random manner
         var items = [];

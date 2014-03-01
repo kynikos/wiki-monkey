@@ -185,6 +185,11 @@ WM.UI = new function () {
             UI = (bot) ? WM.Bot._makeUI(bot, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 1, "Pages"]]) : null;
             display = false;
         }
+        else if (document.getElementById('mw-prefixindex-list-table')) {
+            nextNode = document.getElementById('mw-prefixindex-list-table');
+            UI = (bot) ? WM.Bot._makeUI(bot, [[nextNode.getElementsByTagName('tbody')[0], 0, "Pages"]]) : null;
+            display = false;
+        }
         else {
             var wikiUrls = WM.MW.getWikiUrls();
             var patt1 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.full) + "\?.*?" + "title\\=Special(\\:|%3[Aa])SpecialPages", '');
@@ -211,6 +216,11 @@ WM.UI = new function () {
             else if (document.getElementsByClassName('mw-spcontent').length > 0) {
                 nextNode = document.getElementsByClassName('mw-spcontent')[0];
                 UI = (bot) ? WM.Bot._makeUI(bot, [[nextNode.getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
+                display = false;
+            }
+            else if (document.getElementsByClassName('mw-allpages-table-chunk').length > 0) {
+                nextNode = document.getElementsByClassName('mw-allpages-table-chunk')[0];
+                UI = (bot) ? WM.Bot._makeUI(bot, [[nextNode.getElementsByTagName('tbody')[0], 0, "Pages"]]) : null;
                 display = false;
             }
         }
