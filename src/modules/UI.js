@@ -43,6 +43,10 @@ WM.UI = new function () {
         recentChanges = rows;
     };
 
+    this.setNewPages = function(rows) {
+        newPages = rows;
+    }
+
     var bot = null;
 
     this.setBot = function(rows) {
@@ -181,12 +185,19 @@ WM.UI = new function () {
             UI = (bot) ? WM.Bot._makeUI(bot, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 1, "Pages"]]) : null;
             display = false;
         }
+        else if (document.getElementById('mw-prefixindex-list-table')) {
+            nextNode = document.getElementById('mw-prefixindex-list-table');
+            UI = (bot) ? WM.Bot._makeUI(bot, [[nextNode.getElementsByTagName('tbody')[0], 0, "Pages"]]) : null;
+            display = false;
+        }
         else {
             var wikiUrls = WM.MW.getWikiUrls();
             var patt1 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.full) + "\?.*?" + "title\\=Special(\\:|%3[Aa])SpecialPages", '');
             var patt2 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) + "Special(\\:|%3[Aa])SpecialPages", '');
             var patt3 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.full) + "\?.*?" + "title\\=Special(\\:|%3[Aa])RecentChanges", '');
             var patt4 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) + "Special(\\:|%3[Aa])RecentChanges", '');
+            var patt5 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.full) + "\?.*?" + "title\\=Special(\\:|%3[Aa])NewPages", '');
+            var patt6 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) + "Special(\\:|%3[Aa])NewPages", '');
 
             if (location.href.search(patt1) > -1 || location.href.search(patt2) > -1) {
                 nextNode = document.getElementById('bodyContent');
@@ -197,17 +208,20 @@ WM.UI = new function () {
                 UI = (recentChanges) ? WM.RecentChanges._makeUI(recentChanges) : null;
                 displayLog = false;
             }
-            else {
-                nextNode = document.getElementById('bodyContent');
-                var nextNodeDivs = nextNode.getElementsByTagName('div');
-                // Using for...in to loop through node lists is not supported by Chrome
-                for (var div = 0; div < nextNodeDivs.length; div++) {
-                    if (nextNodeDivs[div].className == 'mw-spcontent') {
-                        UI = (bot) ? WM.Bot._makeUI(bot, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
-                        display = false;
-                        break;
-                    }
-                }
+            else if (location.href.search(patt5) > -1 || location.href.search(patt6) > -1) {
+                nextNode = document.getElementById('mw-content-text').getElementsByTagName('ul')[0];
+                UI = (newPages) ? WM.RecentChanges._makeUI(newPages) : null;
+                displayLog = false;
+            }
+            else if (document.getElementsByClassName('mw-spcontent').length > 0) {
+                nextNode = document.getElementsByClassName('mw-spcontent')[0];
+                UI = (bot) ? WM.Bot._makeUI(bot, [[nextNode.getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
+                display = false;
+            }
+            else if (document.getElementsByClassName('mw-allpages-table-chunk').length > 0) {
+                nextNode = document.getElementsByClassName('mw-allpages-table-chunk')[0];
+                UI = (bot) ? WM.Bot._makeUI(bot, [[nextNode.getElementsByTagName('tbody')[0], 0, "Pages"]]) : null;
+                display = false;
             }
         }
 
