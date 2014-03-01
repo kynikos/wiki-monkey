@@ -38,6 +38,7 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/1.14.6/src/plugins/ArchWikiFixHeadings.js
 // @require https://raw.github.com/kynikos/wiki-monkey/1.14.6/src/plugins/ArchWikiFixLinks.js
 // @require https://raw.github.com/kynikos/wiki-monkey/1.14.6/src/plugins/ArchWikiNewTemplates.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.14.6/src/plugins/ArchWikiNPFilter.js
 // @require https://raw.github.com/kynikos/wiki-monkey/1.14.6/src/plugins/ArchWikiOldAURLinks.js
 // @require https://raw.github.com/kynikos/wiki-monkey/1.14.6/src/plugins/ArchWikiQuickReport.js
 // @require https://raw.github.com/kynikos/wiki-monkey/1.14.6/src/plugins/ArchWikiRCFilter.js
@@ -304,6 +305,16 @@ WM.UI.setSpecial([
 WM.UI.setRecentChanges([
     [
         "ArchWikiRCFilter",
+        "Default filter",
+        {
+            language: "English",
+        }
+    ]
+]);
+
+WM.UI.setNewPages([
+    [
+        "ArchWikiNPFilter",
         "Default filter",
         {
             language: "English",
