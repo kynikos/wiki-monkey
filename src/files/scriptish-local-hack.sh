@@ -7,18 +7,6 @@
 # usage: scriptish-local-hack.sh <scriptish_profile> <WM_git_path> <Alib_git_path>
 #   <scriptish_profile> is usually ~/.mozilla/firefox/<profile_dir>/scriptish_scripts/wiki-monkey-local
 
-function safe_ln() {
-    local target="$1"
-    local dest="$2"
-
-    if [[ -e "$target" ]]; then
-        ln -sf "$target" "$dest"
-    else
-        echo "error: symlink target '$target' does not exist"
-        exit 1
-    fi
-}
-
 function link_from_path() {
     local path="$1"
 
@@ -26,7 +14,7 @@ function link_from_path() {
         f=$(basename "$f")
         lf=${f,,} # lowercase
         if [[ -f "$sc_profile/$lf" ]]; then
-            safe_ln "$path/$f" "$sc_profile/$lf"
+            ln -sf "$path/$f" "$sc_profile/$lf"
         else
             echo "skipping $path/$f"
         fi
