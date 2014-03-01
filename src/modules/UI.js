@@ -43,6 +43,10 @@ WM.UI = new function () {
         recentChanges = rows;
     };
 
+    this.setNewPages = function(rows) {
+        newPages = rows;
+    }
+
     var bot = null;
 
     this.setBot = function(rows) {
@@ -187,6 +191,8 @@ WM.UI = new function () {
             var patt2 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) + "Special(\\:|%3[Aa])SpecialPages", '');
             var patt3 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.full) + "\?.*?" + "title\\=Special(\\:|%3[Aa])RecentChanges", '');
             var patt4 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) + "Special(\\:|%3[Aa])RecentChanges", '');
+            var patt5 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.full) + "\?.*?" + "title\\=Special(\\:|%3[Aa])NewPages", '');
+            var patt6 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) + "Special(\\:|%3[Aa])NewPages", '');
 
             if (location.href.search(patt1) > -1 || location.href.search(patt2) > -1) {
                 nextNode = document.getElementById('bodyContent');
@@ -195,6 +201,11 @@ WM.UI = new function () {
             else if (location.href.search(patt3) > -1 || location.href.search(patt4) > -1) {
                 nextNode = document.getElementById('mw-content-text').getElementsByTagName('h4')[0];
                 UI = (recentChanges) ? WM.RecentChanges._makeUI(recentChanges) : null;
+                displayLog = false;
+            }
+            else if (location.href.search(patt5) > -1 || location.href.search(patt6) > -1) {
+                nextNode = document.getElementById('mw-content-text').getElementsByTagName('ul')[0];
+                UI = (newPages) ? WM.RecentChanges._makeUI(newPages) : null;
                 displayLog = false;
             }
             else {
