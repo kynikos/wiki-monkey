@@ -40,6 +40,7 @@
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiFixHeadings.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiFixLinks.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiNewTemplates.js
+// @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiNPFilter.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiOldAURLinks.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiQuickReport.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiRCFilter.js
@@ -313,6 +314,16 @@ WM.UI.setSpecial([
 WM.UI.setRecentChanges([
     [
         "ArchWikiRCFilter",
+        "Default filter",
+        {
+            language: "English",
+        }
+    ]
+]);
+
+WM.UI.setNewPages([
+    [
+        "ArchWikiNPFilter",
         "Default filter",
         {
             language: "English",

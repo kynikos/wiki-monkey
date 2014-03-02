@@ -71,6 +71,8 @@ WM.UI.setSpecial([
 
 WM.UI.setRecentChanges(null);
 
+WM.UI.setNewPages(null);
+
 WM.UI.setBot([
     ["SimpleReplace", "RegExp substitution", ["1"]],
     ["FixBacklinkFragments", "Fix links to specific sections of the target article", "fix links to specific sections"]

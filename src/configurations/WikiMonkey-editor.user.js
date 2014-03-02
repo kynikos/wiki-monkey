@@ -66,6 +66,8 @@ WM.UI.setSpecial(null);
 
 WM.UI.setRecentChanges(null);
 
+WM.UI.setNewPages(null);
+
 WM.UI.setSpecialList(null);
 
 WM.main();
