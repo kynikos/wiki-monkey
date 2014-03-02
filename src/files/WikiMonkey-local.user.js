@@ -47,6 +47,7 @@
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiSummaryToRelated.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiUpdatePackageTemplates.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiWantedCategories.js
+// @require file:///mnt/archive/Development/wiki-monkey/src/plugins/DeletePages.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ExpandContractions.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/FixBacklinkFragments.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/FixDoubleRedirects.js
@@ -335,6 +336,7 @@ WM.UI.setBot([
     ["ArchWikiUpdatePackageTemplates", "Check packages linked with Pkg/AUR templates and possibly update them", ["update Pkg/AUR templates to reflect new package status"]],
     ["ArchWikiOldAURLinks", "Replace old-style direct AUR package links with Template:AUR", ["replace old-style direct package links with Pkg/AUR templates"]],
     ["ArchWikiWantedCategories", "Create wanted categories", null],
+    ["DeletePages", "Delete pages", "delete page"],
 ]);
 
 WM.main();
