@@ -162,8 +162,12 @@ WM.Interlanguage = new function () {
                 var title = link.title;
                 var api = WM.MW.getWikiUrls(url).api;
 
+                // If this is the first processed page, it's local for sure, so
+                //   query its links in any case. This e.g. prevents the
+                //   application from crashing in case the local page is in a
+                //   language whose language tag is not in the white list
                 // tag is already lower-cased
-                if (whitelist.indexOf(tag) > -1) {
+                if (firstPage || whitelist.indexOf(tag) > -1) {
                     WM.Log.logInfo("Reading " + decodeURI(url) + " ...");
 
                     this.queryLinks(
