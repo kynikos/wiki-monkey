@@ -3,14 +3,14 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.14.6-archwikibot-opera
+// @version 1.14.7-archwikibot-opera
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
 // @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/opera/WikiMonkey-archwikibot-opera.meta.js
 // @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/opera/WikiMonkey-archwikibot-opera.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/1.14.6/src/files/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.14.6/src/files/wiki-monkey-64.png
+// @icon https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/files/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/files/wiki-monkey-64.png
 // @include https://wiki.archlinux.org/*
 // ==/UserScript==
 
@@ -1682,7 +1682,7 @@ WM.Interlanguage = new function () {
     };
 
     this.queryLinks = function (api, queryTitle, title, supportedLangs,
-                                    whitelist, redirects, callEnd, callArgs) {
+                                    whitelist, firstPage, callEnd, callArgs) {
         var query = {
             action: "query",
             prop: "info|revisions",
@@ -1694,9 +1694,9 @@ WM.Interlanguage = new function () {
             sifilteriw: "local",
         }
 
-        // When called by the bot, if the start page is a redirect itself,
-        // it shoudln't be resolved
-        if (redirects) {
+        // When called by the bot, if the start page is a redirect itself, it
+        // shoudln't be resolved
+        if (!firstPage) {
             query.redirects = "1";
         }
 
@@ -1727,8 +1727,7 @@ WM.Interlanguage = new function () {
                     title,
                     supportedLangs,
                     whitelist,
-                    // From now on, redirects can be followed
-                    true,
+                    false,
                     langlinks,
                     iwmap,
                     source,
@@ -1769,7 +1768,7 @@ WM.Interlanguage = new function () {
     };
 
     this.collectLinks = function (visitedlinks, newlinks, supportedLangs,
-                                    whitelist, redirects, callEnd, callArgs) {
+                                    whitelist, firstPage, callEnd, callArgs) {
         for (var tag in newlinks) {
             var link = newlinks[tag];
             break;
@@ -1791,8 +1790,12 @@ WM.Interlanguage = new function () {
                 var title = link.title;
                 var api = WM.MW.getWikiUrls(url).api;
 
+                // If this is the first processed page, it's local for sure, so
+                //   query its links in any case. This e.g. prevents the
+                //   application from crashing in case the local page is in a
+                //   language whose language tag is not in the white list
                 // tag is already lower-cased
-                if (whitelist.indexOf(tag) > -1) {
+                if (firstPage || whitelist.indexOf(tag) > -1) {
                     WM.Log.logInfo("Reading " + decodeURI(url) + " ...");
 
                     this.queryLinks(
@@ -1801,7 +1804,7 @@ WM.Interlanguage = new function () {
                         title,
                         supportedLangs,
                         whitelist,
-                        redirects,
+                        firstPage,
                         WM.Interlanguage._collectLinksContinue,
                         [url, tag, origTag, visitedlinks, newlinks, callEnd,
                                                                     callArgs]
@@ -1817,7 +1820,7 @@ WM.Interlanguage = new function () {
                         title,
                         supportedLangs,
                         whitelist,
-                        redirects,
+                        firstPage,
                         // Don't pass a false value as langlinks because this
                         // link would be interpreted as pointing to a
                         // non-existing article
@@ -1841,7 +1844,7 @@ WM.Interlanguage = new function () {
                     newlinks,
                     supportedLangs,
                     whitelist,
-                    redirects,
+                    firstPage,
                     callEnd,
                     callArgs
                 );
@@ -1853,7 +1856,7 @@ WM.Interlanguage = new function () {
     };
 
     this._collectLinksContinue = function (api, title, supportedLangs,
-                                        whitelist, redirects, langlinks, iwmap,
+                                        whitelist, firstPage, langlinks, iwmap,
                                         source, timestamp, edittoken, args) {
         var url = args[0];
         var tag = args[1];
@@ -1909,7 +1912,7 @@ WM.Interlanguage = new function () {
             newlinks,
             supportedLangs,
             whitelist,
-            redirects,
+            firstPage,
             callEnd,
             callArgs
         );
@@ -5568,7 +5571,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
                 newlinks,
                 supportedLangs,
                 whitelist,
-                true,
+                false,
                 WM.Plugins.SynchronizeInterlanguageLinks.mainEnd,
                 [tag, url, source, langlinks, iwmap, callNext]
             );
@@ -5630,9 +5633,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
             newlinks,
             supportedLangs,
             whitelist,
-            // When called by the bot, if the start page is a redirect itself,
-            // it shoudln't be resolved
-            false,
+            true,
             WM.Plugins.SynchronizeInterlanguageLinks.mainAutoWrite,
             [title, url, tag, summary, callBot]
         );
