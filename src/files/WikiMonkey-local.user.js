@@ -28,11 +28,11 @@
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/Cat.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/Diff.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/Editor.js
+// @require file:///mnt/archive/Development/wiki-monkey/src/modules/Filters.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/Interlanguage.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/Log.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/MW.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/Parser.js
-// @require file:///mnt/archive/Development/wiki-monkey/src/modules/RecentChanges.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/Tables.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/UI.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/WhatLinksHere.js

@@ -25,11 +25,11 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Cat.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Diff.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Editor.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Filters.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Interlanguage.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Log.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/MW.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Parser.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/RecentChanges.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Tables.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/UI.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/WhatLinksHere.js

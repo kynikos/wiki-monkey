@@ -205,12 +205,12 @@ WM.UI = new function () {
             }
             else if (location.href.search(patt3) > -1 || location.href.search(patt4) > -1) {
                 nextNode = document.getElementById('mw-content-text').getElementsByTagName('h4')[0];
-                UI = (recentChanges) ? WM.RecentChanges._makeUI(recentChanges) : null;
+                UI = (recentChanges) ? WM.Filters._makeUI(recentChanges) : null;
                 displayLog = false;
             }
             else if (location.href.search(patt5) > -1 || location.href.search(patt6) > -1) {
                 nextNode = document.getElementById('mw-content-text').getElementsByTagName('ul')[0];
-                UI = (newPages) ? WM.RecentChanges._makeUI(newPages) : null;
+                UI = (newPages) ? WM.Filters._makeUI(newPages) : null;
                 displayLog = false;
             }
             else if (document.getElementsByClassName('mw-spcontent').length > 0) {

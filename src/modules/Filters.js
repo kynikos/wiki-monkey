@@ -18,21 +18,25 @@
  *  along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-WM.RecentChanges = new function () {
+WM.Filters = new function () {
     this._makeUI = function (filters) {
         var divContainer = document.createElement('div');
-        divContainer.id = 'WikiMonkeyRCFilter';
+        divContainer.id = 'WikiMonkeyFilters';
 
-        GM_addStyle("#WikiMonkeyRCFilter-Select, #WikiMonkeyRCFilter-Apply {float:left;} " +
-                    "#WikiMonkeyRCFilter-Select {width:100%; margin-right:-16em;} " +
-                    "#WikiMonkeyRCFilter-Select > p {margin:0 17em 0 0;} " +
-                    "#WikiMonkeyRCFilter-Select > p > select {width:100%;} " +
-                    "#WikiMonkeyRCFilter-Apply > input[type='button'] {margin-right:1em;} " +
-                    "#WikiMonkeyRCFilter-Apply > input[type='checkbox'] {margin-right:0.4em;} " +
-                    "#WikiMonkeyRCFilter-Options {clear:both;}");
+        GM_addStyle("#WikiMonkeyFilters-Select, #WikiMonkeyFilters-Apply " +
+                        "{float:left;} " +
+                    "#WikiMonkeyFilters-Select {width:100%; " +
+                        "margin-right:-16em;} " +
+                    "#WikiMonkeyFilters-Select > p {margin:0 17em 0 0;} " +
+                    "#WikiMonkeyFilters-Select > p > select {width:100%;} " +
+                    "#WikiMonkeyFilters-Apply > input[type='button'] " +
+                        "{margin-right:1em;} " +
+                    "#WikiMonkeyFilters-Apply > input[type='checkbox'] " +
+                        "{margin-right:0.4em;} " +
+                    "#WikiMonkeyFilters-Options {clear:both;}");
 
         var selectFilterDiv = document.createElement('div');
-        selectFilterDiv.id = 'WikiMonkeyRCFilter-Select';
+        selectFilterDiv.id = 'WikiMonkeyFilters-Select';
 
         var selectFilterP = document.createElement('p');
 
@@ -48,9 +52,11 @@ WM.RecentChanges = new function () {
 
         selectFilter.addEventListener("change", (function (filters) {
             return function () {
-                var id = document.getElementById('WikiMonkeyRCFilter-Select').getElementsByTagName('select')[0].selectedIndex;
-                var UI = document.getElementById('WikiMonkeyRCFilter-Options');
-                // [1] Note that this must also be executed immediately, see [2]
+                var id = document.getElementById('WikiMonkeyFilters-Select'
+                            ).getElementsByTagName('select')[0].selectedIndex;
+                var UI = document.getElementById('WikiMonkeyFilters-Options');
+                // [1] Note that this must also be executed immediately,
+                //   see [2]
                 var makeUI = eval("WM.Plugins." + filters[id][0] + ".makeUI");
                 if (makeUI instanceof Function) {
                     UI.replaceChild(makeUI(filters[id][2]), UI.firstChild);
@@ -58,7 +64,8 @@ WM.RecentChanges = new function () {
                 else {
                     // Don't removeChild, otherwise if another plugin with
                     // interface is selected, replaceChild won't work
-                    UI.replaceChild(document.createElement('div'), UI.firstChild);
+                    UI.replaceChild(document.createElement('div'),
+                                                                UI.firstChild);
                 }
             }
         })(filters), false);
@@ -67,13 +74,14 @@ WM.RecentChanges = new function () {
         selectFilterDiv.appendChild(selectFilterP);
 
         var applyFilterDiv = document.createElement('div');
-        applyFilterDiv.id = 'WikiMonkeyRCFilter-Apply';
+        applyFilterDiv.id = 'WikiMonkeyFilters-Apply';
 
         var applyFilter = document.createElement('input');
         applyFilter.type = 'button';
         applyFilter.value = 'Apply filter';
         applyFilter.addEventListener("click", function () {
-            var id = document.getElementById('WikiMonkeyRCFilter-Select').getElementsByTagName('select')[0].selectedIndex;
+            var id = document.getElementById('WikiMonkeyFilters-Select'
+                            ).getElementsByTagName('select')[0].selectedIndex;
             eval("WM.Plugins." + filters[id][0] + ".main")(filters[id][2]);
             this.disabled = true;
         }, false);
@@ -83,8 +91,10 @@ WM.RecentChanges = new function () {
         var showLog = document.createElement('input');
         showLog.type = 'checkbox';
         showLog.addEventListener("change", function () {
-            document.getElementById('WikiMonkeyLog').style.display = (this.checked) ? 'block' : 'none';
-            document.getElementById('WikiMonkeyRCFilter').style.marginBottom = (this.checked) ? '1em' : '0';
+            document.getElementById('WikiMonkeyLog').style.display =
+                                            (this.checked) ? 'block' : 'none';
+            document.getElementById('WikiMonkeyFilters').style.marginBottom =
+                                                (this.checked) ? '1em' : '0';
         }, false);
 
         applyFilterDiv.appendChild(showLog);
@@ -95,7 +105,7 @@ WM.RecentChanges = new function () {
         applyFilterDiv.appendChild(showLogLabel);
 
         var divFilter = document.createElement('div');
-        divFilter.id = "WikiMonkeyRCFilter-Options";
+        divFilter.id = "WikiMonkeyFilters-Options";
 
         // [2] Note that this is also executed onchange, see [1]
         var makeUI = eval("WM.Plugins." + filters[0][0] + ".makeUI");
