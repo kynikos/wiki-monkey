@@ -23,18 +23,59 @@ WM.Log = new function () {
         var log = document.createElement('div');
         log.id = 'WikiMonkeyLog';
 
-        GM_addStyle("#WikiMonkeyLog {height:10em; border:2px solid #07b; padding:0.5em; overflow:auto; resize:vertical; background-color:#111;} " +
-                    "#WikiMonkeyLog p.timestamp, #WikiMonkeyLog p.message {border:none; padding:0; font-family:monospace; color:#eee;} " +
-                    "#WikiMonkeyLog p.timestamp {float:left; width:5em; margin:0 -5em 0 0; font-size:0.9em;} " +
-                    "#WikiMonkeyLog p.message {margin:0 0 0.5em 5em;} " +
-                    "#WikiMonkeyLog p.mdebug {color:cyan;} " +
+        var par = document.createElement('p');
+
+        var filter = document.createElement('input');
+        filter.type = 'checkbox';
+        par.appendChild(filter);
+
+        filter.addEventListener("change", function () {
+            var value = (this.checked) ? 'none' : 'block';
+
+            // Change currentInfoDisplayState *before* the loop, to prevent
+            // race bugs
+            WM.Log.currentInfoDisplayState = value;
+
+            var msgs = document.getElementById('WikiMonkeyLogArea'
+                                            ).getElementsByClassName('minfo');
+
+            for (var m = 0; m < msgs.length; m++) {
+                msgs[m].style.display = value;
+            }
+        }, false);
+
+        var label = document.createElement('span');
+        label.innerHTML = 'Hide info messages';
+        par.appendChild(label);
+
+        log.appendChild(par);
+
+        var logarea = document.createElement('div');
+        logarea.id = 'WikiMonkeyLogArea';
+        log.appendChild(logarea);
+
+        GM_addStyle("#WikiMonkeyLogArea {height:10em; " +
+                        "border:2px solid #07b; padding:0.5em; " +
+                        "overflow:auto; resize:vertical; " +
+                        "background-color:#111;} " +
+                    "#WikiMonkeyLogArea p.timestamp, " +
+                        "#WikiMonkeyLog p.message {border:none; padding:0; " +
+                        "font-family:monospace; color:#eee;} " +
+                    "#WikiMonkeyLogArea p.timestamp {float:left; width:5em; " +
+                        "margin:0 -5em 0 0; font-size:0.9em;} " +
+                    "#WikiMonkeyLogArea p.message {margin:0 0 0.5em 5em;} " +
+                    "#WikiMonkeyLogArea div.mdebug p.message {color:cyan;} " +
+                    "#WikiMonkeyLogArea div.minfo p.message {} " +
                     // The .warning and .error classes are already used by
                     // MediaWiki, without associating them with an id and a tag
-                    "#WikiMonkeyLog p.mwarning {color:gold;} " +
-                    "#WikiMonkeyLog p.merror {color:red;}");
+                    "#WikiMonkeyLogArea div.mwarning p.message " +
+                        "{color:gold;} " +
+                    "#WikiMonkeyLogArea div.merror p.message {color:red;}");
 
         return log;
     };
+
+    this.currentInfoDisplayState = 'block';
 
     var appendMessage = function (text, type) {
         var tstamp = document.createElement('p');
@@ -43,7 +84,7 @@ WM.Log = new function () {
         tstamp.innerHTML = now.toLocaleTimeString();
 
         var msg = document.createElement('p');
-        msg.className = 'message' + ((type) ? " " + type : "");
+        msg.className = 'message';
         // Do not allow the empty string, otherwise the resulting html element
         // may not be rendered by the browser
         msg.innerHTML = (text) ? text : " ";
@@ -51,8 +92,13 @@ WM.Log = new function () {
         var line = document.createElement('div');
         line.appendChild(tstamp);
         line.appendChild(msg);
+        line.className = type;
 
-        var log = document.getElementById('WikiMonkeyLog');
+        if (type == 'minfo') {
+            line.style.display = WM.Log.currentInfoDisplayState;
+        }
+
+        var log = document.getElementById('WikiMonkeyLogArea');
 
         test = log.scrollTop + log.clientHeight == log.scrollHeight;
 
@@ -68,7 +114,7 @@ WM.Log = new function () {
     };
 
     this.logInfo = function (text) {
-        appendMessage(text);
+        appendMessage(text, 'minfo');
     };
 
     this.logWarning = function (text) {
