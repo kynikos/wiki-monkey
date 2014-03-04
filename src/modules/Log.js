@@ -20,14 +20,45 @@
 
 WM.Log = new function () {
     this._makeLogArea = function () {
+        GM_addStyle("#WikiMonkeyLog-Save {margin-left:0.5em;}" +
+                    "#WikiMonkeyLogArea {height:10em; " +
+                        "border:2px solid #07b; padding:0.5em; " +
+                        "overflow:auto; resize:vertical; " +
+                        "background-color:#111;} " +
+                    "#WikiMonkeyLogArea p.timestamp, " +
+                        "#WikiMonkeyLog p.message {border:none; padding:0; " +
+                        "font-family:monospace; color:#eee;} " +
+                    "#WikiMonkeyLogArea p.timestamp {float:left; width:5em; " +
+                        "margin:0 -5em 0 0; font-size:0.9em;} " +
+                    "#WikiMonkeyLogArea p.message {margin:0 0 0.5em 5em;} " +
+                    "#WikiMonkeyLogArea div.mdebug p.message {color:cyan;} " +
+                    "#WikiMonkeyLogArea div.minfo {} " +
+                    // The .warning and .error classes are already used by
+                    // MediaWiki, without associating them with an id and a tag
+                    "#WikiMonkeyLogArea div.mwarning p.message " +
+                        "{color:gold;} " +
+                    "#WikiMonkeyLogArea div.merror p.message {color:red;}");
+
         var log = document.createElement('div');
         log.id = 'WikiMonkeyLog';
 
         var par = document.createElement('p');
+        par.appendChild(makeFilterCheckbox());
+        log.appendChild(par);
+
+        var logarea = document.createElement('div');
+        logarea.id = 'WikiMonkeyLogArea';
+        log.appendChild(logarea);
+
+        return log;
+    };
+
+    var makeFilterCheckbox = function () {
+        var span = document.createElement('span');
 
         var filter = document.createElement('input');
         filter.type = 'checkbox';
-        par.appendChild(filter);
+        span.appendChild(filter);
 
         filter.addEventListener("change", function () {
             var value = (this.checked) ? 'none' : 'block';
@@ -50,33 +81,10 @@ WM.Log = new function () {
 
         var label = document.createElement('span');
         label.innerHTML = 'Hide info messages';
-        par.appendChild(label);
+        span.appendChild(label);
 
-        log.appendChild(par);
+        return span;
 
-        var logarea = document.createElement('div');
-        logarea.id = 'WikiMonkeyLogArea';
-        log.appendChild(logarea);
-
-        GM_addStyle("#WikiMonkeyLogArea {height:10em; " +
-                        "border:2px solid #07b; padding:0.5em; " +
-                        "overflow:auto; resize:vertical; " +
-                        "background-color:#111;} " +
-                    "#WikiMonkeyLogArea p.timestamp, " +
-                        "#WikiMonkeyLog p.message {border:none; padding:0; " +
-                        "font-family:monospace; color:#eee;} " +
-                    "#WikiMonkeyLogArea p.timestamp {float:left; width:5em; " +
-                        "margin:0 -5em 0 0; font-size:0.9em;} " +
-                    "#WikiMonkeyLogArea p.message {margin:0 0 0.5em 5em;} " +
-                    "#WikiMonkeyLogArea div.mdebug p.message {color:cyan;} " +
-                    "#WikiMonkeyLogArea div.minfo p.message {} " +
-                    // The .warning and .error classes are already used by
-                    // MediaWiki, without associating them with an id and a tag
-                    "#WikiMonkeyLogArea div.mwarning p.message " +
-                        "{color:gold;} " +
-                    "#WikiMonkeyLogArea div.merror p.message {color:red;}");
-
-        return log;
     };
 
     this.currentInfoDisplayState = 'block';
