@@ -31,6 +31,7 @@ WM.Log = new function () {
                     "#WikiMonkeyLogArea p.timestamp {float:left; width:5em; " +
                         "margin:0 -5em 0 0; font-size:0.9em;} " +
                     "#WikiMonkeyLogArea p.message {margin:0 0 0.5em 5em;} " +
+                    "#WikiMonkeyLogArea div.mhidden {display:none;} " +
                     "#WikiMonkeyLogArea div.mdebug p.message {color:cyan;} " +
                     "#WikiMonkeyLogArea div.minfo {} " +
                     // The .warning and .error classes are already used by
@@ -174,6 +175,10 @@ WM.Log = new function () {
         if (test) {
             scrollToBottom();
         }
+    };
+
+    this.logHidden = function (text) {
+        appendMessage(text, 'mhidden');
     };
 
     this.logDebug = function (text) {
