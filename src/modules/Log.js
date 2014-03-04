@@ -44,6 +44,7 @@ WM.Log = new function () {
 
         var par = document.createElement('p');
         par.appendChild(makeFilterCheckbox());
+        par.appendChild(makeSaveLink());
         log.appendChild(par);
 
         var logarea = document.createElement('div');
@@ -84,7 +85,56 @@ WM.Log = new function () {
         span.appendChild(label);
 
         return span;
+    };
 
+    var makeSaveLink = function () {
+        var link = document.createElement('a');
+        link.href = '#';
+        link.download = 'WikiMonkey.log';
+        link.innerHTML = '[save log]';
+        link.id = 'WikiMonkeyLog-Save';
+
+        link.addEventListener("click", function () {
+            link.href = 'data:text/plain;charset=utf-8,' +
+                                    encodeURIComponent(composeSaveLogText());
+            link.download = composeSaveLogFilename();
+        }, false);
+
+        return link;
+    };
+
+    var classesToLevels = {'mhidden': 'HDN',
+                           'mdebug': 'DBG',
+                           'minfo': 'INF',
+                           'mwarning': 'WRN',
+                           'merror': 'ERR'};
+
+    var composeSaveLogText = function () {
+        var log = document.getElementById('WikiMonkeyLogArea');
+        var divs = log.getElementsByTagName('div');
+        var text = '';
+
+        for (var d = 0; d < divs.length; d++) {
+            var div = divs[d];
+            var ps = div.getElementsByTagName('p');
+            var tstamp = ps[0].innerHTML;
+            var level = classesToLevels[div.className];
+            var message = ps[1].innerHTML;
+
+            text += tstamp + '\t' + level + '\t' + message + '\n';
+        }
+
+        return text;
+    };
+
+    var composeSaveLogFilename = function () {
+        var date = new Date();
+        return 'WikiMonkey-' + date.getFullYear() +
+                        Alib.Str.padLeft(String(date.getMonth()), '0', 2) +
+                        Alib.Str.padLeft(String(date.getDate()), '0', 2) +
+                        Alib.Str.padLeft(String(date.getHours()), '0', 2) +
+                        Alib.Str.padLeft(String(date.getMinutes()), '0', 2) +
+                        '.log';
     };
 
     this.currentInfoDisplayState = 'block';
