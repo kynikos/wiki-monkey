@@ -42,6 +42,10 @@ WM.Log = new function () {
             for (var m = 0; m < msgs.length; m++) {
                 msgs[m].style.display = value;
             }
+
+            if (!this.checked) {
+                scrollToBottom();
+            }
         }, false);
 
         var label = document.createElement('span');
@@ -77,6 +81,11 @@ WM.Log = new function () {
 
     this.currentInfoDisplayState = 'block';
 
+    var scrollToBottom = function () {
+        var log = document.getElementById('WikiMonkeyLogArea');
+        log.scrollTop = log.scrollHeight - log.clientHeight;
+    };
+
     var appendMessage = function (text, type) {
         var tstamp = document.createElement('p');
         tstamp.className = 'timestamp';
@@ -100,12 +109,12 @@ WM.Log = new function () {
 
         var log = document.getElementById('WikiMonkeyLogArea');
 
-        test = log.scrollTop + log.clientHeight == log.scrollHeight;
+        var test = log.scrollTop + log.clientHeight == log.scrollHeight;
 
         log.appendChild(line);
 
         if (test) {
-            log.scrollTop = log.scrollHeight - log.clientHeight;
+            scrollToBottom();
         }
     };
 
