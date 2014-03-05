@@ -44,7 +44,7 @@ WM.Log = new function () {
         log.id = 'WikiMonkeyLog';
 
         var par = document.createElement('p');
-        par.appendChild(makeFilterCheckbox());
+        par.appendChild(makeFilterLink());
         par.appendChild(makeSaveLink());
         log.appendChild(par);
 
@@ -55,37 +55,28 @@ WM.Log = new function () {
         return log;
     };
 
-    var makeFilterCheckbox = function () {
-        var span = document.createElement('span');
+    var makeFilterLink = function () {
+        var link = document.createElement('a');
+        link.href = '#WikiMonkey';
+        link.innerHTML = computeFilterLinkAnchor();
 
-        var filter = document.createElement('input');
-        filter.type = 'checkbox';
-        span.appendChild(filter);
-
-        filter.addEventListener("change", function () {
-            var value = (this.checked) ? 'none' : 'block';
-
-            // Change currentInfoDisplayState *before* the loop, to prevent
+        link.addEventListener("click", function () {
+            // Change _currentInfoDisplayState *before* the loop, to prevent
             // race bugs
-            WM.Log.currentInfoDisplayState = value;
+            WM.Log._currentInfoDisplayState = !WM.Log._currentInfoDisplayState;
+            this.innerHTML = computeFilterLinkAnchor();
 
             var msgs = document.getElementById('WikiMonkeyLogArea'
                                             ).getElementsByClassName('minfo');
 
             for (var m = 0; m < msgs.length; m++) {
-                msgs[m].style.display = value;
+                msgs[m].style.display = computeInfoDisplayStyle();
             }
 
-            if (!this.checked) {
-                scrollToBottom();
-            }
+            scrollToBottom();
         }, false);
 
-        var label = document.createElement('span');
-        label.innerHTML = 'Hide info messages';
-        span.appendChild(label);
-
-        return span;
+        return link;
     };
 
     var makeSaveLink = function () {
@@ -138,7 +129,16 @@ WM.Log = new function () {
                         '.log';
     };
 
-    this.currentInfoDisplayState = 'block';
+    this._currentInfoDisplayState = true;
+
+    var computeInfoDisplayStyle = function () {
+        return (WM.Log._currentInfoDisplayState) ? 'block' : 'none';
+    };
+
+    var computeFilterLinkAnchor = function () {
+        return (WM.Log._currentInfoDisplayState) ? '[hide info messages]' :
+                                                        '[show info messages]';
+    };
 
     var scrollToBottom = function () {
         var log = document.getElementById('WikiMonkeyLogArea');
@@ -163,7 +163,7 @@ WM.Log = new function () {
         line.className = type;
 
         if (type == 'minfo') {
-            line.style.display = WM.Log.currentInfoDisplayState;
+            line.style.display = computeInfoDisplayStyle();
         }
 
         var log = document.getElementById('WikiMonkeyLogArea');
