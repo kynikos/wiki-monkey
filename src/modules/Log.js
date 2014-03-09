@@ -20,8 +20,7 @@
 
 WM.Log = new function () {
     this._makeLogArea = function () {
-        GM_addStyle("#WikiMonkeyLog-Save {margin-left:0.5em;}" +
-                    "#WikiMonkeyLogArea {height:10em; " +
+        GM_addStyle("#WikiMonkeyLogArea {height:10em; " +
                         "border:2px solid #07b; padding:0.5em; " +
                         "overflow:auto; resize:vertical; " +
                         "background-color:#111;} " +
@@ -45,6 +44,7 @@ WM.Log = new function () {
 
         var par = document.createElement('p');
         par.appendChild(makeFilterLink());
+        par.appendChild(document.createTextNode(' '));
         par.appendChild(makeSaveLink());
         log.appendChild(par);
 
