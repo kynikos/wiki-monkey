@@ -23,7 +23,10 @@ WM.Plugins.ArchWikiNPFilter = new function () {
         GM_addStyle("#mw-content-text > h5 {background-color:#afa;}");
 
         var contentDiv = document.getElementById('mw-content-text');
-        var liList = Alib.DOM.getChildrenByTagName(contentDiv.lastChild, 'li');
+        var ul = Alib.DOM.getChildrenByTagName(contentDiv, 'ul')[0];
+        var liList = Alib.DOM.getChildrenByTagName(ul, 'li');
+        var insertMark = ul.nextSibling;
+        console.debug(JSON.stringify(insertMark));
 
         for (var liNum in liList) {
             var li = liList[liNum];
@@ -33,6 +36,7 @@ WM.Plugins.ArchWikiNPFilter = new function () {
                     var title = links[i].title;
                     WM.Plugins.ArchWikiNPFilter.moveArticle(params,
                                                             contentDiv,
+                                                            insertMark,
                                                             li,
                                                             title);
                     break;
@@ -43,7 +47,7 @@ WM.Plugins.ArchWikiNPFilter = new function () {
         WM.Log.logInfo("Grouped articles by language");
     };
 
-    this.moveArticle = function (params, contentDiv, li, title) {
+    this.moveArticle = function (params, contentDiv, insertMark, li, title) {
         var lang = WM.ArchWiki.detectLanguage(title);
         var pureTitle = lang[0];
         var language = lang[1];
@@ -63,8 +67,8 @@ WM.Plugins.ArchWikiNPFilter = new function () {
                 var langH = document.createElement('h5');
                 langH.innerHTML = language;
                 var ul = document.createElement('ul');
-                contentDiv.appendChild(langH);
-                contentDiv.appendChild(ul);
+                contentDiv.insertBefore(langH, insertMark);
+                contentDiv.insertBefore(ul, insertMark);
                 ul.appendChild(li);
             }
         }
