@@ -1,10 +1,14 @@
 #!/bin/bash
 
 # Creates symlinks in the scriptish profile path pointing into WM git tree
+#
 # Note: 'extensions.scriptish.cache.enabled' needs to be 'false' for this to work,
 # see https://github.com/scriptish/scriptish/wiki/Manual%3A-Preferences#wiki-boolean-extensionsscriptishcacheenabled--new-in-scriptish
 #
-# usage: scriptish-local-hack.sh <scriptish_profile> <WM_git_path> <Alib_git_path>
+# Warning: it is not possible to detect if some file was added/renamed/deleted in the WM git
+# tree, in such cases it will be necessary to reinstall WM and re-run this script.
+#
+# usage: scriptish-dynamic-local-cache.sh <scriptish_profile> <WM_git_path> <Alib_git_path>
 #   <scriptish_profile> is usually ~/.mozilla/firefox/<profile_dir>/scriptish_scripts/wiki-monkey-local
 
 function link_from_path() {
