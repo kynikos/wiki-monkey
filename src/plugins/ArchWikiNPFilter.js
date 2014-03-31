@@ -23,10 +23,9 @@ WM.Plugins.ArchWikiNPFilter = new function () {
         GM_addStyle("#mw-content-text > h5 {background-color:#afa;}");
 
         var contentDiv = document.getElementById('mw-content-text');
-        var ul = Alib.DOM.getChildrenByTagName(contentDiv, 'ul')[0];
+        var ul = contentDiv.getElementsByTagName('ul')[0];
         var liList = Alib.DOM.getChildrenByTagName(ul, 'li');
         var insertMark = ul.nextSibling;
-        console.debug(JSON.stringify(insertMark));
 
         for (var liNum in liList) {
             var li = liList[liNum];
