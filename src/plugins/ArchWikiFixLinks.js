@@ -73,10 +73,29 @@ WM.Plugins.ArchWikiFixLinks = new function () {
         // Official package links -> Pkg template
 
         var re = /\[https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s]+?)\/? +(.+?)?\]/ig;
-        var groups = re.exec(txt);
-        if (groups && groups[1] == groups[2]) {
-            txt = txt.replace(re, '{{Pkg|$1}}');
+        var newText = '';
+        var prevId = 0;
+
+        while (true) {
+            var match = re.exec(txt);
+
+            if (match) {
+                // Don't join these two conditions
+                if (match[1] == match[2]) {
+                    var L = match[0].length;
+                    newText += txt.substring(prevId, re.lastIndex - L) +
+                                                    '{{Pkg|' + match[1] + '}}';
+
+                    prevId = re.lastIndex;
+                }
+            }
+            else {
+                break;
+            }
         }
+
+        newText += txt.substr(prevId);
+        txt = newText;
 
         re = /\[https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s]+?)\/?\]/ig;
         txt = txt.replace(re, '{{Pkg|$1}}');
@@ -94,10 +113,29 @@ WM.Plugins.ArchWikiFixLinks = new function () {
         // AUR package links -> AUR template
 
         var re = /\[https?:\/\/aur\.archlinux\.org\/packages\/([^\s]+?)\/? +(.+?)?\]/ig;
-        var groups = re.exec(txt);
-        if (groups && groups[1] == groups[2]) {
-            txt = txt.replace(re, '{{AUR|$1}}');
+        var newText = '';
+        var prevId = 0;
+
+        while (true) {
+            var match = re.exec(txt);
+
+            if (match) {
+                // Don't join these two conditions
+                if (match[1] == match[2]) {
+                    var L = match[0].length;
+                    newText += txt.substring(prevId, re.lastIndex - L) +
+                                                    '{{AUR|' + match[1] + '}}';
+
+                    prevId = re.lastIndex;
+                }
+            }
+            else {
+                break;
+            }
         }
+
+        newText += txt.substr(prevId);
+        txt = newText;
 
         re = /\[https?:\/\/aur\.archlinux\.org\/packages\/([^\s]+?)\/?\]/ig;
         txt = txt.replace(re, '{{AUR|$1}}');
@@ -116,10 +154,29 @@ WM.Plugins.ArchWikiFixLinks = new function () {
         // Bug links -> Bug template
 
         var re = /\[https?:\/\/bugs\.archlinux\.org\/task\/([^\s]+?)\/? +(.+?)?\]/ig;
-        var groups = re.exec(txt);
-        if (groups && groups[1] == groups[2]) {
-            txt = txt.replace(re, '{{Bug|$1}}');
+        var newText = '';
+        var prevId = 0;
+
+        while (true) {
+            var match = re.exec(txt);
+
+            if (match) {
+                // Don't join these two conditions
+                if (match[1] == match[2]) {
+                    var L = match[0].length;
+                    newText += txt.substring(prevId, re.lastIndex - L) +
+                                                    '{{Bug|' + match[1] + '}}';
+
+                    prevId = re.lastIndex;
+                }
+            }
+            else {
+                break;
+            }
         }
+
+        newText += txt.substr(prevId);
+        txt = newText;
 
         re = /\[https?:\/\/bugs\.archlinux\.org\/task\/([^\s]+?)\/?\]/ig;
         txt = txt.replace(re, '{{Bug|$1}}');
