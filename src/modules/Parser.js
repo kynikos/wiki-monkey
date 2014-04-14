@@ -96,14 +96,18 @@ WM.Parser = new function () {
         }
         else {
             // Behavior switches aren't case-sensitive
-            regExp = /__(TOC|NOTOC|FORCETOC|NOEDITSECTION|NEWSECTIONLINK|NONEWSECTIONLINK|NOGALLERY|HIDDENCAT|NOCONTENTCONVERT|NOCC|NOTITLECONVERT|NOTC|INDEX|NOINDEX|STATICREDIRECT|START|END)__/gi;
+            regExp = new RegExp("__(TOC|NOTOC|FORCETOC|NOEDITSECTION|" +
+                    "NEWSECTIONLINK|NONEWSECTIONLINK|NOGALLERY|HIDDENCAT|" +
+                    "NOCONTENTCONVERT|NOCC|NOTITLECONVERT|NOTC|INDEX|" +
+                    "NOINDEX|STATICREDIRECT|START|END)__", "gi");
         }
         return Alib.RegEx.matchAll(source, regExp);
     };
 
     this.findSectionLinks = function (source) {
         source = this.neutralizeNowikiTags(source);
-        var regExp = /\[\[:?[ _]*:?[ _]*#(.+?)(?:[ _]*\|[_\s]*(.+?)[_\s]*)?[ _]*\]\]/g;
+        var regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*#(.+?)" +
+                        "(?:[ _]*\\|[_\\s]*(.+?)[_\\s]*)?[ _]*\\]\\]", "g");
         return Alib.RegEx.matchAll(source, regExp);
     }
 
@@ -152,7 +156,9 @@ WM.Parser = new function () {
                                     ")[ _]*\\]\\]", "g");
         }
         else {
-            regExp = /\[\[:?[ _]*:?[ _]*((?:([^\]]+?)[ _]*:[ _]*)?((.+?)(?:[ _]*#(.+?))?)(?:[ _]*\|[_\s]*(.+?)[_\s]*)?)[ _]*\]\]/g;
+            regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*((?:([^\\]]+?)" +
+                        "[ _]*:[ _]*)?((.+?)(?:[ _]*#(.+?))?)" +
+                        "(?:[ _]*\\|[_\\s]*(.+?)[_\\s]*)?)[ _]*\\]\\]", "g");
         }
         return Alib.RegEx.matchAll(source, regExp);
     };
