@@ -32,13 +32,50 @@ WM.Parser = new function () {
         // Empty nowiki tags (<nowiki></nowiki>) must be neutralized as well,
         //   otherwise Tampermonkey will hang, see also
         //   https://github.com/kynikos/wiki-monkey/issues/133
-        // [.\s] doesn't work; (?:.|\s) would work instead, but [\s\S] is best
-        var tags = Alib.RegEx.matchAll(source, /<nowiki>[\s\S]*?<\/nowiki>/gi);
-        for (var t in tags) {
-            var filler = Alib.Str.padRight("", "x", tags[t].length);
-            source = Alib.Str.overwriteAt(source, filler, tags[t].index);
+        // Note that the concept of "nesting" doesn't make sense with <nowiki>
+        //   tags, so do *not* use Alib.Str.findEnclosures
+        var newText = "";
+        var index = 0;
+        var oIndex = source.search(/<nowiki>/i);
+
+        // 8 is the length of <nowiki>; 9 is the length of </nowiki>
+        while (true) {
+            if (oIndex > -1) {
+                oIndex += index;
+                newText += source.substring(index, oIndex);
+                var cIndex = source.substr(oIndex + 8).search(/<\/nowiki>/i);
+
+                if (cIndex > -1) {
+                    cIndex += oIndex + 8;
+                    var L = source.substring(oIndex, cIndex).length;
+                    newText += Alib.Str.padRight("", "x", L + 9);
+                    index = cIndex + 9;
+
+                    if (index < source.length) {
+                        oIndex = source.substr(index).search(/<nowiki>/i);
+                        continue;
+                    }
+                    else {
+                        break;
+                    }
+                }
+                else {
+                    // If a <nowiki> tag is left open (no closing tag is
+                    //   found), it does its job until the end of the text
+                    // This also neutralizes the final \n, but it shouldn't
+                    //   matter
+                    var L = source.substring(oIndex).length;
+                    newText += Alib.Str.padRight("", "x", L);
+                    break;
+                }
+            }
+            else {
+                newText += source.substring(index);
+                break;
+            }
         }
-        return source;
+
+        return newText;
     };
 
     this.dotEncode = function (text) {
