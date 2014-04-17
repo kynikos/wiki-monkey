@@ -154,7 +154,7 @@ WM.UI.setSpecial([
             keepAltName: true,
             showIndices: true,
             rightToLeft: false},
-           {page: "Table of Contents (Español)",
+           {page: "Table of contents (Español)",
             root: "Category:Español",
             alsoIn: "también en",
             indentType: ":",
