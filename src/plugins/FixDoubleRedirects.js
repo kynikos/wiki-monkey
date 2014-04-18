@@ -38,7 +38,8 @@ WM.Plugins.FixDoubleRedirects = new function () {
 
         results.reverse();
 
-        WM.Plugins.FixDoubleRedirects.iterateList(results, namespaces, [summary, callNext]);
+        WM.Plugins.FixDoubleRedirects.iterateList(results, namespaces,
+                                                        [summary, callNext]);
     };
 
     this.iterateList = function (results, namespaces, args) {
@@ -49,8 +50,8 @@ WM.Plugins.FixDoubleRedirects = new function () {
 
         if (page) {
             WM.MW.callQueryEdit(page.title,
-                                WM.Plugins.FixDoubleRedirects.processPage,
-                                [page, results, namespaces, summary, callNext]);
+                            WM.Plugins.FixDoubleRedirects.processPage,
+                            [page, results, namespaces, summary, callNext]);
         }
         else {
             WM.Log.logInfo("Fixed double redirects");
@@ -90,24 +91,26 @@ WM.Plugins.FixDoubleRedirects = new function () {
 
             if (newtext != source) {
                 WM.MW.callAPIPost({action: "edit",
-                                   bot: "1",
-                                   title: title,
-                                   summary: summary,
-                                   text: newtext,
-                                   b1asetimestamp: timestamp,
-                                   token: edittoken},
-                                   null,
-                                   WM.Plugins.FixDoubleRedirects.processPageEnd,
-                                   [results, namespaces, summary, callNext]);
+                               bot: "1",
+                               title: title,
+                               summary: summary,
+                               text: newtext,
+                               b1asetimestamp: timestamp,
+                               token: edittoken},
+                               null,
+                               WM.Plugins.FixDoubleRedirects.processPageEnd,
+                               [results, namespaces, summary, callNext]);
             }
             else {
                 WM.Log.logWarning("Couldn't fix " + title);
-                WM.Plugins.FixDoubleRedirects.iterateList(results, namespaces, [summary, callNext]);
+                WM.Plugins.FixDoubleRedirects.iterateList(results, namespaces,
+                                                        [summary, callNext]);
             }
         }
         else {
             WM.Log.logWarning("Couldn't fix " + title);
-            WM.Plugins.FixDoubleRedirects.iterateList(results, namespaces, [summary, callNext]);
+            WM.Plugins.FixDoubleRedirects.iterateList(results, namespaces,
+                                                        [summary, callNext]);
         }
     };
 
@@ -118,10 +121,12 @@ WM.Plugins.FixDoubleRedirects = new function () {
         var callNext = args[3];
 
         if (res.edit && res.edit.result == 'Success') {
-            WM.Plugins.FixDoubleRedirects.iterateList(results, namespaces, [summary, callNext]);
+            WM.Plugins.FixDoubleRedirects.iterateList(results, namespaces,
+                                                        [summary, callNext]);
         }
         else {
-            WM.Log.logError(res['error']['info'] + " (" + res['error']['code'] + ")");
+            WM.Log.logError(res['error']['info'] +
+                                            " (" + res['error']['code'] + ")");
         }
     };
 };

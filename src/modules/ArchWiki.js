@@ -111,7 +111,8 @@ WM.ArchWiki = new function () {
     };
 
     this.getInterwikiLanguages = function () {
-        return languages.interlanguage.external.concat(languages.interlanguage.internal);
+        return languages.interlanguage.external.concat(
+                                            languages.interlanguage.internal);
     };
 
     this.isInterwikiLanguage = function (lang) {
@@ -134,10 +135,12 @@ WM.ArchWiki = new function () {
         var matches = title.match(/^(.+?)([ _]\(([^\(]+)\))?$/);
         var detectedLanguage = matches[3];
         var pureTitle;
-        if (!detectedLanguage || !WM.ArchWiki.isCategoryLanguage(detectedLanguage)) {
+        if (!detectedLanguage || !WM.ArchWiki.isCategoryLanguage(
+                                                        detectedLanguage)) {
             // Language categories are exceptions
             var testLangCat = matches[1].match(/^ *[Cc]ategory *: *(.+?) *$/);
-            if (testLangCat && WM.ArchWiki.isCategoryLanguage(testLangCat[1])) {
+            if (testLangCat && WM.ArchWiki.isCategoryLanguage(
+                                                            testLangCat[1])) {
                 detectedLanguage = testLangCat[1];
                 pureTitle = matches[1];
             }
@@ -154,11 +157,13 @@ WM.ArchWiki = new function () {
 
     this.findAllInterlanguageLinks = function (source) {
         // See also WM.Parser.findInterlanguageLinks!!!
-        return WM.Parser.findSpecialLinks(source, this.getInterwikiLanguages().join("|"));
+        return WM.Parser.findSpecialLinks(source,
+                                    this.getInterwikiLanguages().join("|"));
     };
 
     this.findInternalInterlanguageLinks = function (source) {
         // See also WM.Parser.findInterlanguageLinks!!!
-        return WM.Parser.findSpecialLinks(source, this.getInternalInterwikiLanguages().join("|"));
+        return WM.Parser.findSpecialLinks(source,
+                            this.getInternalInterwikiLanguages().join("|"));
     };
 };

@@ -35,7 +35,8 @@ WM.Plugins.ArchWikiFixHeader = new function () {
 
         // DISPLAYTITLE and Template:Lowercase_title
         var displaytitle = WM.Parser.findVariables(content, "DISPLAYTITLE");
-        var lowercasetitle = WM.Parser.findTemplates(content, "Lowercase title");
+        var lowercasetitle = WM.Parser.findTemplates(content,
+                                                            "Lowercase title");
         var titlemods = displaytitle.concat(lowercasetitle);
         titlemods.sort(function (a, b) {
             return a.index - b.index;
@@ -61,7 +62,9 @@ WM.Plugins.ArchWikiFixHeader = new function () {
             var dlct = (dt.index < lct.index) ? "{{Lowercase title}}" : "{{DISPLAYTITLE:" + dt.match[3] + "}}";
         }
         if (displaytitle.length || lowercasetitle.length) {
-            WM.Log.logWarning("Found multiple instances of {{DISPLAYTITLE:...}} or {{Lowercase title}}: only the last one has been used, the others have been deleted");
+            WM.Log.logWarning("Found multiple instances of " +
+                "{{DISPLAYTITLE:...}} or {{Lowercase title}}: only the last " +
+                "one has been used, the others have been deleted");
         }
 
         // Behavior switches
@@ -79,10 +82,13 @@ WM.Plugins.ArchWikiFixHeader = new function () {
                     bslist.push(behaviorswitches[b].match[0]);
                 }
                 else {
-                    WM.Log.logWarning("Removed duplicate of " + behaviorswitches[b].match[0]);
+                    WM.Log.logWarning("Removed duplicate of " +
+                                                behaviorswitches[b].match[0]);
                 }
-                tempcontent += content.substring(contentId, behaviorswitches[b].index);
-                contentId = behaviorswitches[b].index + behaviorswitches[b].length;
+                tempcontent += content.substring(contentId,
+                                                    behaviorswitches[b].index);
+                contentId = behaviorswitches[b].index +
+                                                    behaviorswitches[b].length;
             }
         }
         tempcontent += content.substring(contentId);
@@ -114,7 +120,8 @@ WM.Plugins.ArchWikiFixHeader = new function () {
             var cattext = "Category:" + cleantitle;
             var catlink = "[[" + cattext + ((cat.match[6]) ? "|" + cat.match[6] : "") + "]]";
             if (language != catlang) {
-                WM.Log.logWarning(cattext + " belongs to a different language than the one of the title (" + language + ")");
+                WM.Log.logWarning(cattext + " belongs to a different " +
+                    "language than the one of the title (" + language + ")");
             }
             if (catlist.indexOf(cattext) < 0) {
                 catlist.push(cattext);
@@ -146,8 +153,8 @@ WM.Plugins.ArchWikiFixHeader = new function () {
             if (link.match[6]) {
                 WM.Log.logWarning(link.match[0] + " contains an alternative text, but it doesn't make sense in interlanguage links and will be removed");
             }
-            // Applying WM.Parser.squashContiguousWhitespace is dangerous here because
-            // we don't know how the target server handles whitespace
+            // Applying WM.Parser.squashContiguousWhitespace is dangerous here
+            //   because we don't know how the target server handles whitespace
             var linktitle = link.match[4];
             var linklang = link.match[2];
             var linktext = linklang + ":" + linktitle;

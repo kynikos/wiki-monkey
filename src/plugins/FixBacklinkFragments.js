@@ -20,9 +20,12 @@
 
 WM.Plugins.FixBacklinkFragments = new function () {
     var fixLinks = function (source, target, sections) {
-        // Note that it's impossible to recognize any namespaces in the title without querying the server
-        // Alternatively, a list of the known namespaces could be maintained for each wiki
-        // Recognizing namespaces would let recognize more liberal link syntaxes (e.g. spaces around the colon)
+        // Note that it's impossible to recognize any namespaces in the title
+        //   without querying the server
+        // Alternatively, a list of the known namespaces could be maintained
+        //   for each wiki
+        // Recognizing namespaces would let recognize more liberal link
+        //   syntaxes (e.g. spaces around the colon)
         var links = WM.Parser.findInternalLinks(source, null, target);
 
         var newText = "";
@@ -43,10 +46,12 @@ WM.Plugins.FixBacklinkFragments = new function () {
                 else if (fixedFragment) {
                     var oldlink = newlink;
                     newlink = "[[" + target + "#" + fixedFragment + ((link.match[6]) ? "|" + link.match[6] : "") + "]]";
-                    WM.Log.logInfo("Fixed broken link fragment: " + oldlink + " -> " + newlink);
+                    WM.Log.logInfo("Fixed broken link fragment: " + oldlink +
+                                                            " -> " + newlink);
                 }
                 else {
-                    WM.Log.logWarning("Cannot fix broken link fragment: " + newlink);
+                    WM.Log.logWarning("Cannot fix broken link fragment: " +
+                                                                    newlink);
                 }
             }
 
@@ -102,9 +107,12 @@ WM.Plugins.FixBacklinkFragments = new function () {
             if (fragId > -1) {
                 var ltitle = link.substring(0, fragId);
 
-                // Note that it's impossible to recognize any namespaces in the title without querying the server
-                // Alternatively, a list of the known namespaces could be maintained for each wiki
-                // Recognizing namespaces would let recognize more liberal link syntaxes (e.g. spaces around the colon)
+                // Note that it's impossible to recognize any namespaces in the
+                //   title without querying the server
+                // Alternatively, a list of the known namespaces could be
+                //   maintained for each wiki
+                // Recognizing namespaces would let recognize more liberal link
+                //   syntaxes (e.g. spaces around the colon)
                 if (WM.Parser.compareArticleTitles(ltitle, target)) {
                     var rawfragment = link.substr(fragId + 1);
                     var fixedFragment = fixFragment(rawfragment, sections);
@@ -114,7 +122,8 @@ WM.Plugins.FixBacklinkFragments = new function () {
                     }
                     else if (fixedFragment) {
                         var anchor = (args[1]) ? ("|" + args[1].value) : "";
-                        var newlink = "{{" + template.title + "|" + target + "#" + fixedFragment  + anchor + "}}";
+                        var newlink = "{{" + template.title + "|" + target +
+                                        "#" + fixedFragment  + anchor + "}}";
                         WM.Log.logInfo("Fixed broken link fragment: " + template.match[0] + " -> " + newlink);
                         return newlink;
                     }
@@ -134,7 +143,8 @@ WM.Plugins.FixBacklinkFragments = new function () {
 
     var fixFragment = function (rawfragment, sections) {
         if (rawfragment) {
-            var fragment = WM.Parser.squashContiguousWhitespace(rawfragment).trim();
+            var fragment = WM.Parser.squashContiguousWhitespace(rawfragment
+                                                                    ).trim();
 
             if (sections.indexOf(fragment) < 0) {
                 for (var s = 0; s < sections.length; s++) {
@@ -169,20 +179,23 @@ WM.Plugins.FixBacklinkFragments = new function () {
                 'page': target,
                 'redirects': 1,
             };
-            WM.Log.logWarning("If some articles in the list are linking to this article " +
-                              "through a redirect, you should process the backlinks of that " +
-                              "redirect page separately through its Special:WhatLinksHere " +
-                              "page, as this plugin can only fix links that exactly match " +
-                              "the title of this article.\nIn order to save time you are " +
-                              "advised to hide the redirects in this list.");
+            WM.Log.logWarning("If some articles in the list are linking to " +
+                "this article " +
+                "through a redirect, you should process the backlinks of " +
+                "that redirect page separately through its " +
+                "Special:WhatLinksHere page, as this plugin can only fix " +
+                "links that exactly match the title of this article.\nIn " +
+                "order to save time you are advised to hide the redirects " +
+                "in this list.");
 
             WM.MW.callAPIGet(params,
-                             null,
-                             WM.Plugins.FixBacklinkFragments.mainAutoFindSections,
-                             [title, target, args, callBot]);
+                         null,
+                         WM.Plugins.FixBacklinkFragments.mainAutoFindSections,
+                         [title, target, args, callBot]);
         }
         else {
-            WM.Plugins.FixBacklinkFragments.mainAutoRead(target, chainArgs, title, args, callBot);
+            WM.Plugins.FixBacklinkFragments.mainAutoRead(target, chainArgs,
+                                                        title, args, callBot);
         }
     };
 
@@ -194,10 +207,12 @@ WM.Plugins.FixBacklinkFragments = new function () {
         var sections = [];
 
         for (var s = 0; s < res.parse.sections.length; s++) {
-            sections.push(WM.Parser.squashContiguousWhitespace(res.parse.sections[s].line).trim());
+            sections.push(WM.Parser.squashContiguousWhitespace(
+                                        res.parse.sections[s].line).trim());
         }
 
-        WM.Plugins.FixBacklinkFragments.mainAutoRead(target, sections, title, summary, callBot);
+        WM.Plugins.FixBacklinkFragments.mainAutoRead(target, sections, title,
+                                                            summary, callBot);
     };
 
     this.mainAutoRead = function (target, sections, title, summary, callBot) {
