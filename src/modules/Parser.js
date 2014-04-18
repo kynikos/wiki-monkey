@@ -33,49 +33,39 @@ WM.Parser = new function () {
         //   otherwise Tampermonkey will hang, see also
         //   https://github.com/kynikos/wiki-monkey/issues/133
         // Note that the concept of "nesting" doesn't make sense with <nowiki>
-        //   tags, so do *not* use Alib.Str.findEnclosures
-        var newText = "";
-        var index = 0;
-        var oIndex = source.search(/<nowiki>/i);
+        //   tags, so do *not* use Alib.Str.findNestedEnclosures
+        var OPENLENGTH = 8;
+        var CLOSELENGTH = 9;
+        var tags = Alib.Str.findSimpleEnclosures(source, /<nowiki>/i,
+                                    OPENLENGTH, /<\/nowiki>/i, CLOSELENGTH);
+        var maskedText = "";
+        var prevId = 0;
 
-        // 8 is the length of <nowiki>; 9 is the length of </nowiki>
-        while (true) {
-            if (oIndex > -1) {
-                oIndex += index;
-                newText += source.substring(index, oIndex);
-                var cIndex = source.substr(oIndex + 8).search(/<\/nowiki>/i);
+        for (var t = 0; t < tags.length; t++) {
+            var tag = tags[t];
 
-                if (cIndex > -1) {
-                    cIndex += oIndex + 8;
-                    var L = source.substring(oIndex, cIndex).length;
-                    newText += Alib.Str.padRight("", "x", L + 9);
-                    index = cIndex + 9;
-
-                    if (index < source.length) {
-                        oIndex = source.substr(index).search(/<nowiki>/i);
-                        continue;
-                    }
-                    else {
-                        break;
-                    }
-                }
-                else {
-                    // If a <nowiki> tag is left open (no closing tag is
-                    //   found), it does its job until the end of the text
-                    // This also neutralizes the final \n, but it shouldn't
-                    //   matter
-                    var L = source.substring(oIndex).length;
-                    newText += Alib.Str.padRight("", "x", L);
-                    break;
-                }
+            if (tag[1]) {
+                var maskLength = tag[1] - tag[0] + CLOSELENGTH;
+                var maskString = Alib.Str.padRight("", "x", maskLength);
+                maskedText += source.substring(prevId, tag[0]) + maskString;
+                prevId = tag[1] + CLOSELENGTH;
+                continue;
             }
             else {
-                newText += source.substring(index);
+                // If a <nowiki> tag is left open (no closing tag is found), it
+                //   does its job until the end of the text
+                // This also neutralizes the final \n, but it shouldn't matter
+                var maskLength = source.substr(tag[0]).length;
+                var maskString = Alib.Str.padRight("", "x", maskLength);
+                maskedText += source.substring(prevId, tag[0]) + maskString;
+                prevId = source.length;
                 break;
             }
         }
 
-        return newText;
+        maskedText += source.substring(prevId);
+
+        return maskedText;
     };
 
     this.dotEncode = function (text) {
