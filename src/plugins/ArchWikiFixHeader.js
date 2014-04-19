@@ -118,8 +118,7 @@ WM.Plugins.ArchWikiFixHeader = new function () {
                                     "reference, but it doesn't make sense " +
                                     "in categories and will be removed");
             }
-            var cleantitle = WM.Parser.squashContiguousWhitespace(
-                                                                    cat.title);
+            var cleantitle = WM.Parser.squashContiguousWhitespace(cat.title);
             var catlang = WM.ArchWiki.detectLanguage(cleantitle)[1];
             var cattext = "Category:" + cleantitle;
             var catlink = "[[" + cattext + ((cat.anchor) ? "|" +
