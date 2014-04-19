@@ -80,8 +80,8 @@ WM.Plugins.FixDoubleRedirects = new function () {
                                         "*"]) + ":" : "";
             var newTitle = WM.Parser.squashContiguousWhitespace(
                                                     page.databaseResult.tc);
-            var fragment = (target.match[5]) ? ("#" + target.match[5]) : "";
-            var altAnchor = (target.match[6]) ? ("|" + target.match[6]) : "";
+            var fragment = (target.fragment) ? ("#" + target.fragment) : "";
+            var altAnchor = (target.anchor) ? ("|" + target.anchor) : "";
             var targetEnd = target.index + target.length;
 
             var newTarget = "#REDIRECT [[" + namespace + newTitle + fragment +

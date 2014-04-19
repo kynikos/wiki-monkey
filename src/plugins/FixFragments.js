@@ -30,7 +30,8 @@ WM.Plugins.FixFragments = new function () {
         for (var l = 0; l < slinks.length; l++) {
             var link = slinks[l];
             newtext1 += source.substring(prevId, link.index);
-            newtext1 += fixLink(source, sections, link.match[0], link.match[1], link.match[2]);
+            newtext1 += fixLink(source, sections, link.rawLink, link.fragment,
+                                                                link.anchor);
             prevId = link.index + link.length;
         }
         newtext1 += source.substr(prevId);
@@ -48,13 +49,14 @@ WM.Plugins.FixFragments = new function () {
         for (var l = 0; l < ilinks.length; l++) {
             var link = ilinks[l];
             newtext2 += newtext1.substring(prevId, link.index);
-            var rawfragment = link.match[5];
+            var rawfragment = link.fragment;
 
             if (rawfragment) {
-                newtext2 += fixLink(newtext1, sections, link.match[0], rawfragment, link.match[6]);
+                newtext2 += fixLink(newtext1, sections, link.rawLink,
+                                                    rawfragment, link.anchor);
             }
             else {
-                newtext2 += link.match[0];
+                newtext2 += link.rawLink;
             }
 
             prevId = link.index + link.length;

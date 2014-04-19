@@ -30,8 +30,9 @@ WM.Interlanguage = new function () {
             var link = parsedLinks[p];
             // Do not store the tag lowercased, since it should be kept as
             // original
-            var ltag = link.match[2];
-            var ltitle = link.match[3];
+            var ltag = link.namespace;
+            var ltitle = link.title + ((link.fragment) ?
+                                                ("#" + link.fragment) : "");
             for (var iw in iwmap) {
                 if (iwmap[iw].prefix.toLowerCase() == ltag.toLowerCase()) {
                     // Fix the url _before_ replacing $1

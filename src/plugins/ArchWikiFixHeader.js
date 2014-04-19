@@ -113,13 +113,17 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         var contentId = 0;
         for (var c in categories) {
             var cat = categories[c];
-            if (cat.match[5]) {
-                WM.Log.logWarning(cat.match[0] + " contains a fragment reference, but it doesn't make sense in categories and will be removed");
+            if (cat.fragment) {
+                WM.Log.logWarning(cat.rawLink + " contains a fragment " +
+                                    "reference, but it doesn't make sense " +
+                                    "in categories and will be removed");
             }
-            var cleantitle = WM.Parser.squashContiguousWhitespace(cat.match[4]);
+            var cleantitle = WM.Parser.squashContiguousWhitespace(
+                                                                    cat.title);
             var catlang = WM.ArchWiki.detectLanguage(cleantitle)[1];
             var cattext = "Category:" + cleantitle;
-            var catlink = "[[" + cattext + ((cat.match[6]) ? "|" + cat.match[6] : "") + "]]";
+            var catlink = "[[" + cattext + ((cat.anchor) ? "|" +
+                                                    cat.anchor : "") + "]]";
             if (language != catlang) {
                 WM.Log.logWarning(cattext + " belongs to a different " +
                     "language than the one of the title (" + language + ")");
@@ -151,15 +155,18 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         var contentId = 0;
         for (var l in interlanguage) {
             var link = interlanguage[l];
-            if (link.match[6]) {
-                WM.Log.logWarning(link.match[0] + " contains an alternative text, but it doesn't make sense in interlanguage links and will be removed");
+            if (link.anchor) {
+                WM.Log.logWarning(link.rawLink + " contains an alternative " +
+                                    "text, but it doesn't make sense in " +
+                                    "interlanguage links and will be removed");
             }
             // Applying WM.Parser.squashContiguousWhitespace is dangerous here
             //   because we don't know how the target server handles whitespace
-            var linktitle = link.match[4];
-            var linklang = link.match[2];
+            var linktitle = link.title;
+            var linklang = link.namespace;
             var linktext = linklang + ":" + linktitle;
-            var fulllink = "[[" + linktext + ((link.match[5]) ? "#" + link.match[5] : "") + "]]";
+            var fulllink = "[[" + linktext + ((link.fragment) ? "#" +
+                                                    link.fragment : "") + "]]";
             if (iwlist.indexOf(linktext) < 0) {
                 iwlist.push(linktext);
                 iwlinks.push(fulllink);

@@ -23,12 +23,13 @@ WM.Plugins.FixLinkFragments = new function () {
                                                             call, callArgs) {
         if (links[index]) {
             var link = links[index];
-            var rawfragment = link.match[5];
+            var rawfragment = link.fragment;
 
             if (rawfragment) {
-                WM.Log.logInfo("Processing " + link.match[0] + "...");
+                WM.Log.logInfo("Processing " + link.rawLink + "...");
 
-                var target = ((link.match[2]) ? link.match[2] + ":" : "") + link.match[4];
+                var target = ((link.namespace) ? link.namespace + ":" : "") +
+                                                                    link.title;
 
                 // Note that it's impossible to recognize any namespaces in the
                 //   title without querying the server
@@ -95,14 +96,16 @@ WM.Plugins.FixLinkFragments = new function () {
             newText += source.substring(prevId, link.index);
 
             if (fixedFragment === true) {
-                newText += link.match[0];
+                newText += link.rawLink;
             }
             else if (fixedFragment) {
-                newText += "[[" + target + "#" + fixedFragment  + ((link.match[6]) ? "|" + link.match[6] : "") + "]]";
+                newText += "[[" + target + "#" + fixedFragment  +
+                            ((link.anchor) ? "|" + link.anchor : "") + "]]";
             }
             else {
-                WM.Log.logWarning("Cannot fix broken link fragment: " + link.match[0]);
-                newText += link.match[0];
+                WM.Log.logWarning("Cannot fix broken link fragment: " +
+                                                                link.rawLink);
+                newText += link.rawLink;
             }
 
             prevId = link.index + link.length;

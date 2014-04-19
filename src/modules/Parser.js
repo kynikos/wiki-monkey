@@ -131,63 +131,136 @@ WM.Parser = new function () {
         return Alib.RegEx.matchAll(source, regExp);
     };
 
+    var findLinksEngine = function (source, titlePattern, specialOnly,
+                                                            caseSensitive) {
+        // Links cannot contain other links, not even in the alternative text
+        //   (only the innermost links are valid)
+        // Make sure to prepare whitespace in titlePattern like in
+        //   prepareRegexpWhitespace
+        // Do *not* use the g flag, or when using RegExp.exec the index will
+        //   have to be reset at every loop
+        var flags = (caseSensitive) ? "" : "i";
+        // The following colon/space combinations are valid
+        //   "[[a:b#c|d]]"
+        //   "[[ a:b#c|d]]"
+        //   "[[ :a:b#c|d]]"
+        //   "[[ : a:b#c|d]]"
+        //   "[[:a:b#c|d]]"
+        //   "[[: a:b#c|d]]"
+        //   "[[::a:b#c|d]]"
+        //   "[[: :a:b#c|d]]"
+        //   "[[:: a:b#c|d]]"
+        //   "[[: : a:b#c|d]]"
+        // A link like "[[ ::a:b#c|d]]" isn't valid, but it would still be
+        //   found when specialOnly is false (bug #166)
+        var special = (specialOnly) ? "(?:[ _]+:)?[ _]*" : "(?:\\:?[ _]*){0,2}" ;
+        var regExp = new RegExp("^" + special + "(" + titlePattern + ")" +
+                    "[ _]*(?:\\|[_\\s]*([\\s\\S]+?)[_\\s]*)?[_\\s]*$", flags);
+        var nSource = WM.Parser.neutralizeNowikiTags(source);
+        var links = [];
+        var dbraces = Alib.Str.findInnermostEnclosures(nSource, "[[", "]]");
+
+        for (var e = 0; e < dbraces.length; e++) {
+            var dbrace = dbraces[e];
+            var inText = source.substring(dbrace[0] + 2, dbrace[1]);
+            var match = regExp.exec(inText);
+
+            if (match) {
+                var push = true;
+
+                if (match[6]) {
+                    // Incomplete templates in the alternative text have an
+                    //   apparently weird behaviour, hard to reverse-engineer,
+                    //   so issue a warning when one is found
+                    //   See also the examples in findTransclusionArguments
+                    // Note that the title already doesn't allow "{" or "}"
+                    var nText = WM.Parser.neutralizeNowikiTags(match[6]);
+                    var maskedText = Alib.Str.findNestedEnclosures(nText, "{{",
+                                                                "}}", "x")[1];
+
+                    if (maskedText.search(/(\{\{|\}\})/) > -1) {
+                        WM.Log.logWarning("[[" + match[0] + "]] seems to " +
+                            "contain part of a template, and the resulting " +
+                            "behaviour cannot be predicted by this " +
+                            "function, so the link will be ignored " +
+                            "altogether");
+                        push = false;
+                    }
+                }
+
+                if (push) {
+                    links.push({"rawLink": "[[" + match[0] + "]]",
+                                "link": match[1],
+                                "rawTitle": match[2],
+                                "namespace": match[3],
+                                "title": match[4],
+                                "fragment": match[5],
+                                "anchor": match[6],
+                                "index": dbrace[0],
+                                "length": dbrace[1] + 2 - dbrace[0]});
+                }
+            }
+        }
+
+        return links;
+    };
+
     this.findSectionLinks = function (source) {
-        source = this.neutralizeNowikiTags(source);
-        var regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*#(.+?)" +
-                        "(?:[ _]*\\|[_\\s]*(.+?)[_\\s]*)?[ _]*\\]\\]", "g");
-        return Alib.RegEx.matchAll(source, regExp);
+        // Keep the capturing groups as required by findLinksEngine
+        var fragmentChars = "[^\\n\\{\\}\\[\\]\\|]*?";
+        var titlePattern = "(()())#(" + fragmentChars + ")";
+        return findLinksEngine(source, titlePattern, false, true);
     }
 
     this.findInternalLinks = function (source, namespace, title) {
-        source = this.neutralizeNowikiTags(source);
-        var regExp;
+        // Keep the capturing groups as required by findLinksEngine
+        var namespaceChars = "[^\\n\\{\\}\\[\\]\\|\\:\\#]+?";
+        var titleChars = "[^\\n\\{\\}\\[\\]\\|\\#]+?";
+        var fragmentChars = "[^\\n\\{\\}\\[\\]\\|]*?";
 
         if (namespace) {
-            if (title) {
-                var rens = prepareRegexpWhitespace(Alib.RegEx.escapePattern(
+            var rens = prepareRegexpWhitespace(Alib.RegEx.escapePattern(
                                                                 namespace));
+
+            if (title) {
                 var retitle = prepareRegexpWhitespace(Alib.RegEx.escapePattern(
                                                                     title));
+                var titlePattern = "((" + rens + ")[ _]*:[ _]*" +
+                                        "(" + retitle + "))" +
+                                        "(?:[ _]*#(" + fragmentChars + "))?";
 
                 // Namespaces wouldn't be case-sensitive, but titles are, so be
-                //   safe and use only the g flag
-                regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*(" +
-                                        "(" + rens + ")[ _]*:[ _]*(" +
-                                        "(" + retitle + ")(?:[ _]*#(.+?))?" +
-                                        ")(?:[ _]*\\|[_\\s]*(.+?)[_\\s]*)?" +
-                                        ")[ _]*\\]\\]", "g");
+                //   safe and don't use the i flag
+                var caseSensitive = true;
             }
             else {
-                var rens = prepareRegexpWhitespace(Alib.RegEx.escapePattern(
-                                                                namespace));
+                var titlePattern = "((" + rens + ")[ _]*:[ _]*" +
+                                        "(" + titleChars + "))" +
+                                        "(?:[ _]*#(" + fragmentChars + "))?";
 
                 // Namespaces aren't case-sensitive
-                regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*(" +
-                                        "(" + rens + ")[ _]*:[ _]*(" +
-                                        "(.+?)(?:[ _]*#(.+?))?" +
-                                        ")(?:[ _]*\\|[_\\s]*(.+?)[_\\s]*)?" +
-                                        ")[ _]*\\]\\]", "gi");
+                var caseSensitive = false;
             }
         }
         else if (title) {
             var retitle = prepareRegexpWhitespace(Alib.RegEx.escapePattern(
                                                                     title));
 
+            // Keep the capturing groups as required by findLinksEngine
+            var titlePattern = "(()(" + retitle + "))" +
+                                        "(?:[ _]*#(" + fragmentChars + "))?";
+
             // Titles are case-sensitive
-            // Note the () that represents the missing namespace in order to
-            //   keep the match indices consistent with the other regular
-            //   expressions
-            regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*(" +
-                                    "()((" + retitle + ")(?:[ _]*#(.+?))?)" +
-                                    "(?:[ _]*\\|[_\\s]*(.+?)[_\\s]*)?" +
-                                    ")[ _]*\\]\\]", "g");
+            var caseSensitive = true;
         }
         else {
-            regExp = new RegExp("\\[\\[:?[ _]*:?[ _]*((?:([^\\]]+?)" +
-                        "[ _]*:[ _]*)?((.+?)(?:[ _]*#(.+?))?)" +
-                        "(?:[ _]*\\|[_\\s]*(.+?)[_\\s]*)?)[ _]*\\]\\]", "g");
+            var titlePattern = "((?:(" + namespaceChars + ")[ _]*:[ _]*)?" +
+                                        "(" + titleChars + "))" +
+                                        "(?:[ _]*#(" + fragmentChars + "))?";
+            var caseSensitive = true;
         }
-        return Alib.RegEx.matchAll(source, regExp);
+
+        return findLinksEngine(source, titlePattern, false, caseSensitive);
     };
 
     this.findInterwikiLinks = function (source, wiki) {
@@ -197,14 +270,15 @@ WM.Parser = new function () {
     this.findSpecialLinks = function (source, pattern) {
         // Make sure to prepare whitespace in pattern like in
         //   prepareRegexpWhitespace
-        // See also WM.ArchWiki.findAllInterlanguageLinks!!!
-        source = this.neutralizeNowikiTags(source);
+        // Keep the capturing groups as required by findLinksEngine
+        // See also WM.ArchWiki.findAllInterlanguageLinks
+        var titleChars = "[^\\n\\{\\}\\[\\]\\|\\#]+?";
+        var fragmentChars = "[^\\n\\{\\}\\[\\]\\|]*?";
+        var titlePattern = "((" + pattern + ")[ _]*:[ _]*" +
+                                        "(" + titleChars + "))" +
+                                        "(?:[ _]*#(" + fragmentChars + "))?";
         // Categories and language tags aren't case-sensitive
-        var regExp = new RegExp("\\[\\[(?:[ _]+:)?[ _]*(" +
-                    "(?:(" + pattern + ")[ _]*:[ _]*)" +
-                    "((.+?)(?:[ _]*#(.+?))?)(?:[ _]*\\|[_\\s]*(.+?)[_\\s]*)?" +
-                    ")[ _]*\\]\\]", "gi");
-        return Alib.RegEx.matchAll(source, regExp);
+        return findLinksEngine(source, titlePattern, true, false);
     };
 
     this.findCategories = function (source) {
@@ -212,7 +286,7 @@ WM.Parser = new function () {
     };
 
     this.findInterlanguageLinks = function (source, language) {
-        // See also WM.ArchWiki.findAllInterlanguageLinks!!!
+        // See also WM.ArchWiki.findAllInterlanguageLinks
         return this.findSpecialLinks(source, Alib.RegEx.escapePattern(
                                                                     language));
     };

@@ -35,9 +35,9 @@ WM.Plugins.FixBacklinkFragments = new function () {
             var link = links[l];
 
             newText += source.substring(prevId, link.index);
-            var newlink = link.match[0];
+            var newlink = link.rawLink;
 
-            var rawfragment = link.match[5];
+            var rawfragment = link.fragment;
 
             if (rawfragment) {
                 var fixedFragment = fixFragment(rawfragment, sections);
@@ -45,7 +45,8 @@ WM.Plugins.FixBacklinkFragments = new function () {
                 if (fixedFragment === true) {}
                 else if (fixedFragment) {
                     var oldlink = newlink;
-                    newlink = "[[" + target + "#" + fixedFragment + ((link.match[6]) ? "|" + link.match[6] : "") + "]]";
+                    newlink = "[[" + target + "#" + fixedFragment +
+                        ((link.anchor) ? "|" + link.anchor : "") + "]]";
                     WM.Log.logInfo("Fixed broken link fragment: " + oldlink +
                                                             " -> " + newlink);
                 }
