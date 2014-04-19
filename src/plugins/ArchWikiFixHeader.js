@@ -119,8 +119,10 @@ WM.Plugins.ArchWikiFixHeader = new function () {
                                     "in categories and will be removed");
             }
             var cleantitle = WM.Parser.squashContiguousWhitespace(cat.title);
-            var catlang = WM.ArchWiki.detectLanguage(cleantitle)[1];
             var cattext = "Category:" + cleantitle;
+            // Don't just pass cleantitle here, otherwise the language of
+            //   root language categories won't be properly detected
+            var catlang = WM.ArchWiki.detectLanguage(cattext)[1];
             var catlink = "[[" + cattext + ((cat.anchor) ? "|" +
                                                     cat.anchor : "") + "]]";
             if (language != catlang) {
