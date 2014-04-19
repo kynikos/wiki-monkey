@@ -132,9 +132,10 @@ WM.ArchWiki = new function () {
     };
 
     this.detectLanguage = function (title) {
-        var matches = title.match(/^(.+?)([ _]\(([^\(]+)\))?$/);
-        var detectedLanguage = matches[3];
-        var pureTitle;
+        var matches = title.match(/^(.+?)(?:[ _]\(([^\(]+)\))?$/);
+        var pureTitle = matches[1];
+        var detectedLanguage = matches[2];
+
         if (!detectedLanguage || !WM.ArchWiki.isCategoryLanguage(
                                                         detectedLanguage)) {
             // Language categories are exceptions
@@ -142,16 +143,14 @@ WM.ArchWiki = new function () {
             if (testLangCat && WM.ArchWiki.isCategoryLanguage(
                                                             testLangCat[1])) {
                 detectedLanguage = testLangCat[1];
-                pureTitle = matches[1];
+                var pureTitle = matches[1];
             }
             else {
                 detectedLanguage = this.getLocalLanguage();
-                pureTitle = matches[0];
+                var pureTitle = matches[0];
             }
         }
-        else {
-            pureTitle = matches[1];
-        }
+
         return [pureTitle, detectedLanguage];
     };
 
