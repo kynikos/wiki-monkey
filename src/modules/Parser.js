@@ -218,15 +218,43 @@ WM.Parser = new function () {
     };
 
     this.findVariables = function (source, variable) {
-        source = this.neutralizeNowikiTags(source);
-        // Variables are case-sensitive
-        // There can't be an underscore before the variable name
-        // There can't be a whitespace between the variable name and the colon
         // There don't seem to exist variable names with whitespace, applying
         //   prepareRegexpWhitespace could be dangerous in this case
-        var regExp = new RegExp("\\{\\{\\s*((" + Alib.RegEx.escapePattern(variable) + ")(?:\\:[_\\s]*((?:.(?!\\{\\{)[_\\s]*?)+?))?)[_\\s]*\\}\\}", "g");
+        var pattern = Alib.RegEx.escapePattern(variable);
+        return this.findVariablesPattern(source, pattern);
+    };
 
-        return Alib.RegEx.matchAll(source, regExp);
+    this.findVariablesPattern = function (source, pattern) {
+        // pattern must be a string and IT MUST NOT HAVE ANY CAPTURING
+        //   GROUPS
+        // There can't be an underscore before the variable name
+        // There can't be a whitespace between the variable name and the colon
+        nSource = this.neutralizeNowikiTags(source);
+        var results = [];
+        var dbrackets = Alib.Str.findNestedEnclosures(nSource, "{{", "}}",
+                                                                    "x")[0];
+
+        for (var d = 0; d < dbrackets.length; d++) {
+            var dbracket = dbrackets[d];
+            var inText = source.substring(dbracket[0] + 2, dbracket[1]);
+
+            // Variables are case-sensitive
+            // Do *not* use the g flag, or when using RegExp.exec the index
+            //   will have to be reset at every loop
+            var regExp = new RegExp("^\\s*(" + pattern + ")" +
+                                        "(?:\\:\\s*([\\s\\S]*?))?\\s*$", "");
+            var match = regExp.exec(inText);
+
+            if (match) {
+                results.push({"rawVariable": "{{" + match[0] + "}}",
+                            "name": match[1],
+                            "value": match[2],
+                            "index": dbracket[0],
+                            "length": dbracket[1] + 2 - dbracket[0]});
+            }
+        }
+
+        return results;
     };
 
     var findTransclusionsEngine = function (source, regExp) {

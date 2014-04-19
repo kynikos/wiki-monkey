@@ -53,13 +53,14 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         var lct = lowercasetitle.pop();
         var dlct = "";
         if (dt && !lct) {
-            var dlct = "{{DISPLAYTITLE:" + dt.match[3] + "}}";
+            var dlct = "{{DISPLAYTITLE:" + dt.value + "}}";
         }
         else if (!dt && lct) {
             var dlct = "{{Lowercase title}}";
         }
         else if (dt && lct) {
-            var dlct = (dt.index < lct.index) ? "{{Lowercase title}}" : "{{DISPLAYTITLE:" + dt.match[3] + "}}";
+            var dlct = (dt.index < lct.index) ? "{{Lowercase title}}" :
+                                        "{{DISPLAYTITLE:" + dt.value + "}}";
         }
         if (displaytitle.length || lowercasetitle.length) {
             WM.Log.logWarning("Found multiple instances of " +
