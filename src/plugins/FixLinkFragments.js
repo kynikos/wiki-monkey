@@ -202,7 +202,8 @@ WM.Plugins.FixLinkFragments = new function () {
                         //   liberal link syntaxes (e.g. spaces around the
                         //   colon)
                         if (!WM.Parser.compareArticleTitles(target, title)) {
-                            WM.Log.logInfo("Processing " + template.match[0] + "...");
+                            WM.Log.logInfo("Processing " +
+                                            template.rawTransclusion + "...");
 
                             var params = {
                                 'action': 'parse',
@@ -240,8 +241,11 @@ WM.Plugins.FixLinkFragments = new function () {
                 }
             }
             else {
-                WM.Log.logWarning("Template:" + template.title + " must have " + expectedArgs + " and only " +
-                expectedArgs + ((expectedArgs > 1) ? " arguments: " : " argument: ") + template.match[0]);
+                WM.Log.logWarning("Template:" + template.title +
+                        " must have " + expectedArgs + " and only " +
+                        expectedArgs +
+                        ((expectedArgs > 1) ? " arguments: " : " argument: ") +
+                        template.rawTransclusion);
                 index++;
                 WM.Plugins.FixLinkFragments.processArchWikiLink(title,
                                         templates, expectedArgs, index, source,
@@ -282,7 +286,7 @@ WM.Plugins.FixLinkFragments = new function () {
             newText += source.substring(prevId, template.index);
 
             if (fixedFragment === true) {
-                newText += template.match[0];
+                newText += template.rawTransclusion;
             }
             else if (fixedFragment) {
                 var anchor = (template.arguments[1]) ? ("|" +
@@ -291,8 +295,9 @@ WM.Plugins.FixLinkFragments = new function () {
                                                 fixedFragment  + anchor + "}}";
             }
             else {
-                WM.Log.logWarning("Cannot fix broken link fragment: " + template.match[0]);
-                newText += template.match[0];
+                WM.Log.logWarning("Cannot fix broken link fragment: " +
+                                                    template.rawTransclusion);
+                newText += template.rawTransclusion;
             }
 
             prevId = template.index + template.length;

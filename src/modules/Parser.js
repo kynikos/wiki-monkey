@@ -331,78 +331,146 @@ WM.Parser = new function () {
         return results;
     };
 
-    var findTransclusionsEngine = function (source, regExp) {
-        // Make sure to prepare whitespace in regExp like in
+    var findTransclusionsEngine = function (source, pattern, templatesOnly) {
+        // pattern must be a string and IT MUST NOT HAVE ANY CAPTURING
+        //   GROUPS
+        // Make sure to prepare whitespace in pattern like in
         //   prepareRegexpWhitespace
+        // The difference between generic transclusions and templates is the
+        //   possibility of a colon before the title which forces the
+        //   transclusion of a page instead of a template
+        // There can't be an underscore before the colon
+        // The title must not be broken by new line characters; any underscores
+        //   must be in the same line as the title, even though then they are
+        //   considered as whitespace
+        // Template names are case-sensitive, just make sure to prepare them
+        //   with prepareTitleCasing
+        // Do *not* use the g flag, or when using RegExp.exec the index will
+        //   have to be reset at every loop
+        var regExp = new RegExp("^(\\s*" + ((templatesOnly) ? "" : ":?") +
+                                        "[_ ]*(" + pattern + ")[_ ]*\\s*)" +
+                                        "(?:\\|([\\s\\S]*))?$", "");
+
         var nSource = WM.Parser.neutralizeNowikiTags(source);
         var transclusions = [];
+        var dbrackets = Alib.Str.findNestedEnclosures(nSource, "{{", "}}",
+                                                                    "x")[0];
 
-        do {
-            var res = Alib.RegEx.matchAll(nSource, regExp);
+        for (var d = 0; d < dbrackets.length; d++) {
+            var dbracket = dbrackets[d];
+            var inText = source.substring(dbracket[0] + 2, dbracket[1]);
+            var match = regExp.exec(inText);
 
-            for (var t in res) {
-                var match = res[t].match;
-                var index = res[t].index;
-                var L = res[t].length;
-                var arguments = [];
-                if (match[3]) {
-                    var args = match[3].split("|");
-                    // 1 is the length of |
-                    var argId = index + match[1].length + 1;
-
-                    for (var a in args) {
-                        var argL = args[a].length;
-                        var eqId = args[a].indexOf("=");
-                        // eqId must be > 0, not -1, in fact the key must not
-                        //   be empty
-                        if (eqId > 0) {
-                            var rawKey = args[a].substring(0, eqId);
-                            var reKey = /^(\s*)(.+?)\s*$/;
-                            var keyMatches = reKey.exec(rawKey);
-                            var key = keyMatches[2];
-                            var keyId = argId + ((keyMatches[1]) ?
-                                                    keyMatches[1].length : 0);
-
-                            // 1 is the length of =
-                            var nValue = args[a].substr(eqId + 1);
-                            var valueId = argId + keyMatches[0].length + 1;
-                            var valueL = argL - eqId - 1;
-                        }
-                        else {
-                            var key = null;
-                            var keyId = null;
-                            var nValue = args[a];
-                            var valueId = argId;
-                            var valueL = argL;
-                        }
-
-                        var value = source.substr(valueId, valueL);
-
-                        arguments.push({key: key,
-                                        key_index: keyId,
-                                        value: value,
-                                        value_index: valueId});
-
-                        // 1 is the length of |
-                        argId = argId + argL + 1;
-                    }
-                }
+            if (match) {
+                // 3 is the length of "{{" + the first "|"
+                var argIndex = dbracket[0] + match[1].length + 3;
 
                 transclusions.push({
-                    title: match[2],
-                    match: match,
-                    index: index,
-                    length: L,
-                    arguments: arguments,
+                    "rawTransclusion": "{{" + match[0] + "}}",
+                    "title": match[2],
+                    "index": dbracket[0],
+                    "length": dbracket[1] - dbracket[0] + 2,
+                    "arguments": findTransclusionArguments(match, argIndex),
                 });
-
-                var filler = Alib.Str.padRight("", "x", L);
-                nSource = Alib.Str.overwriteAt(nSource, filler, res[t].index);
             }
-        // Find also nested transclusions
-        } while (res.length);
+        }
 
         return transclusions;
+    };
+
+    var findTransclusionArguments = function (match, argIndex) {
+        var rawArguments = match[3];
+        var arguments = [];
+
+        if (rawArguments) {
+            var nArgs = WM.Parser.neutralizeNowikiTags(rawArguments);
+
+            // Mask any inner links, so that their "|" characters won't be
+            //   interpreted as belonging to the template
+            //   Note that double braces ("[[]]") "escape" a pipe in a template
+            //   argument even if a link is not correctly formed, e.g. [[|]] or
+            //   using unallowed characters etc.
+            var maskedArgs = Alib.Str.findNestedEnclosures(nArgs, "[[", "]]",
+                                                                    "x")[1];
+
+            // Mask any inner templates, so that their "|" characters won't be
+            //   interpreted as belonging to the outer template
+            maskedArgs = Alib.Str.findNestedEnclosures(maskedArgs, "{{", "}}",
+                                                                    "x")[1];
+
+            // Also tables would have pipes, but using tables inside templates
+            //   doesn't seem to be supported by MediaWiki, except if enclosing
+            //   them in special parser functions, e.g.
+            //   http://www.mediawiki.org/wiki/Extension:Pipe_Escape which
+            //   would then be safely masked by the function above
+
+            // Incomplete links and templates in the arguments text have an
+            //   apparently weird behaviour, hard to reverse-engineer, so issue
+            //   a warning when one is found
+            //   Try for example the following cases:
+            //     000{{hc|BBB[[AAA|ZZZ}}CCC]]111
+            //     000{{hc|BBB[[AAA}}CCC|ZZZ]]111
+            //     000[[BBB{{hc|AAA|ZZZ]]CCC}}111
+            //     000{{hc|BBB[[AAA|ZZZ}}[[KKK]]111000{{hc|AAA|BBB}}111
+            //     {{bc|{{Accuracy|[[test}}]]}}
+            //     {{bc|{{Accuracy|[[test|}}]]}}
+            //     {{Accuracy|[[}}]]
+            //     {{Accuracy|[[test|}}]]
+            //     [[{{Accuracy|]]}}
+            //     [[test|{{Accuracy|]]}}
+            //     [[test|{{Accuracy|]]
+            //     [[test|{{ic|aaa]]}}
+            //   Note that the title already doesn't allow "{", "}", "[" nor
+            //     "]"
+            if (maskedArgs.search(/(\{\{|\}\}|\[\[|\]\])/) > -1) {
+                WM.Log.logWarning("[[" + match[0] + "]] seems to " +
+                    "contain part of a link or template, and the resulting " +
+                    "behaviour cannot be predicted by this function, so " +
+                    "the whole template will be ignored altogether");
+            }
+            else {
+                var mArgs = maskedArgs.split("|");
+                var relIndex = 0;
+
+                for (var m = 0; m < mArgs.length; m++) {
+                    var mArgument = mArgs[m];
+                    var argL = mArgument.length;
+                    var argument = rawArguments.substr(relIndex, argL);
+                    var eqIndex = mArgument.indexOf("=");
+
+                    // eqIndex must be > 0, not -1, in fact the key must not be
+                    //   empty
+                    if (eqIndex > 0) {
+                        var rawKey = argument.substring(0, eqIndex);
+                        var reKey = /^(\s*)(.+?)\s*$/;
+                        var keyMatches = reKey.exec(rawKey);
+                        var key = keyMatches[2];
+                        var keyIndex = argIndex + ((keyMatches[1]) ?
+                                                    keyMatches[1].length : 0);
+
+                        // 1 is the length of "="
+                        var value = argument.substr(eqIndex + 1);
+                        var valueIndex = argIndex + keyMatches[0].length + 1;
+                    }
+                    else {
+                        var key = null;
+                        var keyIndex = null;
+                        var value = argument;
+                        var valueIndex = argIndex;
+                    }
+
+                    arguments.push({key: key,
+                                    key_index: keyIndex,
+                                    value: value,
+                                    value_index: valueIndex});
+
+                    // 1 is the length of "|"
+                    relIndex += argL + 1;
+                }
+            }
+        }
+
+        return arguments;
     };
 
     this.findTemplates = function (source, template) {
@@ -412,32 +480,40 @@ WM.Parser = new function () {
             pattern = prepareTitleCasing(pattern);
         }
         else {
-            var pattern = ".+?";
+            var pattern = "[^\\n\\{\\}\\[\\]\\||\\#]+?";
         }
+
         return this.findTemplatesPattern(source, pattern);
     };
 
     this.findTemplatesPattern = function (source, pattern) {
         // pattern must be a string and IT MUST NOT HAVE ANY CAPTURING
-        //   GROUPS!!!
+        //   GROUPS
         // Make sure to prepare whitespace in pattern like in
         //   prepareRegexpWhitespace
         // Templates can't be transcluded with a colon before the title
-        // The title must not be broken by new line characters
-        var regExp = new RegExp("(\\{\\{\\s*[_ ]*(" + pattern + ")[_\\s]*)(?:\\|((?:\\s*.(?!\\{\\{)\\s*)*?))?\\}\\}", "g");
-        return findTransclusionsEngine(source, regExp);
+        // The title must not be broken by new line characters; any underscores
+        //   must be in the same line as the title, even though then they are
+        //   considered as whitespace
+        return findTransclusionsEngine(source, pattern, true);
     };
 
     this.findTransclusions = function (source, namespace, title) {
         // The difference from templates is the possibility of a colon before
-        // the title which forces the transclusion of a page instead of a
-        // template
-        // The title must not be broken by newline characters
+        //   the title which forces the transclusion of a page instead of a
+        //   template
+        // There can't be an underscore before the colon
+        // The title must not be broken by new line characters; any underscores
+        //   must be in the same line as the title, even though then they are
+        //   considered as whitespace
+        var titleChars = "[^\\n\\{\\}\\[\\]\\||\\#]+?";
+
         if (namespace) {
             var namespacePattern = Alib.RegEx.escapePattern(namespace);
             namespacePattern = prepareRegexpWhitespace(namespacePattern);
             namespacePattern = prepareTitleCasing(namespacePattern);
         }
+
         if (title) {
             var titlePattern = Alib.RegEx.escapePattern(title);
             titlePattern = prepareRegexpWhitespace(titlePattern);
@@ -451,15 +527,13 @@ WM.Parser = new function () {
             var pattern = titlePattern;
         }
         else if (namespacePattern && !titlePattern) {
-            var pattern = namespacePattern + "[ _]*:.+?";
+            var pattern = namespacePattern + "[ _]*:" + titleChars;
         }
         else {
-            var pattern = ".+?";
+            var pattern = titleChars;
         }
 
-        // There can't be an underscore before the colon
-        var regExp = new RegExp("(\\{\\{\\s*:?[ _]*(" + pattern + ")[_\\s]*)(?:\\|((?:\\s*.(?!\\{\\{)\\s*)*?))?\\}\\}", "g");
-        return findTransclusionsEngine(source, regExp);
+        return findTransclusionsEngine(source, pattern, false);
     };
 
     this.findSectionHeadings = function (source) {

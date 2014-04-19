@@ -125,21 +125,25 @@ WM.Plugins.FixBacklinkFragments = new function () {
                         var anchor = (args[1]) ? ("|" + args[1].value) : "";
                         var newlink = "{{" + template.title + "|" + target +
                                         "#" + fixedFragment  + anchor + "}}";
-                        WM.Log.logInfo("Fixed broken link fragment: " + template.match[0] + " -> " + newlink);
+                        WM.Log.logInfo("Fixed broken link fragment: " +
+                                template.rawTransclusion + " -> " + newlink);
                         return newlink;
                     }
                     else {
-                        WM.Log.logWarning("Cannot fix broken link fragment: " + template.match[0]);
+                        WM.Log.logWarning("Cannot fix broken link fragment: " +
+                                                    template.rawTransclusion);
                     }
                 }
             }
         }
         else {
-            WM.Log.logWarning("Template:" + template.title + " must have " + expectedArgs + " and only " +
-            expectedArgs + ((expectedArgs > 1) ? " arguments: " : " argument: ") + template.match[0]);
+            WM.Log.logWarning("Template:" + template.title + " must have " +
+                        expectedArgs + " and only " + expectedArgs +
+                        ((expectedArgs > 1) ? " arguments: " : " argument: ") +
+                        template.rawTransclusion);
         }
 
-        return template.match[0];
+        return template.rawTransclusion;
     };
 
     var fixFragment = function (rawfragment, sections) {

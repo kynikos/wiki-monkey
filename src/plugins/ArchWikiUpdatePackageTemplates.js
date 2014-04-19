@@ -37,7 +37,8 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
 
     this.doUpdateContinue = function (source, newText, templates, index, call,
                                                                     callArgs) {
-        WM.Log.logInfo("Processing " + templates[index].match[0] + "...");
+        WM.Log.logInfo("Processing " + templates[index].rawTransclusion +
+                                                                        "...");
 
         newText += source.substring((
                                 (index == 0) ? 0 : templates[index - 1].index +
@@ -85,7 +86,7 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
                     source, newText, templates, index, call, callArgs);
                 break;
             default:
-                newText += templates[index].match[0];
+                newText += templates[index].rawTransclusion;
                 WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(
                     source, newText, templates, index, call, callArgs);
         }
@@ -103,7 +104,7 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
                         " hasn't been found neither in the official " +
                         "repositories nor in the AUR nor as a package group");
 
-            newText += templates[index].match[0];
+            newText += templates[index].rawTransclusion;
 
             WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source,
                                     newText, templates, index, call, callArgs);
@@ -244,7 +245,7 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
                 WM.Log.logInfo("Replacing template with " + newtemplate);
             }
             else {
-                newText += template.match[0];
+                newText += template.rawTransclusion;
             }
 
             WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source,
@@ -301,7 +302,7 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
                 WM.Log.logInfo("Replacing template with " + newtemplate);
             }
             else {
-                newText += template.match[0];
+                newText += template.rawTransclusion;
             }
 
             WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source,
@@ -358,7 +359,7 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
                 WM.Log.logInfo("Replacing template with " + newtemplate);
             }
             else {
-                newText += template.match[0];
+                newText += template.rawTransclusion;
             }
 
             WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source,
@@ -409,7 +410,7 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
         var grpname = template.arguments[0].value.trim();
 
         if (res) {
-            newText += template.match[0];
+            newText += template.rawTransclusion;
             WM.Log.logWarning(grpname + " is a package group for i686 only, " +
                                     "and Template:Grp only supports x86_64");
             WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source,
@@ -434,7 +435,7 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
         var grpname = template.arguments[0].value.trim();
 
         if (res) {
-            newText += template.match[0];
+            newText += template.rawTransclusion;
             WM.Log.logWarning(grpname + " is a package group for i686 only, " +
                                     "and Template:Grp only supports x86_64");
             WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source,
