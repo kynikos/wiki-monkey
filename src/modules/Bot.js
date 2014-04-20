@@ -541,6 +541,46 @@ WM.Bot = new function () {
         }
     };
 
+    var makeCallContinue = function (lis, id, linkId, ln, article) {
+        return function (status, resArgs) {
+            switch (status) {
+                // The article hasn't been saved
+                case 0:
+                    ln.className = changeWikiMonkeyLinkClassName(ln.className,
+                                                    'WikiMonkeyBotUnchanged');
+                    WM.Log.logInfo(article + " processed (unchanged)");
+                    id++;
+                    WM.Bot._processItem(status, lis, id, linkId, resArgs);
+                    break;
+                // The article has been saved
+                case 1:
+                    ln.className = changeWikiMonkeyLinkClassName(ln.className,
+                                                    'WikiMonkeyBotChanged');
+                    WM.Log.logInfo(article + " processed (changed)");
+                    id++;
+                    WM.Bot._processItem(status, lis, id, linkId, resArgs);
+                    break;
+                // The plugin has encountered a protectedpage error
+                case 'protectedpage':
+                    ln.className = changeWikiMonkeyLinkClassName(ln.className,
+                                                    'WikiMonkeyBotBypassed');
+                    WM.Log.logWarning("This user doesn't have the rights to " +
+                                    "edit " + article + ", bypassing it...");
+                    id++;
+                    // Change status to 0 (page not changed)
+                    WM.Bot._processItem(0, lis, id, linkId, resArgs);
+                    break;
+                // The plugin has encountered a critical error
+                default:
+                    ln.className = changeWikiMonkeyLinkClassName(ln.className,
+                                                        'WikiMonkeyBotFailed');
+                    WM.Log.logError("Error processing " + article +
+                                                        ", stopping the bot");
+                    WM.Bot._endAutomatic(true);
+            }
+        };
+    };
+
     this._processItem = function (status, items, index, linkId, chainArgs) {
         if (items[index]) {
             var link = items[index].getElementsByTagName('a')[linkId];
@@ -578,61 +618,9 @@ WM.Bot = new function () {
                                     ln.className, 'WikiMonkeyBotProcessing');
                             WM.Log.logInfo("Processing " + article + "...");
 
-                            WM.Bot.selections.function_(article, (function (
-                                                lis, id, linkId, ln, article) {
-                                return function (status, resArgs) {
-                                    switch (status) {
-                                        // The article hasn't been saved
-                                        case 0:
-                                            ln.className = changeWikiMonkeyLinkClassName(
-                                                    ln.className,
-                                                    'WikiMonkeyBotUnchanged');
-                                            WM.Log.logInfo(article +
-                                                    " processed (unchanged)");
-                                            id++;
-                                            WM.Bot._processItem(status, lis,
-                                                        id, linkId, resArgs);
-                                            break;
-                                        // The article has been saved
-                                        case 1:
-                                            ln.className = changeWikiMonkeyLinkClassName(
-                                                    ln.className,
-                                                    'WikiMonkeyBotChanged');
-                                            WM.Log.logInfo(article +
-                                                    " processed (changed)");
-                                            id++;
-                                            WM.Bot._processItem(status, lis,
-                                                        id, linkId, resArgs);
-                                            break;
-                                        // The plugin has encountered a
-                                        //   protectedpage error
-                                        case 'protectedpage':
-                                            ln.className = changeWikiMonkeyLinkClassName(
-                                                    ln.className,
-                                                    'WikiMonkeyBotBypassed');
-                                            WM.Log.logWarning("This user " +
-                                                "doesn't have the rights to " +
-                                                "edit " + article +
-                                                ", bypassing it...");
-                                            id++;
-                                            // Change status to 0 (page not
-                                            //   changed)
-                                            WM.Bot._processItem(0, lis, id,
-                                                            linkId, resArgs);
-                                            break;
-                                        // The plugin has encountered a
-                                        //   critical error
-                                        default:
-                                            ln.className = changeWikiMonkeyLinkClassName(
-                                                        ln.className,
-                                                        'WikiMonkeyBotFailed');
-                                            WM.Log.logError("Error " +
-                                                    "processing " + article +
-                                                    ", stopping the bot");
-                                            WM.Bot._endAutomatic(true);
-                                    }
-                                };
-                            })(lis, id, linkId, ln, article), chainArgs);
+                            WM.Bot.selections.function_(article,
+                                makeCallContinue(lis, id, linkId, ln, article),
+                                chainArgs);
                         }
                         else {
                             WM.Log.logError('Another bot has been ' +
