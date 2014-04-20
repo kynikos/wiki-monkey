@@ -24,6 +24,18 @@ var WM = new function () {
     this.main = function () {
         this.MW._storeUserInfo(function () {
             WM.UI._makeUI();
+
+            if (GM_info) {
+                // GreaseMonkey/TamperMonkey
+                WM.Log.logHidden('Wiki Monkey version: ' +
+                                                    GM_info.script.version);
+            }
+            else if (GM_getMetadata) {
+                // Scriptish
+                WM.Log.logHidden('Wiki Monkey version: ' +
+                                                    GM_getMetadata('version'));
+            }
+
             var date = new Date();
             WM.Log.logHidden('Date: ' + date.toString());
             WM.Log.logHidden('URL: ' + location.href);
