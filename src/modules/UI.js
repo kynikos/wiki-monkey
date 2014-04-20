@@ -105,11 +105,18 @@ WM.UI = new function () {
 
                 buttonFunction.addEventListener("click", (function (fn, arg) {
                     return function () {
+                        WM.Log.logHidden("Plugin: " + fn);
                         WM.Plugins[fn].main(arg, null);
-                    }
+                    };
                 })(ff[0], ff[2]), false);
 
-                var exFunction = WM.Plugins[ff[0]].main;
+                var exFunction = (function (plugin) {
+                    return function (args, callNext) {
+                        WM.Log.logHidden("Plugin: " + plugin);
+                        WM.Plugins[plugin].main(args, callNext);
+                    };
+                })(ff[0]);
+
                 rowFunctions.push([exFunction, ff[2]]);
                 allFunctions.push([exFunction, ff[2]]);
 
