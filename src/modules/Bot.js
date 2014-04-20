@@ -75,7 +75,7 @@ WM.Bot = new function () {
                 var UI = document.getElementById('WikiMonkeyBotFunction');
                 // [1] Note that this must also be executed immediately,
                 //   see [2]
-                var makeUI = eval("WM.Plugins." + fns[id][0] + ".makeBotUI");
+                var makeUI = WM.Plugins[fns[id][0]].makeBotUI;
                 if (makeUI instanceof Function) {
                     UI.replaceChild(makeUI(fns[id][2]), UI.firstChild);
                 }
@@ -87,7 +87,7 @@ WM.Bot = new function () {
                 }
                 WM.Bot.selections.function_ = function (title, callContinue,
                                                                 chainArgs) {
-                    eval("WM.Plugins." + fns[id][0] + ".mainAuto")(fns[id][2],
+                    WM.Plugins[fns[id][0]].mainAuto(fns[id][2],
                                             title, callContinue, chainArgs);
                 };
             }
@@ -97,7 +97,7 @@ WM.Bot = new function () {
         divFunction.id = "WikiMonkeyBotFunction";
 
         // [2] Note that this is also executed onchange, see [1]
-        var makeUI = eval("WM.Plugins." + functions[0][0] + ".makeBotUI");
+        var makeUI = WM.Plugins[functions[0][0]].makeBotUI;
         if (makeUI instanceof Function) {
             divFunction.appendChild(makeUI(functions[0][2]));
         }
@@ -107,7 +107,7 @@ WM.Bot = new function () {
         // Don't use "this.selections"
         WM.Bot.selections.function_ = function (title, callContinue,
                                                                 chainArgs) {
-            eval("WM.Plugins." + functions[0][0] + ".mainAuto")(
+            WM.Plugins[functions[0][0]].mainAuto(
                             functions[0][2], title, callContinue, chainArgs);
         };
 

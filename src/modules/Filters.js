@@ -57,7 +57,7 @@ WM.Filters = new function () {
                 var UI = document.getElementById('WikiMonkeyFilters-Options');
                 // [1] Note that this must also be executed immediately,
                 //   see [2]
-                var makeUI = eval("WM.Plugins." + filters[id][0] + ".makeUI");
+                var makeUI = WM.Plugins[filters[id][0]].makeUI;
                 if (makeUI instanceof Function) {
                     UI.replaceChild(makeUI(filters[id][2]), UI.firstChild);
                 }
@@ -82,7 +82,7 @@ WM.Filters = new function () {
         applyFilter.addEventListener("click", function () {
             var id = document.getElementById('WikiMonkeyFilters-Select'
                             ).getElementsByTagName('select')[0].selectedIndex;
-            eval("WM.Plugins." + filters[id][0] + ".main")(filters[id][2]);
+            WM.Plugins[filters[id][0]].main(filters[id][2]);
             this.disabled = true;
         }, false);
 
@@ -108,7 +108,7 @@ WM.Filters = new function () {
         divFilter.id = "WikiMonkeyFilters-Options";
 
         // [2] Note that this is also executed onchange, see [1]
-        var makeUI = eval("WM.Plugins." + filters[0][0] + ".makeUI");
+        var makeUI = WM.Plugins[filters[0][0]].makeUI;
         if (makeUI instanceof Function) {
             divFilter.appendChild(makeUI(filters[0][2]));
         }

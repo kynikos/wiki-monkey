@@ -101,13 +101,11 @@ WM.UI = new function () {
 
                 buttonFunction.addEventListener("click", (function (fn, arg) {
                     return function () {
-                        // window[string] doesn't work
-                        eval("WM.Plugins." + fn + ".main")(arg, null);
+                        WM.Plugins[fn].main(arg, null);
                     }
                 })(ff[0], ff[2]), false);
 
-                // window[string] doesn't work
-                var exFunction = eval("WM.Plugins." + ff[0] + ".main");
+                var exFunction = WM.Plugins[ff[0]].main;
                 rowFunctions.push([exFunction, ff[2]]);
                 allFunctions.push([exFunction, ff[2]]);
 
@@ -115,7 +113,7 @@ WM.UI = new function () {
                 divFunction.className = 'pluginUI';
                 divFunction.appendChild(buttonFunction);
 
-                var makeUI = eval("WM.Plugins." + ff[0] + ".makeUI");
+                var makeUI = WM.Plugins[ff[0]].makeUI;
                 if (makeUI instanceof Function) {
                     divFunction.appendChild(makeUI(ff[2]));
                 }
