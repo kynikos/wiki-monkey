@@ -25,12 +25,12 @@ var WM = new function () {
         this.MW._storeUserInfo(function () {
             WM.UI._makeUI();
 
-            if (GM_info) {
+            if (typeof GM_info !== 'undefined') {
                 // GreaseMonkey/TamperMonkey
                 WM.Log.logHidden('Wiki Monkey version: ' +
                                                     GM_info.script.version);
             }
-            else if (GM_getMetadata) {
+            else if (typeof GM_getMetadata !== 'undefined') {
                 // Scriptish
                 WM.Log.logHidden('Wiki Monkey version: ' +
                                                     GM_getMetadata('version'));
