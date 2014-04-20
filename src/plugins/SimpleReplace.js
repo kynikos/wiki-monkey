@@ -101,21 +101,27 @@ WM.Plugins.SimpleReplace = new function () {
         return divMain;
     };
 
+    var readConfiguration = function (id) {
+        return {pattern: document.getElementById(
+                                "WikiMonkey-SimpleReplace-RegExp-" + id).value,
+                ignoreCase: document.getElementById(
+                        "WikiMonkey-SimpleReplace-IgnoreCase-" + id).checked,
+                newString: document.getElementById(
+                            "WikiMonkey-SimpleReplace-NewString-" + id).value,
+        };
+    };
+
     var doReplace = function (source, id) {
-        var pattern = document.getElementById(
-                                "WikiMonkey-SimpleReplace-RegExp-" + id).value;
-        var ignoreCase = document.getElementById(
-                        "WikiMonkey-SimpleReplace-IgnoreCase-" + id).checked;
-        var newString = document.getElementById(
-                            "WikiMonkey-SimpleReplace-NewString-" + id).value;
-
-        var regexp = new RegExp(pattern, "g" + ((ignoreCase) ? "i" : ""));
-
-        return source.replace(regexp, newString);
+        var config = readConfiguration(id);
+        var regexp = new RegExp(config.pattern,
+                                    "g" + ((config.ignoreCase) ? "i" : ""));
+        return source.replace(regexp, config.newString);
     };
 
     this.main = function (args, callNext) {
         var id = args[0];
+        WM.Log.logHidden("Configuration: " +
+                                        JSON.stringify(readConfiguration(id)));
 
         var source = WM.Editor.readSource();
         var newtext = doReplace(source, id);
@@ -131,6 +137,8 @@ WM.Plugins.SimpleReplace = new function () {
 
     this.mainAuto = function (args, title, callBot, chainArgs) {
         var id = args[0];
+        WM.Log.logHidden("Configuration: " +
+                                        JSON.stringify(readConfiguration(id)));
 
         WM.MW.callQueryEdit(title,
                             WM.Plugins.SimpleReplace.mainAutoWrite,
