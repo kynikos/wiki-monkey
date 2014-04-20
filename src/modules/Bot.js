@@ -85,6 +85,7 @@ WM.Bot = new function () {
                     UI.replaceChild(document.createElement('div'),
                                                                 UI.firstChild);
                 }
+                WM.Bot.selections.plugin = fns[id][0];
                 WM.Bot.selections.function_ = function (title, callContinue,
                                                                 chainArgs) {
                     WM.Plugins[fns[id][0]].mainAuto(fns[id][2],
@@ -105,6 +106,7 @@ WM.Bot = new function () {
             divFunction.appendChild(document.createElement('div'));
         }
         // Don't use "this.selections"
+        WM.Bot.selections.plugin = functions[0][0];
         WM.Bot.selections.function_ = function (title, callContinue,
                                                                 chainArgs) {
             WM.Plugins[functions[0][0]].mainAuto(
@@ -118,7 +120,8 @@ WM.Bot = new function () {
         return fieldset;
     };
 
-    this.selections = {function_: function () {},
+    this.selections = {plugin: null,
+                       function_: function () {},
                        list: {current: null,
                               previous: null},
                        visited: []};
@@ -534,6 +537,9 @@ WM.Bot = new function () {
             WM.Bot._disableForceStart();
             WM.Bot._setBotToken();
             WM.Log.logInfo('Starting bot...');
+            WM.Log.logHidden("Plugin: " + WM.Bot.selections.plugin);
+            WM.Log.logHidden("Filter: " + document.getElementById(
+                                                'WikiMonkeyBotFilter').value);
             WM.Bot._disableStartBot('Bot is running...');
             WM.Bot._disableControls();
             WM.Bot.selections.visited = [];
