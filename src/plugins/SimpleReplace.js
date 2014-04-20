@@ -22,7 +22,8 @@ WM.Plugins.SimpleReplace = new function () {
     var makeUI = function (id) {
         GM_addStyle("#WikiMonkey-SimpleReplace {display:inline-block;} " +
                     "#WikiMonkey-SimpleReplace div {display:inline-block;} " +
-                    "#WikiMonkey-SimpleReplace input[type='text'] {margin-left:0.33em;}");
+                    "#WikiMonkey-SimpleReplace input[type='text'] " +
+                                                    "{margin-left:0.33em;}");
 
         var divMain = document.createElement('div');
         divMain.id = "WikiMonkey-SimpleReplace";
@@ -101,9 +102,12 @@ WM.Plugins.SimpleReplace = new function () {
     };
 
     var doReplace = function (source, id) {
-        var pattern = document.getElementById("WikiMonkey-SimpleReplace-RegExp-" + id).value;
-        var ignoreCase = document.getElementById("WikiMonkey-SimpleReplace-IgnoreCase-" + id).checked;
-        var newString = document.getElementById("WikiMonkey-SimpleReplace-NewString-" + id).value;
+        var pattern = document.getElementById(
+                                "WikiMonkey-SimpleReplace-RegExp-" + id).value;
+        var ignoreCase = document.getElementById(
+                        "WikiMonkey-SimpleReplace-IgnoreCase-" + id).checked;
+        var newString = document.getElementById(
+                            "WikiMonkey-SimpleReplace-NewString-" + id).value;
 
         var regexp = new RegExp(pattern, "g" + ((ignoreCase) ? "i" : ""));
 
@@ -140,7 +144,8 @@ WM.Plugins.SimpleReplace = new function () {
         var newtext = doReplace(source, id);
 
         if (newtext != source) {
-            var summary = document.getElementById("WikiMonkey-SimpleReplace-Summary-" + id).value;
+            var summary = document.getElementById(
+                            "WikiMonkey-SimpleReplace-Summary-" + id).value;
 
             WM.MW.callAPIPost({action: "edit",
                                bot: "1",
