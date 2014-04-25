@@ -39,7 +39,9 @@ WM.Log = new function () {
                     // MediaWiki, without associating them with an id and a tag
                     "#WikiMonkeyLogArea div.mwarning p.message " +
                         "{color:gold;} " +
-                    "#WikiMonkeyLogArea div.merror p.message {color:red;}");
+                    "#WikiMonkeyLogArea div.merror p.message {color:red;} " +
+                    "#WikiMonkeyLogArea a {color:inherit; " +
+                                                "text-decoration:underline;}");
 
         var log = document.createElement('div');
         log.id = 'WikiMonkeyLog';
@@ -197,5 +199,19 @@ WM.Log = new function () {
 
     this.logError = function (text) {
         appendMessage(text, 'merror');
+    };
+
+    this.linkToPage = function (url, anchor) {
+        // Must return a string, not a DOM element
+        return "<a href=\"" + url + "\">" + anchor + "</a>";
+    };
+
+    this.linkToWikiPage = function (title, anchor) {
+        // Must return a string, not a DOM element
+        // Use an absolute (full) URL so it will be usable in the downloadable
+        //   version of the log
+        var wikiUrls = WM.MW.getWikiUrls();
+        return "<a href=\"" + wikiUrls.short + encodeURIComponent(title) +
+                                                    "\">" + anchor + "</a>";
     };
 };
