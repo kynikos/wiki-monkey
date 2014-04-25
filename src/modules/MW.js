@@ -180,7 +180,8 @@ WM.MW = new function () {
     };
 
     this.failedQueryError = function (finalUrl) {
-        return "Failed query: " + finalUrl + "\nYou may have tried to use a " +
+        return "Failed query: " + WM.Log.linkToPage(finalUrl, finalUrl) +
+            "\nYou may have tried to use a " +
             "plugin which requires cross-origin HTTP requests, but you are " +
             "not using Scriptish (Firefox), Greasemonkey (Firefox), " +
             "Tampermonkey (Chrome/Chromium) or a similar extension";
@@ -210,8 +211,9 @@ WM.MW = new function () {
                             res.responseJSON : JSON.parse(res.responseText);
                 }
                 catch (err) {
-                    WM.Log.logError("It is likely that the API for this " +
-                                            "wiki is disabled, see " + api);
+                    WM.Log.logError("It is likely that the " +
+                                                WM.Log.linkToPage(api, "API") +
+                                                " for this wiki is disabled");
                 }
                 if (json) {
                     // Don't put this into the try block or all its exceptions
@@ -254,8 +256,9 @@ WM.MW = new function () {
                             res.responseJSON : JSON.parse(res.responseText);
                 }
                 catch (err) {
-                    WM.Log.logError("It is likely that the API for this " +
-                                            "wiki is disabled, see " + api);
+                    WM.Log.logError("It is likely that the " +
+                                                WM.Log.linkToPage(api, "API") +
+                                                " for this wiki is disabled");
                 }
                 if (json) {
                     // Don't put this into the try block or all its exceptions

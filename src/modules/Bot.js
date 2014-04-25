@@ -557,7 +557,8 @@ WM.Bot = new function () {
                 case 0:
                     ln.className = changeWikiMonkeyLinkClassName(ln.className,
                                                     'WikiMonkeyBotUnchanged');
-                    WM.Log.logInfo(article + " processed (unchanged)");
+                    WM.Log.logInfo(WM.Log.linkToWikiPage(article, article) +
+                                                    " processed (unchanged)");
                     id++;
                     WM.Bot._processItem(status, lis, id, linkId, resArgs);
                     break;
@@ -565,7 +566,8 @@ WM.Bot = new function () {
                 case 1:
                     ln.className = changeWikiMonkeyLinkClassName(ln.className,
                                                     'WikiMonkeyBotChanged');
-                    WM.Log.logInfo(article + " processed (changed)");
+                    WM.Log.logInfo(WM.Log.linkToWikiPage(article, article) +
+                                                    " processed (changed)");
                     id++;
                     WM.Bot._processItem(status, lis, id, linkId, resArgs);
                     break;
@@ -574,7 +576,8 @@ WM.Bot = new function () {
                     ln.className = changeWikiMonkeyLinkClassName(ln.className,
                                                     'WikiMonkeyBotBypassed');
                     WM.Log.logWarning("This user doesn't have the rights to " +
-                                    "edit " + article + ", bypassing it ...");
+                                    "edit " + WM.Log.linkToWikiPage(article,
+                                    article) + ", bypassing it ...");
                     id++;
                     // Change status to 0 (page not changed)
                     WM.Bot._processItem(0, lis, id, linkId, resArgs);
@@ -583,8 +586,9 @@ WM.Bot = new function () {
                 default:
                     ln.className = changeWikiMonkeyLinkClassName(ln.className,
                                                         'WikiMonkeyBotFailed');
-                    WM.Log.logError("Error processing " + article +
-                                                        ", stopping the bot");
+                    WM.Log.logError("Error processing " +
+                                    WM.Log.linkToWikiPage(article, article) +
+                                    ", stopping the bot");
                     WM.Bot._endAutomatic(true);
             }
         };
@@ -626,7 +630,9 @@ WM.Bot = new function () {
                         if (!WM.Bot._checkOtherBotsRunning()) {
                             ln.className = changeWikiMonkeyLinkClassName(
                                     ln.className, 'WikiMonkeyBotProcessing');
-                            WM.Log.logInfo("Processing " + article + " ...");
+                            WM.Log.logInfo("Processing " +
+                                    WM.Log.linkToWikiPage(article, article) +
+                                    " ...");
 
                             WM.Bot.selections.function_(article,
                                 makeCallContinue(lis, id, linkId, ln, article),

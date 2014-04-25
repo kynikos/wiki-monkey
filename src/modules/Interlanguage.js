@@ -171,7 +171,9 @@ WM.Interlanguage = new function () {
                 //   language whose language tag is not in the white list
                 // tag is already lower-cased
                 if (firstPage || whitelist.indexOf(tag) > -1) {
-                    WM.Log.logInfo("Reading " + decodeURI(url) + " ...");
+                    WM.Log.logInfo("Reading " +
+                                WM.Log.linkToPage(url, "[[" + origTag + ":" +
+                                title + "]]") + " ...");
 
                     this.queryLinks(
                         api,
@@ -186,10 +188,11 @@ WM.Interlanguage = new function () {
                     );
                 }
                 else {
-                    WM.Log.logWarning("[[" + tag + ":" + title + "]] will " +
-                            "not be checked because " + tag + " is not " +
-                            "included in the whitelist defined in the " +
-                            "configuration");
+                    WM.Log.logWarning(WM.Log.linkToPage(url,
+                                "[[" + origTag + ":" + title + "]]") +
+                                " will not be checked because " + tag +
+                                " is not included in the whitelist defined " +
+                                "in the configuration");
                     WM.Interlanguage._collectLinksContinue(
                         api,
                         title,
@@ -212,8 +215,9 @@ WM.Interlanguage = new function () {
             }
             else {
                 WM.Log.logWarning("Cannot extract the page title from " +
-                                    decodeURI(url) + ", removing it if it" +
-                                    " was linked from the processed article");
+                            WM.Log.linkToPage(url, decodeURI(url)) +
+                            ", removing it if it" +
+                            " was linked from the processed article");
                 WM.Interlanguage.collectLinks(
                     visitedlinks,
                     newlinks,
@@ -242,7 +246,9 @@ WM.Interlanguage = new function () {
         var callArgs = args[6];
 
         if (langlinks === false) {
-            WM.Log.logWarning("[[" + tag + ":" + title + "]] seems to point " +
+            WM.Log.logWarning(WM.Log.linkToPage(url,
+                                "[[" + origTag + ":" + title + "]]") +
+                                " seems to point " +
                                 "to a non-existing article, removing it if " +
                                 "it was linked from the processed article");
         }
@@ -266,18 +272,20 @@ WM.Interlanguage = new function () {
                     // if it's a real conflict, the user will investigate it,
                     // otherwise the user will ignore it
                     WM.Log.logWarning("Possibly conflicting interlanguage " +
-                        "links: [[" + link.lang + ":" +
-                        link.title + "]] and [[" + link.lang + ":" +
-                        visitedlinks[link.lang.toLowerCase()].title + "]]");
+                        "links: " + WM.Log.linkToPage(link.url, "[[" +
+                        link.lang + ":" + link.title + "]]") + " and " +
+                        WM.Log.linkToPage(vlink.url, "[[" + link.lang + ":" +
+                        visitedlinks[link.lang.toLowerCase()].title + "]]"));
                 }
                 else if (nlink && nlink.url != link.url) {
                     // Just ignore any conflicting links and warn the user:
                     // if it's a real conflict, the user will investigate it,
                     // otherwise the user will ignore it
                     WM.Log.logWarning("Possibly conflicting interlanguage " +
-                            "links: [[" + link.lang + ":" +
-                            link.title + "]] and [[" + link.lang + ":" +
-                            newlinks[link.lang.toLowerCase()].title + "]]");
+                        "links: " + WM.Log.linkToPage(link.url, "[[" +
+                        link.lang + ":" + link.title + "]]") + " and " +
+                        WM.Log.linkToPage(nlink.url, "[[" + link.lang + ":" +
+                        newlinks[link.lang.toLowerCase()].title + "]]"));
                 }
             }
         }
@@ -314,10 +322,11 @@ WM.Interlanguage = new function () {
                                                             link.title + "]]");
                         }
                         else {
-                            WM.Log.logWarning("On " + decodeURI(url) + " , " +
-                                        tag + " interlanguage links point " +
-                                        "to a different wiki than the " +
-                                        "others, ignoring them");
+                            WM.Log.logWarning("On " + WM.Log.linkToPage(url,
+                                    "[[" + link.origTag + ":" + link.title +
+                                    "]]") + " , " + tag + " interlanguage " +
+                                    "links point to a different wiki than " +
+                                    "the others, ignoring them");
                         }
 
                         tagFound = true;
@@ -327,7 +336,9 @@ WM.Interlanguage = new function () {
 
                 if (!tagFound) {
                     WM.Log.logWarning(tag + " interlanguage links are not " +
-                        "supported in " + decodeURI(url) + " , ignoring them");
+                        "supported in " + WM.Log.linkToPage(url, "[[" +
+                        link.origTag + ":" + link.title + "]]") +
+                        " , ignoring them");
                 }
             }
         }
