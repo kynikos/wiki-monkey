@@ -19,6 +19,8 @@
  */
 
 WM.ArchWiki = new function () {
+    "use strict";
+
     var languages = {
         local: "English",
         names: {

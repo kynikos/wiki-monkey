@@ -19,6 +19,8 @@
  */
 
 WM.Bot = new function () {
+    "use strict";
+
     this._makeUI = function (functions, lists) {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyBot';

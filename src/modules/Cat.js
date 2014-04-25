@@ -19,6 +19,8 @@
  */
 
 WM.Cat = new function () {
+    "use strict";
+
     this.recurseTree = function (params) {
         params.callChildren = WM.Cat._recurseTreeCallChildren;
         Alib.Async.recurseTreeAsync(params);

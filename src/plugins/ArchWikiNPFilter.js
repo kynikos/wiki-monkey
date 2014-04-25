@@ -19,6 +19,8 @@
  */
 
 WM.Plugins.ArchWikiNPFilter = new function () {
+    "use strict";
+
     this.main = function (params) {
         GM_addStyle("#mw-content-text > h5 {background-color:#afa;}");
 

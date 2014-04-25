@@ -19,6 +19,8 @@
  */
 
 WM.Diff = new function () {
+    "use strict";
+
     this.getEndTimestamp = function (call, callArgs) {
         var title = decodeURIComponent(Alib.HTTP.getURIParameter(null,
                                                                     'title'));

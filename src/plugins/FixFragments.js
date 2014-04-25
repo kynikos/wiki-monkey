@@ -19,6 +19,8 @@
  */
 
 WM.Plugins.FixFragments = new function () {
+    "use strict";
+
     var fixLinks = function (source) {
         var title = WM.Editor.getTitle();
         var sections = WM.Parser.findSectionHeadings(source).sections;

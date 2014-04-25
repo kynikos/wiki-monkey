@@ -19,6 +19,8 @@
  */
 
 WM.Editor = new function () {
+    "use strict";
+
     this.getTitle = function () {
         return WM.Parser.squashContiguousWhitespace(decodeURIComponent(Alib.HTTP.getURIParameter(null, 'title')));
     };

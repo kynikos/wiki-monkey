@@ -19,6 +19,8 @@
  */
 
 WM.WhatLinksHere = new function () {
+    "use strict";
+
     this.getTitle = function () {
         return document.getElementById('contentSub').getElementsByTagName('a')[0].title;
     };

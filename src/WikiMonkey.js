@@ -19,6 +19,8 @@
  */
 
 var WM = new function () {
+    "use strict";
+
     this.Plugins = {};
 
     this.main = function () {

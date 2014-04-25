@@ -19,6 +19,8 @@
  */
 
 WM.UI = new function () {
+    "use strict";
+
     var editor = null;
 
     this.setEditor = function(rows) {

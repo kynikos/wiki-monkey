@@ -19,6 +19,8 @@
  */
 
 WM.Plugins.FixDoubleRedirects = new function () {
+    "use strict";
+
     this.main = function (args, callNext) {
         var summary = args;
 

@@ -19,6 +19,8 @@
  */
 
 WM.Parser = new function () {
+    "use strict";
+
     this.squashContiguousWhitespace = function (title) {
         // MediaWiki treats consecutive whitespace characters in titles and
         //   section names as one

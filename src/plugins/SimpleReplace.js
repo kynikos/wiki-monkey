@@ -19,6 +19,8 @@
  */
 
 WM.Plugins.SimpleReplace = new function () {
+    "use strict";
+
     var makeUI = function (id) {
         GM_addStyle("#WikiMonkey-SimpleReplace {display:inline-block;} " +
                     "#WikiMonkey-SimpleReplace div {display:inline-block;} " +

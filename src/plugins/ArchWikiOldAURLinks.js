@@ -19,6 +19,8 @@
  */
 
 WM.Plugins.ArchWikiOldAURLinks = new function () {
+    "use strict";
+
     var doReplace = function (source, call, callArgs) {
         var regExp = /\[(https?\:\/\/aur\.archlinux\.org\/packages\.php\?ID\=([0-9]+)) ([^\]]+?)\]/g;
         var links = Alib.RegEx.matchAll(source, regExp);

@@ -19,6 +19,8 @@
  */
 
 WM.Plugins.ExpandContractions = new function () {
+    "use strict";
+
     var replace = function (source, regExp, newString, checkString, checkStrings) {
         var newtext = source.replace(regExp, newString);
         if (checkStrings.length > 1 && newtext != source) {

@@ -19,6 +19,8 @@
  */
 
 WM.Interlanguage = new function () {
+    "use strict";
+
     this.parseLinks = function (supportedLangs, source, iwmap) {
         var parsedLinks = WM.Parser.findSpecialLinks(
             source,

@@ -19,6 +19,8 @@
  */
 
 WM.Plugins.ArchWikiQuickReport = new function () {
+    "use strict";
+
     this.makeUI = function (args) {
         GM_addStyle("#WikiMonkey-ArchWikiQuickReport > select, " +
                     "#WikiMonkey-ArchWikiQuickReport > input, " +

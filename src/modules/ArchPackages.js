@@ -25,6 +25,8 @@
  */
 
 WM.ArchPackages = new function () {
+    "use strict";
+
     this.searchOfficialPackagesByExactName = function (name, call, callArgs) {
         var query = {
             method: "GET",

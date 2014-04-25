@@ -19,6 +19,8 @@
  */
 
 WM.Plugins.FixBacklinkFragments = new function () {
+    "use strict";
+
     var fixLinks = function (source, target, sections) {
         // Note that it's impossible to recognize any namespaces in the title
         //   without querying the server

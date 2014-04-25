@@ -19,6 +19,8 @@
  */
 
 WM.Plugins.ArchWikiNewTemplates = new function () {
+    "use strict";
+
     this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
         var newtext = source;

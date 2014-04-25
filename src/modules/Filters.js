@@ -19,6 +19,8 @@
  */
 
 WM.Filters = new function () {
+    "use strict";
+
     this._makeUI = function (filters) {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyFilters';

@@ -19,6 +19,8 @@
  */
 
 WM.Plugins.FixLinkFragments = new function () {
+    "use strict";
+
     this.processLink = function (title, links, index, source, newText, prevId,
                                                             call, callArgs) {
         if (links[index]) {

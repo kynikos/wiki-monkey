@@ -19,6 +19,8 @@
  */
 
 WM.Plugins.ArchWikiFixLinks = new function () {
+    "use strict";
+
     var doReplace = function (txt) {
         // archlinux.org HTTP -> HTTPS
 

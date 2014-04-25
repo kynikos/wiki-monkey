@@ -19,6 +19,8 @@
  */
 
 WM.Plugins.ArchWikiRCFilter = new function () {
+    "use strict";
+
     this.main = function (params) {
         var h4s = Alib.DOM.getChildrenByTagName(document.getElementById('mw-content-text'), 'h4');
 

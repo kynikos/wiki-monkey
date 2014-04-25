@@ -19,6 +19,8 @@
  */
 
 WM.Plugins.ArchWikiSummaryToRelated = new function () {
+    "use strict";
+
     this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
 

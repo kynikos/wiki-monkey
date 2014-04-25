@@ -19,6 +19,8 @@
  */
 
 WM.Plugins.UpdateCategoryTree = new function () {
+    "use strict";
+
     this.makeUI = function (args) {
         var tocs = args[0];
 

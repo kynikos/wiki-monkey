@@ -19,6 +19,8 @@
  */
 
 WM.Plugins.SynchronizeInterlanguageLinks = new function () {
+    "use strict";
+
     this.main = function (args, callNext) {
         var title = WM.Editor.getTitle();
 

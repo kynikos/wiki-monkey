@@ -19,6 +19,8 @@
  */
 
 WM.MW = new function () {
+    "use strict";
+
     var wikiPaths = {
         known: {
             "^https?://[^\.]+\.wikipedia\.org": {

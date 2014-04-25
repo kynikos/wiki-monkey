@@ -19,6 +19,8 @@
  */
 
 WM.Plugins.DeletePages = new function () {
+    "use strict";
+
     this.mainAuto = function (args, title, chainArgs) {
         var summary = args;
 

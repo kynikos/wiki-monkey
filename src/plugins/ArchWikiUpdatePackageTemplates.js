@@ -19,6 +19,8 @@
  */
 
 WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
+    "use strict";
+
     var doUpdate = function (source, call, callArgs) {
         // Note that findTemplatesPattern puts the pattern in a capturing group
         //   (parentheses) by itself
