@@ -155,7 +155,8 @@ WM.Parser = new function () {
         //   "[[: : a:b#c|d]]"
         // A link like "[[ ::a:b#c|d]]" isn't valid, but it would still be
         //   found when specialOnly is false (bug #166)
-        var special = (specialOnly) ? "(?:[ _]+:)?[ _]*" : "(?:\\:?[ _]*){0,2}" ;
+        var special = (specialOnly) ? "(?:[ _]+:)?[ _]*" :
+                                                        "(?:\\:?[ _]*){0,2}";
         var regExp = new RegExp("^" + special + "(" + titlePattern + ")" +
                     "[ _]*(?:\\|[_\\s]*([\\s\\S]+?)[_\\s]*)?[_\\s]*$", flags);
         var nSource = WM.Parser.neutralizeNowikiTags(source);

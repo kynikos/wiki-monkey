@@ -153,7 +153,8 @@ WM.Bot = new function () {
                 var select = document.getElementById(
                                                 'WikiMonkeyBot-ListSelect');
                 var id = select.selectedIndex;
-                WM.Bot.selections.list.previous = WM.Bot.selections.list.current;
+                WM.Bot.selections.list.previous =
+                                                WM.Bot.selections.list.current;
                 // [2] Note that this must also be executed immediately,
                 //   see [1]
                 WM.Bot.selections.list.current = lss[id];

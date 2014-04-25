@@ -324,7 +324,9 @@ WM.UI.setNewPages([
 
 WM.UI.setBot([
     ["SimpleReplace", "RegExp substitution", ["1"]],
-    ["FixBacklinkFragments", "Fix links to specific sections of the target article", "fix links to specific sections"],
+    ["FixBacklinkFragments",
+                        "Fix links to specific sections of the target article",
+                        "fix links to specific sections"],
     ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
      [function (title) {
          var detect = WM.ArchWiki.detectLanguage(title);
@@ -335,8 +337,13 @@ WM.UI.setBot([
      WM.ArchWiki.getInterwikiLanguages(),
      WM.ArchWiki.getInterwikiLanguages(),
      "synchronized interlanguage links with the other wikis"]],
-    ["ArchWikiUpdatePackageTemplates", "Check packages linked with Pkg/AUR templates and possibly update them", ["update Pkg/AUR templates to reflect new package status"]],
-    ["ArchWikiOldAURLinks", "Replace old-style direct AUR package links with Template:AUR", ["replace old-style direct package links with Pkg/AUR templates"]]
+    ["ArchWikiUpdatePackageTemplates",
+                "Check packages linked with Pkg/AUR templates " +
+                "and possibly update them",
+                ["update Pkg/AUR templates to reflect new package status"]],
+    ["ArchWikiOldAURLinks",
+            "Replace old-style direct AUR package links with Template:AUR",
+            ["replace old-style direct package links with Pkg/AUR templates"]]
 ]);
 
 WM.main();
