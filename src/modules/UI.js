@@ -45,6 +45,8 @@ WM.UI = new function () {
         recentChanges = rows;
     };
 
+    var newPages = null;
+
     this.setNewPages = function(rows) {
         newPages = rows;
     }
