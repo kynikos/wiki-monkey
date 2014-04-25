@@ -382,7 +382,7 @@ WM.Parser = new function () {
 
     var findTransclusionArguments = function (match, argIndex) {
         var rawArguments = match[3];
-        var arguments = [];
+        var args = [];
 
         if (rawArguments) {
             var nArgs = WM.Parser.neutralizeNowikiTags(rawArguments);
@@ -461,7 +461,7 @@ WM.Parser = new function () {
                         var valueIndex = argIndex;
                     }
 
-                    arguments.push({key: key,
+                    args.push({key: key,
                                     key_index: keyIndex,
                                     value: value,
                                     value_index: valueIndex});
@@ -472,7 +472,7 @@ WM.Parser = new function () {
             }
         }
 
-        return arguments;
+        return args;
     };
 
     this.findTemplates = function (source, template) {
