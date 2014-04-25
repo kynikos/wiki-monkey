@@ -217,7 +217,7 @@ WM.MW = new function () {
             onerror: function (res) {
                 WM.Log.logError(WM.MW.failedQueryError(res.finalUrl));
                 if (confirm("Wiki Monkey error: Failed query\n\nDo you want to retry?")) {
-                    WM.Log.logInfo("Retrying...");
+                    WM.Log.logInfo("Retrying ...");
                     WM.MW.callAPIGet(params, api, call, callArgs);
                 }
             }
@@ -257,7 +257,7 @@ WM.MW = new function () {
             onerror: function (res) {
                 WM.Log.logError(WM.MW.failedQueryError(res.finalUrl));
                 if (confirm("Wiki Monkey error: Failed query\n\nDo you want to retry?")) {
-                    WM.Log.logInfo("Retrying...");
+                    WM.Log.logInfo("Retrying ...");
                     WM.MW.callAPIPost(params, api, call, callArgs);
                 }
             }

@@ -412,8 +412,8 @@ WM.Bot = new function () {
     };
 
     this._previewFilter = function () {
-        WM.Log.logInfo('Updating filter preview, please wait...');
-        WM.Bot._disableStartBot('Updating filter preview...');
+        WM.Log.logInfo('Updating filter preview, please wait ...');
+        WM.Bot._disableStartBot('Updating filter preview ...');
 
         var items, linkId, link;
 
@@ -538,11 +538,11 @@ WM.Bot = new function () {
         else {
             WM.Bot._disableForceStart();
             WM.Bot._setBotToken();
-            WM.Log.logInfo('Starting bot...');
+            WM.Log.logInfo('Starting bot ...');
             WM.Log.logHidden("Plugin: " + WM.Bot.selections.plugin);
             WM.Log.logHidden("Filter: " + document.getElementById(
                                                 'WikiMonkeyBotFilter').value);
-            WM.Bot._disableStartBot('Bot is running...');
+            WM.Bot._disableStartBot('Bot is running ...');
             WM.Bot._disableControls();
             WM.Bot.selections.visited = [];
             WM.Bot._processItem(0, items, 0, linkId, null);
@@ -573,7 +573,7 @@ WM.Bot = new function () {
                     ln.className = changeWikiMonkeyLinkClassName(ln.className,
                                                     'WikiMonkeyBotBypassed');
                     WM.Log.logWarning("This user doesn't have the rights to " +
-                                    "edit " + article + ", bypassing it...");
+                                    "edit " + article + ", bypassing it ...");
                     id++;
                     // Change status to 0 (page not changed)
                     WM.Bot._processItem(0, lis, id, linkId, resArgs);
@@ -611,7 +611,8 @@ WM.Bot = new function () {
                     interval = 30000;
                 }
 
-                WM.Log.logInfo('Waiting ' + (interval / 1000) + ' seconds...');
+                WM.Log.logInfo('Waiting ' + (interval / 1000) +
+                                                            ' seconds ...');
 
                 var stopId = setTimeout((function (lis, id, ln, article,
                                                                 chainArgs) {
@@ -624,7 +625,7 @@ WM.Bot = new function () {
                         if (!WM.Bot._checkOtherBotsRunning()) {
                             ln.className = changeWikiMonkeyLinkClassName(
                                     ln.className, 'WikiMonkeyBotProcessing');
-                            WM.Log.logInfo("Processing " + article + "...");
+                            WM.Log.logInfo("Processing " + article + " ...");
 
                             WM.Bot.selections.function_(article,
                                 makeCallContinue(lis, id, linkId, ln, article),
@@ -632,7 +633,7 @@ WM.Bot = new function () {
                         }
                         else {
                             WM.Log.logError('Another bot has been ' +
-                                                'force-started, stopping...');
+                                                'force-started, stopping ...');
                             WM.Bot._endAutomatic(false);
                         }
                     };

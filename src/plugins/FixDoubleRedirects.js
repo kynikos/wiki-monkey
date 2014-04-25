@@ -24,7 +24,7 @@ WM.Plugins.FixDoubleRedirects = new function () {
     this.main = function (args, callNext) {
         var summary = args;
 
-        WM.Log.logInfo("Fixing double redirects...");
+        WM.Log.logInfo("Fixing double redirects ...");
 
         WM.MW.getSpecialList("DoubleRedirects",
                              "namespaces",
@@ -70,7 +70,7 @@ WM.Plugins.FixDoubleRedirects = new function () {
         var summary = args[3];
         var callNext = args[4];
 
-        WM.Log.logInfo("Processing " + title + "...");
+        WM.Log.logInfo("Processing " + title + " ...");
 
         var rawTarget = source.match(/\s*#redirect *[^\n]+/i);
 

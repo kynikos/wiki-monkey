@@ -28,7 +28,7 @@ WM.Plugins.FixLinkFragments = new function () {
             var rawfragment = link.fragment;
 
             if (rawfragment) {
-                WM.Log.logInfo("Processing " + link.rawLink + "...");
+                WM.Log.logInfo("Processing " + link.rawLink + " ...");
 
                 var target = ((link.namespace) ? link.namespace + ":" : "") +
                                                                     link.title;
@@ -205,7 +205,7 @@ WM.Plugins.FixLinkFragments = new function () {
                         //   colon)
                         if (!WM.Parser.compareArticleTitles(target, title)) {
                             WM.Log.logInfo("Processing " +
-                                            template.rawTransclusion + "...");
+                                            template.rawTransclusion + " ...");
 
                             var params = {
                                 'action': 'parse',
@@ -312,7 +312,7 @@ WM.Plugins.FixLinkFragments = new function () {
 
     this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
-        WM.Log.logInfo("Fixing links to sections of other articles...");
+        WM.Log.logInfo("Fixing links to sections of other articles ...");
         var links = WM.Parser.findInternalLinks(source, null, null);
         var title = WM.Editor.getTitle();
         WM.Plugins.FixLinkFragments.processLink(title, links, 0, source, "", 0,

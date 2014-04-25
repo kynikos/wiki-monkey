@@ -38,7 +38,7 @@ WM.Plugins.ArchWikiSaveTalk = new function () {
         var article = args[0];
         var summary = args[1];
 
-        WM.Log.logInfo('Appending diff to ' + article + "...");
+        WM.Log.logInfo('Appending diff to ' + article + " ...");
 
         WM.Diff.getEndTimestamp(WM.Plugins.ArchWikiSaveTalk.mainGetEndTimestamp,
                                 [article, summary, callNext]);

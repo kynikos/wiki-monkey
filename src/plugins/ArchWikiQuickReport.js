@@ -64,7 +64,7 @@ WM.Plugins.ArchWikiQuickReport = new function () {
         var article = args[1];
         var summary = args[2];
 
-        WM.Log.logInfo('Appending diff to ' + article + "...");
+        WM.Log.logInfo('Appending diff to ' + article + " ...");
 
         var select = document.getElementById("WikiMonkey-ArchWikiQuickReport-select-" + id);
         var type = select.options[select.selectedIndex].value;

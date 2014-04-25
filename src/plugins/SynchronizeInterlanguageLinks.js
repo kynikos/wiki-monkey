@@ -30,7 +30,7 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
         var supportedLangs = args[1];
         var whitelist = args[2];
 
-        WM.Log.logInfo("Synchronizing interlanguage links...");
+        WM.Log.logInfo("Synchronizing interlanguage links ...");
 
         WM.MW.getInterwikiMap(
             title,

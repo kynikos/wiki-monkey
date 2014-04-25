@@ -46,7 +46,7 @@ WM.Plugins.ArchWikiOldAURLinks = new function () {
 
         var link = links[index];
 
-        WM.Log.logInfo("Processing " + link.match[0] + "...");
+        WM.Log.logInfo("Processing " + link.match[0] + " ...");
 
         if (res.type == "error") {
             WM.Log.logError("The AUR's RPC interface returned an error: " + res.results);
@@ -117,7 +117,7 @@ WM.Plugins.ArchWikiOldAURLinks = new function () {
 
     this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
-        WM.Log.logInfo("Replacing old-style direct AUR package links...");
+        WM.Log.logInfo("Replacing old-style direct AUR package links ...");
         doReplace(source, WM.Plugins.ArchWikiOldAURLinks.mainEnd, callNext);
     };
 

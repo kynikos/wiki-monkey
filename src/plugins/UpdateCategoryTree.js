@@ -44,7 +44,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
     };
 
     var readToC = function (args) {
-        WM.Log.logInfo('Updating ' + args.params.page + "...");
+        WM.Log.logInfo('Updating ' + args.params.page + " ...");
         WM.MW.callQueryEdit(args.params.page,
                             WM.Plugins.UpdateCategoryTree.processToC,
                             args);
@@ -102,7 +102,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
     this.processCategory = function (params) {
         var args = params.callArgs;
 
-        WM.Log.logInfo("Processing " + params.node + "...");
+        WM.Log.logInfo("Processing " + params.node + " ...");
 
         var text = "";
 

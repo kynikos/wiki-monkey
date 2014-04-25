@@ -40,7 +40,7 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
     this.doUpdateContinue = function (source, newText, templates, index, call,
                                                                     callArgs) {
         WM.Log.logInfo("Processing " + templates[index].rawTransclusion +
-                                                                        "...");
+                                                                    " ...");
 
         newText += source.substring((
                                 (index == 0) ? 0 : templates[index - 1].index +
@@ -117,7 +117,7 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
                                                             call, callArgs) {
         var pkgname = templates[index].arguments[0].value.trim();
         WM.Log.logInfo("Looking for " + pkgname +
-                                        " in the official repositories...");
+                                        " in the official repositories ...");
 
         WM.ArchPackages.isOfficialPackage(pkgname,
                   WM.Plugins.ArchWikiUpdatePackageTemplates.checkOfficial2,
@@ -130,7 +130,7 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
 
         if (pkgname.toLowerCase() != pkgname) {
             WM.Log.logInfo("Looking for " + pkgname.toLowerCase() +
-                            " (lowercase) in the official repositories...");
+                            " (lowercase) in the official repositories ...");
 
             WM.ArchPackages.isOfficialPackage(pkgname.toLowerCase(),
                   WM.Plugins.ArchWikiUpdatePackageTemplates.checkOfficiallc2,
@@ -145,7 +145,7 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
     this.checkAUR = function (checks, source, newText, templates, index, call,
                                                                     callArgs) {
         var pkgname = templates[index].arguments[0].value.trim();
-        WM.Log.logInfo("Looking for " + pkgname + " in the AUR...");
+        WM.Log.logInfo("Looking for " + pkgname + " in the AUR ...");
 
         WM.ArchPackages.isAURPackage(pkgname,
                  WM.Plugins.ArchWikiUpdatePackageTemplates.checkAUR2,
@@ -158,7 +158,7 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
 
         if (pkgname.toLowerCase() != pkgname) {
             WM.Log.logInfo("Looking for " + pkgname.toLowerCase() +
-                                                " (lowercase) in the AUR...");
+                                                " (lowercase) in the AUR ...");
 
             WM.ArchPackages.isAURPackage(pkgname.toLowerCase(),
                  WM.Plugins.ArchWikiUpdatePackageTemplates.checkAURlc2,
@@ -174,7 +174,7 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
                                                             call, callArgs) {
         var grpname = templates[index].arguments[0].value.trim();
         WM.Log.logInfo("Looking for " + grpname +
-                                            " as an x86_64 package group...");
+                                            " as an x86_64 package group ...");
 
         WM.ArchPackages.isPackageGroup64(grpname,
                   WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup64_2,
@@ -187,7 +187,7 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
 
         if (grpname.toLowerCase() != grpname) {
             WM.Log.logInfo("Looking for " + grpname.toLowerCase() +
-                                " (lowercase) as an x86_64 package group...");
+                                " (lowercase) as an x86_64 package group ...");
 
             WM.ArchPackages.isPackageGroup64(grpname.toLowerCase(),
                   WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup64lc2,
@@ -203,7 +203,7 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
                                                             call, callArgs) {
         var grpname = templates[index].arguments[0].value.trim();
         WM.Log.logInfo("Looking for " + grpname +
-                                            " as an i686 package group...");
+                                            " as an i686 package group ...");
 
         WM.ArchPackages.isPackageGroup32(grpname,
                   WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup32_2,
@@ -216,7 +216,7 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
 
         if (grpname.toLowerCase() != grpname) {
             WM.Log.logInfo("Looking for " + grpname.toLowerCase() +
-                                " (lowercase) as an i686 package group...");
+                                " (lowercase) as an i686 package group ...");
 
             WM.ArchPackages.isPackageGroup32(grpname.toLowerCase(),
                   WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup32lc2,
@@ -466,7 +466,7 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
 
     this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
-        WM.Log.logInfo("Updating package templates...");
+        WM.Log.logInfo("Updating package templates ...");
         doUpdate(source, WM.Plugins.ArchWikiUpdatePackageTemplates.mainEnd,
                                                                     callNext);
     };
