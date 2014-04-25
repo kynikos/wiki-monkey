@@ -252,7 +252,7 @@ WM.UI.setSpecial([
             rightToLeft: false},
            {page: "Table of Contents (Русский)",
             root: "Category:Русский",
-            alsoIn: "also in",
+            alsoIn: "Также в",
             indentType: ":",
             replace: ["[ _]\\(Русский\\)", "", ""],
             keepAltName: true,
