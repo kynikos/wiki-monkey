@@ -504,7 +504,7 @@ WM.Bot = new function () {
     };
 
     this._checkOtherBotsRunning = function () {
-        GMValue = GM_getValue('BotToken', "0");
+        var GMValue = GM_getValue('BotToken', "0");
         return (GMValue != "0") && (GMValue != this._getBotToken());
     };
 
