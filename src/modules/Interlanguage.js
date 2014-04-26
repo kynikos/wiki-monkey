@@ -357,6 +357,7 @@ WM.Interlanguage = new function () {
 
         var cleanText = "";
         var textId = 0;
+
         for (var l in oldlinks) {
             var link = oldlinks[l];
             cleanText += source.substring(textId, link.index);
@@ -372,30 +373,36 @@ WM.Interlanguage = new function () {
             var firstLink = 0;
         }
 
-        var newText = "";
+        var parts = [];
+        // Do not add empty strings to parts, otherwise when it's joined
+        //   unnecessary line breaks will be added
 
         var head = cleanText.substring(0, firstLink).trim();
 
         if (head) {
-            newText += head + "\n";
+            parts.push(head);
         }
 
         var links = linkList.join("\n");
 
         if (links) {
-            newText += links + "\n";
+            parts.push(links);
         }
 
-        // Trim the tail part only to the left, because the source text may or
-        // may not have a trailing newline, and always adding a trailing
-        // newline would often make the final (newText != source) return true
-        // even when no actual change has been made
-        var tail = cleanText.substr(firstLink).replace(/^\s+/, "");
+        var body = cleanText.substr(firstLink).trim();
 
-        if (tail) {
-            newText += tail;
+        if (body) {
+            parts.push(body);
         }
 
-        return newText;
+        // Make sure to preserve the original white space at the end, otherwise
+        //   the final (newText != source) may return true even when no actual
+        //   change has been made
+        // Note that /\s+$/ would return null in the absence of trailing
+        //   whitespace, so a further check should be made, while /\s*$/
+        //   safely returns an empty string in that case
+        var trailws = /\s*$/;
+
+        return parts.join("\n") + trailws.exec(source);
     };
 };
