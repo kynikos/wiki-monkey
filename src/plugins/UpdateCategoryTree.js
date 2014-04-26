@@ -44,7 +44,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
     };
 
     var readToC = function (args) {
-        WM.Log.logInfo('Updating ' + args.params.page + " ...");
+        WM.Log.logInfo('Updating ' + WM.Log.linkToWikiPage(args.params.page,
+                                                args.params.page) + " ...");
         WM.MW.callQueryEdit(args.params.page,
                             WM.Plugins.UpdateCategoryTree.processToC,
                             args);
@@ -77,13 +78,13 @@ WM.Plugins.UpdateCategoryTree = new function () {
             }
             else {
                 WM.Log.logError("Cannot find insertion marks in " +
-                                                            args.params.page);
+                    WM.Log.linkToWikiPage(args.params.page, args.params.page));
                 iterateTocs(args);
             }
         }
         else {
-            WM.Log.logWarning(args.params.page +
-                                            ' has been updated too recently');
+            WM.Log.logWarning(WM.Log.linkToWikiPage(args.params.page,
+                        args.params.page) + ' has been updated too recently');
             iterateTocs(args);
         }
     };
@@ -106,7 +107,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
     this.processCategory = function (params) {
         var args = params.callArgs;
 
-        WM.Log.logInfo("Processing " + params.node + " ...");
+        WM.Log.logInfo("Processing " + WM.Log.linkToWikiPage(params.node,
+                                                        params.node) + " ...");
 
         var text = "";
 
@@ -134,7 +136,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
 
         if (params.children == "loop") {
             text += "'''[LOOP]'''\n";
-            WM.Log.logWarning("Loop in " + params.node);
+            WM.Log.logWarning("Loop in " + WM.Log.linkToWikiPage(params.node,
+                                                                params.node));
             WM.Plugins.UpdateCategoryTree.processCategoryEnd(params, args,
                                                                         text);
         }
@@ -226,18 +229,21 @@ WM.Plugins.UpdateCategoryTree = new function () {
                               args);
         }
         else {
-            WM.Log.logInfo(args.params.page + ' is already up to date');
+            WM.Log.logInfo(WM.Log.linkToWikiPage(args.params.page,
+                                args.params.page) + ' is already up to date');
             iterateTocs(args);
         }
     };
 
     this.checkWrite = function (res, args) {
         if (res.edit && res.edit.result == 'Success') {
-            WM.Log.logInfo(args.params.page + ' correctly updated');
+            WM.Log.logInfo(WM.Log.linkToWikiPage(args.params.page,
+                                    args.params.page) + ' correctly updated');
             iterateTocs(args);
         }
         else {
-            WM.Log.logError(args.params.page + ' has not been updated!\n' +
+            WM.Log.logError(WM.Log.linkToWikiPage(args.params.page,
+                    args.params.page) + ' has not been updated!\n' +
                     res['error']['info'] + " (" + res['error']['code'] + ")");
         }
     };

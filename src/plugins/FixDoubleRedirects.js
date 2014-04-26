@@ -70,7 +70,8 @@ WM.Plugins.FixDoubleRedirects = new function () {
         var summary = args[3];
         var callNext = args[4];
 
-        WM.Log.logInfo("Processing " + title + " ...");
+        WM.Log.logInfo("Processing " + WM.Log.linkToWikiPage(title, title) +
+                                                                    " ...");
 
         var rawTarget = source.match(/\s*#redirect *[^\n]+/i);
 
@@ -104,13 +105,15 @@ WM.Plugins.FixDoubleRedirects = new function () {
                                [results, namespaces, summary, callNext]);
             }
             else {
-                WM.Log.logWarning("Couldn't fix " + title);
+                WM.Log.logWarning("Couldn't fix " +
+                                        WM.Log.linkToWikiPage(title, title));
                 WM.Plugins.FixDoubleRedirects.iterateList(results, namespaces,
                                                         [summary, callNext]);
             }
         }
         else {
-            WM.Log.logWarning("Couldn't fix " + title);
+            WM.Log.logWarning("Couldn't fix " +
+                                        WM.Log.linkToWikiPage(title, title));
             WM.Plugins.FixDoubleRedirects.iterateList(results, namespaces,
                                                         [summary, callNext]);
         }

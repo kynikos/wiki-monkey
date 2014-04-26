@@ -38,7 +38,8 @@ WM.Plugins.ArchWikiSaveTalk = new function () {
         var article = args[0];
         var summary = args[1];
 
-        WM.Log.logInfo('Appending diff to ' + article + " ...");
+        WM.Log.logInfo('Appending diff to ' +
+                            WM.Log.linkToWikiPage(article, article) + " ...");
 
         WM.Diff.getEndTimestamp(
                             WM.Plugins.ArchWikiSaveTalk.mainGetEndTimestamp,
@@ -88,7 +89,8 @@ WM.Plugins.ArchWikiSaveTalk = new function () {
         var callNext = args[1];
 
         if (res.edit && res.edit.result == 'Success') {
-            WM.Log.logInfo('Diff correctly appended to ' + article);
+            WM.Log.logInfo('Diff correctly appended to ' +
+                                    WM.Log.linkToWikiPage(article, article));
             if (callNext) {
                 callNext();
             }

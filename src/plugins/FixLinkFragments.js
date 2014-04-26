@@ -28,7 +28,8 @@ WM.Plugins.FixLinkFragments = new function () {
             var rawfragment = link.fragment;
 
             if (rawfragment) {
-                WM.Log.logInfo("Processing " + link.rawLink + " ...");
+                WM.Log.logInfo("Processing " +
+                    WM.Log.linkToWikiPage(link.link, link.rawLink) + " ...");
 
                 var target = ((link.namespace) ? link.namespace + ":" : "") +
                                                                     link.title;
@@ -106,7 +107,7 @@ WM.Plugins.FixLinkFragments = new function () {
             }
             else {
                 WM.Log.logWarning("Cannot fix broken link fragment: " +
-                                                                link.rawLink);
+                            WM.Log.linkToWikiPage(link.link, link.rawLink));
                 newText += link.rawLink;
             }
 
@@ -206,7 +207,8 @@ WM.Plugins.FixLinkFragments = new function () {
                         //   colon)
                         if (!WM.Parser.compareArticleTitles(target, title)) {
                             WM.Log.logInfo("Processing " +
-                                            template.rawTransclusion + " ...");
+                                        WM.Log.linkToWikiPage(link,
+                                        template.rawTransclusion) + " ...");
 
                             var params = {
                                 'action': 'parse',
@@ -299,7 +301,7 @@ WM.Plugins.FixLinkFragments = new function () {
             }
             else {
                 WM.Log.logWarning("Cannot fix broken link fragment: " +
-                                                    template.rawTransclusion);
+                    WM.Log.linkToWikiPage(target, template.rawTransclusion));
                 newText += template.rawTransclusion;
             }
 

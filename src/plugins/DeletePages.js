@@ -53,7 +53,8 @@ WM.Plugins.DeletePages = new function () {
 
         if (!res.delete) {
             if (res.error) {
-                WM.Log.logError(cat + " has not been deleted!\n" +
+                WM.Log.logError(WM.Log.linkToWikiPage(title, title) +
+                                " has not been deleted!\n" +
                                 res.error.info + " (" + res.error.code + ")");
                 callBot(res.error.code, null);
             }

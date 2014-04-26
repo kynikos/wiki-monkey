@@ -108,6 +108,8 @@ WM.Plugins.FixFragments = new function () {
             }
         }
 
+        // It's not easy to use WM.Log.linkToWikiPage because pure fragments
+        //   are not supported yet
         WM.Log.logWarning("Cannot fix broken section link: " + rawlink);
         return rawlink;
     };

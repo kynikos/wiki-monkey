@@ -64,7 +64,8 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
 
         var newlinks = {};
 
-        WM.Log.logInfo("Reading " + decodeURI(url) + " ...");
+        WM.Log.logInfo("Reading " + WM.Log.linkToPage(url, "edited article") +
+                                                                    " ...");
 
         if (langlinks) {
             for (var l in langlinks) {
@@ -77,13 +78,25 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
                                             WM.Interlanguage.createNewLink(
                                             link.lang, link.title, link.url);
                 }
-                else if ((vlink && vlink.url != link.url) ||
-                                            (nlink && nlink.url != link.url)) {
+                else if (vlink && vlink.url != link.url) {
                     // Just ignore any conflicting links and warn the user:
                     // if it's a real conflict, the user will investigate it,
                     // otherwise the user will ignore it
                     WM.Log.logWarning("Possibly conflicting interlanguage " +
-                            "links: [[" + link.lang + ":" + link.title + "]]");
+                        "links: " + WM.Log.linkToPage(link.url, "[[" +
+                        link.lang + ":" + link.title + "]]") + " and " +
+                        WM.Log.linkToPage(vlink.url, "[[" + link.lang + ":" +
+                        visitedlinks[link.lang.toLowerCase()].title + "]]"));
+                }
+                else if (nlink && nlink.url != link.url) {
+                    // Just ignore any conflicting links and warn the user:
+                    // if it's a real conflict, the user will investigate it,
+                    // otherwise the user will ignore it
+                    WM.Log.logWarning("Possibly conflicting interlanguage " +
+                        "links: " + WM.Log.linkToPage(link.url, "[[" +
+                        link.lang + ":" + link.title + "]]") + " and " +
+                        WM.Log.linkToPage(nlink.url, "[[" + link.lang + ":" +
+                        newlinks[link.lang.toLowerCase()].title + "]]"));
                 }
             }
 

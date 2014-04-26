@@ -50,11 +50,11 @@ WM.Plugins.FixBacklinkFragments = new function () {
                     newlink = "[[" + target + "#" + fixedFragment +
                         ((link.anchor) ? "|" + link.anchor : "") + "]]";
                     WM.Log.logInfo("Fixed broken link fragment: " + oldlink +
-                                                            " -> " + newlink);
+                        " -> " + WM.Log.linkToWikiPage(link.link, newlink));
                 }
                 else {
                     WM.Log.logWarning("Cannot fix broken link fragment: " +
-                                                                    newlink);
+                                    WM.Log.linkToWikiPage(link.link, newlink));
                 }
             }
 
@@ -128,12 +128,14 @@ WM.Plugins.FixBacklinkFragments = new function () {
                         var newlink = "{{" + template.title + "|" + target +
                                         "#" + fixedFragment  + anchor + "}}";
                         WM.Log.logInfo("Fixed broken link fragment: " +
-                                template.rawTransclusion + " -> " + newlink);
+                                        template.rawTransclusion + " -> " +
+                                        WM.Log.linkToWikiPage(link, newlink));
                         return newlink;
                     }
                     else {
                         WM.Log.logWarning("Cannot fix broken link fragment: " +
-                                                    template.rawTransclusion);
+                                                    WM.Log.linkToWikiPage(link,
+                                                    template.rawTransclusion));
                     }
                 }
             }

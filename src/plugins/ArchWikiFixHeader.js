@@ -116,7 +116,8 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         for (var c in categories) {
             var cat = categories[c];
             if (cat.fragment) {
-                WM.Log.logWarning(cat.rawLink + " contains a fragment " +
+                WM.Log.logWarning(WM.Log.linkToWikiPage(cat.link,
+                                    cat.rawLink) + " contains a fragment " +
                                     "reference, but it doesn't make sense " +
                                     "in categories and will be removed");
             }
@@ -128,7 +129,8 @@ WM.Plugins.ArchWikiFixHeader = new function () {
             var catlink = "[[" + cattext + ((cat.anchor) ? "|" +
                                                     cat.anchor : "") + "]]";
             if (language != catlang) {
-                WM.Log.logWarning(cattext + " belongs to a different " +
+                WM.Log.logWarning(WM.Log.linkToWikiPage(cat.link, cattext) +
+                    " belongs to a different " +
                     "language than the one of the title (" + language + ")");
             }
             if (catlist.indexOf(cattext) < 0) {
@@ -136,7 +138,8 @@ WM.Plugins.ArchWikiFixHeader = new function () {
                 catlinks.push(catlink);
             }
             else {
-                WM.Log.logWarning("Removed duplicate of " + cattext);
+                WM.Log.logWarning("Removed duplicate of " +
+                                    WM.Log.linkToWikiPage(cat.link, cattext));
             }
             tempcontent += content.substring(contentId, cat.index);
             contentId = cat.index + cat.length;
@@ -159,6 +162,10 @@ WM.Plugins.ArchWikiFixHeader = new function () {
         for (var l in interlanguage) {
             var link = interlanguage[l];
             if (link.anchor) {
+                // Cannot use WM.Log.linkToWikiPage because local interlanguage
+                //   links would not resolved correctly; linkToPage would need
+                //   to find the URL instead, which seems too complicated for
+                //   the purpose of this plugin
                 WM.Log.logWarning(link.rawLink + " contains an alternative " +
                                     "text, but it doesn't make sense in " +
                                     "interlanguage links and will be removed");
@@ -175,6 +182,10 @@ WM.Plugins.ArchWikiFixHeader = new function () {
                 iwlinks.push(fulllink);
             }
             else {
+                // Cannot use WM.Log.linkToWikiPage because local interlanguage
+                //   links would not resolved correctly; linkToPage would need
+                //   to find the URL instead, which seems too complicated for
+                //   the purpose of this plugin
                 WM.Log.logWarning("Removed duplicate of " + linktext);
             }
             tempcontent += content.substring(contentId, link.index);
