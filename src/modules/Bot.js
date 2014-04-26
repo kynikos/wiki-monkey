@@ -374,18 +374,23 @@ WM.Bot = new function () {
                 var inverse = document.getElementById('WikiMonkeyBotInverse'
                                                                     ).checked;
 
-                for (var f in filters) {
-                    var regexp = filters[f][0];
-                    var negative = filters[f][1];
-                    var test = regexp.test(title);
+                if (filters.length > 0) {
+                    for (var f in filters) {
+                        var regexp = filters[f][0];
+                        var negative = filters[f][1];
+                        var test = regexp.test(title);
 
-                    if (test != negative) {
-                        return (inverse) ? false : true;
+                        if (test != negative) {
+                            return (inverse) ? false : true;
+                        }
                     }
-                }
 
-                // No (test != negative) condition has been met
-                return (inverse) ? true : false;
+                    // No (test != negative) condition has been met in the loop
+                    return (inverse) ? true : false;
+                }
+                else {
+                    return (inverse) ? false : true;
+                }
             }
             else {
                 return false;
