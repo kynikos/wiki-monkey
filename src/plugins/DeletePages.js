@@ -44,10 +44,13 @@ WM.Plugins.DeletePages = new function () {
                            reason: summary},
                            null,
                            WM.Plugins.DeletePages.mainAutoEnd,
-                           callBot);
+                           [title, callBot]);
     };
 
-    this.mainAutoEnd = function (res, callBot) {
+    this.mainAutoEnd = function (res, args) {
+        var title = args[0];
+        var callBot = args[1];
+
         if (!res.delete) {
             if (res.error) {
                 WM.Log.logError(cat + " has not been deleted!\n" +
