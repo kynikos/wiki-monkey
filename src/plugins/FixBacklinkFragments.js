@@ -21,6 +21,35 @@
 WM.Plugins.FixBacklinkFragments = new function () {
     "use strict";
 
+    this.makeBotUI = function (args) {
+        GM_addStyle("#WikiMonkey-FixBacklinkFragments input[type='text'] " +
+                                                    "{margin-left:0.33em;}");
+
+        var divMain = document.createElement('div');
+        divMain.id = "WikiMonkey-FixBacklinkFragments";
+
+        var label = document.createElement('span');
+        label.innerHTML = 'Target page:';
+        divMain.appendChild(label);
+
+        var target = document.createElement('input');
+        target.setAttribute('type', 'text');
+        target.id = "WikiMonkey-FixBacklinkFragments-Target";
+
+        if (WM.WhatLinksHere.isWhatLinksHerePage()) {
+            target.value = WM.WhatLinksHere.getTitle();
+        }
+
+        divMain.appendChild(target);
+
+        return divMain;
+    };
+
+    var readTarget = function () {
+        return document.getElementById(
+                            "WikiMonkey-FixBacklinkFragments-Target").value;
+    };
+
     var fixLinks = function (source, target, sections) {
         // Note that it's impossible to recognize any namespaces in the title
         //   without querying the server
@@ -179,32 +208,39 @@ WM.Plugins.FixBacklinkFragments = new function () {
     };
 
     this.mainAuto = function (args, title, callBot, chainArgs) {
-        var target = WM.WhatLinksHere.getTitle();
+        var target = readTarget();
+        WM.Log.logHidden("Target page: " + target);
 
-        if (chainArgs === null) {
-            var params = {
-                'action': 'parse',
-                'prop': 'sections',
-                'page': target,
-                'redirects': 1,
-            };
-            WM.Log.logWarning("If some articles in the list are linking to " +
-                "this article " +
-                "through a redirect, you should process the backlinks of " +
-                "that redirect page separately through its " +
-                "Special:WhatLinksHere page, as this plugin can only fix " +
-                "links that exactly match the title of this article.\nIn " +
-                "order to save time you are advised to hide the redirects " +
-                "in this list.");
+        if (target) {
+            if (chainArgs === null) {
+                var params = {
+                    'action': 'parse',
+                    'prop': 'sections',
+                    'page': target,
+                    'redirects': 1,
+                };
+                WM.Log.logWarning("If some articles in the list are " +
+                    "linking to this article " +
+                    "through a redirect, you should process the backlinks " +
+                    "of that redirect page separately through its " +
+                    "Special:WhatLinksHere page, as this plugin can only " +
+                    "fix links that exactly match the title of this " +
+                    "article.\nIn order to save time you are advised to " +
+                    "hide the redirects in this list.");
 
-            WM.MW.callAPIGet(params,
+                WM.MW.callAPIGet(params,
                          null,
                          WM.Plugins.FixBacklinkFragments.mainAutoFindSections,
                          [title, target, args, callBot]);
+            }
+            else {
+                WM.Plugins.FixBacklinkFragments.mainAutoRead(target, chainArgs,
+                                                        title, args, callBot);
+            }
         }
         else {
-            WM.Plugins.FixBacklinkFragments.mainAutoRead(target, chainArgs,
-                                                        title, args, callBot);
+            WM.Log.logError('The target page cannot be empty');
+            callBot(false, null);
         }
     };
 
@@ -215,13 +251,26 @@ WM.Plugins.FixBacklinkFragments = new function () {
         var callBot = args[3];
         var sections = [];
 
-        for (var s = 0; s < res.parse.sections.length; s++) {
-            sections.push(WM.Parser.squashContiguousWhitespace(
+        if (res.parse) {
+            for (var s = 0; s < res.parse.sections.length; s++) {
+                sections.push(WM.Parser.squashContiguousWhitespace(
                                         res.parse.sections[s].line).trim());
-        }
+            }
 
-        WM.Plugins.FixBacklinkFragments.mainAutoRead(target, sections, title,
-                                                            summary, callBot);
+            WM.Plugins.FixBacklinkFragments.mainAutoRead(target, sections,
+                                                    title, summary, callBot);
+        }
+        else {
+            WM.Log.logError("The set target page, " + target +
+                                                    ", seems not to exist");
+
+            if (res.error) {
+                callBot(res.error.code, sections);
+            }
+            else {
+                callBot(false, sections);
+            }
+        }
     };
 
     this.mainAutoRead = function (target, sections, title, summary, callBot) {

@@ -325,7 +325,7 @@ WM.UI.setNewPages([
 WM.UI.setBot([
     ["SimpleReplace", "RegExp substitution", ["1"]],
     ["FixBacklinkFragments",
-                        "Fix links to specific sections of the target article",
+                        "Fix links to specific sections of a target page",
                         "fix links to specific sections"],
     ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
      [function (title) {
