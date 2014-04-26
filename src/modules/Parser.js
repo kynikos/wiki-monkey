@@ -306,7 +306,7 @@ WM.Parser = new function () {
         //   GROUPS
         // There can't be an underscore before the variable name
         // There can't be a whitespace between the variable name and the colon
-        nSource = this.neutralizeNowikiTags(source);
+        var nSource = this.neutralizeNowikiTags(source);
         var results = [];
         var dbrackets = Alib.Str.findNestedEnclosures(nSource, "{{", "}}",
                                                                     "x")[0];
