@@ -40,8 +40,9 @@ WM.Plugins.ArchWikiSaveTalk = new function () {
 
         WM.Log.logInfo('Appending diff to ' + article + " ...");
 
-        WM.Diff.getEndTimestamp(WM.Plugins.ArchWikiSaveTalk.mainGetEndTimestamp,
-                                [article, summary, callNext]);
+        WM.Diff.getEndTimestamp(
+                            WM.Plugins.ArchWikiSaveTalk.mainGetEndTimestamp,
+                            [article, summary, callNext]);
     };
 
     this.mainGetEndTimestamp = function (enddate, args) {
@@ -60,9 +61,11 @@ WM.Plugins.ArchWikiSaveTalk = new function () {
         var callNext = args[2];
 
         var title = Alib.HTTP.getURIParameter(null, 'title');
-        var pEnddate = enddate.substr(0, 10) + "&nbsp;" + enddate.substr(11, 8);
+        var pEnddate = enddate.substr(0, 10) + "&nbsp;" +
+                                                        enddate.substr(11, 8);
 
-        var newtext = WM.Tables.appendRow(source, "<!-- REPLY TABLE -->", ["[" + location.href + " " + title + "]", pEnddate]);
+        var newtext = WM.Tables.appendRow(source, "<!-- REPLY TABLE -->",
+                        ["[" + location.href + " " + title + "]", pEnddate]);
 
         WM.MW.callAPIPost(
             {
@@ -91,7 +94,8 @@ WM.Plugins.ArchWikiSaveTalk = new function () {
             }
         }
         else {
-            WM.Log.logError('The diff has not been appended!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
+            WM.Log.logError('The diff has not been appended!\n' +
+                    res['error']['info'] + " (" + res['error']['code'] + ")");
         }
     };
 };

@@ -99,7 +99,8 @@ WM.Plugins.FixFragments = new function () {
                     // If the fragment was *partially* encoded instead, a
                     // link-breaking character may have been encoded, so all
                     // link-breaking characters must be re-encoded here!
-                    var escHeading = WM.Parser.dotEncodeLinkBreakingFragmentCharacters(
+                    var escHeading =
+                            WM.Parser.dotEncodeLinkBreakingFragmentCharacters(
                                                                     heading);
                     return newlink = "[[#" + escHeading + ((lalt) ? "|" +
                                                             lalt : "") + "]]";

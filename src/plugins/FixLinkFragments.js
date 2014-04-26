@@ -197,7 +197,8 @@ WM.Plugins.FixLinkFragments = new function () {
 
                     if (rawfragment) {
                         // Note that it's impossible to recognize any
-                        //   namespaces in the title without querying the server
+                        //   namespaces in the title without querying the
+                        //   server
                         // Alternatively, a list of the known namespaces could
                         //   be maintained for each wiki
                         // Recognizing namespaces would let recognize more
@@ -215,11 +216,11 @@ WM.Plugins.FixLinkFragments = new function () {
                             };
 
                             WM.MW.callAPIGet(params,
-                                     null,
-                                     WM.Plugins.FixLinkFragments.processArchWikiLinkContinue,
-                                     [template, target, rawfragment, templates,
-                                     expectedArgs, index, source, newText,
-                                     prevId, title, call, callArgs]);
+                                 null,
+                                 WM.Plugins.FixLinkFragments.processArchWikiLinkContinue,
+                                 [template, target, rawfragment, templates,
+                                 expectedArgs, index, source, newText,
+                                 prevId, title, call, callArgs]);
                         }
                         else {
                             index++;

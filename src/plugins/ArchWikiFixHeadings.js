@@ -32,7 +32,9 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
         }
         else {
             increaseLevel = 0;
-            WM.Log.logWarning("There are 6 levels of headings, it's been necessary to start creating them from level 1 although usually it's suggested to start from level 2");
+            WM.Log.logWarning("There are 6 levels of headings, it's been " +
+                "necessary to start creating them from level 1 although " +
+                "usually it's suggested to start from level 2");
         }
 
         var newtext = "";
@@ -42,9 +44,11 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
         for (var s in info.sections) {
             section = info.sections[s];
             newtext += source.substring(prevId, section.index);
-            newtext += new Array(section.tocLevel + increaseLevel + 1).join("=");
+            newtext += new Array(section.tocLevel + increaseLevel + 1).join(
+                                                                        "=");
             newtext += section.rawheading;
-            newtext += new Array(section.tocLevel + increaseLevel + 1).join("=");
+            newtext += new Array(section.tocLevel + increaseLevel + 1).join(
+                                                                        "=");
             prevId = section.index + section.length0;
         }
         newtext += source.substr(prevId);

@@ -66,15 +66,17 @@ WM.Plugins.ArchWikiQuickReport = new function () {
 
         WM.Log.logInfo('Appending diff to ' + article + " ...");
 
-        var select = document.getElementById("WikiMonkey-ArchWikiQuickReport-select-" + id);
+        var select = document.getElementById(
+                                "WikiMonkey-ArchWikiQuickReport-select-" + id);
         var type = select.options[select.selectedIndex].value;
 
         if (type != 'content' && type != 'style') {
             WM.Log.logError('Select a valid report type');
         }
         else {
-            WM.Diff.getEndTimestamp(WM.Plugins.ArchWikiQuickReport.mainGetEndTimestamp,
-                                    [id, article, type, summary, callNext]);
+            WM.Diff.getEndTimestamp(
+                            WM.Plugins.ArchWikiQuickReport.mainGetEndTimestamp,
+                            [id, article, type, summary, callNext]);
         }
     };
 
@@ -98,10 +100,13 @@ WM.Plugins.ArchWikiQuickReport = new function () {
         var callNext = args[4];
 
         var title = Alib.HTTP.getURIParameter(null, 'title');
-        var pEnddate = enddate.substr(0, 10) + "&nbsp;" + enddate.substr(11, 8);
-        var notes = document.getElementById("WikiMonkey-ArchWikiQuickReport-input-" + id).value;
+        var pEnddate = enddate.substr(0, 10) + "&nbsp;" +
+                                                        enddate.substr(11, 8);
+        var notes = document.getElementById(
+                        "WikiMonkey-ArchWikiQuickReport-input-" + id).value;
 
-        var newtext = WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", pEnddate, type, notes]);
+        var newtext = WM.Tables.appendRow(source, null, ["[" + location.href +
+                                    " " + title + "]", pEnddate, type, notes]);
 
         WM.MW.callAPIPost({action: "edit",
                            bot: "1",
@@ -126,7 +131,8 @@ WM.Plugins.ArchWikiQuickReport = new function () {
             }
         }
         else {
-            WM.Log.logError('The diff has not been appended!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
+            WM.Log.logError('The diff has not been appended!\n' +
+                    res['error']['info'] + " (" + res['error']['code'] + ")");
         }
     };
 };

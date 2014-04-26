@@ -60,26 +60,30 @@ WM.Plugins.UpdateCategoryTree = new function () {
         var now = new Date();
         var msTimestamp = Date.parse(args.timestamp);
         if (now.getTime() - msTimestamp >= minInterval) {
-            var start = args.source.indexOf(args.startMark) + args.startMark.length;
+            var start = args.source.indexOf(args.startMark) +
+                                                        args.startMark.length;
             var end = args.source.lastIndexOf(args.endMark);
 
             if (start > -1 && end > -1) {
                 args.startId = start;
                 args.endId = end;
                 args.treeText = "";
-                args.altNames = (args.params.keepAltName) ? storeAlternativeNames(args.source) : {};
+                args.altNames = (args.params.keepAltName) ?
+                                    storeAlternativeNames(args.source) : {};
                 WM.Cat.recurseTree({node: args.params.root,
-                                    callNode: WM.Plugins.UpdateCategoryTree.processCategory,
-                                    callEnd: WM.Plugins.UpdateCategoryTree.writeToC,
-                                    callArgs: args});
+                    callNode: WM.Plugins.UpdateCategoryTree.processCategory,
+                    callEnd: WM.Plugins.UpdateCategoryTree.writeToC,
+                    callArgs: args});
             }
             else {
-                WM.Log.logError("Cannot find insertion marks in " + args.params.page);
+                WM.Log.logError("Cannot find insertion marks in " +
+                                                            args.params.page);
                 iterateTocs(args);
             }
         }
         else {
-            WM.Log.logWarning(args.params.page + ' has been updated too recently');
+            WM.Log.logWarning(args.params.page +
+                                            ' has been updated too recently');
             iterateTocs(args);
         }
     };
@@ -122,7 +126,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
             }
         }
 
-        var altName = (args.altNames[params.node]) ? args.altNames[params.node] : null;
+        var altName = (args.altNames[params.node]) ?
+                                            args.altNames[params.node] : null;
         text += createCatLink(params.node, args.params.replace, altName);
 
         text += (args.params.rightToLeft) ? "&lrm; " : " ";
@@ -130,7 +135,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
         if (params.children == "loop") {
             text += "'''[LOOP]'''\n";
             WM.Log.logWarning("Loop in " + params.node);
-            WM.Plugins.UpdateCategoryTree.processCategoryEnd(params, args, text);
+            WM.Plugins.UpdateCategoryTree.processCategoryEnd(params, args,
+                                                                        text);
         }
         else {
             WM.Cat.getParentsAndInfo(
@@ -163,10 +169,13 @@ WM.Plugins.UpdateCategoryTree = new function () {
             }
             var parentTitles = [];
             for (var i in parents) {
-                altName = (args.altNames[parents[i].title]) ? args.altNames[parents[i].title] : null;
-                parentTitles.push(createCatLink(parents[i].title, args.params.replace, altName));
+                altName = (args.altNames[parents[i].title]) ?
+                                        args.altNames[parents[i].title] : null;
+                parentTitles.push(createCatLink(parents[i].title,
+                                                args.params.replace, altName));
             }
-            text += " (" + args.params.alsoIn + " " + parentTitles.join(", ") + ")";
+            text += " (" + args.params.alsoIn + " " +
+                                                parentTitles.join(", ") + ")";
         }
 
         text += "</small>\n";
@@ -201,7 +210,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
         var args = params.callArgs;
 
         args.treeText = "\n" + args.treeText;
-        var newtext = Alib.Str.overwriteBetween(args.source, args.treeText, args.startId, args.endId);
+        var newtext = Alib.Str.overwriteBetween(args.source, args.treeText,
+                                                    args.startId, args.endId);
 
         if (newtext != args.source) {
             WM.MW.callAPIPost({action: "edit",
@@ -227,7 +237,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
             iterateTocs(args);
         }
         else {
-            WM.Log.logError(args.params.page + ' has not been updated!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
+            WM.Log.logError(args.params.page + ' has not been updated!\n' +
+                    res['error']['info'] + " (" + res['error']['code'] + ")");
         }
     };
 
@@ -238,7 +249,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
             readToC(args);
         }
         else {
-            WM.Log.logInfo("Operations completed, check the log for warnings or errors");
+            WM.Log.logInfo("Operations completed, check the log for " +
+                                                        "warnings or errors");
             if (args.callNext) {
                 args.callNext();
             }
