@@ -364,7 +364,10 @@ WM.Bot = new function () {
     var canProcessPage = function (link) {
         // Exclude red links (they can be found in some special pages)
         if (link.className.split(" ").indexOf("new") < 0) {
-            var title = link.title;
+            // Don't use link.title because for example in Category pages all
+            //   subpages would include "Category:", thus always matching
+            //   filters like "/a/", "/t/" etc.
+            var title = link.innerHTML;
             var duplicates = document.getElementById('WikiMonkeyBotDuplicates'
                                                                     ).checked;
 
