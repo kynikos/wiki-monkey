@@ -124,6 +124,7 @@ WM.Bot = new function () {
 
     this.selections = {plugin: null,
                        function_: function () {},
+                       filters: [],
                        list: {current: null,
                               previous: null},
                        visited: []};
@@ -326,60 +327,73 @@ WM.Bot = new function () {
                                     ).getElementsByTagName('input')[0].checked;
     };
 
-    var canProcessPage = function (link) {
-        var response = false;
+    var makeFilters = function () {
+        WM.Bot.selections.filters = [];
+        var filters = document.getElementById('WikiMonkeyBotFilter'
+                                                        ).value.split('\n');
 
+        for (var f in filters) {
+            var filter = filters[f];
+
+            // filter could be an empty string
+            if (filter) {
+                var firstSlash = filter.indexOf('/');
+                var lastSlash = filter.lastIndexOf('/');
+                var pattern = filter.substring(firstSlash + 1, lastSlash);
+                var modifiers = filter.substring(lastSlash + 1);
+                var negative = filter.charAt(0) == '!';
+                var regexp;
+
+                try {
+                    regexp = new RegExp(pattern, modifiers);
+                }
+                catch (exc) {
+                    WM.Log.logError('Invalid regexp: ' + exc);
+                    return false;
+                }
+
+                WM.Bot.selections.filters.push([regexp, negative]);
+                // Do not return nor break, so that if among the filters
+                //   there's an invalid regexp the function returns false
+            }
+        }
+
+        return true;
+    };
+
+    var canProcessPage = function (link) {
         // Exclude red links (they can be found in some special pages)
         if (link.className.split(" ").indexOf("new") < 0) {
             var title = link.title;
             var duplicates = document.getElementById('WikiMonkeyBotDuplicates'
                                                                     ).checked;
 
-            if (duplicates || WM.Bot.selections.visited.indexOf(title) == -1) {
+            if (duplicates || WM.Bot.selections.visited.indexOf(title) < 0) {
                 WM.Bot.selections.visited.push(title);
+                var filters = WM.Bot.selections.filters;
                 var inverse = document.getElementById('WikiMonkeyBotInverse'
                                                                     ).checked;
 
-                if (inverse) {
-                    response = true;
-                }
+                for (var f in filters) {
+                    var regexp = filters[f][0];
+                    var negative = filters[f][1];
+                    var test = regexp.test(title);
 
-                var rules = document.getElementById('WikiMonkeyBotFilter'
-                                                        ).value.split('\n');
-                var rule, firstSlash, lastSlash, pattern, modifiers, regexp,
-                                                                test, negative;
-
-                for (var r in rules) {
-                    rule = rules[r];
-
-                    if (rule) {
-                        firstSlash = rule.indexOf('/');
-                        lastSlash = rule.lastIndexOf('/');
-                        pattern = rule.substring(firstSlash + 1, lastSlash);
-                        modifiers = rule.substring(lastSlash + 1);
-                        negative = rule.charAt(0) == '!';
-
-                        try {
-                            regexp = new RegExp(pattern, modifiers);
-                        }
-                        catch (exc) {
-                            WM.Log.logError('Invalid regexp: ' + exc);
-                            break;
-                        }
-
-                        test = regexp.test(title);
-
-                        if (!negative != !test) {
-                            response = (inverse) ? false : true;
-                            // Do not break, so that if among the rules there's
-                            // an invalid regexp the function returns false
-                        }
+                    if (test != negative) {
+                        return (inverse) ? false : true;
                     }
                 }
+
+                // No (test != negative) condition has been met
+                return (inverse) ? true : false;
+            }
+            else {
+                return false;
             }
         }
-
-        return response;
+        else {
+            return false;
+        }
     };
 
     var changeWikiMonkeyLinkClassName = function (className, newClass) {
@@ -444,42 +458,51 @@ WM.Bot = new function () {
 
         WM.Bot.selections.visited = [];
 
-        if (WM.Bot.selections.list.current[0].nodeName == 'TBODY') {
-            items = WM.Bot.selections.list.current[0].getElementsByTagName(
-                                                                        'td');
-        }
-        else {
-            items = WM.Bot.selections.list.current[0].getElementsByTagName(
-                                                                        'li');
-        }
         linkId = WM.Bot.selections.list.current[1];
         var enable = false;
         var N = 0;
 
-        for (var i = 0; i < items.length; i++) {
-            link = items[i].getElementsByTagName('a')[linkId];
+        if (makeFilters()) {
+            if (WM.Bot.selections.list.current[0].nodeName == 'TBODY') {
+                items = WM.Bot.selections.list.current[0].getElementsByTagName(
+                                                                        'td');
+            }
+            else {
+                items = WM.Bot.selections.list.current[0].getElementsByTagName(
+                                                                        'li');
+            }
 
-            // Also test 'link' itself, because the list item could refer to an
-            // invalid title, represented by e.g.
-            // <span class="mw-invalidtitle">Invalid title with namespace
-            // "Category" and text ""</span>
-            if (link) {
-                if (canProcessPage(link)) {
-                    link.className = changeWikiMonkeyLinkClassName(
+            for (var i = 0; i < items.length; i++) {
+                link = items[i].getElementsByTagName('a')[linkId];
+
+                // Also test 'link' itself, because the list item could refer
+                // to an invalid title, represented by e.g.
+                // <span class="mw-invalidtitle">Invalid title with namespace
+                // "Category" and text ""</span>
+                if (link) {
+                    if (canProcessPage(link)) {
+                        link.className = changeWikiMonkeyLinkClassName(
                                     link.className, 'WikiMonkeyBotSelected');
-                    enable = true;
-                    N++;
-                }
-                else {
-                    link.className = restoreOriginalLinkClassName(
+                        enable = true;
+                        N++;
+                    }
+                    else {
+                        link.className = restoreOriginalLinkClassName(
                                                             link.className);
+                    }
                 }
             }
         }
 
         WM.Log.logInfo('Preview updated (' + N + ' pages selected)');
-        (enable) ? WM.Bot._enableStartBot() : WM.Bot._disableStartBot(
+
+        if (enable) {
+            WM.Bot._enableStartBot();
+        }
+        else {
+            WM.Bot._disableStartBot(
                             'No pages selected, reset and preview the filter');
+        }
     };
 
     // GM_setValue can only store strings, bool and 32-bit integers (no 64-bit)
@@ -509,21 +532,6 @@ WM.Bot = new function () {
     };
 
     this._startAutomatic = function () {
-        if (WM.Bot.selections.list.current[0].nodeName == 'TBODY') {
-            var itemsDOM = WM.Bot.selections.list.current[0
-                                                ].getElementsByTagName('td');
-        }
-        else {
-            var itemsDOM = WM.Bot.selections.list.current[0
-                                                ].getElementsByTagName('li');
-        }
-        // Passing the live collection with the callback function was causing
-        // it to be lost in an apparently random manner
-        var items = [];
-        for (var i = 0; i < itemsDOM.length; i++) {
-            items.push(itemsDOM[i]);
-        }
-        var linkId = WM.Bot.selections.list.current[1];
         if (WM.Bot._checkOtherBotsRunning() && !WM.Bot._canForceStart()) {
             WM.Log.logError('It\'s not possible to start the bot (without ' +
                         'forcing it) for one of the following reasons:<br>' +
@@ -536,7 +544,26 @@ WM.Bot = new function () {
                                                     'a browser page refresh');
             WM.Bot._enableForceStart();
         }
-        else {
+        else if (makeFilters()) {
+            if (WM.Bot.selections.list.current[0].nodeName == 'TBODY') {
+                var itemsDOM = WM.Bot.selections.list.current[0
+                                                ].getElementsByTagName('td');
+            }
+            else {
+                var itemsDOM = WM.Bot.selections.list.current[0
+                                                ].getElementsByTagName('li');
+            }
+
+            // Passing the live collection with the callback function was
+            //   causing it to be lost in an apparently random manner
+            var items = [];
+
+            for (var i = 0; i < itemsDOM.length; i++) {
+                items.push(itemsDOM[i]);
+            }
+
+            var linkId = WM.Bot.selections.list.current[1];
+
             WM.Bot._disableForceStart();
             WM.Bot._setBotToken();
             WM.Log.logInfo('Starting bot ...');
