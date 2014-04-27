@@ -28,7 +28,7 @@ WM.Plugins.ArchWikiSortContacts = new function () {
         WM.Log.logInfo("Sorting administrators and maintainers ...");
 
         // Cannot query "bot|sysop|bureaucrat|maintainer" at once, because
-        //   of the upstream bug discussed in #174
+        //   of the upstream bug tracked in #179
         //WM.MW.getActiveUsers("bot|sysop|bureaucrat|maintainer",
         WM.MW.getActiveUsers("sysop",
                                 WM.Plugins.ArchWikiSortContacts.mainContinue1,
@@ -53,7 +53,7 @@ WM.Plugins.ArchWikiSortContacts = new function () {
         }
 
         // Cannot query "bot|sysop|bureaucrat|maintainer" at once, because
-        //   of the upstream bug discussed in #174
+        //   of the upstream bug tracked in #179
         WM.MW.getActiveUsers("maintainer",
                                 WM.Plugins.ArchWikiSortContacts.mainContinue2,
                                 [queriedUsers, pages, summary, callNext]);
@@ -71,7 +71,7 @@ WM.Plugins.ArchWikiSortContacts = new function () {
         }
 
         // Cannot query "bot|sysop|bureaucrat|maintainer" at once, because
-        //   of the upstream bug discussed in #174
+        //   of the upstream bug tracked in #179
         WM.MW.getActiveUsers("bot",
                                 WM.Plugins.ArchWikiSortContacts.mainContinue3,
                                 [queriedUsers, pages, summary, callNext]);
