@@ -517,4 +517,29 @@ WM.MW = new function () {
         },
         callArgs);
     };
+
+    this.getActiveUsers = function (augroup, call, callArgs) {
+        var query = {action: "query",
+                     list: "allusers",
+                     augroup: augroup,
+                     aulimit: 500,
+                     auactiveusers: 1}
+
+        this._getActiveUsersContinue(query, call, callArgs, []);
+    };
+
+    this._getActiveUsersContinue = function (query, call, callArgs, results) {
+        WM.MW.callAPIGet(query, null, function (res, args) {
+            results = results.concat(res.query.allusers);
+
+            if (res["query-continue"]) {
+                query.aufrom = res["query-continue"].allusers.aufrom;
+                WM.MW._getActiveUsersContinue(query, call, args, results);
+            }
+            else {
+                call(results, args);
+            }
+        },
+        callArgs);
+    };
 };
