@@ -102,8 +102,8 @@ WM.Plugins.FixFragments = new function () {
                     var escHeading =
                             WM.Parser.dotEncodeLinkBreakingFragmentCharacters(
                                                                     heading);
-                    return newlink = "[[#" + escHeading + ((lalt) ? "|" +
-                                                            lalt : "") + "]]";
+                    return "[[#" + escHeading + ((lalt) ? "|" + lalt : "") +
+                                                                        "]]";
                 }
             }
         }
