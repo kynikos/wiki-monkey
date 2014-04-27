@@ -61,12 +61,11 @@ WM.Plugins.UpdateCategoryTree = new function () {
         var now = new Date();
         var msTimestamp = Date.parse(args.timestamp);
         if (now.getTime() - msTimestamp >= minInterval) {
-            var start = args.source.indexOf(args.startMark) +
-                                                        args.startMark.length;
+            var start = args.source.indexOf(args.startMark);
             var end = args.source.lastIndexOf(args.endMark);
 
             if (start > -1 && end > -1) {
-                args.startId = start;
+                args.startId = start + args.startMark.length;
                 args.endId = end;
                 args.treeText = "";
                 args.altNames = (args.params.keepAltName) ?
