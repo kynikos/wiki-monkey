@@ -46,6 +46,7 @@
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiQuickReport.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiRCFilter.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiSaveTalk.js
+// @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiSortContacts.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiSummaryToRelated.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiUpdatePackageTemplates.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiWantedCategories.js
@@ -309,7 +310,10 @@ WM.UI.setSpecial([
          "automatic update"]]
     ],
     [
-        ["FixDoubleRedirects", "Fix double redirects", "fix double redirect"]
+        ["FixDoubleRedirects", "Fix double redirects", "fix double redirect"],
+        ["ArchWikiSortContacts", "Sort Admins and Maintainers",
+                    [["ArchWiki:Administrators", "ArchWiki:Maintainers"],
+                    "automatically sort list according to recent activity"]]
     ]
 ]);
 
