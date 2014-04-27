@@ -85,8 +85,8 @@ WM.Plugins.FixFragments = new function () {
                     // contain any encodable characters, but since heading and
                     // fragment at most differ by capitalization, encoding the
                     // heading won't have any effect
-                    return newlink = "[[#" + dotHeading + ((lalt) ? "|" +
-                                                            lalt : "") + "]]";
+                    return "[[#" + dotHeading + ((lalt) ? "|" + lalt : "") +
+                                                                        "]]";
                 }
                 else {
                     // If the fragment was not encoded, if the fragment
