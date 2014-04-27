@@ -393,7 +393,7 @@ WM.MW = new function () {
             backlinks = backlinks.concat(res.query.backlinks);
             if (res["query-continue"]) {
                 query.blcontinue = res["query-continue"].backlinks.blcontinue;
-                this._getBacklinksContinue(query, call, args, backlinks);
+                WM.MW._getBacklinksContinue(query, call, args, backlinks);
             }
             else {
                 call(backlinks, args);
@@ -437,7 +437,7 @@ WM.MW = new function () {
 
             if (res["query-continue"]) {
                 query.llcontinue = res["query-continue"].langlinks.llcontinue;
-                this._getLanglinksContinue(query, call, args, langlinks,
+                WM.MW._getLanglinksContinue(query, call, args, langlinks,
                                                                         iwmap);
             }
             else {
@@ -508,7 +508,7 @@ WM.MW = new function () {
 
             if (res["query-continue"]) {
                 query.qpoffset = res["query-continue"].querypage.qpoffset;
-                this._getSpecialListContinue(query, call, args, results,
+                WM.MW._getSpecialListContinue(query, call, args, results,
                                                                     siteinfo);
             }
             else {
