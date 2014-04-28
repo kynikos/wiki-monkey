@@ -220,13 +220,14 @@ WM.Plugins.FixBacklinkFragments = new function () {
                     'redirects': 1,
                 };
                 WM.Log.logWarning("If some articles in the list are " +
-                    "linking to this article " +
+                    "linking to the target article " +
                     "through a redirect, you should process the backlinks " +
                     "of that redirect page separately through its " +
                     "Special:WhatLinksHere page, as this plugin can only " +
-                    "fix links that exactly match the title of this " +
+                    "fix links that exactly match the title of the target " +
                     "article.\nIn order to save time you are advised to " +
-                    "hide the redirects in this list.");
+                    "hide the redirects in the page lists that allow to do " +
+                    "so.");
 
                 WM.MW.callAPIGet(params,
                          null,
