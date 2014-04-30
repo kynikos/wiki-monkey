@@ -35,11 +35,9 @@ WM.Plugins.ArchWikiSortContacts = new function () {
                                 [pages, summary, callNext]);
     };
 
-    var startJsonMark = "START JSON LIST - DO NOT REMOVE OR MODIFY THIS MARK";
-    var endJsonMark = "END JSON LIST - DO NOT REMOVE OR MODIFY THIS MARK";
-    var startListMark = "START AUTO LIST - DO NOT REMOVE OR MODIFY THIS " +
+    var startMark = "START AUTO LIST - DO NOT REMOVE OR MODIFY THIS " +
                                                                     "MARK-->";
-    var endListMark = "<!--END AUTO LIST - DO NOT REMOVE OR MODIFY THIS MARK";
+    var endMark = "<!--END AUTO LIST - DO NOT REMOVE OR MODIFY THIS MARK";
 
     this.mainContinue1 = function (results, args) {
         var pages = args[0];
@@ -108,6 +106,29 @@ WM.Plugins.ArchWikiSortContacts = new function () {
         }
     };
 
+    var parseUsers = function (string) {
+        var regExp = new RegExp("\\[\\[User:(.+?)\\|.+?\\]\\] " +
+                                "\\(\\[\\[User talk:.+?\\|talk\\]\\]\\) - " +
+                                "\\[\\[Special:EmailUser/.+?\\|(.+?)\\]\\]" +
+                                "(?: <!-- associated bot: (.+?) -->)?\n", "g");
+        var users = [];
+
+        while (true) {
+            var match = regExp.exec(string);
+
+            if (match) {
+                users.push({"username": match[1],
+                             "email": match[2],
+                             "associatedBot": match[3]});
+            }
+            else {
+                break;
+            }
+        }
+
+        return users;
+    };
+
     this.updateList = function (title, source, timestamp, edittoken, args) {
         var queriedUsers = args[0];
         var pages = args[1];
@@ -118,17 +139,15 @@ WM.Plugins.ArchWikiSortContacts = new function () {
         WM.Log.logInfo("Processing " + WM.Log.linkToWikiPage(title, title) +
                                                                     " ...");
 
-        var startJson = source.indexOf(startJsonMark);
-        var endJson = source.indexOf(endJsonMark);
-        var startList = source.indexOf(startListMark);
-        var endList = source.indexOf(endListMark);
+        var startList = source.indexOf(startMark);
+        var endList = source.indexOf(endMark);
 
-        if (startJson > -1 && endJson > -1 && startList > -1 && endList > -1) {
-            startJson += startJsonMark.length;
-            startList += startListMark.length;
+        if (startList > -1 && endList > -1) {
+            startList += startMark.length;
 
-            var authorizedUsers = JSON.parse(source.substring(startJson,
-                                                                    endJson));
+            var userString = source.substring(startList, endList);
+            var test = userString.split("\n").length;
+            var authorizedUsers = parseUsers(userString);
 
             authorizedUsers.sort(function (a, b) {
                 // A user may be inactive (not present in queriedUsers)
@@ -170,25 +189,34 @@ WM.Plugins.ArchWikiSortContacts = new function () {
                         user.email + "]]\n";
             }
 
-            var newText = source.substring(0, startList) + newList +
+            if (test == newList.split("\n").length) {
+                var newText = source.substring(0, startList) + newList +
                                                     source.substring(endList);
 
-            if (newText != source) {
-                WM.MW.callAPIPost({action: "edit",
-                               bot: "1",
-                               title: title,
-                               summary: summary,
-                               text: newText,
-                               b1asetimestamp: timestamp,
-                               token: edittoken},
-                               null,
-                               WM.Plugins.ArchWikiSortContacts.writePage,
-                               [queriedUsers, pages, index, summary,
+                if (newText != source) {
+                    WM.MW.callAPIPost({action: "edit",
+                                   bot: "1",
+                                   title: title,
+                                   summary: summary,
+                                   text: newText,
+                                   b1asetimestamp: timestamp,
+                                   token: edittoken},
+                                   null,
+                                   WM.Plugins.ArchWikiSortContacts.writePage,
+                                   [queriedUsers, pages, index, summary,
                                                                     callNext]);
+                }
+                else {
+                    WM.Log.logInfo(WM.Log.linkToWikiPage(title, title) +
+                                                    " was already up to date");
+                    index++;
+                    WM.Plugins.ArchWikiSortContacts.iteratePages(queriedUsers,
+                                            pages, index, summary, callNext);
+                }
             }
             else {
-                WM.Log.logInfo(WM.Log.linkToWikiPage(title, title) +
-                                                    " was already up to date");
+                WM.Log.logError("An entry in the list may not be correctly " +
+                                                                "formatted");
                 index++;
                 WM.Plugins.ArchWikiSortContacts.iteratePages(queriedUsers,
                                             pages, index, summary, callNext);
