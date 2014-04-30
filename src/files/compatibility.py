@@ -128,43 +128,36 @@ def process_line_standalone(m, g, functions, match_urls, header, line,
 
 
 def adapt_configuration(f):
-    """
-    Adapt features that wouldn't work correctly in
-    """
     code = f.read()
     match = re.match("// ==/UserScript==\s*(.+)", code, re.DOTALL)
+
     if match:
         code = match.group(1)
 
-    # ArchWikiOldAURLinks would require cross-origin HTTP requests
-    code = re.sub(",\s*\[[\"']ArchWikiOldAURLinks[\"'].*?,\n", ",\n", code)
-    code = re.sub("\s*\[[\"']ArchWikiOldAURLinks[\"'].*?,\n", "\n", code)
-    code = re.sub(",\s*\[[\"']ArchWikiOldAURLinks[\"'].*?\n", "\n", code)
-    code = re.sub("\s*\[[\"']ArchWikiOldAURLinks[\"'].*?\n", "\n", code)
-    try:
-        code.index("ArchWikiOldAURLinks")
-    except ValueError:
-        pass
-    else:
-        raise UserWarning("An instance of ArchWikiOldAURLinks has not been "
-                                                                     "removed")
+    # ArchWikiOldAURLinks and ArchWikiUpdatePackageTemplates would require
+    # cross-origin HTTP requests
+    for plugin in ("ArchWikiOldAURLinks", "ArchWikiUpdatePackageTemplates"):
+        while True:
+            cmatch = re.search("(,)?\s*\[[\"']" + plugin + "[\"'].*?\](,)?\n",
+                                                        code, flags=re.DOTALL)
 
-    # ArchWikiUpdatePackageTemplates would require cross-origin HTTP requests
-    code = re.sub(",\s*\[[\"']ArchWikiUpdatePackageTemplates[\"'].*?,\n",
-                                                                   ",\n", code)
-    code = re.sub("\s*\[[\"']ArchWikiUpdatePackageTemplates[\"'].*?,\n", "\n",
-                                                                          code)
-    code = re.sub(",\s*\[[\"']ArchWikiUpdatePackageTemplates[\"'].*?\n", "\n",
-                                                                          code)
-    code = re.sub("\s*\[[\"']ArchWikiUpdatePackageTemplates[\"'].*?\n", "\n",
-                                                                          code)
-    try:
-        code.index("ArchWikiUpdatePackageTemplates")
-    except ValueError:
-        pass
-    else:
-        raise UserWarning("An instance of ArchWikiUpdatePackageTemplates has "
-                                                            "not been removed")
+            if cmatch is not None:
+                if cmatch.group(1) == cmatch.group(2) == ",":
+                    replace = ",\n"
+                else:
+                    replace = "\n"
+
+                code = code[:cmatch.start()] + replace + code[cmatch.end():]
+            else:
+                break
+
+        try:
+            code.index(plugin)
+        except ValueError:
+            pass
+        else:
+            raise UserWarning("An instance of " + plugin + " has not been "
+                                                                    "removed")
 
     # SynchronizeInterlanguageLinks would require cross-origin HTTP requests,
     # use WM.ArchWiki.getInternalInterwikiLanguages() as a white list
