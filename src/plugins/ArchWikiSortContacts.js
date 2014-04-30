@@ -35,8 +35,7 @@ WM.Plugins.ArchWikiSortContacts = new function () {
                                 [pages, summary, callNext]);
     };
 
-    var startMark = "START AUTO LIST - DO NOT REMOVE OR MODIFY THIS " +
-                                                                    "MARK-->";
+    var startMark = "START AUTO LIST - DO NOT REMOVE OR MODIFY THIS MARK-->";
     var endMark = "<!--END AUTO LIST - DO NOT REMOVE OR MODIFY THIS MARK";
 
     this.mainContinue1 = function (results, args) {
