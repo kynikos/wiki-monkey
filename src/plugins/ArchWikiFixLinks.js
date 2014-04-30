@@ -19,6 +19,8 @@
  */
 
 WM.Plugins.ArchWikiFixLinks = new function () {
+    "use strict";
+
     var doReplace = function (txt) {
         // archlinux.org HTTP -> HTTPS
 
@@ -27,7 +29,7 @@ WM.Plugins.ArchWikiFixLinks = new function () {
 
         // wiki.archlinux.org -> Internal link
 
-        re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/Category:([^\]]+?) (.+?)\]/ig;
+        var re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/Category:([^\]]+?) (.+?)\]/ig;
         txt = txt.replace(re, '[[:Category:$1|$2]]');
 
         re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/Category:(.+?)\]/ig;
@@ -48,12 +50,13 @@ WM.Plugins.ArchWikiFixLinks = new function () {
         re = /https?:\/\/wiki\.archlinux\.org(?!\.)/ig;
 
         if (re.test(txt)) {
-            WM.Log.logWarning("It hasn't been possible to convert some links to wiki.archlinux.org");
+            WM.Log.logWarning("It hasn't been possible to convert some " +
+                                                "links to wiki.archlinux.org");
         }
 
         // Wikipedia -> wikipedia: interlink
 
-        re = /\[https?:\/\/en\.wikipedia\.org\/wiki\/([^\]]+?) (.+?)\]/ig;
+        var re = /\[https?:\/\/en\.wikipedia\.org\/wiki\/([^\]]+?) (.+?)\]/ig;
         txt = txt.replace(re, '[[wikipedia:$1|$2]]');
 
         re = /\[https?:\/\/en\.wikipedia\.org\/wiki\/(.+?)\]/ig;
@@ -65,16 +68,36 @@ WM.Plugins.ArchWikiFixLinks = new function () {
         re = /https?:\/\/([a-z]+?)\.wikipedia\.org(?!\.)/ig;
 
         if (re.test(txt)) {
-            WM.Log.logWarning("It hasn't been possible to convert some links to Wikipedia");
+            WM.Log.logWarning("It hasn't been possible to convert some " +
+                                                        "links to Wikipedia");
         }
 
         // Official package links -> Pkg template
 
-        re = /\[https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s]+?)\/? +(.+?)?\]/ig;
-        var groups = re.exec(txt);
-        if (groups && groups[1] == groups[2]) {
-            txt = txt.replace(re, '{{Pkg|$1}}');
+        var re = /\[https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s]+?)\/? +(.+?)?\]/ig;
+        var newText = '';
+        var prevId = 0;
+
+        while (true) {
+            var match = re.exec(txt);
+
+            if (match) {
+                // Don't join these two conditions
+                if (match[1] == match[2]) {
+                    var L = match[0].length;
+                    newText += txt.substring(prevId, re.lastIndex - L) +
+                                                    '{{Pkg|' + match[1] + '}}';
+
+                    prevId = re.lastIndex;
+                }
+            }
+            else {
+                break;
+            }
         }
+
+        newText += txt.substr(prevId);
+        txt = newText;
 
         re = /\[https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s]+?)\/?\]/ig;
         txt = txt.replace(re, '{{Pkg|$1}}');
@@ -85,16 +108,36 @@ WM.Plugins.ArchWikiFixLinks = new function () {
         re = /https?:\/\/(?:www\.)?archlinux\.org\/packages(?!\/?\s)/ig;
 
         if (re.test(txt)) {
-            WM.Log.logWarning("It hasn't been possible to convert some links to archlinux.org/packages");
+            WM.Log.logWarning("It hasn't been possible to convert some " +
+                                            "links to archlinux.org/packages");
         }
 
         // AUR package links -> AUR template
 
-        re = /\[https?:\/\/aur\.archlinux\.org\/packages\/([^\s]+?)\/? +(.+?)?\]/ig;
-        var groups = re.exec(txt);
-        if (groups && groups[1] == groups[2]) {
-            txt = txt.replace(re, '{{AUR|$1}}');
+        var re = /\[https?:\/\/aur\.archlinux\.org\/packages\/([^\s]+?)\/? +(.+?)?\]/ig;
+        var newText = '';
+        var prevId = 0;
+
+        while (true) {
+            var match = re.exec(txt);
+
+            if (match) {
+                // Don't join these two conditions
+                if (match[1] == match[2]) {
+                    var L = match[0].length;
+                    newText += txt.substring(prevId, re.lastIndex - L) +
+                                                    '{{AUR|' + match[1] + '}}';
+
+                    prevId = re.lastIndex;
+                }
+            }
+            else {
+                break;
+            }
         }
+
+        newText += txt.substr(prevId);
+        txt = newText;
 
         re = /\[https?:\/\/aur\.archlinux\.org\/packages\/([^\s]+?)\/?\]/ig;
         txt = txt.replace(re, '{{AUR|$1}}');
@@ -105,16 +148,37 @@ WM.Plugins.ArchWikiFixLinks = new function () {
         re = /https?:\/\/aur\.archlinux\.org(?!(?:\.|(?:\/?packages)?\/?\s))/ig;
 
         if (re.test(txt)) {
-            WM.Log.logWarning("It hasn't been possible to convert some links to aur.archlinux.org (try the \"Fix old AUR links\" function, if installed)");
+            WM.Log.logWarning("It hasn't been possible to convert some " +
+                            "links to aur.archlinux.org (try the " +
+                            "\"Fix old AUR links\" function, if installed)");
         }
 
         // Bug links -> Bug template
 
-        re = /\[https?:\/\/bugs\.archlinux\.org\/task\/([^\s]+?)\/? +(.+?)?\]/ig;
-        var groups = re.exec(txt);
-        if (groups && groups[1] == groups[2]) {
-            txt = txt.replace(re, '{{Bug|$1}}');
+        var re = /\[https?:\/\/bugs\.archlinux\.org\/task\/([^\s]+?)\/? +(.+?)?\]/ig;
+        var newText = '';
+        var prevId = 0;
+
+        while (true) {
+            var match = re.exec(txt);
+
+            if (match) {
+                // Don't join these two conditions
+                if (match[1] == match[2]) {
+                    var L = match[0].length;
+                    newText += txt.substring(prevId, re.lastIndex - L) +
+                                                    '{{Bug|' + match[1] + '}}';
+
+                    prevId = re.lastIndex;
+                }
+            }
+            else {
+                break;
+            }
         }
+
+        newText += txt.substr(prevId);
+        txt = newText;
 
         re = /\[https?:\/\/bugs\.archlinux\.org\/task\/([^\s]+?)\/?\]/ig;
         txt = txt.replace(re, '{{Bug|$1}}');
@@ -125,7 +189,8 @@ WM.Plugins.ArchWikiFixLinks = new function () {
         re = /https?:\/\/bugs\.archlinux\.org\/task/ig;
 
         if (re.test(txt)) {
-            WM.Log.logWarning("It hasn't been possible to convert some links to bugs.archlinux.org/task");
+            WM.Log.logWarning("It hasn't been possible to convert some " +
+                                        "links to bugs.archlinux.org/task");
         }
 
         return txt;

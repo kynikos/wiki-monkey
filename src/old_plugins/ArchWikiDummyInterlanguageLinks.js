@@ -22,7 +22,7 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
     this.queryTitle = function (pureTitle, languages, index, visitedTitles, newTitles, callBot) {
         var title = (languages[index] == "English") ? pureTitle : (pureTitle + " (" + languages[index] + ")");
 
-        WM.Log.logInfo("Querying " + title + "...");
+        WM.Log.logInfo("Querying " + title + " ...");
 
         if (!visitedTitles[languages[index]][title]) {
             WM.MW.callAPIGet(
@@ -200,7 +200,7 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
                 var newText = WM.Plugins.ArchWikiDummyInterlanguageLinks.composeLinks(ring[index][0], source, ring[index][2], links);
 
                 if (newText != source) {
-                    WM.Log.logInfo("Waiting " + interval / 1000 + " seconds...");
+                    WM.Log.logInfo("Waiting " + interval / 1000 + " seconds ...");
                     setTimeout(
                         function () {
                             WM.MW.callAPIPost(
@@ -312,7 +312,7 @@ WM.Plugins.ArchWikiDummyInterlanguageLinks = new function () {
     };
 
     this.mainAuto = function (args, title, callBot) {
-        WM.Log.logInfo("Replacing Template:i18n with dummy interlanguage links...");
+        WM.Log.logInfo("Replacing Template:i18n with dummy interlanguage links ...");
 
         var languages = [
             "Български",

@@ -19,6 +19,8 @@
  */
 
 WM.MW = new function () {
+    "use strict";
+
     var wikiPaths = {
         known: {
             "^https?://[^\.]+\.wikipedia\.org": {
@@ -80,7 +82,8 @@ WM.MW = new function () {
     };
 
     var interwikiFixes = [
-        ["https://wiki.archlinux.org/index.php/$1_(", "https://wiki.archlinux.org/index.php/$1%20("]
+        ["https://wiki.archlinux.org/index.php/$1_(",
+                                "https://wiki.archlinux.org/index.php/$1%20("]
     ];
 
     var getWikiUrls = function (href) {
@@ -152,7 +155,8 @@ WM.MW = new function () {
 
                 if (match) {
                     if (pathname.indexOf(wikiPaths.known[r].short) == 0) {
-                        title = pathname.substr(wikiPaths.known[r].short.length);
+                        title = pathname.substr(wikiPaths.known[r
+                                                            ].short.length);
                     }
                     else {
                         title = false;
@@ -176,16 +180,17 @@ WM.MW = new function () {
     };
 
     this.failedQueryError = function (finalUrl) {
-        return "Failed query: " + finalUrl + "\nYou may have tried to use a " +
+        return "Failed query: " + WM.Log.linkToPage(finalUrl, finalUrl) +
+            "\nYou may have tried to use a " +
             "plugin which requires cross-origin HTTP requests, but you are " +
             "not using Scriptish (Firefox), Greasemonkey (Firefox), " +
             "Tampermonkey (Chrome/Chromium) or a similar extension";
     };
 
     this.failedHTTPRequestError = function (err) {
-        return "Failed HTTP request - " + err + "\nYou may have tried to use " +
-            "a plugin which requires cross-origin HTTP requests, but you are " +
-            "not using Scriptish (Firefox), Greasemonkey (Firefox), " +
+        return "Failed HTTP request - " + err + "\nYou may have tried to " +
+            "use a plugin which requires cross-origin HTTP requests, but " +
+            "you are not using Scriptish (Firefox), Greasemonkey (Firefox), " +
             "Tampermonkey (Chrome/Chromium) or a similar extension";
     };
 
@@ -198,13 +203,17 @@ WM.MW = new function () {
             url: api + "?format=json" + joinParams(params),
             onload: function (res) {
                 try {
-                    // Currently only Scriptish supports the responseJSON method
+                    // Currently only Scriptish supports the responseJSON
+                    //   method
                     //var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
                     // ... or not?
-                    var json = (Alib.Obj.getFirstItem(res.responseJSON)) ? res.responseJSON : JSON.parse(res.responseText);
+                    var json = (Alib.Obj.getFirstItem(res.responseJSON)) ?
+                            res.responseJSON : JSON.parse(res.responseText);
                 }
                 catch (err) {
-                    WM.Log.logError("It is likely that the API for this wiki is disabled, see " + api);
+                    WM.Log.logError("It is likely that the " +
+                                                WM.Log.linkToPage(api, "API") +
+                                                " for this wiki is disabled");
                 }
                 if (json) {
                     // Don't put this into the try block or all its exceptions
@@ -214,8 +223,9 @@ WM.MW = new function () {
             },
             onerror: function (res) {
                 WM.Log.logError(WM.MW.failedQueryError(res.finalUrl));
-                if (confirm("Wiki Monkey error: Failed query\n\nDo you want to retry?")) {
-                    WM.Log.logInfo("Retrying...");
+                if (confirm("Wiki Monkey error: Failed query\n\nDo you want " +
+                                                                "to retry?")) {
+                    WM.Log.logInfo("Retrying ...");
                     WM.MW.callAPIGet(params, api, call, callArgs);
                 }
             }
@@ -238,13 +248,17 @@ WM.MW = new function () {
             url: api,
             onload: function (res) {
                 try {
-                    // Currently only Scriptish supports the responseJSON method
+                    // Currently only Scriptish supports the responseJSON
+                    //   method
                     //var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
                     // ... or not?
-                    var json = (Alib.Obj.getFirstItem(res.responseJSON)) ? res.responseJSON : JSON.parse(res.responseText);
+                    var json = (Alib.Obj.getFirstItem(res.responseJSON)) ?
+                            res.responseJSON : JSON.parse(res.responseText);
                 }
                 catch (err) {
-                    WM.Log.logError("It is likely that the API for this wiki is disabled, see " + api);
+                    WM.Log.logError("It is likely that the " +
+                                                WM.Log.linkToPage(api, "API") +
+                                                " for this wiki is disabled");
                 }
                 if (json) {
                     // Don't put this into the try block or all its exceptions
@@ -254,8 +268,9 @@ WM.MW = new function () {
             },
             onerror: function (res) {
                 WM.Log.logError(WM.MW.failedQueryError(res.finalUrl));
-                if (confirm("Wiki Monkey error: Failed query\n\nDo you want to retry?")) {
-                    WM.Log.logInfo("Retrying...");
+                if (confirm("Wiki Monkey error: Failed query\n\nDo you want " +
+                                                                "to retry?")) {
+                    WM.Log.logInfo("Retrying ...");
                     WM.MW.callAPIPost(params, api, call, callArgs);
                 }
             }
@@ -272,7 +287,8 @@ WM.MW = new function () {
                 for (var p in params) {
                     query.data.append(p, params[p]);
                 }
-                // Do not add "multipart/form-data" explicitly or the query will fail
+                // Do not add "multipart/form-data" explicitly or the query
+                //   will fail
                 //query.headers = {"Content-type": "multipart/form-data"};
             }
             else {
@@ -281,7 +297,8 @@ WM.MW = new function () {
         }
         catch (err) {
             query.data = string;
-            query.headers = {"Content-type": "application/x-www-form-urlencoded"};
+            query.headers = {"Content-type":
+                                        "application/x-www-form-urlencoded"};
         }
 
         try {
@@ -376,7 +393,7 @@ WM.MW = new function () {
             backlinks = backlinks.concat(res.query.backlinks);
             if (res["query-continue"]) {
                 query.blcontinue = res["query-continue"].backlinks.blcontinue;
-                this._getBacklinksContinue(query, call, args, backlinks);
+                WM.MW._getBacklinksContinue(query, call, args, backlinks);
             }
             else {
                 call(backlinks, args);
@@ -402,7 +419,8 @@ WM.MW = new function () {
         this._getLanglinksContinue(query, call, callArgs, [], null);
     };
 
-    this._getLanglinksContinue = function (query, call, callArgs, langlinks, iwmap) {
+    this._getLanglinksContinue = function (query, call, callArgs, langlinks,
+                                                                    iwmap) {
         WM.MW.callAPIGet(query, null, function (res, args) {
             var page = Alib.Obj.getFirstItem(res.query.pages);
             langlinks = langlinks.concat(page.langlinks);
@@ -419,7 +437,8 @@ WM.MW = new function () {
 
             if (res["query-continue"]) {
                 query.llcontinue = res["query-continue"].langlinks.llcontinue;
-                this._getLanglinksContinue(query, call, args, langlinks, iwmap);
+                WM.MW._getLanglinksContinue(query, call, args, langlinks,
+                                                                        iwmap);
             }
             else {
                 call(langlinks, iwmap, args);
@@ -471,7 +490,8 @@ WM.MW = new function () {
         this._getSpecialListContinue(query, call, callArgs, [], {});
     };
 
-    this._getSpecialListContinue = function (query, call, callArgs, results, siteinfo) {
+    this._getSpecialListContinue = function (query, call, callArgs, results,
+                                                                    siteinfo) {
         WM.MW.callAPIGet(query, null, function (res, args) {
             results = results.concat(res.query.querypage.results);
 
@@ -488,10 +508,36 @@ WM.MW = new function () {
 
             if (res["query-continue"]) {
                 query.qpoffset = res["query-continue"].querypage.qpoffset;
-                this._getSpecialListContinue(query, call, args, results, siteinfo);
+                WM.MW._getSpecialListContinue(query, call, args, results,
+                                                                    siteinfo);
             }
             else {
                 call(results, siteinfo, args);
+            }
+        },
+        callArgs);
+    };
+
+    this.getActiveUsers = function (augroup, call, callArgs) {
+        var query = {action: "query",
+                     list: "allusers",
+                     augroup: augroup,
+                     aulimit: 500,
+                     auactiveusers: 1}
+
+        this._getActiveUsersContinue(query, call, callArgs, []);
+    };
+
+    this._getActiveUsersContinue = function (query, call, callArgs, results) {
+        WM.MW.callAPIGet(query, null, function (res, args) {
+            results = results.concat(res.query.allusers);
+
+            if (res["query-continue"]) {
+                query.aufrom = res["query-continue"].allusers.aufrom;
+                WM.MW._getActiveUsersContinue(query, call, args, results);
+            }
+            else {
+                call(results, args);
             }
         },
         callArgs);

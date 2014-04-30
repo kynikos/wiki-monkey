@@ -19,6 +19,8 @@
  */
 
 WM.Plugins.ArchWikiOldAURLinks = new function () {
+    "use strict";
+
     var doReplace = function (source, call, callArgs) {
         var regExp = /\[(https?\:\/\/aur\.archlinux\.org\/packages\.php\?ID\=([0-9]+)) ([^\]]+?)\]/g;
         var links = Alib.RegEx.matchAll(source, regExp);
@@ -26,8 +28,8 @@ WM.Plugins.ArchWikiOldAURLinks = new function () {
 
         if (links.length > 0) {
             WM.ArchPackages.getAURInfo(links[0].match[2],
-                                       WM.Plugins.ArchWikiOldAURLinks.doReplaceContinue,
-                                       [source, newText, links, 0, call, callArgs]);
+                           WM.Plugins.ArchWikiOldAURLinks.doReplaceContinue,
+                           [source, newText, links, 0, call, callArgs]);
         }
         else {
             call(source, newText, callArgs);
@@ -44,10 +46,12 @@ WM.Plugins.ArchWikiOldAURLinks = new function () {
 
         var link = links[index];
 
-        WM.Log.logInfo("Processing " + link.match[0] + "...");
+        WM.Log.logInfo("Processing " + WM.Log.linkToPage(link.match[1],
+                                                    link.match[0]) + " ...");
 
         if (res.type == "error") {
-            WM.Log.logError("The AUR's RPC interface returned an error: " + res.results);
+            WM.Log.logError("The AUR's RPC interface returned an error: " +
+                                                                res.results);
             call(-1, -1, callArgs);
         }
         else {
@@ -57,18 +61,23 @@ WM.Plugins.ArchWikiOldAURLinks = new function () {
                 if (link.match[3] == pkgname) {
                     var newlink = "{{AUR|" + pkgname + "}}";
                     newText = newText.replace(link.match[0], newlink);
-                    WM.Log.logInfo("Checked and replaced link with " + newlink);
-                    WM.Plugins.ArchWikiOldAURLinks.doReplaceContinue2(source, newText, links, index, call, callArgs);
+                    WM.Log.logInfo("Checked and replaced link with " +
+                                                                    newlink);
+                    WM.Plugins.ArchWikiOldAURLinks.doReplaceContinue2(source,
+                                        newText, links, index, call, callArgs);
                 }
                 else {
-                    WM.Log.logWarning("Couldn't replace: the link doesn't use the package name (" + pkgname + ") as the anchor text");
-                    WM.Plugins.ArchWikiOldAURLinks.doReplaceContinue2(source, newText, links, index, call, callArgs);
+                    WM.Log.logWarning("Couldn't replace: the link doesn't " +
+                                        "use the package name (" + pkgname +
+                                        ") as the anchor text");
+                    WM.Plugins.ArchWikiOldAURLinks.doReplaceContinue2(source,
+                                        newText, links, index, call, callArgs);
                 }
             }
             else {
                 WM.ArchPackages.isOfficialPackage(link.match[3],
-                                                  WM.Plugins.ArchWikiOldAURLinks.checkIfOfficial,
-                                                  [link, source, newText, links, index, call, callArgs]);
+                      WM.Plugins.ArchWikiOldAURLinks.checkIfOfficial,
+                      [link, source, newText, links, index, call, callArgs]);
             }
         }
     };
@@ -86,9 +95,9 @@ WM.Plugins.ArchWikiOldAURLinks = new function () {
             var newlink = "{{Pkg|" + link.match[3] + "}}";
             newText = newText.replace(link.match[0], newlink);
             WM.Log.logInfo("Replaced link with " + newlink);
-            WM.Log.logWarning("The package doesn't exist anymore in the AUR, " +
-                              "but a package with the same name as the link " +
-                              "anchor has been found in the official repositories");
+            WM.Log.logWarning("The package doesn't exist anymore in the " +
+                        "AUR, but a package with the same name as the link " +
+                        "anchor has been found in the official repositories");
         }
         else {
             WM.Log.logWarning("Couldn't replace: the package doesn't exist " +
@@ -97,16 +106,18 @@ WM.Plugins.ArchWikiOldAURLinks = new function () {
                               "name as the link anchor");
         }
 
-        WM.Plugins.ArchWikiOldAURLinks.doReplaceContinue2(source, newText, links, index, call, callArgs);
+        WM.Plugins.ArchWikiOldAURLinks.doReplaceContinue2(source, newText,
+                                                links, index, call, callArgs);
     };
 
-    this.doReplaceContinue2 = function (source, newText, links, index, call, callArgs) {
+    this.doReplaceContinue2 = function (source, newText, links, index, call,
+                                                                    callArgs) {
         index++;
 
         if (links[index]) {
             WM.ArchPackages.getAURInfo(links[index].match[2],
-                                       WM.Plugins.ArchWikiOldAURLinks.doReplaceContinue,
-                                       [source, newText, links, index, call, callArgs]);
+                           WM.Plugins.ArchWikiOldAURLinks.doReplaceContinue,
+                           [source, newText, links, index, call, callArgs]);
         }
         else {
             call(source, newText, callArgs);
@@ -115,7 +126,7 @@ WM.Plugins.ArchWikiOldAURLinks = new function () {
 
     this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
-        WM.Log.logInfo("Replacing old-style direct AUR package links...");
+        WM.Log.logInfo("Replacing old-style direct AUR package links ...");
         doReplace(source, WM.Plugins.ArchWikiOldAURLinks.mainEnd, callNext);
     };
 
@@ -128,7 +139,8 @@ WM.Plugins.ArchWikiOldAURLinks = new function () {
             WM.Log.logInfo("Replaced old-style direct AUR package links");
         }
         else {
-            WM.Log.logInfo("No automatically replaceable old-style AUR package links found");
+            WM.Log.logInfo("No automatically replaceable old-style AUR " +
+                                                        "package links found");
         }
 
         if (callNext) {
@@ -144,7 +156,8 @@ WM.Plugins.ArchWikiOldAURLinks = new function () {
                             [summary, callBot]);
     };
 
-    this.mainAutoReplace = function (title, source, timestamp, edittoken, args) {
+    this.mainAutoReplace = function (title, source, timestamp, edittoken,
+                                                                        args) {
         var summary = args[0];
         var callBot = args[1];
 

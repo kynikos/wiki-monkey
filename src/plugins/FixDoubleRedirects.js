@@ -19,10 +19,12 @@
  */
 
 WM.Plugins.FixDoubleRedirects = new function () {
+    "use strict";
+
     this.main = function (args, callNext) {
         var summary = args;
 
-        WM.Log.logInfo("Fixing double redirects...");
+        WM.Log.logInfo("Fixing double redirects ...");
 
         WM.MW.getSpecialList("DoubleRedirects",
                              "namespaces",
@@ -38,7 +40,8 @@ WM.Plugins.FixDoubleRedirects = new function () {
 
         results.reverse();
 
-        WM.Plugins.FixDoubleRedirects.iterateList(results, namespaces, [summary, callNext]);
+        WM.Plugins.FixDoubleRedirects.iterateList(results, namespaces,
+                                                        [summary, callNext]);
     };
 
     this.iterateList = function (results, namespaces, args) {
@@ -49,8 +52,8 @@ WM.Plugins.FixDoubleRedirects = new function () {
 
         if (page) {
             WM.MW.callQueryEdit(page.title,
-                                WM.Plugins.FixDoubleRedirects.processPage,
-                                [page, results, namespaces, summary, callNext]);
+                            WM.Plugins.FixDoubleRedirects.processPage,
+                            [page, results, namespaces, summary, callNext]);
         }
         else {
             WM.Log.logInfo("Fixed double redirects");
@@ -67,7 +70,8 @@ WM.Plugins.FixDoubleRedirects = new function () {
         var summary = args[3];
         var callNext = args[4];
 
-        WM.Log.logInfo("Processing " + title + "...");
+        WM.Log.logInfo("Processing " + WM.Log.linkToWikiPage(title, title) +
+                                                                    " ...");
 
         var rawTarget = source.match(/\s*#redirect *[^\n]+/i);
 
@@ -79,8 +83,8 @@ WM.Plugins.FixDoubleRedirects = new function () {
                                         "*"]) + ":" : "";
             var newTitle = WM.Parser.squashContiguousWhitespace(
                                                     page.databaseResult.tc);
-            var fragment = (target.match[5]) ? ("#" + target.match[5]) : "";
-            var altAnchor = (target.match[6]) ? ("|" + target.match[6]) : "";
+            var fragment = (target.fragment) ? ("#" + target.fragment) : "";
+            var altAnchor = (target.anchor) ? ("|" + target.anchor) : "";
             var targetEnd = target.index + target.length;
 
             var newTarget = "#REDIRECT [[" + namespace + newTitle + fragment +
@@ -90,24 +94,28 @@ WM.Plugins.FixDoubleRedirects = new function () {
 
             if (newtext != source) {
                 WM.MW.callAPIPost({action: "edit",
-                                   bot: "1",
-                                   title: title,
-                                   summary: summary,
-                                   text: newtext,
-                                   b1asetimestamp: timestamp,
-                                   token: edittoken},
-                                   null,
-                                   WM.Plugins.FixDoubleRedirects.processPageEnd,
-                                   [results, namespaces, summary, callNext]);
+                               bot: "1",
+                               title: title,
+                               summary: summary,
+                               text: newtext,
+                               b1asetimestamp: timestamp,
+                               token: edittoken},
+                               null,
+                               WM.Plugins.FixDoubleRedirects.processPageEnd,
+                               [results, namespaces, summary, callNext]);
             }
             else {
-                WM.Log.logWarning("Couldn't fix " + title);
-                WM.Plugins.FixDoubleRedirects.iterateList(results, namespaces, [summary, callNext]);
+                WM.Log.logWarning("Couldn't fix " +
+                                        WM.Log.linkToWikiPage(title, title));
+                WM.Plugins.FixDoubleRedirects.iterateList(results, namespaces,
+                                                        [summary, callNext]);
             }
         }
         else {
-            WM.Log.logWarning("Couldn't fix " + title);
-            WM.Plugins.FixDoubleRedirects.iterateList(results, namespaces, [summary, callNext]);
+            WM.Log.logWarning("Couldn't fix " +
+                                        WM.Log.linkToWikiPage(title, title));
+            WM.Plugins.FixDoubleRedirects.iterateList(results, namespaces,
+                                                        [summary, callNext]);
         }
     };
 
@@ -118,10 +126,12 @@ WM.Plugins.FixDoubleRedirects = new function () {
         var callNext = args[3];
 
         if (res.edit && res.edit.result == 'Success') {
-            WM.Plugins.FixDoubleRedirects.iterateList(results, namespaces, [summary, callNext]);
+            WM.Plugins.FixDoubleRedirects.iterateList(results, namespaces,
+                                                        [summary, callNext]);
         }
         else {
-            WM.Log.logError(res['error']['info'] + " (" + res['error']['code'] + ")");
+            WM.Log.logError(res['error']['info'] +
+                                            " (" + res['error']['code'] + ")");
         }
     };
 };

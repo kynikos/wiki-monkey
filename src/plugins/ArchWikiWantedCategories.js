@@ -19,6 +19,8 @@
  */
 
 WM.Plugins.ArchWikiWantedCategories = new function () {
+    "use strict";
+
     this.mainAuto = function (args, title, callBot, chainArgs) {
         title = title.replace(" (page does not exist)", "");
 

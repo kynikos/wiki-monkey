@@ -19,7 +19,15 @@
  */
 
 WM.WhatLinksHere = new function () {
+    "use strict";
+
+    this.isWhatLinksHerePage = function () {
+        return (document.getElementById('mw-whatlinkshere-list')) ? true :
+                                                                        false;
+    };
+
     this.getTitle = function () {
-        return document.getElementById('contentSub').getElementsByTagName('a')[0].title;
+        return document.getElementById('contentSub').getElementsByTagName('a'
+                                                                    )[0].title;
     };
 };

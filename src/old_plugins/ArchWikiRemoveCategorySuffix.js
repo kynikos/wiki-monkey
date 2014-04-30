@@ -22,7 +22,7 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
     this.createCategory = function (params) {
         // OUT OF DATE #######################################################################
 
-        WM.Log.logInfo("Processing category " + cat + "...");
+        WM.Log.logInfo("Processing category " + cat + " ...");
 
         var cat = params.node;
 
@@ -74,7 +74,7 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
     var recategorizeNextMember = function (cat, info, title, members, mindex) {
         if (members[mindex]) {
             var member = members[mindex].title;
-            WM.Log.logInfo("Processing member " + member + "...");
+            WM.Log.logInfo("Processing member " + member + " ...");
             setTimeout(recategorizeMember, this.params.interval, [cat, info, title, member, members, mindex]);
         }
         else {
@@ -154,7 +154,7 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
     var updateNextBacklink = function (cat, info, title, backlinks, bindex) {
         if (backlinks[bindex]) {
             var backlink = backlinks[bindex].title;
-            WM.Log.logInfo("Processing backlink " + backlink + "...");
+            WM.Log.logInfo("Processing backlink " + backlink + " ...");
             setTimeout(updateBacklink, this.params.interval, [cat, info, title, backlink, backlinks, bindex]);
         }
         else {
@@ -238,7 +238,7 @@ WM.Plugins.ArchWikiRemoveCategorySuffix = new function () {
 
     this.main = function (args) {
         this.params.root = args[0];
-        WM.Log.logInfo("Removing _(English) suffix...");
+        WM.Log.logInfo("Removing _(English) suffix ...");
         WM.Cat.recurseTree(root, this.createCategory, this.mainEnd);
     };
 

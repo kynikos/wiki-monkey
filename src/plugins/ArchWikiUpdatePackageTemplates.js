@@ -19,24 +19,33 @@
  */
 
 WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
+    "use strict";
+
     var doUpdate = function (source, call, callArgs) {
-        // Note that findTemplatesPattern puts the pattern in a capturing group (parentheses) by itself
-        var templates = WM.Parser.findTemplatesPattern(source, "[Pp]kg|[Aa]ur|AUR|[Gg]rp");
+        // Note that findTemplatesPattern puts the pattern in a capturing group
+        //   (parentheses) by itself
+        var templates = WM.Parser.findTemplatesPattern(source,
+                                                "[Pp]kg|[Aa]ur|AUR|[Gg]rp");
         var newText = "";
 
         if (templates.length > 0) {
-            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue(source, newText, templates, 0, call, callArgs);
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue(source,
+                                        newText, templates, 0, call, callArgs);
         }
         else {
             call(source, source, callArgs);
         }
     };
 
-    this.doUpdateContinue = function (source, newText, templates, index, call, callArgs) {
-        WM.Log.logInfo("Processing " + templates[index].match[0] + "...");
+    this.doUpdateContinue = function (source, newText, templates, index, call,
+                                                                    callArgs) {
+        WM.Log.logInfo("Processing " + templates[index].rawTransclusion +
+                                                                    " ...");
 
-        newText += source.substring(((index == 0) ? 0 : templates[index - 1].index + templates[index - 1].length),
-                                    templates[index].index);
+        newText += source.substring((
+                                (index == 0) ? 0 : templates[index - 1].index +
+                                templates[index - 1].length),
+                                templates[index].index);
 
         switch (templates[index].title.toLowerCase()) {
             case 'pkg':
@@ -79,120 +88,143 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
                     source, newText, templates, index, call, callArgs);
                 break;
             default:
-                newText += templates[index].match[0];
+                newText += templates[index].rawTransclusion;
                 WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(
                     source, newText, templates, index, call, callArgs);
         }
     };
 
-    this.doUpdateContinue2 = function (checks, source, newText, templates, index, call, callArgs) {
+    this.doUpdateContinue2 = function (checks, source, newText, templates,
+                                                    index, call, callArgs) {
         var check = checks.pop();
 
         if (check) {
             check(checks, source, newText, templates, index, call, callArgs);
         }
         else {
-            WM.Log.logWarning(templates[index].arguments[0].value.trim() + " hasn't been found neither in the official repositories nor in the AUR nor as a package group");
+            WM.Log.logWarning(templates[index].arguments[0].value.trim() +
+                        " hasn't been found neither in the official " +
+                        "repositories nor in the AUR nor as a package group");
 
-            newText += templates[index].match[0];
+            newText += templates[index].rawTransclusion;
 
-            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source,
+                                    newText, templates, index, call, callArgs);
         }
     };
 
-    this.checkOfficial = function (checks, source, newText, templates, index, call, callArgs) {
+    this.checkOfficial = function (checks, source, newText, templates, index,
+                                                            call, callArgs) {
         var pkgname = templates[index].arguments[0].value.trim();
-        WM.Log.logInfo("Looking for " + pkgname + " in the official repositories...");
+        WM.Log.logInfo("Looking for " + pkgname +
+                                        " in the official repositories ...");
 
         WM.ArchPackages.isOfficialPackage(pkgname,
-                                          WM.Plugins.ArchWikiUpdatePackageTemplates.checkOfficial2,
-                                          [checks, source, newText, templates, index, call, callArgs]);
+                  WM.Plugins.ArchWikiUpdatePackageTemplates.checkOfficial2,
+                  [checks, source, newText, templates, index, call, callArgs]);
     };
 
-    this.checkOfficiallc = function (checks, source, newText, templates, index, call, callArgs) {
+    this.checkOfficiallc = function (checks, source, newText, templates, index,
+                                                            call, callArgs) {
         var pkgname = templates[index].arguments[0].value.trim();
 
         if (pkgname.toLowerCase() != pkgname) {
-            WM.Log.logInfo("Looking for " + pkgname.toLowerCase() + " (lowercase) in the official repositories...");
+            WM.Log.logInfo("Looking for " + pkgname.toLowerCase() +
+                            " (lowercase) in the official repositories ...");
 
             WM.ArchPackages.isOfficialPackage(pkgname.toLowerCase(),
-                                              WM.Plugins.ArchWikiUpdatePackageTemplates.checkOfficiallc2,
-                                              [checks, source, newText, templates, index, call, callArgs]);
+                  WM.Plugins.ArchWikiUpdatePackageTemplates.checkOfficiallc2,
+                  [checks, source, newText, templates, index, call, callArgs]);
         }
         else {
-            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks,
+                            source, newText, templates, index, call, callArgs);
         }
     };
 
-    this.checkAUR = function (checks, source, newText, templates, index, call, callArgs) {
+    this.checkAUR = function (checks, source, newText, templates, index, call,
+                                                                    callArgs) {
         var pkgname = templates[index].arguments[0].value.trim();
-        WM.Log.logInfo("Looking for " + pkgname + " in the AUR...");
+        WM.Log.logInfo("Looking for " + pkgname + " in the AUR ...");
 
         WM.ArchPackages.isAURPackage(pkgname,
-                                     WM.Plugins.ArchWikiUpdatePackageTemplates.checkAUR2,
-                                     [checks, source, newText, templates, index, call, callArgs]);
+                 WM.Plugins.ArchWikiUpdatePackageTemplates.checkAUR2,
+                 [checks, source, newText, templates, index, call, callArgs]);
     };
 
-    this.checkAURlc = function (checks, source, newText, templates, index, call, callArgs) {
+    this.checkAURlc = function (checks, source, newText, templates, index,
+                                                            call, callArgs) {
         var pkgname = templates[index].arguments[0].value.trim();
 
         if (pkgname.toLowerCase() != pkgname) {
-            WM.Log.logInfo("Looking for " + pkgname.toLowerCase() + " (lowercase) in the AUR...");
+            WM.Log.logInfo("Looking for " + pkgname.toLowerCase() +
+                                                " (lowercase) in the AUR ...");
 
             WM.ArchPackages.isAURPackage(pkgname.toLowerCase(),
-                                         WM.Plugins.ArchWikiUpdatePackageTemplates.checkAURlc2,
-                                         [checks, source, newText, templates, index, call, callArgs]);
+                 WM.Plugins.ArchWikiUpdatePackageTemplates.checkAURlc2,
+                 [checks, source, newText, templates, index, call, callArgs]);
         }
         else {
-            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks,
+                            source, newText, templates, index, call, callArgs);
         }
     };
 
-    this.checkGroup64 = function (checks, source, newText, templates, index, call, callArgs) {
+    this.checkGroup64 = function (checks, source, newText, templates, index,
+                                                            call, callArgs) {
         var grpname = templates[index].arguments[0].value.trim();
-        WM.Log.logInfo("Looking for " + grpname + " as an x86_64 package group...");
+        WM.Log.logInfo("Looking for " + grpname +
+                                            " as an x86_64 package group ...");
 
         WM.ArchPackages.isPackageGroup64(grpname,
-                                          WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup64_2,
-                                          [checks, source, newText, templates, index, call, callArgs]);
+                  WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup64_2,
+                  [checks, source, newText, templates, index, call, callArgs]);
     };
 
-    this.checkGroup64lc = function (checks, source, newText, templates, index, call, callArgs) {
+    this.checkGroup64lc = function (checks, source, newText, templates, index,
+                                                            call, callArgs) {
         var grpname = templates[index].arguments[0].value.trim();
 
         if (grpname.toLowerCase() != grpname) {
-            WM.Log.logInfo("Looking for " + grpname.toLowerCase() + " (lowercase) as an x86_64 package group...");
+            WM.Log.logInfo("Looking for " + grpname.toLowerCase() +
+                                " (lowercase) as an x86_64 package group ...");
 
             WM.ArchPackages.isPackageGroup64(grpname.toLowerCase(),
-                                              WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup64lc2,
-                                              [checks, source, newText, templates, index, call, callArgs]);
+                  WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup64lc2,
+                  [checks, source, newText, templates, index, call, callArgs]);
         }
         else {
-            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks,
+                            source, newText, templates, index, call, callArgs);
         }
     };
 
-    this.checkGroup32 = function (checks, source, newText, templates, index, call, callArgs) {
+    this.checkGroup32 = function (checks, source, newText, templates, index,
+                                                            call, callArgs) {
         var grpname = templates[index].arguments[0].value.trim();
-        WM.Log.logInfo("Looking for " + grpname + " as an i686 package group...");
+        WM.Log.logInfo("Looking for " + grpname +
+                                            " as an i686 package group ...");
 
         WM.ArchPackages.isPackageGroup32(grpname,
-                                          WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup32_2,
-                                          [checks, source, newText, templates, index, call, callArgs]);
+                  WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup32_2,
+                  [checks, source, newText, templates, index, call, callArgs]);
     };
 
-    this.checkGroup32lc = function (checks, source, newText, templates, index, call, callArgs) {
+    this.checkGroup32lc = function (checks, source, newText, templates, index,
+                                                            call, callArgs) {
         var grpname = templates[index].arguments[0].value.trim();
 
         if (grpname.toLowerCase() != grpname) {
-            WM.Log.logInfo("Looking for " + grpname.toLowerCase() + " (lowercase) as an i686 package group...");
+            WM.Log.logInfo("Looking for " + grpname.toLowerCase() +
+                                " (lowercase) as an i686 package group ...");
 
             WM.ArchPackages.isPackageGroup32(grpname.toLowerCase(),
-                                              WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup32lc2,
-                                              [checks, source, newText, templates, index, call, callArgs]);
+                  WM.Plugins.ArchWikiUpdatePackageTemplates.checkGroup32lc2,
+                  [checks, source, newText, templates, index, call, callArgs]);
         }
         else {
-            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks,
+                            source, newText, templates, index, call, callArgs);
         }
     };
 
@@ -215,13 +247,15 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
                 WM.Log.logInfo("Replacing template with " + newtemplate);
             }
             else {
-                newText += template.match[0];
+                newText += template.rawTransclusion;
             }
 
-            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source,
+                                    newText, templates, index, call, callArgs);
         }
         else {
-            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks,
+                            source, newText, templates, index, call, callArgs);
         }
     };
 
@@ -242,10 +276,12 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
             newText += newtemplate;
             WM.Log.logInfo("Replacing template with " + newtemplate);
 
-            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source,
+                                    newText, templates, index, call, callArgs);
         }
         else {
-            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks,
+                            source, newText, templates, index, call, callArgs);
         }
     };
 
@@ -268,13 +304,15 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
                 WM.Log.logInfo("Replacing template with " + newtemplate);
             }
             else {
-                newText += template.match[0];
+                newText += template.rawTransclusion;
             }
 
-            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source,
+                                    newText, templates, index, call, callArgs);
         }
         else {
-            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks,
+                            source, newText, templates, index, call, callArgs);
         }
     };
 
@@ -295,10 +333,12 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
             newText += newtemplate;
             WM.Log.logInfo("Replacing template with " + newtemplate);
 
-            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source,
+                                    newText, templates, index, call, callArgs);
         }
         else {
-            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks,
+                            source, newText, templates, index, call, callArgs);
         }
     };
 
@@ -321,13 +361,15 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
                 WM.Log.logInfo("Replacing template with " + newtemplate);
             }
             else {
-                newText += template.match[0];
+                newText += template.rawTransclusion;
             }
 
-            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source,
+                                    newText, templates, index, call, callArgs);
         }
         else {
-            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks,
+                            source, newText, templates, index, call, callArgs);
         }
     };
 
@@ -348,10 +390,12 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
             newText += newtemplate;
             WM.Log.logInfo("Replacing template with " + newtemplate);
 
-            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source,
+                                    newText, templates, index, call, callArgs);
         }
         else {
-            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks,
+                            source, newText, templates, index, call, callArgs);
         }
     };
 
@@ -368,12 +412,15 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
         var grpname = template.arguments[0].value.trim();
 
         if (res) {
-            newText += template.match[0];
-            WM.Log.logWarning(grpname + " is a package group for i686 only, and Template:Grp only supports x86_64");
-            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+            newText += template.rawTransclusion;
+            WM.Log.logWarning(grpname + " is a package group for i686 only, " +
+                                    "and Template:Grp only supports x86_64");
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source,
+                                    newText, templates, index, call, callArgs);
         }
         else {
-            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks,
+                            source, newText, templates, index, call, callArgs);
         }
     };
 
@@ -390,31 +437,38 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
         var grpname = template.arguments[0].value.trim();
 
         if (res) {
-            newText += template.match[0];
-            WM.Log.logWarning(grpname + " is a package group for i686 only, and Template:Grp only supports x86_64");
-            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+            newText += template.rawTransclusion;
+            WM.Log.logWarning(grpname + " is a package group for i686 only, " +
+                                    "and Template:Grp only supports x86_64");
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source,
+                                    newText, templates, index, call, callArgs);
         }
         else {
-            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue2(checks,
+                            source, newText, templates, index, call, callArgs);
         }
     };
 
-    this.doUpdateContinue3 = function (source, newText, templates, index, call, callArgs) {
+    this.doUpdateContinue3 = function (source, newText, templates, index, call,
+                                                                    callArgs) {
         index++;
 
         if (templates[index]) {
-            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue(source, newText, templates, index, call, callArgs);
+            WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue(source,
+                                    newText, templates, index, call, callArgs);
         }
         else {
-            newText += source.substring(templates[index - 1].index + templates[index - 1].length);
+            newText += source.substring(templates[index - 1].index +
+                                                templates[index - 1].length);
             call(source, newText, callArgs);
         }
     };
 
     this.main = function (args, callNext) {
         var source = WM.Editor.readSource();
-        WM.Log.logInfo("Updating package templates...");
-        doUpdate(source, WM.Plugins.ArchWikiUpdatePackageTemplates.mainEnd, callNext);
+        WM.Log.logInfo("Updating package templates ...");
+        doUpdate(source, WM.Plugins.ArchWikiUpdatePackageTemplates.mainEnd,
+                                                                    callNext);
     };
 
     this.mainEnd = function (source, newtext, callNext) {
@@ -423,7 +477,8 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
             WM.Log.logInfo("Updated package templates");
         }
         else {
-            WM.Log.logInfo("No automatically updatable package templates found");
+            WM.Log.logInfo("No automatically updatable package templates " +
+                                                                    "found");
         }
 
         if (callNext) {
@@ -435,11 +490,12 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
         var summary = args[0];
 
         WM.MW.callQueryEdit(title,
-                            WM.Plugins.ArchWikiUpdatePackageTemplates.mainAutoReplace,
-                            [summary, callBot]);
+                    WM.Plugins.ArchWikiUpdatePackageTemplates.mainAutoReplace,
+                    [summary, callBot]);
     };
 
-    this.mainAutoReplace = function (title, source, timestamp, edittoken, args) {
+    this.mainAutoReplace = function (title, source, timestamp, edittoken,
+                                                                        args) {
         var summary = args[0];
         var callBot = args[1];
 
@@ -457,15 +513,15 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
 
         if (newtext != source) {
             WM.MW.callAPIPost({action: "edit",
-                               bot: "1",
-                               title: title,
-                               summary: summary,
-                               text: newtext,
-                               basetimestamp: timestamp,
-                               token: edittoken},
-                               null,
-                               WM.Plugins.ArchWikiUpdatePackageTemplates.mainAutoEnd,
-                               callBot);
+                       bot: "1",
+                       title: title,
+                       summary: summary,
+                       text: newtext,
+                       basetimestamp: timestamp,
+                       token: edittoken},
+                       null,
+                       WM.Plugins.ArchWikiUpdatePackageTemplates.mainAutoEnd,
+                       callBot);
         }
         else {
             callBot(0, null);

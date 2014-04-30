@@ -25,19 +25,25 @@
  */
 
 WM.ArchPackages = new function () {
+    "use strict";
+
     this.searchOfficialPackagesByExactName = function (name, call, callArgs) {
         var query = {
             method: "GET",
-            url: "https://www.archlinux.org/packages/search/json/?name=" + encodeURIComponent(name),
+            url: "https://www.archlinux.org/packages/search/json/?name=" +
+                                                    encodeURIComponent(name),
             onload: function (res) {
                 try {
-                    // Currently only Scriptish supports the responseJSON method
+                    // Currently only Scriptish supports the responseJSON
+                    //   method
                     //var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
                     // ... or not?
-                    var json = (Alib.Obj.getFirstItem(res.responseJSON)) ? res.responseJSON : JSON.parse(res.responseText);
+                    var json = (Alib.Obj.getFirstItem(res.responseJSON)) ?
+                            res.responseJSON : JSON.parse(res.responseText);
                 }
                 catch (err) {
-                    WM.Log.logError("The Official Repositories web interface returned an unexpected object");
+                    WM.Log.logError("The Official Repositories web " +
+                                    "interface returned an unexpected object");
                 }
 
                 if (json) {
@@ -69,23 +75,28 @@ WM.ArchPackages = new function () {
             }
         }
 
-        WM.ArchPackages.searchOfficialPackagesByExactName(pkg, call2, callArgs);
+        WM.ArchPackages.searchOfficialPackagesByExactName(pkg, call2,
+                                                                    callArgs);
     };
 
     this.getAURInfo = function (arg, call, callArgs) {
         // arg can be either an exact package name (string) or an ID (integer)
         var query = {
             method: "GET",
-            url: "https://aur.archlinux.org/rpc.php?type=info&arg=" + encodeURIComponent(arg),
+            url: "https://aur.archlinux.org/rpc.php?type=info&arg=" +
+                                                    encodeURIComponent(arg),
             onload: function (res) {
                 try {
-                    // Currently only Scriptish supports the responseJSON method
+                    // Currently only Scriptish supports the responseJSON
+                    //   method
                     //var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
                     // ... or not?
-                    var json = (Alib.Obj.getFirstItem(res.responseJSON)) ? res.responseJSON : JSON.parse(res.responseText);
+                    var json = (Alib.Obj.getFirstItem(res.responseJSON)) ?
+                            res.responseJSON : JSON.parse(res.responseText);
                 }
                 catch (err) {
-                    WM.Log.logError("The AUR's RPC interface returned an unexpected object");
+                    WM.Log.logError("The AUR's RPC interface returned an " +
+                                                        "unexpected object");
                 }
 
                 if (json) {
@@ -110,7 +121,8 @@ WM.ArchPackages = new function () {
     this.isAURPackage = function (pkg, call, callArgs) {
         var call2 = function (res, args) {
             if (res.type == "error") {
-                WM.Log.logError("The AUR's RPC interface returned an error: " + res.results);
+                WM.Log.logError("The AUR's RPC interface returned an error: " +
+                                                                res.results);
             }
             else {
                 if (res.resultcount > 0) {
@@ -128,7 +140,8 @@ WM.ArchPackages = new function () {
     var isPackageGroup = function (arch, grp, call, callArgs) {
         var query = {
             method: "GET",
-            url: "https://www.archlinux.org/groups/" + encodeURIComponent(arch) + "/" + encodeURIComponent(grp),
+            url: "https://www.archlinux.org/groups/" +
+                    encodeURIComponent(arch) + "/" + encodeURIComponent(grp),
             onload: function (res) {
                 // Cannot use the DOMParser because Scriptish/GreaseMonkey
                 // doesn't support XrayWrapper well
@@ -137,7 +150,8 @@ WM.ArchPackages = new function () {
                 var escgrp = Alib.RegEx.escapePattern(grp);
                 var escarch = Alib.RegEx.escapePattern(arch);
 
-                var regExp = new RegExp("<h2>\\s*Group Details -\\s*" + escgrp + "\\s*\\(" + escarch + "\\)\\s*</h2>", "");
+                var regExp = new RegExp("<h2>\\s*Group Details -\\s*" +
+                            escgrp + "\\s*\\(" + escarch + "\\)\\s*</h2>", "");
 
                 if (res.responseText.search(regExp) > -1) {
                     call(true, callArgs);

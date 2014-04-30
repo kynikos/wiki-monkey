@@ -19,6 +19,8 @@
  */
 
 WM.Plugins.FixFragments = new function () {
+    "use strict";
+
     var fixLinks = function (source) {
         var title = WM.Editor.getTitle();
         var sections = WM.Parser.findSectionHeadings(source).sections;
@@ -30,14 +32,18 @@ WM.Plugins.FixFragments = new function () {
         for (var l = 0; l < slinks.length; l++) {
             var link = slinks[l];
             newtext1 += source.substring(prevId, link.index);
-            newtext1 += fixLink(source, sections, link.match[0], link.match[1], link.match[2]);
+            newtext1 += fixLink(source, sections, link.rawLink, link.fragment,
+                                                                link.anchor);
             prevId = link.index + link.length;
         }
         newtext1 += source.substr(prevId);
 
-        // Note that it's impossible to recognize any namespaces in the title without querying the server
-        // Alternatively, a list of the known namespaces could be maintained for each wiki
-        // Recognizing namespaces would let recognize more liberal link syntaxes (e.g. spaces around the colon)
+        // Note that it's impossible to recognize any namespaces in the title
+        //   without querying the server
+        // Alternatively, a list of the known namespaces could be maintained
+        //   for each wiki
+        // Recognizing namespaces would let recognize more liberal link
+        //   syntaxes (e.g. spaces around the colon)
         var ilinks = WM.Parser.findInternalLinks(newtext1, null, title);
         var newtext2 = "";
         var prevId = 0;
@@ -45,13 +51,14 @@ WM.Plugins.FixFragments = new function () {
         for (var l = 0; l < ilinks.length; l++) {
             var link = ilinks[l];
             newtext2 += newtext1.substring(prevId, link.index);
-            var rawfragment = link.match[5];
+            var rawfragment = link.fragment;
 
             if (rawfragment) {
-                newtext2 += fixLink(newtext1, sections, link.match[0], rawfragment, link.match[6]);
+                newtext2 += fixLink(newtext1, sections, link.rawLink,
+                                                    rawfragment, link.anchor);
             }
             else {
-                newtext2 += link.match[0];
+                newtext2 += link.rawLink;
             }
 
             prevId = link.index + link.length;
@@ -62,7 +69,8 @@ WM.Plugins.FixFragments = new function () {
     };
 
     var fixLink = function (source, sections, rawlink, rawfragment, lalt) {
-        var fragment = WM.Parser.squashContiguousWhitespace(rawfragment).trim();
+        var fragment = WM.Parser.squashContiguousWhitespace(rawfragment
+                                                                    ).trim();
 
         for (var s = 0; s < sections.length; s++) {
             var heading = sections[s].cleanheading;
@@ -77,7 +85,8 @@ WM.Plugins.FixFragments = new function () {
                     // contain any encodable characters, but since heading and
                     // fragment at most differ by capitalization, encoding the
                     // heading won't have any effect
-                    return newlink = "[[#" + dotHeading + ((lalt) ? "|" + lalt : "") + "]]";
+                    return "[[#" + dotHeading + ((lalt) ? "|" + lalt : "") +
+                                                                        "]]";
                 }
                 else {
                     // If the fragment was not encoded, if the fragment
@@ -90,12 +99,17 @@ WM.Plugins.FixFragments = new function () {
                     // If the fragment was *partially* encoded instead, a
                     // link-breaking character may have been encoded, so all
                     // link-breaking characters must be re-encoded here!
-                    var escHeading = WM.Parser.dotEncodeLinkBreakingFragmentCharacters(heading);
-                    return newlink = "[[#" + escHeading + ((lalt) ? "|" + lalt : "") + "]]";
+                    var escHeading =
+                            WM.Parser.dotEncodeLinkBreakingFragmentCharacters(
+                                                                    heading);
+                    return "[[#" + escHeading + ((lalt) ? "|" + lalt : "") +
+                                                                        "]]";
                 }
             }
         }
 
+        // It's not easy to use WM.Log.linkToWikiPage because pure fragments
+        //   are not supported yet
         WM.Log.logWarning("Cannot fix broken section link: " + rawlink);
         return rawlink;
     };

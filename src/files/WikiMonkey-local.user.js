@@ -28,25 +28,29 @@
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/Cat.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/Diff.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/Editor.js
+// @require file:///mnt/archive/Development/wiki-monkey/src/modules/Filters.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/Interlanguage.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/Log.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/MW.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/Parser.js
-// @require file:///mnt/archive/Development/wiki-monkey/src/modules/RecentChanges.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/Tables.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/UI.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/WhatLinksHere.js
+// @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiDeprecateFaq.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiFixHeader.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiFixHeadings.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiFixLinks.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiNewTemplates.js
+// @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiNPFilter.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiOldAURLinks.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiQuickReport.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiRCFilter.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiSaveTalk.js
+// @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiSortContacts.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiSummaryToRelated.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiUpdatePackageTemplates.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiWantedCategories.js
+// @require file:///mnt/archive/Development/wiki-monkey/src/plugins/DeletePages.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ExpandContractions.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/FixBacklinkFragments.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/FixDoubleRedirects.js
@@ -67,7 +71,8 @@ WM.UI.setEditor([
         ["ArchWikiNewTemplates", "Use code templates", null],
         ["ExpandContractions", "Expand contractions", null],
         ["MultipleLineBreaks", "Squash multiple line breaks", null],
-        ["ArchWikiSummaryToRelated", "Convert summary to related", null]
+        ["ArchWikiSummaryToRelated", "Convert summary to related", null],
+        ["ArchWikiDeprecateFaq", "Replace FAQ template", null]
     ],
     [
         ["SimpleReplace", "RegExp substitution", ["1"]]
@@ -150,7 +155,7 @@ WM.UI.setSpecial([
             keepAltName: true,
             showIndices: true,
             rightToLeft: false},
-           {page: "Table of Contents (Español)",
+           {page: "Table of contents (Español)",
             root: "Category:Español",
             alsoIn: "también en",
             indentType: ":",
@@ -248,7 +253,7 @@ WM.UI.setSpecial([
             rightToLeft: false},
            {page: "Table of Contents (Русский)",
             root: "Category:Русский",
-            alsoIn: "also in",
+            alsoIn: "Также в",
             indentType: ":",
             replace: ["[ _]\\(Русский\\)", "", ""],
             keepAltName: true,
@@ -305,7 +310,10 @@ WM.UI.setSpecial([
          "automatic update"]]
     ],
     [
-        ["FixDoubleRedirects", "Fix double redirects", "fix double redirect"]
+        ["FixDoubleRedirects", "Fix double redirects", "fix double redirect"],
+        ["ArchWikiSortContacts", "Sort Admins and Maintainers",
+                    [["ArchWiki:Administrators", "ArchWiki:Maintainers"],
+                    "automatically sort list according to recent activity"]]
     ]
 ]);
 
@@ -319,9 +327,20 @@ WM.UI.setRecentChanges([
     ]
 ]);
 
+WM.UI.setNewPages([
+    [
+        "ArchWikiNPFilter",
+        "Default filter",
+        {
+            language: "English",
+        }
+    ]
+]);
+
 WM.UI.setBot([
     ["SimpleReplace", "RegExp substitution", ["1"]],
-    ["FixBacklinkFragments", "Fix links to specific sections of the target article", "fix links to specific sections"],
+    ["FixBacklinkFragments", "Fix links to specific sections of a target " +
+                                "page", "fix links to specific sections"],
     ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
      [function (title) {
          var detect = WM.ArchWiki.detectLanguage(title);
@@ -332,9 +351,14 @@ WM.UI.setBot([
      WM.ArchWiki.getInterwikiLanguages(),
      WM.ArchWiki.getInterwikiLanguages(),
      "synchronized interlanguage links with the other wikis"]],
-    ["ArchWikiUpdatePackageTemplates", "Check packages linked with Pkg/AUR templates and possibly update them", ["update Pkg/AUR templates to reflect new package status"]],
-    ["ArchWikiOldAURLinks", "Replace old-style direct AUR package links with Template:AUR", ["replace old-style direct package links with Pkg/AUR templates"]],
+    ["ArchWikiUpdatePackageTemplates", "Check packages linked with Pkg/AUR " +
+                "templates and possibly update them",
+                ["update Pkg/AUR templates to reflect new package status"]],
+    ["ArchWikiOldAURLinks", "Replace old-style direct AUR package links " +
+            "with Template:AUR",
+            ["replace old-style direct package links with Pkg/AUR templates"]],
     ["ArchWikiWantedCategories", "Create wanted categories", null],
+    ["DeletePages", "Delete pages", "delete page"],
 ]);
 
 WM.main();

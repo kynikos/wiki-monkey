@@ -3,44 +3,44 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.14.7-bot
+// @version 1.15.0-bot
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
 // @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-bot.meta.js
 // @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-bot.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/files/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/files/wiki-monkey-64.png
+// @icon https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/files/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/files/wiki-monkey-64.png
 // @match http://*.wikipedia.org/*
 // @match https://wiki.archlinux.org/*
-// @require https://raw.github.com/kynikos/js-aux-lib/1.4/src/Async.js
-// @require https://raw.github.com/kynikos/js-aux-lib/1.4/src/Compatibility.js
-// @require https://raw.github.com/kynikos/js-aux-lib/1.4/src/DOM.js
-// @require https://raw.github.com/kynikos/js-aux-lib/1.4/src/HTTP.js
-// @require https://raw.github.com/kynikos/js-aux-lib/1.4/src/Obj.js
-// @require https://raw.github.com/kynikos/js-aux-lib/1.4/src/RegEx.js
-// @require https://raw.github.com/kynikos/js-aux-lib/1.4/src/Str.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/WikiMonkey.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/Bot.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/Cat.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/Diff.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/Editor.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/Interlanguage.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/Log.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/MW.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/Parser.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/RecentChanges.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/Tables.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/UI.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/WhatLinksHere.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/plugins/ExpandContractions.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/plugins/FixBacklinkFragments.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/plugins/FixDoubleRedirects.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/plugins/FixFragments.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/plugins/FixLinkFragments.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/plugins/MultipleLineBreaks.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/plugins/SimpleReplace.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/plugins/UpdateCategoryTree.js
+// @require https://raw.github.com/kynikos/js-aux-lib/1.5/src/Async.js
+// @require https://raw.github.com/kynikos/js-aux-lib/1.5/src/Compatibility.js
+// @require https://raw.github.com/kynikos/js-aux-lib/1.5/src/DOM.js
+// @require https://raw.github.com/kynikos/js-aux-lib/1.5/src/HTTP.js
+// @require https://raw.github.com/kynikos/js-aux-lib/1.5/src/Obj.js
+// @require https://raw.github.com/kynikos/js-aux-lib/1.5/src/RegEx.js
+// @require https://raw.github.com/kynikos/js-aux-lib/1.5/src/Str.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/WikiMonkey.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/Bot.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/Cat.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/Diff.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/Editor.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/Filters.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/Interlanguage.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/Log.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/MW.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/Parser.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/Tables.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/UI.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/WhatLinksHere.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/plugins/ExpandContractions.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/plugins/FixBacklinkFragments.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/plugins/FixDoubleRedirects.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/plugins/FixFragments.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/plugins/FixLinkFragments.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/plugins/MultipleLineBreaks.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/plugins/SimpleReplace.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/plugins/UpdateCategoryTree.js
 // ==/UserScript==
 
 WM.UI.setEditor([
@@ -71,9 +71,13 @@ WM.UI.setSpecial([
 
 WM.UI.setRecentChanges(null);
 
+WM.UI.setNewPages(null);
+
 WM.UI.setBot([
     ["SimpleReplace", "RegExp substitution", ["1"]],
-    ["FixBacklinkFragments", "Fix links to specific sections of the target article", "fix links to specific sections"]
+    ["FixBacklinkFragments",
+                        "Fix links to specific sections of a target page",
+                        "fix links to specific sections"]
 ]);
 
 WM.main();

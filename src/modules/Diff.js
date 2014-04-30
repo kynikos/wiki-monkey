@@ -19,8 +19,11 @@
  */
 
 WM.Diff = new function () {
+    "use strict";
+
     this.getEndTimestamp = function (call, callArgs) {
-        var title = Alib.HTTP.getURIParameter(null, 'title');
+        var title = decodeURIComponent(Alib.HTTP.getURIParameter(null,
+                                                                    'title'));
         var diff = Alib.HTTP.getURIParameter(null, 'diff');
         var oldid = Alib.HTTP.getURIParameter(null, 'oldid');
 

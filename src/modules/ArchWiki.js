@@ -19,6 +19,8 @@
  */
 
 WM.ArchWiki = new function () {
+    "use strict";
+
     var languages = {
         local: "English",
         names: {
@@ -111,7 +113,8 @@ WM.ArchWiki = new function () {
     };
 
     this.getInterwikiLanguages = function () {
-        return languages.interlanguage.external.concat(languages.interlanguage.internal);
+        return languages.interlanguage.external.concat(
+                                            languages.interlanguage.internal);
     };
 
     this.isInterwikiLanguage = function (lang) {
@@ -131,34 +134,41 @@ WM.ArchWiki = new function () {
     };
 
     this.detectLanguage = function (title) {
-        var matches = title.match(/^(.+?)([ _]\(([^\(]+)\))?$/);
-        var detectedLanguage = matches[3];
-        var pureTitle;
-        if (!detectedLanguage || !WM.ArchWiki.isCategoryLanguage(detectedLanguage)) {
+        var matches = title.match(/^(.+?)(?:[ _]\(([^\(]+)\))?$/);
+        var pureTitle = matches[1];
+        var detectedLanguage = matches[2];
+
+        if (!detectedLanguage || !WM.ArchWiki.isCategoryLanguage(
+                                                        detectedLanguage)) {
             // Language categories are exceptions
-            var testLangCat = matches[1].match(/^ *[Cc]ategory *: *(.+?) *$/);
-            if (testLangCat && WM.ArchWiki.isCategoryLanguage(testLangCat[1])) {
+            // Don't just use /^[ _]*(.+?)[ _]*$/ but require the whole
+            //   namespace+title to be passed as the argument (i.e. including
+            //   "Category:")
+            var testLangCat = matches[1].match(
+                                    /^[ _]*[Cc]ategory[ _]*:[ _]*(.+?)[ _]*$/);
+            if (testLangCat && WM.ArchWiki.isCategoryLanguage(
+                                                            testLangCat[1])) {
                 detectedLanguage = testLangCat[1];
-                pureTitle = matches[1];
+                var pureTitle = matches[1];
             }
             else {
                 detectedLanguage = this.getLocalLanguage();
-                pureTitle = matches[0];
+                var pureTitle = matches[0];
             }
         }
-        else {
-            pureTitle = matches[1];
-        }
+
         return [pureTitle, detectedLanguage];
     };
 
     this.findAllInterlanguageLinks = function (source) {
         // See also WM.Parser.findInterlanguageLinks!!!
-        return WM.Parser.findSpecialLinks(source, this.getInterwikiLanguages().join("|"));
+        return WM.Parser.findSpecialLinks(source,
+                                    this.getInterwikiLanguages().join("|"));
     };
 
     this.findInternalInterlanguageLinks = function (source) {
         // See also WM.Parser.findInterlanguageLinks!!!
-        return WM.Parser.findSpecialLinks(source, this.getInternalInterwikiLanguages().join("|"));
+        return WM.Parser.findSpecialLinks(source,
+                            this.getInternalInterwikiLanguages().join("|"));
     };
 };

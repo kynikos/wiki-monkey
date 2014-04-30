@@ -19,6 +19,8 @@
  */
 
 WM.UI = new function () {
+    "use strict";
+
     var editor = null;
 
     this.setEditor = function(rows) {
@@ -43,6 +45,12 @@ WM.UI = new function () {
         recentChanges = rows;
     };
 
+    var newPages = null;
+
+    this.setNewPages = function(rows) {
+        newPages = rows;
+    }
+
     var bot = null;
 
     this.setBot = function(rows) {
@@ -53,11 +61,15 @@ WM.UI = new function () {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyButtons';
 
-        GM_addStyle("#WikiMonkeyButtons div.row {position:relative; margin-bottom:0.33em;} " +
+        GM_addStyle("#WikiMonkeyButtons div.row {position:relative; " +
+                                                    "margin-bottom:0.33em;} " +
                     "#WikiMonkeyButtons div.shortcut {position:absolute;} " +
-                    "#WikiMonkeyButtons div.shortcut > input, #WikiMonkeyButtonAll {width:8.33em; margin-bottom:0.33em; font-weight:bold;} " +
+                    "#WikiMonkeyButtons div.shortcut > input, " +
+                                "#WikiMonkeyButtonAll {width:8.33em; " +
+                                "margin-bottom:0.33em; font-weight:bold;} " +
                     "#WikiMonkeyButtons div.plugins {margin-left:9em;} " +
-                    "#WikiMonkeyButtons div.pluginUI {display:inline-block; margin-bottom:0.33em; margin-right:0.33em;}");
+                    "#WikiMonkeyButtons div.pluginUI {display:inline-block; " +
+                                "margin-bottom:0.33em; margin-right:0.33em;}");
 
         var buttonAll = document.createElement('input');
         buttonAll.setAttribute('type', 'button');
@@ -97,13 +109,18 @@ WM.UI = new function () {
 
                 buttonFunction.addEventListener("click", (function (fn, arg) {
                     return function () {
-                        // window[string] doesn't work
-                        eval("WM.Plugins." + fn + ".main")(arg, null);
-                    }
+                        WM.Log.logHidden("Plugin: " + fn);
+                        WM.Plugins[fn].main(arg, null);
+                    };
                 })(ff[0], ff[2]), false);
 
-                // window[string] doesn't work
-                var exFunction = eval("WM.Plugins." + ff[0] + ".main");
+                var exFunction = (function (plugin) {
+                    return function (args, callNext) {
+                        WM.Log.logHidden("Plugin: " + plugin);
+                        WM.Plugins[plugin].main(args, callNext);
+                    };
+                })(ff[0]);
+
                 rowFunctions.push([exFunction, ff[2]]);
                 allFunctions.push([exFunction, ff[2]]);
 
@@ -111,7 +128,7 @@ WM.UI = new function () {
                 divFunction.className = 'pluginUI';
                 divFunction.appendChild(buttonFunction);
 
-                var makeUI = eval("WM.Plugins." + ff[0] + ".makeUI");
+                var makeUI = WM.Plugins[ff[0]].makeUI;
                 if (makeUI instanceof Function) {
                     divFunction.appendChild(makeUI(ff[2]));
                 }
@@ -159,55 +176,100 @@ WM.UI = new function () {
         var displayLog = true;
 
         if (document.getElementById('editform')) {
-            nextNode = document.getElementById('wpSummaryLabel').parentNode.nextSibling;
+            nextNode = document.getElementById('wpSummaryLabel'
+                                                    ).parentNode.nextSibling;
             UI = (editor) ? makeButtons(editor) : null;
         }
         else if (document.getElementById('mw-diff-otitle1')) {
-            nextNode = document.getElementById('bodyContent').getElementsByTagName('h2')[0];
+            nextNode = document.getElementById('bodyContent'
+                                            ).getElementsByTagName('h2')[0];
             UI = (diff) ? makeButtons(diff) : null;
         }
-        else if (document.getElementById('mw-subcategories') || document.getElementById('mw-pages')) {
+        else if (document.getElementById('mw-subcategories') ||
+                                        document.getElementById('mw-pages')) {
             nextNode = document.getElementById('bodyContent');
-            UI = (bot) ? WM.Bot._makeUI(bot, [[document.getElementById('mw-pages'), 0, "Pages"], [document.getElementById('mw-subcategories'), 0, "Subcategories"]]) : null;
+            UI = (bot) ? WM.Bot._makeUI(bot,
+                            [[document.getElementById('mw-pages'), 0, "Pages"],
+                            [document.getElementById('mw-subcategories'), 0,
+                            "Subcategories"]]) : null;
             display = false;
         }
         else if (document.getElementById('mw-whatlinkshere-list')) {
-            nextNode = document.getElementById('bodyContent').getElementsByTagName('form')[0].nextSibling;
-            UI = (bot) ? WM.Bot._makeUI(bot, [[document.getElementById('mw-whatlinkshere-list'), 0, "Pages"]]) : null;
+            nextNode = document.getElementById('bodyContent'
+                                ).getElementsByTagName('form')[0].nextSibling;
+            UI = (bot) ? WM.Bot._makeUI(bot,
+                            [[document.getElementById('mw-whatlinkshere-list'),
+                            0, "Pages"]]) : null;
             display = false;
         }
-        else if (document.getElementById('mw-linksearch-form') && document.getElementById('bodyContent').getElementsByTagName('ol')[0]) {
-            nextNode = document.getElementById('mw-linksearch-form').nextSibling;
-            UI = (bot) ? WM.Bot._makeUI(bot, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 1, "Pages"]]) : null;
+        else if (document.getElementById('mw-linksearch-form') &&
+                                        document.getElementById('bodyContent'
+                                        ).getElementsByTagName('ol')[0]) {
+            nextNode = document.getElementById('mw-linksearch-form'
+                                                                ).nextSibling;
+            UI = (bot) ? WM.Bot._makeUI(bot,
+                        [[document.getElementById('bodyContent'
+                        ).getElementsByTagName('ol')[0], 1, "Pages"]]) : null;
+            display = false;
+        }
+        else if (document.getElementById('mw-prefixindex-list-table')) {
+            nextNode = document.getElementById('mw-prefixindex-list-table');
+            UI = (bot) ? WM.Bot._makeUI(bot,
+                                [[nextNode.getElementsByTagName('tbody')[0],
+                                0, "Pages"]]) : null;
             display = false;
         }
         else {
             var wikiUrls = WM.MW.getWikiUrls();
-            var patt1 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.full) + "\?.*?" + "title\\=Special(\\:|%3[Aa])SpecialPages", '');
-            var patt2 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) + "Special(\\:|%3[Aa])SpecialPages", '');
-            var patt3 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.full) + "\?.*?" + "title\\=Special(\\:|%3[Aa])RecentChanges", '');
-            var patt4 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) + "Special(\\:|%3[Aa])RecentChanges", '');
+            var patt1 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.full) +
+                    "\?.*?" + "title\\=Special(\\:|%3[Aa])SpecialPages", '');
+            var patt2 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) +
+                    "Special(\\:|%3[Aa])SpecialPages", '');
+            var patt3 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.full) +
+                    "\?.*?" + "title\\=Special(\\:|%3[Aa])RecentChanges", '');
+            var patt4 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) +
+                    "Special(\\:|%3[Aa])RecentChanges", '');
+            var patt5 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.full) +
+                    "\?.*?" + "title\\=Special(\\:|%3[Aa])NewPages", '');
+            var patt6 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) +
+                    "Special(\\:|%3[Aa])NewPages", '');
 
-            if (location.href.search(patt1) > -1 || location.href.search(patt2) > -1) {
+            if (location.href.search(patt1) > -1 ||
+                                            location.href.search(patt2) > -1) {
                 nextNode = document.getElementById('bodyContent');
                 UI = (special) ? makeButtons(special) : null;
             }
-            else if (location.href.search(patt3) > -1 || location.href.search(patt4) > -1) {
-                nextNode = document.getElementById('mw-content-text').getElementsByTagName('h4')[0];
-                UI = (recentChanges) ? WM.RecentChanges._makeUI(recentChanges) : null;
+            else if (location.href.search(patt3) > -1 ||
+                                            location.href.search(patt4) > -1) {
+                nextNode = document.getElementById('mw-content-text'
+                                            ).getElementsByTagName('h4')[0];
+                UI = (recentChanges) ? WM.Filters._makeUI(recentChanges) :
+                                                                        null;
                 displayLog = false;
             }
-            else {
-                nextNode = document.getElementById('bodyContent');
-                var nextNodeDivs = nextNode.getElementsByTagName('div');
-                // Using for...in to loop through node lists is not supported by Chrome
-                for (var div = 0; div < nextNodeDivs.length; div++) {
-                    if (nextNodeDivs[div].className == 'mw-spcontent') {
-                        UI = (bot) ? WM.Bot._makeUI(bot, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
-                        display = false;
-                        break;
-                    }
-                }
+            else if (location.href.search(patt5) > -1 ||
+                                            location.href.search(patt6) > -1) {
+                nextNode = document.getElementById('mw-content-text'
+                                            ).getElementsByTagName('ul')[0];
+                UI = (newPages) ? WM.Filters._makeUI(newPages) : null;
+                displayLog = false;
+            }
+            else if (document.getElementsByClassName('mw-spcontent'
+                                                                ).length > 0) {
+                nextNode = document.getElementsByClassName('mw-spcontent')[0];
+                UI = (bot) ? WM.Bot._makeUI(bot,
+                                    [[nextNode.getElementsByTagName('ol')[0],
+                                    0, "Pages"]]) : null;
+                display = false;
+            }
+            else if (document.getElementsByClassName('mw-allpages-table-chunk'
+                                                                ).length > 0) {
+                nextNode = document.getElementsByClassName(
+                                                'mw-allpages-table-chunk')[0];
+                UI = (bot) ? WM.Bot._makeUI(bot,
+                                [[nextNode.getElementsByTagName('tbody')[0],
+                                0, "Pages"]]) : null;
+                display = false;
             }
         }
 

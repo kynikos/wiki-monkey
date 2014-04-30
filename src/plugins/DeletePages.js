@@ -18,56 +18,16 @@
  *  along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-WM.Plugins.DeletePage = new function () {
-    this.main = function (args, callNext) {
-        var [title, summary] = args;
-
-        WM.Log.logInfo("Deleting " + title + "...");
-
-        WM.MW.callQuery({prop: 'info',
-                         intoken: 'delete',
-                         titles: title},
-                         WM.Plugins.DeletePage.mainWrite,
-                         [title, summary, callNext]);
-    };
-
-    this.mainWrite = function (page, args) {
-        var [title, summary, callNext] = args;
-
-        var deletetoken = page.deletetoken;
-
-        WM.MW.callAPIPost({action: 'delete',
-                           bot: '1',
-                           title: title,
-                           token: deletetoken,
-                           reason: summary},
-                           null,
-                           WM.Plugins.DeletePage.mainEnd,
-                           [title, callNext]);
-    };
-
-    this.mainEnd = function (res, args) {
-        var title = args[0];
-        var callNext = args[1];
-
-        if (!res['delete']) {
-            WM.Log.logError(title + " has not been deleted!\n" + res['error']['info'] + " (" + res['error']['code'] + ")");
-        }
-        else {
-            WM.Log.logInfo(title + " deleted");
-            if (callNext) {
-                callNext();
-            }
-        }
-    };
+WM.Plugins.DeletePages = new function () {
+    "use strict";
 
     this.mainAuto = function (args, title, chainArgs) {
-        var summary = args[0];
+        var summary = args;
 
         WM.MW.callQuery({prop: 'info',
                          intoken: 'delete',
                          titles: title},
-                         WM.Plugins.DeletePage.mainAutoWrite,
+                         WM.Plugins.DeletePages.mainAutoWrite,
                          [title, summary]);
     };
 
@@ -83,14 +43,19 @@ WM.Plugins.DeletePage = new function () {
                            token: deletetoken,
                            reason: summary},
                            null,
-                           WM.Plugins.DeletePage.mainAutoEnd,
-                           callBot);
+                           WM.Plugins.DeletePages.mainAutoEnd,
+                           [title, callBot]);
     };
 
-    this.mainAutoEnd = function (res, callBot) {
+    this.mainAutoEnd = function (res, args) {
+        var title = args[0];
+        var callBot = args[1];
+
         if (!res.delete) {
             if (res.error) {
-                WM.Log.logError(cat + " has not been deleted!\n" + res.error.info + " (" + res.error.code + ")");
+                WM.Log.logError(WM.Log.linkToWikiPage(title, title) +
+                                " has not been deleted!\n" +
+                                res.error.info + " (" + res.error.code + ")");
                 callBot(res.error.code, null);
             }
             else {

@@ -19,8 +19,11 @@
  */
 
 WM.Editor = new function () {
+    "use strict";
+
     this.getTitle = function () {
-        return WM.Parser.squashContiguousWhitespace(decodeURIComponent(Alib.HTTP.getURIParameter(null, 'title')));
+        return WM.Parser.squashContiguousWhitespace(decodeURIComponent(
+                                    Alib.HTTP.getURIParameter(null, 'title')));
     };
 
     this.isSection = function () {
@@ -46,6 +49,7 @@ WM.Editor = new function () {
     };
 
     this.appendToSummary = function (text) {
-        document.getElementById('wpSummary').setAttribute("value", this.readSummary() + text);
+        document.getElementById('wpSummary').setAttribute("value",
+                                                    this.readSummary() + text);
     };
 };

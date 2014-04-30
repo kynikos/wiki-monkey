@@ -19,6 +19,8 @@
  */
 
 WM.Interlanguage = new function () {
+    "use strict";
+
     this.parseLinks = function (supportedLangs, source, iwmap) {
         var parsedLinks = WM.Parser.findSpecialLinks(
             source,
@@ -30,8 +32,9 @@ WM.Interlanguage = new function () {
             var link = parsedLinks[p];
             // Do not store the tag lowercased, since it should be kept as
             // original
-            var ltag = link.match[2];
-            var ltitle = link.match[3];
+            var ltag = link.namespace;
+            var ltitle = link.title + ((link.fragment) ?
+                                                ("#" + link.fragment) : "");
             for (var iw in iwmap) {
                 if (iwmap[iw].prefix.toLowerCase() == ltag.toLowerCase()) {
                     // Fix the url _before_ replacing $1
@@ -168,7 +171,9 @@ WM.Interlanguage = new function () {
                 //   language whose language tag is not in the white list
                 // tag is already lower-cased
                 if (firstPage || whitelist.indexOf(tag) > -1) {
-                    WM.Log.logInfo("Reading " + decodeURI(url) + " ...");
+                    WM.Log.logInfo("Reading " +
+                                WM.Log.linkToPage(url, "[[" + origTag + ":" +
+                                title + "]]") + " ...");
 
                     this.queryLinks(
                         api,
@@ -183,10 +188,11 @@ WM.Interlanguage = new function () {
                     );
                 }
                 else {
-                    WM.Log.logWarning("[[" + tag + ":" + title + "]] will " +
-                            "not be checked because " + tag + " is not " +
-                            "included in the whitelist defined in the " +
-                            "configuration");
+                    WM.Log.logWarning(WM.Log.linkToPage(url,
+                                "[[" + origTag + ":" + title + "]]") +
+                                " will not be checked because " + tag +
+                                " is not included in the whitelist defined " +
+                                "in the configuration");
                     WM.Interlanguage._collectLinksContinue(
                         api,
                         title,
@@ -209,8 +215,9 @@ WM.Interlanguage = new function () {
             }
             else {
                 WM.Log.logWarning("Cannot extract the page title from " +
-                                    decodeURI(url) + ", removing it if it" +
-                                    " was linked from the processed article");
+                            WM.Log.linkToPage(url, decodeURI(url)) +
+                            ", removing it if it" +
+                            " was linked from the processed article");
                 WM.Interlanguage.collectLinks(
                     visitedlinks,
                     newlinks,
@@ -239,7 +246,9 @@ WM.Interlanguage = new function () {
         var callArgs = args[6];
 
         if (langlinks === false) {
-            WM.Log.logWarning("[[" + tag + ":" + title + "]] seems to point " +
+            WM.Log.logWarning(WM.Log.linkToPage(url,
+                                "[[" + origTag + ":" + title + "]]") +
+                                " seems to point " +
                                 "to a non-existing article, removing it if " +
                                 "it was linked from the processed article");
         }
@@ -263,18 +272,20 @@ WM.Interlanguage = new function () {
                     // if it's a real conflict, the user will investigate it,
                     // otherwise the user will ignore it
                     WM.Log.logWarning("Possibly conflicting interlanguage " +
-                        "links: [[" + link.lang + ":" +
-                        link.title + "]] and [[" + link.lang + ":" +
-                        visitedlinks[link.lang.toLowerCase()].title + "]]");
+                        "links: " + WM.Log.linkToPage(link.url, "[[" +
+                        link.lang + ":" + link.title + "]]") + " and " +
+                        WM.Log.linkToPage(vlink.url, "[[" + link.lang + ":" +
+                        visitedlinks[link.lang.toLowerCase()].title + "]]"));
                 }
                 else if (nlink && nlink.url != link.url) {
                     // Just ignore any conflicting links and warn the user:
                     // if it's a real conflict, the user will investigate it,
                     // otherwise the user will ignore it
                     WM.Log.logWarning("Possibly conflicting interlanguage " +
-                            "links: [[" + link.lang + ":" +
-                            link.title + "]] and [[" + link.lang + ":" +
-                            newlinks[link.lang.toLowerCase()].title + "]]");
+                        "links: " + WM.Log.linkToPage(link.url, "[[" +
+                        link.lang + ":" + link.title + "]]") + " and " +
+                        WM.Log.linkToPage(nlink.url, "[[" + link.lang + ":" +
+                        newlinks[link.lang.toLowerCase()].title + "]]"));
                 }
             }
         }
@@ -311,10 +322,11 @@ WM.Interlanguage = new function () {
                                                             link.title + "]]");
                         }
                         else {
-                            WM.Log.logWarning("On " + decodeURI(url) + " , " +
-                                        tag + " interlanguage links point " +
-                                        "to a different wiki than the " +
-                                        "others, ignoring them");
+                            WM.Log.logWarning("On " + WM.Log.linkToPage(url,
+                                    "[[" + link.origTag + ":" + link.title +
+                                    "]]") + " , " + tag + " interlanguage " +
+                                    "links point to a different wiki than " +
+                                    "the others, ignoring them");
                         }
 
                         tagFound = true;
@@ -324,7 +336,9 @@ WM.Interlanguage = new function () {
 
                 if (!tagFound) {
                     WM.Log.logWarning(tag + " interlanguage links are not " +
-                        "supported in " + decodeURI(url) + " , ignoring them");
+                        "supported in " + WM.Log.linkToPage(url, "[[" +
+                        link.origTag + ":" + link.title + "]]") +
+                        " , ignoring them");
                 }
             }
         }
@@ -343,6 +357,7 @@ WM.Interlanguage = new function () {
 
         var cleanText = "";
         var textId = 0;
+
         for (var l in oldlinks) {
             var link = oldlinks[l];
             cleanText += source.substring(textId, link.index);
@@ -358,30 +373,36 @@ WM.Interlanguage = new function () {
             var firstLink = 0;
         }
 
-        var newText = "";
+        var parts = [];
+        // Do not add empty strings to parts, otherwise when it's joined
+        //   unnecessary line breaks will be added
 
         var head = cleanText.substring(0, firstLink).trim();
 
         if (head) {
-            newText += head + "\n";
+            parts.push(head);
         }
 
         var links = linkList.join("\n");
 
         if (links) {
-            newText += links + "\n";
+            parts.push(links);
         }
 
-        // Trim the tail part only to the left, because the source text may or
-        // may not have a trailing newline, and always adding a trailing
-        // newline would often make the final (newText != source) return true
-        // even when no actual change has been made
-        var tail = cleanText.substr(firstLink).replace(/^\s+/, "");
+        var body = cleanText.substr(firstLink).trim();
 
-        if (tail) {
-            newText += tail;
+        if (body) {
+            parts.push(body);
         }
 
-        return newText;
+        // Make sure to preserve the original white space at the end, otherwise
+        //   the final (newText != source) may return true even when no actual
+        //   change has been made
+        // Note that /\s+$/ would return null in the absence of trailing
+        //   whitespace, so a further check should be made, while /\s*$/
+        //   safely returns an empty string in that case
+        var trailws = /\s*$/;
+
+        return parts.join("\n") + trailws.exec(source);
     };
 };

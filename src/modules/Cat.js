@@ -19,6 +19,8 @@
  */
 
 WM.Cat = new function () {
+    "use strict";
+
     this.recurseTree = function (params) {
         params.callChildren = WM.Cat._recurseTreeCallChildren;
         Alib.Async.recurseTreeAsync(params);
@@ -29,7 +31,8 @@ WM.Cat = new function () {
     };
 
     this._recurseTreeCallChildren = function (params) {
-        WM.Cat.getSubCategories(params.node, WM.Cat._recurseTreeCallChildrenContinue, params);
+        WM.Cat.getSubCategories(params.node,
+                            WM.Cat._recurseTreeCallChildrenContinue, params);
     };
 
     this._recurseTreeCallChildrenContinue = function (subCats, params) {
@@ -64,7 +67,8 @@ WM.Cat = new function () {
         WM.MW.callAPIGet(query, null, function (res, args) {
             members = members.concat(res.query.categorymembers);
             if (res["query-continue"]) {
-                query.cmcontinue = res["query-continue"].categorymembers.cmcontinue;
+                query.cmcontinue = res["query-continue"
+                                                ].categorymembers.cmcontinue;
                 this._getMembersContinue(query, call, args, members);
             }
             else {
@@ -83,7 +87,8 @@ WM.Cat = new function () {
         this._getParentsAndInfoContinue(query, call, callArgs, [], null);
     };
 
-    this._getParentsAndInfoContinue = function (query, call, callArgs, parents, info) {
+    this._getParentsAndInfoContinue = function (query, call, callArgs, parents,
+                                                                        info) {
         WM.MW.callAPIGet(query, null, function (res, args) {
             var page = Alib.Obj.getFirstItem(res.query.pages);
 
@@ -99,7 +104,8 @@ WM.Cat = new function () {
                 // Request categoryinfo only once
                 query.prop = "categories";
                 query.clcontinue = res["query-continue"].categories.clcontinue;
-                this._getParentsAndInfoContinue(query, call, args, parents, info);
+                this._getParentsAndInfoContinue(query, call, args, parents,
+                                                                        info);
             }
             else {
                 call(parents, info, args);

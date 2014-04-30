@@ -3,50 +3,51 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.14.7-archwikieditor
+// @version 1.15.0-archwikieditor
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
 // @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-archwikieditor.meta.js
 // @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-archwikieditor.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/files/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/files/wiki-monkey-64.png
+// @icon https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/files/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/files/wiki-monkey-64.png
 // @match https://wiki.archlinux.org/*
-// @require https://raw.github.com/kynikos/js-aux-lib/1.4/src/Async.js
-// @require https://raw.github.com/kynikos/js-aux-lib/1.4/src/Compatibility.js
-// @require https://raw.github.com/kynikos/js-aux-lib/1.4/src/DOM.js
-// @require https://raw.github.com/kynikos/js-aux-lib/1.4/src/HTTP.js
-// @require https://raw.github.com/kynikos/js-aux-lib/1.4/src/Obj.js
-// @require https://raw.github.com/kynikos/js-aux-lib/1.4/src/RegEx.js
-// @require https://raw.github.com/kynikos/js-aux-lib/1.4/src/Str.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/WikiMonkey.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/ArchPackages.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/ArchWiki.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/Bot.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/Cat.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/Diff.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/Editor.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/Interlanguage.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/Log.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/MW.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/Parser.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/RecentChanges.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/Tables.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/UI.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/modules/WhatLinksHere.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/plugins/ArchWikiFixHeader.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/plugins/ArchWikiFixHeadings.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/plugins/ArchWikiFixLinks.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/plugins/ArchWikiNewTemplates.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/plugins/ArchWikiOldAURLinks.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/plugins/ArchWikiSummaryToRelated.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/plugins/ArchWikiUpdatePackageTemplates.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/plugins/ExpandContractions.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/plugins/FixFragments.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/plugins/FixLinkFragments.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/plugins/MultipleLineBreaks.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/plugins/SimpleReplace.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.14.7/src/plugins/SynchronizeInterlanguageLinks.js
+// @require https://raw.github.com/kynikos/js-aux-lib/1.5/src/Async.js
+// @require https://raw.github.com/kynikos/js-aux-lib/1.5/src/Compatibility.js
+// @require https://raw.github.com/kynikos/js-aux-lib/1.5/src/DOM.js
+// @require https://raw.github.com/kynikos/js-aux-lib/1.5/src/HTTP.js
+// @require https://raw.github.com/kynikos/js-aux-lib/1.5/src/Obj.js
+// @require https://raw.github.com/kynikos/js-aux-lib/1.5/src/RegEx.js
+// @require https://raw.github.com/kynikos/js-aux-lib/1.5/src/Str.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/WikiMonkey.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/ArchPackages.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/ArchWiki.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/Bot.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/Cat.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/Diff.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/Editor.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/Filters.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/Interlanguage.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/Log.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/MW.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/Parser.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/Tables.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/UI.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/modules/WhatLinksHere.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/plugins/ArchWikiDeprecateFaq.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/plugins/ArchWikiFixHeader.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/plugins/ArchWikiFixHeadings.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/plugins/ArchWikiFixLinks.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/plugins/ArchWikiNewTemplates.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/plugins/ArchWikiOldAURLinks.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/plugins/ArchWikiSummaryToRelated.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/plugins/ArchWikiUpdatePackageTemplates.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/plugins/ExpandContractions.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/plugins/FixFragments.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/plugins/FixLinkFragments.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/plugins/MultipleLineBreaks.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/plugins/SimpleReplace.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/plugins/SynchronizeInterlanguageLinks.js
 // ==/UserScript==
 
 WM.UI.setEditor([
@@ -58,7 +59,8 @@ WM.UI.setEditor([
         ["ArchWikiNewTemplates", "Use code templates", null],
         ["ExpandContractions", "Expand contractions", null],
         ["MultipleLineBreaks", "Squash multiple line breaks", null],
-        ["ArchWikiSummaryToRelated", "Convert summary to related", null]
+        ["ArchWikiSummaryToRelated", "Convert summary to related", null],
+        ["ArchWikiDeprecateFaq", "Replace FAQ template", null]
     ],
     [
         ["SimpleReplace", "RegExp substitution", ["1"]]
@@ -90,6 +92,8 @@ WM.UI.setLinkSearch(null);
 WM.UI.setSpecial(null);
 
 WM.UI.setRecentChanges(null);
+
+WM.UI.setNewPages(null);
 
 WM.UI.setSpecialList(null);
 

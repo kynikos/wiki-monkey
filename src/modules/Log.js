@@ -19,21 +19,134 @@
  */
 
 WM.Log = new function () {
+    "use strict";
+
     this._makeLogArea = function () {
+        GM_addStyle("#WikiMonkeyLogArea {height:10em; " +
+                        "border:2px solid #07b; padding:0.5em; " +
+                        "overflow:auto; resize:vertical; " +
+                        "background-color:#111;} " +
+                    "#WikiMonkeyLogArea p.timestamp, " +
+                        "#WikiMonkeyLog p.message {border:none; padding:0; " +
+                        "font-family:monospace; color:#eee;} " +
+                    "#WikiMonkeyLogArea p.timestamp {float:left; width:5em; " +
+                        "margin:0 -5em 0 0; font-size:0.9em;} " +
+                    "#WikiMonkeyLogArea p.message {margin:0 0 0.5em 5em;} " +
+                    "#WikiMonkeyLogArea div.mhidden {display:none;} " +
+                    "#WikiMonkeyLogArea div.mdebug p.message {color:cyan;} " +
+                    "#WikiMonkeyLogArea div.minfo {} " +
+                    // The .warning and .error classes are already used by
+                    // MediaWiki, without associating them with an id and a tag
+                    "#WikiMonkeyLogArea div.mwarning p.message " +
+                        "{color:gold;} " +
+                    "#WikiMonkeyLogArea div.merror p.message {color:red;} " +
+                    "#WikiMonkeyLogArea a {color:inherit; " +
+                                                "text-decoration:underline;}");
+
         var log = document.createElement('div');
         log.id = 'WikiMonkeyLog';
 
-        GM_addStyle("#WikiMonkeyLog {height:10em; border:2px solid #07b; padding:0.5em; overflow:auto; resize:vertical; background-color:#111;} " +
-                    "#WikiMonkeyLog p.timestamp, #WikiMonkeyLog p.message {border:none; padding:0; font-family:monospace; color:#eee;} " +
-                    "#WikiMonkeyLog p.timestamp {float:left; width:5em; margin:0 -5em 0 0; font-size:0.9em;} " +
-                    "#WikiMonkeyLog p.message {margin:0 0 0.5em 5em;} " +
-                    "#WikiMonkeyLog p.mdebug {color:cyan;} " +
-                    // The .warning and .error classes are already used by
-                    // MediaWiki, without associating them with an id and a tag
-                    "#WikiMonkeyLog p.mwarning {color:gold;} " +
-                    "#WikiMonkeyLog p.merror {color:red;}");
+        var par = document.createElement('p');
+        par.appendChild(makeFilterLink());
+        par.appendChild(document.createTextNode(' '));
+        par.appendChild(makeSaveLink());
+        log.appendChild(par);
+
+        var logarea = document.createElement('div');
+        logarea.id = 'WikiMonkeyLogArea';
+        log.appendChild(logarea);
 
         return log;
+    };
+
+    var makeFilterLink = function () {
+        var link = document.createElement('a');
+        link.href = '#WikiMonkey';
+        link.innerHTML = computeFilterLinkAnchor();
+
+        link.addEventListener("click", function () {
+            // Change _currentInfoDisplayState *before* the loop, to prevent
+            // race bugs
+            WM.Log._currentInfoDisplayState = !WM.Log._currentInfoDisplayState;
+            this.innerHTML = computeFilterLinkAnchor();
+
+            var msgs = document.getElementById('WikiMonkeyLogArea'
+                                            ).getElementsByClassName('minfo');
+
+            for (var m = 0; m < msgs.length; m++) {
+                msgs[m].style.display = computeInfoDisplayStyle();
+            }
+
+            scrollToBottom();
+        }, false);
+
+        return link;
+    };
+
+    var makeSaveLink = function () {
+        var link = document.createElement('a');
+        link.href = '#';
+        link.download = 'WikiMonkey.log';
+        link.innerHTML = '[save log]';
+        link.id = 'WikiMonkeyLog-Save';
+
+        link.addEventListener("click", function () {
+            link.href = 'data:text/plain;charset=utf-8,' +
+                                    encodeURIComponent(composeSaveLogText());
+            link.download = composeSaveLogFilename();
+        }, false);
+
+        return link;
+    };
+
+    var classesToLevels = {'mhidden': 'HDN',
+                           'mdebug': 'DBG',
+                           'minfo': 'INF',
+                           'mwarning': 'WRN',
+                           'merror': 'ERR'};
+
+    var composeSaveLogText = function () {
+        var log = document.getElementById('WikiMonkeyLogArea');
+        var divs = log.getElementsByTagName('div');
+        var text = '';
+
+        for (var d = 0; d < divs.length; d++) {
+            var div = divs[d];
+            var ps = div.getElementsByTagName('p');
+            var tstamp = ps[0].innerHTML;
+            var level = classesToLevels[div.className];
+            var message = ps[1].innerHTML;
+
+            text += tstamp + '\t' + level + '\t' + message + '\n';
+        }
+
+        return text;
+    };
+
+    var composeSaveLogFilename = function () {
+        var date = new Date();
+        return 'WikiMonkey-' + date.getFullYear() +
+                        Alib.Str.padLeft(String(date.getMonth()), '0', 2) +
+                        Alib.Str.padLeft(String(date.getDate()), '0', 2) +
+                        Alib.Str.padLeft(String(date.getHours()), '0', 2) +
+                        Alib.Str.padLeft(String(date.getMinutes()), '0', 2) +
+                        '.log';
+    };
+
+    this._currentInfoDisplayState = true;
+
+    var computeInfoDisplayStyle = function () {
+        return (WM.Log._currentInfoDisplayState) ? 'block' : 'none';
+    };
+
+    var computeFilterLinkAnchor = function () {
+        return (WM.Log._currentInfoDisplayState) ? '[hide info messages]' :
+                                                        '[show info messages]';
+    };
+
+    var scrollToBottom = function () {
+        var log = document.getElementById('WikiMonkeyLogArea');
+        log.scrollTop = log.scrollHeight - log.clientHeight;
     };
 
     var appendMessage = function (text, type) {
@@ -43,7 +156,7 @@ WM.Log = new function () {
         tstamp.innerHTML = now.toLocaleTimeString();
 
         var msg = document.createElement('p');
-        msg.className = 'message' + ((type) ? " " + type : "");
+        msg.className = 'message';
         // Do not allow the empty string, otherwise the resulting html element
         // may not be rendered by the browser
         msg.innerHTML = (text) ? text : " ";
@@ -51,16 +164,25 @@ WM.Log = new function () {
         var line = document.createElement('div');
         line.appendChild(tstamp);
         line.appendChild(msg);
+        line.className = type;
 
-        var log = document.getElementById('WikiMonkeyLog');
+        if (type == 'minfo') {
+            line.style.display = computeInfoDisplayStyle();
+        }
 
-        test = log.scrollTop + log.clientHeight == log.scrollHeight;
+        var log = document.getElementById('WikiMonkeyLogArea');
+
+        var test = log.scrollTop + log.clientHeight == log.scrollHeight;
 
         log.appendChild(line);
 
         if (test) {
-            log.scrollTop = log.scrollHeight - log.clientHeight;
+            scrollToBottom();
         }
+    };
+
+    this.logHidden = function (text) {
+        appendMessage(text, 'mhidden');
     };
 
     this.logDebug = function (text) {
@@ -68,7 +190,7 @@ WM.Log = new function () {
     };
 
     this.logInfo = function (text) {
-        appendMessage(text);
+        appendMessage(text, 'minfo');
     };
 
     this.logWarning = function (text) {
@@ -77,5 +199,21 @@ WM.Log = new function () {
 
     this.logError = function (text) {
         appendMessage(text, 'merror');
+    };
+
+    this.linkToPage = function (url, anchor) {
+        // Must return a string, not a DOM element
+        return "<a href=\"" + url + "\">" + anchor + "</a>";
+    };
+
+    this.linkToWikiPage = function (title, anchor) {
+        // Must return a string, not a DOM element
+        // Use an absolute (full) URL so it will be usable in the downloadable
+        //   version of the log
+        // Do *not* use encodeURIComponent(title) because the passed title may
+        //   have a fragment or a query string that would then be encoded
+        //   MediaWiki should be able to correctly resolve the title anyway
+        var wikiUrls = WM.MW.getWikiUrls();
+        return "<a href=\"" + wikiUrls.short + title + "\">" + anchor + "</a>";
     };
 };
