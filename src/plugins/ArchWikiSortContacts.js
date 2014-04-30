@@ -106,7 +106,7 @@ WM.Plugins.ArchWikiSortContacts = new function () {
     };
 
     var parseUsers = function (string) {
-        var regExp = new RegExp("\\[\\[User:(.+?)\\|.+?\\]\\] " +
+        var regExp = new RegExp("\\[\\[User:(.+?)\\|(.+?)\\]\\] " +
                                 "\\(\\[\\[User talk:.+?\\|talk\\]\\]\\) - " +
                                 "\\[\\[Special:EmailUser/.+?\\|(.+?)\\]\\]" +
                                 "(?: <!-- associated bot: (.+?) -->)?\n", "g");
@@ -117,8 +117,9 @@ WM.Plugins.ArchWikiSortContacts = new function () {
 
             if (match) {
                 users.push({"username": match[1],
-                             "email": match[2],
-                             "associatedBot": match[3]});
+                            "displayedname": match[2],
+                            "email": match[3],
+                            "associatedBot": match[4]});
             }
             else {
                 break;
@@ -182,8 +183,9 @@ WM.Plugins.ArchWikiSortContacts = new function () {
 
             for (var a in authorizedUsers) {
                 var user = authorizedUsers[a];
-                newList += "* [[User:" + user.username + "|" + user.username +
-                        "]] ([[User talk:" + user.username + "|talk]]) - " +
+                newList += "* [[User:" + user.username + "|" +
+                        user.displayedname + "]] ([[User talk:" +
+                        user.username + "|talk]]) - " +
                         "[[Special:EmailUser/" + user.username + "|" +
                         user.email + "]]\n";
             }
