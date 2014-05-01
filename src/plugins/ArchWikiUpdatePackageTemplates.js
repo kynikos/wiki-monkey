@@ -102,9 +102,15 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
             check(checks, source, newText, templates, index, call, callArgs);
         }
         else {
-            WM.Log.logWarning(templates[index].arguments[0].value.trim() +
+            var pkg = templates[index].arguments[0].value.trim();
+            WM.Log.logWarning(pkg +
                         " hasn't been found neither in the official " +
                         "repositories nor in the AUR nor as a package group");
+            WM.Log.logJson("Plugins.ArchWikiUpdatePackageTemplates",
+                    {"error": "notfound",
+                    "page": callArgs[0],
+                    "pagelanguage": WM.ArchWiki.detectLanguage(callArgs[0])[1],
+                    "package": pkg});
 
             newText += templates[index].rawTransclusion;
 
@@ -415,6 +421,11 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
             newText += template.rawTransclusion;
             WM.Log.logWarning(grpname + " is a package group for i686 only, " +
                                     "and Template:Grp only supports x86_64");
+            WM.Log.logJson("Plugins.ArchWikiUpdatePackageTemplates",
+                    {"error": "group64",
+                    "page": callArgs[0],
+                    "pagelanguage": WM.ArchWiki.detectLanguage(callArgs[0])[1],
+                    "package": grpname});
             WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source,
                                     newText, templates, index, call, callArgs);
         }
@@ -440,6 +451,11 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
             newText += template.rawTransclusion;
             WM.Log.logWarning(grpname + " is a package group for i686 only, " +
                                     "and Template:Grp only supports x86_64");
+            WM.Log.logJson("Plugins.ArchWikiUpdatePackageTemplates",
+                    {"error": "group64",
+                    "page": callArgs[0],
+                    "pagelanguage": WM.ArchWiki.detectLanguage(callArgs[0])[1],
+                    "package": grpname});
             WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source,
                                     newText, templates, index, call, callArgs);
         }
@@ -465,13 +481,16 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
     };
 
     this.main = function (args, callNext) {
+        var title = WM.Editor.getTitle();
         var source = WM.Editor.readSource();
         WM.Log.logInfo("Updating package templates ...");
         doUpdate(source, WM.Plugins.ArchWikiUpdatePackageTemplates.mainEnd,
-                                                                    callNext);
+                                                            [title, callNext]);
     };
 
-    this.mainEnd = function (source, newtext, callNext) {
+    this.mainEnd = function (source, newtext, args) {
+        var callNext = args[1];
+
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Updated package templates");
