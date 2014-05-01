@@ -3,14 +3,14 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.15.0-archwikibot-opera
+// @version 1.15.1-archwikibot-opera
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
 // @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/opera/WikiMonkey-archwikibot-opera.meta.js
 // @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/opera/WikiMonkey-archwikibot-opera.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/files/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.15.0/src/files/wiki-monkey-64.png
+// @icon https://raw.github.com/kynikos/wiki-monkey/1.15.1/src/files/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.15.1/src/files/wiki-monkey-64.png
 // @include https://wiki.archlinux.org/*
 // ==/UserScript==
 
@@ -2489,6 +2489,7 @@ WM.Log = new function () {
                         "margin:0 -5em 0 0; font-size:0.9em;} " +
                     "#WikiMonkeyLogArea p.message {margin:0 0 0.5em 5em;} " +
                     "#WikiMonkeyLogArea div.mhidden {display:none;} " +
+                    "#WikiMonkeyLogArea div.mjson {display:none;} " +
                     "#WikiMonkeyLogArea div.mdebug p.message {color:cyan;} " +
                     "#WikiMonkeyLogArea div.minfo {} " +
                     // The .warning and .error classes are already used by
@@ -2556,6 +2557,7 @@ WM.Log = new function () {
     };
 
     var classesToLevels = {'mhidden': 'HDN',
+                           'mjson': 'JSN',
                            'mdebug': 'DBG',
                            'minfo': 'INF',
                            'mwarning': 'WRN',
@@ -2639,6 +2641,11 @@ WM.Log = new function () {
 
     this.logHidden = function (text) {
         appendMessage(text, 'mhidden');
+    };
+
+    this.logJson = function (component, data) {
+        var text = JSON.stringify({"component": component, "data": data});
+        appendMessage(text, 'mjson');
     };
 
     this.logDebug = function (text) {
@@ -5300,9 +5307,15 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
             check(checks, source, newText, templates, index, call, callArgs);
         }
         else {
-            WM.Log.logWarning(templates[index].arguments[0].value.trim() +
+            var pkg = templates[index].arguments[0].value.trim();
+            WM.Log.logWarning(pkg +
                         " hasn't been found neither in the official " +
                         "repositories nor in the AUR nor as a package group");
+            WM.Log.logJson("Plugins.ArchWikiUpdatePackageTemplates",
+                    {"error": "notfound",
+                    "page": callArgs[0],
+                    "pagelanguage": WM.ArchWiki.detectLanguage(callArgs[0])[1],
+                    "package": pkg});
 
             newText += templates[index].rawTransclusion;
 
@@ -5613,6 +5626,11 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
             newText += template.rawTransclusion;
             WM.Log.logWarning(grpname + " is a package group for i686 only, " +
                                     "and Template:Grp only supports x86_64");
+            WM.Log.logJson("Plugins.ArchWikiUpdatePackageTemplates",
+                    {"error": "group64",
+                    "page": callArgs[0],
+                    "pagelanguage": WM.ArchWiki.detectLanguage(callArgs[0])[1],
+                    "package": grpname});
             WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source,
                                     newText, templates, index, call, callArgs);
         }
@@ -5638,6 +5656,11 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
             newText += template.rawTransclusion;
             WM.Log.logWarning(grpname + " is a package group for i686 only, " +
                                     "and Template:Grp only supports x86_64");
+            WM.Log.logJson("Plugins.ArchWikiUpdatePackageTemplates",
+                    {"error": "group64",
+                    "page": callArgs[0],
+                    "pagelanguage": WM.ArchWiki.detectLanguage(callArgs[0])[1],
+                    "package": grpname});
             WM.Plugins.ArchWikiUpdatePackageTemplates.doUpdateContinue3(source,
                                     newText, templates, index, call, callArgs);
         }
@@ -5663,13 +5686,16 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
     };
 
     this.main = function (args, callNext) {
+        var title = WM.Editor.getTitle();
         var source = WM.Editor.readSource();
         WM.Log.logInfo("Updating package templates ...");
         doUpdate(source, WM.Plugins.ArchWikiUpdatePackageTemplates.mainEnd,
-                                                                    callNext);
+                                                            [title, callNext]);
     };
 
-    this.mainEnd = function (source, newtext, callNext) {
+    this.mainEnd = function (source, newtext, args) {
+        var callNext = args[1];
+
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Updated package templates");

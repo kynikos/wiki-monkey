@@ -2157,6 +2157,7 @@ WM.Log = new function () {
                         "margin:0 -5em 0 0; font-size:0.9em;} " +
                     "#WikiMonkeyLogArea p.message {margin:0 0 0.5em 5em;} " +
                     "#WikiMonkeyLogArea div.mhidden {display:none;} " +
+                    "#WikiMonkeyLogArea div.mjson {display:none;} " +
                     "#WikiMonkeyLogArea div.mdebug p.message {color:cyan;} " +
                     "#WikiMonkeyLogArea div.minfo {} " +
                     // The .warning and .error classes are already used by
@@ -2224,6 +2225,7 @@ WM.Log = new function () {
     };
 
     var classesToLevels = {'mhidden': 'HDN',
+                           'mjson': 'JSN',
                            'mdebug': 'DBG',
                            'minfo': 'INF',
                            'mwarning': 'WRN',
@@ -2307,6 +2309,11 @@ WM.Log = new function () {
 
     this.logHidden = function (text) {
         appendMessage(text, 'mhidden');
+    };
+
+    this.logJson = function (component, data) {
+        var text = JSON.stringify({"component": component, "data": data});
+        appendMessage(text, 'mjson');
     };
 
     this.logDebug = function (text) {
