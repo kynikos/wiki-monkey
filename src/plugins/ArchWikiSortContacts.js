@@ -148,28 +148,53 @@ WM.Plugins.ArchWikiSortContacts = new function () {
             var authorizedUsers = parseUsers(userString);
 
             authorizedUsers.sort(function (a, b) {
+                var aname = a.username.charAt(0).toUpperCase() +
+                                                        a.username.substr(1);
+                var bname = b.username.charAt(0).toUpperCase() +
+                                                        b.username.substr(1);
+
+                // Do *not* modify the queriedUsers object directly!
+                var aedits, bedits;
+
                 // A user may be inactive (not present in queriedUsers)
-                if (!queriedUsers[a.username]) {
-                    queriedUsers[a.username] = 0;
+                if (queriedUsers[aname]) {
+                    aedits = queriedUsers[aname];
+                }
+                else {
+                    aedits = 0;
                 }
 
-                if (!queriedUsers[b.username]) {
-                    queriedUsers[b.username] = 0;
+                // A user may be inactive (not present in queriedUsers)
+                if (queriedUsers[bname]) {
+                    bedits = queriedUsers[bname];
+                }
+                else {
+                    bedits = 0;
                 }
 
-                if (queriedUsers[a.associatedBot]) {
-                    queriedUsers[a.username] += queriedUsers[a.associatedBot];
+                if (a.associatedBot) {
+                    var abotname = a.associatedBot.charAt(0).toUpperCase() +
+                                                    a.associatedBot.substr(1);
+
+                    if (queriedUsers[abotname]) {
+                        aedits += queriedUsers[abotname];
+                    }
                 }
 
-                if (queriedUsers[b.associatedBot]) {
-                    queriedUsers[b.username] += queriedUsers[b.associatedBot];
+                if (b.associatedBot) {
+                    var bbotname = b.associatedBot.charAt(0).toUpperCase() +
+                                                    b.associatedBot.substr(1);
+
+                    if (queriedUsers[bbotname]) {
+                        bedits += queriedUsers[bbotname];
+                    }
                 }
 
                 // The users must be sorted in descending order
-                if (queriedUsers[a.username] < queriedUsers[b.username]) {
+                if (aedits < bedits) {
                     return 1;
                 }
-                else if (queriedUsers[a.username] > queriedUsers[b.username]) {
+                else if (aedits > bedits) {
                     return -1;
                 }
                 else {
