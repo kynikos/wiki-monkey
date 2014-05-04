@@ -215,6 +215,7 @@ WM.Plugins.ArchWikiSortContacts = new function () {
                 if (newText != source) {
                     WM.MW.callAPIPost({action: "edit",
                                    bot: "1",
+                                   minor: "1",
                                    title: title,
                                    summary: summary,
                                    text: newText,
