@@ -241,7 +241,7 @@ WM.UI.setSpecial([
             keepAltName: true,
             showIndices: true,
             rightToLeft: false},
-           {page: "Table of Contents (Русский)",
+           {page: "Table of contents (Русский)",
             root: "Category:Русский",
             alsoIn: "Также в",
             indentType: ":",
