@@ -343,36 +343,44 @@ WM.MW = new function () {
 
     var userInfo;
 
-    this._storeUserInfo = function (call) {
-        userInfo = this.callAPIGet({action: "query",
-                                    meta: "userinfo",
-                                    uiprop: "groups"},
-                                    null,
-                                    WM.MW._storeUserInfoEnd,
-                                    call);
-    };
+    var getUserInfo = function (call) {
+        var storeInfo = function (res, call) {
+            userInfo = res;
+            call();
+        };
 
-    this._storeUserInfoEnd = function (res, call) {
-        userInfo = res;
-        call();
-    }
-
-    this.isLoggedIn = function () {
-        return userInfo.query.userinfo.id != 0;
-    };
-
-    this.getUserName = function () {
-        return userInfo.query.userinfo.name;
-    };
-
-    this.isUserBot = function () {
-        var groups = userInfo.query.userinfo.groups;
-        for (var g in groups) {
-            if (groups[g] == 'bot') {
-                return true;
-            }
+        if (!userInfo) {
+            WM.MW.callAPIGet({action: "query",
+                                meta: "userinfo",
+                                uiprop: "groups"},
+                                null,
+                                storeInfo,
+                                call);
         }
-        return false;
+        else {
+            call();
+        }
+    };
+
+    this.isLoggedIn = function (call, args) {
+        getUserInfo(function () {
+            var test = userInfo.query.userinfo.id != 0;
+            call(test, args);
+        });
+    };
+
+    this.getUserName = function (call, args) {
+        getUserInfo(function () {
+            call(userInfo.query.userinfo.name, args);
+        });
+    };
+
+    this.isUserBot = function (call, args) {
+        getUserInfo(function () {
+            var groups = userInfo.query.userinfo.groups;
+            var res = groups.indexOf("bot") > -1;
+            call(res, args);
+        });
     };
 
     this.getBacklinks = function (bltitle, blnamespace, call, callArgs) {

@@ -56,11 +56,9 @@ WM.Plugins.UpdateCategoryTree = new function () {
         args.timestamp = timestamp;
         args.edittoken = edittoken;
 
-        var minInterval = (WM.MW.isUserBot()) ? 60000 : 21600000;
-
         var now = new Date();
         var msTimestamp = Date.parse(args.timestamp);
-        if (now.getTime() - msTimestamp >= minInterval) {
+        if (now.getTime() - msTimestamp >= args.minInterval) {
             var start = args.source.indexOf(args.startMark);
             var end = args.source.lastIndexOf(args.endMark);
 
@@ -269,8 +267,20 @@ WM.Plugins.UpdateCategoryTree = new function () {
         var select = document.getElementById("UpdateCategoryTree-select");
         var value = select.options[select.selectedIndex].value;
 
+        WM.MW.isUserBot(this.mainContinue, [tocs, summary, select, value,
+                                                                    callNext]);
+    };
+
+    this.mainContinue = function (botTest, args) {
+        var tocs = args[0];
+        var summary = args[1];
+        var select = args[2];
+        var value = args[3];
+        var callNext = args[4];
+
         iterateTocs({
             tocs: (value == '*') ? tocs : [tocs[select.selectedIndex]],
+            minInterval: (botTest) ? 60000 : 21600000,
             index: -1,
             params: {},
             edittoken: "",
@@ -282,7 +292,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
             startMark: "START AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK-->",
             endMark: "<!--END AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK",
             altNames: {},
-            summary: args[1],
+            summary: summary,
             callNext: callNext,
         });
     };

@@ -584,8 +584,17 @@ WM.Bot = new function () {
             WM.Bot._disableStartBot('Bot is running ...');
             WM.Bot._disableControls();
             WM.Bot.configuration.visited = [];
-            WM.Bot._processItem(0, items, 0, linkId, null);
+
+            WM.MW.isUserBot(WM.Bot._startAutomaticContinue, [items, linkId]);
         }
+    };
+
+    this._startAutomaticContinue = function (botTest, args) {
+        var items = args[0];
+        var linkId = args[1];
+
+        WM.Bot.configuration.interval = (botTest) ? 3000 : 30000;
+        WM.Bot._processItem(0, items, 0, linkId, null);
     };
 
     var makeCallContinue = function (lis, id, linkId, ln, article) {
@@ -642,16 +651,12 @@ WM.Bot = new function () {
             // "Category" and text ""</span>
             if (link && canProcessPage(link)) {
                 var title = link.title;
-                var interval;
 
                 if (status === 0) {
-                    interval = 1000;
-                }
-                else if (WM.MW.isUserBot()) {
-                    interval = 3000;
+                    var interval = 1000;
                 }
                 else {
-                    interval = 30000;
+                    var interval = WM.Bot.configuration.interval;
                 }
 
                 WM.Log.logInfo('Waiting ' + (interval / 1000) +
