@@ -139,24 +139,32 @@ WM.Plugins.SimpleReplace = new function () {
 
     this.mainAuto = function (args, title, callBot, chainArgs) {
         var id = args[0];
+
         WM.Log.logHidden("Configuration: " +
                                         JSON.stringify(readConfiguration(id)));
 
-        WM.MW.callQueryEdit(title,
-                            WM.Plugins.SimpleReplace.mainAutoWrite,
-                            [id, callBot]);
+        var summary = document.getElementById(
+                            "WikiMonkey-SimpleReplace-Summary-" + id).value;
+
+        if (summary != "") {
+            WM.MW.callQueryEdit(title,
+                                WM.Plugins.SimpleReplace.mainAutoWrite,
+                                [id, summary, callBot]);
+        }
+        else {
+            WM.Log.logError("The edit summary cannot be empty");
+            callBot(false, null);
+        }
     };
 
     this.mainAutoWrite = function (title, source, timestamp, edittoken, args) {
         var id = args[0];
-        var callBot = args[1];
+        var summary = args[1];
+        var callBot = args[2];
 
         var newtext = doReplace(source, id);
 
         if (newtext != source) {
-            var summary = document.getElementById(
-                            "WikiMonkey-SimpleReplace-Summary-" + id).value;
-
             WM.MW.callAPIPost({action: "edit",
                                bot: "1",
                                title: title,
