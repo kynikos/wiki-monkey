@@ -128,7 +128,7 @@ WM.Log = new function () {
     var composeSaveLogFilename = function () {
         var date = new Date();
         return 'WikiMonkey-' + date.getFullYear() +
-                        Alib.Str.padLeft(String(date.getMonth()), '0', 2) +
+                        Alib.Str.padLeft(String(date.getMonth() + 1), '0', 2) +
                         Alib.Str.padLeft(String(date.getDate()), '0', 2) +
                         Alib.Str.padLeft(String(date.getHours()), '0', 2) +
                         Alib.Str.padLeft(String(date.getMinutes()), '0', 2) +
