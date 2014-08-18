@@ -4,7 +4,7 @@ import os
 import re
 
 SRC_PATH = ".."
-ALIB_SRC_PATH = "../../../js-aux-lib/src"
+ALIB_SRC_PATH = "../../../lib.js.generic/src"
 MAIN_SCRIPT = os.path.join(SRC_PATH, "WikiMonkey.js")
 CFG_PATH = os.path.join(SRC_PATH, "configurations")
 CHROMIUM_PATH = os.path.join(CFG_PATH, "chromium")
@@ -54,7 +54,7 @@ def process_header_line(m, g, functions, match_urls, header, line):
                             '(\.(meta|user)\.js)$', line)
     matches = re.match('^// @match (.+)$', line)
     alib_requires = re.match('^// @require https://raw\.github\.com/kynikos/'
-                             'js-aux-lib/[^/]+/src/(.+\.js)', line)
+                             'lib\.js\.generic/[^/]+/src/(.+\.js)', line)
     requires = re.match('^// @require https://raw\.github\.com/kynikos/'
                         'wiki-monkey/[^/]+/src/(.+\.js)', line)
 
