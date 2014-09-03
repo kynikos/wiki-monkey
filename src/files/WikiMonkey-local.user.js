@@ -13,7 +13,7 @@
 // @icon64 https://raw.github.com/kynikos/wiki-monkey/develop/src/files/wiki-monkey-64.png
 // @match http://*.wikipedia.org/*
 // @match https://wiki.archlinux.org/*
-// @require http://code.jquery.com/jquery-1.7.2.min.js
+// @require https://code.jquery.com/jquery-2.1.1.min.js
 // @require file:///mnt/archive/Development/lib.js.generic/src/Async.js
 // @require file:///mnt/archive/Development/lib.js.generic/src/Compatibility.js
 // @require file:///mnt/archive/Development/lib.js.generic/src/CSS.js
