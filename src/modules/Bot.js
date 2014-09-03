@@ -516,20 +516,20 @@ WM.Bot = new function () {
         }
     };
 
-    // sessionStorage can only store strings
+    // localStorage can only store strings
     this.botToken = "0";
 
     this._setBotToken = function () {
         var date = new Date();
         var token = date.getTime() + "";
         this.botToken = token;
-        sessionStorage.setItem('BotToken', token);
+        localStorage.setItem('BotToken', token);
     };
 
     this._resetBotToken = function (reset) {
         this.botToken = "0";
         if (reset) {
-            sessionStorage.setItem('BotToken', "0");
+            localStorage.setItem('BotToken', "0");
         }
     };
 
@@ -538,13 +538,10 @@ WM.Bot = new function () {
     };
 
     this._checkOtherBotsRunning = function () {
-        var value = sessionStorage.getItem('BotToken');
+        var value = localStorage.getItem('BotToken');
 
-        if (!value) {
-            value = "0";
-        }
-
-        return (value != "0") && (value != this._getBotToken());
+        // value may be null if it's never been stored in localStorage
+        return value && value != "0" && value != this._getBotToken();
     };
 
     this._startAutomatic = function () {
