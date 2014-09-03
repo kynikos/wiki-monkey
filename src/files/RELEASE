@@ -15,7 +15,7 @@
 * Commit
 * Checkout the master branch and merge the VERSION branch
 * Tag the release commit with the new version number
-* Remove the VERSION branch also remotely
+* Remove the VERSION branch (also remotely if it was pushed)
 * Checkout the develop branch
 * Run release.py DEVELOP_VERSION
 * Run delcompatibility.sh
