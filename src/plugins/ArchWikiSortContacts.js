@@ -96,12 +96,8 @@ WM.Plugins.ArchWikiSortContacts = new function () {
                             WM.Plugins.ArchWikiSortContacts.updateList,
                             [queriedUsers, pages, index, summary, callNext]);
         }
-        else {
-            WM.Log.logInfo("Operations completed, check the log for " +
-                                                        "warnings or errors");
-            if (callNext) {
-                callNext();
-            }
+        else if (callNext) {
+            callNext();
         }
     };
 
@@ -215,6 +211,7 @@ WM.Plugins.ArchWikiSortContacts = new function () {
                 if (newText != source) {
                     WM.MW.callAPIPost({action: "edit",
                                    bot: "1",
+                                   minor: "1",
                                    title: title,
                                    summary: summary,
                                    text: newText,
@@ -258,6 +255,9 @@ WM.Plugins.ArchWikiSortContacts = new function () {
         var callNext = args[4];
 
         if (res.edit && res.edit.result == 'Success') {
+            WM.Log.logInfo(WM.Log.linkToWikiPage(pages[index], pages[index]) +
+                                                    " was correctly updated");
+
             index++;
             WM.Plugins.ArchWikiSortContacts.iteratePages(queriedUsers, pages,
                                                     index, summary, callNext);

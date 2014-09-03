@@ -22,7 +22,8 @@ WM.Plugins.ArchWikiNPFilter = new function () {
     "use strict";
 
     this.main = function (params) {
-        GM_addStyle("#mw-content-text > h5 {background-color:#afa;}");
+        Alib.CSS.addStyleElement("#mw-content-text > h5 " +
+                                                "{background-color:#afa;}");
 
         var contentDiv = document.getElementById('mw-content-text');
         var ul = contentDiv.getElementsByTagName('ul')[0];

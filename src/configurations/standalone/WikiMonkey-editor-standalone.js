@@ -21,80 +21,13 @@
 if (location.href.match(/^http:\/\/[a-z]+\.wikipedia\.org/i) ||
     location.href.match(/^https:\/\/wiki\.archlinux\.org/i)) {
 
-if (!GM_setValue || !GM_getValue || !GM_listValues || !GM_deleteValue) {
-    var setWikiMonkeyGmApiEmulationCookie = function (value) {
-        var name = "WikiMonkeyGmApiValuesEmulation";
-        
-        var expireDate = new Date();
-        expireDate.setTime(expireDate.getTime() + (3110400000));  // 36 days
-        var expires = ";expires=" + expireDate.toUTCString();
-        
-        var path = ";path=/";
-        
-        document.cookie = name + "=" + escape(value) + expires + path;
+if (!GM_info) {
+    var GM_info = {
+        script: {
+            version: "1.16.0-editor-standalone",
+        },
     };
-    
-    var getWikiMonkeyGmApiEmulationCookie = function () {
-        if (document.cookie.length > 0) {
-            var cookieArray = document.cookie.split(';');
-            var regExp = /^ *WikiMonkeyGmApiValuesEmulation\=(.+)$/;
-            for (var i in cookieArray) {
-                var match = regExp.exec(cookieArray[i]);
-                if (match) {
-                    return unescape(match[1]);
-                }
-            }
-        }
-        return null;
-    };
-
-    var GM_setValue = function (name, value) {
-        var valueString = getWikiMonkeyGmApiEmulationCookie();
-        var valueDict = (valueString) ? JSON.parse(valueString) : {};
-        valueDict[name] = value;
-        setWikiMonkeyGmApiEmulationCookie(JSON.stringify(valueDict));
-        return value;
-    };
-
-    var GM_getValue = function (name, defaultValue) {
-        var valueString = getWikiMonkeyGmApiEmulationCookie();
-        var valueDict = (valueString) ? JSON.parse(valueString) : undefined;
-        return (valueDict) ? valueDict[name] : defaultValue;
-    };
-
-    var GM_listValues = function () {
-        var valueString = getWikiMonkeyGmApiEmulationCookie();
-        if (valueString) {
-            var valueDict = JSON.parse(valueString);
-            var keys = [];
-            for (var key in valueDict) {
-                keys.push(key);
-            }
-            return keys;
-        }
-        else {
-            return undefined;
-        }
-    };
-
-    var GM_deleteValue = function (name) {
-        var valueString = getWikiMonkeyGmApiEmulationCookie();
-        var valueDict = (valueString) ? JSON.parse(valueString) : {};
-        delete valueDict[name];
-        setWikiMonkeyGmApiEmulationCookie(JSON.stringify(valueDict));
-        return undefined;
-    };
-}
-
-if (!GM_addStyle) {
-    var GM_addStyle = function (css) {
-        var head = document.getElementsByTagName('head')[0];
-        var style = document.createElement('style');
-        style.setAttribute('type', 'text/css');
-        style.innerHTML = css;
-        head.appendChild(style);
-    };
-}
+};
 
 if (!GM_xmlhttpRequest) {
     var GM_xmlhttpRequest = function (params) {
@@ -111,7 +44,7 @@ if (!GM_xmlhttpRequest) {
          *     onload: ,
          *     onerror: ,
          *     onreadystatechange: ,
-         * 
+         *
          *     // Not yet implemented
          *     //binary: ,
          *     //mozBackgroundRequest: ,
@@ -133,15 +66,15 @@ if (!GM_xmlhttpRequest) {
         if (!params.onerror) params.onerror = function (req) {};
         if (!params.onreadystatechange) params.onreadystatechange = function (req) {};
         params.async = true;
-        
+
         var req = new XMLHttpRequest();
-        
+
         req.open(params.method, params.url, params.async, params.user, params.password);
-        
+
         for (var header in params.headers) {
             req.setRequestHeader(header, params.headers[header]);
         }
-        
+
         req.onreadystatechange = function () {
             var response = {
                 responseText: req.responseText,
@@ -152,16 +85,16 @@ if (!GM_xmlhttpRequest) {
                 // Not yet implemented
                 //finalUrl: ,
             };
-            
+
             try {
                 response.responseJSON = JSON.parse(req.responseText);
             }
             catch (err) {
                 response.responseJSON = undefined;
             }
-            
+
             params.onreadystatechange(response);
-            
+
             if (req.readyState == 4) {
                 if (req.status == 200) {
                     params.onload(response);
@@ -171,9 +104,9 @@ if (!GM_xmlhttpRequest) {
                 }
             }
         };
-        
+
         req.send(params.data);
-        
+
         return {
             abort: function () {
                 req.abort();
@@ -195,7 +128,7 @@ Alib.Async = new function () {
             fid[0](fid[1], callContinue);
         }
     };
-    
+
     this.recurseTreeAsync = function (params) {
         /*
          * params = {
@@ -211,7 +144,7 @@ Alib.Async = new function () {
          *     stage: ,
          *     nodesList:
          * }
-         * 
+         *
          * nodesList: [
          *     {
          *         node: ,
@@ -222,9 +155,9 @@ Alib.Async = new function () {
          *     },
          *     {...}
          * ]
-         * 
+         *
          * Example:
-         * 
+         *
          * recurseTreeAsync({
          *     node: ,
          *     callChildren: ,
@@ -232,16 +165,16 @@ Alib.Async = new function () {
          *     callEnd: ,
          *     callArgs:
          * });
-         * 
+         *
          * callChildren(params) {
          *     params.children = ;
          *     recurseTreeAsync(params);
          * }
-         * 
+         *
          * callNode(params) {
          *     recurseTreeAsync(params);
          * }
-         * 
+         *
          * callEnd(params) {}
          */
         if (params.stage === undefined) {
@@ -323,6 +256,17 @@ Alib.Compatibility = new function () {
     this.normalizeCarriageReturns = function (source) {
         // Opera and IE use \r\n instead of \n
         return source.replace(/\r\n/g, '\n');
+    };
+};
+
+if (!Alib) var Alib = {};
+
+Alib.CSS = new function () {
+    this.addStyleElement = function (css) {
+        var style = document.createElement('style');
+        style.setAttribute('type', 'text/css');
+        style.innerHTML = css;
+        document.head.appendChild(style);
     };
 };
 
@@ -501,7 +445,7 @@ Alib.Obj = new function () {
         }
         return keys;
     };
-    
+
     this.getValues = function (object) {
         var values = [];
         for (var i in object) {
@@ -509,7 +453,7 @@ Alib.Obj = new function () {
         }
         return values;
     };
-    
+
     this.getFirstItem = function (object) {
         for (var i in object) {
             return object[i];
@@ -765,24 +709,13 @@ var WM = new function () {
     this.Plugins = {};
 
     this.main = function () {
-        this.MW._storeUserInfo(function () {
-            WM.UI._makeUI();
+        WM.UI._makeUI();
 
-            if (typeof GM_info !== 'undefined') {
-                // GreaseMonkey/TamperMonkey
-                WM.Log.logHidden('Wiki Monkey version: ' +
-                                                    GM_info.script.version);
-            }
-            else if (typeof GM_getMetadata !== 'undefined') {
-                // Scriptish
-                WM.Log.logHidden('Wiki Monkey version: ' +
-                                                    GM_getMetadata('version'));
-            }
-
-            var date = new Date();
-            WM.Log.logHidden('Date: ' + date.toString());
-            WM.Log.logHidden('URL: ' + location.href);
-        });
+        WM.Log.logHidden('Wiki Monkey version: ' +
+                                            GM_info.script.version);
+        var date = new Date();
+        WM.Log.logHidden('Date: ' + date.toString());
+        WM.Log.logHidden('URL: ' + location.href);
     };
 };
 
@@ -793,7 +726,7 @@ WM.Bot = new function () {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyBot';
 
-        GM_addStyle("#WikiMonkeyBot-PluginSelect {width:100%; " +
+        Alib.CSS.addStyleElement("#WikiMonkeyBot-PluginSelect {width:100%; " +
                                                     "margin-bottom:1em;} " +
                     "#WikiMonkeyBot-ListSelect {margin-bottom:1em;} " +
                     "#WikiMonkeyBotFilter {height:6em; margin-bottom:1em; " +
@@ -855,8 +788,8 @@ WM.Bot = new function () {
                     UI.replaceChild(document.createElement('div'),
                                                                 UI.firstChild);
                 }
-                WM.Bot.selections.plugin = fns[id][0];
-                WM.Bot.selections.function_ = function (title, callContinue,
+                WM.Bot.configuration.plugin = fns[id][0];
+                WM.Bot.configuration.function_ = function (title, callContinue,
                                                                 chainArgs) {
                     WM.Plugins[fns[id][0]].mainAuto(fns[id][2],
                                             title, callContinue, chainArgs);
@@ -875,9 +808,9 @@ WM.Bot = new function () {
         else {
             divFunction.appendChild(document.createElement('div'));
         }
-        // Don't use "this.selections"
-        WM.Bot.selections.plugin = functions[0][0];
-        WM.Bot.selections.function_ = function (title, callContinue,
+        // Don't use "this.configuration"
+        WM.Bot.configuration.plugin = functions[0][0];
+        WM.Bot.configuration.function_ = function (title, callContinue,
                                                                 chainArgs) {
             WM.Plugins[functions[0][0]].mainAuto(
                             functions[0][2], title, callContinue, chainArgs);
@@ -890,7 +823,7 @@ WM.Bot = new function () {
         return fieldset;
     };
 
-    this.selections = {plugin: null,
+    this.configuration = {plugin: null,
                        function_: function () {},
                        filters: [],
                        list: {current: null,
@@ -909,10 +842,10 @@ WM.Bot = new function () {
                 option.innerHTML = lists[l][2];
                 selectLists.appendChild(option);
 
-                if (!WM.Bot.selections.list.current) {
+                if (!WM.Bot.configuration.list.current) {
                     // [1] Note that this is also executed onchange, see [2]
-                    // Don't use "this.selections"
-                    WM.Bot.selections.list.current = lists[l];
+                    // Don't use "this.configuration"
+                    WM.Bot.configuration.list.current = lists[l];
                 }
             }
         }
@@ -922,11 +855,11 @@ WM.Bot = new function () {
                 var select = document.getElementById(
                                                 'WikiMonkeyBot-ListSelect');
                 var id = select.selectedIndex;
-                WM.Bot.selections.list.previous =
-                                                WM.Bot.selections.list.current;
+                WM.Bot.configuration.list.previous =
+                                            WM.Bot.configuration.list.current;
                 // [2] Note that this must also be executed immediately,
                 //   see [1]
-                WM.Bot.selections.list.current = lss[id];
+                WM.Bot.configuration.list.current = lss[id];
             }
         })(lists), false);
 
@@ -1096,7 +1029,7 @@ WM.Bot = new function () {
     };
 
     var makeFilters = function () {
-        WM.Bot.selections.filters = [];
+        WM.Bot.configuration.filters = [];
         var filters = document.getElementById('WikiMonkeyBotFilter'
                                                         ).value.split('\n');
 
@@ -1120,7 +1053,7 @@ WM.Bot = new function () {
                     return false;
                 }
 
-                WM.Bot.selections.filters.push([regexp, negative]);
+                WM.Bot.configuration.filters.push([regexp, negative]);
                 // Do not return nor break, so that if among the filters
                 //   there's an invalid regexp the function returns false
             }
@@ -1139,9 +1072,10 @@ WM.Bot = new function () {
             var duplicates = document.getElementById('WikiMonkeyBotDuplicates'
                                                                     ).checked;
 
-            if (duplicates || WM.Bot.selections.visited.indexOf(title) < 0) {
-                WM.Bot.selections.visited.push(title);
-                var filters = WM.Bot.selections.filters;
+            if (duplicates || WM.Bot.configuration.visited.indexOf(
+                                                                title) < 0) {
+                WM.Bot.configuration.visited.push(title);
+                var filters = WM.Bot.configuration.filters;
                 var inverse = document.getElementById('WikiMonkeyBotInverse'
                                                                     ).checked;
 
@@ -1208,16 +1142,16 @@ WM.Bot = new function () {
 
         var items, linkId, link;
 
-        if (WM.Bot.selections.list.previous) {
-            if (WM.Bot.selections.list.current[0].nodeName == 'TBODY') {
-                items = WM.Bot.selections.list.previous[0
+        if (WM.Bot.configuration.list.previous) {
+            if (WM.Bot.configuration.list.current[0].nodeName == 'TBODY') {
+                items = WM.Bot.configuration.list.previous[0
                                                 ].getElementsByTagName('td');
             }
             else {
-                items = WM.Bot.selections.list.previous[0
+                items = WM.Bot.configuration.list.previous[0
                                                 ].getElementsByTagName('li');
             }
-            linkId = WM.Bot.selections.list.previous[1];
+            linkId = WM.Bot.configuration.list.previous[1];
 
             for (var i = 0; i < items.length; i++) {
                 link = items[i].getElementsByTagName('a')[linkId];
@@ -1232,19 +1166,21 @@ WM.Bot = new function () {
             }
         }
 
-        WM.Bot.selections.visited = [];
+        WM.Bot.configuration.visited = [];
 
-        linkId = WM.Bot.selections.list.current[1];
+        linkId = WM.Bot.configuration.list.current[1];
         var enable = false;
         var N = 0;
 
         if (makeFilters()) {
-            if (WM.Bot.selections.list.current[0].nodeName == 'TBODY') {
-                items = WM.Bot.selections.list.current[0].getElementsByTagName(
+            if (WM.Bot.configuration.list.current[0].nodeName == 'TBODY') {
+                items =
+                    WM.Bot.configuration.list.current[0].getElementsByTagName(
                                                                         'td');
             }
             else {
-                items = WM.Bot.selections.list.current[0].getElementsByTagName(
+                items =
+                    WM.Bot.configuration.list.current[0].getElementsByTagName(
                                                                         'li');
             }
 
@@ -1281,20 +1217,20 @@ WM.Bot = new function () {
         }
     };
 
-    // GM_setValue can only store strings, bool and 32-bit integers (no 64-bit)
+    // localStorage can only store strings
     this.botToken = "0";
 
     this._setBotToken = function () {
         var date = new Date();
         var token = date.getTime() + "";
         this.botToken = token;
-        GM_setValue('BotToken', token);
+        localStorage.setItem('BotToken', token);
     };
 
     this._resetBotToken = function (reset) {
         this.botToken = "0";
         if (reset) {
-            GM_setValue('BotToken', "0");
+            localStorage.setItem('BotToken', "0");
         }
     };
 
@@ -1303,8 +1239,10 @@ WM.Bot = new function () {
     };
 
     this._checkOtherBotsRunning = function () {
-        var GMValue = GM_getValue('BotToken', "0");
-        return (GMValue != "0") && (GMValue != this._getBotToken());
+        var value = localStorage.getItem('BotToken');
+
+        // value may be null if it's never been stored in localStorage
+        return value && value != "0" && value != this._getBotToken();
     };
 
     this._startAutomatic = function () {
@@ -1321,12 +1259,12 @@ WM.Bot = new function () {
             WM.Bot._enableForceStart();
         }
         else if (makeFilters()) {
-            if (WM.Bot.selections.list.current[0].nodeName == 'TBODY') {
-                var itemsDOM = WM.Bot.selections.list.current[0
+            if (WM.Bot.configuration.list.current[0].nodeName == 'TBODY') {
+                var itemsDOM = WM.Bot.configuration.list.current[0
                                                 ].getElementsByTagName('td');
             }
             else {
-                var itemsDOM = WM.Bot.selections.list.current[0
+                var itemsDOM = WM.Bot.configuration.list.current[0
                                                 ].getElementsByTagName('li');
             }
 
@@ -1338,19 +1276,28 @@ WM.Bot = new function () {
                 items.push(itemsDOM[i]);
             }
 
-            var linkId = WM.Bot.selections.list.current[1];
+            var linkId = WM.Bot.configuration.list.current[1];
 
             WM.Bot._disableForceStart();
             WM.Bot._setBotToken();
             WM.Log.logInfo('Starting bot ...');
-            WM.Log.logHidden("Plugin: " + WM.Bot.selections.plugin);
+            WM.Log.logHidden("Plugin: " + WM.Bot.configuration.plugin);
             WM.Log.logHidden("Filter: " + document.getElementById(
                                                 'WikiMonkeyBotFilter').value);
             WM.Bot._disableStartBot('Bot is running ...');
             WM.Bot._disableControls();
-            WM.Bot.selections.visited = [];
-            WM.Bot._processItem(0, items, 0, linkId, null);
+            WM.Bot.configuration.visited = [];
+
+            WM.MW.isUserBot(WM.Bot._startAutomaticContinue, [items, linkId]);
         }
+    };
+
+    this._startAutomaticContinue = function (botTest, args) {
+        var items = args[0];
+        var linkId = args[1];
+
+        WM.Bot.configuration.interval = (botTest) ? 3000 : 30000;
+        WM.Bot._processItem(0, items, 0, linkId, null);
     };
 
     var makeCallContinue = function (lis, id, linkId, ln, article) {
@@ -1407,16 +1354,12 @@ WM.Bot = new function () {
             // "Category" and text ""</span>
             if (link && canProcessPage(link)) {
                 var title = link.title;
-                var interval;
 
                 if (status === 0) {
-                    interval = 1000;
-                }
-                else if (WM.MW.isUserBot()) {
-                    interval = 3000;
+                    var interval = 1000;
                 }
                 else {
-                    interval = 30000;
+                    var interval = WM.Bot.configuration.interval;
                 }
 
                 WM.Log.logInfo('Waiting ' + (interval / 1000) +
@@ -1437,7 +1380,7 @@ WM.Bot = new function () {
                                     WM.Log.linkToWikiPage(article, article) +
                                     " ...");
 
-                            WM.Bot.selections.function_(article,
+                            WM.Bot.configuration.function_(article,
                                 makeCallContinue(lis, id, linkId, ln, article),
                                 chainArgs);
                         }
@@ -1652,8 +1595,8 @@ WM.Filters = new function () {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyFilters';
 
-        GM_addStyle("#WikiMonkeyFilters-Select, #WikiMonkeyFilters-Apply " +
-                        "{float:left;} " +
+        Alib.CSS.addStyleElement("#WikiMonkeyFilters-Select, " +
+                    "#WikiMonkeyFilters-Apply {float:left;} " +
                     "#WikiMonkeyFilters-Select {width:100%; " +
                         "margin-right:-16em;} " +
                     "#WikiMonkeyFilters-Select > p {margin:0 17em 0 0;} " +
@@ -2146,7 +2089,7 @@ WM.Log = new function () {
     "use strict";
 
     this._makeLogArea = function () {
-        GM_addStyle("#WikiMonkeyLogArea {height:10em; " +
+        Alib.CSS.addStyleElement("#WikiMonkeyLogArea {height:10em; " +
                         "border:2px solid #07b; padding:0.5em; " +
                         "overflow:auto; resize:vertical; " +
                         "background-color:#111;} " +
@@ -2252,7 +2195,7 @@ WM.Log = new function () {
     var composeSaveLogFilename = function () {
         var date = new Date();
         return 'WikiMonkey-' + date.getFullYear() +
-                        Alib.Str.padLeft(String(date.getMonth()), '0', 2) +
+                        Alib.Str.padLeft(String(date.getMonth() + 1), '0', 2) +
                         Alib.Str.padLeft(String(date.getDate()), '0', 2) +
                         Alib.Str.padLeft(String(date.getHours()), '0', 2) +
                         Alib.Str.padLeft(String(date.getMinutes()), '0', 2) +
@@ -2674,36 +2617,44 @@ WM.MW = new function () {
 
     var userInfo;
 
-    this._storeUserInfo = function (call) {
-        userInfo = this.callAPIGet({action: "query",
-                                    meta: "userinfo",
-                                    uiprop: "groups"},
-                                    null,
-                                    WM.MW._storeUserInfoEnd,
-                                    call);
-    };
+    var getUserInfo = function (call) {
+        var storeInfo = function (res, call) {
+            userInfo = res;
+            call();
+        };
 
-    this._storeUserInfoEnd = function (res, call) {
-        userInfo = res;
-        call();
-    }
-
-    this.isLoggedIn = function () {
-        return userInfo.query.userinfo.id != 0;
-    };
-
-    this.getUserName = function () {
-        return userInfo.query.userinfo.name;
-    };
-
-    this.isUserBot = function () {
-        var groups = userInfo.query.userinfo.groups;
-        for (var g in groups) {
-            if (groups[g] == 'bot') {
-                return true;
-            }
+        if (!userInfo) {
+            WM.MW.callAPIGet({action: "query",
+                                meta: "userinfo",
+                                uiprop: "groups"},
+                                null,
+                                storeInfo,
+                                call);
         }
-        return false;
+        else {
+            call();
+        }
+    };
+
+    this.isLoggedIn = function (call, args) {
+        getUserInfo(function () {
+            var test = userInfo.query.userinfo.id != 0;
+            call(test, args);
+        });
+    };
+
+    this.getUserName = function (call, args) {
+        getUserInfo(function () {
+            call(userInfo.query.userinfo.name, args);
+        });
+    };
+
+    this.isUserBot = function (call, args) {
+        getUserInfo(function () {
+            var groups = userInfo.query.userinfo.groups;
+            var res = groups.indexOf("bot") > -1;
+            call(res, args);
+        });
     };
 
     this.getBacklinks = function (bltitle, blnamespace, call, callArgs) {
@@ -3567,8 +3518,8 @@ WM.UI = new function () {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyButtons';
 
-        GM_addStyle("#WikiMonkeyButtons div.row {position:relative; " +
-                                                    "margin-bottom:0.33em;} " +
+        Alib.CSS.addStyleElement("#WikiMonkeyButtons div.row " +
+                                "{position:relative; margin-bottom:0.33em;} " +
                     "#WikiMonkeyButtons div.shortcut {position:absolute;} " +
                     "#WikiMonkeyButtons div.shortcut > input, " +
                                 "#WikiMonkeyButtonAll {width:8.33em; " +
@@ -3780,7 +3731,7 @@ WM.UI = new function () {
         }
 
         if (UI) {
-            GM_addStyle("#WikiMonkey {position:relative;} " +
+            Alib.CSS.addStyleElement("#WikiMonkey {position:relative;} " +
                         "#WikiMonkey fieldset {margin:0 0 1em 0;}");
 
             var main = document.createElement('fieldset');
@@ -3886,6 +3837,8 @@ WM.Plugins.ExpandContractions = new function () {
         newtext = replace(newtext, /([a-z])n't/ig, '$1 not', "n't", ["not"]);
         newtext = replace(newtext, /(here|there)'s/ig, '$1 is', "here/there's",
                                         ["here/there is", "here/there has"]);
+        newtext = replace(newtext, /(g)onna/ig, '$1oing to', "gonna",
+                                                                ["going to"]);
         // Replacing he's, she's, that's, what's, where's, who's ... may be too
         //   dangerous
         newtext = replace(newtext, /([a-z])'s (been)/ig, '$1 has $2',
@@ -4382,7 +4335,8 @@ WM.Plugins.SimpleReplace = new function () {
     "use strict";
 
     var makeUI = function (id) {
-        GM_addStyle("#WikiMonkey-SimpleReplace {display:inline-block;} " +
+        Alib.CSS.addStyleElement("#WikiMonkey-SimpleReplace " +
+                                                "{display:inline-block;} " +
                     "#WikiMonkey-SimpleReplace div {display:inline-block;} " +
                     "#WikiMonkey-SimpleReplace input[type='text'] " +
                                                     "{margin-left:0.33em;}");
@@ -4434,7 +4388,8 @@ WM.Plugins.SimpleReplace = new function () {
 
         var divMain = makeUI(id);
 
-        GM_addStyle("#WikiMonkey-SimpleReplace div {margin-left:1em;}");
+        Alib.CSS.addStyleElement("#WikiMonkey-SimpleReplace div " +
+                                                        "{margin-left:1em;}");
 
         return divMain;
     };
@@ -4444,7 +4399,8 @@ WM.Plugins.SimpleReplace = new function () {
 
         var divMain = makeUI(id);
 
-        GM_addStyle("#WikiMonkey-SimpleReplace div {margin-right:2em;}");
+        Alib.CSS.addStyleElement("#WikiMonkey-SimpleReplace div " +
+                                                        "{margin-right:2em;}");
 
         var par3 = document.createElement('div');
 
@@ -4463,30 +4419,45 @@ WM.Plugins.SimpleReplace = new function () {
         return divMain;
     };
 
-    var readConfiguration = function (id) {
-        return {pattern: document.getElementById(
+    var configuration;
+
+    var storeConfiguration = function (id) {
+        configuration = {pattern: document.getElementById(
                                 "WikiMonkey-SimpleReplace-RegExp-" + id).value,
                 ignoreCase: document.getElementById(
                         "WikiMonkey-SimpleReplace-IgnoreCase-" + id).checked,
                 newString: document.getElementById(
                             "WikiMonkey-SimpleReplace-NewString-" + id).value,
         };
+
+        WM.Log.logHidden("Pattern: " + configuration.pattern);
+        WM.Log.logHidden("Ignore case: " + configuration.ignoreCase);
+        WM.Log.logHidden("New string: " + configuration.newString);
     };
 
-    var doReplace = function (source, id) {
-        var config = readConfiguration(id);
-        var regexp = new RegExp(config.pattern,
-                                    "g" + ((config.ignoreCase) ? "i" : ""));
-        return source.replace(regexp, config.newString);
+    var storeRegExp = function () {
+        configuration.regExp = new RegExp(configuration.pattern,
+                                "g" + ((configuration.ignoreCase) ? "i" : ""));
     };
 
     this.main = function (args, callNext) {
         var id = args[0];
-        WM.Log.logHidden("Configuration: " +
-                                        JSON.stringify(readConfiguration(id)));
+
+        storeConfiguration(id);
+
+        try {
+            storeRegExp();
+        }
+        catch (exc) {
+            WM.Log.logError("Invalid pattern: " + exc);
+            // Block the execution of this function
+            return false;
+        }
 
         var source = WM.Editor.readSource();
-        var newtext = doReplace(source, id);
+        var newtext = source.replace(configuration.regExp,
+                                                    configuration.newString);
+
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Text substituted");
@@ -4499,24 +4470,42 @@ WM.Plugins.SimpleReplace = new function () {
 
     this.mainAuto = function (args, title, callBot, chainArgs) {
         var id = args[0];
-        WM.Log.logHidden("Configuration: " +
-                                        JSON.stringify(readConfiguration(id)));
 
-        WM.MW.callQueryEdit(title,
-                            WM.Plugins.SimpleReplace.mainAutoWrite,
-                            [id, callBot]);
+        storeConfiguration(id);
+
+        try {
+            storeRegExp();
+        }
+        catch (exc) {
+            WM.Log.logError("Invalid pattern: " + exc);
+            callBot(false, null);
+            // Block the execution of this function
+            return false;
+        }
+
+        var summary = document.getElementById(
+                            "WikiMonkey-SimpleReplace-Summary-" + id).value;
+
+        if (summary != "") {
+            WM.MW.callQueryEdit(title,
+                                WM.Plugins.SimpleReplace.mainAutoWrite,
+                                [id, summary, callBot]);
+        }
+        else {
+            WM.Log.logError("The edit summary cannot be empty");
+            callBot(false, null);
+        }
     };
 
     this.mainAutoWrite = function (title, source, timestamp, edittoken, args) {
         var id = args[0];
-        var callBot = args[1];
+        var summary = args[1];
+        var callBot = args[2];
 
-        var newtext = doReplace(source, id);
+        var newtext = source.replace(configuration.regExp,
+                                                    configuration.newString);
 
         if (newtext != source) {
-            var summary = document.getElementById(
-                            "WikiMonkey-SimpleReplace-Summary-" + id).value;
-
             WM.MW.callAPIPost({action: "edit",
                                bot: "1",
                                title: title,

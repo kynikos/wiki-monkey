@@ -22,7 +22,8 @@ WM.Plugins.SimpleReplace = new function () {
     "use strict";
 
     var makeUI = function (id) {
-        GM_addStyle("#WikiMonkey-SimpleReplace {display:inline-block;} " +
+        Alib.CSS.addStyleElement("#WikiMonkey-SimpleReplace " +
+                                                "{display:inline-block;} " +
                     "#WikiMonkey-SimpleReplace div {display:inline-block;} " +
                     "#WikiMonkey-SimpleReplace input[type='text'] " +
                                                     "{margin-left:0.33em;}");
@@ -74,7 +75,8 @@ WM.Plugins.SimpleReplace = new function () {
 
         var divMain = makeUI(id);
 
-        GM_addStyle("#WikiMonkey-SimpleReplace div {margin-left:1em;}");
+        Alib.CSS.addStyleElement("#WikiMonkey-SimpleReplace div " +
+                                                        "{margin-left:1em;}");
 
         return divMain;
     };
@@ -84,7 +86,8 @@ WM.Plugins.SimpleReplace = new function () {
 
         var divMain = makeUI(id);
 
-        GM_addStyle("#WikiMonkey-SimpleReplace div {margin-right:2em;}");
+        Alib.CSS.addStyleElement("#WikiMonkey-SimpleReplace div " +
+                                                        "{margin-right:2em;}");
 
         var par3 = document.createElement('div');
 
@@ -103,30 +106,45 @@ WM.Plugins.SimpleReplace = new function () {
         return divMain;
     };
 
-    var readConfiguration = function (id) {
-        return {pattern: document.getElementById(
+    var configuration;
+
+    var storeConfiguration = function (id) {
+        configuration = {pattern: document.getElementById(
                                 "WikiMonkey-SimpleReplace-RegExp-" + id).value,
                 ignoreCase: document.getElementById(
                         "WikiMonkey-SimpleReplace-IgnoreCase-" + id).checked,
                 newString: document.getElementById(
                             "WikiMonkey-SimpleReplace-NewString-" + id).value,
         };
+
+        WM.Log.logHidden("Pattern: " + configuration.pattern);
+        WM.Log.logHidden("Ignore case: " + configuration.ignoreCase);
+        WM.Log.logHidden("New string: " + configuration.newString);
     };
 
-    var doReplace = function (source, id) {
-        var config = readConfiguration(id);
-        var regexp = new RegExp(config.pattern,
-                                    "g" + ((config.ignoreCase) ? "i" : ""));
-        return source.replace(regexp, config.newString);
+    var storeRegExp = function () {
+        configuration.regExp = new RegExp(configuration.pattern,
+                                "g" + ((configuration.ignoreCase) ? "i" : ""));
     };
 
     this.main = function (args, callNext) {
         var id = args[0];
-        WM.Log.logHidden("Configuration: " +
-                                        JSON.stringify(readConfiguration(id)));
+
+        storeConfiguration(id);
+
+        try {
+            storeRegExp();
+        }
+        catch (exc) {
+            WM.Log.logError("Invalid pattern: " + exc);
+            // Block the execution of this function
+            return false;
+        }
 
         var source = WM.Editor.readSource();
-        var newtext = doReplace(source, id);
+        var newtext = source.replace(configuration.regExp,
+                                                    configuration.newString);
+
         if (newtext != source) {
             WM.Editor.writeSource(newtext);
             WM.Log.logInfo("Text substituted");
@@ -139,24 +157,42 @@ WM.Plugins.SimpleReplace = new function () {
 
     this.mainAuto = function (args, title, callBot, chainArgs) {
         var id = args[0];
-        WM.Log.logHidden("Configuration: " +
-                                        JSON.stringify(readConfiguration(id)));
 
-        WM.MW.callQueryEdit(title,
-                            WM.Plugins.SimpleReplace.mainAutoWrite,
-                            [id, callBot]);
+        storeConfiguration(id);
+
+        try {
+            storeRegExp();
+        }
+        catch (exc) {
+            WM.Log.logError("Invalid pattern: " + exc);
+            callBot(false, null);
+            // Block the execution of this function
+            return false;
+        }
+
+        var summary = document.getElementById(
+                            "WikiMonkey-SimpleReplace-Summary-" + id).value;
+
+        if (summary != "") {
+            WM.MW.callQueryEdit(title,
+                                WM.Plugins.SimpleReplace.mainAutoWrite,
+                                [id, summary, callBot]);
+        }
+        else {
+            WM.Log.logError("The edit summary cannot be empty");
+            callBot(false, null);
+        }
     };
 
     this.mainAutoWrite = function (title, source, timestamp, edittoken, args) {
         var id = args[0];
-        var callBot = args[1];
+        var summary = args[1];
+        var callBot = args[2];
 
-        var newtext = doReplace(source, id);
+        var newtext = source.replace(configuration.regExp,
+                                                    configuration.newString);
 
         if (newtext != source) {
-            var summary = document.getElementById(
-                            "WikiMonkey-SimpleReplace-Summary-" + id).value;
-
             WM.MW.callAPIPost({action: "edit",
                                bot: "1",
                                title: title,

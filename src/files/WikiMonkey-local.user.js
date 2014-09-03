@@ -13,14 +13,17 @@
 // @icon64 https://raw.github.com/kynikos/wiki-monkey/develop/src/files/wiki-monkey-64.png
 // @match http://*.wikipedia.org/*
 // @match https://wiki.archlinux.org/*
-// @require http://code.jquery.com/jquery-1.7.2.min.js
-// @require file:///mnt/archive/Development/js-aux-lib/src/Async.js
-// @require file:///mnt/archive/Development/js-aux-lib/src/Compatibility.js
-// @require file:///mnt/archive/Development/js-aux-lib/src/DOM.js
-// @require file:///mnt/archive/Development/js-aux-lib/src/HTTP.js
-// @require file:///mnt/archive/Development/js-aux-lib/src/Obj.js
-// @require file:///mnt/archive/Development/js-aux-lib/src/RegEx.js
-// @require file:///mnt/archive/Development/js-aux-lib/src/Str.js
+// @grant GM_info
+// @grant GM_xmlhttpRequest
+// @require https://code.jquery.com/jquery-2.1.1.min.js
+// @require file:///mnt/archive/Development/lib.js.generic/src/Async.js
+// @require file:///mnt/archive/Development/lib.js.generic/src/Compatibility.js
+// @require file:///mnt/archive/Development/lib.js.generic/src/CSS.js
+// @require file:///mnt/archive/Development/lib.js.generic/src/DOM.js
+// @require file:///mnt/archive/Development/lib.js.generic/src/HTTP.js
+// @require file:///mnt/archive/Development/lib.js.generic/src/Obj.js
+// @require file:///mnt/archive/Development/lib.js.generic/src/RegEx.js
+// @require file:///mnt/archive/Development/lib.js.generic/src/Str.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/WikiMonkey.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/ArchPackages.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/ArchWiki.js
@@ -251,7 +254,7 @@ WM.UI.setSpecial([
             keepAltName: true,
             showIndices: true,
             rightToLeft: false},
-           {page: "Table of Contents (Русский)",
+           {page: "Table of contents (Русский)",
             root: "Category:Русский",
             alsoIn: "Также в",
             indentType: ":",

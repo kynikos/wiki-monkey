@@ -22,8 +22,8 @@ WM.Plugins.FixBacklinkFragments = new function () {
     "use strict";
 
     this.makeBotUI = function (args) {
-        GM_addStyle("#WikiMonkey-FixBacklinkFragments input[type='text'] " +
-                                                    "{margin-left:0.33em;}");
+        Alib.CSS.addStyleElement("#WikiMonkey-FixBacklinkFragments " +
+                                "input[type='text'] {margin-left:0.33em;}");
 
         var divMain = document.createElement('div');
         divMain.id = "WikiMonkey-FixBacklinkFragments";

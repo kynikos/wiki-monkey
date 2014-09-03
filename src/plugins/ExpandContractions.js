@@ -53,6 +53,8 @@ WM.Plugins.ExpandContractions = new function () {
         newtext = replace(newtext, /([a-z])n't/ig, '$1 not', "n't", ["not"]);
         newtext = replace(newtext, /(here|there)'s/ig, '$1 is', "here/there's",
                                         ["here/there is", "here/there has"]);
+        newtext = replace(newtext, /(g)onna/ig, '$1oing to', "gonna",
+                                                                ["going to"]);
         // Replacing he's, she's, that's, what's, where's, who's ... may be too
         //   dangerous
         newtext = replace(newtext, /([a-z])'s (been)/ig, '$1 has $2',

@@ -22,7 +22,7 @@ WM.Plugins.ArchWikiQuickReport = new function () {
     "use strict";
 
     this.makeUI = function (args) {
-        GM_addStyle("#WikiMonkey-ArchWikiQuickReport > select, " +
+        Alib.CSS.addStyleElement("#WikiMonkey-ArchWikiQuickReport > select, " +
                     "#WikiMonkey-ArchWikiQuickReport > input, " +
                     "#WikiMonkey-ArchWikiQuickReport > a " +
                     "{margin-left:0.33em;}");

@@ -16,7 +16,7 @@ CONFIG = {
     "UPDATE": "develop" if development else "master",
     "PATH": "../configurations",
     "ALIB_VERSION": "master" if development else sys.argv[2],
-    "ALIB_PATH": "../../../js-aux-lib/src",
+    "ALIB_PATH": "../../../lib.js.generic/src",
 }
 
 
@@ -29,9 +29,9 @@ def process_line(line):
             "{REPO_VERSION}{g1}\n",
         ),
         (
-            '// @require https://raw\.github\.com/kynikos/js-aux-lib/'
+            '// @require https://raw\.github\.com/kynikos/lib\.js\.generic/'
             '[^/]+(/.+\.js)',
-            "// @require https://raw.github.com/kynikos/js-aux-lib/"
+            "// @require https://raw.github.com/kynikos/lib.js.generic/"
             "{ALIB_VERSION}{g0}\n",
         ),
         (

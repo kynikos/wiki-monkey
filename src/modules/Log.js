@@ -22,7 +22,7 @@ WM.Log = new function () {
     "use strict";
 
     this._makeLogArea = function () {
-        GM_addStyle("#WikiMonkeyLogArea {height:10em; " +
+        Alib.CSS.addStyleElement("#WikiMonkeyLogArea {height:10em; " +
                         "border:2px solid #07b; padding:0.5em; " +
                         "overflow:auto; resize:vertical; " +
                         "background-color:#111;} " +
@@ -128,7 +128,7 @@ WM.Log = new function () {
     var composeSaveLogFilename = function () {
         var date = new Date();
         return 'WikiMonkey-' + date.getFullYear() +
-                        Alib.Str.padLeft(String(date.getMonth()), '0', 2) +
+                        Alib.Str.padLeft(String(date.getMonth() + 1), '0', 2) +
                         Alib.Str.padLeft(String(date.getDate()), '0', 2) +
                         Alib.Str.padLeft(String(date.getHours()), '0', 2) +
                         Alib.Str.padLeft(String(date.getMinutes()), '0', 2) +
