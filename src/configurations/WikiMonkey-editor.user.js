@@ -13,8 +13,11 @@
 // @icon64 https://raw.github.com/kynikos/wiki-monkey/develop/src/files/wiki-monkey-64.png
 // @match http://*.wikipedia.org/*
 // @match https://wiki.archlinux.org/*
+// @grant GM_info
+// @grant GM_xmlhttpRequest
 // @require https://raw.github.com/kynikos/lib.js.generic/master/src/Async.js
 // @require https://raw.github.com/kynikos/lib.js.generic/master/src/Compatibility.js
+// @require https://raw.github.com/kynikos/lib.js.generic/master/src/CSS.js
 // @require https://raw.github.com/kynikos/lib.js.generic/master/src/DOM.js
 // @require https://raw.github.com/kynikos/lib.js.generic/master/src/HTTP.js
 // @require https://raw.github.com/kynikos/lib.js.generic/master/src/Obj.js
