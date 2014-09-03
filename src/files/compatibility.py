@@ -25,6 +25,8 @@ STANDALONE = {
     "end": "\n}\n",
 }
 
+cversion = ""
+
 
 def get_script(s):
     code = s.read()
@@ -41,8 +43,25 @@ def get_licence():
 
 
 def get_GM_API_emulation():
+    GM_info = """
+if (!GM_info) {{
+    var GM_info = {{
+        script: {{
+            version: "{}",
+        }},
+    }};
+}};
+""".format(cversion)
+
     with open(GM_API_EMULATION, 'r') as s:
-        return get_script(s)
+        return  GM_info + get_script(s)
+
+
+def store_version(version, m1):
+    # This is a very ugly hack, but the whole script should be rewritten
+    # much better anyway...
+    global cversion
+    cversion = version.group(1) + "-" + m1
 
 
 def process_header_line(m, g, functions, match_urls, header, line):
@@ -71,7 +90,7 @@ def process_header_line(m, g, functions, match_urls, header, line):
                                     version, update_url, download_url, matches)
     elif m[1] == "standalone":
         header = process_line_standalone(m, g, functions, match_urls, header,
-                                                                 line, matches)
+                                                        version, line, matches)
 
     return functions, header
 
@@ -81,7 +100,8 @@ def process_line_aux(m1, g, functions, header, line, id, version, update_url,
     if id:
         g.write("// @id " + id.group(1) + "-" + m1 + "\n")
     elif version:
-        g.write("// @version " + version.group(1) + "-" + m1 + "\n")
+        store_version(version, m1)
+        g.write("// @version " + cversion + "\n")
     elif update_url:
         g.write("// @updateURL " + update_url.group(1) + "/" + m1 +
                    update_url.group(2) + "-" + m1 + update_url.group(3) + "\n")
@@ -107,9 +127,11 @@ def process_line_aux(m1, g, functions, header, line, id, version, update_url,
     return header
 
 
-def process_line_standalone(m, g, functions, match_urls, header, line,
+def process_line_standalone(m, g, functions, match_urls, header, version, line,
                                                                       matches):
-    if matches:
+    if version:
+        store_version(version, m[1])
+    elif matches:
         match_urls.append(STANDALONE["conditions"][matches.group(1)])
     elif line[:18] == "// ==/UserScript==":
         header = False
