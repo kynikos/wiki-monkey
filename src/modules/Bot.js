@@ -538,7 +538,12 @@ WM.Bot = new function () {
     };
 
     this._checkOtherBotsRunning = function () {
-        var value = sessionStorage.getItem('BotToken', "0");
+        var value = sessionStorage.getItem('BotToken');
+
+        if (!value) {
+            value = "0";
+        }
+
         return (value != "0") && (value != this._getBotToken());
     };
 
