@@ -516,20 +516,20 @@ WM.Bot = new function () {
         }
     };
 
-    // GM_setValue can only store strings, bool and 32-bit integers (no 64-bit)
+    // sessionStorage can only store strings
     this.botToken = "0";
 
     this._setBotToken = function () {
         var date = new Date();
         var token = date.getTime() + "";
         this.botToken = token;
-        GM_setValue('BotToken', token);
+        sessionStorage.setItem('BotToken', token);
     };
 
     this._resetBotToken = function (reset) {
         this.botToken = "0";
         if (reset) {
-            GM_setValue('BotToken', "0");
+            sessionStorage.setItem('BotToken', "0");
         }
     };
 
@@ -538,8 +538,8 @@ WM.Bot = new function () {
     };
 
     this._checkOtherBotsRunning = function () {
-        var GMValue = GM_getValue('BotToken', "0");
-        return (GMValue != "0") && (GMValue != this._getBotToken());
+        var value = sessionStorage.getItem('BotToken', "0");
+        return (value != "0") && (value != this._getBotToken());
     };
 
     this._startAutomatic = function () {
