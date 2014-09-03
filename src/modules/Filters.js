@@ -25,8 +25,8 @@ WM.Filters = new function () {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyFilters';
 
-        GM_addStyle("#WikiMonkeyFilters-Select, #WikiMonkeyFilters-Apply " +
-                        "{float:left;} " +
+        Alib.CSS.addStyleElement("#WikiMonkeyFilters-Select, " +
+                    "#WikiMonkeyFilters-Apply {float:left;} " +
                     "#WikiMonkeyFilters-Select {width:100%; " +
                         "margin-right:-16em;} " +
                     "#WikiMonkeyFilters-Select > p {margin:0 17em 0 0;} " +

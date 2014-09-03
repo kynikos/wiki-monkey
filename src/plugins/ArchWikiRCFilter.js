@@ -32,7 +32,8 @@ WM.Plugins.ArchWikiRCFilter = new function () {
                                         "enable in your user preferences.");
         }
         else {
-            GM_addStyle("#mw-content-text > h4 {background-color:#aaf;} " +
+            Alib.CSS.addStyleElement("#mw-content-text > h4 " +
+                                                "{background-color:#aaf;} " +
                     "#mw-content-text > div > h5 {background-color:#afa;}");
 
             for (var h4n in h4s) {

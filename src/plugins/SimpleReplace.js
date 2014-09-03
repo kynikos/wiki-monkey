@@ -22,7 +22,8 @@ WM.Plugins.SimpleReplace = new function () {
     "use strict";
 
     var makeUI = function (id) {
-        GM_addStyle("#WikiMonkey-SimpleReplace {display:inline-block;} " +
+        Alib.CSS.addStyleElement("#WikiMonkey-SimpleReplace " +
+                                                "{display:inline-block;} " +
                     "#WikiMonkey-SimpleReplace div {display:inline-block;} " +
                     "#WikiMonkey-SimpleReplace input[type='text'] " +
                                                     "{margin-left:0.33em;}");
@@ -74,7 +75,8 @@ WM.Plugins.SimpleReplace = new function () {
 
         var divMain = makeUI(id);
 
-        GM_addStyle("#WikiMonkey-SimpleReplace div {margin-left:1em;}");
+        Alib.CSS.addStyleElement("#WikiMonkey-SimpleReplace div " +
+                                                        "{margin-left:1em;}");
 
         return divMain;
     };
@@ -84,7 +86,8 @@ WM.Plugins.SimpleReplace = new function () {
 
         var divMain = makeUI(id);
 
-        GM_addStyle("#WikiMonkey-SimpleReplace div {margin-right:2em;}");
+        Alib.CSS.addStyleElement("#WikiMonkey-SimpleReplace div " +
+                                                        "{margin-right:2em;}");
 
         var par3 = document.createElement('div');
 

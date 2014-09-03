@@ -16,6 +16,7 @@
 // @require http://code.jquery.com/jquery-1.7.2.min.js
 // @require file:///mnt/archive/Development/lib.js.generic/src/Async.js
 // @require file:///mnt/archive/Development/lib.js.generic/src/Compatibility.js
+// @require file:///mnt/archive/Development/lib.js.generic/src/CSS.js
 // @require file:///mnt/archive/Development/lib.js.generic/src/DOM.js
 // @require file:///mnt/archive/Development/lib.js.generic/src/HTTP.js
 // @require file:///mnt/archive/Development/lib.js.generic/src/Obj.js

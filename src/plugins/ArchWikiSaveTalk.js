@@ -22,7 +22,8 @@ WM.Plugins.ArchWikiSaveTalk = new function () {
     "use strict";
 
     this.makeUI = function (args) {
-        GM_addStyle("#WikiMonkey-ArchWikiSaveTalk {margin-left:0.33em;}");
+        Alib.CSS.addStyleElement("#WikiMonkey-ArchWikiSaveTalk " +
+                                                    "{margin-left:0.33em;}");
 
         var article = args[0];
 

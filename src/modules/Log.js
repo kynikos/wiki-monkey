@@ -22,7 +22,7 @@ WM.Log = new function () {
     "use strict";
 
     this._makeLogArea = function () {
-        GM_addStyle("#WikiMonkeyLogArea {height:10em; " +
+        Alib.CSS.addStyleElement("#WikiMonkeyLogArea {height:10em; " +
                         "border:2px solid #07b; padding:0.5em; " +
                         "overflow:auto; resize:vertical; " +
                         "background-color:#111;} " +

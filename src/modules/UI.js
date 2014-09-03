@@ -61,8 +61,8 @@ WM.UI = new function () {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyButtons';
 
-        GM_addStyle("#WikiMonkeyButtons div.row {position:relative; " +
-                                                    "margin-bottom:0.33em;} " +
+        Alib.CSS.addStyleElement("#WikiMonkeyButtons div.row " +
+                                "{position:relative; margin-bottom:0.33em;} " +
                     "#WikiMonkeyButtons div.shortcut {position:absolute;} " +
                     "#WikiMonkeyButtons div.shortcut > input, " +
                                 "#WikiMonkeyButtonAll {width:8.33em; " +
@@ -274,7 +274,7 @@ WM.UI = new function () {
         }
 
         if (UI) {
-            GM_addStyle("#WikiMonkey {position:relative;} " +
+            Alib.CSS.addStyleElement("#WikiMonkey {position:relative;} " +
                         "#WikiMonkey fieldset {margin:0 0 1em 0;}");
 
             var main = document.createElement('fieldset');

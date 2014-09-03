@@ -25,7 +25,7 @@ WM.Bot = new function () {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyBot';
 
-        GM_addStyle("#WikiMonkeyBot-PluginSelect {width:100%; " +
+        Alib.CSS.addStyleElement("#WikiMonkeyBot-PluginSelect {width:100%; " +
                                                     "margin-bottom:1em;} " +
                     "#WikiMonkeyBot-ListSelect {margin-bottom:1em;} " +
                     "#WikiMonkeyBotFilter {height:6em; margin-bottom:1em; " +
