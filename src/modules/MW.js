@@ -184,14 +184,14 @@ WM.MW = new function () {
             "\nYou may have tried to use a " +
             "plugin which requires cross-origin HTTP requests, but you are " +
             "not using Greasemonkey (Firefox), Tampermonkey " +
-            "(Chrome/Chromium) or a similar extension";
+            "(Chrome/Chromium), Violentmonkey (Opera) or a similar extension";
     };
 
     this.failedHTTPRequestError = function (err) {
         return "Failed HTTP request - " + err + "\nYou may have tried to " +
             "use a plugin which requires cross-origin HTTP requests, but " +
             "you are not using Greasemonkey (Firefox), Tampermonkey " +
-            "(Chrome/Chromium) or a similar extension";
+            "(Chrome/Chromium), Violentmonkey (Opera) or a similar extension";
     };
 
     this.callAPIGet = function (params, api, call, callArgs) {
