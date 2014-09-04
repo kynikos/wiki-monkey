@@ -34,10 +34,6 @@ WM.ArchPackages = new function () {
                                                     encodeURIComponent(name),
             onload: function (res) {
                 try {
-                    // Currently only Scriptish supports the responseJSON
-                    //   method
-                    //var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
-                    // ... or not?
                     var json = (Alib.Obj.getFirstItem(res.responseJSON)) ?
                             res.responseJSON : JSON.parse(res.responseText);
                 }
@@ -87,10 +83,6 @@ WM.ArchPackages = new function () {
                                                     encodeURIComponent(arg),
             onload: function (res) {
                 try {
-                    // Currently only Scriptish supports the responseJSON
-                    //   method
-                    //var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
-                    // ... or not?
                     var json = (Alib.Obj.getFirstItem(res.responseJSON)) ?
                             res.responseJSON : JSON.parse(res.responseText);
                 }
@@ -143,8 +135,8 @@ WM.ArchPackages = new function () {
             url: "https://www.archlinux.org/groups/" +
                     encodeURIComponent(arch) + "/" + encodeURIComponent(grp),
             onload: function (res) {
-                // Cannot use the DOMParser because Scriptish/GreaseMonkey
-                // doesn't support XrayWrapper well
+                // Cannot use the DOMParser because GreaseMonkey doesn't
+                // support XrayWrapper well
                 // See http://www.oreillynet.com/pub/a/network/2005/11/01/avoid-common-greasemonkey-pitfalls.html?page=3
                 // and https://developer.mozilla.org/en/docs/XPConnect_wrappers#XPCNativeWrapper_%28XrayWrapper%29
                 var escgrp = Alib.RegEx.escapePattern(grp);

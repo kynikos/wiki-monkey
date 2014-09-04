@@ -1,6 +1,5 @@
 * MediaWiki API manual: http://www.mediawiki.org/wiki/API:Main_page
 * ArchWiki API: https://wiki.archlinux.org/api.php
-* Scriptish: https://github.com/scriptish/scriptish/wiki
 * Greasemonkey: http://wiki.greasespot.net/Greasemonkey_Manual
 * Tampermonkey: http://forum.tampermonkey.net/
 * Chromium: http://www.chromium.org/developers/design-documents/user-scripts
