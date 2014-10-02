@@ -23,7 +23,7 @@ if (location.href.match(/^https:\/\/wiki\.archlinux\.org/i)) {
 if (!GM_info) {
     var GM_info = {
         script: {
-            version: "1.16.0-archwikieditor-standalone",
+            version: "1.16.1-archwikieditor-standalone",
         },
     };
 };
@@ -734,10 +734,6 @@ WM.ArchPackages = new function () {
                                                     encodeURIComponent(name),
             onload: function (res) {
                 try {
-                    // Currently only Scriptish supports the responseJSON
-                    //   method
-                    //var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
-                    // ... or not?
                     var json = (Alib.Obj.getFirstItem(res.responseJSON)) ?
                             res.responseJSON : JSON.parse(res.responseText);
                 }
@@ -787,10 +783,6 @@ WM.ArchPackages = new function () {
                                                     encodeURIComponent(arg),
             onload: function (res) {
                 try {
-                    // Currently only Scriptish supports the responseJSON
-                    //   method
-                    //var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
-                    // ... or not?
                     var json = (Alib.Obj.getFirstItem(res.responseJSON)) ?
                             res.responseJSON : JSON.parse(res.responseText);
                 }
@@ -843,8 +835,8 @@ WM.ArchPackages = new function () {
             url: "https://www.archlinux.org/groups/" +
                     encodeURIComponent(arch) + "/" + encodeURIComponent(grp),
             onload: function (res) {
-                // Cannot use the DOMParser because Scriptish/GreaseMonkey
-                // doesn't support XrayWrapper well
+                // Cannot use the DOMParser because GreaseMonkey doesn't
+                // support XrayWrapper well
                 // See http://www.oreillynet.com/pub/a/network/2005/11/01/avoid-common-greasemonkey-pitfalls.html?page=3
                 // and https://developer.mozilla.org/en/docs/XPConnect_wrappers#XPCNativeWrapper_%28XrayWrapper%29
                 var escgrp = Alib.RegEx.escapePattern(grp);
@@ -2775,15 +2767,15 @@ WM.MW = new function () {
         return "Failed query: " + WM.Log.linkToPage(finalUrl, finalUrl) +
             "\nYou may have tried to use a " +
             "plugin which requires cross-origin HTTP requests, but you are " +
-            "not using Scriptish (Firefox), Greasemonkey (Firefox), " +
-            "Tampermonkey (Chrome/Chromium) or a similar extension";
+            "not using Greasemonkey (Firefox), Tampermonkey " +
+            "(Chrome/Chromium), Violentmonkey (Opera) or a similar extension";
     };
 
     this.failedHTTPRequestError = function (err) {
         return "Failed HTTP request - " + err + "\nYou may have tried to " +
             "use a plugin which requires cross-origin HTTP requests, but " +
-            "you are not using Scriptish (Firefox), Greasemonkey (Firefox), " +
-            "Tampermonkey (Chrome/Chromium) or a similar extension";
+            "you are not using Greasemonkey (Firefox), Tampermonkey " +
+            "(Chrome/Chromium), Violentmonkey (Opera) or a similar extension";
     };
 
     this.callAPIGet = function (params, api, call, callArgs) {
@@ -2795,10 +2787,6 @@ WM.MW = new function () {
             url: api + "?format=json" + joinParams(params),
             onload: function (res) {
                 try {
-                    // Currently only Scriptish supports the responseJSON
-                    //   method
-                    //var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
-                    // ... or not?
                     var json = (Alib.Obj.getFirstItem(res.responseJSON)) ?
                             res.responseJSON : JSON.parse(res.responseText);
                 }
@@ -2840,10 +2828,6 @@ WM.MW = new function () {
             url: api,
             onload: function (res) {
                 try {
-                    // Currently only Scriptish supports the responseJSON
-                    //   method
-                    //var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
-                    // ... or not?
                     var json = (Alib.Obj.getFirstItem(res.responseJSON)) ?
                             res.responseJSON : JSON.parse(res.responseText);
                 }
@@ -4117,56 +4101,6 @@ WM.WhatLinksHere = new function () {
     this.getTitle = function () {
         return document.getElementById('contentSub').getElementsByTagName('a'
                                                                     )[0].title;
-    };
-};
-
-WM.Plugins.ArchWikiDeprecateFaq = new function () {
-    "use strict";
-
-    this.main = function (args, callNext) {
-        var source = WM.Editor.readSource();
-
-        var faqs = WM.Parser.findTemplates(source, 'FAQ');
-        var index = 0;
-        var newText = "";
-
-        for (var f = 0; f < faqs.length; f++) {
-            var faq = faqs[f];
-            var heading = faq.arguments[0].value.trim();
-
-            if (faq.arguments.length == 2) {
-                if (heading.indexOf("\n") > -1) {
-                    WM.Log.logWarning("Cannot replace " + faq.rawTransclusion +
-                            " because the question spans multiple lines");
-                    newText += source.substring(index, faq.index + faq.length);
-                }
-                else {
-                    newText += source.substring(index, faq.index) + "=== " +
-                        heading + " ===\n\n" + faq.arguments[1].value.trim();
-                }
-            }
-            else {
-                WM.Log.logWarning("Cannot replace " + faq.rawTransclusion +
-                        " because it has an unexpected number of arguments");
-                newText += source.substring(index, faq.index + faq.length);
-            }
-
-            index = faq.index + faq.length;
-        }
-
-        newText += source.substr(index);
-
-        if (faq) {
-            WM.Editor.writeSource(newText);
-            WM.Log.logWarning("Replaced Template:FAQ with simple level-3 " +
-                                    "sections: check that the sections " +
-                                    "don't require a higher level and that " +
-                                    "no unneeded white space has been added");
-        }
-
-        if (callNext) {
-            callNext();
-        }
     };
 };
 
@@ -6404,8 +6338,7 @@ WM.UI.setEditor([
         ["ArchWikiNewTemplates", "Use code templates", null],
         ["ExpandContractions", "Expand contractions", null],
         ["MultipleLineBreaks", "Squash multiple line breaks", null],
-        ["ArchWikiSummaryToRelated", "Convert summary to related", null],
-        ["ArchWikiDeprecateFaq", "Replace FAQ template", null]
+        ["ArchWikiSummaryToRelated", "Convert summary to related", null]
     ],
     [
         ["SimpleReplace", "RegExp substitution", ["1"]]
@@ -6426,19 +6359,13 @@ WM.UI.setEditor([
 
 WM.UI.setDiff(null);
 
-WM.UI.setCategory(null);
-
-WM.UI.setWhatLinksHere(null);
-
-WM.UI.setLinkSearch(null);
-
 WM.UI.setSpecial(null);
 
 WM.UI.setRecentChanges(null);
 
 WM.UI.setNewPages(null);
 
-WM.UI.setSpecialList(null);
+WM.UI.setBot(null);
 
 WM.main();
 

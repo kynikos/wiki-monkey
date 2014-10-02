@@ -1,24 +1,21 @@
 #!/bin/bash
 
-# Creates symlinks in the scriptish profile path pointing into WM git tree
-#
-# Note: 'extensions.scriptish.cache.enabled' needs to be 'false' for this to work,
-# see https://github.com/scriptish/scriptish/wiki/Manual%3A-Preferences#wiki-boolean-extensionsscriptishcacheenabled--new-in-scriptish
+# Creates symlinks in the greasemonkey profile path pointing into WM git tree
 #
 # Warning: it is not possible to detect if some file was added/renamed/deleted in the WM git
 # tree, in such cases it will be necessary to reinstall WM and re-run this script.
 #
-# usage: scriptish-dynamic-local-cache.sh <scriptish_profile> <WM_git_path> <Alib_git_path>
-#   <scriptish_profile> is usually ~/.mozilla/firefox/<profile_dir>/scriptish_scripts/wiki-monkey-local
+# usage: gm-dynamic-local-cache.sh <greasemonkey_profile> <WM_git_path> <Alib_git_path>
+#   <greasemonkey_profile> is usually ~/.mozilla/firefox/<profile_dir>/gm_scripts/Wiki_Monkey
+#   paths must not have a final slash
 
 function link_from_path() {
     local path="$1"
 
     for f in "$path"/*.js; do
         f=$(basename "$f")
-        lf=${f,,} # lowercase
-        if [[ -f "$sc_profile/$lf" ]]; then
-            ln -sf "$path/$f" "$sc_profile/$lf"
+        if [[ -f "$gm_profile/$f" ]]; then
+            ln -sf "$path/$f" "$gm_profile/$f"
         else
             echo "skipping $path/$f"
         fi
@@ -36,17 +33,17 @@ function link_into_git() {
 
     # print files that remained non-link
     echo "There are some files that were not re-linked:"
-    find "$sc_profile" -type f -name "*.js" -exec basename "{}" \;
+    find "$gm_profile" -type f -name "*.js" -exec basename "{}" \;
 }
 
 
 # check passed paths
-sc_profile="$1"
+gm_profile="$1"
 git_root="$2"
 alib_root="$3"
 
-if [[ ! -f "$sc_profile/wiki-monkey-local.user.js" ]]; then
-    echo "$sc_profile/wiki-monkey-local.user.js does not exist, is '$sc_profile' scriptish profile path correct?"
+if [[ ! -f "$gm_profile/WikiMonkey-local.user.js" ]]; then
+    echo "$gm_profile/WikiMonkey-local.user.js does not exist, is '$gm_profile' greasemonkey profile path correct?"
     exit 1
 fi
 
@@ -60,4 +57,4 @@ if [[ ! -d "$alib_root" ]]; then
     exit 1
 fi
 
-link_into_git "$sc_profile" "$git_root" "$alib_root"
+link_into_git "$gm_profile" "$git_root" "$alib_root"

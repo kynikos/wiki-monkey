@@ -23,7 +23,7 @@ if (location.href.match(/^https:\/\/wiki\.archlinux\.org/i)) {
 if (!GM_info) {
     var GM_info = {
         script: {
-            version: "1.16.0-archwikipatrollite-standalone",
+            version: "1.16.1-archwikipatrollite-standalone",
         },
     };
 };
@@ -889,10 +889,6 @@ WM.ArchPackages = new function () {
                                                     encodeURIComponent(name),
             onload: function (res) {
                 try {
-                    // Currently only Scriptish supports the responseJSON
-                    //   method
-                    //var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
-                    // ... or not?
                     var json = (Alib.Obj.getFirstItem(res.responseJSON)) ?
                             res.responseJSON : JSON.parse(res.responseText);
                 }
@@ -942,10 +938,6 @@ WM.ArchPackages = new function () {
                                                     encodeURIComponent(arg),
             onload: function (res) {
                 try {
-                    // Currently only Scriptish supports the responseJSON
-                    //   method
-                    //var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
-                    // ... or not?
                     var json = (Alib.Obj.getFirstItem(res.responseJSON)) ?
                             res.responseJSON : JSON.parse(res.responseText);
                 }
@@ -998,8 +990,8 @@ WM.ArchPackages = new function () {
             url: "https://www.archlinux.org/groups/" +
                     encodeURIComponent(arch) + "/" + encodeURIComponent(grp),
             onload: function (res) {
-                // Cannot use the DOMParser because Scriptish/GreaseMonkey
-                // doesn't support XrayWrapper well
+                // Cannot use the DOMParser because GreaseMonkey doesn't
+                // support XrayWrapper well
                 // See http://www.oreillynet.com/pub/a/network/2005/11/01/avoid-common-greasemonkey-pitfalls.html?page=3
                 // and https://developer.mozilla.org/en/docs/XPConnect_wrappers#XPCNativeWrapper_%28XrayWrapper%29
                 var escgrp = Alib.RegEx.escapePattern(grp);
@@ -2775,15 +2767,15 @@ WM.MW = new function () {
         return "Failed query: " + WM.Log.linkToPage(finalUrl, finalUrl) +
             "\nYou may have tried to use a " +
             "plugin which requires cross-origin HTTP requests, but you are " +
-            "not using Scriptish (Firefox), Greasemonkey (Firefox), " +
-            "Tampermonkey (Chrome/Chromium) or a similar extension";
+            "not using Greasemonkey (Firefox), Tampermonkey " +
+            "(Chrome/Chromium), Violentmonkey (Opera) or a similar extension";
     };
 
     this.failedHTTPRequestError = function (err) {
         return "Failed HTTP request - " + err + "\nYou may have tried to " +
             "use a plugin which requires cross-origin HTTP requests, but " +
-            "you are not using Scriptish (Firefox), Greasemonkey (Firefox), " +
-            "Tampermonkey (Chrome/Chromium) or a similar extension";
+            "you are not using Greasemonkey (Firefox), Tampermonkey " +
+            "(Chrome/Chromium), Violentmonkey (Opera) or a similar extension";
     };
 
     this.callAPIGet = function (params, api, call, callArgs) {
@@ -2795,10 +2787,6 @@ WM.MW = new function () {
             url: api + "?format=json" + joinParams(params),
             onload: function (res) {
                 try {
-                    // Currently only Scriptish supports the responseJSON
-                    //   method
-                    //var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
-                    // ... or not?
                     var json = (Alib.Obj.getFirstItem(res.responseJSON)) ?
                             res.responseJSON : JSON.parse(res.responseText);
                 }
@@ -2840,10 +2828,6 @@ WM.MW = new function () {
             url: api,
             onload: function (res) {
                 try {
-                    // Currently only Scriptish supports the responseJSON
-                    //   method
-                    //var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
-                    // ... or not?
                     var json = (Alib.Obj.getFirstItem(res.responseJSON)) ?
                             res.responseJSON : JSON.parse(res.responseText);
                 }
@@ -4381,12 +4365,6 @@ WM.UI.setDiff([
     ]
 ]);
 
-WM.UI.setCategory(null);
-
-WM.UI.setWhatLinksHere(null);
-
-WM.UI.setLinkSearch(null);
-
 WM.UI.setSpecial(null);
 
 WM.UI.setRecentChanges([
@@ -4409,7 +4387,7 @@ WM.UI.setNewPages([
     ]
 ]);
 
-WM.UI.setSpecialList(null);
+WM.UI.setBot(null);
 
 WM.main();
 

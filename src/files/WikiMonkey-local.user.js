@@ -39,7 +39,6 @@
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/Tables.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/UI.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/modules/WhatLinksHere.js
-// @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiDeprecateFaq.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiFixHeader.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiFixHeadings.js
 // @require file:///mnt/archive/Development/wiki-monkey/src/plugins/ArchWikiFixLinks.js
@@ -74,8 +73,7 @@ WM.UI.setEditor([
         ["ArchWikiNewTemplates", "Use code templates", null],
         ["ExpandContractions", "Expand contractions", null],
         ["MultipleLineBreaks", "Squash multiple line breaks", null],
-        ["ArchWikiSummaryToRelated", "Convert summary to related", null],
-        ["ArchWikiDeprecateFaq", "Replace FAQ template", null]
+        ["ArchWikiSummaryToRelated", "Convert summary to related", null]
     ],
     [
         ["SimpleReplace", "RegExp substitution", ["1"]]

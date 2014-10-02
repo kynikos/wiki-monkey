@@ -24,7 +24,7 @@ if (location.href.match(/^http:\/\/[a-z]+\.wikipedia\.org/i) ||
 if (!GM_info) {
     var GM_info = {
         script: {
-            version: "1.16.0-editor-standalone",
+            version: "1.16.1-editor-standalone",
         },
     };
 };
@@ -2457,15 +2457,15 @@ WM.MW = new function () {
         return "Failed query: " + WM.Log.linkToPage(finalUrl, finalUrl) +
             "\nYou may have tried to use a " +
             "plugin which requires cross-origin HTTP requests, but you are " +
-            "not using Scriptish (Firefox), Greasemonkey (Firefox), " +
-            "Tampermonkey (Chrome/Chromium) or a similar extension";
+            "not using Greasemonkey (Firefox), Tampermonkey " +
+            "(Chrome/Chromium), Violentmonkey (Opera) or a similar extension";
     };
 
     this.failedHTTPRequestError = function (err) {
         return "Failed HTTP request - " + err + "\nYou may have tried to " +
             "use a plugin which requires cross-origin HTTP requests, but " +
-            "you are not using Scriptish (Firefox), Greasemonkey (Firefox), " +
-            "Tampermonkey (Chrome/Chromium) or a similar extension";
+            "you are not using Greasemonkey (Firefox), Tampermonkey " +
+            "(Chrome/Chromium), Violentmonkey (Opera) or a similar extension";
     };
 
     this.callAPIGet = function (params, api, call, callArgs) {
@@ -2477,10 +2477,6 @@ WM.MW = new function () {
             url: api + "?format=json" + joinParams(params),
             onload: function (res) {
                 try {
-                    // Currently only Scriptish supports the responseJSON
-                    //   method
-                    //var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
-                    // ... or not?
                     var json = (Alib.Obj.getFirstItem(res.responseJSON)) ?
                             res.responseJSON : JSON.parse(res.responseText);
                 }
@@ -2522,10 +2518,6 @@ WM.MW = new function () {
             url: api,
             onload: function (res) {
                 try {
-                    // Currently only Scriptish supports the responseJSON
-                    //   method
-                    //var json = (res.responseJSON) ? res.responseJSON : JSON.parse(res.responseText);
-                    // ... or not?
                     var json = (Alib.Obj.getFirstItem(res.responseJSON)) ?
                             res.responseJSON : JSON.parse(res.responseText);
                 }
@@ -4552,19 +4544,13 @@ WM.UI.setEditor([
 
 WM.UI.setDiff(null);
 
-WM.UI.setCategory(null);
-
-WM.UI.setWhatLinksHere(null);
-
-WM.UI.setLinkSearch(null);
-
 WM.UI.setSpecial(null);
 
 WM.UI.setRecentChanges(null);
 
 WM.UI.setNewPages(null);
 
-WM.UI.setSpecialList(null);
+WM.UI.setBot(null);
 
 WM.main();
 
