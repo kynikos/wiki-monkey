@@ -18,7 +18,6 @@
 * Remove the VERSION branch (also remotely if it was pushed)
 * Checkout the develop branch
 * Run release.py DEVELOP_VERSION
-* Run delcompatibility.sh
 * Commit
 * Push to the remote repository
 * Check milestone is closed on GitHub
