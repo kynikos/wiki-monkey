@@ -24,7 +24,7 @@ if (location.href.match(/^http:\/\/[a-z]+\.wikipedia\.org/i) ||
 if (!GM_info) {
     var GM_info = {
         script: {
-            version: "1.16.0-dev-bot-standalone",
+            version: "1.16.1-bot-standalone",
         },
     };
 };

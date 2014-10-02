@@ -23,7 +23,7 @@ if (location.href.match(/^https:\/\/wiki\.archlinux\.org/i)) {
 if (!GM_info) {
     var GM_info = {
         script: {
-            version: "1.16.0-dev-archwikibot-standalone",
+            version: "1.16.1-archwikibot-standalone",
         },
     };
 };

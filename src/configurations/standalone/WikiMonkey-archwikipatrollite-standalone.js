@@ -23,7 +23,7 @@ if (location.href.match(/^https:\/\/wiki\.archlinux\.org/i)) {
 if (!GM_info) {
     var GM_info = {
         script: {
-            version: "1.16.0-dev-archwikipatrollite-standalone",
+            version: "1.16.1-archwikipatrollite-standalone",
         },
     };
 };

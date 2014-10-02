@@ -3,14 +3,14 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.16.0-dev-bot-chromium
+// @version 1.16.1-bot-chromium
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/develop/src/configurations/chromium/WikiMonkey-bot-chromium.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/develop/src/configurations/chromium/WikiMonkey-bot-chromium.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/develop/src/files/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/develop/src/files/wiki-monkey-64.png
+// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-bot-chromium.meta.js
+// @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-bot-chromium.user.js
+// @icon https://raw.github.com/kynikos/wiki-monkey/1.16.1/src/files/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.16.1/src/files/wiki-monkey-64.png
 // @match http://*.wikipedia.org/*
 // @match https://wiki.archlinux.org/*
 // @grant GM_info
@@ -40,7 +40,7 @@
 if (!GM_info) {
     var GM_info = {
         script: {
-            version: "1.16.0-dev-bot-chromium",
+            version: "1.16.1-bot-chromium",
         },
     };
 };
