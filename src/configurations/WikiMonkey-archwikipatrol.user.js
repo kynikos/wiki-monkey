@@ -94,12 +94,6 @@ WM.UI.setDiff([
     ]
 ]);
 
-WM.UI.setCategory(null);
-
-WM.UI.setWhatLinksHere(null);
-
-WM.UI.setLinkSearch(null);
-
 WM.UI.setSpecial(null);
 
 WM.UI.setRecentChanges([
@@ -122,6 +116,6 @@ WM.UI.setNewPages([
     ]
 ]);
 
-WM.UI.setSpecialList(null);
+WM.UI.setBot(null);
 
 WM.main();

@@ -86,18 +86,12 @@ WM.UI.setEditor([
 
 WM.UI.setDiff(null);
 
-WM.UI.setCategory(null);
-
-WM.UI.setWhatLinksHere(null);
-
-WM.UI.setLinkSearch(null);
-
 WM.UI.setSpecial(null);
 
 WM.UI.setRecentChanges(null);
 
 WM.UI.setNewPages(null);
 
-WM.UI.setSpecialList(null);
+WM.UI.setBot(null);
 
 WM.main();
