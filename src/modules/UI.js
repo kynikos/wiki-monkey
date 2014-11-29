@@ -221,34 +221,34 @@ WM.UI = new function () {
         }
         else {
             var wikiUrls = WM.MW.getWikiUrls();
-            var patt1 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.full) +
+            var patt1A = new RegExp(Alib.RegEx.escapePattern(wikiUrls.full) +
                     "\?.*?" + "title\\=Special(\\:|%3[Aa])SpecialPages", '');
-            var patt2 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) +
+            var patt1B = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) +
                     "Special(\\:|%3[Aa])SpecialPages", '');
-            var patt3 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.full) +
+            var patt2A = new RegExp(Alib.RegEx.escapePattern(wikiUrls.full) +
                     "\?.*?" + "title\\=Special(\\:|%3[Aa])RecentChanges", '');
-            var patt4 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) +
+            var patt2B = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) +
                     "Special(\\:|%3[Aa])RecentChanges", '');
-            var patt5 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.full) +
+            var patt3A = new RegExp(Alib.RegEx.escapePattern(wikiUrls.full) +
                     "\?.*?" + "title\\=Special(\\:|%3[Aa])NewPages", '');
-            var patt6 = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) +
+            var patt3B = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) +
                     "Special(\\:|%3[Aa])NewPages", '');
 
-            if (location.href.search(patt1) > -1 ||
-                                            location.href.search(patt2) > -1) {
+            if (location.href.search(patt1A) > -1 ||
+                                        location.href.search(patt1B) > -1) {
                 nextNode = document.getElementById('bodyContent');
                 UI = (special) ? makeButtons(special) : null;
             }
-            else if (location.href.search(patt3) > -1 ||
-                                            location.href.search(patt4) > -1) {
+            else if (location.href.search(patt2A) > -1 ||
+                                        location.href.search(patt2B) > -1) {
                 nextNode = document.getElementById('mw-content-text'
                                             ).getElementsByTagName('h4')[0];
                 UI = (recentChanges) ? WM.Filters._makeUI(recentChanges) :
                                                                         null;
                 displayLog = false;
             }
-            else if (location.href.search(patt5) > -1 ||
-                                            location.href.search(patt6) > -1) {
+            else if (location.href.search(patt3A) > -1 ||
+                                        location.href.search(patt3B) > -1) {
                 nextNode = document.getElementById('mw-content-text'
                                             ).getElementsByTagName('ul')[0];
                 UI = (newPages) ? WM.Filters._makeUI(newPages) : null;
