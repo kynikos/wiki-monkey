@@ -233,6 +233,10 @@ WM.UI = new function () {
                     "\?.*?" + "title\\=Special(\\:|%3[Aa])NewPages", '');
             var patt3B = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) +
                     "Special(\\:|%3[Aa])NewPages", '');
+            var patt4A = new RegExp(Alib.RegEx.escapePattern(wikiUrls.full) +
+                    "\?.*?" + "title\\=Special(\\:|%3[Aa])ProtectedPages", '');
+            var patt4B = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) +
+                    "Special(\\:|%3[Aa])ProtectedPages", '');
 
             if (location.href.search(patt1A) > -1 ||
                                         location.href.search(patt1B) > -1) {
@@ -253,6 +257,16 @@ WM.UI = new function () {
                                             ).getElementsByTagName('ul')[0];
                 UI = (newPages) ? WM.Filters._makeUI(newPages) : null;
                 displayLog = false;
+            }
+            else if (location.href.search(patt4A) > -1 ||
+                                        location.href.search(patt4B) > -1) {
+                nextNode = document.getElementById('mw-content-text'
+                                            ).getElementsByTagName('form')[0];
+                UI = (bot) ? WM.Bot._makeUI(bot,
+                                    [[document.getElementById('mw-content-text'
+                                            ).getElementsByTagName('ul')[0],
+                                    0, "Pages"]]) : null;
+                display = false;
             }
             else if (document.getElementsByClassName('mw-spcontent'
                                                                 ).length > 0) {
