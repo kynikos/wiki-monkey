@@ -261,7 +261,7 @@ WM.UI = new function () {
             else if (location.href.search(patt4A) > -1 ||
                                         location.href.search(patt4B) > -1) {
                 nextNode = document.getElementById('mw-content-text'
-                                            ).getElementsByTagName('form')[0];
+                                            ).getElementsByTagName('ul')[0];
                 UI = (bot) ? WM.Bot._makeUI(bot,
                                     [[document.getElementById('mw-content-text'
                                             ).getElementsByTagName('ul')[0],
