@@ -23,7 +23,8 @@ WM.Plugins.ArchWikiSortContacts = new function () {
 
     this.main = function (args, callNext) {
         var pages = args[0];
-        var summary = args[1];
+        var inactiveIntros = args[1];
+        var summary = args[2];
 
         WM.Log.logInfo("Sorting administrators and maintainers ...");
 
@@ -32,16 +33,18 @@ WM.Plugins.ArchWikiSortContacts = new function () {
         //WM.MW.getActiveUsers("bot|sysop|bureaucrat|maintainer",
         WM.MW.getActiveUsers("sysop",
                                 WM.Plugins.ArchWikiSortContacts.mainContinue1,
-                                [pages, summary, callNext]);
+                                [pages, inactiveIntros, summary, callNext]);
     };
 
     var startMark = "START AUTO LIST - DO NOT REMOVE OR MODIFY THIS MARK-->";
     var endMark = "<!--END AUTO LIST - DO NOT REMOVE OR MODIFY THIS MARK";
+    var INACTIVE_LIMIT = 30;
 
     this.mainContinue1 = function (results, args) {
         var pages = args[0];
-        var summary = args[1];
-        var callNext = args[2];
+        var inactiveIntros = args[1];
+        var summary = args[2];
+        var callNext = args[3];
         var queriedUsers = {};
 
         for (var u in results) {
@@ -52,15 +55,16 @@ WM.Plugins.ArchWikiSortContacts = new function () {
         // Cannot query "bot|sysop|bureaucrat|maintainer" at once, because
         //   of the upstream bug tracked in #179
         WM.MW.getActiveUsers("maintainer",
-                                WM.Plugins.ArchWikiSortContacts.mainContinue2,
-                                [queriedUsers, pages, summary, callNext]);
+                    WM.Plugins.ArchWikiSortContacts.mainContinue2,
+                    [queriedUsers, pages, inactiveIntros, summary, callNext]);
     };
 
     this.mainContinue2 = function (results, args) {
         var queriedUsers = args[0];
         var pages = args[1];
-        var summary = args[2];
-        var callNext = args[3];
+        var inactiveIntros = args[2];
+        var summary = args[3];
+        var callNext = args[4];
 
         for (var u in results) {
             var user = results[u];
@@ -70,15 +74,16 @@ WM.Plugins.ArchWikiSortContacts = new function () {
         // Cannot query "bot|sysop|bureaucrat|maintainer" at once, because
         //   of the upstream bug tracked in #179
         WM.MW.getActiveUsers("bot",
-                                WM.Plugins.ArchWikiSortContacts.mainContinue3,
-                                [queriedUsers, pages, summary, callNext]);
+                    WM.Plugins.ArchWikiSortContacts.mainContinue3,
+                    [queriedUsers, pages, inactiveIntros, summary, callNext]);
     };
 
     this.mainContinue3 = function (results, args) {
         var queriedUsers = args[0];
         var pages = args[1];
-        var summary = args[2];
-        var callNext = args[3];
+        var inactiveIntros = args[2];
+        var summary = args[3];
+        var callNext = args[4];
 
         for (var u in results) {
             var user = results[u];
@@ -86,29 +91,35 @@ WM.Plugins.ArchWikiSortContacts = new function () {
         }
 
         WM.Plugins.ArchWikiSortContacts.iteratePages(queriedUsers, pages, 0,
-                                                            summary, callNext);
+                                            inactiveIntros, summary, callNext);
     };
 
-    this.iteratePages = function (queriedUsers, pages, index, summary,
-                                                                    callNext) {
+    this.iteratePages = function (queriedUsers, pages, index, inactiveIntros,
+                                                        summary, callNext) {
         if (index < pages.length) {
             WM.MW.callQueryEdit(pages[index],
-                            WM.Plugins.ArchWikiSortContacts.updateList,
-                            [queriedUsers, pages, index, summary, callNext]);
+                                WM.Plugins.ArchWikiSortContacts.updateList,
+                                [queriedUsers, pages, index, inactiveIntros,
+                                summary, callNext]);
         }
         else if (callNext) {
             callNext();
         }
     };
 
-    var parseUsers = function (string, queriedUsers) {
+    var parseUsers = function (usersArray, queriedUsers, inactiveIntros,
+                                                                    index) {
         var regExp = new RegExp("^\\*.*?\\[\\[User:(.+?)\\|.+?" +
                         // Don't do "(?: \\<!-- associated bot: (.+?) -->)?.*$"
-                        "(?: \\<!-- associated bot: (.+?) -->.*)?$", "gm");
-        var users = [];
+                        "(?: \\<!-- associated bot: (.+?) -->.*)?$", "");
+        var users = {
+            active: [],
+            inactive: []
+        };
 
-        while (true) {
-            var match = regExp.exec(string);
+        for (var u in usersArray) {
+            var userString = usersArray[u];
+            var match = regExp.exec(userString);
 
             if (match) {
                 var edits = 0;
@@ -131,11 +142,18 @@ WM.Plugins.ArchWikiSortContacts = new function () {
                     }
                 }
 
-                users.push({"text": match[0],
-                            "edits": edits});
+                if (edits < INACTIVE_LIMIT) {
+                    users.inactive.push({"text": match[0],
+                                         "edits": edits});
+                }
+                else {
+                    users.active.push({"text": match[0],
+                                       "edits": edits});
+                }
             }
-            else {
-                break;
+            else if (userString != "" &&
+                            userString.indexOf(inactiveIntros[index]) != 0) {
+                return false;
             }
         }
 
@@ -146,8 +164,9 @@ WM.Plugins.ArchWikiSortContacts = new function () {
         var queriedUsers = args[0];
         var pages = args[1];
         var index = args[2];
-        var summary = args[3];
-        var callNext = args[4];
+        var inactiveIntros = args[3];
+        var summary = args[4];
+        var callNext = args[5];
 
         WM.Log.logInfo("Processing " + WM.Log.linkToWikiPage(title, title) +
                                                                     " ...");
@@ -158,30 +177,41 @@ WM.Plugins.ArchWikiSortContacts = new function () {
         if (startList > -1 && endList > -1) {
             startList += startMark.length;
 
-            var userString = source.substring(startList, endList);
-            var test = userString.split("\n").length;
-            var authorizedUsers = parseUsers(userString, queriedUsers);
+            var usersArray = source.substring(startList, endList).split("\n");
+            var authorizedUsers = parseUsers(usersArray, queriedUsers,
+                                                        inactiveIntros, index);
 
-            authorizedUsers.sort(function (a, b) {
-                // Users must be sorted in descending order
-                if (a.edits < b.edits) {
-                    return 1;
+            if (authorizedUsers) {
+                var sorter = function (a, b) {
+                    // Users must be sorted in descending order
+                    if (a.edits < b.edits) {
+                        return 1;
+                    }
+                    else if (a.edits > b.edits) {
+                        return -1;
+                    }
+                    else {
+                        return 0;
+                    }
                 }
-                else if (a.edits > b.edits) {
-                    return -1;
+
+                authorizedUsers.active.sort(sorter);
+                authorizedUsers.inactive.sort(sorter);
+
+                var newList = "\n";
+
+                for (var a in authorizedUsers.active) {
+                    newList += authorizedUsers.active[a].text + "\n";
                 }
-                else {
-                    return 0;
+
+                if (authorizedUsers.inactive.length > 0) {
+                    newList += "\n" + inactiveIntros[index] + "\n\n";
+
+                    for (var a in authorizedUsers.inactive) {
+                        newList += authorizedUsers.inactive[a].text + "\n";
+                    }
                 }
-            });
 
-            var newList = "\n";
-
-            for (var a in authorizedUsers) {
-                newList += authorizedUsers[a].text + "\n";
-            }
-
-            if (test == newList.split("\n").length) {
                 var newText = source.substring(0, startList) + newList +
                                                     source.substring(endList);
 
@@ -196,15 +226,15 @@ WM.Plugins.ArchWikiSortContacts = new function () {
                                    token: edittoken},
                                    null,
                                    WM.Plugins.ArchWikiSortContacts.writePage,
-                                   [queriedUsers, pages, index, summary,
-                                                                    callNext]);
+                                   [queriedUsers, pages, index, inactiveIntros,
+                                                        summary, callNext]);
                 }
                 else {
                     WM.Log.logInfo(WM.Log.linkToWikiPage(title, title) +
                                                     " was already up to date");
                     index++;
                     WM.Plugins.ArchWikiSortContacts.iteratePages(queriedUsers,
-                                            pages, index, summary, callNext);
+                            pages, index, inactiveIntros, summary, callNext);
                 }
             }
             else {
@@ -212,7 +242,7 @@ WM.Plugins.ArchWikiSortContacts = new function () {
                                                                 "formatted");
                 index++;
                 WM.Plugins.ArchWikiSortContacts.iteratePages(queriedUsers,
-                                            pages, index, summary, callNext);
+                            pages, index, inactiveIntros, summary, callNext);
             }
         }
         else {
@@ -220,7 +250,7 @@ WM.Plugins.ArchWikiSortContacts = new function () {
                                         WM.Log.linkToWikiPage(title, title));
             index++;
             WM.Plugins.ArchWikiSortContacts.iteratePages(queriedUsers, pages,
-                                                    index, summary, callNext);
+                                    index, inactiveIntros, summary, callNext);
         }
     };
 
@@ -228,8 +258,9 @@ WM.Plugins.ArchWikiSortContacts = new function () {
         var queriedUsers = args[0];
         var pages = args[1];
         var index = args[2];
-        var summary = args[3];
-        var callNext = args[4];
+        var inactiveIntros = args[3];
+        var summary = args[4];
+        var callNext = args[5];
 
         if (res.edit && res.edit.result == 'Success') {
             WM.Log.logInfo(WM.Log.linkToWikiPage(pages[index], pages[index]) +
@@ -237,7 +268,7 @@ WM.Plugins.ArchWikiSortContacts = new function () {
 
             index++;
             WM.Plugins.ArchWikiSortContacts.iteratePages(queriedUsers, pages,
-                                                    index, summary, callNext);
+                                    index, inactiveIntros, summary, callNext);
         }
         else {
             WM.Log.logError(res['error']['info'] +

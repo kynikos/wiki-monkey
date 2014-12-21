@@ -314,7 +314,9 @@ WM.UI.setSpecial([
         ["FixDoubleRedirects", "Fix double redirects", "fix double redirect"],
         ["ArchWikiSortContacts", "Sort Admins and Maintainers",
                     [["ArchWiki:Administrators", "ArchWiki:Maintainers"],
-                    "automatically sort list according to recent activity"]]
+                     ["The following Administrators are currently inactive:",
+                      "The following Maintainers are currently inactive:"],
+                     "automatically sort list according to recent activity"]]
     ]
 ]);
 
