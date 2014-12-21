@@ -101,7 +101,7 @@ WM.Plugins.ArchWikiSortContacts = new function () {
         }
     };
 
-    var parseUsers = function (string) {
+    var parseUsers = function (string, queriedUsers) {
         var regExp = new RegExp("^\\*.*?\\[\\[User:(.+?)\\|.+?" +
                         // Don't do "(?: \\<!-- associated bot: (.+?) -->)?.*$"
                         "(?: \\<!-- associated bot: (.+?) -->.*)?$", "gm");
@@ -111,9 +111,28 @@ WM.Plugins.ArchWikiSortContacts = new function () {
             var match = regExp.exec(string);
 
             if (match) {
+                var edits = 0;
+                var user = match[1].charAt(0).toUpperCase() +
+                                                            match[1].substr(1);
+
+                // The user may be inactive (not present in queriedUsers)
+                if (queriedUsers[user]) {
+                    edits += queriedUsers[user];
+                }
+
+                // The user may not have an associated bot
+                if (match[2]) {
+                    var bot = match[2].charAt(0).toUpperCase() +
+                                                            match[2].substr(1);
+
+                    // The bot may be inactive (not present in queriedUsers)
+                    if (queriedUsers[bot]) {
+                        edits += queriedUsers[bot];
+                    }
+                }
+
                 users.push({"text": match[0],
-                            "username": match[1],
-                            "associatedBot": match[2]});
+                            "edits": edits});
             }
             else {
                 break;
@@ -141,56 +160,14 @@ WM.Plugins.ArchWikiSortContacts = new function () {
 
             var userString = source.substring(startList, endList);
             var test = userString.split("\n").length;
-            var authorizedUsers = parseUsers(userString);
+            var authorizedUsers = parseUsers(userString, queriedUsers);
 
             authorizedUsers.sort(function (a, b) {
-                var aname = a.username.charAt(0).toUpperCase() +
-                                                        a.username.substr(1);
-                var bname = b.username.charAt(0).toUpperCase() +
-                                                        b.username.substr(1);
-
-                // Do *not* modify the queriedUsers object directly!
-                var aedits, bedits;
-
-                // A user may be inactive (not present in queriedUsers)
-                if (queriedUsers[aname]) {
-                    aedits = queriedUsers[aname];
-                }
-                else {
-                    aedits = 0;
-                }
-
-                // A user may be inactive (not present in queriedUsers)
-                if (queriedUsers[bname]) {
-                    bedits = queriedUsers[bname];
-                }
-                else {
-                    bedits = 0;
-                }
-
-                if (a.associatedBot) {
-                    var abotname = a.associatedBot.charAt(0).toUpperCase() +
-                                                    a.associatedBot.substr(1);
-
-                    if (queriedUsers[abotname]) {
-                        aedits += queriedUsers[abotname];
-                    }
-                }
-
-                if (b.associatedBot) {
-                    var bbotname = b.associatedBot.charAt(0).toUpperCase() +
-                                                    b.associatedBot.substr(1);
-
-                    if (queriedUsers[bbotname]) {
-                        bedits += queriedUsers[bbotname];
-                    }
-                }
-
-                // The users must be sorted in descending order
-                if (aedits < bedits) {
+                // Users must be sorted in descending order
+                if (a.edits < b.edits) {
                     return 1;
                 }
-                else if (aedits > bedits) {
+                else if (a.edits > b.edits) {
                     return -1;
                 }
                 else {
