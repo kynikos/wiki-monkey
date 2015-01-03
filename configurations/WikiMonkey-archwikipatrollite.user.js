@@ -7,10 +7,10 @@
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/develop/src/configurations/WikiMonkey-archwikipatrollite.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/develop/src/configurations/WikiMonkey-archwikipatrollite.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/develop/src/files/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/develop/src/files/wiki-monkey-64.png
+// @updateURL https://raw.github.com/kynikos/wiki-monkey/develop/configurations/WikiMonkey-archwikipatrollite.meta.js
+// @downloadURL https://raw.github.com/kynikos/wiki-monkey/develop/configurations/WikiMonkey-archwikipatrollite.user.js
+// @icon https://raw.github.com/kynikos/wiki-monkey/develop/files/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/develop/files/wiki-monkey-64.png
 // @match https://wiki.archlinux.org/*
 // @grant GM_info
 // @grant GM_xmlhttpRequest
@@ -22,24 +22,24 @@
 // @require https://raw.github.com/kynikos/lib.js.generic/master/src/Obj.js
 // @require https://raw.github.com/kynikos/lib.js.generic/master/src/RegEx.js
 // @require https://raw.github.com/kynikos/lib.js.generic/master/src/Str.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/WikiMonkey.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/ArchWiki.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/ArchPackages.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Bot.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Cat.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Diff.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Editor.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Filters.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Interlanguage.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Log.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/MW.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Parser.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/Tables.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/UI.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/modules/WhatLinksHere.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/ArchWikiNPFilter.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/ArchWikiQuickReport.js
-// @require https://raw.github.com/kynikos/wiki-monkey/develop/src/plugins/ArchWikiRCFilter.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/WikiMonkey.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/ArchWiki.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/ArchPackages.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Bot.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Cat.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Diff.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Editor.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Filters.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Interlanguage.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Log.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/MW.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Parser.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Tables.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/UI.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/WhatLinksHere.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/plugins/ArchWikiNPFilter.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/plugins/ArchWikiQuickReport.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/plugins/ArchWikiRCFilter.js
 // ==/UserScript==
 
 WM.UI.setEditor(null);

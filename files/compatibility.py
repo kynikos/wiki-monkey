@@ -3,17 +3,17 @@
 import os
 import re
 
-SRC_PATH = ".."
-ALIB_SRC_PATH = "../../../lib.js.generic/src"
-MAIN_SCRIPT = os.path.join(SRC_PATH, "WikiMonkey.js")
-CFG_PATH = os.path.join(SRC_PATH, "configurations")
+ROOT_PATH = ".."
+ALIB_PATH = "../../../lib.js.generic/src"
+MAIN_SCRIPT = os.path.join(ROOT_PATH, "WikiMonkey.js")
+CFG_PATH = os.path.join(ROOT_PATH, "configurations")
 CHROMIUM_PATH = os.path.join(CFG_PATH, "chromium")
 OPERA_PATH = os.path.join(CFG_PATH, "opera")
 STALONE_PATH = os.path.join(CFG_PATH, "standalone")
 EXTENSIONS = ((CHROMIUM_PATH, "chromium"),
               (OPERA_PATH, "opera"),
               (STALONE_PATH, "standalone"))
-GM_API_EMULATION = os.path.join(ALIB_SRC_PATH, "GMAPIEmulation.js")
+GM_API_EMULATION = os.path.join(ALIB_PATH, "GMAPIEmulation.js")
 STANDALONE = {
     "start": "\nif ({}) {{\n",
     "match": "location.href.match({})",
@@ -75,14 +75,14 @@ def process_header_line(m, g, functions, match_urls, header, line):
     alib_requires = re.match('^// @require https://raw\.github\.com/kynikos/'
                              'lib\.js\.generic/[^/]+/src/(.+\.js)', line)
     requires = re.match('^// @require https://raw\.github\.com/kynikos/'
-                        'wiki-monkey/[^/]+/src/(.+\.js)', line)
+                        'wiki-monkey/[^/]+/(.+\.js)', line)
 
     if alib_requires:
-        source = os.path.join(ALIB_SRC_PATH, alib_requires.group(1))
+        source = os.path.join(ALIB_PATH, alib_requires.group(1))
         with open(source, 'r') as s:
             functions += get_script(s)
     elif requires:
-        source = os.path.join(SRC_PATH, requires.group(1))
+        source = os.path.join(ROOT_PATH, requires.group(1))
         with open(source, 'r') as s:
             functions += get_script(s)
     elif m[1] in ("chromium", "opera"):
