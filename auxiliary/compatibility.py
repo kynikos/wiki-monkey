@@ -51,6 +51,8 @@ if (!GM_info) {{
         }},
     }};
 }};
+
+var GM_emulation = true;
 """.format(cversion)
 
     with open(GM_API_EMULATION, 'r') as s:
