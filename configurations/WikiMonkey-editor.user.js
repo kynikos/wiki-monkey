@@ -9,8 +9,8 @@
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
 // @updateURL https://raw.github.com/kynikos/wiki-monkey/develop/configurations/WikiMonkey-editor.meta.js
 // @downloadURL https://raw.github.com/kynikos/wiki-monkey/develop/configurations/WikiMonkey-editor.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/develop/files/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/develop/files/wiki-monkey-64.png
+// @icon https://raw.github.com/kynikos/wiki-monkey/develop/auxiliary/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/develop/auxiliary/wiki-monkey-64.png
 // @match http://*.wikipedia.org/*
 // @match https://wiki.archlinux.org/*
 // @grant GM_info
