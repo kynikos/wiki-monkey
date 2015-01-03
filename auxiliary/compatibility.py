@@ -183,18 +183,6 @@ def adapt_configuration(f):
             raise UserWarning("An instance of " + plugin + " has not been "
                                                                     "removed")
 
-    # SynchronizeInterlanguageLinks would require cross-origin HTTP requests,
-    # use WM.ArchWiki.getInternalInterwikiLanguages() as a white list
-    code = re.sub("(\[[\"']SynchronizeInterlanguageLinks[\"'].*?"
-                            "WM\.ArchWiki\.getInterwikiLanguages\(\),\s*)"
-                            "WM\.ArchWiki\.getInterwikiLanguages\(\)",
-                            "\g<1>WM.ArchWiki.getInternalInterwikiLanguages()",
-                            code, flags=re.DOTALL)
-    if re.search("WM\.ArchWiki\.getInterwikiLanguages\(\),\s*"
-                "WM\.ArchWiki\.getInterwikiLanguages\(\)", code) is not None:
-        raise UserWarning("An instance of WM.ArchWiki.getInterwikiLanguages "
-                                    "as a white list has not been replaced")
-
     return code
 
 

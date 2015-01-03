@@ -21,14 +21,23 @@
 WM.Plugins.SynchronizeInterlanguageLinks = new function () {
     "use strict";
 
-    this.main = function (args, callNext) {
-        var title = WM.Editor.getTitle();
+    var generateWhiteList = function () {
+        if (typeof GM_emulation === "undefined") {
+            return WM.ArchWiki.getInterwikiLanguages();
+        }
+        else {
+            return WM.ArchWiki.getInternalInterwikiLanguages();
+        }
+    };
 
-        var detect = args[0](title);
-        var tag = detect[0];
-        var pureTitle = detect[1];
-        var supportedLangs = args[1];
-        var whitelist = args[2];
+    this.main = function (args, callNext) {
+        var supportedLangs = WM.ArchWiki.getInterwikiLanguages();
+        var whitelist = generateWhiteList();
+
+        var title = WM.Editor.getTitle();
+        var detect = WM.ArchWiki.detectLanguage(title);
+        var pureTitle = detect[0];
+        var tag = WM.ArchWiki.getInterlanguageTag(detect[1]);
 
         WM.Log.logInfo("Synchronizing interlanguage links ...");
 
@@ -144,13 +153,13 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
     };
 
     this.mainAuto = function (args, title, callBot, chainArgs) {
-        var detect = args[0](title);
-        var tag = detect[0];
-        var pureTitle = detect[1];
+        var summary = args;
 
-        var supportedLangs = args[1];
-        var whitelist = args[2];
-        var summary = args[3];
+        var supportedLangs = WM.ArchWiki.getInterwikiLanguages();
+        var whitelist = generateWhiteList();
+        var detect = WM.ArchWiki.detectLanguage(title);
+        var pureTitle = detect[0];
+        var tag = WM.ArchWiki.getInterlanguageTag(detect[1]);
 
         var wikiUrls = WM.MW.getWikiUrls();
         var url = wikiUrls.short + encodeURIComponent(

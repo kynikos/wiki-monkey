@@ -74,15 +74,7 @@ WM.UI.setEditor([
     ],
     [
         ["FixLinkFragments", "Fix external section links", null],
-        ["SynchronizeInterlanguageLinks", "Sync interlanguage links",
-         [function (title) {
-             var detect = WM.ArchWiki.detectLanguage(title);
-             var tag = WM.ArchWiki.getInterlanguageTag(detect[1]);
-             // The language must correspond to a working interwiki tag
-             return [tag, detect[0]];
-         },
-         WM.ArchWiki.getInterwikiLanguages(),
-         WM.ArchWiki.getInterwikiLanguages()]],
+        ["SynchronizeInterlanguageLinks", "Sync interlanguage links"],
         ["ArchWikiOldAURLinks", "Fix old AUR links", null],
         ["ArchWikiUpdatePackageTemplates", "Update package templates", null]
     ]
@@ -331,15 +323,7 @@ WM.UI.setBot([
                         "Fix links to specific sections of a target page",
                         "fix links to specific sections"],
     ["SynchronizeInterlanguageLinks", "Synchronize interlanguage links",
-     [function (title) {
-         var detect = WM.ArchWiki.detectLanguage(title);
-         var tag = WM.ArchWiki.getInterlanguageTag(detect[1]);
-         // The language must correspond to a working interwiki tag
-         return [tag, detect[0]];
-     },
-     WM.ArchWiki.getInterwikiLanguages(),
-     WM.ArchWiki.getInterwikiLanguages(),
-     "synchronized interlanguage links with the other wikis"]],
+     "synchronized interlanguage links with the other wikis"],
     ["ArchWikiUpdatePackageTemplates",
                 "Check packages linked with Pkg/AUR templates " +
                 "and possibly update them",
