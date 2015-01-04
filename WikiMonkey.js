@@ -26,8 +26,7 @@ var WM = new function () {
     this.main = function () {
         WM.UI._makeUI();
 
-        WM.Log.logHidden('Wiki Monkey version: ' +
-                                            GM_info.script.version);
+        WM.Log.logHidden('Wiki Monkey version: ' + GM_info.script.version);
         var date = new Date();
         WM.Log.logHidden('Date: ' + date.toString());
         WM.Log.logHidden('URL: ' + location.href);
