@@ -86,59 +86,79 @@ WM.MW = new function () {
                                 "https://wiki.archlinux.org/index.php/$1%20("]
     ];
 
-    var getWikiUrls = function (href) {
+    var getWikiPaths = function (href) {
         // It's necessary to keep this function in a private attribute,
-        // otherwise localWikiUrls cannot be initialized
-        if (href) {
-            for (var r in wikiPaths.known) {
-                var re = new RegExp(r, "i");
-                var match = re.exec(href);
+        // otherwise localWikiPaths and localWikiUrls cannot be initialized
+        for (var r in wikiPaths.known) {
+            var re = new RegExp(r, "i");
+            var match = re.exec(href);
 
-                if (match) {
-                    var hostname = match[0];
-                    var paths = {};
-
-                    for (var p in wikiPaths.known[r]) {
-                        paths[p] = wikiPaths.known[r][p];
-                    }
-
-                    break;
-                }
-            }
-
-            if (!paths) {
-                var hostname = Alib.HTTP.getUrlLocation(href).hostname;
+            if (match) {
+                var hostname = match[0];
                 var paths = {};
 
-                for (var p in wikiPaths.default_) {
-                    paths[p] = wikiPaths.default_[p];
+                for (var p in wikiPaths.known[r]) {
+                    paths[p] = wikiPaths.known[r][p];
                 }
+
+                break;
             }
+        }
+
+        if (!paths) {
+            var hostname = Alib.HTTP.getUrlLocation(href).hostname;
+            var paths = {};
+
+            for (var p in wikiPaths.default_) {
+                paths[p] = wikiPaths.default_[p];
+            }
+        }
+
+        return [hostname, paths]
+    };
+
+    var localWikiPaths;
+    var localWikiUrls;
+
+    // This function must be run *after* getWikiPaths (!= this.getWikiPaths)
+    (function () {
+        var wpaths = getWikiPaths(location.href);
+        var hostname = wpaths[0];
+
+        localWikiPaths = wpaths[1];
+        localWikiUrls = {};
+
+        for (var key in localWikiPaths) {
+            localWikiUrls[key] = hostname + localWikiPaths[key];
+        }
+    })();
+
+    this.getWikiPaths = function (href) {
+        if (href) {
+            return getWikiPaths(href)[1];
+        }
+        else {
+            return localWikiPaths;
+        }
+    };
+
+    this.getWikiUrls = function (href) {
+        if (href) {
+            var wpaths = getWikiPaths(href);
+            var hostname = wpaths[0];
+            var paths = wpaths[1];
 
             var urls = {};
 
             for (var key in paths) {
                 urls[key] = hostname + paths[key];
             }
+
+            return urls;
         }
         else {
-            var urls = {};
-
-            for (var p in localWikiUrls) {
-                urls[p] = localWikiUrls[p];
-            }
+            return localWikiUrls;
         }
-
-        return urls;
-    };
-
-    // This variable must be assigned *after* getWikiUrls (!= this.getWikiUrls)
-    var localWikiUrls = (function () {
-        return getWikiUrls(location.href);
-    })();
-
-    this.getWikiUrls = function (href) {
-        return getWikiUrls(href);
     };
 
     this.getTitleFromWikiUrl = function (url) {
