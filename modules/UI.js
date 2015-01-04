@@ -341,6 +341,11 @@ WM.UI = new function () {
             main.appendChild(main2);
 
             nextNode.parentNode.insertBefore(main, nextNode);
+
+            WM.Log.logHidden('Wiki Monkey version: ' + GM_info.script.version);
+            var date = new Date();
+            WM.Log.logHidden('Date: ' + date.toString());
+            WM.Log.logHidden('URL: ' + location.href);
         }
     };
 };
