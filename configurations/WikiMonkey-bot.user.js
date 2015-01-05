@@ -15,6 +15,7 @@
 // @match https://wiki.archlinux.org/*
 // @grant GM_info
 // @grant GM_xmlhttpRequest
+// @require https://code.jquery.com/jquery-2.1.3.min.js
 // @require https://raw.github.com/kynikos/lib.js.generic/master/src/Async.js
 // @require https://raw.github.com/kynikos/lib.js.generic/master/src/Compatibility.js
 // @require https://raw.github.com/kynikos/lib.js.generic/master/src/CSS.js
