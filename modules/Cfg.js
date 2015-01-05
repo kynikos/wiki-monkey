@@ -68,6 +68,24 @@ WM.Cfg = new function () {
             .val("Defaults")
             .click(requestDefaults)
             .appendTo(bdiv);
+        $("<input/>")
+            .attr("type", "button")
+            .val("Import")
+            .click(importFile)
+            .appendTo(bdiv);
+        $("<input/>")
+            .attr({"type": "file", "id": "WikiMonkey-import"})
+            .change(doImportFile)
+            .appendTo(bdiv)
+            .hide();
+        $("<input/>")
+            .attr("type", "button")
+            .val("Export")
+            .click(exportEditor)
+            .appendTo(bdiv);
+        $("<a/>")
+            .attr({"id": "WikiMonkey-export", "download": "WikiMonkey.conf"})
+            .appendTo(bdiv);
         editor.append(bdiv);
 
         var help = $("<a/>")
@@ -193,5 +211,29 @@ WM.Cfg = new function () {
 
     var requestDefaults = function () {
         $("#WikiMonkey-editor").val(DEFAULTS_REQUEST);
+    };
+
+    var importFile = function () {
+        $("#WikiMonkey-import").trigger("click");
+    };
+
+    var doImportFile= function () {
+        var file = this.files[0];
+        var freader = new FileReader();
+
+        freader.onload = function(fileLoadedEvent) {
+            $("#WikiMonkey-editor").val(fileLoadedEvent.target.result);
+        };
+
+        freader.readAsText(file, "UTF-8");
+    };
+
+    var exportEditor = function () {
+        var blob = new Blob([$("#WikiMonkey-editor").val()],
+                                                        {type:'text/plain'});
+        $("#WikiMonkey-export")
+            .attr("href", window.URL.createObjectURL(blob))
+            // .trigger("click"); doesn't work
+            [0].click();
     };
 };
