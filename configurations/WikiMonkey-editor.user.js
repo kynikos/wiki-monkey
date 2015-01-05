@@ -27,6 +27,7 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/WikiMonkey.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Bot.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Cat.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Cfg.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Diff.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Editor.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Filters.js
@@ -44,28 +45,23 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/plugins/SimpleReplace.js
 // ==/UserScript==
 
-WM.UI.setEditor([
-    [
-        ["FixFragments", "Fix section links", null],
-        ["ExpandContractions", "Expand contractions", null],
-        ["MultipleLineBreaks", "Squash multiple line breaks", null]
+WM.main({
+    "Editor": [
+        [
+            ["FixFragments", "Fix section links", null],
+            ["ExpandContractions", "Expand contractions", null],
+            ["MultipleLineBreaks", "Squash multiple line breaks", null]
+        ],
+        [
+            ["SimpleReplace", "RegExp substitution", ["1"]]
+        ],
+        [
+            ["FixLinkFragments", "Fix external section links", null]
+        ]
     ],
-    [
-        ["SimpleReplace", "RegExp substitution", ["1"]]
-    ],
-    [
-        ["FixLinkFragments", "Fix external section links", null]
-    ]
-]);
-
-WM.UI.setDiff(null);
-
-WM.UI.setSpecial(null);
-
-WM.UI.setRecentChanges(null);
-
-WM.UI.setNewPages(null);
-
-WM.UI.setBot(null);
-
-WM.main();
+    "Diff": null,
+    "Special": null,
+    "RecentChanges": null,
+    "NewPages": null,
+    "Bot": null
+});

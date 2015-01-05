@@ -21,42 +21,6 @@
 WM.UI = new function () {
     "use strict";
 
-    var editor = null;
-
-    this.setEditor = function(rows) {
-        editor = rows;
-    };
-
-    var diff = null;
-
-    this.setDiff = function(rows) {
-        diff = rows;
-    };
-
-    var special = null;
-
-    this.setSpecial = function(rows) {
-        special = rows;
-    };
-
-    var recentChanges = null;
-
-    this.setRecentChanges = function(rows) {
-        recentChanges = rows;
-    };
-
-    var newPages = null;
-
-    this.setNewPages = function(rows) {
-        newPages = rows;
-    }
-
-    var bot = null;
-
-    this.setBot = function(rows) {
-        bot = rows;
-    };
-
     var makeButtons = function (functions) {
         var divContainer = document.createElement('div');
         divContainer.id = 'WikiMonkeyButtons';
@@ -178,17 +142,20 @@ WM.UI = new function () {
         if (document.getElementById('editform')) {
             nextNode = document.getElementById('wpSummaryLabel'
                                                     ).parentNode.nextSibling;
-            UI = (editor) ? makeButtons(editor) : null;
+            var conf = WM.Cfg._getEditor();
+            UI = (conf) ? makeButtons(conf) : null;
         }
         else if (document.getElementById('mw-diff-otitle1')) {
             nextNode = document.getElementById('bodyContent'
                                             ).getElementsByTagName('h2')[0];
-            UI = (diff) ? makeButtons(diff) : null;
+            var conf = WM.Cfg._getDiff();
+            UI = (conf) ? makeButtons(conf) : null;
         }
         else if (document.getElementById('mw-subcategories') ||
                                         document.getElementById('mw-pages')) {
             nextNode = document.getElementById('bodyContent');
-            UI = (bot) ? WM.Bot._makeUI(bot,
+            var conf = WM.Cfg._getBot();
+            UI = (conf) ? WM.Bot._makeUI(conf,
                             [[document.getElementById('mw-pages'), 0, "Pages"],
                             [document.getElementById('mw-subcategories'), 0,
                             "Subcategories"]]) : null;
@@ -197,7 +164,8 @@ WM.UI = new function () {
         else if (document.getElementById('mw-whatlinkshere-list')) {
             nextNode = document.getElementById('bodyContent'
                                 ).getElementsByTagName('form')[0].nextSibling;
-            UI = (bot) ? WM.Bot._makeUI(bot,
+            var conf = WM.Cfg._getBot();
+            UI = (conf) ? WM.Bot._makeUI(conf,
                             [[document.getElementById('mw-whatlinkshere-list'),
                             0, "Pages"]]) : null;
             display = false;
@@ -207,14 +175,16 @@ WM.UI = new function () {
                                         ).getElementsByTagName('ol')[0]) {
             nextNode = document.getElementById('mw-linksearch-form'
                                                                 ).nextSibling;
-            UI = (bot) ? WM.Bot._makeUI(bot,
+            var conf = WM.Cfg._getBot();
+            UI = (conf) ? WM.Bot._makeUI(conf,
                         [[document.getElementById('bodyContent'
                         ).getElementsByTagName('ol')[0], 1, "Pages"]]) : null;
             display = false;
         }
         else if (document.getElementById('mw-prefixindex-list-table')) {
             nextNode = document.getElementById('mw-prefixindex-list-table');
-            UI = (bot) ? WM.Bot._makeUI(bot,
+            var conf = WM.Cfg._getBot();
+            UI = (conf) ? WM.Bot._makeUI(conf,
                                 [[nextNode.getElementsByTagName('tbody')[0],
                                 0, "Pages"]]) : null;
             display = false;
@@ -241,28 +211,31 @@ WM.UI = new function () {
             if (location.href.search(patt1A) > -1 ||
                                         location.href.search(patt1B) > -1) {
                 nextNode = document.getElementById('bodyContent');
-                UI = (special) ? makeButtons(special) : null;
+                var conf = WM.Cfg._getSpecial();
+                UI = (conf) ? makeButtons(conf) : null;
             }
             else if (location.href.search(patt2A) > -1 ||
                                         location.href.search(patt2B) > -1) {
                 nextNode = document.getElementById('mw-content-text'
                                             ).getElementsByTagName('h4')[0];
-                UI = (recentChanges) ? WM.Filters._makeUI(recentChanges) :
-                                                                        null;
+                var conf = WM.Cfg._getRecentChanges();
+                UI = (conf) ? WM.Filters._makeUI(conf) : null;
                 displayLog = false;
             }
             else if (location.href.search(patt3A) > -1 ||
                                         location.href.search(patt3B) > -1) {
                 nextNode = document.getElementById('mw-content-text'
                                             ).getElementsByTagName('ul')[0];
-                UI = (newPages) ? WM.Filters._makeUI(newPages) : null;
+                var conf = WM.Cfg._getNewPages();
+                UI = (conf) ? WM.Filters._makeUI(conf) : null;
                 displayLog = false;
             }
             else if (location.href.search(patt4A) > -1 ||
                                         location.href.search(patt4B) > -1) {
                 nextNode = document.getElementById('mw-content-text'
                                             ).getElementsByTagName('ul')[0];
-                UI = (bot) ? WM.Bot._makeUI(bot,
+                var conf = WM.Cfg._getBot();
+                UI = (conf) ? WM.Bot._makeUI(conf,
                                     [[document.getElementById('mw-content-text'
                                             ).getElementsByTagName('ul')[0],
                                     0, "Pages"]]) : null;
@@ -271,7 +244,8 @@ WM.UI = new function () {
             else if (document.getElementsByClassName('mw-spcontent'
                                                                 ).length > 0) {
                 nextNode = document.getElementsByClassName('mw-spcontent')[0];
-                UI = (bot) ? WM.Bot._makeUI(bot,
+                var conf = WM.Cfg._getBot();
+                UI = (conf) ? WM.Bot._makeUI(conf,
                                     [[nextNode.getElementsByTagName('ol')[0],
                                     0, "Pages"]]) : null;
                 display = false;
@@ -280,7 +254,8 @@ WM.UI = new function () {
                                                                 ).length > 0) {
                 nextNode = document.getElementsByClassName(
                                                 'mw-allpages-table-chunk')[0];
-                UI = (bot) ? WM.Bot._makeUI(bot,
+                var conf = WM.Cfg._getBot();
+                UI = (conf) ? WM.Bot._makeUI(conf,
                                 [[nextNode.getElementsByTagName('tbody')[0],
                                 0, "Pages"]]) : null;
                 display = false;

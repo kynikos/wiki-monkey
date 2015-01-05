@@ -28,6 +28,7 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/ArchWiki.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Bot.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Cat.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Cfg.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Diff.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Editor.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Filters.js
@@ -56,57 +57,53 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/plugins/SynchronizeInterlanguageLinks.js
 // ==/UserScript==
 
-WM.UI.setEditor([
-    [
-        ["ArchWikiFixHeader", "Fix header", null],
-        ["ArchWikiFixHeadings", "Fix headings", null],
-        ["ArchWikiFixLinks", "Fix external links", null],
-        ["FixFragments", "Fix section links", null],
-        ["ArchWikiNewTemplates", "Use code templates", null],
-        ["ExpandContractions", "Expand contractions", null],
-        ["MultipleLineBreaks", "Squash multiple line breaks", null],
-        ["ArchWikiSummaryToRelated", "Convert summary to related", null]
+WM.main({
+    "Editor": [
+        [
+            ["ArchWikiFixHeader", "Fix header", null],
+            ["ArchWikiFixHeadings", "Fix headings", null],
+            ["ArchWikiFixLinks", "Fix external links", null],
+            ["FixFragments", "Fix section links", null],
+            ["ArchWikiNewTemplates", "Use code templates", null],
+            ["ExpandContractions", "Expand contractions", null],
+            ["MultipleLineBreaks", "Squash multiple line breaks", null],
+            ["ArchWikiSummaryToRelated", "Convert summary to related", null]
+        ],
+        [
+            ["SimpleReplace", "RegExp substitution", ["1"]]
+        ],
+        [
+            ["FixLinkFragments", "Fix external section links", null],
+            ["SynchronizeInterlanguageLinks", "Sync interlanguage links"],
+            ["ArchWikiOldAURLinks", "Fix old AUR links", null],
+            ["ArchWikiUpdatePackageTemplates", "Update package templates",
+                                                                        null]
+        ]
     ],
-    [
-        ["SimpleReplace", "RegExp substitution", ["1"]]
+    "Diff": [
+        [
+            ["ArchWikiQuickReport", "Quick report",
+             ["1", "ArchWiki:Reports", "add report"]]
+        ]
     ],
-    [
-        ["FixLinkFragments", "Fix external section links", null],
-        ["SynchronizeInterlanguageLinks", "Sync interlanguage links"],
-        ["ArchWikiOldAURLinks", "Fix old AUR links", null],
-        ["ArchWikiUpdatePackageTemplates", "Update package templates", null]
-    ]
-]);
-
-WM.UI.setDiff([
-    [
-        ["ArchWikiQuickReport", "Quick report",
-         ["1", "ArchWiki:Reports", "add report"]]
-    ]
-]);
-
-WM.UI.setSpecial(null);
-
-WM.UI.setRecentChanges([
-    [
-        "ArchWikiRCFilter",
-        "Default filter",
-        {
-            language: "English",
-        }
-    ]
-]);
-
-WM.UI.setNewPages([
-    [
-        "ArchWikiNPFilter",
-        "Default filter",
-        {
-            language: "English",
-        }
-    ]
-]);
-
-WM.UI.setBot(null);
-
-WM.main();
+    "Special": null,
+    "RecentChanges": [
+        [
+            "ArchWikiRCFilter",
+            "Default filter",
+            {
+                language: "English",
+            }
+        ]
+    ],
+    "NewPages": [
+        [
+            "ArchWikiNPFilter",
+            "Default filter",
+            {
+                language: "English",
+            }
+        ]
+    ],
+    "Bot": null
+});

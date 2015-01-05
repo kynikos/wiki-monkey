@@ -28,6 +28,7 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/ArchPackages.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Bot.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Cat.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Cfg.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Diff.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Editor.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Filters.js
@@ -43,37 +44,32 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/plugins/ArchWikiRCFilter.js
 // ==/UserScript==
 
-WM.UI.setEditor(null);
-
-WM.UI.setDiff([
-    [
-        ["ArchWikiQuickReport", "Quick report",
-         ["1", "ArchWiki:Reports", "add report"]]
-    ]
-]);
-
-WM.UI.setSpecial(null);
-
-WM.UI.setRecentChanges([
-    [
-        "ArchWikiRCFilter",
-        "Default filter",
-        {
-            language: "English",
-        }
-    ]
-]);
-
-WM.UI.setNewPages([
-    [
-        "ArchWikiNPFilter",
-        "Default filter",
-        {
-            language: "English",
-        }
-    ]
-]);
-
-WM.UI.setBot(null);
-
-WM.main();
+WM.main({
+    "Editor": null,
+    "Diff": [
+        [
+            ["ArchWikiQuickReport", "Quick report",
+             ["1", "ArchWiki:Reports", "add report"]]
+        ]
+    ],
+    "Special": null,
+    "RecentChanges": [
+        [
+            "ArchWikiRCFilter",
+            "Default filter",
+            {
+                language: "English",
+            }
+        ]
+    ],
+    "NewPages": [
+        [
+            "ArchWikiNPFilter",
+            "Default filter",
+            {
+                language: "English",
+            }
+        ]
+    ],
+    "Bot": null
+});

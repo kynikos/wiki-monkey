@@ -27,6 +27,7 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/WikiMonkey.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Bot.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Cat.js
+// @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Cfg.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Diff.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Editor.js
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/modules/Filters.js
@@ -47,41 +48,37 @@
 // @require https://raw.github.com/kynikos/wiki-monkey/develop/plugins/UpdateCategoryTree.js
 // ==/UserScript==
 
-WM.UI.setEditor([
-    [
-        ["FixFragments", "Fix section links", null],
-        ["ExpandContractions", "Expand contractions", null],
-        ["MultipleLineBreaks", "Squash multiple line breaks", null]
+WM.main({
+    "Editor": [
+        [
+            ["FixFragments", "Fix section links", null],
+            ["ExpandContractions", "Expand contractions", null],
+            ["MultipleLineBreaks", "Squash multiple line breaks", null]
+        ],
+        [
+            ["SimpleReplace", "RegExp substitution", ["1"]]
+        ],
+        [
+            ["FixLinkFragments", "Fix external section links", null]
+        ]
     ],
-    [
-        ["SimpleReplace", "RegExp substitution", ["1"]]
+    "Diff": null,
+    "Special": [
+        [
+            ["UpdateCategoryTree", "Update category tree",
+             [{}, "automatic update"]]
+        ],
+        [
+            ["FixDoubleRedirects", "Fix double redirects",
+                                                        "fix double redirect"]
+        ]
     ],
-    [
-        ["FixLinkFragments", "Fix external section links", null]
+    "RecentChanges": null,
+    "NewPages": null,
+    "Bot": [
+        ["SimpleReplace", "RegExp substitution", ["1"]],
+        ["FixBacklinkFragments",
+                            "Fix links to specific sections of a target page",
+                            "fix links to specific sections"]
     ]
-]);
-
-WM.UI.setDiff(null);
-
-WM.UI.setSpecial([
-    [
-        ["UpdateCategoryTree", "Update category tree",
-         [{}, "automatic update"]]
-    ],
-    [
-        ["FixDoubleRedirects", "Fix double redirects", "fix double redirect"]
-    ]
-]);
-
-WM.UI.setRecentChanges(null);
-
-WM.UI.setNewPages(null);
-
-WM.UI.setBot([
-    ["SimpleReplace", "RegExp substitution", ["1"]],
-    ["FixBacklinkFragments",
-                        "Fix links to specific sections of a target page",
-                        "fix links to specific sections"]
-]);
-
-WM.main();
+});

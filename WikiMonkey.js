@@ -23,7 +23,8 @@ var WM = new function () {
 
     this.Plugins = {};
 
-    this.main = function () {
+    this.main = function (defaultConfig) {
+        WM.Cfg._load(defaultConfig);
         WM.UI._makeUI();
     };
 };
