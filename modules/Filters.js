@@ -48,7 +48,7 @@ WM.Filters = new function () {
 
         for (var f in filters) {
             option = document.createElement('option');
-            option.innerHTML = filters[f][1];
+            option.innerHTML = filters[f][0];
             selectFilter.appendChild(option);
         }
 
@@ -57,11 +57,12 @@ WM.Filters = new function () {
                 var id = document.getElementById('WikiMonkeyFilters-Select'
                             ).getElementsByTagName('select')[0].selectedIndex;
                 var UI = document.getElementById('WikiMonkeyFilters-Options');
+                var pluginInfo = WM.Cfg.getPlugin(filters[id][1]);
                 // [1] Note that this must also be executed immediately,
                 //   see [2]
-                var makeUI = WM.Plugins[filters[id][0]].makeUI;
+                var makeUI = pluginInfo[0].makeUI;
                 if (makeUI instanceof Function) {
-                    UI.replaceChild(makeUI(filters[id][2]), UI.firstChild);
+                    UI.replaceChild(makeUI(pluginInfo[2]), UI.firstChild);
                 }
                 else {
                     // Don't removeChild, otherwise if another plugin with
@@ -84,7 +85,8 @@ WM.Filters = new function () {
         applyFilter.addEventListener("click", function () {
             var id = document.getElementById('WikiMonkeyFilters-Select'
                             ).getElementsByTagName('select')[0].selectedIndex;
-            WM.Plugins[filters[id][0]].main(filters[id][2]);
+            var pluginInfo = WM.Cfg.getPlugin(filters[id][1]);
+            pluginInfo[0].main(pluginInfo[2]);
             this.disabled = true;
         }, false);
 
@@ -109,10 +111,12 @@ WM.Filters = new function () {
         var divFilter = document.createElement('div');
         divFilter.id = "WikiMonkeyFilters-Options";
 
+        var pluginInfo = WM.Cfg.getPlugin(filters[0][1]);
+
         // [2] Note that this is also executed onchange, see [1]
-        var makeUI = WM.Plugins[filters[0][0]].makeUI;
+        var makeUI = pluginInfo[0].makeUI;
         if (makeUI instanceof Function) {
-            divFilter.appendChild(makeUI(filters[0][2]));
+            divFilter.appendChild(makeUI(pluginInfo[2]));
         }
         else {
             divFilter.appendChild(document.createElement('div'));

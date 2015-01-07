@@ -506,7 +506,7 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
     };
 
     this.mainAuto = function (args, title, callBot, chainArgs) {
-        var summary = args[0];
+        var summary = args;
 
         WM.MW.callQueryEdit(title,
                     WM.Plugins.ArchWikiUpdatePackageTemplates.mainAutoReplace,

@@ -128,7 +128,7 @@ WM.Plugins.SimpleReplace = new function () {
     };
 
     this.main = function (args, callNext) {
-        var id = args[0];
+        var id = args;
 
         storeConfiguration(id);
 
@@ -156,7 +156,7 @@ WM.Plugins.SimpleReplace = new function () {
     };
 
     this.mainAuto = function (args, title, callBot, chainArgs) {
-        var id = args[0];
+        var id = args;
 
         storeConfiguration(id);
 

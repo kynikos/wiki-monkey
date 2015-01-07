@@ -208,6 +208,8 @@ WM.Plugins.FixBacklinkFragments = new function () {
     };
 
     this.mainAuto = function (args, title, callBot, chainArgs) {
+        var summary = args;
+
         var target = readTarget();
         WM.Log.logHidden("Target page: " + target);
 
@@ -232,11 +234,11 @@ WM.Plugins.FixBacklinkFragments = new function () {
                 WM.MW.callAPIGet(params,
                          null,
                          WM.Plugins.FixBacklinkFragments.mainAutoFindSections,
-                         [title, target, args, callBot]);
+                         [title, target, summary, callBot]);
             }
             else {
                 WM.Plugins.FixBacklinkFragments.mainAutoRead(target, chainArgs,
-                                                        title, args, callBot);
+                                                    title, summary, callBot);
             }
         }
         else {

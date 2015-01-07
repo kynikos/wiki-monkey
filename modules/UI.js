@@ -66,35 +66,37 @@ WM.UI = new function () {
 
             for (var f in row) {
                 var ff = row[f];
+                var pluginInfo = WM.Cfg.getPlugin(ff[1]);
 
                 var buttonFunction = document.createElement('input');
                 buttonFunction.setAttribute('type', 'button');
-                buttonFunction.setAttribute('value', ff[1]);
+                buttonFunction.setAttribute('value', ff[0]);
 
-                buttonFunction.addEventListener("click", (function (fn, arg) {
+                buttonFunction.addEventListener("click",
+                                                    (function (pluginInfo) {
                     return function () {
-                        WM.Log.logHidden("Plugin: " + fn);
-                        WM.Plugins[fn].main(arg, null);
+                        WM.Log.logHidden("Plugin: " + pluginInfo[1]);
+                        pluginInfo[0].main(pluginInfo[2], null);
                     };
-                })(ff[0], ff[2]), false);
+                })(pluginInfo), false);
 
-                var exFunction = (function (plugin) {
+                var exFunction = (function (pluginInfo) {
                     return function (args, callNext) {
-                        WM.Log.logHidden("Plugin: " + plugin);
-                        WM.Plugins[plugin].main(args, callNext);
+                        WM.Log.logHidden("Plugin: " + pluginInfo[1]);
+                        pluginInfo[0].main(pluginInfo[2], callNext);
                     };
-                })(ff[0]);
+                })(pluginInfo);
 
-                rowFunctions.push([exFunction, ff[2]]);
-                allFunctions.push([exFunction, ff[2]]);
+                rowFunctions.push([exFunction, pluginInfo[2]]);
+                allFunctions.push([exFunction, pluginInfo[2]]);
 
                 var divFunction = document.createElement('div');
                 divFunction.className = 'pluginUI';
                 divFunction.appendChild(buttonFunction);
 
-                var makeUI = WM.Plugins[ff[0]].makeUI;
+                var makeUI = pluginInfo[0].makeUI;
                 if (makeUI instanceof Function) {
-                    divFunction.appendChild(makeUI(ff[2]));
+                    divFunction.appendChild(makeUI(pluginInfo[2]));
                 }
 
                 divPlugins.appendChild(divFunction);

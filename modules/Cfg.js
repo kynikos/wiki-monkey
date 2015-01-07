@@ -191,6 +191,13 @@ WM.Cfg = new function () {
         return config["NewPages"];
     };
 
+    this.getPlugin = function (instanceName) {
+        var name = config.PluginInstances[instanceName][0];
+        var args = config.PluginInstances[instanceName][1];
+        var plugin = WM.Plugins[name];
+        return [plugin, name, args];
+    };
+
     this.save = function() {
         localStorage.setItem("WikiMonkey", JSON.stringify(config));
     };

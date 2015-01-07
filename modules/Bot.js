@@ -65,7 +65,7 @@ WM.Bot = new function () {
 
         for (var f in functions) {
             option = document.createElement('option');
-            option.innerHTML = functions[f][1];
+            option.innerHTML = functions[f][0];
             selectFunctions.appendChild(option);
         }
 
@@ -75,11 +75,12 @@ WM.Bot = new function () {
                                                 'WikiMonkeyBot-PluginSelect');
                 var id = select.selectedIndex;
                 var UI = document.getElementById('WikiMonkeyBotFunction');
+                var pluginInfo = WM.Cfg.getPlugin(fns[id][1]);
                 // [1] Note that this must also be executed immediately,
                 //   see [2]
-                var makeUI = WM.Plugins[fns[id][0]].makeBotUI;
+                var makeUI = pluginInfo[0].makeBotUI;
                 if (makeUI instanceof Function) {
-                    UI.replaceChild(makeUI(fns[id][2]), UI.firstChild);
+                    UI.replaceChild(makeUI(pluginInfo[2]), UI.firstChild);
                 }
                 else {
                     // Don't removeChild, otherwise if another plugin with
@@ -87,11 +88,11 @@ WM.Bot = new function () {
                     UI.replaceChild(document.createElement('div'),
                                                                 UI.firstChild);
                 }
-                WM.Bot.configuration.plugin = fns[id][0];
+                WM.Bot.configuration.plugin = pluginInfo[1];
                 WM.Bot.configuration.function_ = function (title, callContinue,
                                                                 chainArgs) {
-                    WM.Plugins[fns[id][0]].mainAuto(fns[id][2],
-                                            title, callContinue, chainArgs);
+                    pluginInfo[0].mainAuto(pluginInfo[2], title, callContinue,
+                                                                    chainArgs);
                 };
             }
         })(functions), false);
@@ -99,20 +100,22 @@ WM.Bot = new function () {
         var divFunction = document.createElement('div');
         divFunction.id = "WikiMonkeyBotFunction";
 
+        var pluginInfo = WM.Cfg.getPlugin(functions[0][1]);
+
         // [2] Note that this is also executed onchange, see [1]
-        var makeUI = WM.Plugins[functions[0][0]].makeBotUI;
+        var makeUI = pluginInfo[0].makeBotUI;
         if (makeUI instanceof Function) {
-            divFunction.appendChild(makeUI(functions[0][2]));
+            divFunction.appendChild(makeUI(pluginInfo[2]));
         }
         else {
             divFunction.appendChild(document.createElement('div'));
         }
         // Don't use "this.configuration"
-        WM.Bot.configuration.plugin = functions[0][0];
+        WM.Bot.configuration.plugin = pluginInfo[1];
         WM.Bot.configuration.function_ = function (title, callContinue,
                                                                 chainArgs) {
-            WM.Plugins[functions[0][0]].mainAuto(
-                            functions[0][2], title, callContinue, chainArgs);
+            pluginInfo[0].mainAuto(pluginInfo[2], title, callContinue,
+                                                                    chainArgs);
         };
 
         fieldset.appendChild(legend);
