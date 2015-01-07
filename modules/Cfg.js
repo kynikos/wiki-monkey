@@ -29,7 +29,7 @@ WM.Cfg = new function () {
          */
         Alib.CSS.addStyleElement("#WikiMonkey-prefsection textarea {" +
                                                             "height:30em;} " +
-            "#WikiMonkey-prefsection div, #WikiMonkey-prefsection p " +
+            "#WikiMonkey-prefsection div, #WikiMonkey-prefsection p.message " +
                             "{display:inline-block; margin-bottom:0.5em;} " +
             "#WikiMonkey-prefsection input {margin-right:0.5em;}" +
             "#WikiMonkey-prefsection input[value='Save'] {font-weight:bold;}");
@@ -93,11 +93,30 @@ WM.Cfg = new function () {
             .text("[help]");
 
         $("<p/>")
+            .addClass("message")
             .text("All pages running Wiki Monkey need to be refreshed " +
                                         "for saved changes to take effect. ")
             .append(help).appendTo(editor);
 
         $("<textarea/>").attr("id", "WikiMonkey-editor").appendTo(editor);
+
+        $("<p/>")
+            .text('Wiki Monkey version: ' + GM_info.script.version)
+            .appendTo(editor);
+
+        $("<p/>")
+            .text("Actually installed plugins (in general, a subset of " +
+                                    "those set in the loaded configuration):")
+            .appendTo(editor);
+
+        var list = $("<ul/>");
+
+        for (var plugin in WM.Plugins) {
+            $("<li/>").text(plugin).appendTo(list);
+        }
+
+        list.appendTo(editor);
+
         $("#preferences").children("fieldset").last().after(editor);
 
         resetEditor();
