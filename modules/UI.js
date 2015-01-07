@@ -189,6 +189,13 @@ WM.UI = new function () {
                                 0, "Pages"]]) : null;
             display = false;
         }
+        /*
+         * Making the interface shouldn't rely on saved configuration, in order
+         * to always make it possible to fix a misconfiguration
+         */
+        else if (document.getElementById('mw-prefs-form')) {
+            WM.Cfg._makeUI();
+        }
         else {
             var wikiUrls = WM.MW.getWikiUrls();
             var patt1A = new RegExp(Alib.RegEx.escapePattern(wikiUrls.full) +
@@ -288,6 +295,14 @@ WM.UI = new function () {
                 return false;
             }, false);
             legend.appendChild(hide);
+
+            legend.appendChild(document.createTextNode(' '));
+
+            var conf = document.createElement('a');
+            conf.href = WM.MW.getWikiPaths().short +
+                                            'Special:Preferences#wiki-monkey';
+            conf.innerHTML = '[conf]';
+            legend.appendChild(conf);
 
             legend.appendChild(document.createTextNode(' '));
 
