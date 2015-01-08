@@ -35,6 +35,7 @@
 // @require file:///mnt/archive/Development/wiki-monkey/modules/Filters.js
 // @require file:///mnt/archive/Development/wiki-monkey/modules/Interlanguage.js
 // @require file:///mnt/archive/Development/wiki-monkey/modules/Log.js
+// @require file:///mnt/archive/Development/wiki-monkey/modules/Menu.js
 // @require file:///mnt/archive/Development/wiki-monkey/modules/MW.js
 // @require file:///mnt/archive/Development/wiki-monkey/modules/Parser.js
 // @require file:///mnt/archive/Development/wiki-monkey/modules/Tables.js
