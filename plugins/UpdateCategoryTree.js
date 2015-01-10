@@ -21,27 +21,26 @@
 WM.Plugins.UpdateCategoryTree = new function () {
     "use strict";
 
-    this.makeUI = function (args) {
-        var tocs = args[0];
+    this.main = function (args, callNext) {
+        WM.MW.isUserBot(this.mainContinue, [args, callNext]);
+    };
 
-        Alib.CSS.addStyleElement("#UpdateCategoryTree-select " +
-                                                    "{margin-left:0.33em;}");
-
-        var select = document.createElement('select');
-        var option;
-        for (var key in tocs) {
-            option = document.createElement('option');
-            option.value = tocs[key].page;
-            option.innerHTML = tocs[key].page;
-            select.appendChild(option);
-        }
-        option = document.createElement('option');
-        option.value = '*';
-        option.innerHTML = 'UPDATE ALL';
-        select.appendChild(option);
-        select.id = "UpdateCategoryTree-select";
-
-        return select;
+    this.mainContinue = function (botTest, args) {
+        readToC({
+            params: args[0],
+            minInterval: (botTest) ? 60000 : 21600000,
+            edittoken: "",
+            timestamp: "",
+            source: "",
+            startId: 0,
+            endId: 0,
+            treeText: "",
+            startMark: "START AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK-->",
+            endMark: "<!--END AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK",
+            altNames: {},
+            summary: args[0].summary,
+            callNext: args[1],
+        });
     };
 
     var readToC = function (args) {
@@ -77,13 +76,19 @@ WM.Plugins.UpdateCategoryTree = new function () {
             else {
                 WM.Log.logError("Cannot find insertion marks in " +
                     WM.Log.linkToWikiPage(args.params.page, args.params.page));
-                iterateTocs(args);
+
+                if (args.callNext) {
+                    args.callNext();
+                }
             }
         }
         else {
             WM.Log.logWarning(WM.Log.linkToWikiPage(args.params.page,
                         args.params.page) + ' has been updated too recently');
-            iterateTocs(args);
+
+            if (args.callNext) {
+                args.callNext();
+            }
         }
     };
 
@@ -229,7 +234,10 @@ WM.Plugins.UpdateCategoryTree = new function () {
         else {
             WM.Log.logInfo(WM.Log.linkToWikiPage(args.params.page,
                                 args.params.page) + ' is already up to date');
-            iterateTocs(args);
+
+            if (args.callNext) {
+                args.callNext();
+            }
         }
     };
 
@@ -237,64 +245,15 @@ WM.Plugins.UpdateCategoryTree = new function () {
         if (res.edit && res.edit.result == 'Success') {
             WM.Log.logInfo(WM.Log.linkToWikiPage(args.params.page,
                                     args.params.page) + ' correctly updated');
-            iterateTocs(args);
+
+            if (args.callNext) {
+                args.callNext();
+            }
         }
         else {
             WM.Log.logError(WM.Log.linkToWikiPage(args.params.page,
                     args.params.page) + ' has not been updated!\n' +
                     res['error']['info'] + " (" + res['error']['code'] + ")");
         }
-    };
-
-    var iterateTocs = function (args) {
-        args.index++;
-        args.params = args.tocs[args.index];
-        if (args.tocs[args.index]) {
-            readToC(args);
-        }
-        else {
-            WM.Log.logInfo("Operations completed, check the log for " +
-                                                        "warnings or errors");
-            if (args.callNext) {
-                args.callNext();
-            }
-        }
-    };
-
-    this.main = function (args, callNext) {
-        var tocs = args[0];
-        var summary = args[1];
-
-        var select = document.getElementById("UpdateCategoryTree-select");
-        var value = select.options[select.selectedIndex].value;
-
-        WM.MW.isUserBot(this.mainContinue, [tocs, summary, select, value,
-                                                                    callNext]);
-    };
-
-    this.mainContinue = function (botTest, args) {
-        var tocs = args[0];
-        var summary = args[1];
-        var select = args[2];
-        var value = args[3];
-        var callNext = args[4];
-
-        iterateTocs({
-            tocs: (value == '*') ? tocs : [tocs[select.selectedIndex]],
-            minInterval: (botTest) ? 60000 : 21600000,
-            index: -1,
-            params: {},
-            edittoken: "",
-            timestamp: "",
-            source: "",
-            startId: 0,
-            endId: 0,
-            treeText: "",
-            startMark: "START AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK-->",
-            endMark: "<!--END AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK",
-            altNames: {},
-            summary: summary,
-            callNext: callNext,
-        });
     };
 };
