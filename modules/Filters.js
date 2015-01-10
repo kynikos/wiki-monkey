@@ -34,50 +34,63 @@ WM.Filters = new function () {
                         "{margin-right:0.4em;} " +
                     "#WikiMonkeyFilters-Options {clear:both;}");
 
+        var ffilters = [];
         var selectFilter = $('<select/>').change(updateFilterUI(filters));
 
         for (var f in filters) {
-            $('<option/>').text(filters[f][0]).appendTo(selectFilter);
+            // This allows to disable an entry by giving it any second
+            // parameter that evaluates to false
+            if (filters[f][1]) {
+                ffilters.push(filters[f]);
+                $('<option/>').text(filters[f][0]).appendTo(selectFilter);
+            }
         }
 
-        var applyFilterDiv = $('<div/>').attr('id', 'WikiMonkeyFilters-Apply');
+        if (ffilters.length) {
+            var applyFilterDiv = $('<div/>')
+                .attr('id', 'WikiMonkeyFilters-Apply');
 
-        $('<input/>')
-            .attr('type', 'button')
-            .val('Apply filter')
-            .click(executePlugin(filters))
-            .appendTo(applyFilterDiv);
+            $('<input/>')
+                .attr('type', 'button')
+                .val('Apply filter')
+                .click(executePlugin(ffilters))
+                .appendTo(applyFilterDiv);
 
-        $('<input/>')
-            .attr('type', 'checkbox')
-            .change(toggleLog)
-            .appendTo(applyFilterDiv);
+            $('<input/>')
+                .attr('type', 'checkbox')
+                .change(toggleLog)
+                .appendTo(applyFilterDiv);
 
-        $('<span/>')
-            .text('Show Log')
-            .appendTo(applyFilterDiv);
+            $('<span/>')
+                .text('Show Log')
+                .appendTo(applyFilterDiv);
 
-        var divFilter = $('<div/>').attr('id', "WikiMonkeyFilters-Options");
+            var divFilter = $('<div/>')
+                .attr('id', "WikiMonkeyFilters-Options");
 
-        // This allows updateFilterUI replace it the first time
-        $('<div/>').appendTo(divFilter);
-        doUpdateFilterUI(divFilter, filters, 0);
+            // This allows updateFilterUI replace it the first time
+            $('<div/>').appendTo(divFilter);
+            doUpdateFilterUI(divFilter, ffilters, 0);
 
-        var selectFilterP = $('<p/>').append(selectFilter);
+            var selectFilterP = $('<p/>').append(selectFilter);
 
-        var selectFilterDiv = $('<div/>')
-            .attr('id', 'WikiMonkeyFilters-Select')
-            .append(selectFilterP);
+            var selectFilterDiv = $('<div/>')
+                .attr('id', 'WikiMonkeyFilters-Select')
+                .append(selectFilterP);
 
-        return $('<div/>')
-            .attr('id', 'WikiMonkeyFilters')
-            .append(selectFilterDiv)
-            .append(applyFilterDiv)
-            .append(divFilter)
-            [0];
+            return $('<div/>')
+                .attr('id', 'WikiMonkeyFilters')
+                .append(selectFilterDiv)
+                .append(applyFilterDiv)
+                .append(divFilter)
+                [0];
+        }
+        else {
+            return false;
+        }
     };
 
-    var updateFilterUI = function (filters) {
+    var updateFilterUI = function (ffilters) {
         return function (event) {
             var UI = $('#WikiMonkeyFilters-Options');
             var id = $('#WikiMonkeyFilters-Select')
@@ -85,12 +98,12 @@ WM.Filters = new function () {
                 .first()
                 [0].selectedIndex;
 
-            doUpdateFilterUI(UI, filters, id);
+            doUpdateFilterUI(UI, ffilters, id);
         };
     };
 
-    var doUpdateFilterUI = function (UI, filters, id) {
-        var pluginInfo = WM.Cfg.getPlugin(filters[id][1]);
+    var doUpdateFilterUI = function (UI, ffilters, id) {
+        var pluginInfo = WM.Cfg.getPlugin(ffilters[id][1]);
         var makeUI = pluginInfo[0].makeUI;
 
         if (makeUI instanceof Function) {
@@ -103,14 +116,14 @@ WM.Filters = new function () {
         }
     };
 
-    var executePlugin = function (filters) {
+    var executePlugin = function (ffilters) {
         return function (event) {
             var id = $('#WikiMonkeyFilters-Select')
                 .find('select')
                 .first()
                 [0].selectedIndex;
 
-            var pluginInfo = WM.Cfg.getPlugin(filters[id][1]);
+            var pluginInfo = WM.Cfg.getPlugin(ffilters[id][1]);
             pluginInfo[0].main(pluginInfo[2]);
 
             this.disabled = true;

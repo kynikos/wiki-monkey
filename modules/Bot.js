@@ -46,10 +46,16 @@ WM.Bot = new function () {
                     "a.WikiMonkeyBotFailed {background-color:red; " +
                                                     "padding:0.2em 0.4em;}");
 
-        divContainer.appendChild(makeFunctionUI(functions));
-        divContainer.appendChild(makeConfUI(lists));
+        var fdiv = makeFunctionUI(functions);
 
-        return divContainer;
+        if (fdiv) {
+            divContainer.appendChild(fdiv);
+            divContainer.appendChild(makeConfUI(lists));
+            return divContainer;
+        }
+        else {
+            return false;
+        }
     };
 
     var makeFunctionUI = function (functions) {
@@ -62,67 +68,78 @@ WM.Bot = new function () {
         selectFunctions.id = 'WikiMonkeyBot-PluginSelect';
 
         var option;
+        var ffunctions = [];
 
         for (var f in functions) {
-            option = document.createElement('option');
-            option.innerHTML = functions[f][0];
-            selectFunctions.appendChild(option);
+            // This allows to disable an entry by giving it any second
+            // parameter that evaluates to false
+            if (functions[f][1]) {
+                ffunctions.push(functions[f]);
+                option = document.createElement('option');
+                option.innerHTML = functions[f][0];
+                selectFunctions.appendChild(option);
+            }
         }
 
-        selectFunctions.addEventListener("change", (function (fns) {
-            return function () {
-                var select = document.getElementById(
+        if (ffunctions.length) {
+            selectFunctions.addEventListener("change", (function (fns) {
+                return function () {
+                    var select = document.getElementById(
                                                 'WikiMonkeyBot-PluginSelect');
-                var id = select.selectedIndex;
-                var UI = document.getElementById('WikiMonkeyBotFunction');
-                var pluginInfo = WM.Cfg.getPlugin(fns[id][1]);
-                // [1] Note that this must also be executed immediately,
-                //   see [2]
-                var makeUI = pluginInfo[0].makeBotUI;
-                if (makeUI instanceof Function) {
-                    UI.replaceChild(makeUI(pluginInfo[2]), UI.firstChild);
-                }
-                else {
-                    // Don't removeChild, otherwise if another plugin with
-                    // interface is selected, replaceChild won't work
-                    UI.replaceChild(document.createElement('div'),
+                    var id = select.selectedIndex;
+                    var UI = document.getElementById('WikiMonkeyBotFunction');
+                    var pluginInfo = WM.Cfg.getPlugin(fns[id][1]);
+                    // [1] Note that this must also be executed immediately,
+                    //   see [2]
+                    var makeUI = pluginInfo[0].makeBotUI;
+                    if (makeUI instanceof Function) {
+                        UI.replaceChild(makeUI(pluginInfo[2]), UI.firstChild);
+                    }
+                    else {
+                        // Don't removeChild, otherwise if another plugin with
+                        // interface is selected, replaceChild won't work
+                        UI.replaceChild(document.createElement('div'),
                                                                 UI.firstChild);
+                    }
+                    WM.Bot.configuration.plugin = pluginInfo[1];
+                    WM.Bot.configuration.function_ = function (title,
+                                                    callContinue, chainArgs) {
+                        pluginInfo[0].mainAuto(pluginInfo[2], title,
+                                                    callContinue, chainArgs);
+                    };
                 }
-                WM.Bot.configuration.plugin = pluginInfo[1];
-                WM.Bot.configuration.function_ = function (title, callContinue,
-                                                                chainArgs) {
-                    pluginInfo[0].mainAuto(pluginInfo[2], title, callContinue,
-                                                                    chainArgs);
-                };
+            })(ffunctions), false);
+
+            var divFunction = document.createElement('div');
+            divFunction.id = "WikiMonkeyBotFunction";
+
+            var pluginInfo = WM.Cfg.getPlugin(ffunctions[0][1]);
+
+            // [2] Note that this is also executed onchange, see [1]
+            var makeUI = pluginInfo[0].makeBotUI;
+            if (makeUI instanceof Function) {
+                divFunction.appendChild(makeUI(pluginInfo[2]));
             }
-        })(functions), false);
+            else {
+                divFunction.appendChild(document.createElement('div'));
+            }
+            // Don't use "this.configuration"
+            WM.Bot.configuration.plugin = pluginInfo[1];
+            WM.Bot.configuration.function_ = function (title, callContinue,
+                                                                chainArgs) {
+                pluginInfo[0].mainAuto(pluginInfo[2], title, callContinue,
+                                                                    chainArgs);
+            };
 
-        var divFunction = document.createElement('div');
-        divFunction.id = "WikiMonkeyBotFunction";
+            fieldset.appendChild(legend);
+            fieldset.appendChild(selectFunctions);
+            fieldset.appendChild(divFunction);
 
-        var pluginInfo = WM.Cfg.getPlugin(functions[0][1]);
-
-        // [2] Note that this is also executed onchange, see [1]
-        var makeUI = pluginInfo[0].makeBotUI;
-        if (makeUI instanceof Function) {
-            divFunction.appendChild(makeUI(pluginInfo[2]));
+            return fieldset;
         }
         else {
-            divFunction.appendChild(document.createElement('div'));
+            return false;
         }
-        // Don't use "this.configuration"
-        WM.Bot.configuration.plugin = pluginInfo[1];
-        WM.Bot.configuration.function_ = function (title, callContinue,
-                                                                chainArgs) {
-            pluginInfo[0].mainAuto(pluginInfo[2], title, callContinue,
-                                                                    chainArgs);
-        };
-
-        fieldset.appendChild(legend);
-        fieldset.appendChild(selectFunctions);
-        fieldset.appendChild(divFunction);
-
-        return fieldset;
     };
 
     this.configuration = {plugin: null,

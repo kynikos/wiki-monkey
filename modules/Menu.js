@@ -28,10 +28,14 @@ WM.Menu = new function () {
                 "#WikiMonkeyMenu input.margin {margin:0 0.33em 0.33em 0;}");
 
         mainDiv = $('<div/>').attr('id', 'WikiMonkeyMenu');
-        makeSubMenus(null, plugins);
-        mainDiv.children().last().show();
 
-        return mainDiv[0];
+        if (makeSubMenus(null, plugins)) {
+            mainDiv.children().last().show();
+            return mainDiv[0];
+        }
+        else {
+            return false;
+        }
     };
 
     var makeSubMenus = function (superMenu, entries) {
@@ -68,7 +72,9 @@ WM.Menu = new function () {
                     .addClass('margin')
                     .appendTo(menuDiv);
             }
-            else {
+            // This allows to disable an entry by giving it any second
+            // parameter that evaluates to false
+            else if (entries[e][1]) {
                 var smres = makeSubMenus(menuDiv, entries[e][1]);
                 var subMenuDiv = smres[0];
                 var subGroupActions = smres[1];
@@ -89,6 +95,9 @@ WM.Menu = new function () {
         if (menuDiv[0].hasChildNodes()) {
             menuDiv.hide().appendTo(mainDiv);
             return [menuDiv, groupActions];
+        }
+        else {
+            return false;
         }
     };
 
