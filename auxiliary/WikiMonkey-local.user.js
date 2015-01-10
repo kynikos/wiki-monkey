@@ -391,43 +391,37 @@ WM.main({
     },
     "Editor": [
         [
-            ["Fix header", "archWikiFixHeader"],
-            ["Fix headings", "archWikiFixHeadings"],
-            ["Fix external links", "archWikiFixLinks"],
-            ["Fix section links", "fixFragments"],
-            ["Use code templates", "archWikiNewTemplates"],
-            ["Expand contractions", "expandContractions"],
-            ["Squash multiple line breaks", "multipleLineBreaks"],
-            ["Convert summary to related", "archWikiSummaryToRelated"]
+            "Text plugins", [
+                ["Fix header", "archWikiFixHeader"],
+                ["Fix headings", "archWikiFixHeadings"],
+                ["Fix external links", "archWikiFixLinks"],
+                ["Fix section links", "fixFragments"],
+                ["Use code templates", "archWikiNewTemplates"],
+                ["Expand contractions", "expandContractions"],
+                ["Squash multiple line breaks", "multipleLineBreaks"],
+                ["Convert summary to related", "archWikiSummaryToRelated"]
+            ]
         ],
+        ["RegExp substitution", "simpleReplace"],
         [
-            ["RegExp substitution", "simpleReplace"]
-        ],
-        [
-            ["Fix external section links", "fixLinkFragments"],
-            ["Sync interlanguage links",
-                                    "synchronizeInterlanguageLinks"],
-            ["Fix old AUR links", "archWikiOldAURLinks"],
-            ["Update package templates",
-                                    "archWikiUpdatePackageTemplates"]
+            "Query plugins", [
+                ["Fix external section links", "fixLinkFragments"],
+                ["Sync interlanguage links",
+                                        "synchronizeInterlanguageLinks"],
+                ["Fix old AUR links", "archWikiOldAURLinks"],
+                ["Update package templates",
+                                        "archWikiUpdatePackageTemplates"]
+            ]
         ]
     ],
     "Diff": [
-        [
-            ["Quick report", "archWikiQuickReport"]
-        ],
-        [
-            ["Save discussion", "archWikiSaveTalk"]
-        ]
+        ["Quick report", "archWikiQuickReport"],
+        ["Save discussion", "archWikiSaveTalk"]
     ],
     "Special": [
-        [
-            ["Update category tree", "updateCategoryTree"]
-        ],
-        [
-            ["Fix double redirects", "fixDoubleRedirects"],
-            ["Sort Admins and Maintainers", "archWikiSortContacts"]
-        ]
+        ["Update category tree", "updateCategoryTree"],
+        ["Fix double redirects", "fixDoubleRedirects"],
+        ["Sort Admins and Maintainers", "archWikiSortContacts"]
     ],
     "RecentChanges": [
         ["Default filter", "archWikiRCFilter"]
