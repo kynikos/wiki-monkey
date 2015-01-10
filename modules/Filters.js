@@ -22,9 +22,6 @@ WM.Filters = new function () {
     "use strict";
 
     this._makeUI = function (filters) {
-        var divContainer = document.createElement('div');
-        divContainer.id = 'WikiMonkeyFilters';
-
         Alib.CSS.addStyleElement("#WikiMonkeyFilters-Select, " +
                     "#WikiMonkeyFilters-Apply {float:left;} " +
                     "#WikiMonkeyFilters-Select {width:100%; " +
@@ -37,95 +34,95 @@ WM.Filters = new function () {
                         "{margin-right:0.4em;} " +
                     "#WikiMonkeyFilters-Options {clear:both;}");
 
-        var selectFilterDiv = document.createElement('div');
-        selectFilterDiv.id = 'WikiMonkeyFilters-Select';
-
-        var selectFilterP = document.createElement('p');
-
-        var selectFilter = document.createElement('select');
-
-        var option;
+        var selectFilter = $('<select/>').change(updateFilterUI(filters));
 
         for (var f in filters) {
-            option = document.createElement('option');
-            option.innerHTML = filters[f][0];
-            selectFilter.appendChild(option);
+            $('<option/>').text(filters[f][0]).appendTo(selectFilter);
         }
 
-        selectFilter.addEventListener("change", (function (filters) {
-            return function () {
-                var id = document.getElementById('WikiMonkeyFilters-Select'
-                            ).getElementsByTagName('select')[0].selectedIndex;
-                var UI = document.getElementById('WikiMonkeyFilters-Options');
-                var pluginInfo = WM.Cfg.getPlugin(filters[id][1]);
-                // [1] Note that this must also be executed immediately,
-                //   see [2]
-                var makeUI = pluginInfo[0].makeUI;
-                if (makeUI instanceof Function) {
-                    UI.replaceChild(makeUI(pluginInfo[2]), UI.firstChild);
-                }
-                else {
-                    // Don't removeChild, otherwise if another plugin with
-                    // interface is selected, replaceChild won't work
-                    UI.replaceChild(document.createElement('div'),
-                                                                UI.firstChild);
-                }
-            }
-        })(filters), false);
+        var applyFilterDiv = $('<div/>').attr('id', 'WikiMonkeyFilters-Apply');
 
-        selectFilterP.appendChild(selectFilter);
-        selectFilterDiv.appendChild(selectFilterP);
+        $('<input/>')
+            .attr('type', 'button')
+            .val('Apply filter')
+            .click(executePlugin(filters))
+            .appendTo(applyFilterDiv);
 
-        var applyFilterDiv = document.createElement('div');
-        applyFilterDiv.id = 'WikiMonkeyFilters-Apply';
+        $('<input/>')
+            .attr('type', 'checkbox')
+            .change(toggleLog)
+            .appendTo(applyFilterDiv);
 
-        var applyFilter = document.createElement('input');
-        applyFilter.type = 'button';
-        applyFilter.value = 'Apply filter';
-        applyFilter.addEventListener("click", function () {
-            var id = document.getElementById('WikiMonkeyFilters-Select'
-                            ).getElementsByTagName('select')[0].selectedIndex;
-            var pluginInfo = WM.Cfg.getPlugin(filters[id][1]);
-            pluginInfo[0].main(pluginInfo[2]);
-            this.disabled = true;
-        }, false);
+        $('<span/>')
+            .text('Show Log')
+            .appendTo(applyFilterDiv);
 
-        applyFilterDiv.appendChild(applyFilter);
+        var divFilter = $('<div/>').attr('id', "WikiMonkeyFilters-Options");
 
-        var showLog = document.createElement('input');
-        showLog.type = 'checkbox';
-        showLog.addEventListener("change", function () {
-            document.getElementById('WikiMonkeyLog').style.display =
-                                            (this.checked) ? 'block' : 'none';
-            document.getElementById('WikiMonkeyFilters').style.marginBottom =
-                                                (this.checked) ? '1em' : '0';
-        }, false);
+        // This allows updateFilterUI replace it the first time
+        $('<div/>').appendTo(divFilter);
+        doUpdateFilterUI(divFilter, filters, 0);
 
-        applyFilterDiv.appendChild(showLog);
+        var selectFilterP = $('<p/>').append(selectFilter);
 
-        var showLogLabel = document.createElement('span');
-        showLogLabel.innerHTML = 'Show Log';
+        var selectFilterDiv = $('<div/>')
+            .attr('id', 'WikiMonkeyFilters-Select')
+            .append(selectFilterP);
 
-        applyFilterDiv.appendChild(showLogLabel);
+        return $('<div/>')
+            .attr('id', 'WikiMonkeyFilters')
+            .append(selectFilterDiv)
+            .append(applyFilterDiv)
+            .append(divFilter)
+            [0];
+    };
 
-        var divFilter = document.createElement('div');
-        divFilter.id = "WikiMonkeyFilters-Options";
+    var updateFilterUI = function (filters) {
+        return function (event) {
+            var UI = $('#WikiMonkeyFilters-Options');
+            var id = $('#WikiMonkeyFilters-Select')
+                .find('select')
+                .first()
+                [0].selectedIndex;
 
-        var pluginInfo = WM.Cfg.getPlugin(filters[0][1]);
+            doUpdateFilterUI(UI, filters, id);
+        };
+    };
 
-        // [2] Note that this is also executed onchange, see [1]
+    var doUpdateFilterUI = function (UI, filters, id) {
+        var pluginInfo = WM.Cfg.getPlugin(filters[id][1]);
         var makeUI = pluginInfo[0].makeUI;
+
         if (makeUI instanceof Function) {
-            divFilter.appendChild(makeUI(pluginInfo[2]));
+            UI.children().first().replaceWith(makeUI(pluginInfo[2]));
         }
         else {
-            divFilter.appendChild(document.createElement('div'));
+            // Don't remove, otherwise if another plugin with interface is
+            // selected, replaceWith won't work
+            UI.children().first().replaceWith($('<div/>'));
         }
+    };
 
-        divContainer.appendChild(selectFilterDiv);
-        divContainer.appendChild(applyFilterDiv);
-        divContainer.appendChild(divFilter);
+    var executePlugin = function (filters) {
+        return function (event) {
+            var id = $('#WikiMonkeyFilters-Select')
+                .find('select')
+                .first()
+                [0].selectedIndex;
 
-        return divContainer;
+            var pluginInfo = WM.Cfg.getPlugin(filters[id][1]);
+            pluginInfo[0].main(pluginInfo[2]);
+
+            this.disabled = true;
+        };
+    };
+
+    var toggleLog = function (event) {
+        if (this.checked) {
+            $('#WikiMonkeyLog').show();
+        }
+        else {
+            $('#WikiMonkeyLog').hide();
+        }
     };
 };
