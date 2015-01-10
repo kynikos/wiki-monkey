@@ -74,6 +74,15 @@ WM.Bot = new function () {
             // This allows to disable an entry by giving it any second
             // parameter that evaluates to false
             if (functions[f][1]) {
+                // This protects from configurations that define plugins
+                // that are actually not installed
+                try {
+                    WM.Cfg.getPlugin(functions[f][1]);
+                }
+                catch (error) {
+                    continue;
+                }
+
                 ffunctions.push(functions[f]);
                 option = document.createElement('option');
                 option.innerHTML = functions[f][0];

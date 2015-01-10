@@ -57,7 +57,14 @@ WM.Menu = new function () {
                 .val(entries[e][0]);
 
             if (typeof(entries[e][1]) === 'string') {
-                var pluginInfo = WM.Cfg.getPlugin(entries[e][1]);
+                // This protects from configurations that define plugins
+                // that are actually not installed
+                try {
+                    var pluginInfo = WM.Cfg.getPlugin(entries[e][1]);
+                }
+                catch (error) {
+                    continue;
+                }
 
                 if (pluginInfo[0].makeUI) {
                     entry.click(makeEntryUI(menuDiv, pluginInfo));

@@ -41,6 +41,15 @@ WM.Filters = new function () {
             // This allows to disable an entry by giving it any second
             // parameter that evaluates to false
             if (filters[f][1]) {
+                // This protects from configurations that define plugins
+                // that are actually not installed
+                try {
+                    WM.Cfg.getPlugin(filters[f][1]);
+                }
+                catch (error) {
+                    continue;
+                }
+
                 ffilters.push(filters[f]);
                 $('<option/>').text(filters[f][0]).appendTo(selectFilter);
             }
