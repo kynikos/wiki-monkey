@@ -176,11 +176,21 @@ WM.main({
         ],
         "synchronizeInterlanguageLinks": [
             "SynchronizeInterlanguageLinks",
-            null
+            [
+                "ArchWiki",
+                "ArchWiki",
+                "ArchWiki",
+                null
+            ]
         ],
         "synchronizeInterlanguageLinksBot": [
             "SynchronizeInterlanguageLinks",
-            "synchronized interlanguage links with the other wikis"
+            [
+                "ArchWiki",
+                "ArchWiki",
+                "ArchWiki",
+                "synchronized interlanguage links with the other wikis"
+            ]
         ],
         "updateCategoryTreeAr": [
             "UpdateCategoryTree",
