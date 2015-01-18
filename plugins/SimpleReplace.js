@@ -21,7 +21,7 @@
 WM.Plugins.SimpleReplace = new function () {
     "use strict";
 
-    var makeUI = function (id) {
+    var makeUI = function () {
         Alib.CSS.addStyleElement("#WikiMonkey-SimpleReplace div " +
                                                 "{margin-bottom:0.33em;} " +
                             "#WikiMonkey-SimpleReplace input[type='text'] " +
@@ -37,11 +37,11 @@ WM.Plugins.SimpleReplace = new function () {
 
         var regexp = document.createElement('input');
         regexp.setAttribute('type', 'text');
-        regexp.id = "WikiMonkey-SimpleReplace-RegExp-" + id;
+        regexp.id = "WikiMonkey-SimpleReplace-RegExp";
 
         var ignoreCase = document.createElement('input');
         ignoreCase.setAttribute('type', 'checkbox');
-        ignoreCase.id = "WikiMonkey-SimpleReplace-IgnoreCase-" + id;
+        ignoreCase.id = "WikiMonkey-SimpleReplace-IgnoreCase";
 
         var ignoreCaseLabel = document.createElement('span');
         ignoreCaseLabel.innerHTML = 'i';
@@ -58,7 +58,7 @@ WM.Plugins.SimpleReplace = new function () {
 
         var newString = document.createElement('input');
         newString.setAttribute('type', 'text');
-        newString.id = "WikiMonkey-SimpleReplace-NewString-" + id;
+        newString.id = "WikiMonkey-SimpleReplace-NewString";
 
         par2.appendChild(newStringLabel);
         par2.appendChild(newString);
@@ -70,12 +70,11 @@ WM.Plugins.SimpleReplace = new function () {
     };
 
     this.makeUI = function (args) {
-        return makeUI(args[0]);
+        return makeUI();
     };
 
     this.makeBotUI = function (args) {
-        var id = args[0];
-        var divMain = makeUI(id);
+        var divMain = makeUI();
         var par3 = document.createElement('div');
 
         var summaryLabel = document.createElement('span');
@@ -83,7 +82,7 @@ WM.Plugins.SimpleReplace = new function () {
 
         var summary = document.createElement('input');
         summary.setAttribute('type', 'text');
-        summary.id = "WikiMonkey-SimpleReplace-Summary-" + id;
+        summary.id = "WikiMonkey-SimpleReplace-Summary";
 
         par3.appendChild(summaryLabel);
         par3.appendChild(summary);
@@ -95,13 +94,13 @@ WM.Plugins.SimpleReplace = new function () {
 
     var configuration;
 
-    var storeConfiguration = function (id) {
+    var storeConfiguration = function () {
         configuration = {pattern: document.getElementById(
-                                "WikiMonkey-SimpleReplace-RegExp-" + id).value,
+                                "WikiMonkey-SimpleReplace-RegExp").value,
                 ignoreCase: document.getElementById(
-                        "WikiMonkey-SimpleReplace-IgnoreCase-" + id).checked,
+                        "WikiMonkey-SimpleReplace-IgnoreCase").checked,
                 newString: document.getElementById(
-                            "WikiMonkey-SimpleReplace-NewString-" + id).value,
+                            "WikiMonkey-SimpleReplace-NewString").value,
         };
 
         WM.Log.logHidden("Pattern: " + configuration.pattern);
@@ -115,9 +114,7 @@ WM.Plugins.SimpleReplace = new function () {
     };
 
     this.main = function (args, callNext) {
-        var id = args;
-
-        storeConfiguration(id);
+        storeConfiguration();
 
         try {
             storeRegExp();
@@ -143,9 +140,7 @@ WM.Plugins.SimpleReplace = new function () {
     };
 
     this.mainAuto = function (args, title, callBot, chainArgs) {
-        var id = args;
-
-        storeConfiguration(id);
+        storeConfiguration();
 
         try {
             storeRegExp();
@@ -158,12 +153,12 @@ WM.Plugins.SimpleReplace = new function () {
         }
 
         var summary = document.getElementById(
-                            "WikiMonkey-SimpleReplace-Summary-" + id).value;
+                                    "WikiMonkey-SimpleReplace-Summary").value;
 
         if (summary != "") {
             WM.MW.callQueryEdit(title,
                                 WM.Plugins.SimpleReplace.mainAutoWrite,
-                                [id, summary, callBot]);
+                                [summary, callBot]);
         }
         else {
             WM.Log.logError("The edit summary cannot be empty");
@@ -172,9 +167,8 @@ WM.Plugins.SimpleReplace = new function () {
     };
 
     this.mainAutoWrite = function (title, source, timestamp, edittoken, args) {
-        var id = args[0];
-        var summary = args[1];
-        var callBot = args[2];
+        var summary = args[0];
+        var callBot = args[1];
 
         var newtext = source.replace(configuration.regExp,
                                                     configuration.newString);

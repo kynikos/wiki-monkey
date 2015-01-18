@@ -172,7 +172,7 @@ WM.main({
         ],
         "simpleReplace": [
             "SimpleReplace",
-            "1"
+            null
         ],
         "synchronizeInterlanguageLinks": [
             "SynchronizeInterlanguageLinks",
