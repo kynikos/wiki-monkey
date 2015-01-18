@@ -22,7 +22,23 @@ WM.Plugins.UpdateCategoryTree = new function () {
     "use strict";
 
     this.main = function (args, callNext) {
-        WM.MW.isUserBot(this.mainContinue, [args, callNext]);
+        var inparams = args[0];
+        var summary = args[1];
+
+        if (inparams.constructor === Array) {
+            if (inparams[0] == "ArchWiki") {
+                var params = WM.ArchWiki.getTableOfContents(inparams[1]);
+            }
+            else {
+                WM.Log.logError("Unrecognized parameter");
+                return false;
+            }
+        }
+        else {
+            var params = inparams;
+        }
+
+        WM.MW.isUserBot(this.mainContinue, [params, summary, callNext]);
     };
 
     this.mainContinue = function (botTest, args) {
@@ -38,8 +54,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
             startMark: "START AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK-->",
             endMark: "<!--END AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK",
             altNames: {},
-            summary: args[0].summary,
-            callNext: args[1],
+            summary: args[1],
+            callNext: args[2],
         });
     };
 
