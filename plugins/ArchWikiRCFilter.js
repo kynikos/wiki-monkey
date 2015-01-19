@@ -22,8 +22,9 @@ WM.Plugins.ArchWikiRCFilter = new function () {
     "use strict";
 
     this.main = function (params) {
-        var h4s = Alib.DOM.getChildrenByTagName(document.getElementById(
-                                                    'mw-content-text'), 'h4');
+        var h4s = Alib.DOM.getChildrenByTagName(
+                        document.getElementById('mw-content-text')
+                        .getElementsByClassName('mw-changeslist')[0], 'h4');
 
         if (Alib.DOM.getNextElementSibling(h4s[0]).localName.toLowerCase() !=
                                                                     'div') {
@@ -32,9 +33,9 @@ WM.Plugins.ArchWikiRCFilter = new function () {
                                         "enable in your user preferences.");
         }
         else {
-            Alib.CSS.addStyleElement("#mw-content-text > h4 " +
+            Alib.CSS.addStyleElement("#mw-content-text > div > h4 " +
                                                 "{background-color:#aaf;} " +
-                    "#mw-content-text > div > h5 {background-color:#afa;}");
+                    "#mw-content-text > div > div > h5 {background-color:#afa;}");
 
             for (var h4n in h4s) {
                 var groupDiv = Alib.DOM.getNextElementSibling(h4s[h4n]);
