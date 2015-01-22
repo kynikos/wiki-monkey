@@ -21,87 +21,107 @@
 WM.Menu = new function () {
     "use strict";
 
-    var mainDiv;
-
     this._makeUI = function (plugins) {
         Alib.CSS.addStyleElement(
                 "#WikiMonkeyMenu input.margin {margin:0 0.33em 0.33em 0;}");
 
-        mainDiv = $('<div/>').attr('id', 'WikiMonkeyMenu');
+        var mainDiv = $('<div/>').attr('id', 'WikiMonkeyMenu');
+        var groupActions = {};
 
-        if (makeSubMenus(null, plugins)) {
-            mainDiv.children().last().show();
-            return mainDiv[0];
-        }
-        else {
-            return false;
-        }
-    };
+        for (var pid in plugins) {
+            var pluginConf = plugins[pid];
+            var pluginName = pluginConf[0];
+            var pluginInst = pluginConf[1];
 
-    var makeSubMenus = function (superMenu, entries) {
-        var menuDiv = $('<div/>');
-        var groupActions = [];
-
-        if (superMenu) {
-            $('<input/>')
-                .attr('type', 'button')
-                .val('<')
-                .addClass('margin')
-                .click(makeChangeMenu(menuDiv, superMenu))
-                .appendTo(menuDiv);
-        }
-
-        for (var e = 0; e < entries.length; e++) {
-            var entry = $('<input/>')
-                .attr('type', 'button')
-                .val(entries[e][0]);
-
-            if (typeof(entries[e][1]) === 'string') {
-                // This protects from configurations that define plugins
-                // that are actually not installed
-                try {
-                    var pluginInfo = WM.Cfg.getPlugin(entries[e][1]);
-                }
-                catch (error) {
-                    continue;
-                }
-
-                if (pluginInfo[0].makeUI) {
-                    entry.click(makeEntryUI(menuDiv, pluginInfo));
-                    groupActions.push([warnInputNeeded, pluginInfo]);
-                }
-                else {
-                    entry.click(makeEntryAction(pluginInfo));
-                    groupActions.push([executeEntryAction, pluginInfo]);
-                }
-
-                entry
-                    .addClass('margin')
-                    .appendTo(menuDiv);
+            // This protects from configurations that define plugins
+            // that are actually not installed
+            try {
+                var plugin = WM.Plugins[pluginName];
             }
+            catch (error) {
+                continue;
+            }
+
             // This allows to disable an entry by giving it any second
             // parameter that evaluates to false
-            else if (entries[e][1]) {
-                var smres = makeSubMenus(menuDiv, entries[e][1]);
-                var subMenuDiv = smres[0];
-                var subGroupActions = smres[1];
+            if (!pluginInst || !pluginInst.length) {
+                continue;
+            }
 
-                entry
-                    .click(makeGroupAction(subGroupActions))
-                    .appendTo(menuDiv);
+            pluginInst.unshift("WikiMonkeyMenuRoot");
+            var currId = false;
 
-                $('<input/>')
-                    .attr('type', 'button')
-                    .val('>')
-                    .addClass('margin')
-                    .click(makeChangeMenu(menuDiv, subMenuDiv))
-                    .appendTo(menuDiv);
+            for (var m = 0; m < pluginInst.length - 1; m++) {
+                var parentId = currId;
+                currId = pluginInst.slice(0, m + 1).join("-")
+                                                    .replace(/ /g, "_");
+
+                // I can't simply do $("#" + currId) because mainDiv
+                // hasn't been added to the DOM tree yet
+                var menuSel = mainDiv.children("div[id='" + currId + "']");
+
+                if (!menuSel.length) {
+                    var currMenu = $("<div/>")
+                        .attr("id", currId)
+                        .hide()
+                        .appendTo(mainDiv);
+
+                    groupActions[currId] = [];
+
+                    if (m > 0) {
+                        // I can't simply do $("#" + currId) because
+                        // mainDiv hasn't been added to the DOM tree yet
+                        var parentMenu = mainDiv
+                                .children("div[id='" + parentId + "']");
+
+                        $('<input/>')
+                            .attr('type', 'button')
+                            .val('<')
+                            .addClass('margin')
+                            .click(makeChangeMenu(currMenu, parentMenu))
+                            .appendTo(currMenu);
+
+                        $('<input/>')
+                            .attr('type', 'button')
+                            .val(pluginInst[m])
+                            .click(makeGroupAction(groupActions[currId]))
+                            .appendTo(parentMenu);
+
+                        $('<input/>')
+                            .attr('type', 'button')
+                            .val('>')
+                            .addClass('margin')
+                            .click(makeChangeMenu(parentMenu, currMenu))
+                            .appendTo(parentMenu);
+                    }
+                }
+                else {
+                    var currMenu = menuSel.first();
+                }
+            }
+
+            var entry = $("<input/>")
+                .attr('type', 'button')
+                .val(pluginInst[pluginInst.length - 1])
+                .addClass('margin')
+                .appendTo(currMenu);
+
+            if (plugin.makeUI) {
+                entry.click(makeEntryUI(currMenu, plugin, pluginConf));
+                groupActions[currId].push([warnInputNeeded, pluginConf[0]]);
+            }
+            else {
+                entry.click(makeEntryAction(plugin, pluginConf));
+                groupActions[currId].push([executeEntryAction,
+                                                        [plugin, pluginConf]]);
             }
         }
 
-        if (menuDiv[0].hasChildNodes()) {
-            menuDiv.hide().appendTo(mainDiv);
-            return [menuDiv, groupActions];
+        var menus = mainDiv.children();
+
+        if (menus.length) {
+            menus.first().show();
+            return mainDiv[0];
         }
         else {
             return false;
@@ -115,9 +135,9 @@ WM.Menu = new function () {
         };
     };
 
-    var makeEntryUI = function (menuDiv, pluginInfo) {
+    var makeEntryUI = function (currMenu, plugin, pluginConf) {
         return function (event) {
-            menuDiv.hide();
+            currMenu.hide();
             var UIdiv = $('<div/>');
 
             $('<input/>')
@@ -126,35 +146,37 @@ WM.Menu = new function () {
                 .addClass('margin')
                 .click(function (event) {
                     UIdiv.remove();
-                    menuDiv.show();
+                    currMenu.show();
                 })
                 .appendTo(UIdiv);
 
             $('<input/>')
                 .attr('type', 'button')
                 .val('Execute')
-                .click(makeEntryAction(pluginInfo))
+                .click(makeEntryAction(plugin, pluginConf))
                 .appendTo(UIdiv);
 
-            var UI = pluginInfo[0].makeUI(pluginInfo[2]);
-            UIdiv.append(UI).insertAfter(menuDiv);
+            var UI = plugin.makeUI(pluginConf[2]);
+            UIdiv.append(UI).insertAfter(currMenu);
         };
     };
 
-    var makeEntryAction = function (pluginInfo) {
+    var makeEntryAction = function (plugin, pluginConf) {
         return function (event) {
-            executeEntryAction(pluginInfo, null);
+            executeEntryAction([plugin, pluginConf], null);
         };
     };
 
-    var executeEntryAction = function (pluginInfo, callNext) {
-        WM.Log.logHidden("Plugin: " + pluginInfo[1]);
-        pluginInfo[0].main(pluginInfo[2], callNext);
+    var executeEntryAction = function (args, callNext) {
+        var plugin = args[0];
+        var pluginConf = args[1];
+        WM.Log.logHidden("Plugin: " + pluginConf[0]);
+        plugin.main(pluginConf[2], callNext);
     };
 
-    var warnInputNeeded = function (pluginInfo, callNext) {
-        WM.Log.logWarning("Plugin " + pluginInfo[1] +
-                " not executed because it requires input from its interface.");
+    var warnInputNeeded = function (pluginName, callNext) {
+        WM.Log.logWarning("Plugin " + pluginName +
+            " was not executed because it requires input from its interface.");
 
         if (callNext) {
             callNext();

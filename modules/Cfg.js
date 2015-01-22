@@ -160,42 +160,44 @@ WM.Cfg = new function () {
         var savedConfig = JSON.parse(localStorage.getItem("WikiMonkey"));
 
         if (savedConfig) {
-            $.extend(true, config, savedConfig);
+            if (savedConfig["Plugins"]) {
+                for (var type in config["Plugins"]) {
+                    if (savedConfig["Plugins"][type]) {
+                        // Don't do a deep (recursive) merge! It would also
+                        // merge the plugins' arguments, and also other
+                        // possible unexpected effects
+                        $.extend(config["Plugins"][type],
+                                                savedConfig["Plugins"][type]);
+                    }
+                }
+            }
         }
-        else {
-            this.save();
-        }
+
+        this.save();
     };
 
-    this._getEditor = function(key) {
-        return config["Editor"];
+    this._getEditor = function() {
+        return config["Plugins"]["Editor"];
     };
 
-    this._getDiff = function(key) {
-        return config["Diff"];
+    this._getDiff = function() {
+        return config["Plugins"]["Diff"];
     };
 
-    this._getBot = function(key) {
-        return config["Bot"];
+    this._getBot = function() {
+        return config["Plugins"]["Bot"];
     };
 
-    this._getSpecial = function(key) {
-        return config["Special"];
+    this._getSpecial = function() {
+        return config["Plugins"]["Special"];
     };
 
-    this._getRecentChanges = function(key) {
-        return config["RecentChanges"];
+    this._getRecentChanges = function() {
+        return config["Plugins"]["RecentChanges"];
     };
 
-    this._getNewPages = function(key) {
-        return config["NewPages"];
-    };
-
-    this.getPlugin = function (instanceName) {
-        var name = config.PluginInstances[instanceName][0];
-        var args = config.PluginInstances[instanceName][1];
-        var plugin = WM.Plugins[name];
-        return [plugin, name, args];
+    this._getNewPages = function() {
+        return config["Plugins"]["NewPages"];
     };
 
     this.save = function() {
