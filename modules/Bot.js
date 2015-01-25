@@ -558,13 +558,13 @@ WM.Bot = new function () {
         var date = new Date();
         var token = date.getTime() + "";
         this.botToken = token;
-        localStorage.setItem('BotToken', token);
+        localStorage.setItem('WikiMonkeyBotToken', token);
     };
 
     this._resetBotToken = function (reset) {
         this.botToken = "0";
         if (reset) {
-            localStorage.setItem('BotToken', "0");
+            localStorage.setItem('WikiMonkeyBotToken', "0");
         }
     };
 
@@ -573,7 +573,7 @@ WM.Bot = new function () {
     };
 
     this._checkOtherBotsRunning = function () {
-        var value = localStorage.getItem('BotToken');
+        var value = localStorage.getItem('WikiMonkeyBotToken');
 
         // value may be null if it's never been stored in localStorage
         return value && value != "0" && value != this._getBotToken();
