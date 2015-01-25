@@ -124,22 +124,22 @@ WM.Menu = new function () {
             }
         }
 
-        var execAll = $('<input/>')
-            .attr('type', 'button')
-            .val("*")
-            .addClass('margin')
-            .click(makeGroupAction(groupActions["WikiMonkeyMenuRoot"]));
-
-        // I can't simply do $("#" + currId) because mainDiv
-        // hasn't been added to the DOM tree yet
-        mainDiv
-            .children("div[id='WikiMonkeyMenuRoot']")
-            .first()
-            .prepend(execAll);
-
         var menus = mainDiv.children();
 
         if (menus.length) {
+            var execAll = $('<input/>')
+                .attr('type', 'button')
+                .val("*")
+                .addClass('margin')
+                .click(makeGroupAction(groupActions["WikiMonkeyMenuRoot"]));
+
+            // I can't simply do $("#" + currId) because mainDiv
+            // hasn't been added to the DOM tree yet
+            mainDiv
+                .children("div[id='WikiMonkeyMenuRoot']")
+                .first()
+                .prepend(execAll);
+
             menus.first().show();
             return mainDiv[0];
         }
