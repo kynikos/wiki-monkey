@@ -291,7 +291,7 @@ WM.ArchWiki = new function () {
             "showIndices": true,
             "rightToLeft": false
         },
-        "uk": {
+        "sk": {
             "page": "Table of Contents (Slovenský)",
             "root": "Category:Slovenský",
             "alsoIn": "also in",
