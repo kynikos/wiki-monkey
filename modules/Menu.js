@@ -48,6 +48,13 @@ WM.Menu = new function () {
                 continue;
             }
 
+            if (plugin.makeUI) {
+                var groupAction = [warnInputNeeded, pluginConf[0]];
+            }
+            else {
+                var groupAction = [executeEntryAction, [plugin, pluginConf]];
+            }
+
             pluginInst.unshift("WikiMonkeyMenuRoot");
             var currId = false;
 
@@ -69,10 +76,10 @@ WM.Menu = new function () {
                     groupActions[currId] = [];
 
                     if (m > 0) {
-                        // I can't simply do $("#" + currId) because
-                        // mainDiv hasn't been added to the DOM tree yet
-                        var parentMenu = mainDiv
-                                .children("div[id='" + parentId + "']");
+                        // I can't simply do $("#" + currId) because mainDiv
+                        // hasn't been added to the DOM tree yet
+                        var parentMenu = mainDiv.children("div[id='" +
+                                                            parentId + "']");
 
                         $('<input/>')
                             .attr('type', 'button')
@@ -98,6 +105,8 @@ WM.Menu = new function () {
                 else {
                     var currMenu = menuSel.first();
                 }
+
+                groupActions[currId].push(groupAction);
             }
 
             var entry = $("<input/>")
@@ -108,12 +117,9 @@ WM.Menu = new function () {
 
             if (plugin.makeUI) {
                 entry.click(makeEntryUI(currMenu, plugin, pluginConf));
-                groupActions[currId].push([warnInputNeeded, pluginConf[0]]);
             }
             else {
                 entry.click(makeEntryAction(plugin, pluginConf));
-                groupActions[currId].push([executeEntryAction,
-                                                        [plugin, pluginConf]]);
             }
         }
 
