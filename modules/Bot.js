@@ -77,10 +77,8 @@ WM.Bot = new function () {
 
             // This protects from configurations that define plugins
             // that are actually not installed
-            try {
-                WM.Plugins[pluginName];
-            }
-            catch (error) {
+            // A try-catch doesn't work...
+            if (!WM.Plugins[pluginName]) {
                 continue;
             }
 
