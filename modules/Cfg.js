@@ -173,7 +173,7 @@ WM.Cfg = new function () {
             }
         }
 
-        this.save();
+        save();
     };
 
     this._getEditor = function() {
@@ -200,7 +200,7 @@ WM.Cfg = new function () {
         return config["Plugins"]["NewPages"];
     };
 
-    this.save = function() {
+    var save = function() {
         localStorage.setItem("WikiMonkey", JSON.stringify(config));
     };
 
@@ -230,7 +230,7 @@ WM.Cfg = new function () {
             }
         }
 
-        WM.Cfg.save();
+        save();
     };
 
     var resetEditor = function () {
