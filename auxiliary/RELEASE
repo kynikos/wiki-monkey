@@ -19,11 +19,6 @@
 * Remove the VERSION branches, also remotely
 
 * Checkout the develop branch
-* Run `./release.py DEVELOP_VERSION` from inside the auxiliary folder
-* Run `./clean.py` from inside the auxiliary folder
-* Commit
-* Push to the remote repository
-
 * Check milestone is closed on GitHub
 * Update documentation:
   - GitHub wiki
