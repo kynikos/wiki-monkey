@@ -1,10 +1,10 @@
 // ==UserScript==
 // @id wiki-monkey-local
-// @name Wiki Monkey
+// @name Wiki Monkey (local)
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version local
-// @description MediaWiki-compatible bot and editor assistant that runs in the browser
+// @version 2.0.0-local
+// @description MediaWiki-compatible bot and editor assistant that runs in the browser (local version)
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
 // @updateURL file:///mnt/archive/Development/wiki-monkey/auxiliary/WikiMonkey-local.user.js
@@ -26,8 +26,6 @@
 // @require file:///mnt/archive/Development/lib.js.generic/src/RegEx.js
 // @require file:///mnt/archive/Development/lib.js.generic/src/Str.js
 // @require file:///mnt/archive/Development/wiki-monkey/modules/_Init.js
-// @require file:///mnt/archive/Development/wiki-monkey/modules/ArchPackages.js
-// @require file:///mnt/archive/Development/wiki-monkey/modules/ArchWiki.js
 // @require file:///mnt/archive/Development/wiki-monkey/modules/Bot.js
 // @require file:///mnt/archive/Development/wiki-monkey/modules/Cat.js
 // @require file:///mnt/archive/Development/wiki-monkey/modules/Cfg.js
@@ -42,6 +40,17 @@
 // @require file:///mnt/archive/Development/wiki-monkey/modules/Tables.js
 // @require file:///mnt/archive/Development/wiki-monkey/modules/UI.js
 // @require file:///mnt/archive/Development/wiki-monkey/modules/WhatLinksHere.js
+// @require file:///mnt/archive/Development/wiki-monkey/modules/ArchPackages.js
+// @require file:///mnt/archive/Development/wiki-monkey/modules/ArchWiki.js
+// @require file:///mnt/archive/Development/wiki-monkey/plugins/ExpandContractions.js
+// @require file:///mnt/archive/Development/wiki-monkey/plugins/FixBacklinkFragments.js
+// @require file:///mnt/archive/Development/wiki-monkey/plugins/FixDoubleRedirects.js
+// @require file:///mnt/archive/Development/wiki-monkey/plugins/FixFragments.js
+// @require file:///mnt/archive/Development/wiki-monkey/plugins/FixLinkFragments.js
+// @require file:///mnt/archive/Development/wiki-monkey/plugins/MultipleLineBreaks.js
+// @require file:///mnt/archive/Development/wiki-monkey/plugins/SimpleReplace.js
+// @require file:///mnt/archive/Development/wiki-monkey/plugins/SynchronizeInterlanguageLinks.js
+// @require file:///mnt/archive/Development/wiki-monkey/plugins/UpdateCategoryTree.js
 // @require file:///mnt/archive/Development/wiki-monkey/plugins/ArchWikiFixHeader.js
 // @require file:///mnt/archive/Development/wiki-monkey/plugins/ArchWikiFixHeadings.js
 // @require file:///mnt/archive/Development/wiki-monkey/plugins/ArchWikiFixLinks.js
@@ -56,35 +65,26 @@
 // @require file:///mnt/archive/Development/wiki-monkey/plugins/ArchWikiUpdatePackageTemplates.js
 // @require file:///mnt/archive/Development/wiki-monkey/plugins/ArchWikiWantedCategories.js
 // @require file:///mnt/archive/Development/wiki-monkey/plugins/DeletePages.js
-// @require file:///mnt/archive/Development/wiki-monkey/plugins/ExpandContractions.js
-// @require file:///mnt/archive/Development/wiki-monkey/plugins/FixBacklinkFragments.js
-// @require file:///mnt/archive/Development/wiki-monkey/plugins/FixDoubleRedirects.js
-// @require file:///mnt/archive/Development/wiki-monkey/plugins/FixFragments.js
-// @require file:///mnt/archive/Development/wiki-monkey/plugins/FixLinkFragments.js
-// @require file:///mnt/archive/Development/wiki-monkey/plugins/MultipleLineBreaks.js
-// @require file:///mnt/archive/Development/wiki-monkey/plugins/SimpleReplace.js
-// @require file:///mnt/archive/Development/wiki-monkey/plugins/SynchronizeInterlanguageLinks.js
-// @require file:///mnt/archive/Development/wiki-monkey/plugins/UpdateCategoryTree.js
 // ==/UserScript==
 
 WM.main({
     "Plugins": {
         "Bot": {
-            "10": [
+            "010SR": [
                 "SimpleReplace",
                 [
                     "RegExp substitution"
                 ],
                 null
             ],
-            "20": [
+            "020BL": [
                 "FixBacklinkFragments",
                 [
                     "Fix links to specific sections of a target page"
                 ],
                 "fix links to specific sections"
             ],
-            "30": [
+            "030IL": [
                 "SynchronizeInterlanguageLinks",
                 [
                     "Synchronize interlanguage links"
@@ -96,28 +96,28 @@ WM.main({
                     "synchronized interlanguage links with the other wikis"
                 ]
             ],
-            "40": [
+            "040APT": [
                 "ArchWikiUpdatePackageTemplates",
                 [
                     "Check packages linked with Pkg/AUR templates and possibly update them"
                 ],
                 "update Pkg/AUR templates to reflect new package status"
             ],
-            "50": [
+            "050AAL": [
                 "ArchWikiOldAURLinks",
                 [
                     "Replace old-style direct AUR package links with Template:AUR"
                 ],
                 "replace old-style direct package links with Pkg/AUR templates"
             ],
-            "60": [
+            "060AWC": [
                 "ArchWikiWantedCategories",
                 [
                     "Create wanted categories"
                 ],
                 null
             ],
-            "70": [
+            "070DP": [
                 "DeletePages",
                 [
                     "Delete pages"
@@ -126,7 +126,7 @@ WM.main({
             ]
         },
         "Diff": {
-            "10": [
+            "010AQR": [
                 "ArchWikiQuickReport",
                 [
                     "Quick report"
@@ -137,7 +137,7 @@ WM.main({
                     "add report"
                 ]
             ],
-            "20": [
+            "020AST": [
                 "ArchWikiSaveTalk",
                 [
                     "Save discussion"
@@ -149,7 +149,7 @@ WM.main({
             ]
         },
         "Editor": {
-            "10": [
+            "010AHE": [
                 "ArchWikiFixHeader",
                 [
                     "Text plugins",
@@ -157,7 +157,70 @@ WM.main({
                 ],
                 null
             ],
-            "100": [
+            "020ASE": [
+                "ArchWikiFixHeadings",
+                [
+                    "Text plugins",
+                    "Fix headings"
+                ],
+                null
+            ],
+            "030AEL": [
+                "ArchWikiFixLinks",
+                [
+                    "Text plugins",
+                    "Fix external links"
+                ],
+                null
+            ],
+            "040SL": [
+                "FixFragments",
+                [
+                    "Text plugins",
+                    "Fix section links"
+                ],
+                null
+            ],
+            "050ACT": [
+                "ArchWikiNewTemplates",
+                [
+                    "Text plugins",
+                    "Use code templates"
+                ],
+                null
+            ],
+            "060EC": [
+                "ExpandContractions",
+                [
+                    "Text plugins",
+                    "Expand contractions"
+                ],
+                null
+            ],
+            "070ML": [
+                "MultipleLineBreaks",
+                [
+                    "Text plugins",
+                    "Squash multiple line breaks"
+                ],
+                null
+            ],
+            "080ASR": [
+                "ArchWikiSummaryToRelated",
+                [
+                    "Text plugins",
+                    "Convert summary to related"
+                ],
+                null
+            ],
+            "110SR": [
+                "SimpleReplace",
+                [
+                    "RegExp substitution"
+                ],
+                null
+            ],
+            "210ES": [
                 "FixLinkFragments",
                 [
                     "Query plugins",
@@ -165,7 +228,7 @@ WM.main({
                 ],
                 null
             ],
-            "110": [
+            "220AIL": [
                 "SynchronizeInterlanguageLinks",
                 [
                     "Query plugins",
@@ -178,7 +241,7 @@ WM.main({
                     null
                 ]
             ],
-            "120": [
+            "230AAL": [
                 "ArchWikiOldAURLinks",
                 [
                     "Query plugins",
@@ -186,80 +249,17 @@ WM.main({
                 ],
                 null
             ],
-            "130": [
+            "240APT": [
                 "ArchWikiUpdatePackageTemplates",
                 [
                     "Query plugins",
                     "Update package templates"
                 ],
                 null
-            ],
-            "20": [
-                "ArchWikiFixHeadings",
-                [
-                    "Text plugins",
-                    "Fix headings"
-                ],
-                null
-            ],
-            "30": [
-                "ArchWikiFixLinks",
-                [
-                    "Text plugins",
-                    "Fix external links"
-                ],
-                null
-            ],
-            "40": [
-                "FixFragments",
-                [
-                    "Text plugins",
-                    "Fix section links"
-                ],
-                null
-            ],
-            "50": [
-                "ArchWikiNewTemplates",
-                [
-                    "Text plugins",
-                    "Use code templates"
-                ],
-                null
-            ],
-            "60": [
-                "ExpandContractions",
-                [
-                    "Text plugins",
-                    "Expand contractions"
-                ],
-                null
-            ],
-            "70": [
-                "MultipleLineBreaks",
-                [
-                    "Text plugins",
-                    "Squash multiple line breaks"
-                ],
-                null
-            ],
-            "80": [
-                "ArchWikiSummaryToRelated",
-                [
-                    "Text plugins",
-                    "Convert summary to related"
-                ],
-                null
-            ],
-            "90": [
-                "SimpleReplace",
-                [
-                    "RegExp substitution"
-                ],
-                null
             ]
         },
         "NewPages": {
-            "10": [
+            "010ANP": [
                 "ArchWikiNPFilter",
                 [
                     "Default filter"
@@ -270,7 +270,7 @@ WM.main({
             ]
         },
         "RecentChanges": {
-            "10": [
+            "010ARC": [
                 "ArchWikiRCFilter",
                 [
                     "Default filter"
@@ -281,7 +281,7 @@ WM.main({
             ]
         },
         "Special": {
-            "10": [
+            "010CTar": [
                 "UpdateCategoryTree",
                 [
                     "Update category trees",
@@ -295,147 +295,7 @@ WM.main({
                     "automatic update"
                 ]
             ],
-            "100": [
-                "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Hungarian"
-                ],
-                [
-                    [
-                        "ArchWiki",
-                        "hu"
-                    ],
-                    "automatic update"
-                ]
-            ],
-            "110": [
-                "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Indonesian"
-                ],
-                [
-                    [
-                        "ArchWiki",
-                        "id"
-                    ],
-                    "automatic update"
-                ]
-            ],
-            "120": [
-                "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Italian"
-                ],
-                [
-                    [
-                        "ArchWiki",
-                        "it"
-                    ],
-                    "automatic update"
-                ]
-            ],
-            "130": [
-                "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Japanese"
-                ],
-                [
-                    [
-                        "ArchWiki",
-                        "ja"
-                    ],
-                    "automatic update"
-                ]
-            ],
-            "140": [
-                "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Korean"
-                ],
-                [
-                    [
-                        "ArchWiki",
-                        "ko"
-                    ],
-                    "automatic update"
-                ]
-            ],
-            "150": [
-                "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Lithuanian"
-                ],
-                [
-                    [
-                        "ArchWiki",
-                        "lt"
-                    ],
-                    "automatic update"
-                ]
-            ],
-            "160": [
-                "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Dutch"
-                ],
-                [
-                    [
-                        "ArchWiki",
-                        "nl"
-                    ],
-                    "automatic update"
-                ]
-            ],
-            "170": [
-                "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Polish"
-                ],
-                [
-                    [
-                        "ArchWiki",
-                        "pl"
-                    ],
-                    "automatic update"
-                ]
-            ],
-            "180": [
-                "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Portuguese"
-                ],
-                [
-                    [
-                        "ArchWiki",
-                        "pt"
-                    ],
-                    "automatic update"
-                ]
-            ],
-            "190": [
-                "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Russian"
-                ],
-                [
-                    [
-                        "ArchWiki",
-                        "ru"
-                    ],
-                    "automatic update"
-                ]
-            ],
-            "20": [
+            "010CTbg": [
                 "UpdateCategoryTree",
                 [
                     "Update category trees",
@@ -449,7 +309,245 @@ WM.main({
                     "automatic update"
                 ]
             ],
-            "200": [
+            "010CTcs": [
+                "UpdateCategoryTree",
+                [
+                    "Update category trees",
+                    "Czech"
+                ],
+                [
+                    [
+                        "ArchWiki",
+                        "cs"
+                    ],
+                    "automatic update"
+                ]
+            ],
+            "010CTda": [
+                "UpdateCategoryTree",
+                [
+                    "Update category trees",
+                    "Danish"
+                ],
+                [
+                    [
+                        "ArchWiki",
+                        "da"
+                    ],
+                    "automatic update"
+                ]
+            ],
+            "010CTel": [
+                "UpdateCategoryTree",
+                [
+                    "Update category trees",
+                    "Greek"
+                ],
+                [
+                    [
+                        "ArchWiki",
+                        "el"
+                    ],
+                    "automatic update"
+                ]
+            ],
+            "010CTen": [
+                "UpdateCategoryTree",
+                [
+                    "Update category trees",
+                    "English"
+                ],
+                [
+                    [
+                        "ArchWiki",
+                        "en"
+                    ],
+                    "automatic update"
+                ]
+            ],
+            "010CTes": [
+                "UpdateCategoryTree",
+                [
+                    "Update category trees",
+                    "Spanish"
+                ],
+                [
+                    [
+                        "ArchWiki",
+                        "es"
+                    ],
+                    "automatic update"
+                ]
+            ],
+            "010CThe": [
+                "UpdateCategoryTree",
+                [
+                    "Update category trees",
+                    "Hebrew"
+                ],
+                [
+                    [
+                        "ArchWiki",
+                        "he"
+                    ],
+                    "automatic update"
+                ]
+            ],
+            "010CThr": [
+                "UpdateCategoryTree",
+                [
+                    "Update category trees",
+                    "Croatian"
+                ],
+                [
+                    [
+                        "ArchWiki",
+                        "hr"
+                    ],
+                    "automatic update"
+                ]
+            ],
+            "010CThu": [
+                "UpdateCategoryTree",
+                [
+                    "Update category trees",
+                    "Hungarian"
+                ],
+                [
+                    [
+                        "ArchWiki",
+                        "hu"
+                    ],
+                    "automatic update"
+                ]
+            ],
+            "010CTid": [
+                "UpdateCategoryTree",
+                [
+                    "Update category trees",
+                    "Indonesian"
+                ],
+                [
+                    [
+                        "ArchWiki",
+                        "id"
+                    ],
+                    "automatic update"
+                ]
+            ],
+            "010CTit": [
+                "UpdateCategoryTree",
+                [
+                    "Update category trees",
+                    "Italian"
+                ],
+                [
+                    [
+                        "ArchWiki",
+                        "it"
+                    ],
+                    "automatic update"
+                ]
+            ],
+            "010CTja": [
+                "UpdateCategoryTree",
+                [
+                    "Update category trees",
+                    "Japanese"
+                ],
+                [
+                    [
+                        "ArchWiki",
+                        "ja"
+                    ],
+                    "automatic update"
+                ]
+            ],
+            "010CTko": [
+                "UpdateCategoryTree",
+                [
+                    "Update category trees",
+                    "Korean"
+                ],
+                [
+                    [
+                        "ArchWiki",
+                        "ko"
+                    ],
+                    "automatic update"
+                ]
+            ],
+            "010CTlt": [
+                "UpdateCategoryTree",
+                [
+                    "Update category trees",
+                    "Lithuanian"
+                ],
+                [
+                    [
+                        "ArchWiki",
+                        "lt"
+                    ],
+                    "automatic update"
+                ]
+            ],
+            "010CTnl": [
+                "UpdateCategoryTree",
+                [
+                    "Update category trees",
+                    "Dutch"
+                ],
+                [
+                    [
+                        "ArchWiki",
+                        "nl"
+                    ],
+                    "automatic update"
+                ]
+            ],
+            "010CTpl": [
+                "UpdateCategoryTree",
+                [
+                    "Update category trees",
+                    "Polish"
+                ],
+                [
+                    [
+                        "ArchWiki",
+                        "pl"
+                    ],
+                    "automatic update"
+                ]
+            ],
+            "010CTpt": [
+                "UpdateCategoryTree",
+                [
+                    "Update category trees",
+                    "Portuguese"
+                ],
+                [
+                    [
+                        "ArchWiki",
+                        "pt"
+                    ],
+                    "automatic update"
+                ]
+            ],
+            "010CTru": [
+                "UpdateCategoryTree",
+                [
+                    "Update category trees",
+                    "Russian"
+                ],
+                [
+                    [
+                        "ArchWiki",
+                        "ru"
+                    ],
+                    "automatic update"
+                ]
+            ],
+            "010CTsk": [
                 "UpdateCategoryTree",
                 [
                     "Update category trees",
@@ -463,7 +561,7 @@ WM.main({
                     "automatic update"
                 ]
             ],
-            "210": [
+            "010CTsr": [
                 "UpdateCategoryTree",
                 [
                     "Update category trees",
@@ -477,7 +575,7 @@ WM.main({
                     "automatic update"
                 ]
             ],
-            "220": [
+            "010CTth": [
                 "UpdateCategoryTree",
                 [
                     "Update category trees",
@@ -491,7 +589,7 @@ WM.main({
                     "automatic update"
                 ]
             ],
-            "230": [
+            "010CTuk": [
                 "UpdateCategoryTree",
                 [
                     "Update category trees",
@@ -505,7 +603,7 @@ WM.main({
                     "automatic update"
                 ]
             ],
-            "240": [
+            "010CTzhcn": [
                 "UpdateCategoryTree",
                 [
                     "Update category trees",
@@ -519,7 +617,7 @@ WM.main({
                     "automatic update"
                 ]
             ],
-            "250": [
+            "010CTzhtw": [
                 "UpdateCategoryTree",
                 [
                     "Update category trees",
@@ -533,14 +631,14 @@ WM.main({
                     "automatic update"
                 ]
             ],
-            "260": [
+            "020DR": [
                 "FixDoubleRedirects",
                 [
                     "Fix double redirects"
                 ],
                 "fix double redirect"
             ],
-            "270": [
+            "030ASC": [
                 "ArchWikiSortContacts",
                 [
                     "Sort Admins and Maintainers"
@@ -555,104 +653,6 @@ WM.main({
                         "The following Maintainers are currently inactive:"
                     ],
                     "automatically sort list according to recent activity"
-                ]
-            ],
-            "30": [
-                "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Czech"
-                ],
-                [
-                    [
-                        "ArchWiki",
-                        "cs"
-                    ],
-                    "automatic update"
-                ]
-            ],
-            "40": [
-                "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Danish"
-                ],
-                [
-                    [
-                        "ArchWiki",
-                        "da"
-                    ],
-                    "automatic update"
-                ]
-            ],
-            "50": [
-                "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Greek"
-                ],
-                [
-                    [
-                        "ArchWiki",
-                        "el"
-                    ],
-                    "automatic update"
-                ]
-            ],
-            "60": [
-                "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "English"
-                ],
-                [
-                    [
-                        "ArchWiki",
-                        "en"
-                    ],
-                    "automatic update"
-                ]
-            ],
-            "70": [
-                "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Spanish"
-                ],
-                [
-                    [
-                        "ArchWiki",
-                        "es"
-                    ],
-                    "automatic update"
-                ]
-            ],
-            "80": [
-                "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Hebrew"
-                ],
-                [
-                    [
-                        "ArchWiki",
-                        "he"
-                    ],
-                    "automatic update"
-                ]
-            ],
-            "90": [
-                "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Croatian"
-                ],
-                [
-                    [
-                        "ArchWiki",
-                        "hr"
-                    ],
-                    "automatic update"
                 ]
             ]
         }

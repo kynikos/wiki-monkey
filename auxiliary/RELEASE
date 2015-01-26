@@ -1,25 +1,29 @@
+* Verify that Alib's correct branch is checked out
+* Check that release.py is correctly configured and up to date
 * Make sure to be on the develop branch
-* Check that the basic configurations are up to date
-* Add to compatibility.py (adapt_configuration function) any new adaptations
-  that must be done to the compatibility versions
-* Release a new version of Alib if necessary
-* Create and ckeckout a VERSION branch
-* Run compatibility.py (check for errors)
-* Commit and push to the remote repository
-* Install all the configurations and check that they work correctly in every
-  supported browser
-  If they don't work, remove the VERSION branch, commit the fixes in the
-  develop branch and re-create the VERSION branch when ready to test again
-* Run release.py VERSION ALIB_VERSION (check that the ALIB_VERSION tag exists)
-* Run compatibility.py
+
+* Create and ckeckout a 2.x VERSION branch
+* Run `./release.py VERSION1.x` from inside the auxiliary folder
+* Copy (not rename) the src folder to something else
+* Run `./release.py VERSION2.x` from inside the auxiliary folder
+* Replace the new src folder with the previously copied one
 * Commit
-* Checkout the master branch and merge the VERSION branch
-* Tag the release commit with the new version number
-* Remove the VERSION branch (also remotely if it was pushed)
+* Create a 1.x VERSION branch
+
+* Push the new branches to the remote repository
+* Install all the generated scripts and check that they work correctly in
+  every supported browser
+
+* Checkout the master branch and merge the 2.x VERSION branch
+* Tag the release commit with both the new 1.x and 2.x VERSION numbers
+* Remove the VERSION branches, also remotely
+
 * Checkout the develop branch
-* Run release.py DEVELOP_VERSION
+* Run `./release.py DEVELOP_VERSION` from inside the auxiliary folder
+* Run `./clean.py` from inside the auxiliary folder
 * Commit
 * Push to the remote repository
+
 * Check milestone is closed on GitHub
 * Update documentation:
   - GitHub wiki
