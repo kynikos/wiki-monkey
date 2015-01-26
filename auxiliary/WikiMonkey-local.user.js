@@ -16,6 +16,7 @@
 // @grant GM_info
 // @grant GM_xmlhttpRequest
 // @require https://code.jquery.com/jquery-2.1.3.min.js
+// @require file:///mnt/archive/Development/lib.js.generic/src/GMAPIEmulation.js
 // @require file:///mnt/archive/Development/lib.js.generic/src/Async.js
 // @require file:///mnt/archive/Development/lib.js.generic/src/Compatibility.js
 // @require file:///mnt/archive/Development/lib.js.generic/src/CSS.js
