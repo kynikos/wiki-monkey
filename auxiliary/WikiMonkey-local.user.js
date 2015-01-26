@@ -24,7 +24,7 @@
 // @require file:///mnt/archive/Development/lib.js.generic/src/Obj.js
 // @require file:///mnt/archive/Development/lib.js.generic/src/RegEx.js
 // @require file:///mnt/archive/Development/lib.js.generic/src/Str.js
-// @require file:///mnt/archive/Development/wiki-monkey/WikiMonkey.js
+// @require file:///mnt/archive/Development/wiki-monkey/modules/_Init.js
 // @require file:///mnt/archive/Development/wiki-monkey/modules/ArchPackages.js
 // @require file:///mnt/archive/Development/wiki-monkey/modules/ArchWiki.js
 // @require file:///mnt/archive/Development/wiki-monkey/modules/Bot.js

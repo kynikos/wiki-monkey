@@ -24,7 +24,6 @@ function link_from_path() {
 
 function link_into_git() {
     # Wiki Monkey
-    link_from_path "$git_root"
     link_from_path "$git_root/modules"
     link_from_path "$git_root/plugins"
 
@@ -47,8 +46,8 @@ if [[ ! -f "$gm_profile/WikiMonkey-local.user.js" ]]; then
     exit 1
 fi
 
-if [[ ! -f "$git_root/WikiMonkey.js" ]]; then
-    echo "$git_root/WikiMonkey.js does not exist, is '$git_root' as WM git root correct?"
+if [[ ! -f "$git_root/modules/_Init.js" ]]; then
+    echo "$git_root/modules/_Init.js does not exist, is '$git_root' as WM git root correct?"
     exit 1
 fi
 
