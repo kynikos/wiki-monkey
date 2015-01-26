@@ -7,10 +7,10 @@
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL file:///mnt/archive/Development/wiki-monkey/files/WikiMonkey-local.user.js
-// @downloadURL file:///mnt/archive/Development/wiki-monkey/files/WikiMonkey-local.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/develop/files/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/develop/files/wiki-monkey-64.png
+// @updateURL file:///mnt/archive/Development/wiki-monkey/auxiliary/WikiMonkey-local.user.js
+// @downloadURL file:///mnt/archive/Development/wiki-monkey/auxiliary/WikiMonkey-local.user.js
+// @icon file:///mnt/archive/Development/wiki-monkey/auxiliary/wiki-monkey.png
+// @icon64 file:///mnt/archive/Development/wiki-monkey/auxiliary/wiki-monkey-64.png
 // @match http://*.wikipedia.org/*
 // @match https://wiki.archlinux.org/*
 // @grant GM_info
