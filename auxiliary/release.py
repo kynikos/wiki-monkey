@@ -181,7 +181,9 @@ CONFIG = {
             "010ANP": (
                 "ArchWikiNPFilter",
                 ("Default filter", ),
-                {"language": "English"}
+                {
+                    "language": "English"
+                }
             ),
         },
         "Special": {
