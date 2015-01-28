@@ -27,8 +27,7 @@ WM.Plugins.ArchWikiQuickReport = new function () {
                     "#WikiMonkey-ArchWikiQuickReport > a " +
                     "{margin-left:0.33em;}");
 
-        var id = args[0];
-        var article = args[1];
+        var article = args[0];
 
         var select = document.createElement('select');
         var types = ["&lt;TYPE&gt;", "content", "style"];
@@ -40,11 +39,11 @@ WM.Plugins.ArchWikiQuickReport = new function () {
             option.innerHTML = value;
             select.appendChild(option);
         }
-        select.id = "WikiMonkey-ArchWikiQuickReport-select-" + id;
+        select.id = "WikiMonkey-ArchWikiQuickReport-select";
 
         var input = document.createElement('input');
         input.setAttribute('type', 'text');
-        input.id = "WikiMonkey-ArchWikiQuickReport-input-" + id;
+        input.id = "WikiMonkey-ArchWikiQuickReport-input";
 
         var link = document.createElement('a');
         link.href = "/index.php/" + article;
@@ -60,15 +59,14 @@ WM.Plugins.ArchWikiQuickReport = new function () {
     };
 
     this.main = function (args, callNext) {
-        var id = args[0];
-        var article = args[1];
-        var summary = args[2];
+        var article = args[0];
+        var summary = args[1];
 
         WM.Log.logInfo('Appending diff to ' +
                             WM.Log.linkToWikiPage(article, article) + " ...");
 
         var select = document.getElementById(
-                                "WikiMonkey-ArchWikiQuickReport-select-" + id);
+                                "WikiMonkey-ArchWikiQuickReport-select");
         var type = select.options[select.selectedIndex].value;
 
         if (type != 'content' && type != 'style') {
@@ -77,34 +75,32 @@ WM.Plugins.ArchWikiQuickReport = new function () {
         else {
             WM.Diff.getEndTimestamp(
                             WM.Plugins.ArchWikiQuickReport.mainGetEndTimestamp,
-                            [id, article, type, summary, callNext]);
+                            [article, type, summary, callNext]);
         }
     };
 
     this.mainGetEndTimestamp = function (enddate, args) {
-        var id = args[0];
-        var article = args[1];
-        var type = args[2];
-        var summary = args[3];
-        var callNext = args[4];
+        var article = args[0];
+        var type = args[1];
+        var summary = args[2];
+        var callNext = args[3];
 
         WM.MW.callQueryEdit(article,
                             WM.Plugins.ArchWikiQuickReport.mainWrite,
-                            [id, type, summary, enddate, callNext]);
+                            [type, summary, enddate, callNext]);
     };
 
     this.mainWrite = function (article, source, timestamp, edittoken, args) {
-        var id = args[0];
-        var type = args[1];
-        var summary = args[2];
-        var enddate = args[3];
-        var callNext = args[4];
+        var type = args[0];
+        var summary = args[1];
+        var enddate = args[2];
+        var callNext = args[3];
 
         var title = Alib.HTTP.getURIParameter(null, 'title');
         var pEnddate = enddate.substr(0, 10) + "&nbsp;" +
                                                         enddate.substr(11, 8);
         var notes = document.getElementById(
-                        "WikiMonkey-ArchWikiQuickReport-input-" + id).value;
+                        "WikiMonkey-ArchWikiQuickReport-input").value;
 
         var newtext = WM.Tables.appendRow(source, null, ["[" + location.href +
                                     " " + title + "]", pEnddate, type, notes]);

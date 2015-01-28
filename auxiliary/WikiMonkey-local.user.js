@@ -132,7 +132,6 @@ WM.main({
                     "Quick report"
                 ],
                 [
-                    "1",
                     "ArchWiki:Reports",
                     "add report"
                 ]

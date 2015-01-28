@@ -162,7 +162,6 @@ CONFIG = {
                 "ArchWikiQuickReport",
                 ("Quick report", ),
                 (
-                    "1",
                     "ArchWiki:Reports",
                     "add report"
                 )
