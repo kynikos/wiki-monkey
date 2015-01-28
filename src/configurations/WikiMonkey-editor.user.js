@@ -3,68 +3,85 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.16.1-editor
-// @description MediaWiki-compatible bot and editor assistant that runs in the browser
+// @version 1.17.0-wikipedia
+// @description MediaWiki-compatible bot and editor assistant that runs in the browser (Wikipedia version)
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
 // @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-editor.meta.js
 // @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-editor.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/1.16.1/src/files/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.16.1/src/files/wiki-monkey-64.png
+// @icon https://raw.github.com/kynikos/wiki-monkey/1.17.0/auxiliary/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.17.0/auxiliary/wiki-monkey-64.png
 // @match http://*.wikipedia.org/*
-// @match https://wiki.archlinux.org/*
 // @grant GM_info
 // @grant GM_xmlhttpRequest
-// @require https://raw.github.com/kynikos/lib.js.generic/1.6/src/Async.js
-// @require https://raw.github.com/kynikos/lib.js.generic/1.6/src/Compatibility.js
-// @require https://raw.github.com/kynikos/lib.js.generic/1.6/src/CSS.js
-// @require https://raw.github.com/kynikos/lib.js.generic/1.6/src/DOM.js
-// @require https://raw.github.com/kynikos/lib.js.generic/1.6/src/HTTP.js
-// @require https://raw.github.com/kynikos/lib.js.generic/1.6/src/Obj.js
-// @require https://raw.github.com/kynikos/lib.js.generic/1.6/src/RegEx.js
-// @require https://raw.github.com/kynikos/lib.js.generic/1.6/src/Str.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.16.1/src/WikiMonkey.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.16.1/src/modules/Bot.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.16.1/src/modules/Cat.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.16.1/src/modules/Diff.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.16.1/src/modules/Editor.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.16.1/src/modules/Filters.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.16.1/src/modules/Interlanguage.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.16.1/src/modules/Log.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.16.1/src/modules/MW.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.16.1/src/modules/Parser.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.16.1/src/modules/Tables.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.16.1/src/modules/UI.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.16.1/src/modules/WhatLinksHere.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.16.1/src/plugins/ExpandContractions.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.16.1/src/plugins/FixFragments.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.16.1/src/plugins/FixLinkFragments.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.16.1/src/plugins/MultipleLineBreaks.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.16.1/src/plugins/SimpleReplace.js
+// @require https://code.jquery.com/jquery-2.1.3.min.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.17.0/scripts/WikiMonkey-Wikipedia.include.js
 // ==/UserScript==
 
-WM.UI.setEditor([
-    [
-        ["FixFragments", "Fix section links", null],
-        ["ExpandContractions", "Expand contractions", null],
-        ["MultipleLineBreaks", "Squash multiple line breaks", null]
-    ],
-    [
-        ["SimpleReplace", "RegExp substitution", ["1"]]
-    ],
-    [
-        ["FixLinkFragments", "Fix external section links", null]
-    ]
-]);
-
-WM.UI.setDiff(null);
-
-WM.UI.setSpecial(null);
-
-WM.UI.setRecentChanges(null);
-
-WM.UI.setNewPages(null);
-
-WM.UI.setBot(null);
-
-WM.main();
+WM.main({
+    "Plugins": {
+        "Bot": {
+            "010SR": [
+                "SimpleReplace",
+                null,
+                null
+            ],
+            "020BL": [
+                "FixBacklinkFragments",
+                null,
+                "fix links to specific sections"
+            ]
+        },
+        "Diff": {},
+        "Editor": {
+            "040SL": [
+                "FixFragments",
+                [
+                    "Text plugins",
+                    "Fix section links"
+                ],
+                null
+            ],
+            "060EC": [
+                "ExpandContractions",
+                [
+                    "Text plugins",
+                    "Expand contractions"
+                ],
+                null
+            ],
+            "070ML": [
+                "MultipleLineBreaks",
+                [
+                    "Text plugins",
+                    "Squash multiple line breaks"
+                ],
+                null
+            ],
+            "110SR": [
+                "SimpleReplace",
+                [
+                    "RegExp substitution"
+                ],
+                null
+            ],
+            "210ES": [
+                "FixLinkFragments",
+                [
+                    "Query plugins",
+                    "Fix external section links"
+                ],
+                null
+            ]
+        },
+        "NewPages": {},
+        "RecentChanges": {},
+        "Special": {
+            "020DR": [
+                "FixDoubleRedirects",
+                null,
+                "fix double redirect"
+            ]
+        }
+    }
+});

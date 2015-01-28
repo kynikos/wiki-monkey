@@ -1,0 +1,30 @@
+* Verify that Alib's correct branch is checked out
+* Check that release.py is correctly configured and up to date
+* Make sure to be on the develop branch
+
+* Create and ckeckout a 2.x VERSION branch
+* Run `./release.py VERSION1.x` from inside the auxiliary folder
+* Copy (not rename) the src folder to something else
+* Run `./release.py VERSION2.x` from inside the auxiliary folder
+* Replace the new src folder with the previously copied one
+* Commit
+* Create a 1.x VERSION branch
+
+* Push the new branches to the remote repository
+* Install all the generated scripts and check that they work correctly in
+  every supported browser
+
+* Checkout the master branch and merge the 2.x VERSION branch
+* Tag the release commit with both the new 1.x and 2.x VERSION numbers
+* Remove the VERSION branches, also remotely
+
+* Checkout the develop branch
+* Check milestone is closed on GitHub
+* Update documentation:
+  - GitHub wiki
+  - ArchWiki article: https://wiki.archlinux.org/index.php/Wiki_Monkey
+
+NOTES:
+* To force merge "theirs" branch: `git merge -X theirs branch`
+* To delete a remote branch: `git push origin :tmpbranch`
+  or `git push origin :refs/heads/tmpbranch`
