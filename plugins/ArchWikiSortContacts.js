@@ -21,6 +21,14 @@
 WM.Plugins.ArchWikiSortContacts = new function () {
     "use strict";
 
+    /*
+     * This plugin was originally based on list=allusers, but because of bug
+     *  #208 it can't rely on that anymore, so it was rewritten with
+     *  60bb2ac2a2dcd0b15b7aac80725c83151173eeb3
+     * See also https://bbs.archlinux.org/viewtopic.php?id=192389 and
+     *  https://lists.wikimedia.org/pipermail/mediawiki-l/2015-January/043850.html
+     */
+
     var startMark = "START AUTO LIST - DO NOT REMOVE OR MODIFY THIS MARK-->";
     var endMark = "<!--END AUTO LIST - DO NOT REMOVE OR MODIFY THIS MARK";
     var RECENT_DAYS = 30;
