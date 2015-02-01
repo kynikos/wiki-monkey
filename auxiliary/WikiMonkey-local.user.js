@@ -3,7 +3,7 @@
 // @name Wiki Monkey (local)
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 2.0.0-local
+// @version 2.0.0-dev-local
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser (local version)
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
@@ -640,17 +640,24 @@ WM.main({
             "030ASC": [
                 "ArchWikiSortContacts",
                 [
-                    "Sort Admins and Maintainers"
+                    "Sort contacts",
+                    "Sort Administrators"
                 ],
                 [
-                    [
-                        "ArchWiki:Administrators",
-                        "ArchWiki:Maintainers"
-                    ],
-                    [
-                        "The following Administrators are currently inactive:",
-                        "The following Maintainers are currently inactive:"
-                    ],
+                    "ArchWiki:Administrators",
+                    "The following Administrators are currently inactive:",
+                    "automatically sort list according to recent activity"
+                ]
+            ],
+            "040ASCM": [
+                "ArchWikiSortContacts",
+                [
+                    "Sort contacts",
+                    "Sort Maintainers"
+                ],
+                [
+                    "ArchWiki:Maintainers",
+                    "The following Maintainers are currently inactive:",
                     "automatically sort list according to recent activity"
                 ]
             ]

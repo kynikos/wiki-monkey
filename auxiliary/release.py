@@ -87,11 +87,19 @@ CONFIG = {
         "Special": {
             "030ASC": (
                 "ArchWikiSortContacts",
-                ("Sort Admins and Maintainers", ),
+                ("Sort contacts", "Sort Administrators"),
                 (
-                    ("ArchWiki:Administrators", "ArchWiki:Maintainers"),
-                    ("The following Administrators are currently inactive:",
-                          "The following Maintainers are currently inactive:"),
+                    "ArchWiki:Administrators",
+                    "The following Administrators are currently inactive:",
+                    "automatically sort list according to recent activity"
+                )
+            ),
+            "040ASCM": (
+                "ArchWikiSortContacts",
+                ("Sort contacts", "Sort Maintainers"),
+                (
+                    "ArchWiki:Maintainers",
+                    "The following Maintainers are currently inactive:",
                     "automatically sort list according to recent activity"
                 )
             ),
