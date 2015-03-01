@@ -77,6 +77,8 @@ WM.Plugins.FixDoubleRedirects = new function () {
 
         if (source.indexOf(rawTarget[0]) == 0) {
             var target = WM.Parser.findInternalLinks(rawTarget[0], null)[0];
+            var interlanguage = (page.databaseResult.iwc) ?
+                                        page.databaseResult.iwc + ":" : "";
             var namespace = (namespaces[page.databaseResult.nsc]["*"]) ?
                                         WM.Parser.squashContiguousWhitespace(
                                         namespaces[page.databaseResult.nsc][
@@ -87,8 +89,8 @@ WM.Plugins.FixDoubleRedirects = new function () {
             var altAnchor = (target.anchor) ? ("|" + target.anchor) : "";
             var targetEnd = target.index + target.length;
 
-            var newTarget = "#REDIRECT [[" + namespace + newTitle + fragment +
-                                                            altAnchor + "]]";
+            var newTarget = "#REDIRECT [[" + interlanguage + namespace +
+                                        newTitle + fragment + altAnchor + "]]";
             var newtext = Alib.Str.overwriteFor(source, newTarget, 0,
                                                                     targetEnd);
 
