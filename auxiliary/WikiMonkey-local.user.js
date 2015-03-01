@@ -448,20 +448,6 @@ WM.main({
                     "automatic update"
                 ]
             ],
-            "010CTja": [
-                "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Japanese"
-                ],
-                [
-                    [
-                        "ArchWiki",
-                        "ja"
-                    ],
-                    "automatic update"
-                ]
-            ],
             "010CTko": [
                 "UpdateCategoryTree",
                 [

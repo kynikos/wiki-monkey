@@ -43,6 +43,11 @@ WM.MW = new function () {
                 full: "/index.php",
                 api: "/api.php"
             },
+            "^https?://archlinuxjp\.kusakata\.com": {
+                short: "/wiki/",
+                full: "/wiki/index.php",
+                api: "/wiki/api.php"
+            },
             "^http://wiki\.archlinux\.ro": {
                 short: "/index.php/",
                 full: "/index.php",

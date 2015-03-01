@@ -326,17 +326,6 @@ CONFIG = {
                     "automatic update"
                 )
             ),
-            "010CTja": (
-                "UpdateCategoryTree",
-                ("Update category trees", "Japanese"),
-                (
-                    (
-                        "ArchWiki",
-                        "ja"
-                    ),
-                    "automatic update"
-                )
-            ),
             "010CTko": (
                 "UpdateCategoryTree",
                 ("Update category trees", "Korean"),
@@ -524,7 +513,7 @@ DISABLE_BOT = {
 DISABLE_AW_BOT = {
     "Special": ("010CTar", "010CTbg", "010CTcs", "010CTda", "010CTel",
                 "010CTen", "010CTes", "010CThe", "010CThr", "010CThu",
-                "010CTid", "010CTit", "010CTja", "010CTko", "010CTlt",
+                "010CTid", "010CTit", "010CTko", "010CTlt",
                 "010CTnl", "010CTpl", "010CTpt", "010CTru", "010CTsk",
                 "010CTsr", "010CTth", "010CTuk", "010CTzhcn", "010CTzhtw"),
     "Bot": ("030IL", ),
