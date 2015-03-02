@@ -238,6 +238,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
         if (newtext != args.source) {
             WM.MW.callAPIPost({action: "edit",
                                bot: "1",
+                               minor: "1",
                                title: args.params.page,
                                summary: args.summary,
                                text: newtext,
