@@ -525,7 +525,7 @@ DISABLE_AW_BOT_X = {
 
 DISABLE_LOCAL = {
     "Diff": ("020AST", ),
-    "Special": ("030ASC", ),
+    "Special": ("030ASC", "040ASCM"),
     "Bot": ("060AWC", "070DP"),
 }
 
