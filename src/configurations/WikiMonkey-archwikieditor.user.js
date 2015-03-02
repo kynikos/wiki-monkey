@@ -3,19 +3,19 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.17.0-archwiki
+// @version 1.17.1-archwiki
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser (ArchWiki version)
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
 // @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-archwikieditor.meta.js
 // @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-archwikieditor.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/1.17.0/auxiliary/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.17.0/auxiliary/wiki-monkey-64.png
+// @icon https://raw.github.com/kynikos/wiki-monkey/1.17.1/auxiliary/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.17.1/auxiliary/wiki-monkey-64.png
 // @match https://wiki.archlinux.org/*
 // @grant GM_info
 // @grant GM_xmlhttpRequest
 // @require https://code.jquery.com/jquery-2.1.3.min.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.17.0/scripts/WikiMonkey-ArchWiki.include.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.17.1/scripts/WikiMonkey-ArchWiki.include.js
 // ==/UserScript==
 
 WM.main({
@@ -319,17 +319,6 @@ WM.main({
                     [
                         "ArchWiki",
                         "it"
-                    ],
-                    "automatic update"
-                ]
-            ],
-            "010CTja": [
-                "UpdateCategoryTree",
-                null,
-                [
-                    [
-                        "ArchWiki",
-                        "ja"
                     ],
                     "automatic update"
                 ]

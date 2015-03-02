@@ -21,7 +21,7 @@
 if (!GM_info) {
     var GM_info = {
         script: {
-            version: "2.0.0-wikipedia",
+            version: "2.0.1-wikipedia",
         },
     };
 
@@ -2810,6 +2810,11 @@ WM.MW = new function () {
                 full: "/index.php",
                 api: "/api.php"
             },
+            "^https?://archlinuxjp\.kusakata\.com": {
+                short: "/wiki/",
+                full: "/wiki/index.php",
+                api: "/wiki/api.php"
+            },
             "^http://wiki\.archlinux\.ro": {
                 short: "/index.php/",
                 full: "/index.php",
@@ -3305,23 +3310,26 @@ WM.MW = new function () {
         callArgs);
     };
 
-    this.getActiveUsers = function (augroup, call, callArgs) {
+    this.getUserContribs = function (ucuser, ucstart, ucend, call, callArgs) {
         var query = {action: "query",
-                     list: "allusers",
-                     augroup: augroup,
-                     aulimit: 500,
-                     auactiveusers: 1}
+                    list: "usercontribs",
+                    ucuser: ucuser,
+                    ucprop: "",
+                    ucstart: ucstart,
+                    ucend: ucend,
+                    uclimit: 500}
 
-        this._getActiveUsersContinue(query, call, callArgs, []);
+        this._getUserContribsContinue(query, call, callArgs, []);
     };
 
-    this._getActiveUsersContinue = function (query, call, callArgs, results) {
+    this._getUserContribsContinue = function (query, call, callArgs, results) {
         WM.MW.callAPIGet(query, null, function (res, args) {
-            results = results.concat(res.query.allusers);
+            results = results.concat(res.query.usercontribs);
 
             if (res["query-continue"]) {
-                query.aufrom = res["query-continue"].allusers.aufrom;
-                WM.MW._getActiveUsersContinue(query, call, args, results);
+                query.uccontinue = res["query-continue"].usercontribs
+                                                                .uccontinue;
+                WM.MW._getUserContribsContinue(query, call, args, results);
             }
             else {
                 call(results, args);
@@ -4630,6 +4638,8 @@ WM.Plugins.FixDoubleRedirects = new function () {
 
         if (source.indexOf(rawTarget[0]) == 0) {
             var target = WM.Parser.findInternalLinks(rawTarget[0], null)[0];
+            var interlanguage = (page.databaseResult.iwc) ?
+                                        page.databaseResult.iwc + ":" : "";
             var namespace = (namespaces[page.databaseResult.nsc]["*"]) ?
                                         WM.Parser.squashContiguousWhitespace(
                                         namespaces[page.databaseResult.nsc][
@@ -4640,8 +4650,8 @@ WM.Plugins.FixDoubleRedirects = new function () {
             var altAnchor = (target.anchor) ? ("|" + target.anchor) : "";
             var targetEnd = target.index + target.length;
 
-            var newTarget = "#REDIRECT [[" + namespace + newTitle + fragment +
-                                                            altAnchor + "]]";
+            var newTarget = "#REDIRECT [[" + interlanguage + namespace +
+                                        newTitle + fragment + altAnchor + "]]";
             var newtext = Alib.Str.overwriteFor(source, newTarget, 0,
                                                                     targetEnd);
 
@@ -5811,6 +5821,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
         if (newtext != args.source) {
             WM.MW.callAPIPost({action: "edit",
                                bot: "1",
+                               minor: "1",
                                title: args.params.page,
                                summary: args.summary,
                                text: newtext,

@@ -43,6 +43,11 @@ WM.MW = new function () {
                 full: "/index.php",
                 api: "/api.php"
             },
+            "^https?://archlinuxjp\.kusakata\.com": {
+                short: "/wiki/",
+                full: "/wiki/index.php",
+                api: "/wiki/api.php"
+            },
             "^http://wiki\.archlinux\.ro": {
                 short: "/index.php/",
                 full: "/index.php",
@@ -538,23 +543,26 @@ WM.MW = new function () {
         callArgs);
     };
 
-    this.getActiveUsers = function (augroup, call, callArgs) {
+    this.getUserContribs = function (ucuser, ucstart, ucend, call, callArgs) {
         var query = {action: "query",
-                     list: "allusers",
-                     augroup: augroup,
-                     aulimit: 500,
-                     auactiveusers: 1}
+                    list: "usercontribs",
+                    ucuser: ucuser,
+                    ucprop: "",
+                    ucstart: ucstart,
+                    ucend: ucend,
+                    uclimit: 500}
 
-        this._getActiveUsersContinue(query, call, callArgs, []);
+        this._getUserContribsContinue(query, call, callArgs, []);
     };
 
-    this._getActiveUsersContinue = function (query, call, callArgs, results) {
+    this._getUserContribsContinue = function (query, call, callArgs, results) {
         WM.MW.callAPIGet(query, null, function (res, args) {
-            results = results.concat(res.query.allusers);
+            results = results.concat(res.query.usercontribs);
 
             if (res["query-continue"]) {
-                query.aufrom = res["query-continue"].allusers.aufrom;
-                WM.MW._getActiveUsersContinue(query, call, args, results);
+                query.uccontinue = res["query-continue"].usercontribs
+                                                                .uccontinue;
+                WM.MW._getUserContribsContinue(query, call, args, results);
             }
             else {
                 call(results, args);

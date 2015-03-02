@@ -93,9 +93,9 @@ WM.ArchWiki = new function () {
             "正體中文"
         ],
         interlanguage: {
-            external: ["de", "fa", "fi", "fr", "ro", "sv", "tr"],
+            external: ["de", "fa", "fi", "fr", "ja", "ro", "sv", "tr"],
             internal: ["ar", "bg", "cs", "da", "el", "en", "es", "he", "hr",
-                       "hu", "id", "it", "ja", "ko", "lt", "nl", "pl", "pt",
+                       "hu", "id", "it", "ko", "lt", "nl", "pl", "pt",
                        "ru", "sk", "sr", "th", "uk", "zh-cn", "zh-tw"],
         }
     };
@@ -217,16 +217,6 @@ WM.ArchWiki = new function () {
             "alsoIn": "anche in",
             "indentType": ":",
             "replace": ["[ _]\\(Italiano\\)", "", ""],
-            "keepAltName": true,
-            "showIndices": true,
-            "rightToLeft": false
-        },
-        "ja": {
-            "page": "Table of Contents (日本語)",
-            "root": "Category:日本語",
-            "alsoIn": "also in",
-            "indentType": ":",
-            "replace": ["[ _]\\(日本語\\)", "", ""],
             "keepAltName": true,
             "showIndices": true,
             "rightToLeft": false
