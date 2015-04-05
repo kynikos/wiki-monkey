@@ -21,19 +21,20 @@
 WM.Plugins.DeletePages = new function () {
     "use strict";
 
-    this.mainAuto = function (args, title, chainArgs) {
+    this.mainAuto = function (args, title, callBot, chainArgs) {
         var summary = args;
 
         WM.MW.callQuery({prop: 'info',
                          intoken: 'delete',
                          titles: title},
                          WM.Plugins.DeletePages.mainAutoWrite,
-                         [title, summary]);
+                         [title, summary, callBot]);
     };
 
     this.mainAutoWrite = function (page, args) {
         var title = args[0];
         var summary = args[1];
+        var callBot = args[2];
 
         var deletetoken = page.deletetoken;
 
