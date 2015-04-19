@@ -79,17 +79,40 @@ WM.Interlanguage = new function () {
             query,
             api,
             function (res, args) {
-                var page = Alib.Obj.getFirstItem(res.query.pages);
-                if (page.revisions) {
-                    var source = page.revisions[0]["*"];
-                    var timestamp = page.revisions[0].timestamp;
-                    var edittoken = page.edittoken;
+                if (res.query.pages) {
+                    var page = Alib.Obj.getFirstItem(res.query.pages);
+                    if (page.revisions) {
+                        var error = null;
+                        var source = page.revisions[0]["*"];
+                        var timestamp = page.revisions[0].timestamp;
+                        var edittoken = page.edittoken;
+                        var iwmap = res.query.interwikimap;
+                        var langlinks = WM.Interlanguage.parseLinks(
+                                                supportedLangs, source, iwmap);
+                    }
+                    else {
+                        // The requested article doesn't exist
+                        var error = 'nonexisting';
+                        var source = false;
+                        var timestamp = false;
+                        var edittoken = false;
+                        var iwmap = res.query.interwikimap;
+                        var langlinks = false;
+                    }
+                }
+                else if (res.query.redirects) {
+                    // The requested article is an unsolved redirect
+                    // (redirect over interwiki link?)
+                    var error = 'unsolvedredirect';
+                    var source = false;
+                    var timestamp = false;
+                    var edittoken = false;
                     var iwmap = res.query.interwikimap;
-                    var langlinks = WM.Interlanguage.parseLinks(supportedLangs,
-                                                                source, iwmap);
+                    var langlinks = false;
                 }
                 else {
-                    // The requested article doesn't exist
+                    // Unknown error
+                    var error = 'unknown';
                     var source = false;
                     var timestamp = false;
                     var edittoken = false;
@@ -103,6 +126,7 @@ WM.Interlanguage = new function () {
                     supportedLangs,
                     whitelist,
                     false,
+                    error,
                     langlinks,
                     iwmap,
                     source,
@@ -188,21 +212,14 @@ WM.Interlanguage = new function () {
                     );
                 }
                 else {
-                    WM.Log.logWarning(WM.Log.linkToPage(url,
-                                "[[" + origTag + ":" + title + "]]") +
-                                " will not be checked because " + tag +
-                                " is not included in the whitelist defined " +
-                                "in the configuration");
                     WM.Interlanguage._collectLinksContinue(
                         api,
                         title,
                         supportedLangs,
                         whitelist,
                         firstPage,
-                        // Don't pass a false value as langlinks because this
-                        // link would be interpreted as pointing to a
-                        // non-existing article
-                        [],
+                        'notinwhitelist',
+                        null,
                         false,
                         null,
                         null,
@@ -235,8 +252,8 @@ WM.Interlanguage = new function () {
     };
 
     this._collectLinksContinue = function (api, title, supportedLangs,
-                                        whitelist, firstPage, langlinks, iwmap,
-                                        source, timestamp, edittoken, args) {
+                                whitelist, firstPage, error, langlinks,
+                                iwmap, source, timestamp, edittoken, args) {
         var url = args[0];
         var tag = args[1];
         var origTag = args[2];
@@ -245,14 +262,34 @@ WM.Interlanguage = new function () {
         var callEnd = args[5];
         var callArgs = args[6];
 
-        if (langlinks === false) {
+        if (error == 'nonexisting') {
             WM.Log.logWarning(WM.Log.linkToPage(url,
                                 "[[" + origTag + ":" + title + "]]") +
                                 " seems to point " +
-                                "to a non-existing article, removing it if " +
+                                "to a non-existing article: removing it if " +
                                 "it was linked from the processed article");
         }
         else {
+            if (error == 'unsolvedredirect') {
+                WM.Log.logWarning(WM.Log.linkToPage(url,
+                                "[[" + origTag + ":" + title + "]]") +
+                                " will not be checked because it points to " +
+                                "an external redirect");
+            }
+            else if (error == 'unknown') {
+                WM.Log.logWarning(WM.Log.linkToPage(url,
+                                "[[" + origTag + ":" + title + "]]") +
+                                " will not be checked because of an " +
+                                "unspecified problem");
+            }
+            else if (error == 'notinwhitelist') {
+                WM.Log.logWarning(WM.Log.linkToPage(url,
+                                "[[" + origTag + ":" + title + "]]") +
+                                " will not be checked because " + tag +
+                                " is not included in the whitelist defined " +
+                                "in the configuration");
+            }
+
             visitedlinks[tag] = WM.Interlanguage.createVisitedLink(origTag,
                                             title, url, iwmap, api, source,
                                             timestamp, edittoken, langlinks);
