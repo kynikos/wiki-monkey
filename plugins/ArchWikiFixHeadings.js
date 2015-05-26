@@ -27,14 +27,19 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
         var info = WM.Parser.findSectionHeadings(source);
 
         var increaseLevel;
-        if (info.maxTocLevel < 6) {
-            increaseLevel = 1;
+        if (WM.Editor.isSection()) {
+            increaseLevel = info.minLevel - 1;
         }
         else {
-            increaseLevel = 0;
-            WM.Log.logWarning("There are 6 levels of headings, it's been " +
-                "necessary to start creating them from level 1 although " +
-                "usually it's suggested to start from level 2");
+            if (info.maxTocLevel < 6) {
+                increaseLevel = 1;
+            }
+            else {
+                increaseLevel = 0;
+                WM.Log.logWarning("There are 6 levels of headings, it's been " +
+                    "necessary to start creating them from level 1 although " +
+                    "usually it's suggested to start from level 2");
+            }
         }
 
         var newtext = "";
