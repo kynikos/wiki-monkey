@@ -36,9 +36,9 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
             }
             else {
                 increaseLevel = 0;
-                WM.Log.logWarning("There are 6 levels of headings, it's been " +
-                    "necessary to start creating them from level 1 although " +
-                    "usually it's suggested to start from level 2");
+                WM.Log.logWarning("There are 6 levels of headings, it has " +
+                    "been necessary to start creating them from level 1 " +
+                    "although usually it is suggested to start from level 2");
             }
         }
 
