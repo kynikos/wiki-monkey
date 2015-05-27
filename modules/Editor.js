@@ -27,7 +27,8 @@ WM.Editor = new function () {
     };
 
     this.isSection = function () {
-        return (Alib.HTTP.getURIParameter(null, 'section')) ? true : false;
+        return (document.getElementsByName('wpSection')[0].value) ? true :
+                                                                        false;
     };
 
     this.readSource = function () {
