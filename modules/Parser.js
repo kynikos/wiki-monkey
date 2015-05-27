@@ -597,6 +597,9 @@ WM.Parser = new function () {
                     prevLevels = {};
                     prevLevels[level] = 1;
                     prevLevels.relMax = level;
+                    if (maxTocLevel == 0) {
+                        maxTocLevel = tocLevel;
+                    }
                 }
                 else if (level > prevLevels.relMax) {
                     tocLevel++;
