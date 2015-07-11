@@ -200,6 +200,10 @@ WM.Cfg = new function () {
         return config["Plugins"]["NewPages"];
     };
 
+    this._getEditorMods = function() {
+        return config["Mods"]["Editor"];
+    };
+
     var save = function() {
         localStorage.setItem("WikiMonkey", JSON.stringify(config));
     };

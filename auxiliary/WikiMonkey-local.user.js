@@ -35,6 +35,7 @@
 // @require file:///mnt/archive/Development/wiki-monkey/modules/Interlanguage.js
 // @require file:///mnt/archive/Development/wiki-monkey/modules/Log.js
 // @require file:///mnt/archive/Development/wiki-monkey/modules/Menu.js
+// @require file:///mnt/archive/Development/wiki-monkey/modules/Mods.js
 // @require file:///mnt/archive/Development/wiki-monkey/modules/MW.js
 // @require file:///mnt/archive/Development/wiki-monkey/modules/Parser.js
 // @require file:///mnt/archive/Development/wiki-monkey/modules/Tables.js
@@ -647,6 +648,11 @@ WM.main({
                     "automatically sort list according to recent activity"
                 ]
             ]
+        }
+    },
+    'Mods': {
+        'Editor': {
+            'disable_edit_summary_submit_on_enter': true
         }
     }
 });

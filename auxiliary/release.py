@@ -487,6 +487,12 @@ CONFIG_PLUGINS = {
     "Wikipedia": {},
 }
 
+CONFIG_MODS = {
+    "Editor": {
+        'disable_edit_summary_submit_on_enter': True,
+    },
+}
+
 DISABLE_EDITOR = {
     "Editor": ("040SL", "060EC", "070ML", "110SR", "210ES"),
 }
@@ -659,6 +665,7 @@ MODULES_COMMON = (
     "Interlanguage",
     "Log",
     "Menu",
+    "Mods",
     "MW",
     "Parser",
     "Tables",
@@ -865,6 +872,7 @@ def compose_config(wiki, browser, conf_name, disables):
 
     conf = {
         "Plugins": conf_plugins,
+        "Mods": CONFIG_MODS,
     }
     cfg = json.dumps(conf, indent=4, sort_keys=True)
 

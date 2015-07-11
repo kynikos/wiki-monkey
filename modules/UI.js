@@ -31,6 +31,7 @@ WM.UI = new function () {
                                                     ).parentNode.nextSibling;
             var conf = WM.Cfg._getEditorPlugins();
             UI = (conf) ? WM.Menu._makeUI(conf) : null;
+            WM.Mods.applyEditorMods();
         }
         else if (document.getElementById('mw-diff-otitle1')) {
             nextNode = document.getElementById('bodyContent'
