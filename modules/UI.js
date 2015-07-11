@@ -1,6 +1,6 @@
 /*
  *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
- *  Copyright (C) 2011-2014 Dario Giovannetti <dev@dariogiovannetti.net>
+ *  Copyright (C) 2011-2015 Dario Giovannetti <dev@dariogiovannetti.net>
  *
  *  This file is part of Wiki Monkey.
  *
@@ -29,19 +29,20 @@ WM.UI = new function () {
         if (document.getElementById('editform')) {
             nextNode = document.getElementById('wpSummaryLabel'
                                                     ).parentNode.nextSibling;
-            var conf = WM.Cfg._getEditor();
+            var conf = WM.Cfg._getEditorPlugins();
             UI = (conf) ? WM.Menu._makeUI(conf) : null;
+            WM.Mods.applyEditorMods();
         }
         else if (document.getElementById('mw-diff-otitle1')) {
             nextNode = document.getElementById('bodyContent'
                                             ).getElementsByTagName('h2')[0];
-            var conf = WM.Cfg._getDiff();
+            var conf = WM.Cfg._getDiffPlugins();
             UI = (conf) ? WM.Menu._makeUI(conf) : null;
         }
         else if (document.getElementById('mw-subcategories') ||
                                         document.getElementById('mw-pages')) {
             nextNode = document.getElementById('bodyContent');
-            var conf = WM.Cfg._getBot();
+            var conf = WM.Cfg._getBotPlugins();
             UI = (conf) ? WM.Bot._makeUI(conf,
                             [[document.getElementById('mw-pages'), 0, "Pages"],
                             [document.getElementById('mw-subcategories'), 0,
@@ -51,7 +52,7 @@ WM.UI = new function () {
         else if (document.getElementById('mw-whatlinkshere-list')) {
             nextNode = document.getElementById('bodyContent'
                                 ).getElementsByTagName('form')[0].nextSibling;
-            var conf = WM.Cfg._getBot();
+            var conf = WM.Cfg._getBotPlugins();
             UI = (conf) ? WM.Bot._makeUI(conf,
                             [[document.getElementById('mw-whatlinkshere-list'),
                             0, "Pages"]]) : null;
@@ -62,7 +63,7 @@ WM.UI = new function () {
                                         ).getElementsByTagName('ol')[0]) {
             nextNode = document.getElementById('mw-linksearch-form'
                                                                 ).nextSibling;
-            var conf = WM.Cfg._getBot();
+            var conf = WM.Cfg._getBotPlugins();
             UI = (conf) ? WM.Bot._makeUI(conf,
                         [[document.getElementById('bodyContent'
                         ).getElementsByTagName('ol')[0], 1, "Pages"]]) : null;
@@ -70,7 +71,7 @@ WM.UI = new function () {
         }
         else if (document.getElementById('mw-prefixindex-list-table')) {
             nextNode = document.getElementById('mw-prefixindex-list-table');
-            var conf = WM.Cfg._getBot();
+            var conf = WM.Cfg._getBotPlugins();
             UI = (conf) ? WM.Bot._makeUI(conf,
                                 [[nextNode.getElementsByTagName('tbody')[0],
                                 0, "Pages"]]) : null;
@@ -105,14 +106,14 @@ WM.UI = new function () {
             if (location.href.search(patt1A) > -1 ||
                                         location.href.search(patt1B) > -1) {
                 nextNode = document.getElementById('bodyContent');
-                var conf = WM.Cfg._getSpecial();
+                var conf = WM.Cfg._getSpecialPlugins();
                 UI = (conf) ? WM.Menu._makeUI(conf) : null;
             }
             else if (location.href.search(patt2A) > -1 ||
                                         location.href.search(patt2B) > -1) {
                 nextNode = document.getElementById('mw-content-text'
                                             ).getElementsByTagName('h4')[0];
-                var conf = WM.Cfg._getRecentChanges();
+                var conf = WM.Cfg._getRecentChangesPlugins();
                 UI = (conf) ? WM.Filters._makeUI(conf) : null;
                 displayLog = false;
             }
@@ -120,7 +121,7 @@ WM.UI = new function () {
                                         location.href.search(patt3B) > -1) {
                 nextNode = document.getElementById('mw-content-text'
                                             ).getElementsByTagName('ul')[0];
-                var conf = WM.Cfg._getNewPages();
+                var conf = WM.Cfg._getNewPagesPlugins();
                 UI = (conf) ? WM.Filters._makeUI(conf) : null;
                 displayLog = false;
             }
@@ -128,7 +129,7 @@ WM.UI = new function () {
                                         location.href.search(patt4B) > -1) {
                 nextNode = document.getElementById('mw-content-text'
                                             ).getElementsByTagName('ul')[0];
-                var conf = WM.Cfg._getBot();
+                var conf = WM.Cfg._getBotPlugins();
                 UI = (conf) ? WM.Bot._makeUI(conf,
                                     [[document.getElementById('mw-content-text'
                                             ).getElementsByTagName('ul')[0],
@@ -138,7 +139,7 @@ WM.UI = new function () {
             else if (document.getElementsByClassName('mw-spcontent'
                                                                 ).length > 0) {
                 nextNode = document.getElementsByClassName('mw-spcontent')[0];
-                var conf = WM.Cfg._getBot();
+                var conf = WM.Cfg._getBotPlugins();
                 UI = (conf) ? WM.Bot._makeUI(conf,
                                     [[nextNode.getElementsByTagName('ol')[0],
                                     0, "Pages"]]) : null;
@@ -148,7 +149,7 @@ WM.UI = new function () {
                                                                 ).length > 0) {
                 nextNode = document.getElementsByClassName(
                                                 'mw-allpages-table-chunk')[0];
-                var conf = WM.Cfg._getBot();
+                var conf = WM.Cfg._getBotPlugins();
                 UI = (conf) ? WM.Bot._makeUI(conf,
                                 [[nextNode.getElementsByTagName('tbody')[0],
                                 0, "Pages"]]) : null;

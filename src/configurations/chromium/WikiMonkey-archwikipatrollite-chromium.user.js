@@ -3,14 +3,14 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.17.1-archwiki
+// @version 1.17.2-archwiki
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser (ArchWiki version)
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
 // @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-archwikipatrollite-chromium.meta.js
 // @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-archwikipatrollite-chromium.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/1.17.1/auxiliary/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.17.1/auxiliary/wiki-monkey-64.png
+// @icon https://raw.github.com/kynikos/wiki-monkey/1.17.2/auxiliary/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.17.2/auxiliary/wiki-monkey-64.png
 // @match https://wiki.archlinux.org/*
 // @grant GM_info
 // @grant GM_xmlhttpRequest
@@ -23,7 +23,7 @@
 
 /*
  *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
- *  Copyright (C) 2011-2014 Dario Giovannetti <dev@dariogiovannetti.net>
+ *  Copyright (C) 2011-2015 Dario Giovannetti <dev@dariogiovannetti.net>
  *
  *  This file is part of Wiki Monkey.
  *
@@ -44,7 +44,7 @@
 if (!GM_info) {
     var GM_info = {
         script: {
-            version: "1.17.1-archwiki",
+            version: "1.17.2-archwiki",
         },
     };
 
@@ -1703,14 +1703,14 @@ WM.Cfg = new function () {
         var savedConfig = JSON.parse(localStorage.getItem("WikiMonkey"));
 
         if (savedConfig) {
-            if (savedConfig["Plugins"]) {
-                for (var type in config["Plugins"]) {
-                    if (savedConfig["Plugins"][type]) {
+            for (var section in savedConfig) {
+                for (var type in config[section]) {
+                    if (savedConfig[section][type]) {
                         // Don't do a deep (recursive) merge! It would also
                         // merge the plugins' arguments, and also other
                         // possible unexpected effects
-                        $.extend(config["Plugins"][type],
-                                                savedConfig["Plugins"][type]);
+                        $.extend(config[section][type],
+                                                savedConfig[section][type]);
                     }
                 }
             }
@@ -1719,28 +1719,32 @@ WM.Cfg = new function () {
         save();
     };
 
-    this._getEditor = function() {
+    this._getEditorPlugins = function() {
         return config["Plugins"]["Editor"];
     };
 
-    this._getDiff = function() {
+    this._getDiffPlugins = function() {
         return config["Plugins"]["Diff"];
     };
 
-    this._getBot = function() {
+    this._getBotPlugins = function() {
         return config["Plugins"]["Bot"];
     };
 
-    this._getSpecial = function() {
+    this._getSpecialPlugins = function() {
         return config["Plugins"]["Special"];
     };
 
-    this._getRecentChanges = function() {
+    this._getRecentChangesPlugins = function() {
         return config["Plugins"]["RecentChanges"];
     };
 
-    this._getNewPages = function() {
+    this._getNewPagesPlugins = function() {
         return config["Plugins"]["NewPages"];
+    };
+
+    this._getEditorMods = function() {
+        return config["Mods"]["Editor"];
     };
 
     var save = function() {
@@ -1859,7 +1863,8 @@ WM.Editor = new function () {
     };
 
     this.isSection = function () {
-        return (Alib.HTTP.getURIParameter(null, 'section')) ? true : false;
+        return (document.getElementsByName('wpSection')[0].value) ? true :
+                                                                        false;
     };
 
     this.readSource = function () {
@@ -2081,17 +2086,40 @@ WM.Interlanguage = new function () {
             query,
             api,
             function (res, args) {
-                var page = Alib.Obj.getFirstItem(res.query.pages);
-                if (page.revisions) {
-                    var source = page.revisions[0]["*"];
-                    var timestamp = page.revisions[0].timestamp;
-                    var edittoken = page.edittoken;
+                if (res.query.pages) {
+                    var page = Alib.Obj.getFirstItem(res.query.pages);
+                    if (page.revisions) {
+                        var error = null;
+                        var source = page.revisions[0]["*"];
+                        var timestamp = page.revisions[0].timestamp;
+                        var edittoken = page.edittoken;
+                        var iwmap = res.query.interwikimap;
+                        var langlinks = WM.Interlanguage.parseLinks(
+                                                supportedLangs, source, iwmap);
+                    }
+                    else {
+                        // The requested article doesn't exist
+                        var error = 'nonexisting';
+                        var source = false;
+                        var timestamp = false;
+                        var edittoken = false;
+                        var iwmap = res.query.interwikimap;
+                        var langlinks = false;
+                    }
+                }
+                else if (res.query.redirects) {
+                    // The requested article is an unsolved redirect
+                    // (redirect over interwiki link?)
+                    var error = 'unsolvedredirect';
+                    var source = false;
+                    var timestamp = false;
+                    var edittoken = false;
                     var iwmap = res.query.interwikimap;
-                    var langlinks = WM.Interlanguage.parseLinks(supportedLangs,
-                                                                source, iwmap);
+                    var langlinks = false;
                 }
                 else {
-                    // The requested article doesn't exist
+                    // Unknown error
+                    var error = 'unknown';
                     var source = false;
                     var timestamp = false;
                     var edittoken = false;
@@ -2105,6 +2133,7 @@ WM.Interlanguage = new function () {
                     supportedLangs,
                     whitelist,
                     false,
+                    error,
                     langlinks,
                     iwmap,
                     source,
@@ -2190,21 +2219,14 @@ WM.Interlanguage = new function () {
                     );
                 }
                 else {
-                    WM.Log.logWarning(WM.Log.linkToPage(url,
-                                "[[" + origTag + ":" + title + "]]") +
-                                " will not be checked because " + tag +
-                                " is not included in the whitelist defined " +
-                                "in the configuration");
                     WM.Interlanguage._collectLinksContinue(
                         api,
                         title,
                         supportedLangs,
                         whitelist,
                         firstPage,
-                        // Don't pass a false value as langlinks because this
-                        // link would be interpreted as pointing to a
-                        // non-existing article
-                        [],
+                        'notinwhitelist',
+                        null,
                         false,
                         null,
                         null,
@@ -2237,8 +2259,8 @@ WM.Interlanguage = new function () {
     };
 
     this._collectLinksContinue = function (api, title, supportedLangs,
-                                        whitelist, firstPage, langlinks, iwmap,
-                                        source, timestamp, edittoken, args) {
+                                whitelist, firstPage, error, langlinks,
+                                iwmap, source, timestamp, edittoken, args) {
         var url = args[0];
         var tag = args[1];
         var origTag = args[2];
@@ -2247,14 +2269,34 @@ WM.Interlanguage = new function () {
         var callEnd = args[5];
         var callArgs = args[6];
 
-        if (langlinks === false) {
+        if (error == 'nonexisting') {
             WM.Log.logWarning(WM.Log.linkToPage(url,
                                 "[[" + origTag + ":" + title + "]]") +
                                 " seems to point " +
-                                "to a non-existing article, removing it if " +
+                                "to a non-existing article: removing it if " +
                                 "it was linked from the processed article");
         }
         else {
+            if (error == 'unsolvedredirect') {
+                WM.Log.logWarning(WM.Log.linkToPage(url,
+                                "[[" + origTag + ":" + title + "]]") +
+                                " will not be checked because it points to " +
+                                "an external redirect");
+            }
+            else if (error == 'unknown') {
+                WM.Log.logWarning(WM.Log.linkToPage(url,
+                                "[[" + origTag + ":" + title + "]]") +
+                                " will not be checked because of an " +
+                                "unspecified problem");
+            }
+            else if (error == 'notinwhitelist') {
+                WM.Log.logWarning(WM.Log.linkToPage(url,
+                                "[[" + origTag + ":" + title + "]]") +
+                                " will not be checked because " + tag +
+                                " is not included in the whitelist defined " +
+                                "in the configuration");
+            }
+
             visitedlinks[tag] = WM.Interlanguage.createVisitedLink(origTag,
                                             title, url, iwmap, api, source,
                                             timestamp, edittoken, langlinks);
@@ -2805,6 +2847,28 @@ WM.Menu = new function () {
         return function (event) {
             Alib.Async.executeAsync(subGroupActions, -1);
         };
+    };
+};
+
+WM.Mods = new function () {
+    "use strict";
+
+    var disableEditSummarySubmitOnEnter = function () {
+        $('#wpSummary').keydown(function(event) {
+            // 'keyCode' is deprecated, but not all browsers support 'key' yet
+            if (event.key == 'Enter' || (typeof event.key === 'undefined' &&
+                                                        event.keyCode == 13)) {
+                event.preventDefault();
+                return false;
+            }
+        });
+    };
+
+    this.applyEditorMods = function() {
+        var conf = WM.Cfg._getEditorMods();
+        if (conf['disable_edit_summary_submit_on_enter']) {
+            disableEditSummarySubmitOnEnter();
+        }
     };
 };
 
@@ -3941,6 +4005,9 @@ WM.Parser = new function () {
                     prevLevels = {};
                     prevLevels[level] = 1;
                     prevLevels.relMax = level;
+                    if (maxTocLevel == 0) {
+                        maxTocLevel = tocLevel;
+                    }
                 }
                 else if (level > prevLevels.relMax) {
                     tocLevel++;
@@ -4022,19 +4089,20 @@ WM.UI = new function () {
         if (document.getElementById('editform')) {
             nextNode = document.getElementById('wpSummaryLabel'
                                                     ).parentNode.nextSibling;
-            var conf = WM.Cfg._getEditor();
+            var conf = WM.Cfg._getEditorPlugins();
             UI = (conf) ? WM.Menu._makeUI(conf) : null;
+            WM.Mods.applyEditorMods();
         }
         else if (document.getElementById('mw-diff-otitle1')) {
             nextNode = document.getElementById('bodyContent'
                                             ).getElementsByTagName('h2')[0];
-            var conf = WM.Cfg._getDiff();
+            var conf = WM.Cfg._getDiffPlugins();
             UI = (conf) ? WM.Menu._makeUI(conf) : null;
         }
         else if (document.getElementById('mw-subcategories') ||
                                         document.getElementById('mw-pages')) {
             nextNode = document.getElementById('bodyContent');
-            var conf = WM.Cfg._getBot();
+            var conf = WM.Cfg._getBotPlugins();
             UI = (conf) ? WM.Bot._makeUI(conf,
                             [[document.getElementById('mw-pages'), 0, "Pages"],
                             [document.getElementById('mw-subcategories'), 0,
@@ -4044,7 +4112,7 @@ WM.UI = new function () {
         else if (document.getElementById('mw-whatlinkshere-list')) {
             nextNode = document.getElementById('bodyContent'
                                 ).getElementsByTagName('form')[0].nextSibling;
-            var conf = WM.Cfg._getBot();
+            var conf = WM.Cfg._getBotPlugins();
             UI = (conf) ? WM.Bot._makeUI(conf,
                             [[document.getElementById('mw-whatlinkshere-list'),
                             0, "Pages"]]) : null;
@@ -4055,7 +4123,7 @@ WM.UI = new function () {
                                         ).getElementsByTagName('ol')[0]) {
             nextNode = document.getElementById('mw-linksearch-form'
                                                                 ).nextSibling;
-            var conf = WM.Cfg._getBot();
+            var conf = WM.Cfg._getBotPlugins();
             UI = (conf) ? WM.Bot._makeUI(conf,
                         [[document.getElementById('bodyContent'
                         ).getElementsByTagName('ol')[0], 1, "Pages"]]) : null;
@@ -4063,7 +4131,7 @@ WM.UI = new function () {
         }
         else if (document.getElementById('mw-prefixindex-list-table')) {
             nextNode = document.getElementById('mw-prefixindex-list-table');
-            var conf = WM.Cfg._getBot();
+            var conf = WM.Cfg._getBotPlugins();
             UI = (conf) ? WM.Bot._makeUI(conf,
                                 [[nextNode.getElementsByTagName('tbody')[0],
                                 0, "Pages"]]) : null;
@@ -4098,14 +4166,14 @@ WM.UI = new function () {
             if (location.href.search(patt1A) > -1 ||
                                         location.href.search(patt1B) > -1) {
                 nextNode = document.getElementById('bodyContent');
-                var conf = WM.Cfg._getSpecial();
+                var conf = WM.Cfg._getSpecialPlugins();
                 UI = (conf) ? WM.Menu._makeUI(conf) : null;
             }
             else if (location.href.search(patt2A) > -1 ||
                                         location.href.search(patt2B) > -1) {
                 nextNode = document.getElementById('mw-content-text'
                                             ).getElementsByTagName('h4')[0];
-                var conf = WM.Cfg._getRecentChanges();
+                var conf = WM.Cfg._getRecentChangesPlugins();
                 UI = (conf) ? WM.Filters._makeUI(conf) : null;
                 displayLog = false;
             }
@@ -4113,7 +4181,7 @@ WM.UI = new function () {
                                         location.href.search(patt3B) > -1) {
                 nextNode = document.getElementById('mw-content-text'
                                             ).getElementsByTagName('ul')[0];
-                var conf = WM.Cfg._getNewPages();
+                var conf = WM.Cfg._getNewPagesPlugins();
                 UI = (conf) ? WM.Filters._makeUI(conf) : null;
                 displayLog = false;
             }
@@ -4121,7 +4189,7 @@ WM.UI = new function () {
                                         location.href.search(patt4B) > -1) {
                 nextNode = document.getElementById('mw-content-text'
                                             ).getElementsByTagName('ul')[0];
-                var conf = WM.Cfg._getBot();
+                var conf = WM.Cfg._getBotPlugins();
                 UI = (conf) ? WM.Bot._makeUI(conf,
                                     [[document.getElementById('mw-content-text'
                                             ).getElementsByTagName('ul')[0],
@@ -4131,7 +4199,7 @@ WM.UI = new function () {
             else if (document.getElementsByClassName('mw-spcontent'
                                                                 ).length > 0) {
                 nextNode = document.getElementsByClassName('mw-spcontent')[0];
-                var conf = WM.Cfg._getBot();
+                var conf = WM.Cfg._getBotPlugins();
                 UI = (conf) ? WM.Bot._makeUI(conf,
                                     [[nextNode.getElementsByTagName('ol')[0],
                                     0, "Pages"]]) : null;
@@ -4141,7 +4209,7 @@ WM.UI = new function () {
                                                                 ).length > 0) {
                 nextNode = document.getElementsByClassName(
                                                 'mw-allpages-table-chunk')[0];
-                var conf = WM.Cfg._getBot();
+                var conf = WM.Cfg._getBotPlugins();
                 UI = (conf) ? WM.Bot._makeUI(conf,
                                 [[nextNode.getElementsByTagName('tbody')[0],
                                 0, "Pages"]]) : null;
@@ -6644,14 +6712,19 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
         var info = WM.Parser.findSectionHeadings(source);
 
         var increaseLevel;
-        if (info.maxTocLevel < 6) {
-            increaseLevel = 1;
+        if (WM.Editor.isSection()) {
+            increaseLevel = info.minLevel - 1;
         }
         else {
-            increaseLevel = 0;
-            WM.Log.logWarning("There are 6 levels of headings, it's been " +
-                "necessary to start creating them from level 1 although " +
-                "usually it's suggested to start from level 2");
+            if (info.maxTocLevel < 6) {
+                increaseLevel = 1;
+            }
+            else {
+                increaseLevel = 0;
+                WM.Log.logWarning("There are 6 levels of headings, it has " +
+                    "been necessary to start creating them from level 1 " +
+                    "although usually it is suggested to start from level 2");
+            }
         }
 
         var newtext = "";
@@ -7972,6 +8045,11 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
 };
 
 WM.main({
+    "Mods": {
+        "Editor": {
+            "disable_edit_summary_submit_on_enter": true
+        }
+    },
     "Plugins": {
         "Bot": {
             "010SR": [

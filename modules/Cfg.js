@@ -1,6 +1,6 @@
 /*
  *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
- *  Copyright (C) 2011-2014 Dario Giovannetti <dev@dariogiovannetti.net>
+ *  Copyright (C) 2011-2015 Dario Giovannetti <dev@dariogiovannetti.net>
  *
  *  This file is part of Wiki Monkey.
  *
@@ -160,14 +160,14 @@ WM.Cfg = new function () {
         var savedConfig = JSON.parse(localStorage.getItem("WikiMonkey"));
 
         if (savedConfig) {
-            if (savedConfig["Plugins"]) {
-                for (var type in config["Plugins"]) {
-                    if (savedConfig["Plugins"][type]) {
+            for (var section in savedConfig) {
+                for (var type in config[section]) {
+                    if (savedConfig[section][type]) {
                         // Don't do a deep (recursive) merge! It would also
                         // merge the plugins' arguments, and also other
                         // possible unexpected effects
-                        $.extend(config["Plugins"][type],
-                                                savedConfig["Plugins"][type]);
+                        $.extend(config[section][type],
+                                                savedConfig[section][type]);
                     }
                 }
             }
@@ -176,28 +176,32 @@ WM.Cfg = new function () {
         save();
     };
 
-    this._getEditor = function() {
+    this._getEditorPlugins = function() {
         return config["Plugins"]["Editor"];
     };
 
-    this._getDiff = function() {
+    this._getDiffPlugins = function() {
         return config["Plugins"]["Diff"];
     };
 
-    this._getBot = function() {
+    this._getBotPlugins = function() {
         return config["Plugins"]["Bot"];
     };
 
-    this._getSpecial = function() {
+    this._getSpecialPlugins = function() {
         return config["Plugins"]["Special"];
     };
 
-    this._getRecentChanges = function() {
+    this._getRecentChangesPlugins = function() {
         return config["Plugins"]["RecentChanges"];
     };
 
-    this._getNewPages = function() {
+    this._getNewPagesPlugins = function() {
         return config["Plugins"]["NewPages"];
+    };
+
+    this._getEditorMods = function() {
+        return config["Mods"]["Editor"];
     };
 
     var save = function() {

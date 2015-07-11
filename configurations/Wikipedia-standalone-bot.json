@@ -1,4 +1,9 @@
 {
+    "Mods": {
+        "Editor": {
+            "disable_edit_summary_submit_on_enter": true
+        }
+    },
     "Plugins": {
         "Bot": {
             "010SR": [

@@ -18,17 +18,24 @@
  *  along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-WM.Tables = new function () {
+WM.Mods = new function () {
     "use strict";
 
-    this.appendRow = function (source, mark, values) {
-        var lastId = source.lastIndexOf('|}' + mark);
-        var endtable = (lastId > -1) ? lastId : source.lastIndexOf('|}');
+    var disableEditSummarySubmitOnEnter = function () {
+        $('#wpSummary').keydown(function(event) {
+            // 'keyCode' is deprecated, but not all browsers support 'key' yet
+            if (event.key == 'Enter' || (typeof event.key === 'undefined' &&
+                                                        event.keyCode == 13)) {
+                event.preventDefault();
+                return false;
+            }
+        });
+    };
 
-        var row = "|-\n|" + values.join("\n|") + "\n";
-
-        var newText = Alib.Str.insert(source, row, endtable);
-
-        return newText;
+    this.applyEditorMods = function() {
+        var conf = WM.Cfg._getEditorMods();
+        if (conf['disable_edit_summary_submit_on_enter']) {
+            disableEditSummarySubmitOnEnter();
+        }
     };
 };

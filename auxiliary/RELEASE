@@ -13,6 +13,8 @@
 * Push the new branches to the remote repository
 * Install all the generated scripts and check that they work correctly in
   every supported browser
+  Also make sure to check the effects of any changes to the configuration
+  object
 
 * Checkout the master branch and merge the 2.x VERSION branch
 * Tag the release commit with both the new 1.x and 2.x VERSION numbers

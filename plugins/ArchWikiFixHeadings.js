@@ -1,6 +1,6 @@
 /*
  *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
- *  Copyright (C) 2011-2014 Dario Giovannetti <dev@dariogiovannetti.net>
+ *  Copyright (C) 2011-2015 Dario Giovannetti <dev@dariogiovannetti.net>
  *
  *  This file is part of Wiki Monkey.
  *
@@ -27,14 +27,19 @@ WM.Plugins.ArchWikiFixHeadings = new function () {
         var info = WM.Parser.findSectionHeadings(source);
 
         var increaseLevel;
-        if (info.maxTocLevel < 6) {
-            increaseLevel = 1;
+        if (WM.Editor.isSection()) {
+            increaseLevel = info.minLevel - 1;
         }
         else {
-            increaseLevel = 0;
-            WM.Log.logWarning("There are 6 levels of headings, it's been " +
-                "necessary to start creating them from level 1 although " +
-                "usually it's suggested to start from level 2");
+            if (info.maxTocLevel < 6) {
+                increaseLevel = 1;
+            }
+            else {
+                increaseLevel = 0;
+                WM.Log.logWarning("There are 6 levels of headings, it has " +
+                    "been necessary to start creating them from level 1 " +
+                    "although usually it is suggested to start from level 2");
+            }
         }
 
         var newtext = "";

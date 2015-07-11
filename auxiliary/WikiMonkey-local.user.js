@@ -3,7 +3,7 @@
 // @name Wiki Monkey (local)
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 2.0.1-local
+// @version 2.0.2-local
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser (local version)
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
@@ -35,6 +35,7 @@
 // @require file:///mnt/archive/Development/wiki-monkey/modules/Interlanguage.js
 // @require file:///mnt/archive/Development/wiki-monkey/modules/Log.js
 // @require file:///mnt/archive/Development/wiki-monkey/modules/Menu.js
+// @require file:///mnt/archive/Development/wiki-monkey/modules/Mods.js
 // @require file:///mnt/archive/Development/wiki-monkey/modules/MW.js
 // @require file:///mnt/archive/Development/wiki-monkey/modules/Parser.js
 // @require file:///mnt/archive/Development/wiki-monkey/modules/Tables.js
@@ -68,6 +69,11 @@
 // ==/UserScript==
 
 WM.main({
+    "Mods": {
+        "Editor": {
+            "disable_edit_summary_submit_on_enter": true
+        }
+    },
     "Plugins": {
         "Bot": {
             "010SR": [

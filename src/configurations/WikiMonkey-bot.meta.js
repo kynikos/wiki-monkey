@@ -1,3 +1,3 @@
 // ==UserScript==
-// @version 1.17.1-wikipedia
+// @version 1.17.2-wikipedia
 // ==/UserScript==

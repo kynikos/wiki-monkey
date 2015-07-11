@@ -1,6 +1,6 @@
 /*
  *  Wiki Monkey - MediaWiki bot and editor assistant that runs in the browser
- *  Copyright (C) 2011-2014 Dario Giovannetti <dev@dariogiovannetti.net>
+ *  Copyright (C) 2011-2015 Dario Giovannetti <dev@dariogiovannetti.net>
  *
  *  This file is part of Wiki Monkey.
  *
@@ -597,6 +597,9 @@ WM.Parser = new function () {
                     prevLevels = {};
                     prevLevels[level] = 1;
                     prevLevels.relMax = level;
+                    if (maxTocLevel == 0) {
+                        maxTocLevel = tocLevel;
+                    }
                 }
                 else if (level > prevLevels.relMax) {
                     tocLevel++;
