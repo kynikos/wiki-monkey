@@ -176,27 +176,27 @@ WM.Cfg = new function () {
         save();
     };
 
-    this._getEditor = function() {
+    this._getEditorPlugins = function() {
         return config["Plugins"]["Editor"];
     };
 
-    this._getDiff = function() {
+    this._getDiffPlugins = function() {
         return config["Plugins"]["Diff"];
     };
 
-    this._getBot = function() {
+    this._getBotPlugins = function() {
         return config["Plugins"]["Bot"];
     };
 
-    this._getSpecial = function() {
+    this._getSpecialPlugins = function() {
         return config["Plugins"]["Special"];
     };
 
-    this._getRecentChanges = function() {
+    this._getRecentChangesPlugins = function() {
         return config["Plugins"]["RecentChanges"];
     };
 
-    this._getNewPages = function() {
+    this._getNewPagesPlugins = function() {
         return config["Plugins"]["NewPages"];
     };
 
