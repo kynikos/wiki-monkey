@@ -23,7 +23,9 @@ WM.Mods = new function () {
 
     var disableEditSummarySubmitOnEnter = function () {
         $('#wpSummary').keydown(function(event) {
-            if (event.keyCode == 13) {
+            // 'keyCode' is deprecated, but not all browsers support 'key' yet
+            if (event.key == 'Enter' || (typeof event.key === 'undefined' &&
+                                                        event.keyCode == 13)) {
                 event.preventDefault();
                 return false;
             }
