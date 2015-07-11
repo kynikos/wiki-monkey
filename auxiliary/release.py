@@ -20,7 +20,7 @@ import urllib.request
 #                None,
 #            ),
 
-CONFIG_COMMON = {
+CONFIG_COMMON_PLUGINS = {
     "Editor": {
         "040SL": (
             "FixFragments",
@@ -72,7 +72,7 @@ CONFIG_COMMON = {
     },
 }
 
-CONFIG = {
+CONFIG_PLUGINS = {
     "local": {
         "Diff": {
             "020AST": (
@@ -825,7 +825,7 @@ if (!GM_info) {{
     return text
 
 
-def merge_conf(*dicts):
+def merge_conf_plugins(*dicts):
     mdict = {}
 
     for dict_ in dicts:
@@ -850,18 +850,23 @@ def merge_conf(*dicts):
 
 def compose_config(wiki, browser, conf_name, disables):
     if wiki != "local":
-        conf = merge_conf(CONFIG_COMMON, CONFIG[wiki])
+        conf_plugins = merge_conf_plugins(CONFIG_COMMON_PLUGINS,
+                                          CONFIG_PLUGINS[wiki])
     else:
-        conf = merge_conf(CONFIG_COMMON, *CONFIG.values())
+        conf_plugins = merge_conf_plugins(CONFIG_COMMON_PLUGINS,
+                                          *CONFIG_PLUGINS.values())
 
     for disable in disables:
         for type_ in disable:
             for id_ in disable[type_]:
-                tmplist = list(conf[type_][id_])
+                tmplist = list(conf_plugins[type_][id_])
                 tmplist[1] = None
-                conf[type_][id_] = tuple(tmplist)
+                conf_plugins[type_][id_] = tuple(tmplist)
 
-    cfg = json.dumps({"Plugins": conf}, indent=4, sort_keys=True)
+    conf = {
+        "Plugins": conf_plugins,
+    }
+    cfg = json.dumps(conf, indent=4, sort_keys=True)
 
     if conf_name is not None:
         with open(os.path.join(CONF_PATH, conf_name + ".json"), 'w') as f:

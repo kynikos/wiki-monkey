@@ -160,14 +160,14 @@ WM.Cfg = new function () {
         var savedConfig = JSON.parse(localStorage.getItem("WikiMonkey"));
 
         if (savedConfig) {
-            if (savedConfig["Plugins"]) {
-                for (var type in config["Plugins"]) {
-                    if (savedConfig["Plugins"][type]) {
+            for (var section in savedConfig) {
+                for (var type in config[section]) {
+                    if (savedConfig[section][type]) {
                         // Don't do a deep (recursive) merge! It would also
                         // merge the plugins' arguments, and also other
                         // possible unexpected effects
-                        $.extend(config["Plugins"][type],
-                                                savedConfig["Plugins"][type]);
+                        $.extend(config[section][type],
+                                                savedConfig[section][type]);
                     }
                 }
             }
