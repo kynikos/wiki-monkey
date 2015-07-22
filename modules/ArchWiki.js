@@ -58,8 +58,8 @@ WM.ArchWiki = new function () {
             "Türkçe": {subtag: "tr", english: "Turkish"},
             "Українська": {subtag: "uk", english: "Ukrainian"},
             "Tiếng Việt": {subtag: "vi", english: "Vietnamese"},
-            "简体中文": {subtag: "zh-CN", english: "Chinese (Simplified)"},
-            "正體中文": {subtag: "zh-TW", english: "Chinese (Traditional)"}
+            "简体中文": {subtag: "zh-cn", english: "Chinese (Simplified)"},
+            "正體中文": {subtag: "zh-tw", english: "Chinese (Traditional)"}
         },
         categories: [
             "العربية",
