@@ -204,6 +204,14 @@ WM.Cfg = new function () {
         return config["Mods"]["Editor"];
     };
 
+    this._getRecentChangesMods = function() {
+        return config["Mods"]["RecentChanges"];
+    };
+
+    this._getContributionsMods = function() {
+        return config["Mods"]["Contributions"];
+    };
+
     var save = function() {
         localStorage.setItem("WikiMonkey", JSON.stringify(config));
     };

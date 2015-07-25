@@ -102,6 +102,10 @@ WM.UI = new function () {
                     "\?.*?" + "title\\=Special(\\:|%3[Aa])ProtectedPages", '');
             var patt4B = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) +
                     "Special(\\:|%3[Aa])ProtectedPages", '');
+            var patt5A = new RegExp(Alib.RegEx.escapePattern(wikiUrls.full) +
+                    "\?.*?" + "title\\=Special(\\:|%3[Aa])Contributions", '');
+            var patt5B = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) +
+                    "Special(\\:|%3[Aa])Contributions", '');
 
             if (location.href.search(patt1A) > -1 ||
                                         location.href.search(patt1B) > -1) {
@@ -116,6 +120,7 @@ WM.UI = new function () {
                 var conf = WM.Cfg._getRecentChangesPlugins();
                 UI = (conf) ? WM.Filters._makeUI(conf) : null;
                 displayLog = false;
+                WM.Mods.applyRecentChangesMods();
             }
             else if (location.href.search(patt3A) > -1 ||
                                         location.href.search(patt3B) > -1) {
@@ -135,6 +140,10 @@ WM.UI = new function () {
                                             ).getElementsByTagName('ul')[0],
                                     0, "Pages"]]) : null;
                 display = false;
+            }
+            else if (location.href.search(patt5A) > -1 ||
+                                        location.href.search(patt5B) > -1) {
+                WM.Mods.applyContributionsMods();
             }
             else if (document.getElementsByClassName('mw-spcontent'
                                                                 ).length > 0) {

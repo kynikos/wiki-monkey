@@ -491,6 +491,12 @@ CONFIG_MODS = {
     "Editor": {
         'disable_edit_summary_submit_on_enter': True,
     },
+    "RecentChanges": {
+        'hide_rollback_links': True,
+    },
+    "Contributions": {
+        'hide_rollback_links': True,
+    },
 }
 
 DISABLE_EDITOR = {

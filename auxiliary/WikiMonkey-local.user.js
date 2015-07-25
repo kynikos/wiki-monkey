@@ -653,6 +653,12 @@ WM.main({
     'Mods': {
         'Editor': {
             'disable_edit_summary_submit_on_enter': true
+        },
+        'RecentChanges': {
+            'hide_rollback_links': true
+        },
+        'Contributions': {
+            'hide_rollback_links': true
         }
     }
 });

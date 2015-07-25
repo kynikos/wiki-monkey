@@ -32,10 +32,28 @@ WM.Mods = new function () {
         });
     };
 
+    var hideRollbackLinks = function () {
+        Alib.CSS.addStyleElement("span.mw-rollback-link {display:none;}");
+    };
+
     this.applyEditorMods = function() {
         var conf = WM.Cfg._getEditorMods();
         if (conf['disable_edit_summary_submit_on_enter']) {
             disableEditSummarySubmitOnEnter();
+        }
+    };
+
+    this.applyRecentChangesMods = function() {
+        var conf = WM.Cfg._getRecentChangesMods();
+        if (conf['hide_rollback_links']) {
+            hideRollbackLinks();
+        }
+    };
+
+    this.applyContributionsMods = function() {
+        var conf = WM.Cfg._getContributionsMods();
+        if (conf['hide_rollback_links']) {
+            hideRollbackLinks();
         }
     };
 };
