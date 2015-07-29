@@ -171,7 +171,7 @@ CONFIG_PLUGINS = {
                 ("Quick report", ),
                 (
                     "ArchWiki:Reports",
-                    "add report"
+                    "add report for %t"
                 )
             ),
         },

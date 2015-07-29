@@ -134,7 +134,7 @@ WM.main({
                 ],
                 [
                     "ArchWiki:Reports",
-                    "add report"
+                    "add report for %t"
                 ]
             ],
             "020AST": [
