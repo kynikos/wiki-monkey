@@ -104,7 +104,7 @@ WM.ArchWiki = new function () {
         "ar": {
             "page": "Table of Contents (العربية)",
             "root": "Category:العربية",
-            "alsoIn": "also in",
+            "alsoIn": "أيضا في",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(العربية\\)", "", ""],
             "keepAltName": true,
@@ -114,7 +114,7 @@ WM.ArchWiki = new function () {
         "bg": {
             "page": "Table of Contents (Български)",
             "root": "Category:Български",
-            "alsoIn": "also in",
+            "alsoIn": "също в",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(Български\\)", "", ""],
             "keepAltName": true,
@@ -124,7 +124,7 @@ WM.ArchWiki = new function () {
         "cs": {
             "page": "Table of Contents (Česky)",
             "root": "Category:Česky",
-            "alsoIn": "also in",
+            "alsoIn": "také v",
             "indentType": ":",
             "replace": ["[ _]\\(Česky\\)", "", ""],
             "keepAltName": true,
@@ -134,7 +134,7 @@ WM.ArchWiki = new function () {
         "da": {
             "page": "Table of Contents (Dansk)",
             "root": "Category:Dansk",
-            "alsoIn": "also in",
+            "alsoIn": "også i",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(Dansk\\)", "", ""],
             "keepAltName": true,
@@ -144,7 +144,7 @@ WM.ArchWiki = new function () {
         "el": {
             "page": "Table of Contents (Ελληνικά)",
             "root": "Category:Ελληνικά",
-            "alsoIn": "also in",
+            "alsoIn": "επίσης σε",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(Ελληνικά\\)", "", ""],
             "keepAltName": true,
@@ -174,7 +174,7 @@ WM.ArchWiki = new function () {
         "he": {
             "page": "Table of Contents (עברית)",
             "root": "Category:עברית",
-            "alsoIn": "also in",
+            "alsoIn": "גם ב",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(עברית\\)", "", ""],
             "keepAltName": true,
@@ -184,7 +184,7 @@ WM.ArchWiki = new function () {
         "hr": {
             "page": "Table of Contents (Hrvatski)",
             "root": "Category:Hrvatski",
-            "alsoIn": "also in",
+            "alsoIn": "također u",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(Hrvatski\\)", "", ""],
             "keepAltName": true,
@@ -194,7 +194,7 @@ WM.ArchWiki = new function () {
         "hu": {
             "page": "Table of Contents (Magyar)",
             "root": "Category:Magyar",
-            "alsoIn": "also in",
+            "alsoIn": "is",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(Magyar\\)", "", ""],
             "keepAltName": true,
@@ -204,7 +204,7 @@ WM.ArchWiki = new function () {
         "id": {
             "page": "Table of Contents (Indonesia)",
             "root": "Category:Indonesia",
-            "alsoIn": "also in",
+            "alsoIn": "juga di",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(Indonesia\\)", "", ""],
             "keepAltName": true,
@@ -224,7 +224,7 @@ WM.ArchWiki = new function () {
         "ko": {
             "page": "Table of Contents (한국어)",
             "root": "Category:한국어",
-            "alsoIn": "also in",
+            "alsoIn": "또한 에",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(한국어\\)", "", ""],
             "keepAltName": true,
@@ -234,7 +234,7 @@ WM.ArchWiki = new function () {
         "lt": {
             "page": "Table of Contents (Lietuviškai)",
             "root": "Category:Lietuviškai",
-            "alsoIn": "also in",
+            "alsoIn": "taip pat ir",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(Lietuviškai\\)", "", ""],
             "keepAltName": true,
@@ -244,7 +244,7 @@ WM.ArchWiki = new function () {
         "nl": {
             "page": "Table of Contents (Nederlands)",
             "root": "Category:Nederlands",
-            "alsoIn": "also in",
+            "alsoIn": "ook in",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(Nederlands\\)", "", ""],
             "keepAltName": true,
@@ -254,7 +254,7 @@ WM.ArchWiki = new function () {
         "pl": {
             "page": "Table of Contents (Polski)",
             "root": "Category:Polski",
-            "alsoIn": "also in",
+            "alsoIn": "również w",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(Polski\\)", "", ""],
             "keepAltName": true,
@@ -284,7 +284,7 @@ WM.ArchWiki = new function () {
         "sk": {
             "page": "Table of Contents (Slovenský)",
             "root": "Category:Slovenský",
-            "alsoIn": "also in",
+            "alsoIn": "tiež v",
             "indentType": ":",
             "replace": ["[ _]\\(Slovenský\\)", "", ""],
             "keepAltName": true,
@@ -294,7 +294,7 @@ WM.ArchWiki = new function () {
         "sr": {
             "page": "Table of Contents (Српски)",
             "root": "Category:Српски",
-            "alsoIn": "also in",
+            "alsoIn": "такође у",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(Српски\\)", "", ""],
             "keepAltName": true,
@@ -304,7 +304,7 @@ WM.ArchWiki = new function () {
         "th": {
             "page": "Table of Contents (ไทย)",
             "root": "Category:ไทย",
-            "alsoIn": "also in",
+            "alsoIn": "ยังอยู่ใน",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(ไทย\\)", "", ""],
             "keepAltName": true,
@@ -314,7 +314,7 @@ WM.ArchWiki = new function () {
         "uk": {
             "page": "Table of Contents (Українська)",
             "root": "Category:Українська",
-            "alsoIn": "also in",
+            "alsoIn": "також в",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(Українська\\)", "", ""],
             "keepAltName": true,
@@ -324,7 +324,7 @@ WM.ArchWiki = new function () {
         "zh-cn": {
             "page": "Table of Contents (简体中文)",
             "root": "Category:简体中文",
-            "alsoIn": "also in",
+            "alsoIn": "还在",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(简体中文\\)", "", ""],
             "keepAltName": true,
@@ -334,7 +334,7 @@ WM.ArchWiki = new function () {
         "zh-tw": {
             "page": "Table of Contents (正體中文)",
             "root": "Category:正體中文",
-            "alsoIn": "also in",
+            "alsoIn": "還在",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(正體中文\\)", "", ""],
             "keepAltName": true,
