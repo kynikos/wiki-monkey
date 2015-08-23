@@ -324,7 +324,7 @@ WM.ArchWiki = new function () {
         "zh-cn": {
             "page": "Table of Contents (简体中文)",
             "root": "Category:简体中文",
-            "alsoIn": "还在",  // Unconfirmed
+            "alsoIn": "同时还属于",
             "indentType": ":",
             "replace": ["[ _]\\(简体中文\\)", "", ""],
             "keepAltName": true,
