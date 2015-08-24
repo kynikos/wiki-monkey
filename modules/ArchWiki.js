@@ -104,7 +104,7 @@ WM.ArchWiki = new function () {
         "ar": {
             "page": "Table of Contents (العربية)",
             "root": "Category:العربية",
-            "alsoIn": "أيضا في",  // Unconfirmed
+            "alsoIn": "also in",  // TODO: Untranslated, Right-to-left problems
             "indentType": ":",
             "replace": ["[ _]\\(العربية\\)", "", ""],
             "keepAltName": true,
@@ -174,7 +174,7 @@ WM.ArchWiki = new function () {
         "he": {
             "page": "Table of Contents (עברית)",
             "root": "Category:עברית",
-            "alsoIn": "גם ב",  // Unconfirmed
+            "alsoIn": "also in",  // TODO: Untranslated, Right-to-left problems
             "indentType": ":",
             "replace": ["[ _]\\(עברית\\)", "", ""],
             "keepAltName": true,
