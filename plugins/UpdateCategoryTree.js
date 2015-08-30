@@ -114,7 +114,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
         while (true) {
             var match = regExp.exec(source);
             if (match) {
-                dict[match[1]] = match[2];
+                dict[match[1].toLowerCase()] = match[2];
             }
             else {
                 break;
@@ -147,8 +147,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
             }
         }
 
-        var altName = (args.altNames[params.node]) ?
-                                            args.altNames[params.node] : null;
+        var altName = (args.altNames[params.node.toLowerCase()]) ?
+                            args.altNames[params.node.toLowerCase()] : null;
         text += createCatLink(params.node, args.params.replace, altName);
 
         text += (args.params.rightToLeft) ? "&lrm; " : " ";
@@ -191,8 +191,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
             }
             var parentTitles = [];
             for (var i in parents) {
-                altName = (args.altNames[parents[i].title]) ?
-                                        args.altNames[parents[i].title] : null;
+                altName = (args.altNames[parents[i].title.toLowerCase()]) ?
+                        args.altNames[parents[i].title.toLowerCase()] : null;
                 parentTitles.push(createCatLink(parents[i].title,
                                                 args.params.replace, altName));
             }
