@@ -3,7 +3,7 @@
 // @name Wiki Monkey (local)
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 2.0.3-local
+// @version 2.0.4-local
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser (local version)
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
@@ -70,8 +70,14 @@
 
 WM.main({
     "Mods": {
+        "Contributions": {
+            "hide_rollback_links": true
+        },
         "Editor": {
             "disable_edit_summary_submit_on_enter": true
+        },
+        "RecentChanges": {
+            "hide_rollback_links": true
         }
     },
     "Plugins": {
@@ -139,7 +145,7 @@ WM.main({
                 ],
                 [
                     "ArchWiki:Reports",
-                    "add report"
+                    "add report for %t"
                 ]
             ],
             "020AST": [

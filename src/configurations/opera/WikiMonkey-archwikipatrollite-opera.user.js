@@ -3,14 +3,14 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.17.3-archwiki
+// @version 1.17.4-archwiki
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser (ArchWiki version)
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
 // @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/opera/WikiMonkey-archwikipatrollite-opera.meta.js
 // @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/opera/WikiMonkey-archwikipatrollite-opera.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/1.17.3/auxiliary/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.17.3/auxiliary/wiki-monkey-64.png
+// @icon https://raw.github.com/kynikos/wiki-monkey/1.17.4/auxiliary/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.17.4/auxiliary/wiki-monkey-64.png
 // @include https://wiki.archlinux.org/*
 // @grant GM_info
 // @grant GM_xmlhttpRequest
@@ -44,7 +44,7 @@
 if (!GM_info) {
     var GM_info = {
         script: {
-            version: "1.17.3-archwiki",
+            version: "1.17.4-archwiki",
         },
     };
 
@@ -1747,6 +1747,14 @@ WM.Cfg = new function () {
         return config["Mods"]["Editor"];
     };
 
+    this._getRecentChangesMods = function() {
+        return config["Mods"]["RecentChanges"];
+    };
+
+    this._getContributionsMods = function() {
+        return config["Mods"]["Contributions"];
+    };
+
     var save = function() {
         localStorage.setItem("WikiMonkey", JSON.stringify(config));
     };
@@ -2864,10 +2872,28 @@ WM.Mods = new function () {
         });
     };
 
+    var hideRollbackLinks = function () {
+        Alib.CSS.addStyleElement("span.mw-rollback-link {display:none;}");
+    };
+
     this.applyEditorMods = function() {
         var conf = WM.Cfg._getEditorMods();
         if (conf['disable_edit_summary_submit_on_enter']) {
             disableEditSummarySubmitOnEnter();
+        }
+    };
+
+    this.applyRecentChangesMods = function() {
+        var conf = WM.Cfg._getRecentChangesMods();
+        if (conf['hide_rollback_links']) {
+            hideRollbackLinks();
+        }
+    };
+
+    this.applyContributionsMods = function() {
+        var conf = WM.Cfg._getContributionsMods();
+        if (conf['hide_rollback_links']) {
+            hideRollbackLinks();
         }
     };
 };
@@ -4162,6 +4188,10 @@ WM.UI = new function () {
                     "\?.*?" + "title\\=Special(\\:|%3[Aa])ProtectedPages", '');
             var patt4B = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) +
                     "Special(\\:|%3[Aa])ProtectedPages", '');
+            var patt5A = new RegExp(Alib.RegEx.escapePattern(wikiUrls.full) +
+                    "\?.*?" + "title\\=Special(\\:|%3[Aa])Contributions", '');
+            var patt5B = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) +
+                    "Special(\\:|%3[Aa])Contributions", '');
 
             if (location.href.search(patt1A) > -1 ||
                                         location.href.search(patt1B) > -1) {
@@ -4176,6 +4206,7 @@ WM.UI = new function () {
                 var conf = WM.Cfg._getRecentChangesPlugins();
                 UI = (conf) ? WM.Filters._makeUI(conf) : null;
                 displayLog = false;
+                WM.Mods.applyRecentChangesMods();
             }
             else if (location.href.search(patt3A) > -1 ||
                                         location.href.search(patt3B) > -1) {
@@ -4195,6 +4226,10 @@ WM.UI = new function () {
                                             ).getElementsByTagName('ul')[0],
                                     0, "Pages"]]) : null;
                 display = false;
+            }
+            else if (location.href.search(patt5A) > -1 ||
+                                        location.href.search(patt5B) > -1) {
+                WM.Mods.applyContributionsMods();
             }
             else if (document.getElementsByClassName('mw-spcontent'
                                                                 ).length > 0) {
@@ -4498,8 +4533,8 @@ WM.ArchWiki = new function () {
             "Türkçe": {subtag: "tr", english: "Turkish"},
             "Українська": {subtag: "uk", english: "Ukrainian"},
             "Tiếng Việt": {subtag: "vi", english: "Vietnamese"},
-            "简体中文": {subtag: "zh-CN", english: "Chinese (Simplified)"},
-            "正體中文": {subtag: "zh-TW", english: "Chinese (Traditional)"}
+            "简体中文": {subtag: "zh-cn", english: "Chinese (Simplified)"},
+            "正體中文": {subtag: "zh-tw", english: "Chinese (Traditional)"}
         },
         categories: [
             "العربية",
@@ -4542,9 +4577,9 @@ WM.ArchWiki = new function () {
 
     var tablesOfContents = {
         "ar": {
-            "page": "Table of Contents (العربية)",
+            "page": "Table of contents (العربية)",
             "root": "Category:العربية",
-            "alsoIn": "also in",
+            "alsoIn": "also in",  // TODO: Untranslated, Right-to-left problems
             "indentType": ":",
             "replace": ["[ _]\\(العربية\\)", "", ""],
             "keepAltName": true,
@@ -4552,9 +4587,9 @@ WM.ArchWiki = new function () {
             "rightToLeft": true
         },
         "bg": {
-            "page": "Table of Contents (Български)",
+            "page": "Table of contents (Български)",
             "root": "Category:Български",
-            "alsoIn": "also in",
+            "alsoIn": "също в",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(Български\\)", "", ""],
             "keepAltName": true,
@@ -4562,9 +4597,9 @@ WM.ArchWiki = new function () {
             "rightToLeft": false
         },
         "cs": {
-            "page": "Table of Contents (Česky)",
+            "page": "Table of contents (Česky)",
             "root": "Category:Česky",
-            "alsoIn": "also in",
+            "alsoIn": "také v",
             "indentType": ":",
             "replace": ["[ _]\\(Česky\\)", "", ""],
             "keepAltName": true,
@@ -4572,9 +4607,9 @@ WM.ArchWiki = new function () {
             "rightToLeft": false
         },
         "da": {
-            "page": "Table of Contents (Dansk)",
+            "page": "Table of contents (Dansk)",
             "root": "Category:Dansk",
-            "alsoIn": "also in",
+            "alsoIn": "også i",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(Dansk\\)", "", ""],
             "keepAltName": true,
@@ -4582,9 +4617,9 @@ WM.ArchWiki = new function () {
             "rightToLeft": false
         },
         "el": {
-            "page": "Table of Contents (Ελληνικά)",
+            "page": "Table of contents (Ελληνικά)",
             "root": "Category:Ελληνικά",
-            "alsoIn": "also in",
+            "alsoIn": "επίσης σε",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(Ελληνικά\\)", "", ""],
             "keepAltName": true,
@@ -4612,9 +4647,9 @@ WM.ArchWiki = new function () {
             "rightToLeft": false
         },
         "he": {
-            "page": "Table of Contents (עברית)",
+            "page": "Table of contents (עברית)",
             "root": "Category:עברית",
-            "alsoIn": "also in",
+            "alsoIn": "also in",  // TODO: Untranslated, Right-to-left problems
             "indentType": ":",
             "replace": ["[ _]\\(עברית\\)", "", ""],
             "keepAltName": true,
@@ -4622,9 +4657,9 @@ WM.ArchWiki = new function () {
             "rightToLeft": true
         },
         "hr": {
-            "page": "Table of Contents (Hrvatski)",
+            "page": "Table of contents (Hrvatski)",
             "root": "Category:Hrvatski",
-            "alsoIn": "also in",
+            "alsoIn": "također u",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(Hrvatski\\)", "", ""],
             "keepAltName": true,
@@ -4632,9 +4667,9 @@ WM.ArchWiki = new function () {
             "rightToLeft": false
         },
         "hu": {
-            "page": "Table of Contents (Magyar)",
+            "page": "Table of contents (Magyar)",
             "root": "Category:Magyar",
-            "alsoIn": "also in",
+            "alsoIn": "is",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(Magyar\\)", "", ""],
             "keepAltName": true,
@@ -4642,9 +4677,9 @@ WM.ArchWiki = new function () {
             "rightToLeft": false
         },
         "id": {
-            "page": "Table of Contents (Indonesia)",
+            "page": "Table of contents (Indonesia)",
             "root": "Category:Indonesia",
-            "alsoIn": "also in",
+            "alsoIn": "juga di",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(Indonesia\\)", "", ""],
             "keepAltName": true,
@@ -4652,7 +4687,7 @@ WM.ArchWiki = new function () {
             "rightToLeft": false
         },
         "it": {
-            "page": "Table of Contents (Italiano)",
+            "page": "Table of contents (Italiano)",
             "root": "Category:Italiano",
             "alsoIn": "anche in",
             "indentType": ":",
@@ -4662,9 +4697,9 @@ WM.ArchWiki = new function () {
             "rightToLeft": false
         },
         "ko": {
-            "page": "Table of Contents (한국어)",
+            "page": "Table of contents (한국어)",
             "root": "Category:한국어",
-            "alsoIn": "also in",
+            "alsoIn": "또한 에",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(한국어\\)", "", ""],
             "keepAltName": true,
@@ -4672,9 +4707,9 @@ WM.ArchWiki = new function () {
             "rightToLeft": false
         },
         "lt": {
-            "page": "Table of Contents (Lietuviškai)",
+            "page": "Table of contents (Lietuviškai)",
             "root": "Category:Lietuviškai",
-            "alsoIn": "also in",
+            "alsoIn": "taip pat ir",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(Lietuviškai\\)", "", ""],
             "keepAltName": true,
@@ -4682,9 +4717,9 @@ WM.ArchWiki = new function () {
             "rightToLeft": false
         },
         "nl": {
-            "page": "Table of Contents (Nederlands)",
+            "page": "Table of contents (Nederlands)",
             "root": "Category:Nederlands",
-            "alsoIn": "also in",
+            "alsoIn": "ook in",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(Nederlands\\)", "", ""],
             "keepAltName": true,
@@ -4692,9 +4727,9 @@ WM.ArchWiki = new function () {
             "rightToLeft": false
         },
         "pl": {
-            "page": "Table of Contents (Polski)",
+            "page": "Table of contents (Polski)",
             "root": "Category:Polski",
-            "alsoIn": "also in",
+            "alsoIn": "również w",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(Polski\\)", "", ""],
             "keepAltName": true,
@@ -4702,7 +4737,7 @@ WM.ArchWiki = new function () {
             "rightToLeft": false
         },
         "pt": {
-            "page": "Table of Contents (Português)",
+            "page": "Table of contents (Português)",
             "root": "Category:Português",
             "alsoIn": "também em",
             "indentType": ":",
@@ -4722,9 +4757,9 @@ WM.ArchWiki = new function () {
             "rightToLeft": false
         },
         "sk": {
-            "page": "Table of Contents (Slovenský)",
+            "page": "Table of contents (Slovenský)",
             "root": "Category:Slovenský",
-            "alsoIn": "also in",
+            "alsoIn": "tiež v",
             "indentType": ":",
             "replace": ["[ _]\\(Slovenský\\)", "", ""],
             "keepAltName": true,
@@ -4732,9 +4767,9 @@ WM.ArchWiki = new function () {
             "rightToLeft": false
         },
         "sr": {
-            "page": "Table of Contents (Српски)",
+            "page": "Table of contents (Српски)",
             "root": "Category:Српски",
-            "alsoIn": "also in",
+            "alsoIn": "такође у",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(Српски\\)", "", ""],
             "keepAltName": true,
@@ -4742,9 +4777,9 @@ WM.ArchWiki = new function () {
             "rightToLeft": false
         },
         "th": {
-            "page": "Table of Contents (ไทย)",
+            "page": "Table of contents (ไทย)",
             "root": "Category:ไทย",
-            "alsoIn": "also in",
+            "alsoIn": "ยังอยู่ใน",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(ไทย\\)", "", ""],
             "keepAltName": true,
@@ -4752,9 +4787,9 @@ WM.ArchWiki = new function () {
             "rightToLeft": false
         },
         "uk": {
-            "page": "Table of Contents (Українська)",
+            "page": "Table of contents (Українська)",
             "root": "Category:Українська",
-            "alsoIn": "also in",
+            "alsoIn": "також в",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(Українська\\)", "", ""],
             "keepAltName": true,
@@ -4762,9 +4797,9 @@ WM.ArchWiki = new function () {
             "rightToLeft": false
         },
         "zh-cn": {
-            "page": "Table of Contents (简体中文)",
+            "page": "Table of contents (简体中文)",
             "root": "Category:简体中文",
-            "alsoIn": "also in",
+            "alsoIn": "同时还属于",
             "indentType": ":",
             "replace": ["[ _]\\(简体中文\\)", "", ""],
             "keepAltName": true,
@@ -4772,9 +4807,9 @@ WM.ArchWiki = new function () {
             "rightToLeft": false
         },
         "zh-tw": {
-            "page": "Table of Contents (正體中文)",
+            "page": "Table of contents (正體中文)",
             "root": "Category:正體中文",
-            "alsoIn": "also in",
+            "alsoIn": "還在",  // Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(正體中文\\)", "", ""],
             "keepAltName": true,
@@ -6390,7 +6425,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
         while (true) {
             var match = regExp.exec(source);
             if (match) {
-                dict[match[1]] = match[2];
+                dict[match[1].toLowerCase()] = match[2];
             }
             else {
                 break;
@@ -6423,8 +6458,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
             }
         }
 
-        var altName = (args.altNames[params.node]) ?
-                                            args.altNames[params.node] : null;
+        var altName = (args.altNames[params.node.toLowerCase()]) ?
+                            args.altNames[params.node.toLowerCase()] : null;
         text += createCatLink(params.node, args.params.replace, altName);
 
         text += (args.params.rightToLeft) ? "&lrm; " : " ";
@@ -6467,8 +6502,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
             }
             var parentTitles = [];
             for (var i in parents) {
-                altName = (args.altNames[parents[i].title]) ?
-                                        args.altNames[parents[i].title] : null;
+                altName = (args.altNames[parents[i].title.toLowerCase()]) ?
+                        args.altNames[parents[i].title.toLowerCase()] : null;
                 parentTitles.push(createCatLink(parents[i].title,
                                                 args.params.replace, altName));
             }
@@ -7392,10 +7427,15 @@ WM.Plugins.ArchWikiQuickReport = new function () {
         var newtext = WM.Tables.appendRow(source, null, ["[" + location.href +
                                     " " + title + "]", pEnddate, type, notes]);
 
+        // Javascript doesn't support look behind...
+        var expsummary = summary.replace(/(^|[^%])(%%)*%t/g,
+                                        '$1$2[[' + title + ']]');
+        expsummary = expsummary.replace(/%(.)/g, '$1');
+
         WM.MW.callAPIPost({action: "edit",
                            bot: "1",
                            title: article,
-                           summary: summary,
+                           summary: expsummary,
                            text: newtext,
                            basetimestamp: timestamp,
                            token: edittoken},
@@ -8090,8 +8130,14 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
 
 WM.main({
     "Mods": {
+        "Contributions": {
+            "hide_rollback_links": true
+        },
         "Editor": {
             "disable_edit_summary_submit_on_enter": true
+        },
+        "RecentChanges": {
+            "hide_rollback_links": true
         }
     },
     "Plugins": {
@@ -8135,7 +8181,7 @@ WM.main({
                 ],
                 [
                     "ArchWiki:Reports",
-                    "add report"
+                    "add report for %t"
                 ]
             ]
         },

@@ -1,7 +1,13 @@
 {
     "Mods": {
+        "Contributions": {
+            "hide_rollback_links": true
+        },
         "Editor": {
             "disable_edit_summary_submit_on_enter": true
+        },
+        "RecentChanges": {
+            "hide_rollback_links": true
         }
     },
     "Plugins": {
@@ -45,7 +51,7 @@
                 ],
                 [
                     "ArchWiki:Reports",
-                    "add report"
+                    "add report for %t"
                 ]
             ]
         },

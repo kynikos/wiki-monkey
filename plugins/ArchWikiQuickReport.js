@@ -105,10 +105,15 @@ WM.Plugins.ArchWikiQuickReport = new function () {
         var newtext = WM.Tables.appendRow(source, null, ["[" + location.href +
                                     " " + title + "]", pEnddate, type, notes]);
 
+        // Javascript doesn't support look behind...
+        var expsummary = summary.replace(/(^|[^%])(%%)*%t/g,
+                                        '$1$2[[' + title + ']]');
+        expsummary = expsummary.replace(/%(.)/g, '$1');
+
         WM.MW.callAPIPost({action: "edit",
                            bot: "1",
                            title: article,
-                           summary: summary,
+                           summary: expsummary,
                            text: newtext,
                            basetimestamp: timestamp,
                            token: edittoken},

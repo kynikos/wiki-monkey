@@ -21,7 +21,7 @@
 if (!GM_info) {
     var GM_info = {
         script: {
-            version: "2.0.3-wikipedia",
+            version: "2.0.4-wikipedia",
         },
     };
 
@@ -1724,6 +1724,14 @@ WM.Cfg = new function () {
         return config["Mods"]["Editor"];
     };
 
+    this._getRecentChangesMods = function() {
+        return config["Mods"]["RecentChanges"];
+    };
+
+    this._getContributionsMods = function() {
+        return config["Mods"]["Contributions"];
+    };
+
     var save = function() {
         localStorage.setItem("WikiMonkey", JSON.stringify(config));
     };
@@ -2841,10 +2849,28 @@ WM.Mods = new function () {
         });
     };
 
+    var hideRollbackLinks = function () {
+        Alib.CSS.addStyleElement("span.mw-rollback-link {display:none;}");
+    };
+
     this.applyEditorMods = function() {
         var conf = WM.Cfg._getEditorMods();
         if (conf['disable_edit_summary_submit_on_enter']) {
             disableEditSummarySubmitOnEnter();
+        }
+    };
+
+    this.applyRecentChangesMods = function() {
+        var conf = WM.Cfg._getRecentChangesMods();
+        if (conf['hide_rollback_links']) {
+            hideRollbackLinks();
+        }
+    };
+
+    this.applyContributionsMods = function() {
+        var conf = WM.Cfg._getContributionsMods();
+        if (conf['hide_rollback_links']) {
+            hideRollbackLinks();
         }
     };
 };
@@ -4139,6 +4165,10 @@ WM.UI = new function () {
                     "\?.*?" + "title\\=Special(\\:|%3[Aa])ProtectedPages", '');
             var patt4B = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) +
                     "Special(\\:|%3[Aa])ProtectedPages", '');
+            var patt5A = new RegExp(Alib.RegEx.escapePattern(wikiUrls.full) +
+                    "\?.*?" + "title\\=Special(\\:|%3[Aa])Contributions", '');
+            var patt5B = new RegExp(Alib.RegEx.escapePattern(wikiUrls.short) +
+                    "Special(\\:|%3[Aa])Contributions", '');
 
             if (location.href.search(patt1A) > -1 ||
                                         location.href.search(patt1B) > -1) {
@@ -4153,6 +4183,7 @@ WM.UI = new function () {
                 var conf = WM.Cfg._getRecentChangesPlugins();
                 UI = (conf) ? WM.Filters._makeUI(conf) : null;
                 displayLog = false;
+                WM.Mods.applyRecentChangesMods();
             }
             else if (location.href.search(patt3A) > -1 ||
                                         location.href.search(patt3B) > -1) {
@@ -4172,6 +4203,10 @@ WM.UI = new function () {
                                             ).getElementsByTagName('ul')[0],
                                     0, "Pages"]]) : null;
                 display = false;
+            }
+            else if (location.href.search(patt5A) > -1 ||
+                                        location.href.search(patt5B) > -1) {
+                WM.Mods.applyContributionsMods();
             }
             else if (document.getElementsByClassName('mw-spcontent'
                                                                 ).length > 0) {
@@ -5809,7 +5844,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
         while (true) {
             var match = regExp.exec(source);
             if (match) {
-                dict[match[1]] = match[2];
+                dict[match[1].toLowerCase()] = match[2];
             }
             else {
                 break;
@@ -5842,8 +5877,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
             }
         }
 
-        var altName = (args.altNames[params.node]) ?
-                                            args.altNames[params.node] : null;
+        var altName = (args.altNames[params.node.toLowerCase()]) ?
+                            args.altNames[params.node.toLowerCase()] : null;
         text += createCatLink(params.node, args.params.replace, altName);
 
         text += (args.params.rightToLeft) ? "&lrm; " : " ";
@@ -5886,8 +5921,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
             }
             var parentTitles = [];
             for (var i in parents) {
-                altName = (args.altNames[parents[i].title]) ?
-                                        args.altNames[parents[i].title] : null;
+                altName = (args.altNames[parents[i].title.toLowerCase()]) ?
+                        args.altNames[parents[i].title.toLowerCase()] : null;
                 parentTitles.push(createCatLink(parents[i].title,
                                                 args.params.replace, altName));
             }

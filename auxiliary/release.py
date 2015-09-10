@@ -171,7 +171,7 @@ CONFIG_PLUGINS = {
                 ("Quick report", ),
                 (
                     "ArchWiki:Reports",
-                    "add report"
+                    "add report for %t"
                 )
             ),
         },
@@ -490,6 +490,12 @@ CONFIG_PLUGINS = {
 CONFIG_MODS = {
     "Editor": {
         'disable_edit_summary_submit_on_enter': True,
+    },
+    "RecentChanges": {
+        'hide_rollback_links': True,
+    },
+    "Contributions": {
+        'hide_rollback_links': True,
     },
 }
 
