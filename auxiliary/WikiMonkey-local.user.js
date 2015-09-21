@@ -652,7 +652,8 @@ WM.main({
     },
     'Mods': {
         'Editor': {
-            'disable_edit_summary_submit_on_enter': true
+            'disable_edit_summary_submit_on_enter': true,
+            'scroll_to_first_heading': false
         },
         'RecentChanges': {
             'hide_rollback_links': true
