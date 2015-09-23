@@ -52,7 +52,8 @@ WM.Plugins.FixLinkFragments = new function () {
                              null,
                              WM.Plugins.FixLinkFragments.processLinkContinue,
                              [link, target, rawfragment, links, index, source,
-                                    newText, prevId, title, call, callArgs]);
+                                    newText, prevId, title, call, callArgs],
+                             null);
                 }
                 else {
                     index++;
@@ -222,7 +223,8 @@ WM.Plugins.FixLinkFragments = new function () {
                                  WM.Plugins.FixLinkFragments.processArchWikiLinkContinue,
                                  [template, target, rawfragment, templates,
                                  expectedArgs, index, source, newText,
-                                 prevId, title, call, callArgs]);
+                                 prevId, title, call, callArgs],
+                                 null);
                         }
                         else {
                             index++;

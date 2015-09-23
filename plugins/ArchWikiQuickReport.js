@@ -119,7 +119,8 @@ WM.Plugins.ArchWikiQuickReport = new function () {
                            token: edittoken},
                            null,
                            WM.Plugins.ArchWikiQuickReport.mainEnd,
-                           [article, callNext]);
+                           [article, callNext],
+                           null);
     };
 
     this.mainEnd = function (res, args) {

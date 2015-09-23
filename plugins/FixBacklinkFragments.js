@@ -234,7 +234,8 @@ WM.Plugins.FixBacklinkFragments = new function () {
                 WM.MW.callAPIGet(params,
                          null,
                          WM.Plugins.FixBacklinkFragments.mainAutoFindSections,
-                         [title, target, summary, callBot]);
+                         [title, target, summary, callBot],
+                         null);
             }
             else {
                 WM.Plugins.FixBacklinkFragments.mainAutoRead(target, chainArgs,
@@ -300,7 +301,8 @@ WM.Plugins.FixBacklinkFragments = new function () {
                                token: edittoken},
                                null,
                                WM.Plugins.FixBacklinkFragments.mainAutoEnd,
-                               [callBot, sections]);
+                               [callBot, sections],
+                               null);
         }
         else {
             callBot(0, sections);

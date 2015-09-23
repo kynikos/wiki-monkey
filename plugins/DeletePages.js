@@ -28,7 +28,8 @@ WM.Plugins.DeletePages = new function () {
                          intoken: 'delete',
                          titles: title},
                          WM.Plugins.DeletePages.mainAutoWrite,
-                         [title, summary, callBot]);
+                         [title, summary, callBot],
+                         null);
     };
 
     this.mainAutoWrite = function (page, args) {
@@ -45,7 +46,8 @@ WM.Plugins.DeletePages = new function () {
                            reason: summary},
                            null,
                            WM.Plugins.DeletePages.mainAutoEnd,
-                           [title, callBot]);
+                           [title, callBot],
+                           null);
     };
 
     this.mainAutoEnd = function (res, args) {

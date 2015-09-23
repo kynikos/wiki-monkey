@@ -28,7 +28,8 @@ WM.Plugins.ArchWikiWantedCategories = new function () {
                          intoken: "edit",
                          titles: title},
                          WM.Plugins.ArchWikiWantedCategories.mainAutoWrite,
-                         [title, callBot]);
+                         [title, callBot],
+                         null);
     };
 
     this.mainAutoWrite = function (page, args) {
@@ -52,7 +53,8 @@ WM.Plugins.ArchWikiWantedCategories = new function () {
                                token: edittoken},
                                null,
                                WM.Plugins.ArchWikiWantedCategories.mainAutoEnd,
-                               callBot);
+                               callBot,
+                               null);
         }
         else {
             callBot(0, null);

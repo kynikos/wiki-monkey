@@ -183,7 +183,8 @@ WM.Plugins.SimpleReplace = new function () {
                                token: edittoken},
                                null,
                                WM.Plugins.SimpleReplace.mainAutoEnd,
-                               callBot);
+                               callBot,
+                               null);
         }
         else {
             callBot(0, null);

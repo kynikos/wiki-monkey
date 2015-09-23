@@ -219,7 +219,7 @@ WM.MW = new function () {
             "(Chrome/Chromium), Violentmonkey (Opera) or a similar extension";
     };
 
-    this.callAPIGet = function (params, api, call, callArgs) {
+    this.callAPIGet = function (params, api, call, callArgs, callError) {
         if (!api) {
             api = localWikiUrls.api;
         }
@@ -235,6 +235,9 @@ WM.MW = new function () {
                     WM.Log.logError("It is likely that the " +
                                                 WM.Log.linkToPage(api, "API") +
                                                 " for this wiki is disabled");
+                    if (callError) {
+                        callError(callArgs);
+                    }
                 }
                 if (json) {
                     // Don't put this into the try block or all its exceptions
@@ -247,7 +250,10 @@ WM.MW = new function () {
                 if (confirm("Wiki Monkey error: Failed query\n\nDo you want " +
                                                                 "to retry?")) {
                     WM.Log.logInfo("Retrying ...");
-                    WM.MW.callAPIGet(params, api, call, callArgs);
+                    WM.MW.callAPIGet(params, api, call, callArgs, callError);
+                }
+                else if (callError) {
+                    callError(callArgs);
                 }
             }
         };
@@ -260,7 +266,7 @@ WM.MW = new function () {
         }
     };
 
-    this.callAPIPost = function (params, api, call, callArgs) {
+    this.callAPIPost = function (params, api, call, callArgs, callError) {
         if (!api) {
             api = localWikiUrls.api;
         }
@@ -276,6 +282,9 @@ WM.MW = new function () {
                     WM.Log.logError("It is likely that the " +
                                                 WM.Log.linkToPage(api, "API") +
                                                 " for this wiki is disabled");
+                    if (callError) {
+                        callError(callArgs);
+                    }
                 }
                 if (json) {
                     // Don't put this into the try block or all its exceptions
@@ -288,7 +297,10 @@ WM.MW = new function () {
                 if (confirm("Wiki Monkey error: Failed query\n\nDo you want " +
                                                                 "to retry?")) {
                     WM.Log.logInfo("Retrying ...");
-                    WM.MW.callAPIPost(params, api, call, callArgs);
+                    WM.MW.callAPIPost(params, api, call, callArgs, callError);
+                }
+                else if (callError) {
+                    callError(callArgs);
                 }
             }
         };
@@ -334,13 +346,13 @@ WM.MW = new function () {
         return string;
     };
 
-    this.callQuery = function (params, call, callArgs) {
+    this.callQuery = function (params, call, callArgs, callError) {
         params.action = "query";
         var callBack = function (res, args) {
             var page = Alib.Obj.getFirstItem(res.query.pages);
             call(page, args);
         };
-        this.callAPIGet(params, null, callBack, callArgs);
+        this.callAPIGet(params, null, callBack, callArgs, callError);
     };
 
     this.callQueryEdit = function (title, call, callArgs) {
@@ -355,7 +367,8 @@ WM.MW = new function () {
                         intoken: "edit",
                         titles: title},
                         callBack,
-                        callArgs);
+                        callArgs,
+                        null);
     };
 
     var userInfo;
@@ -372,7 +385,8 @@ WM.MW = new function () {
                                 uiprop: "groups"},
                                 null,
                                 storeInfo,
-                                call);
+                                call,
+                                null);
         }
         else {
             call();
@@ -424,7 +438,7 @@ WM.MW = new function () {
                 call(backlinks, args);
             }
         },
-        callArgs);
+        callArgs, null);
     };
 
     this.getLanglinks = function (title, iwmap, call, callArgs) {
@@ -469,7 +483,7 @@ WM.MW = new function () {
                 call(langlinks, iwmap, args);
             }
         },
-        callArgs);
+        callArgs, null);
     };
 
     this.getInterwikiMap = function (title, call, callArgs) {
@@ -484,7 +498,8 @@ WM.MW = new function () {
             function (res, args) {
                 call(res.query.interwikimap, args);
             },
-            callArgs
+            callArgs,
+            null
         );
     };
 
@@ -540,7 +555,7 @@ WM.MW = new function () {
                 call(results, siteinfo, args);
             }
         },
-        callArgs);
+        callArgs, null);
     };
 
     this.getUserContribs = function (ucuser, ucstart, ucend, call, callArgs) {
@@ -568,6 +583,6 @@ WM.MW = new function () {
                 call(results, args);
             }
         },
-        callArgs);
+        callArgs, null);
     };
 };

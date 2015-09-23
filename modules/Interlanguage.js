@@ -135,7 +135,8 @@ WM.Interlanguage = new function () {
                     args
                 );
             },
-            callArgs
+            callArgs,
+            null
         );
     };
 

@@ -200,7 +200,8 @@ WM.Plugins.ArchWikiSortContacts = new function () {
                            token: edittoken},
                            null,
                            WM.Plugins.ArchWikiSortContacts.writePage,
-                           [title, callNext]);
+                           [title, callNext],
+                           null);
         }
         else {
             WM.Log.logInfo(WM.Log.linkToWikiPage(title, title) +

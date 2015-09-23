@@ -246,7 +246,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
                                token: args.edittoken},
                               null,
                               WM.Plugins.UpdateCategoryTree.checkWrite,
-                              args);
+                              args,
+                              null);
         }
         else {
             WM.Log.logInfo(WM.Log.linkToWikiPage(args.params.page,

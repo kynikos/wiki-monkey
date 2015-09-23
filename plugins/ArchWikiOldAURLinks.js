@@ -186,7 +186,8 @@ WM.Plugins.ArchWikiOldAURLinks = new function () {
                                token: edittoken},
                                null,
                                WM.Plugins.ArchWikiOldAURLinks.mainAutoEnd,
-                               callBot);
+                               callBot,
+                               null);
         }
         else {
             callBot(0, null);
