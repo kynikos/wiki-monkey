@@ -489,6 +489,7 @@ CONFIG_PLUGINS = {
 
 CONFIG_MODS = {
     "General": {
+        'heading_number_style': 'font-size: 60%;',
     },
     "Editor": {
         'disable_edit_summary_submit_on_enter': True,

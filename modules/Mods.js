@@ -21,6 +21,10 @@
 WM.Mods = new function () {
     "use strict";
 
+    var changeHeadingNumberStyle = function (style) {
+        Alib.CSS.addStyleElement("span.mw-headline-number {" + style + "}");
+    };
+
     var disableEditSummarySubmitOnEnter = function () {
         $('#wpSummary').keydown(function(event) {
             // 'keyCode' is deprecated, but not all browsers support 'key' yet
@@ -42,6 +46,9 @@ WM.Mods = new function () {
 
     this.applyGeneralMods = function() {
         var conf = WM.Cfg._getGeneralMods();
+        if (conf['heading_number_style']) {
+            changeHeadingNumberStyle(conf['heading_number_style']);
+        }
     };
 
     this.applyEditorMods = function() {
