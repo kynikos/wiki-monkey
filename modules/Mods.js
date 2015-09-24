@@ -40,6 +40,10 @@ WM.Mods = new function () {
         window.scrollTo(0, $('#firstHeading').offset().top);
     };
 
+    this.applyGeneralMods = function() {
+        var conf = WM.Cfg._getGeneralMods();
+    };
+
     this.applyEditorMods = function() {
         var conf = WM.Cfg._getEditorMods();
         if (conf['disable_edit_summary_submit_on_enter']) {

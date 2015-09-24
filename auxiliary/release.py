@@ -488,6 +488,8 @@ CONFIG_PLUGINS = {
 }
 
 CONFIG_MODS = {
+    "General": {
+    },
     "Editor": {
         'disable_edit_summary_submit_on_enter': True,
         'scroll_to_first_heading': False,

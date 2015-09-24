@@ -651,6 +651,8 @@ WM.main({
         }
     },
     'Mods': {
+        "General": {
+        },
         'Editor': {
             'disable_edit_summary_submit_on_enter': true,
             'scroll_to_first_heading': false

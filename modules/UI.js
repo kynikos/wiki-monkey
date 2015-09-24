@@ -26,6 +26,8 @@ WM.UI = new function () {
         var display = true;
         var displayLog = true;
 
+        WM.Mods.applyGeneralMods();
+
         if (document.getElementById('editform')) {
             nextNode = document.getElementById('wpSummaryLabel'
                                                     ).parentNode.nextSibling;

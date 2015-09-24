@@ -200,6 +200,10 @@ WM.Cfg = new function () {
         return config["Plugins"]["NewPages"];
     };
 
+    this._getGeneralMods = function() {
+        return config["Mods"]["General"];
+    };
+
     this._getEditorMods = function() {
         return config["Mods"]["Editor"];
     };
