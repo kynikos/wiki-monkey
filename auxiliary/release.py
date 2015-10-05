@@ -464,6 +464,13 @@ CONFIG_PLUGINS = {
                     "automatic update"
                 )
             ),
+            "040ASCC": (
+                "ArchWikiSortContacts",
+                # Always disabled by default, but leave available for e.g.
+                # Translation Teams
+                None,
+                None,
+            ),
         },
         "Bot": {
             "030IL": (
@@ -739,6 +746,7 @@ PLUGINS = {
         "ArchWikiOldAURLinks",
         "ArchWikiQuickReport",
         "ArchWikiRCFilter",
+        "ArchWikiSortContacts",
         "ArchWikiSummaryToRelated",
         "ArchWikiUpdatePackageTemplates",
     ),
