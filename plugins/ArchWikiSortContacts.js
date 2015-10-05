@@ -31,29 +31,32 @@ WM.Plugins.ArchWikiSortContacts = new function () {
 
     var startMark = "START AUTO LIST - DO NOT REMOVE OR MODIFY THIS MARK-->";
     var endMark = "<!--END AUTO LIST - DO NOT REMOVE OR MODIFY THIS MARK";
-    var RECENT_DAYS = 30;
-    var INACTIVE_LIMIT = 30;
     var regExp = new RegExp("^\\*.*?\\[\\[User:(.+?)\\|.+?" +
                     // Don't do "(?: \\<!-- associated bot: (.+?) -->)?.*$"
                     "(?: \\<!-- associated bot: (.+?) -->.*)?$", "");
 
     this.main = function (args, callNext) {
         var page = args[0];
-        var inactiveIntro = args[1];
-        var summary = args[2];
+        var recentDays = args[1];
+        var inactiveLimit = args[2];
+        var inactiveIntro = args[3];
+        var summary = args[4];
 
         WM.Log.logInfo("Sorting " + WM.Log.linkToWikiPage(page, page) +
                                                                     " ...");
 
         WM.MW.callQueryEdit(page,
                             WM.Plugins.ArchWikiSortContacts.parseList,
-                            [inactiveIntro, summary, callNext]);
+                            [recentDays, inactiveLimit, inactiveIntro,
+                             summary, callNext]);
     };
 
     this.parseList = function (title, source, timestamp, edittoken, args) {
-        var inactiveIntro = args[0];
-        var summary = args[1];
-        var callNext = args[2];
+        var recentDays = args[0];
+        var inactiveLimit = args[1];
+        var inactiveIntro = args[2];
+        var summary = args[3];
+        var callNext = args[4];
 
         var startList = source.indexOf(startMark);
         var endList = source.indexOf(endMark);
@@ -62,7 +65,7 @@ WM.Plugins.ArchWikiSortContacts = new function () {
             startList += startMark.length;
             var date = new Date();
             var ucstart = Math.floor(Date.now() / 1000);
-            var ucend = ucstart - 86400 * RECENT_DAYS;
+            var ucend = ucstart - 86400 * recentDays;
             var users = {
                 active: [],
                 inactive: []
@@ -70,8 +73,8 @@ WM.Plugins.ArchWikiSortContacts = new function () {
 
             var usersArray = source.substring(startList, endList).split("\n");
             iterateUsers(usersArray, -1, ucstart, ucend, users, title, source,
-                                    startList, endList, timestamp, edittoken,
-                                    inactiveIntro, summary, callNext);
+                            startList, endList, timestamp, edittoken,
+                            inactiveLimit, inactiveIntro, summary, callNext);
         }
         else {
             WM.Log.logError("Cannot find the needed marks");
@@ -79,8 +82,8 @@ WM.Plugins.ArchWikiSortContacts = new function () {
     };
 
     var iterateUsers = function (usersArray, index, ucstart, ucend, users,
-                                title, source, startList, endList, timestamp,
-                                edittoken, inactiveIntro, summary, callNext) {
+                    title, source, startList, endList, timestamp, edittoken,
+                    inactiveLimit, inactiveIntro, summary, callNext) {
         index++;
 
         if (index < usersArray.length) {
@@ -101,8 +104,8 @@ WM.Plugins.ArchWikiSortContacts = new function () {
                 WM.MW.getUserContribs(ucuser, ucstart, ucend,
                     WM.Plugins.ArchWikiSortContacts.storeUserContribs,
                     [usersArray, index, ucstart, ucend, users, title, source,
-                    startList, endList, timestamp, edittoken, inactiveIntro,
-                    summary, callNext]);
+                     startList, endList, timestamp, edittoken, inactiveLimit,
+                     inactiveIntro, summary, callNext]);
 
             }
             else if (userString != "" &&
@@ -112,8 +115,8 @@ WM.Plugins.ArchWikiSortContacts = new function () {
             }
             else {
                 iterateUsers(usersArray, index, ucstart, ucend, users, title,
-                                source, startList, endList, timestamp,
-                                edittoken, inactiveIntro, summary, callNext);
+                            source, startList, endList, timestamp, edittoken,
+                            inactiveLimit, inactiveIntro, summary, callNext);
             }
         }
         else {
@@ -134,13 +137,14 @@ WM.Plugins.ArchWikiSortContacts = new function () {
         var endList = args[8];
         var timestamp = args[9];
         var edittoken = args[10];
-        var inactiveIntro = args[11];
-        var summary = args[12];
-        var callNext = args[13];
+        var inactiveLimit = args[11];
+        var inactiveIntro = args[12];
+        var summary = args[13];
+        var callNext = args[14];
 
         var edits = results.length;
 
-        if (edits < INACTIVE_LIMIT) {
+        if (edits < inactiveLimit) {
             users.inactive.push({"text": usersArray[index],
                                  "edits": edits});
         }
@@ -150,8 +154,8 @@ WM.Plugins.ArchWikiSortContacts = new function () {
         }
 
         iterateUsers(usersArray, index, ucstart, ucend, users, title, source,
-                                    startList, endList, timestamp, edittoken,
-                                    inactiveIntro, summary, callNext)
+                            startList, endList, timestamp, edittoken,
+                            inactiveLimit, inactiveIntro, summary, callNext)
     };
 
     var updateList = function (users, title, source, startList, endList,
