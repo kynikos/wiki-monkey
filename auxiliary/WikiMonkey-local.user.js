@@ -634,8 +634,7 @@ WM.main({
                     "ArchWiki:Administrators",
                     30,
                     30,
-                    "The following Administrators are currently inactive "
-                    "(less than 30 edits in the last 30 days):",
+                    "The following Administrators are currently inactive (less than 30 edits in the last 30 days):",
                     "automatically sort list according to recent activity"
                 ]
             ],
@@ -648,9 +647,8 @@ WM.main({
                 [
                     "ArchWiki:Maintainers",
                     30,
-                    30,
-                    "The following Maintainers are currently inactive "
-                    "(less than 30 edits in the last 30 days):",
+                    10,
+                    "The following Maintainers are currently inactive (less than 10 edits in the last 30 days):",
                     "automatically sort list according to recent activity"
                 ]
             ]
