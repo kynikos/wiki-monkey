@@ -40,21 +40,24 @@ WM.Diff = new function () {
                                  rvdir: "newer",
                                  rvstartid: oldid},
                                  giveEndTimestamp,
-                                 1);
+                                 1,
+                                 null);
                 break;
             case 'prev':
                 WM.MW.callQuery({prop: "revisions",
                                  revids: oldid,
                                  rvprop: "timestamp"},
                                  giveEndTimestamp,
-                                 0);
+                                 0,
+                                 null);
                 break;
             default:
                 WM.MW.callQuery({prop: "revisions",
                                  revids: diff,
                                  rvprop: "timestamp"},
                                  giveEndTimestamp,
-                                 0);
+                                 0,
+                                 null);
         }
     };
 };

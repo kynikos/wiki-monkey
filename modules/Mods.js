@@ -21,6 +21,10 @@
 WM.Mods = new function () {
     "use strict";
 
+    var changeHeadingNumberStyle = function (style) {
+        Alib.CSS.addStyleElement("span.mw-headline-number {" + style + "}");
+    };
+
     var disableEditSummarySubmitOnEnter = function () {
         $('#wpSummary').keydown(function(event) {
             // 'keyCode' is deprecated, but not all browsers support 'key' yet
@@ -36,10 +40,24 @@ WM.Mods = new function () {
         Alib.CSS.addStyleElement("span.mw-rollback-link {display:none;}");
     };
 
+    var scrollToFirstHeading = function () {
+        window.scrollTo(0, $('#firstHeading').offset().top);
+    };
+
+    this.applyGeneralMods = function() {
+        var conf = WM.Cfg._getGeneralMods();
+        if (conf['heading_number_style']) {
+            changeHeadingNumberStyle(conf['heading_number_style']);
+        }
+    };
+
     this.applyEditorMods = function() {
         var conf = WM.Cfg._getEditorMods();
         if (conf['disable_edit_summary_submit_on_enter']) {
             disableEditSummarySubmitOnEnter();
+        }
+        if (conf['scroll_to_first_heading']) {
+            scrollToFirstHeading();
         }
     };
 

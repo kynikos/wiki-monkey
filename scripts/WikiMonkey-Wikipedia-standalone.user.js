@@ -28,7 +28,7 @@ if (location.href.match(/^http:\/\/[a-z]+\.wikipedia\.org/i)) {
 if (!GM_info) {
     var GM_info = {
         script: {
-            version: "2.0.4-wikipedia",
+            version: "2.0.5-wikipedia",
         },
     };
 
@@ -1505,7 +1505,7 @@ WM.Cat = new function () {
                 call(members, args);
             }
         },
-        callArgs);
+        callArgs, null);
     };
 
     this.getParentsAndInfo = function (name, call, callArgs) {
@@ -1541,7 +1541,7 @@ WM.Cat = new function () {
                 call(parents, info, args);
             }
         },
-        callArgs);
+        callArgs, null);
     };
 };
 
@@ -1727,6 +1727,10 @@ WM.Cfg = new function () {
         return config["Plugins"]["NewPages"];
     };
 
+    this._getGeneralMods = function() {
+        return config["Mods"]["General"];
+    };
+
     this._getEditorMods = function() {
         return config["Mods"]["Editor"];
     };
@@ -1827,21 +1831,24 @@ WM.Diff = new function () {
                                  rvdir: "newer",
                                  rvstartid: oldid},
                                  giveEndTimestamp,
-                                 1);
+                                 1,
+                                 null);
                 break;
             case 'prev':
                 WM.MW.callQuery({prop: "revisions",
                                  revids: oldid,
                                  rvprop: "timestamp"},
                                  giveEndTimestamp,
-                                 0);
+                                 0,
+                                 null);
                 break;
             default:
                 WM.MW.callQuery({prop: "revisions",
                                  revids: diff,
                                  rvprop: "timestamp"},
                                  giveEndTimestamp,
-                                 0);
+                                 0,
+                                 null);
         }
     };
 };
@@ -2134,7 +2141,23 @@ WM.Interlanguage = new function () {
                     args
                 );
             },
-            callArgs
+            callArgs,
+            function (args) {
+                callEnd(
+                    api,
+                    title,
+                    supportedLangs,
+                    whitelist,
+                    false,
+                    'unknown',
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    args
+                );
+            }
         );
     };
 
@@ -2845,6 +2868,10 @@ WM.Menu = new function () {
 WM.Mods = new function () {
     "use strict";
 
+    var changeHeadingNumberStyle = function (style) {
+        Alib.CSS.addStyleElement("span.mw-headline-number {" + style + "}");
+    };
+
     var disableEditSummarySubmitOnEnter = function () {
         $('#wpSummary').keydown(function(event) {
             // 'keyCode' is deprecated, but not all browsers support 'key' yet
@@ -2860,10 +2887,24 @@ WM.Mods = new function () {
         Alib.CSS.addStyleElement("span.mw-rollback-link {display:none;}");
     };
 
+    var scrollToFirstHeading = function () {
+        window.scrollTo(0, $('#firstHeading').offset().top);
+    };
+
+    this.applyGeneralMods = function() {
+        var conf = WM.Cfg._getGeneralMods();
+        if (conf['heading_number_style']) {
+            changeHeadingNumberStyle(conf['heading_number_style']);
+        }
+    };
+
     this.applyEditorMods = function() {
         var conf = WM.Cfg._getEditorMods();
         if (conf['disable_edit_summary_submit_on_enter']) {
             disableEditSummarySubmitOnEnter();
+        }
+        if (conf['scroll_to_first_heading']) {
+            scrollToFirstHeading();
         }
     };
 
@@ -2907,10 +2948,10 @@ WM.MW = new function () {
                 full: "/index.php",
                 api: "/api.php"
             },
-            "^https?://archlinuxjp\.kusakata\.com": {
-                short: "/wiki/",
-                full: "/wiki/index.php",
-                api: "/wiki/api.php"
+            "^https?://wiki\.archlinuxjp\.org": {
+                short: "/index.php/",
+                full: "/index.php",
+                api: "/api.php"
             },
             "^http://wiki\.archlinux\.ro": {
                 short: "/index.php/",
@@ -3083,7 +3124,7 @@ WM.MW = new function () {
             "(Chrome/Chromium), Violentmonkey (Opera) or a similar extension";
     };
 
-    this.callAPIGet = function (params, api, call, callArgs) {
+    this.callAPIGet = function (params, api, call, callArgs, callError) {
         if (!api) {
             api = localWikiUrls.api;
         }
@@ -3099,6 +3140,9 @@ WM.MW = new function () {
                     WM.Log.logError("It is likely that the " +
                                                 WM.Log.linkToPage(api, "API") +
                                                 " for this wiki is disabled");
+                    if (callError) {
+                        callError(callArgs);
+                    }
                 }
                 if (json) {
                     // Don't put this into the try block or all its exceptions
@@ -3111,7 +3155,10 @@ WM.MW = new function () {
                 if (confirm("Wiki Monkey error: Failed query\n\nDo you want " +
                                                                 "to retry?")) {
                     WM.Log.logInfo("Retrying ...");
-                    WM.MW.callAPIGet(params, api, call, callArgs);
+                    WM.MW.callAPIGet(params, api, call, callArgs, callError);
+                }
+                else if (callError) {
+                    callError(callArgs);
                 }
             }
         };
@@ -3124,7 +3171,7 @@ WM.MW = new function () {
         }
     };
 
-    this.callAPIPost = function (params, api, call, callArgs) {
+    this.callAPIPost = function (params, api, call, callArgs, callError) {
         if (!api) {
             api = localWikiUrls.api;
         }
@@ -3140,6 +3187,9 @@ WM.MW = new function () {
                     WM.Log.logError("It is likely that the " +
                                                 WM.Log.linkToPage(api, "API") +
                                                 " for this wiki is disabled");
+                    if (callError) {
+                        callError(callArgs);
+                    }
                 }
                 if (json) {
                     // Don't put this into the try block or all its exceptions
@@ -3152,7 +3202,10 @@ WM.MW = new function () {
                 if (confirm("Wiki Monkey error: Failed query\n\nDo you want " +
                                                                 "to retry?")) {
                     WM.Log.logInfo("Retrying ...");
-                    WM.MW.callAPIPost(params, api, call, callArgs);
+                    WM.MW.callAPIPost(params, api, call, callArgs, callError);
+                }
+                else if (callError) {
+                    callError(callArgs);
                 }
             }
         };
@@ -3198,13 +3251,13 @@ WM.MW = new function () {
         return string;
     };
 
-    this.callQuery = function (params, call, callArgs) {
+    this.callQuery = function (params, call, callArgs, callError) {
         params.action = "query";
         var callBack = function (res, args) {
             var page = Alib.Obj.getFirstItem(res.query.pages);
             call(page, args);
         };
-        this.callAPIGet(params, null, callBack, callArgs);
+        this.callAPIGet(params, null, callBack, callArgs, callError);
     };
 
     this.callQueryEdit = function (title, call, callArgs) {
@@ -3219,7 +3272,8 @@ WM.MW = new function () {
                         intoken: "edit",
                         titles: title},
                         callBack,
-                        callArgs);
+                        callArgs,
+                        null);
     };
 
     var userInfo;
@@ -3236,7 +3290,8 @@ WM.MW = new function () {
                                 uiprop: "groups"},
                                 null,
                                 storeInfo,
-                                call);
+                                call,
+                                null);
         }
         else {
             call();
@@ -3288,7 +3343,7 @@ WM.MW = new function () {
                 call(backlinks, args);
             }
         },
-        callArgs);
+        callArgs, null);
     };
 
     this.getLanglinks = function (title, iwmap, call, callArgs) {
@@ -3333,7 +3388,7 @@ WM.MW = new function () {
                 call(langlinks, iwmap, args);
             }
         },
-        callArgs);
+        callArgs, null);
     };
 
     this.getInterwikiMap = function (title, call, callArgs) {
@@ -3348,7 +3403,8 @@ WM.MW = new function () {
             function (res, args) {
                 call(res.query.interwikimap, args);
             },
-            callArgs
+            callArgs,
+            null
         );
     };
 
@@ -3404,7 +3460,7 @@ WM.MW = new function () {
                 call(results, siteinfo, args);
             }
         },
-        callArgs);
+        callArgs, null);
     };
 
     this.getUserContribs = function (ucuser, ucstart, ucend, call, callArgs) {
@@ -3432,7 +3488,7 @@ WM.MW = new function () {
                 call(results, args);
             }
         },
-        callArgs);
+        callArgs, null);
     };
 };
 
@@ -4096,6 +4152,8 @@ WM.UI = new function () {
         var display = true;
         var displayLog = true;
 
+        WM.Mods.applyGeneralMods();
+
         if (document.getElementById('editform')) {
             nextNode = document.getElementById('wpSummaryLabel'
                                                     ).parentNode.nextSibling;
@@ -4128,11 +4186,10 @@ WM.UI = new function () {
                             0, "Pages"]]) : null;
             display = false;
         }
-        else if (document.getElementById('mw-linksearch-form') &&
+        else if (document.body.classList.contains('mw-special-LinkSearch') &&
                                         document.getElementById('bodyContent'
                                         ).getElementsByTagName('ol')[0]) {
-            nextNode = document.getElementById('mw-linksearch-form'
-                                                                ).nextSibling;
+            nextNode = document.getElementsByClassName('mw-spcontent')[0];
             var conf = WM.Cfg._getBotPlugins();
             UI = (conf) ? WM.Bot._makeUI(conf,
                         [[document.getElementById('bodyContent'
@@ -4599,7 +4656,8 @@ WM.Plugins.FixBacklinkFragments = new function () {
                 WM.MW.callAPIGet(params,
                          null,
                          WM.Plugins.FixBacklinkFragments.mainAutoFindSections,
-                         [title, target, summary, callBot]);
+                         [title, target, summary, callBot],
+                         null);
             }
             else {
                 WM.Plugins.FixBacklinkFragments.mainAutoRead(target, chainArgs,
@@ -4665,7 +4723,8 @@ WM.Plugins.FixBacklinkFragments = new function () {
                                token: edittoken},
                                null,
                                WM.Plugins.FixBacklinkFragments.mainAutoEnd,
-                               [callBot, sections]);
+                               [callBot, sections],
+                               null);
         }
         else {
             callBot(0, sections);
@@ -4752,7 +4811,8 @@ WM.Plugins.FixDoubleRedirects = new function () {
                          WM.Plugins.FixDoubleRedirects.processDoubleRedirect,
                          [doubleRedirect, doubleRedirectTitle,
                           doubleRedirectSource, timestamp, edittoken,
-                          doubleRedirects, namespaces, summary, callNext]);
+                          doubleRedirects, namespaces, summary, callNext],
+                         null);
     };
 
     this.processDoubleRedirect = function (middleRedirect, args) {
@@ -4825,7 +4885,8 @@ WM.Plugins.FixDoubleRedirects = new function () {
                      token: edittoken},
                     null,
                     WM.Plugins.FixDoubleRedirects.processDoubleRedirectEnd,
-                    [doubleRedirects, namespaces, summary, callNext]);
+                    [doubleRedirects, namespaces, summary, callNext],
+                    null);
         }
         else {
             WM.Log.logWarning("Could not fix " +
@@ -5001,7 +5062,8 @@ WM.Plugins.FixLinkFragments = new function () {
                              null,
                              WM.Plugins.FixLinkFragments.processLinkContinue,
                              [link, target, rawfragment, links, index, source,
-                                    newText, prevId, title, call, callArgs]);
+                                    newText, prevId, title, call, callArgs],
+                             null);
                 }
                 else {
                     index++;
@@ -5171,7 +5233,8 @@ WM.Plugins.FixLinkFragments = new function () {
                                  WM.Plugins.FixLinkFragments.processArchWikiLinkContinue,
                                  [template, target, rawfragment, templates,
                                  expectedArgs, index, source, newText,
-                                 prevId, title, call, callArgs]);
+                                 prevId, title, call, callArgs],
+                                 null);
                         }
                         else {
                             index++;
@@ -5485,7 +5548,8 @@ WM.Plugins.SimpleReplace = new function () {
                                token: edittoken},
                                null,
                                WM.Plugins.SimpleReplace.mainAutoEnd,
-                               callBot);
+                               callBot,
+                               null);
         }
         else {
             callBot(0, null);
@@ -5733,7 +5797,8 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
                  token: edittoken},
                 null,
                 WM.Plugins.SynchronizeInterlanguageLinks.mainAutoEnd,
-                callBot
+                callBot,
+                null
             );
         }
         else {
@@ -5983,7 +6048,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
                                token: args.edittoken},
                               null,
                               WM.Plugins.UpdateCategoryTree.checkWrite,
-                              args);
+                              args,
+                              null);
         }
         else {
             WM.Log.logInfo(WM.Log.linkToWikiPage(args.params.page,
@@ -6018,7 +6084,11 @@ WM.main({
             "hide_rollback_links": true
         },
         "Editor": {
-            "disable_edit_summary_submit_on_enter": true
+            "disable_edit_summary_submit_on_enter": true,
+            "scroll_to_first_heading": false
+        },
+        "General": {
+            "heading_number_style": false
         },
         "RecentChanges": {
             "hide_rollback_links": true

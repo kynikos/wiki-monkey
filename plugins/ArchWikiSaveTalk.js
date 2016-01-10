@@ -81,7 +81,8 @@ WM.Plugins.ArchWikiSaveTalk = new function () {
             },
             null,
             WM.Plugins.ArchWikiSaveTalk.mainEnd,
-            [article, callNext]
+            [article, callNext],
+            null
         );
     };
 

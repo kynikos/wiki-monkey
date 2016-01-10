@@ -75,7 +75,7 @@ WM.Cat = new function () {
                 call(members, args);
             }
         },
-        callArgs);
+        callArgs, null);
     };
 
     this.getParentsAndInfo = function (name, call, callArgs) {
@@ -111,6 +111,6 @@ WM.Cat = new function () {
                 call(parents, info, args);
             }
         },
-        callArgs);
+        callArgs, null);
     };
 };

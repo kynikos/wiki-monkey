@@ -81,7 +81,8 @@ WM.Plugins.FixDoubleRedirects = new function () {
                          WM.Plugins.FixDoubleRedirects.processDoubleRedirect,
                          [doubleRedirect, doubleRedirectTitle,
                           doubleRedirectSource, timestamp, edittoken,
-                          doubleRedirects, namespaces, summary, callNext]);
+                          doubleRedirects, namespaces, summary, callNext],
+                         null);
     };
 
     this.processDoubleRedirect = function (middleRedirect, args) {
@@ -154,7 +155,8 @@ WM.Plugins.FixDoubleRedirects = new function () {
                      token: edittoken},
                     null,
                     WM.Plugins.FixDoubleRedirects.processDoubleRedirectEnd,
-                    [doubleRedirects, namespaces, summary, callNext]);
+                    [doubleRedirects, namespaces, summary, callNext],
+                    null);
         }
         else {
             WM.Log.logWarning("Could not fix " +

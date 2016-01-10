@@ -245,7 +245,8 @@ WM.Plugins.SynchronizeInterlanguageLinks = new function () {
                  token: edittoken},
                 null,
                 WM.Plugins.SynchronizeInterlanguageLinks.mainAutoEnd,
-                callBot
+                callBot,
+                null
             );
         }
         else {

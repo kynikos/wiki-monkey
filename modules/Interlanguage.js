@@ -135,7 +135,23 @@ WM.Interlanguage = new function () {
                     args
                 );
             },
-            callArgs
+            callArgs,
+            function (args) {
+                callEnd(
+                    api,
+                    title,
+                    supportedLangs,
+                    whitelist,
+                    false,
+                    'unknown',
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    args
+                );
+            }
         );
     };
 

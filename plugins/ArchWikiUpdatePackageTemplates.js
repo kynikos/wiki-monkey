@@ -540,7 +540,8 @@ WM.Plugins.ArchWikiUpdatePackageTemplates = new function () {
                        token: edittoken},
                        null,
                        WM.Plugins.ArchWikiUpdatePackageTemplates.mainAutoEnd,
-                       callBot);
+                       callBot,
+                       null);
         }
         else {
             callBot(0, null);
