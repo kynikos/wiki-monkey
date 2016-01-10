@@ -39,7 +39,14 @@ WM.Cfg = new function () {
         toc.find("a").click(WM.Cfg._hideEditor);
 
         var link = $("<a/>")
-            .attr({"id": "WikiMonkey-preftab", "href": "#wiki-monkey"})
+            .attr({
+                "id": "WikiMonkey-preftab",
+                "href": "#wiki-monkey",
+                "role": "tab",
+                "aria-controls": "WikiMonkey-config",
+                "tabindex": "-1",
+                "aria-selected": "false"
+            })
             .text("Wiki Monkey")
             .click(WM.Cfg._showEditor);
 
@@ -129,8 +136,15 @@ WM.Cfg = new function () {
 
     this._showEditor = function () {
         var tab = $("#WikiMonkey-preftab").parent();
-        tab.siblings(".selected").removeClass("selected");
-        tab.addClass("selected");
+        tab
+            .siblings(".selected")
+            .removeClass("selected")
+            .children("a:first")
+            .attr({"tabindex": "-1", "aria-selected": "false"});
+        tab
+            .addClass("selected")
+            .children("a:first")
+            .attr({"tabindex": "0", "aria-selected": "true"});
 
         var editor = $("#WikiMonkey-prefsection");
         editor.siblings("fieldset").hide();
@@ -140,7 +154,10 @@ WM.Cfg = new function () {
     };
 
     this._hideEditor = function () {
-        $("#WikiMonkey-preftab").parent().removeClass("selected");
+        $("#WikiMonkey-preftab")
+            .attr({"tabindex": "-1", "aria-selected": "false"})
+            .parent()
+            .removeClass("selected");
 
         var editor = $("#WikiMonkey-prefsection");
         editor.hide()
