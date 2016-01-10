@@ -658,7 +658,7 @@ WM.main({
     },
     'Mods': {
         "General": {
-            'heading_number_style': 'font-size: 60%;'
+            'heading_number_style': false
         },
         'Editor': {
             'disable_edit_summary_submit_on_enter': true,
