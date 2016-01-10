@@ -22,6 +22,13 @@ WM.Cfg = new function () {
     "use strict";
 
     this._makeUI = function () {
+        // We have to wait until #preftoc exists, because it's generated
+        // dynamically by a MediaWiki script, hence racing with Wiki Monkey
+        Alib.DOM.waitUntilJQuerySelectorMatches('#preftoc', _doMakeUI, [],
+                                                500);
+    };
+
+    var _doMakeUI = function () {
         /*
          * Creating the preferences interface shouldn't rely on the saved
          * configuration, in order to always make it possible to fix a
