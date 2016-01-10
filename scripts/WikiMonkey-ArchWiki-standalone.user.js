@@ -28,7 +28,7 @@ if (location.href.match(/^https:\/\/wiki\.archlinux\.org/i)) {
 if (!GM_info) {
     var GM_info = {
         script: {
-            version: "2.0.5-archwiki",
+            version: "2.0.6-archwiki",
         },
     };
 
@@ -362,6 +362,20 @@ Alib.DOM = new function () {
             }
         }
         return text;
+    };
+
+    this.waitUntilJQuerySelectorMatches = function (selector, handler, args,
+                                                    interval) {
+        //TODO: turn into a jQuery plugin
+        var recurse = function () {
+            if ($(selector)[0]) {
+                handler(args);
+            }
+            else {
+                setTimeout(recurse, interval);
+            }
+        };
+        recurse();
     };
 };
 
@@ -1549,6 +1563,13 @@ WM.Cfg = new function () {
     "use strict";
 
     this._makeUI = function () {
+        // We have to wait until #preftoc exists, because it's generated
+        // dynamically by a MediaWiki script, hence racing with Wiki Monkey
+        Alib.DOM.waitUntilJQuerySelectorMatches('#preftoc', _doMakeUI, [],
+                                                500);
+    };
+
+    var _doMakeUI = function () {
         /*
          * Creating the preferences interface shouldn't rely on the saved
          * configuration, in order to always make it possible to fix a
@@ -1562,10 +1583,18 @@ WM.Cfg = new function () {
             "#WikiMonkey-prefsection input[value='Save'] {font-weight:bold;}");
 
         var toc = $("#preftoc");
-        var tlinks = toc.find("a").click(WM.Cfg._hideEditor);
+
+        toc.find("a").click(WM.Cfg._hideEditor);
 
         var link = $("<a/>")
-            .attr({"id": "WikiMonkey-preftab", "href": "#wiki-monkey"})
+            .attr({
+                "id": "WikiMonkey-preftab",
+                "href": "#wiki-monkey",
+                "role": "tab",
+                "aria-controls": "WikiMonkey-config",
+                "tabindex": "-1",
+                "aria-selected": "false"
+            })
             .text("Wiki Monkey")
             .click(WM.Cfg._showEditor);
 
@@ -1655,8 +1684,15 @@ WM.Cfg = new function () {
 
     this._showEditor = function () {
         var tab = $("#WikiMonkey-preftab").parent();
-        tab.siblings(".selected").removeClass("selected");
-        tab.addClass("selected");
+        tab
+            .siblings(".selected")
+            .removeClass("selected")
+            .children("a:first")
+            .attr({"tabindex": "-1", "aria-selected": "false"});
+        tab
+            .addClass("selected")
+            .children("a:first")
+            .attr({"tabindex": "0", "aria-selected": "true"});
 
         var editor = $("#WikiMonkey-prefsection");
         editor.siblings("fieldset").hide();
@@ -1666,7 +1702,10 @@ WM.Cfg = new function () {
     };
 
     this._hideEditor = function () {
-        $("#WikiMonkey-preftab").parent().removeClass("selected");
+        $("#WikiMonkey-preftab")
+            .attr({"tabindex": "-1", "aria-selected": "false"})
+            .parent()
+            .removeClass("selected");
 
         var editor = $("#WikiMonkey-prefsection");
         editor.hide()

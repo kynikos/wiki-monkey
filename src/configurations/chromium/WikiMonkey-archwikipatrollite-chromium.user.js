@@ -3,14 +3,14 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.17.5-archwiki
+// @version 1.17.6-archwiki
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser (ArchWiki version)
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
 // @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-archwikipatrollite-chromium.meta.js
 // @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-archwikipatrollite-chromium.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/1.17.5/auxiliary/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.17.5/auxiliary/wiki-monkey-64.png
+// @icon https://raw.github.com/kynikos/wiki-monkey/1.17.6/auxiliary/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.17.6/auxiliary/wiki-monkey-64.png
 // @match https://wiki.archlinux.org/*
 // @grant GM_info
 // @grant GM_xmlhttpRequest
@@ -44,7 +44,7 @@
 if (!GM_info) {
     var GM_info = {
         script: {
-            version: "1.17.5-archwiki",
+            version: "1.17.6-archwiki",
         },
     };
 
@@ -378,6 +378,20 @@ Alib.DOM = new function () {
             }
         }
         return text;
+    };
+
+    this.waitUntilJQuerySelectorMatches = function (selector, handler, args,
+                                                    interval) {
+        //TODO: turn into a jQuery plugin
+        var recurse = function () {
+            if ($(selector)[0]) {
+                handler(args);
+            }
+            else {
+                setTimeout(recurse, interval);
+            }
+        };
+        recurse();
     };
 };
 
@@ -1565,6 +1579,13 @@ WM.Cfg = new function () {
     "use strict";
 
     this._makeUI = function () {
+        // We have to wait until #preftoc exists, because it's generated
+        // dynamically by a MediaWiki script, hence racing with Wiki Monkey
+        Alib.DOM.waitUntilJQuerySelectorMatches('#preftoc', _doMakeUI, [],
+                                                500);
+    };
+
+    var _doMakeUI = function () {
         /*
          * Creating the preferences interface shouldn't rely on the saved
          * configuration, in order to always make it possible to fix a
@@ -1578,10 +1599,18 @@ WM.Cfg = new function () {
             "#WikiMonkey-prefsection input[value='Save'] {font-weight:bold;}");
 
         var toc = $("#preftoc");
-        var tlinks = toc.find("a").click(WM.Cfg._hideEditor);
+
+        toc.find("a").click(WM.Cfg._hideEditor);
 
         var link = $("<a/>")
-            .attr({"id": "WikiMonkey-preftab", "href": "#wiki-monkey"})
+            .attr({
+                "id": "WikiMonkey-preftab",
+                "href": "#wiki-monkey",
+                "role": "tab",
+                "aria-controls": "WikiMonkey-config",
+                "tabindex": "-1",
+                "aria-selected": "false"
+            })
             .text("Wiki Monkey")
             .click(WM.Cfg._showEditor);
 
@@ -1671,8 +1700,15 @@ WM.Cfg = new function () {
 
     this._showEditor = function () {
         var tab = $("#WikiMonkey-preftab").parent();
-        tab.siblings(".selected").removeClass("selected");
-        tab.addClass("selected");
+        tab
+            .siblings(".selected")
+            .removeClass("selected")
+            .children("a:first")
+            .attr({"tabindex": "-1", "aria-selected": "false"});
+        tab
+            .addClass("selected")
+            .children("a:first")
+            .attr({"tabindex": "0", "aria-selected": "true"});
 
         var editor = $("#WikiMonkey-prefsection");
         editor.siblings("fieldset").hide();
@@ -1682,7 +1718,10 @@ WM.Cfg = new function () {
     };
 
     this._hideEditor = function () {
-        $("#WikiMonkey-preftab").parent().removeClass("selected");
+        $("#WikiMonkey-preftab")
+            .attr({"tabindex": "-1", "aria-selected": "false"})
+            .parent()
+            .removeClass("selected");
 
         var editor = $("#WikiMonkey-prefsection");
         editor.hide()
