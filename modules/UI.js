@@ -60,11 +60,10 @@ WM.UI = new function () {
                             0, "Pages"]]) : null;
             display = false;
         }
-        else if (document.getElementById('mw-linksearch-form') &&
+        else if (document.body.classList.contains('mw-special-LinkSearch') &&
                                         document.getElementById('bodyContent'
                                         ).getElementsByTagName('ol')[0]) {
-            nextNode = document.getElementById('mw-linksearch-form'
-                                                                ).nextSibling;
+            nextNode = document.getElementsByClassName('mw-spcontent')[0];
             var conf = WM.Cfg._getBotPlugins();
             UI = (conf) ? WM.Bot._makeUI(conf,
                         [[document.getElementById('bodyContent'
