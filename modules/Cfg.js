@@ -35,7 +35,8 @@ WM.Cfg = new function () {
             "#WikiMonkey-prefsection input[value='Save'] {font-weight:bold;}");
 
         var toc = $("#preftoc");
-        var tlinks = toc.find("a").click(WM.Cfg._hideEditor);
+
+        toc.find("a").click(WM.Cfg._hideEditor);
 
         var link = $("<a/>")
             .attr({"id": "WikiMonkey-preftab", "href": "#wiki-monkey"})
