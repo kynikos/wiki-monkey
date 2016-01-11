@@ -3,7 +3,7 @@
 // @name Wiki Monkey (local)
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 2.0.0-dev-local
+// @version 2.0.6-dev-local
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser (local version)
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
@@ -69,6 +69,21 @@
 // ==/UserScript==
 
 WM.main({
+    "Mods": {
+        "Contributions": {
+            "hide_rollback_links": true
+        },
+        "Editor": {
+            "disable_edit_summary_submit_on_enter": true,
+            "scroll_to_first_heading": false
+        },
+        "General": {
+            "heading_number_style": false
+        },
+        "RecentChanges": {
+            "hide_rollback_links": true
+        }
+    },
     "Plugins": {
         "Bot": {
             "010SR": [
@@ -638,6 +653,11 @@ WM.main({
                     "automatically sort list according to recent activity"
                 ]
             ],
+            "040ASCC": [
+                "ArchWikiSortContacts",
+                null,
+                null
+            ],
             "040ASCM": [
                 "ArchWikiSortContacts",
                 [
@@ -652,21 +672,6 @@ WM.main({
                     "automatically sort list according to recent activity"
                 ]
             ]
-        }
-    },
-    'Mods': {
-        "General": {
-            'heading_number_style': false
-        },
-        'Editor': {
-            'disable_edit_summary_submit_on_enter': true,
-            'scroll_to_first_heading': false
-        },
-        'RecentChanges': {
-            'hide_rollback_links': true
-        },
-        'Contributions': {
-            'hide_rollback_links': true
         }
     }
 });

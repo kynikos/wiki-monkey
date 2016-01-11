@@ -19,9 +19,12 @@
 * Checkout the master branch and merge the 2.x VERSION branch
 * Tag the release commit with both the new 1.x and 2.x VERSION numbers
 * Remove the VERSION branches, also remotely
+* Checkout the develop branch
+* Run `./release.py DEV_VERSION` from inside the auxiliary folder
+* Run `./clean.sh` from inside the auxiliary folder
+* Commit
 * Push everything to origin, including the tags
 
-* Checkout the develop branch
 * Check milestone is closed on GitHub
 * Update documentation:
   - GitHub wiki
