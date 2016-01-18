@@ -175,25 +175,22 @@ WM.Plugins.UpdateCategoryTree = new function () {
         var text = args_[2];
         var altName = args_[3];
 
+        var currParent = params.ancestors[params.ancestors.length - 1];
+        var alsoParents = [];
         text += "<small>(" + ((info) ? info.pages : 0) + ")";
 
         if (parents.length > 1) {
-            outer_loop:
-            for (var p in parents) {
-                var par = parents[p].title;
-                for (var a in params.ancestors) {
-                    var anc = params.ancestors[a];
-                    if (par == anc) {
-                        parents.splice(p, 1);
-                        break outer_loop;
-                    }
+            for (var p = 0; p < parents.length; p++) {
+                var par = parents[p];
+                if (currParent != par.title && !("hidden" in par)) {
+                    alsoParents.push(par);
                 }
             }
             var parentTitles = [];
-            for (var i in parents) {
-                altName = (args.altNames[parents[i].title.toLowerCase()]) ?
-                        args.altNames[parents[i].title.toLowerCase()] : null;
-                parentTitles.push(createCatLink(parents[i].title,
+            for (var i in alsoParents) {
+                altName = (args.altNames[alsoParents[i].title.toLowerCase()]) ?
+                    args.altNames[alsoParents[i].title.toLowerCase()] : null;
+                parentTitles.push(createCatLink(alsoParents[i].title,
                                                 args.params.replace, altName));
             }
             text += " (" + args.params.alsoIn + " " +
