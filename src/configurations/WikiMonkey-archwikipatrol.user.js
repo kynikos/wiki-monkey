@@ -1,71 +1,21 @@
 // ==UserScript==
-// @id wiki-monkey-local
-// @name Wiki Monkey (local)
+// @id wiki-monkey-archwikipatrol
+// @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 2.0.7-local
-// @description MediaWiki-compatible bot and editor assistant that runs in the browser (local version)
+// @version 1.17.7-archwiki
+// @description MediaWiki-compatible bot and editor assistant that runs in the browser (ArchWiki version)
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL file:///home/dario/data/development/wiki-monkey/auxiliary/WikiMonkey-local.user.js
-// @downloadURL file:///home/dario/data/development/wiki-monkey/auxiliary/WikiMonkey-local.user.js
-// @icon file:///home/dario/data/development/wiki-monkey/auxiliary/wiki-monkey.png
-// @icon64 file:///home/dario/data/development/wiki-monkey/auxiliary/wiki-monkey-64.png
-// @match http://*.wikipedia.org/*
+// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-archwikipatrol.meta.js
+// @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-archwikipatrol.user.js
+// @icon https://raw.github.com/kynikos/wiki-monkey/1.17.7/auxiliary/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.17.7/auxiliary/wiki-monkey-64.png
 // @match https://wiki.archlinux.org/*
 // @grant GM_info
 // @grant GM_xmlhttpRequest
 // @require https://code.jquery.com/jquery-2.1.3.min.js
-// @require file:///home/dario/data/development/lib.js.generic/src/GMAPIEmulation.js
-// @require file:///home/dario/data/development/lib.js.generic/src/Async.js
-// @require file:///home/dario/data/development/lib.js.generic/src/Compatibility.js
-// @require file:///home/dario/data/development/lib.js.generic/src/CSS.js
-// @require file:///home/dario/data/development/lib.js.generic/src/DOM.js
-// @require file:///home/dario/data/development/lib.js.generic/src/HTTP.js
-// @require file:///home/dario/data/development/lib.js.generic/src/Obj.js
-// @require file:///home/dario/data/development/lib.js.generic/src/RegEx.js
-// @require file:///home/dario/data/development/lib.js.generic/src/Str.js
-// @require file:///home/dario/data/development/wiki-monkey/modules/_Init.js
-// @require file:///home/dario/data/development/wiki-monkey/modules/Bot.js
-// @require file:///home/dario/data/development/wiki-monkey/modules/Cat.js
-// @require file:///home/dario/data/development/wiki-monkey/modules/Cfg.js
-// @require file:///home/dario/data/development/wiki-monkey/modules/Diff.js
-// @require file:///home/dario/data/development/wiki-monkey/modules/Editor.js
-// @require file:///home/dario/data/development/wiki-monkey/modules/Filters.js
-// @require file:///home/dario/data/development/wiki-monkey/modules/Interlanguage.js
-// @require file:///home/dario/data/development/wiki-monkey/modules/Log.js
-// @require file:///home/dario/data/development/wiki-monkey/modules/Menu.js
-// @require file:///home/dario/data/development/wiki-monkey/modules/Mods.js
-// @require file:///home/dario/data/development/wiki-monkey/modules/MW.js
-// @require file:///home/dario/data/development/wiki-monkey/modules/Parser.js
-// @require file:///home/dario/data/development/wiki-monkey/modules/Tables.js
-// @require file:///home/dario/data/development/wiki-monkey/modules/UI.js
-// @require file:///home/dario/data/development/wiki-monkey/modules/WhatLinksHere.js
-// @require file:///home/dario/data/development/wiki-monkey/modules/ArchPackages.js
-// @require file:///home/dario/data/development/wiki-monkey/modules/ArchWiki.js
-// @require file:///home/dario/data/development/wiki-monkey/plugins/ExpandContractions.js
-// @require file:///home/dario/data/development/wiki-monkey/plugins/FixBacklinkFragments.js
-// @require file:///home/dario/data/development/wiki-monkey/plugins/FixDoubleRedirects.js
-// @require file:///home/dario/data/development/wiki-monkey/plugins/FixFragments.js
-// @require file:///home/dario/data/development/wiki-monkey/plugins/FixLinkFragments.js
-// @require file:///home/dario/data/development/wiki-monkey/plugins/MultipleLineBreaks.js
-// @require file:///home/dario/data/development/wiki-monkey/plugins/SimpleReplace.js
-// @require file:///home/dario/data/development/wiki-monkey/plugins/SynchronizeInterlanguageLinks.js
-// @require file:///home/dario/data/development/wiki-monkey/plugins/UpdateCategoryTree.js
-// @require file:///home/dario/data/development/wiki-monkey/plugins/ArchWikiFixHeader.js
-// @require file:///home/dario/data/development/wiki-monkey/plugins/ArchWikiFixHeadings.js
-// @require file:///home/dario/data/development/wiki-monkey/plugins/ArchWikiFixLinks.js
-// @require file:///home/dario/data/development/wiki-monkey/plugins/ArchWikiNewTemplates.js
-// @require file:///home/dario/data/development/wiki-monkey/plugins/ArchWikiNPFilter.js
-// @require file:///home/dario/data/development/wiki-monkey/plugins/ArchWikiOldAURLinks.js
-// @require file:///home/dario/data/development/wiki-monkey/plugins/ArchWikiQuickReport.js
-// @require file:///home/dario/data/development/wiki-monkey/plugins/ArchWikiRCFilter.js
-// @require file:///home/dario/data/development/wiki-monkey/plugins/ArchWikiSaveTalk.js
-// @require file:///home/dario/data/development/wiki-monkey/plugins/ArchWikiSortContacts.js
-// @require file:///home/dario/data/development/wiki-monkey/plugins/ArchWikiSummaryToRelated.js
-// @require file:///home/dario/data/development/wiki-monkey/plugins/ArchWikiUpdatePackageTemplates.js
-// @require file:///home/dario/data/development/wiki-monkey/plugins/ArchWikiWantedCategories.js
-// @require file:///home/dario/data/development/wiki-monkey/plugins/DeletePages.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.17.7/scripts/WikiMonkey-ArchWiki.include.js
 // ==/UserScript==
 
 WM.main({
@@ -88,23 +38,17 @@ WM.main({
         "Bot": {
             "010SR": [
                 "SimpleReplace",
-                [
-                    "RegExp substitution"
-                ],
+                null,
                 null
             ],
             "020BL": [
                 "FixBacklinkFragments",
-                [
-                    "Fix links to specific sections of a target page"
-                ],
+                null,
                 "fix links to specific sections"
             ],
             "030IL": [
                 "SynchronizeInterlanguageLinks",
-                [
-                    "Synchronize interlanguage links"
-                ],
+                null,
                 [
                     "ArchWiki",
                     "ArchWiki",
@@ -114,31 +58,13 @@ WM.main({
             ],
             "040APT": [
                 "ArchWikiUpdatePackageTemplates",
-                [
-                    "Check packages linked with Pkg/AUR templates and possibly update them"
-                ],
+                null,
                 "update Pkg/AUR templates to reflect new package status"
             ],
             "050AAL": [
                 "ArchWikiOldAURLinks",
-                [
-                    "Replace old-style direct AUR package links with Template:AUR"
-                ],
+                null,
                 "replace old-style direct package links with Pkg/AUR templates"
-            ],
-            "060AWC": [
-                "ArchWikiWantedCategories",
-                [
-                    "Create wanted categories"
-                ],
-                null
-            ],
-            "070DP": [
-                "DeletePages",
-                [
-                    "Delete pages"
-                ],
-                "delete page"
             ]
         },
         "Diff": {
@@ -150,16 +76,6 @@ WM.main({
                 [
                     "ArchWiki:Reports",
                     "add report for %t"
-                ]
-            ],
-            "020AST": [
-                "ArchWikiSaveTalk",
-                [
-                    "Save discussion"
-                ],
-                [
-                    "User:Kynikos/Tasks",
-                    "add discussion"
                 ]
             ]
         },
@@ -298,10 +214,7 @@ WM.main({
         "Special": {
             "010CTar": [
                 "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Arabic"
-                ],
+                null,
                 [
                     [
                         "ArchWiki",
@@ -313,10 +226,7 @@ WM.main({
             ],
             "010CTbg": [
                 "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Bulgarian"
-                ],
+                null,
                 [
                     [
                         "ArchWiki",
@@ -328,10 +238,7 @@ WM.main({
             ],
             "010CTcs": [
                 "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Czech"
-                ],
+                null,
                 [
                     [
                         "ArchWiki",
@@ -343,10 +250,7 @@ WM.main({
             ],
             "010CTda": [
                 "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Danish"
-                ],
+                null,
                 [
                     [
                         "ArchWiki",
@@ -358,10 +262,7 @@ WM.main({
             ],
             "010CTel": [
                 "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Greek"
-                ],
+                null,
                 [
                     [
                         "ArchWiki",
@@ -373,10 +274,7 @@ WM.main({
             ],
             "010CTen": [
                 "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "English"
-                ],
+                null,
                 [
                     [
                         "ArchWiki",
@@ -388,10 +286,7 @@ WM.main({
             ],
             "010CTes": [
                 "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Spanish"
-                ],
+                null,
                 [
                     [
                         "ArchWiki",
@@ -403,10 +298,7 @@ WM.main({
             ],
             "010CThe": [
                 "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Hebrew"
-                ],
+                null,
                 [
                     [
                         "ArchWiki",
@@ -418,10 +310,7 @@ WM.main({
             ],
             "010CThr": [
                 "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Croatian"
-                ],
+                null,
                 [
                     [
                         "ArchWiki",
@@ -433,10 +322,7 @@ WM.main({
             ],
             "010CThu": [
                 "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Hungarian"
-                ],
+                null,
                 [
                     [
                         "ArchWiki",
@@ -448,10 +334,7 @@ WM.main({
             ],
             "010CTid": [
                 "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Indonesian"
-                ],
+                null,
                 [
                     [
                         "ArchWiki",
@@ -463,10 +346,7 @@ WM.main({
             ],
             "010CTit": [
                 "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Italian"
-                ],
+                null,
                 [
                     [
                         "ArchWiki",
@@ -478,10 +358,7 @@ WM.main({
             ],
             "010CTko": [
                 "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Korean"
-                ],
+                null,
                 [
                     [
                         "ArchWiki",
@@ -493,10 +370,7 @@ WM.main({
             ],
             "010CTlt": [
                 "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Lithuanian"
-                ],
+                null,
                 [
                     [
                         "ArchWiki",
@@ -508,10 +382,7 @@ WM.main({
             ],
             "010CTnl": [
                 "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Dutch"
-                ],
+                null,
                 [
                     [
                         "ArchWiki",
@@ -523,10 +394,7 @@ WM.main({
             ],
             "010CTpl": [
                 "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Polish"
-                ],
+                null,
                 [
                     [
                         "ArchWiki",
@@ -538,10 +406,7 @@ WM.main({
             ],
             "010CTpt": [
                 "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Portuguese"
-                ],
+                null,
                 [
                     [
                         "ArchWiki",
@@ -553,10 +418,7 @@ WM.main({
             ],
             "010CTru": [
                 "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Russian"
-                ],
+                null,
                 [
                     [
                         "ArchWiki",
@@ -568,10 +430,7 @@ WM.main({
             ],
             "010CTsk": [
                 "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Slovak"
-                ],
+                null,
                 [
                     [
                         "ArchWiki",
@@ -583,10 +442,7 @@ WM.main({
             ],
             "010CTsr": [
                 "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Serbian"
-                ],
+                null,
                 [
                     [
                         "ArchWiki",
@@ -598,10 +454,7 @@ WM.main({
             ],
             "010CTth": [
                 "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Thai"
-                ],
+                null,
                 [
                     [
                         "ArchWiki",
@@ -613,10 +466,7 @@ WM.main({
             ],
             "010CTuk": [
                 "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Ukrainian"
-                ],
+                null,
                 [
                     [
                         "ArchWiki",
@@ -628,10 +478,7 @@ WM.main({
             ],
             "010CTzhcn": [
                 "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Chinese (Simplified)"
-                ],
+                null,
                 [
                     [
                         "ArchWiki",
@@ -643,10 +490,7 @@ WM.main({
             ],
             "010CTzhtw": [
                 "UpdateCategoryTree",
-                [
-                    "Update category trees",
-                    "Chinese (Traditional)"
-                ],
+                null,
                 [
                     [
                         "ArchWiki",
@@ -658,43 +502,13 @@ WM.main({
             ],
             "020DR": [
                 "FixDoubleRedirects",
-                [
-                    "Fix double redirects"
-                ],
+                null,
                 "fix double redirect"
-            ],
-            "030ASC": [
-                "ArchWikiSortContacts",
-                [
-                    "Sort contacts",
-                    "Sort Administrators"
-                ],
-                [
-                    "ArchWiki:Administrators",
-                    30,
-                    30,
-                    "The following Administrators are currently inactive (less than 30 edits in the last 30 days):",
-                    "automatically sort list according to recent activity"
-                ]
             ],
             "040ASCC": [
                 "ArchWikiSortContacts",
                 null,
                 null
-            ],
-            "040ASCM": [
-                "ArchWikiSortContacts",
-                [
-                    "Sort contacts",
-                    "Sort Maintainers"
-                ],
-                [
-                    "ArchWiki:Maintainers",
-                    30,
-                    10,
-                    "The following Maintainers are currently inactive (less than 10 edits in the last 30 days):",
-                    "automatically sort list according to recent activity"
-                ]
             ]
         }
     }
