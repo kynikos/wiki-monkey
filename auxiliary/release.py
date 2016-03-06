@@ -208,7 +208,8 @@ CONFIG_PLUGINS = {
                         "ArchWiki",
                         "ar"
                     ),
-                    "automatic update"
+                    "automatic update",
+                    False,
                 )
             ),
             "010CTbg": (
@@ -219,7 +220,8 @@ CONFIG_PLUGINS = {
                         "ArchWiki",
                         "bg"
                     ),
-                    "automatic update"
+                    "automatic update",
+                    False,
                 )
             ),
             "010CTcs": (
@@ -230,7 +232,8 @@ CONFIG_PLUGINS = {
                         "ArchWiki",
                         "cs"
                     ),
-                    "automatic update"
+                    "automatic update",
+                    False,
                 )
             ),
             "010CTda": (
@@ -241,7 +244,8 @@ CONFIG_PLUGINS = {
                         "ArchWiki",
                         "da"
                     ),
-                    "automatic update"
+                    "automatic update",
+                    False,
                 )
             ),
             "010CTel": (
@@ -252,7 +256,8 @@ CONFIG_PLUGINS = {
                         "ArchWiki",
                         "el"
                     ),
-                    "automatic update"
+                    "automatic update",
+                    False,
                 )
             ),
             "010CTen": (
@@ -263,7 +268,8 @@ CONFIG_PLUGINS = {
                         "ArchWiki",
                         "en"
                     ),
-                    "automatic update"
+                    "automatic update",
+                    False,
                 )
             ),
             "010CTes": (
@@ -274,7 +280,8 @@ CONFIG_PLUGINS = {
                         "ArchWiki",
                         "es"
                     ),
-                    "automatic update"
+                    "automatic update",
+                    False,
                 )
             ),
             "010CThe": (
@@ -285,7 +292,8 @@ CONFIG_PLUGINS = {
                         "ArchWiki",
                         "he"
                     ),
-                    "automatic update"
+                    "automatic update",
+                    False,
                 )
             ),
             "010CThr": (
@@ -296,7 +304,8 @@ CONFIG_PLUGINS = {
                         "ArchWiki",
                         "hr"
                     ),
-                    "automatic update"
+                    "automatic update",
+                    False,
                 )
             ),
             "010CThu": (
@@ -307,7 +316,8 @@ CONFIG_PLUGINS = {
                         "ArchWiki",
                         "hu"
                     ),
-                    "automatic update"
+                    "automatic update",
+                    False,
                 )
             ),
             "010CTid": (
@@ -318,7 +328,8 @@ CONFIG_PLUGINS = {
                         "ArchWiki",
                         "id"
                     ),
-                    "automatic update"
+                    "automatic update",
+                    False,
                 )
             ),
             "010CTit": (
@@ -329,7 +340,8 @@ CONFIG_PLUGINS = {
                         "ArchWiki",
                         "it"
                     ),
-                    "automatic update"
+                    "automatic update",
+                    False,
                 )
             ),
             "010CTko": (
@@ -340,7 +352,8 @@ CONFIG_PLUGINS = {
                         "ArchWiki",
                         "ko"
                     ),
-                    "automatic update"
+                    "automatic update",
+                    False,
                 )
             ),
             "010CTlt": (
@@ -351,7 +364,8 @@ CONFIG_PLUGINS = {
                         "ArchWiki",
                         "lt"
                     ),
-                    "automatic update"
+                    "automatic update",
+                    False,
                 )
             ),
             "010CTnl": (
@@ -362,7 +376,8 @@ CONFIG_PLUGINS = {
                         "ArchWiki",
                         "nl"
                     ),
-                    "automatic update"
+                    "automatic update",
+                    False,
                 )
             ),
             "010CTpl": (
@@ -373,7 +388,8 @@ CONFIG_PLUGINS = {
                         "ArchWiki",
                         "pl"
                     ),
-                    "automatic update"
+                    "automatic update",
+                    False,
                 )
             ),
             "010CTpt": (
@@ -384,7 +400,8 @@ CONFIG_PLUGINS = {
                         "ArchWiki",
                         "pt"
                     ),
-                    "automatic update"
+                    "automatic update",
+                    False,
                 )
             ),
             "010CTru": (
@@ -395,7 +412,8 @@ CONFIG_PLUGINS = {
                         "ArchWiki",
                         "ru"
                     ),
-                    "automatic update"
+                    "automatic update",
+                    False,
                 )
             ),
             "010CTsk": (
@@ -406,7 +424,8 @@ CONFIG_PLUGINS = {
                         "ArchWiki",
                         "sk"
                     ),
-                    "automatic update"
+                    "automatic update",
+                    False,
                 )
             ),
             "010CTsr": (
@@ -417,7 +436,8 @@ CONFIG_PLUGINS = {
                         "ArchWiki",
                         "sr"
                     ),
-                    "automatic update"
+                    "automatic update",
+                    False,
                 )
             ),
             "010CTth": (
@@ -428,7 +448,8 @@ CONFIG_PLUGINS = {
                         "ArchWiki",
                         "th"
                     ),
-                    "automatic update"
+                    "automatic update",
+                    False,
                 )
             ),
             "010CTuk": (
@@ -439,7 +460,8 @@ CONFIG_PLUGINS = {
                         "ArchWiki",
                         "uk"
                     ),
-                    "automatic update"
+                    "automatic update",
+                    False,
                 )
             ),
             "010CTzhcn": (
@@ -450,7 +472,8 @@ CONFIG_PLUGINS = {
                         "ArchWiki",
                         "zh-cn"
                     ),
-                    "automatic update"
+                    "automatic update",
+                    False,
                 )
             ),
             "010CTzhtw": (
@@ -461,7 +484,8 @@ CONFIG_PLUGINS = {
                         "ArchWiki",
                         "zh-tw"
                     ),
-                    "automatic update"
+                    "automatic update",
+                    False,
                 )
             ),
             "040ASCC": (
