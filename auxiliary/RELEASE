@@ -1,3 +1,4 @@
+* Ensure that no backward-incompatible configuration changes have been made
 * Verify that Alib's correct branch is checked out
 * Check that release.py is correctly configured and up to date
 * Make sure to be on the develop branch
