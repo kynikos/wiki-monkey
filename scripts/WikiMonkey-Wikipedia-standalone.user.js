@@ -28,7 +28,7 @@ if (location.href.match(/^http:\/\/[a-z]+\.wikipedia\.org/i)) {
 if (!GM_info) {
     var GM_info = {
         script: {
-            version: "2.0.6-wikipedia",
+            version: "2.0.7-wikipedia",
         },
     };
 
@@ -1526,6 +1526,7 @@ WM.Cat = new function () {
         var query = {action: "query",
                      prop: "categories|categoryinfo",
                      titles: name,
+                     clprop: "hidden",
                      cllimit: 500};
 
         this._getParentsAndInfoContinue(query, call, callArgs, [], null);
@@ -5865,6 +5866,16 @@ WM.Plugins.UpdateCategoryTree = new function () {
     this.main = function (args, callNext) {
         var inparams = args[0];
         var summary = args[1];
+        // The third argument was added in 2.0.7, therefore previous
+        // configurations don't have it
+        if (args[2] !== undefined) {
+            var showRootAlsoIn = args[2];
+        }
+        else {
+            var showRootAlsoIn = false;
+            WM.Log.logInfo("The configuration does not specify the " +
+                           "showRootAlsoIn value, defaulting to false");
+        }
 
         if (inparams.constructor === Array) {
             if (inparams[0] == "ArchWiki") {
@@ -5879,7 +5890,8 @@ WM.Plugins.UpdateCategoryTree = new function () {
             var params = inparams;
         }
 
-        WM.MW.isUserBot(this.mainContinue, [params, summary, callNext]);
+        WM.MW.isUserBot(this.mainContinue, [params, showRootAlsoIn, summary,
+                                            callNext]);
     };
 
     this.mainContinue = function (botTest, args) {
@@ -5895,8 +5907,9 @@ WM.Plugins.UpdateCategoryTree = new function () {
             startMark: "START AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK-->",
             endMark: "<!--END AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK",
             altNames: {},
-            summary: args[1],
-            callNext: args[2],
+            showRootAlsoIn: args[1],
+            summary: args[2],
+            callNext: args[3],
         });
     };
 
@@ -6016,29 +6029,33 @@ WM.Plugins.UpdateCategoryTree = new function () {
         var text = args_[2];
         var altName = args_[3];
 
+        var currParent = params.ancestors[params.ancestors.length - 1];
+        var alsoParents = [];
         text += "<small>(" + ((info) ? info.pages : 0) + ")";
 
-        if (parents.length > 1) {
-            outer_loop:
-            for (var p in parents) {
-                var par = parents[p].title;
-                for (var a in params.ancestors) {
-                    var anc = params.ancestors[a];
-                    if (par == anc) {
-                        parents.splice(p, 1);
-                        break outer_loop;
-                    }
+        // Allow hiding the "also in" (whose currParent is undefined) links for
+        // the root item, since the root's parent category would be displayed
+        // there
+        if (currParent || args.showRootAlsoIn) {
+            for (var p = 0; p < parents.length; p++) {
+                var par = parents[p];
+                if (currParent != par.title && !("hidden" in par)) {
+                    alsoParents.push(par);
                 }
             }
-            var parentTitles = [];
-            for (var i in parents) {
-                altName = (args.altNames[parents[i].title.toLowerCase()]) ?
-                        args.altNames[parents[i].title.toLowerCase()] : null;
-                parentTitles.push(createCatLink(parents[i].title,
+            if (alsoParents.length) {
+                var parentTitles = [];
+                for (var i in alsoParents) {
+                    altName =
+                        (args.altNames[alsoParents[i].title.toLowerCase()]) ?
+                        args.altNames[alsoParents[i].title.toLowerCase()] :
+                        null;
+                    parentTitles.push(createCatLink(alsoParents[i].title,
                                                 args.params.replace, altName));
-            }
-            text += " (" + args.params.alsoIn + " " +
+                }
+                text += " (" + args.params.alsoIn + " " +
                                                 parentTitles.join(", ") + ")";
+            }
         }
 
         text += "</small>\n";

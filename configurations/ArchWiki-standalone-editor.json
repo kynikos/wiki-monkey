@@ -188,7 +188,8 @@
                         "ArchWiki",
                         "ar"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTbg": [
@@ -199,7 +200,8 @@
                         "ArchWiki",
                         "bg"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTcs": [
@@ -210,7 +212,8 @@
                         "ArchWiki",
                         "cs"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTda": [
@@ -221,7 +224,8 @@
                         "ArchWiki",
                         "da"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTel": [
@@ -232,7 +236,8 @@
                         "ArchWiki",
                         "el"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTen": [
@@ -243,7 +248,8 @@
                         "ArchWiki",
                         "en"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTes": [
@@ -254,7 +260,8 @@
                         "ArchWiki",
                         "es"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CThe": [
@@ -265,7 +272,8 @@
                         "ArchWiki",
                         "he"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CThr": [
@@ -276,7 +284,8 @@
                         "ArchWiki",
                         "hr"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CThu": [
@@ -287,7 +296,8 @@
                         "ArchWiki",
                         "hu"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTid": [
@@ -298,7 +308,8 @@
                         "ArchWiki",
                         "id"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTit": [
@@ -309,7 +320,8 @@
                         "ArchWiki",
                         "it"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTko": [
@@ -320,7 +332,8 @@
                         "ArchWiki",
                         "ko"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTlt": [
@@ -331,7 +344,8 @@
                         "ArchWiki",
                         "lt"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTnl": [
@@ -342,7 +356,8 @@
                         "ArchWiki",
                         "nl"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTpl": [
@@ -353,7 +368,8 @@
                         "ArchWiki",
                         "pl"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTpt": [
@@ -364,7 +380,8 @@
                         "ArchWiki",
                         "pt"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTru": [
@@ -375,7 +392,8 @@
                         "ArchWiki",
                         "ru"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTsk": [
@@ -386,7 +404,8 @@
                         "ArchWiki",
                         "sk"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTsr": [
@@ -397,7 +416,8 @@
                         "ArchWiki",
                         "sr"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTth": [
@@ -408,7 +428,8 @@
                         "ArchWiki",
                         "th"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTuk": [
@@ -419,7 +440,8 @@
                         "ArchWiki",
                         "uk"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTzhcn": [
@@ -430,7 +452,8 @@
                         "ArchWiki",
                         "zh-cn"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTzhtw": [
@@ -441,7 +464,8 @@
                         "ArchWiki",
                         "zh-tw"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "020DR": [

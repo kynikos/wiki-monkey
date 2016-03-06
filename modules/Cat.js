@@ -82,6 +82,7 @@ WM.Cat = new function () {
         var query = {action: "query",
                      prop: "categories|categoryinfo",
                      titles: name,
+                     clprop: "hidden",
                      cllimit: 500};
 
         this._getParentsAndInfoContinue(query, call, callArgs, [], null);

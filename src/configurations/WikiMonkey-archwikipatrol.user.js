@@ -3,19 +3,19 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.17.6-archwiki
+// @version 1.17.7-archwiki
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser (ArchWiki version)
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
 // @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-archwikipatrol.meta.js
 // @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-archwikipatrol.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/1.17.6/auxiliary/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.17.6/auxiliary/wiki-monkey-64.png
+// @icon https://raw.github.com/kynikos/wiki-monkey/1.17.7/auxiliary/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.17.7/auxiliary/wiki-monkey-64.png
 // @match https://wiki.archlinux.org/*
 // @grant GM_info
 // @grant GM_xmlhttpRequest
 // @require https://code.jquery.com/jquery-2.1.3.min.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.17.6/scripts/WikiMonkey-ArchWiki.include.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.17.7/scripts/WikiMonkey-ArchWiki.include.js
 // ==/UserScript==
 
 WM.main({
@@ -220,7 +220,8 @@ WM.main({
                         "ArchWiki",
                         "ar"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTbg": [
@@ -231,7 +232,8 @@ WM.main({
                         "ArchWiki",
                         "bg"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTcs": [
@@ -242,7 +244,8 @@ WM.main({
                         "ArchWiki",
                         "cs"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTda": [
@@ -253,7 +256,8 @@ WM.main({
                         "ArchWiki",
                         "da"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTel": [
@@ -264,7 +268,8 @@ WM.main({
                         "ArchWiki",
                         "el"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTen": [
@@ -275,7 +280,8 @@ WM.main({
                         "ArchWiki",
                         "en"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTes": [
@@ -286,7 +292,8 @@ WM.main({
                         "ArchWiki",
                         "es"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CThe": [
@@ -297,7 +304,8 @@ WM.main({
                         "ArchWiki",
                         "he"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CThr": [
@@ -308,7 +316,8 @@ WM.main({
                         "ArchWiki",
                         "hr"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CThu": [
@@ -319,7 +328,8 @@ WM.main({
                         "ArchWiki",
                         "hu"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTid": [
@@ -330,7 +340,8 @@ WM.main({
                         "ArchWiki",
                         "id"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTit": [
@@ -341,7 +352,8 @@ WM.main({
                         "ArchWiki",
                         "it"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTko": [
@@ -352,7 +364,8 @@ WM.main({
                         "ArchWiki",
                         "ko"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTlt": [
@@ -363,7 +376,8 @@ WM.main({
                         "ArchWiki",
                         "lt"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTnl": [
@@ -374,7 +388,8 @@ WM.main({
                         "ArchWiki",
                         "nl"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTpl": [
@@ -385,7 +400,8 @@ WM.main({
                         "ArchWiki",
                         "pl"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTpt": [
@@ -396,7 +412,8 @@ WM.main({
                         "ArchWiki",
                         "pt"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTru": [
@@ -407,7 +424,8 @@ WM.main({
                         "ArchWiki",
                         "ru"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTsk": [
@@ -418,7 +436,8 @@ WM.main({
                         "ArchWiki",
                         "sk"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTsr": [
@@ -429,7 +448,8 @@ WM.main({
                         "ArchWiki",
                         "sr"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTth": [
@@ -440,7 +460,8 @@ WM.main({
                         "ArchWiki",
                         "th"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTuk": [
@@ -451,7 +472,8 @@ WM.main({
                         "ArchWiki",
                         "uk"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTzhcn": [
@@ -462,7 +484,8 @@ WM.main({
                         "ArchWiki",
                         "zh-cn"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "010CTzhtw": [
@@ -473,7 +496,8 @@ WM.main({
                         "ArchWiki",
                         "zh-tw"
                     ],
-                    "automatic update"
+                    "automatic update",
+                    false
                 ]
             ],
             "020DR": [
