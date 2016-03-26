@@ -100,11 +100,11 @@ WM.Plugins.FixDoubleRedirects = new function () {
         WM.Log.logInfo("Processing " + WM.Log.linkToWikiPage(
                         doubleRedirectTitle, doubleRedirectTitle) + " ...");
 
-        var rawOldTarget = doubleRedirectSource.match(/\s*#redirect *[^\n]+/i);
+        var rawOldTarget = doubleRedirectSource.match(/\s*#redirect\s*[^\n]+/i);
         var oldTarget = WM.Parser.findInternalLinks(rawOldTarget[0], null)[0];
 
         var rawMiddleTarget = middleRedirectSource.match(
-                                                    /\s*#redirect *[^\n]+/i);
+                                                    /\s*#redirect\s*[^\n]+/i);
         var middleTarget = WM.Parser.findInternalLinks(rawMiddleTarget[0],
                                                                     null)[0];
 
