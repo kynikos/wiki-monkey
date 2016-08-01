@@ -1,17 +1,16 @@
 // ==UserScript==
-// @id wiki-monkey-local
-// @name Wiki Monkey (local)
+// @id wiki-monkey-archwiki
+// @name Wiki Monkey (ArchWiki)
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version dev-local
-// @description MediaWiki-compatible bot and editor assistant that runs in the browser (local version)
+// @version 3.0.0-dev-archwiki
+// @description MediaWiki-compatible bot and editor assistant that runs in the browser (ArchWiki version)
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/scripts/WikiMonkey-local.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/scripts/WikiMonkey-local.user.js
+// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/scripts/WikiMonkey-ArchWiki.meta.js
+// @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/scripts/WikiMonkey-ArchWiki.user.js
 // @icon https://raw.github.com/kynikos/wiki-monkey/2.0.7/auxiliary/wiki-monkey.png
 // @icon64 https://raw.github.com/kynikos/wiki-monkey/2.0.7/auxiliary/wiki-monkey-64.png
-// @match http://*.wikipedia.org/*
 // @match https://wiki.archlinux.org/*
 // @grant GM_info
 // @grant GM_xmlhttpRequest
@@ -10616,11 +10615,11 @@ var WM, WM_;
 
 WM_ = require('./modules/_Init').WM;
 
-WM = new WM_(['ArchWikiFixHeader', require("./plugins/ArchWikiFixHeader").ArchWikiFixHeader], ['ArchWikiFixHeadings', require("./plugins/ArchWikiFixHeadings").ArchWikiFixHeadings], ['ArchWikiFixLinks', require("./plugins/ArchWikiFixLinks").ArchWikiFixLinks], ['ArchWikiNewTemplates', require("./plugins/ArchWikiNewTemplates").ArchWikiNewTemplates], ['ArchWikiNPFilter', require("./plugins/ArchWikiNPFilter").ArchWikiNPFilter], ['ArchWikiOldAURLinks', require("./plugins/ArchWikiOldAURLinks").ArchWikiOldAURLinks], ['ArchWikiQuickReport', require("./plugins/ArchWikiQuickReport").ArchWikiQuickReport], ['ArchWikiSaveTalk', require("./plugins/ArchWikiSaveTalk").ArchWikiSaveTalk], ['ArchWikiSortContacts', require("./plugins/ArchWikiSortContacts").ArchWikiSortContacts], ['ArchWikiSummaryToRelated', require("./plugins/ArchWikiSummaryToRelated").ArchWikiSummaryToRelated], ['ArchWikiRCFilter', require("./plugins/ArchWikiRCFilter").ArchWikiRCFilter], ['ArchWikiUpdatePackageTemplates', require("./plugins/ArchWikiUpdatePackageTemplates").ArchWikiUpdatePackageTemplates], ['ArchWikiWantedCategories', require("./plugins/ArchWikiWantedCategories").ArchWikiWantedCategories], ['DeletePages', require("./plugins/DeletePages").DeletePages], ['ExpandContractions', require("./plugins/ExpandContractions").ExpandContractions], ['FixBacklinkFragments', require("./plugins/FixBacklinkFragments").FixBacklinkFragments], ['FixDoubleRedirects', require("./plugins/FixDoubleRedirects").FixDoubleRedirects], ['FixFragments', require("./plugins/FixFragments").FixFragments], ['FixLinkFragments', require("./plugins/FixLinkFragments").FixLinkFragments], ['MultipleLineBreaks', require("./plugins/MultipleLineBreaks").MultipleLineBreaks], ['SimpleReplace', require("./plugins/SimpleReplace").SimpleReplace], ['SynchronizeInterlanguageLinks', require("./plugins/SynchronizeInterlanguageLinks").SynchronizeInterlanguageLinks], ['UpdateCategoryTree', require("./plugins/UpdateCategoryTree").UpdateCategoryTree]);
+WM = new WM_(['ArchWikiFixHeader', require("./plugins/ArchWikiFixHeader").ArchWikiFixHeader], ['ArchWikiFixHeadings', require("./plugins/ArchWikiFixHeadings").ArchWikiFixHeadings], ['ArchWikiFixLinks', require("./plugins/ArchWikiFixLinks").ArchWikiFixLinks], ['ArchWikiNewTemplates', require("./plugins/ArchWikiNewTemplates").ArchWikiNewTemplates], ['ArchWikiNPFilter', require("./plugins/ArchWikiNPFilter").ArchWikiNPFilter], ['ArchWikiOldAURLinks', require("./plugins/ArchWikiOldAURLinks").ArchWikiOldAURLinks], ['ArchWikiQuickReport', require("./plugins/ArchWikiQuickReport").ArchWikiQuickReport], ['ArchWikiSortContacts', require("./plugins/ArchWikiSortContacts").ArchWikiSortContacts], ['ArchWikiSummaryToRelated', require("./plugins/ArchWikiSummaryToRelated").ArchWikiSummaryToRelated], ['ArchWikiRCFilter', require("./plugins/ArchWikiRCFilter").ArchWikiRCFilter], ['ArchWikiUpdatePackageTemplates', require("./plugins/ArchWikiUpdatePackageTemplates").ArchWikiUpdatePackageTemplates], ['ExpandContractions', require("./plugins/ExpandContractions").ExpandContractions], ['FixBacklinkFragments', require("./plugins/FixBacklinkFragments").FixBacklinkFragments], ['FixDoubleRedirects', require("./plugins/FixDoubleRedirects").FixDoubleRedirects], ['FixFragments', require("./plugins/FixFragments").FixFragments], ['FixLinkFragments', require("./plugins/FixLinkFragments").FixLinkFragments], ['MultipleLineBreaks', require("./plugins/MultipleLineBreaks").MultipleLineBreaks], ['SimpleReplace', require("./plugins/SimpleReplace").SimpleReplace], ['SynchronizeInterlanguageLinks', require("./plugins/SynchronizeInterlanguageLinks").SynchronizeInterlanguageLinks], ['UpdateCategoryTree', require("./plugins/UpdateCategoryTree").UpdateCategoryTree]);
 
-WM.main(require("../build/configurations/_local"));
+WM.main(require("../build/configurations/ArchWiki-bot"));
 
-},{"../build/configurations/_local":11,"./modules/_Init":29,"./plugins/ArchWikiFixHeader":30,"./plugins/ArchWikiFixHeadings":31,"./plugins/ArchWikiFixLinks":32,"./plugins/ArchWikiNPFilter":33,"./plugins/ArchWikiNewTemplates":34,"./plugins/ArchWikiOldAURLinks":35,"./plugins/ArchWikiQuickReport":36,"./plugins/ArchWikiRCFilter":37,"./plugins/ArchWikiSaveTalk":38,"./plugins/ArchWikiSortContacts":39,"./plugins/ArchWikiSummaryToRelated":40,"./plugins/ArchWikiUpdatePackageTemplates":41,"./plugins/ArchWikiWantedCategories":42,"./plugins/DeletePages":43,"./plugins/ExpandContractions":44,"./plugins/FixBacklinkFragments":45,"./plugins/FixDoubleRedirects":46,"./plugins/FixFragments":47,"./plugins/FixLinkFragments":48,"./plugins/MultipleLineBreaks":49,"./plugins/SimpleReplace":50,"./plugins/SynchronizeInterlanguageLinks":51,"./plugins/UpdateCategoryTree":52}],11:[function(require,module,exports){
+},{"../build/configurations/ArchWiki-bot":11,"./modules/_Init":29,"./plugins/ArchWikiFixHeader":30,"./plugins/ArchWikiFixHeadings":31,"./plugins/ArchWikiFixLinks":32,"./plugins/ArchWikiNPFilter":33,"./plugins/ArchWikiNewTemplates":34,"./plugins/ArchWikiOldAURLinks":35,"./plugins/ArchWikiQuickReport":36,"./plugins/ArchWikiRCFilter":37,"./plugins/ArchWikiSortContacts":38,"./plugins/ArchWikiSummaryToRelated":39,"./plugins/ArchWikiUpdatePackageTemplates":40,"./plugins/ExpandContractions":41,"./plugins/FixBacklinkFragments":42,"./plugins/FixDoubleRedirects":43,"./plugins/FixFragments":44,"./plugins/FixLinkFragments":45,"./plugins/MultipleLineBreaks":46,"./plugins/SimpleReplace":47,"./plugins/SynchronizeInterlanguageLinks":48,"./plugins/UpdateCategoryTree":49}],11:[function(require,module,exports){
 module.exports = {
     "Mods": {
         "Contributions": {
@@ -10678,20 +10677,6 @@ module.exports = {
                     "Replace old-style direct AUR package links with Template:AUR"
                 ],
                 "replace old-style direct package links with Pkg/AUR templates"
-            ],
-            "060AWC": [
-                "ArchWikiWantedCategories",
-                [
-                    "Create wanted categories"
-                ],
-                null
-            ],
-            "070DP": [
-                "DeletePages",
-                [
-                    "Delete pages"
-                ],
-                "delete page"
             ]
         },
         "Diff": {
@@ -10703,16 +10688,6 @@ module.exports = {
                 [
                     "ArchWiki:Reports",
                     "add report for %t"
-                ]
-            ],
-            "020AST": [
-                "ArchWikiSaveTalk",
-                [
-                    "Save discussion"
-                ],
-                [
-                    "User:Kynikos/Tasks",
-                    "add discussion"
                 ]
             ]
         },
@@ -10808,11 +10783,6 @@ module.exports = {
                     "ArchWiki",
                     null
                 ]
-            ],
-            "220IL": [
-                "SynchronizeInterlanguageLinks",
-                null,
-                null
             ],
             "230AAL": [
                 "ArchWikiOldAURLinks",
@@ -11221,43 +11191,10 @@ module.exports = {
                 ],
                 "fix double redirect"
             ],
-            "030ASC": [
-                "ArchWikiSortContacts",
-                [
-                    "Sort contacts",
-                    "Sort Administrators"
-                ],
-                [
-                    "ArchWiki:Administrators",
-                    30,
-                    30,
-                    "The following Administrators are currently inactive (less than 30 edits in the last 30 days):",
-                    "automatically sort list according to recent activity"
-                ]
-            ],
-            "030CT": [
-                "UpdateCategoryTree",
-                null,
-                null
-            ],
             "040ASCC": [
                 "ArchWikiSortContacts",
                 null,
                 null
-            ],
-            "040ASCM": [
-                "ArchWikiSortContacts",
-                [
-                    "Sort contacts",
-                    "Sort Maintainers"
-                ],
-                [
-                    "ArchWiki:Maintainers",
-                    30,
-                    10,
-                    "The following Maintainers are currently inactive (less than 10 edits in the last 30 days):",
-                    "automatically sort list according to recent activity"
-                ]
             ]
         }
     }
@@ -12777,7 +12714,7 @@ module.exports.Cfg = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/CSS":2,"../../lib.js.generic/dist/DOM":4,"jquery":53}],17:[function(require,module,exports){
+},{"../../lib.js.generic/dist/CSS":2,"../../lib.js.generic/dist/DOM":4,"jquery":50}],17:[function(require,module,exports){
 // Generated by CoffeeScript 1.10.0
 var HTTP;
 
@@ -12978,7 +12915,7 @@ module.exports.Filters = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/CSS":2,"jquery":53}],20:[function(require,module,exports){
+},{"../../lib.js.generic/dist/CSS":2,"jquery":50}],20:[function(require,module,exports){
 // Generated by CoffeeScript 1.10.0
 var Obj,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -14118,7 +14055,7 @@ module.exports.Menu = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/Async":1,"../../lib.js.generic/dist/CSS":2,"jquery":53}],24:[function(require,module,exports){
+},{"../../lib.js.generic/dist/Async":1,"../../lib.js.generic/dist/CSS":2,"jquery":50}],24:[function(require,module,exports){
 // Generated by CoffeeScript 1.10.0
 var $, CSS;
 
@@ -14193,7 +14130,7 @@ module.exports.Mods = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/CSS":2,"jquery":53}],25:[function(require,module,exports){
+},{"../../lib.js.generic/dist/CSS":2,"jquery":50}],25:[function(require,module,exports){
 // Generated by CoffeeScript 1.10.0
 var RegEx, Str;
 
@@ -15688,87 +15625,6 @@ module.exports.ArchWikiRCFilter = (function() {
 
 },{"../../lib.js.generic/dist/CSS":2,"../../lib.js.generic/dist/DOM":4}],38:[function(require,module,exports){
 // Generated by CoffeeScript 1.10.0
-var CSS, HTTP,
-  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-
-CSS = require('../../lib.js.generic/dist/CSS');
-
-HTTP = require('../../lib.js.generic/dist/HTTP');
-
-module.exports.ArchWikiSaveTalk = (function() {
-  function ArchWikiSaveTalk(WM) {
-    this.WM = WM;
-    this.mainEnd = bind(this.mainEnd, this);
-    this.mainWrite = bind(this.mainWrite, this);
-    this.mainGetEndTimestamp = bind(this.mainGetEndTimestamp, this);
-  }
-
-  ArchWikiSaveTalk.prototype.makeUI = function(args) {
-    var article, link;
-    CSS.addStyleElement("#WikiMonkey-ArchWikiSaveTalk {margin-left:0.33em;}");
-    article = args[0];
-    link = document.createElement('a');
-    link.id = "WikiMonkey-ArchWikiSaveTalk";
-    link.href = "/index.php/" + article;
-    link.innerHTML = article;
-    return link;
-  };
-
-  ArchWikiSaveTalk.prototype.main = function(args, callNext) {
-    var article, summary;
-    article = args[0];
-    summary = args[1];
-    this.WM.Log.logInfo('Appending diff to ' + this.WM.Log.linkToWikiPage(article, article) + " ...");
-    return this.WM.Diff.getEndTimestamp(this.mainGetEndTimestamp, [article, summary, callNext]);
-  };
-
-  ArchWikiSaveTalk.prototype.mainGetEndTimestamp = function(enddate, args) {
-    var article, callNext, summary;
-    article = args[0];
-    summary = args[1];
-    callNext = args[2];
-    return this.WM.MW.callQueryEdit(article, this.mainWrite, [summary, enddate, callNext]);
-  };
-
-  ArchWikiSaveTalk.prototype.mainWrite = function(article, source, timestamp, edittoken, args) {
-    var callNext, enddate, newtext, pEnddate, summary, title;
-    summary = args[0];
-    enddate = args[1];
-    callNext = args[2];
-    title = HTTP.getURIParameter(null, 'title');
-    pEnddate = enddate.substr(0, 10) + "&nbsp;" + enddate.substr(11, 8);
-    newtext = this.WM.Tables.appendRow(source, "<!-- REPLY TABLE -->", ["[" + location.href + " " + title + "]", pEnddate]);
-    return this.WM.MW.callAPIPost({
-      action: "edit",
-      bot: "1",
-      title: article,
-      summary: summary,
-      text: newtext,
-      basetimestamp: timestamp,
-      token: edittoken
-    }, null, this.mainEnd, [article, callNext], null);
-  };
-
-  ArchWikiSaveTalk.prototype.mainEnd = function(res, args) {
-    var article, callNext;
-    article = args[0];
-    callNext = args[1];
-    if (res.edit && res.edit.result === 'Success') {
-      this.WM.Log.logInfo('Diff correctly appended to ' + this.WM.Log.linkToWikiPage(article, article));
-      if (callNext) {
-        return callNext();
-      }
-    } else {
-      return this.WM.Log.logError('The diff has not been appended!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
-    }
-  };
-
-  return ArchWikiSaveTalk;
-
-})();
-
-},{"../../lib.js.generic/dist/CSS":2,"../../lib.js.generic/dist/HTTP":5}],39:[function(require,module,exports){
-// Generated by CoffeeScript 1.10.0
 var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 module.exports.ArchWikiSortContacts = (function() {
@@ -15945,7 +15801,7 @@ module.exports.ArchWikiSortContacts = (function() {
 
 })();
 
-},{}],40:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 // Generated by CoffeeScript 1.10.0
 module.exports.ArchWikiSummaryToRelated = (function() {
   function ArchWikiSummaryToRelated(WM) {
@@ -15989,7 +15845,7 @@ module.exports.ArchWikiSummaryToRelated = (function() {
 
 })();
 
-},{}],41:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 // Generated by CoffeeScript 1.10.0
 var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
@@ -16412,113 +16268,7 @@ module.exports.ArchWikiUpdatePackageTemplates = (function() {
 
 })();
 
-},{}],42:[function(require,module,exports){
-// Generated by CoffeeScript 1.10.0
-module.exports.ArchWikiWantedCategories = (function() {
-  function ArchWikiWantedCategories(WM) {
-    this.WM = WM;
-  }
-
-  ArchWikiWantedCategories.prototype.mainAuto = function(args, title, callBot, chainArgs) {
-    title = title.replace(" (page does not exist)", "");
-    return this.WM.MW.callQuery({
-      prop: "info",
-      intoken: "edit",
-      titles: title
-    }, this.mainAutoWrite, [title, callBot], null);
-  };
-
-  ArchWikiWantedCategories.prototype.mainAutoWrite = function(page, args) {
-    var callBot, edittoken, language, summary, text, title;
-    title = args[0];
-    callBot = args[1];
-    edittoken = page.edittoken;
-    language = this.WM.ArchWiki.detectLanguage(title)[1];
-    if (language !== this.WM.ArchWiki.getLocalLanguage()) {
-      text = "[[Category:" + language + "]]";
-      summary = "wanted category";
-      return this.WM.MW.callAPIPost({
-        action: "edit",
-        bot: "1",
-        title: title,
-        summary: summary,
-        text: text,
-        createonly: "1",
-        token: edittoken
-      }, null, this.mainAutoEnd, callBot, null);
-    } else {
-      return callBot(0, null);
-    }
-  };
-
-  ArchWikiWantedCategories.prototype.mainAutoEnd = function(res, callBot) {
-    if (res.edit && res.edit.result === 'Success') {
-      return callBot(1, null);
-    } else if (res.error) {
-      this.WM.Log.logError(res.error.info + " (" + res.error.code + ")");
-      return callBot(res.error.code, null);
-    } else {
-      return callBot(false, null);
-    }
-  };
-
-  return ArchWikiWantedCategories;
-
-})();
-
-},{}],43:[function(require,module,exports){
-// Generated by CoffeeScript 1.10.0
-module.exports.DeletePages = (function() {
-  function DeletePages(WM) {
-    this.WM = WM;
-  }
-
-  DeletePages.prototype.mainAuto = function(args, title, callBot, chainArgs) {
-    var summary;
-    summary = args;
-    return this.WM.MW.callQuery({
-      prop: 'info',
-      intoken: 'delete',
-      titles: title
-    }, this.WM.Plugins.DeletePages.mainAutoWrite, [title, summary, callBot], null);
-  };
-
-  DeletePages.prototype.mainAutoWrite = function(page, args) {
-    var callBot, deletetoken, summary, title;
-    title = args[0];
-    summary = args[1];
-    callBot = args[2];
-    deletetoken = page.deletetoken;
-    return this.WM.MW.callAPIPost({
-      action: 'delete',
-      bot: '1',
-      title: title,
-      token: deletetoken,
-      reason: summary
-    }, null, this.WM.Plugins.DeletePages.mainAutoEnd, [title, callBot], null);
-  };
-
-  DeletePages.prototype.mainAutoEnd = function(res, args) {
-    var callBot, title;
-    title = args[0];
-    callBot = args[1];
-    if (!res["delete"]) {
-      if (res.error) {
-        this.WM.Log.logError((this.WM.Log.linkToWikiPage(title, title)) + " has not been deleted!\n" + res.error.info + " (" + res.error.code + ")");
-        return callBot(res.error.code, null);
-      } else {
-        return callBot(false, null);
-      }
-    } else {
-      return callBot(1, null);
-    }
-  };
-
-  return DeletePages;
-
-})();
-
-},{}],44:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 // Generated by CoffeeScript 1.10.0
 module.exports.ExpandContractions = (function() {
   var replace;
@@ -16569,7 +16319,7 @@ module.exports.ExpandContractions = (function() {
 
 })();
 
-},{}],45:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 // Generated by CoffeeScript 1.10.0
 var CSS,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -16812,7 +16562,7 @@ module.exports.FixBacklinkFragments = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/CSS":2}],46:[function(require,module,exports){
+},{"../../lib.js.generic/dist/CSS":2}],43:[function(require,module,exports){
 // Generated by CoffeeScript 1.10.0
 var Str,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -16953,7 +16703,7 @@ module.exports.FixDoubleRedirects = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/Str":8}],47:[function(require,module,exports){
+},{"../../lib.js.generic/dist/Str":8}],44:[function(require,module,exports){
 // Generated by CoffeeScript 1.10.0
 module.exports.FixFragments = (function() {
   function FixFragments(WM) {
@@ -17032,7 +16782,7 @@ module.exports.FixFragments = (function() {
 
 })();
 
-},{}],48:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 // Generated by CoffeeScript 1.10.0
 var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
@@ -17271,7 +17021,7 @@ module.exports.FixLinkFragments = (function() {
 
 })();
 
-},{}],49:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 // Generated by CoffeeScript 1.10.0
 module.exports.MultipleLineBreaks = (function() {
   function MultipleLineBreaks(WM) {
@@ -17296,7 +17046,7 @@ module.exports.MultipleLineBreaks = (function() {
 
 })();
 
-},{}],50:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 // Generated by CoffeeScript 1.10.0
 var CSS,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -17458,7 +17208,7 @@ module.exports.SimpleReplace = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/CSS":2}],51:[function(require,module,exports){
+},{"../../lib.js.generic/dist/CSS":2}],48:[function(require,module,exports){
 // Generated by CoffeeScript 1.10.0
 var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
@@ -17637,7 +17387,7 @@ module.exports.SynchronizeInterlanguageLinks = (function() {
 
 })();
 
-},{}],52:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 // Generated by CoffeeScript 1.10.0
 var Str,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
@@ -17876,6 +17626,6 @@ module.exports.UpdateCategoryTree = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/Str":8}],53:[function(require,module,exports){
+},{"../../lib.js.generic/dist/Str":8}],50:[function(require,module,exports){
 arguments[4][9][0].apply(exports,arguments)
 },{"dup":9}]},{},[10]);
