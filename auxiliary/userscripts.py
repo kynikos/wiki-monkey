@@ -131,8 +131,7 @@ def compile(run, version):
                 # GreaseMonkey version
                 # compile_gm(run, DISTDIR, fname, fname, srcpath, matches,
                 #            version, 'lite', SED, True)
-                compile_mw_sa(run, fname, srcpath, version, '', '')
-                compile_mw_sa(run, fname, srcpath, version, 'lite', SED)
+                compile_mw_sa(run, fname, srcpath, version)
 
 
 def compile_gm(run, distdir, fname, cfname, srcpath, matches, version, suffix,
@@ -173,45 +172,54 @@ def compile_gm(run, distdir, fname, cfname, srcpath, matches, version, suffix,
         dmf.write(header_meta)
 
 
-def compile_mw_sa(run, fname, srcpath, version, suffix, args):
+def compile_mw_sa(run, fname, srcpath, version):
     with open(srcpath, 'r') as sf:
         srcscript = sf.read()
 
     distfile_mw_temp = DISTFILE.format(distdir=SRCDIR, fname=fname,
-                                       suffix='-mw' + (('-' + suffix)
-                                                       if suffix else ''),
-                                       preext='temp')
+                                       suffix='-mw', preext='temp')
 
     with open(distfile_mw_temp, 'w') as df:
         df.write('\n'.join((GM_EMULATION.format(version=version), srcscript)))
 
     distfile_mw = DISTFILE.format(distdir=DISTDIR, fname=fname,
-                                  suffix='-mw' + (('-' + suffix)
-                                                  if suffix else ''),
-                                  preext='user')
+                                  suffix='-mw-temp', preext='user')
+    distfile_mw_lite = DISTFILE.format(distdir=DISTDIR, fname=fname,
+                                       suffix='-mw', preext='user')
 
-    run(BROWSERIFY.format(args=args, srcpath=distfile_mw_temp,
+    run(BROWSERIFY.format(args='', srcpath=distfile_mw_temp,
                           distfile=distfile_mw))
+    run(BROWSERIFY.format(args=SED, srcpath=distfile_mw_temp,
+                          distfile=distfile_mw_lite))
 
     os.remove(distfile_mw_temp)
 
     with open(distfile_mw, 'r') as sf:
         script_mw = sf.read()
 
-    with open(distfile_mw, 'w') as df:
-        df.write('\n'.join((LICENCE, script_mw)))
+    os.remove(distfile_mw)
+
+    with open(distfile_mw_lite, 'r') as sf:
+        script_mw_lite = sf.read()
+
+    # The MediaWiki version doesn't require a non-lite script, since MediaWiki
+    # always ships with jQuery
+    with open(distfile_mw_lite, 'w') as df:
+        df.write('\n'.join((LICENCE, script_mw_lite)))
 
     distfile_sa = DISTFILE.format(distdir=DISTDIR, fname=fname,
-                                  suffix='-sa' + (('-' + suffix)
-                                                  if suffix else ''),
-                                  preext='user')
+                                  suffix='-sa', preext='user')
+    distfile_sa_lite = DISTFILE.format(distdir=DISTDIR, fname=fname,
+                                       suffix='-sa-lite', preext='user')
 
-    with open(distfile_sa, 'w') as df:
-        # TODO: For the moment this is only using the first of the
-        #       CONFIG[fname]['matchlist_re'] expressions; when there are more
-        #       than one, join them all with ||
-        df.write('\n'.join((LICENCE,
-                            STANDALONE_START.format(
+    for distfile, script in ((distfile_sa, script_mw),
+                             (distfile_sa_lite, script_mw_lite)):
+        with open(distfile, 'w') as df:
+            # TODO: For the moment this is only using the first of the
+            #       CONFIG[fname]['matchlist_re'] expressions; when there are
+            #       more than one, join them all with ||
+            df.write('\n'.join((LICENCE,
+                                STANDALONE_START.format(
                                             CONFIG[fname]['matchlist_re'][0]),
-                            script_mw,
-                            STANDALONE_END)))
+                                script,
+                                STANDALONE_END)))
