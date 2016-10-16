@@ -3,14 +3,14 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.17.7-wikipedia
+// @version 1.17.8-wikipedia
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser (Wikipedia version)
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
 // @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-bot-chromium.meta.js
 // @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/chromium/WikiMonkey-bot-chromium.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/1.17.7/auxiliary/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.17.7/auxiliary/wiki-monkey-64.png
+// @icon https://raw.github.com/kynikos/wiki-monkey/1.17.8/auxiliary/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.17.8/auxiliary/wiki-monkey-64.png
 // @match http://*.wikipedia.org/*
 // @grant GM_info
 // @grant GM_xmlhttpRequest
@@ -41,10 +41,36 @@
  *  along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+if (sessionStorage.getItem('WikiMonkey-deprecation-message') != 'hidden') {
+    $('<div>')
+        .css({'display': 'none',
+              'width': '100%',
+              'background-color': '#e7a526',
+              'text-align': 'center',
+              'line-height': 2})
+        .append('The latest release of Wiki Monkey needs to be installed manually: follow ',
+                $('<a>')
+                    .attr('href', 'https://github.com/kynikos/wiki-monkey/wiki/Getting-started')
+                    .text('this link'),
+                ' for instructions. Alternatively, ',
+                $('<a>')
+                    .attr('href', '#')
+                    .text('hide')
+                    .click(function (event) {
+                        $(event.currentTarget).parent().slideUp();
+                        sessionStorage.setItem('WikiMonkey-deprecation-message',
+                                               'hidden');
+                        return false;
+                    }),
+                ' this message for this session.')
+        .prependTo('body')
+        .slideDown();
+}
+
 if (!GM_info) {
     var GM_info = {
         script: {
-            version: "1.17.7-wikipedia",
+            version: "1.17.8-wikipedia",
         },
     };
 
@@ -5882,7 +5908,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
     this.main = function (args, callNext) {
         var inparams = args[0];
         var summary = args[1];
-        // The third argument was added in 2.0.7, therefore previous
+        // The third argument was added in 2.0.8, therefore previous
         // configurations don't have it
         if (args[2] !== undefined) {
             var showRootAlsoIn = args[2];

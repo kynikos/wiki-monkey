@@ -25,6 +25,11 @@
                 "FixBacklinkFragments",
                 null,
                 "fix links to specific sections"
+            ],
+            "030IL": [
+                "SynchronizeInterlanguageLinks",
+                null,
+                null
             ]
         },
         "Diff": {},
@@ -67,6 +72,11 @@
                     "Fix external section links"
                 ],
                 null
+            ],
+            "220IL": [
+                "SynchronizeInterlanguageLinks",
+                null,
+                null
             ]
         },
         "NewPages": {},
@@ -76,6 +86,11 @@
                 "FixDoubleRedirects",
                 null,
                 "fix double redirect"
+            ],
+            "030CT": [
+                "UpdateCategoryTree",
+                null,
+                null
             ]
         }
     }

@@ -3,20 +3,46 @@
 // @name Wiki Monkey
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 1.17.7-archwiki
+// @version 1.17.8-archwiki
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser (ArchWiki version)
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
 // @updateURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-archwikipatrol.meta.js
 // @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/src/configurations/WikiMonkey-archwikipatrol.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/1.17.7/auxiliary/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.17.7/auxiliary/wiki-monkey-64.png
+// @icon https://raw.github.com/kynikos/wiki-monkey/1.17.8/auxiliary/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/1.17.8/auxiliary/wiki-monkey-64.png
 // @match https://wiki.archlinux.org/*
 // @grant GM_info
 // @grant GM_xmlhttpRequest
 // @require https://code.jquery.com/jquery-2.1.3.min.js
-// @require https://raw.github.com/kynikos/wiki-monkey/1.17.7/scripts/WikiMonkey-ArchWiki.include.js
+// @require https://raw.github.com/kynikos/wiki-monkey/1.17.8/scripts/WikiMonkey-ArchWiki.include.js
 // ==/UserScript==
+
+if (sessionStorage.getItem('WikiMonkey-deprecation-message') != 'hidden') {
+    $('<div>')
+        .css({'display': 'none',
+              'width': '100%',
+              'background-color': '#e7a526',
+              'text-align': 'center',
+              'line-height': 2})
+        .append('The latest release of Wiki Monkey needs to be installed manually: follow ',
+                $('<a>')
+                    .attr('href', 'https://github.com/kynikos/wiki-monkey/wiki/Getting-started')
+                    .text('this link'),
+                ' for instructions. Alternatively, ',
+                $('<a>')
+                    .attr('href', '#')
+                    .text('hide')
+                    .click(function (event) {
+                        $(event.currentTarget).parent().slideUp();
+                        sessionStorage.setItem('WikiMonkey-deprecation-message',
+                                               'hidden');
+                        return false;
+                    }),
+                ' this message for this session.')
+        .prependTo('body')
+        .slideDown();
+}
 
 WM.main({
     "Mods": {

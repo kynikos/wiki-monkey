@@ -21,7 +21,7 @@
 if (!GM_info) {
     var GM_info = {
         script: {
-            version: "2.0.7-wikipedia",
+            version: "2.0.8-wikipedia",
         },
     };
 
@@ -5859,7 +5859,7 @@ WM.Plugins.UpdateCategoryTree = new function () {
     this.main = function (args, callNext) {
         var inparams = args[0];
         var summary = args[1];
-        // The third argument was added in 2.0.7, therefore previous
+        // The third argument was added in 2.0.8, therefore previous
         // configurations don't have it
         if (args[2] !== undefined) {
             var showRootAlsoIn = args[2];

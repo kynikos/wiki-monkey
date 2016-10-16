@@ -29,6 +29,11 @@
                     "Fix links to specific sections of a target page"
                 ],
                 "fix links to specific sections"
+            ],
+            "030IL": [
+                "SynchronizeInterlanguageLinks",
+                null,
+                null
             ]
         },
         "Diff": {},
@@ -71,6 +76,11 @@
                     "Fix external section links"
                 ],
                 null
+            ],
+            "220IL": [
+                "SynchronizeInterlanguageLinks",
+                null,
+                null
             ]
         },
         "NewPages": {},
@@ -82,6 +92,11 @@
                     "Fix double redirects"
                 ],
                 "fix double redirect"
+            ],
+            "030CT": [
+                "UpdateCategoryTree",
+                null,
+                null
             ]
         }
     }
