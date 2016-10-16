@@ -22,7 +22,8 @@
   - GitHub wiki
   - ArchWiki article: https://wiki.archlinux.org/index.php/Wiki_Monkey
 
-* Merge the v3.x.x branch into the master branch (should be a fast-forward)
+* Merge the v3.x.x branch into the master and develop branches (should be
+  fast-forwards)
   To force merge "theirs" branch: `git merge -X theirs branch`
 * Tag the release commit the v3.x.x version number
 * Remove the v3.x.x branch, also remotely
