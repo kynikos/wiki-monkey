@@ -20,6 +20,8 @@ RegEx = require('../../lib.js.generic/dist/RegEx')
 
 
 class module.exports.ArchWikiOldAURLinks
+    @REQUIRES_GM = true
+
     constructor: (@WM) ->
 
     doReplace: (source, call, callArgs) =>

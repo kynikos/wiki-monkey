@@ -18,6 +18,8 @@
 
 
 class module.exports.SynchronizeInterlanguageLinks
+    @REQUIRES_GM = false
+
     constructor: (@WM) ->
 
     detectLang: (title, tag) =>

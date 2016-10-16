@@ -18,6 +18,8 @@
 
 
 class module.exports.ArchWikiSortContacts
+    @REQUIRES_GM = false
+
     constructor: (@WM) ->
 
     # This plugin was originally based on list=allusers, but because of bug

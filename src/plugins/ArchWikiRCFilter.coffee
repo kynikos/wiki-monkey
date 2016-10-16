@@ -21,6 +21,8 @@ DOM = require('../../lib.js.generic/dist/DOM')
 
 
 class module.exports.ArchWikiRCFilter
+    @REQUIRES_GM = false
+
     constructor: (@WM) ->
 
     main: (params) ->

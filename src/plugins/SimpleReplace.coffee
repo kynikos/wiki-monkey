@@ -20,6 +20,8 @@ CSS = require('../../lib.js.generic/dist/CSS')
 
 
 class module.exports.SimpleReplace
+    @REQUIRES_GM = false
+
     constructor: (@WM) ->
 
     makeUI = ->

@@ -554,11 +554,8 @@ DISABLE_EDITOR = {
 }
 
 DISABLE_AW_EDITOR = {
-    "Editor": ("010AHE", "020ASE", "030AEL", "050ACT", "080ASR", "220AIL"),
-}
-
-DISABLE_AW_EDITOR_X = {
-    "Editor": ("230AAL", "240APT"),
+    "Editor": ("010AHE", "020ASE", "030AEL", "050ACT", "080ASR", "220AIL",
+               "230AAL", "240APT"),
 }
 
 DISABLE_AW_PATROL = {
@@ -579,11 +576,7 @@ DISABLE_AW_BOT = {
                 "010CTnl", "010CTpl", "010CTpt", "010CTru", "010CTsk",
                 "010CTsr", "010CTth", "010CTuk", "010CTzhcn", "010CTzhtw",
                 "040ASCC"),
-    "Bot": ("030IL", ),
-}
-
-DISABLE_AW_BOT_X = {
-    "Bot": ("040APT", "050AAL"),
+    "Bot": ("030IL", "040APT", "050AAL"),
 }
 
 DISABLE_W_BOT = {
@@ -605,40 +598,16 @@ CONFIGS = {
     'ArchWiki-bot': ((ARCHWIKI, ), ()),
     'ArchWiki-editor': ((ARCHWIKI, ), (DISABLE_BOT,
                                        DISABLE_AW_BOT,
-                                       DISABLE_AW_BOT_X,
                                        DISABLE_AW_PATROL)),
     'ArchWiki-patrol-lite': ((ARCHWIKI, ), (DISABLE_EDITOR,
                                             DISABLE_AW_EDITOR,
-                                            DISABLE_AW_EDITOR_X,
                                             DISABLE_BOT,
-                                            DISABLE_AW_BOT,
-                                            DISABLE_AW_BOT_X)),
+                                            DISABLE_AW_BOT)),
     'ArchWiki-patrol': ((ARCHWIKI, ), (DISABLE_BOT,
-                                       DISABLE_AW_BOT,
-                                       DISABLE_AW_BOT_X)),
-    'ArchWiki-standalone-bot': ((ARCHWIKI, ), (DISABLE_AW_EDITOR_X,
-                                               DISABLE_AW_BOT_X, )),
-    'ArchWiki-standalone-editor': ((ARCHWIKI, ), (DISABLE_AW_EDITOR_X,
-                                                  DISABLE_BOT,
-                                                  DISABLE_AW_BOT,
-                                                  DISABLE_AW_BOT_X,
-                                                  DISABLE_AW_PATROL)),
-    'ArchWiki-standalone-patrol-lite': ((ARCHWIKI, ), (DISABLE_EDITOR,
-                                                       DISABLE_AW_EDITOR,
-                                                       DISABLE_AW_EDITOR_X,
-                                                       DISABLE_BOT,
-                                                       DISABLE_AW_BOT,
-                                                       DISABLE_AW_BOT_X)),
-    'ArchWiki-standalone-patrol': ((ARCHWIKI, ), (DISABLE_AW_EDITOR_X,
-                                                  DISABLE_BOT,
-                                                  DISABLE_AW_BOT,
-                                                  DISABLE_AW_BOT_X)),
+                                       DISABLE_AW_BOT)),
     'Wikipedia-bot': ((WIKIPEDIA, ), ()),
     'Wikipedia-editor': ((WIKIPEDIA, ), (DISABLE_BOT,
                                          DISABLE_W_BOT)),
-    'Wikipedia-standalone-bot': ((WIKIPEDIA, ), ()),
-    'Wikipedia-standalone-editor': ((WIKIPEDIA, ), (DISABLE_BOT,
-                                                    DISABLE_W_BOT)),
 }
 
 

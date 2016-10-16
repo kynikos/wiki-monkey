@@ -21,6 +21,8 @@ HTTP = require('../../lib.js.generic/dist/HTTP')
 
 
 class module.exports.ArchWikiQuickReport
+    @REQUIRES_GM = false
+
     constructor: (@WM) ->
 
     makeUI: (args) ->

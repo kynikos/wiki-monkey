@@ -20,6 +20,8 @@ Str = require('../../lib.js.generic/dist/Str')
 
 
 class module.exports.FixDoubleRedirects
+    @REQUIRES_GM = false
+
     constructor: (@WM) ->
         null
 

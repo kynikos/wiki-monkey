@@ -20,6 +20,8 @@ Str = require('../../lib.js.generic/dist/Str')
 
 
 class module.exports.UpdateCategoryTree
+    @REQUIRES_GM = false
+
     constructor: (@WM) ->
 
     main: (args, callNext) ->

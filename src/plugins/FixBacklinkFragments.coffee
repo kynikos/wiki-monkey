@@ -20,6 +20,8 @@ CSS = require('../../lib.js.generic/dist/CSS')
 
 
 class module.exports.FixBacklinkFragments
+    @REQUIRES_GM = false
+
     constructor: (@WM) ->
 
     makeBotUI: (args) =>
