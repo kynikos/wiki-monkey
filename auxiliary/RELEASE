@@ -9,6 +9,7 @@
 * Create and check out a 'v3.x.x' branch
 * Run `invoke release 3.x.x`
   Do *not* prepend the 'v' here
+* Run `invoke build`
 * Commit
 * Push the new branch to the remote repository
 * Install all the generated scripts and check that they work correctly in
@@ -22,14 +23,11 @@
   - ArchWiki article: https://wiki.archlinux.org/index.php/Wiki_Monkey
 
 * Merge the v3.x.x branch into the master branch (should be a fast-forward)
+  To force merge "theirs" branch: `git merge -X theirs branch`
 * Tag the release commit the v3.x.x version number
 * Remove the v3.x.x branch, also remotely
+  To delete a remote branch: `git push origin :tmpbranch`
+   or `git push origin :refs/heads/tmpbranch`
 * Checkout the develop branch
-* Optionally run `invoke build` and use that for development rebuilds
 * Commit
 * Push everything to origin, including the tags
-
-NOTES:
-* To force merge "theirs" branch: `git merge -X theirs branch`
-* To delete a remote branch: `git push origin :tmpbranch`
-  or `git push origin :refs/heads/tmpbranch`
