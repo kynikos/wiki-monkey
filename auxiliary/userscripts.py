@@ -50,8 +50,8 @@ GM_HEADER = """// ==UserScript==
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
 // @updateURL https://raw.github.com/kynikos/wiki-monkey/master/scripts/WikiMonkey-{name}{dashlite}.meta.js
 // @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/scripts/WikiMonkey-{name}{dashlite}.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/2.0.7/auxiliary/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/2.0.7/auxiliary/wiki-monkey-64.png
+// @icon https://raw.github.com/kynikos/wiki-monkey/v{version}/auxiliary/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/v{version}/auxiliary/wiki-monkey-64.png
 {matches}
 // @grant GM_info
 // @grant GM_xmlhttpRequest
