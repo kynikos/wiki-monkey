@@ -16,6 +16,11 @@
   Also make sure to check the effects of any changes to the configuration
   object
 
+* Check milestone is closed on GitHub
+* Update documentation:
+  - GitHub wiki
+  - ArchWiki article: https://wiki.archlinux.org/index.php/Wiki_Monkey
+
 * Merge the v3.x.x branch into the master branch (should be a fast-forward)
 * Tag the release commit the v3.x.x version number
 * Remove the v3.x.x branch, also remotely
@@ -23,11 +28,6 @@
 * Optionally run `invoke build` and use that for development rebuilds
 * Commit
 * Push everything to origin, including the tags
-
-* Check milestone is closed on GitHub
-* Update documentation:
-  - GitHub wiki
-  - ArchWiki article: https://wiki.archlinux.org/index.php/Wiki_Monkey
 
 NOTES:
 * To force merge "theirs" branch: `git merge -X theirs branch`

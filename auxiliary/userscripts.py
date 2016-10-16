@@ -122,20 +122,21 @@ def compile(run, version):
 
             if srcfile.startswith('_'):
                 compile_gm(run, AUXDIR, fname[1:], fname, srcpath, matches,
-                           version or 'dev', '', '')
+                           version or 'dev', '', '', False)
             elif version:
                 compile_gm(run, DISTDIR, fname, fname, srcpath, matches,
-                           version, '', '')
-                compile_gm(run, DISTDIR, fname, fname, srcpath, matches,
-                           version, 'lite', SED)
-                compile_gm_meta(fname, version, '')
-                compile_gm_meta(fname, version, 'lite')
+                           version, '', '', True)
+                # The user script is loaded *before* MediaWiki loads jQuery,
+                # so it doesn't make sense to build a lite version of the
+                # GreaseMonkey version
+                # compile_gm(run, DISTDIR, fname, fname, srcpath, matches,
+                #            version, 'lite', SED, True)
                 compile_mw_sa(run, fname, srcpath, version, '', '')
                 compile_mw_sa(run, fname, srcpath, version, 'lite', SED)
 
 
 def compile_gm(run, distdir, fname, cfname, srcpath, matches, version, suffix,
-               args):
+               args, meta):
     distfile = DISTFILE.format(distdir=distdir, fname=fname,
                                suffix=('-' + suffix) if suffix else '',
                                preext='user')
@@ -156,19 +157,20 @@ def compile_gm(run, distdir, fname, cfname, srcpath, matches, version, suffix,
     with open(distfile, 'w') as df:
         df.write('\n'.join((header, script)))
 
+    if not meta:
+        return None
 
-def compile_gm_meta(fname, version, suffix):
-    distfile = DISTFILE.format(distdir=DISTDIR, fname=fname,
-                               suffix=('-' + suffix) if suffix else '',
-                               preext='meta')
+    distfile_meta = DISTFILE.format(distdir=DISTDIR, fname=fname,
+                                    suffix=('-' + suffix) if suffix else '',
+                                    preext='meta')
 
-    header = GM_META_HEADER.format(**CONFIG[fname],
-                                   version=version,
-                                   dashlite=(('-' + suffix)
-                                             if suffix else ''))
+    header_meta = GM_META_HEADER.format(**CONFIG[fname],
+                                        version=version,
+                                        dashlite=(('-' + suffix)
+                                                  if suffix else ''))
 
-    with open(distfile, 'w') as df:
-        df.write(header)
+    with open(distfile_meta, 'w') as dmf:
+        dmf.write(header_meta)
 
 
 def compile_mw_sa(run, fname, srcpath, version, suffix, args):
