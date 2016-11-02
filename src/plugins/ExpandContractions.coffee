@@ -22,12 +22,13 @@ class module.exports.ExpandContractions
 
     constructor: (@WM) ->
 
-    replace = (source, regExp, newString, checkString, checkStrings) ->
+    replace: (source, regExp, newString, checkString, checkStrings) ->
         newtext = source.replace(regExp, newString)
         if checkStrings.length > 1 and newtext != source
-            @WM.Log.logWarning("Replaced some \"" + checkString + "\" with \"" +
-                        checkStrings[0] + "\": check that it didn't mean \"" +
-                        checkStrings.slice(1).join("\" or \"") + "\" instead")
+            @WM.Log.logWarning("Replaced some \"#{checkString}\" with
+                               \"#{checkStrings[0]}\": check that it didn't
+                               mean \"#{checkStrings.slice(1).join('\" or \"')}\"
+                               instead")
         return newtext
 
     main: (args, callNext) ->
@@ -38,27 +39,28 @@ class module.exports.ExpandContractions
         # Note that JavaScript doesn't support look behind :(
         # Pay attention to preserve the original capitalization
 
-        newtext = replace(newtext, /([a-z])'re/ig, '$1 are', "'re", ["are"])
-        newtext = replace(newtext, /([a-z])'ve/ig, '$1 have', "'ve", ["have"])
-        newtext = replace(newtext, /([a-z])'ll/ig, '$1 will', "'ll",
+        newtext = @replace(newtext, /([a-z])'re/ig, '$1 are', "'re", ["are"])
+        newtext = @replace(newtext, /([a-z])'ve/ig, '$1 have', "'ve", ["have"])
+        newtext = @replace(newtext, /([a-z])'ll/ig, '$1 will', "'ll",
                                                             ["will", "shall"])
-        newtext = replace(newtext, /([a-z])'d/ig, '$1 would', "'d",
+        newtext = @replace(newtext, /([a-z])'d/ig, '$1 would', "'d",
                                                             ["would", "had"])
-        newtext = replace(newtext, /(c)an't/ig, '$1annot', "can't",
+        newtext = @replace(newtext, /(c)an't/ig, '$1annot', "can't",
                                                                 ["cannot"])
-        newtext = replace(newtext, /(w)on't/ig, '$1ill not', "won't",
+        newtext = @replace(newtext, /(w)on't/ig, '$1ill not', "won't",
                                                                 ["will not"])
-        newtext = replace(newtext, /([a-z])n't/ig, '$1 not', "n't", ["not"])
-        newtext = replace(newtext, /(here|there)'s/ig, '$1 is', "here/there's",
+        newtext = @replace(newtext, /([a-z])n't/ig, '$1 not', "n't", ["not"])
+        newtext = @replace(newtext, /(here|there)'s/ig, '$1 is',
+                                        "here/there's",
                                         ["here/there is", "here/there has"])
-        newtext = replace(newtext, /(g)onna/ig, '$1oing to', "gonna",
+        newtext = @replace(newtext, /(g)onna/ig, '$1oing to', "gonna",
                                                                 ["going to"])
         # Replacing he's, she's, that's, what's, where's, who's ... may be too
         #   dangerous
-        newtext = replace(newtext, /([a-z])'s (been)/ig, '$1 has $2',
+        newtext = @replace(newtext, /([a-z])'s (been)/ig, '$1 has $2',
                                                     "'s been", ["has been"])
-        newtext = replace(newtext, /(let)'s/ig, '$1 us', "let's", ["let us"])
-        newtext = replace(newtext, /(it)'(s own)/ig, '$1$2', "it's own",
+        newtext = @replace(newtext, /(let)'s/ig, '$1 us', "let's", ["let us"])
+        newtext = @replace(newtext, /(it)'(s own)/ig, '$1$2', "it's own",
                                                                 ["its own"])
 
         ss = newtext.match(/[a-z]'s/gi)
