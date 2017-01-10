@@ -635,6 +635,15 @@ module.exports = {
                     "The following Maintainers are currently inactive (less than 10 edits in the last 30 days):",
                     "automatically sort list according to recent activity"
                 ]
+            ],
+            "999TMPZH": [
+                "TempZh",
+                [
+                    "Update zh links"
+                ],
+                [
+                    "zh-cn"
+                ]
             ]
         }
     }

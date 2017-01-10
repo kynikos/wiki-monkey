@@ -23,11 +23,11 @@ var WM, WM_;
 
 WM_ = require('./modules/_Init').WM;
 
-WM = new WM_(['ArchWikiFixHeader', require("./plugins/ArchWikiFixHeader").ArchWikiFixHeader], ['ArchWikiFixHeadings', require("./plugins/ArchWikiFixHeadings").ArchWikiFixHeadings], ['ArchWikiFixLinks', require("./plugins/ArchWikiFixLinks").ArchWikiFixLinks], ['ArchWikiNewTemplates', require("./plugins/ArchWikiNewTemplates").ArchWikiNewTemplates], ['ArchWikiNPFilter', require("./plugins/ArchWikiNPFilter").ArchWikiNPFilter], ['ArchWikiOldAURLinks', require("./plugins/ArchWikiOldAURLinks").ArchWikiOldAURLinks], ['ArchWikiQuickReport', require("./plugins/ArchWikiQuickReport").ArchWikiQuickReport], ['ArchWikiSaveTalk', require("./plugins/ArchWikiSaveTalk").ArchWikiSaveTalk], ['ArchWikiSortContacts', require("./plugins/ArchWikiSortContacts").ArchWikiSortContacts], ['ArchWikiSummaryToRelated', require("./plugins/ArchWikiSummaryToRelated").ArchWikiSummaryToRelated], ['ArchWikiRCFilter', require("./plugins/ArchWikiRCFilter").ArchWikiRCFilter], ['ArchWikiUpdatePackageTemplates', require("./plugins/ArchWikiUpdatePackageTemplates").ArchWikiUpdatePackageTemplates], ['ArchWikiWantedCategories', require("./plugins/ArchWikiWantedCategories").ArchWikiWantedCategories], ['DeletePages', require("./plugins/DeletePages").DeletePages], ['ExpandContractions', require("./plugins/ExpandContractions").ExpandContractions], ['FixBacklinkFragments', require("./plugins/FixBacklinkFragments").FixBacklinkFragments], ['FixDoubleRedirects', require("./plugins/FixDoubleRedirects").FixDoubleRedirects], ['FixFragments', require("./plugins/FixFragments").FixFragments], ['FixLinkFragments', require("./plugins/FixLinkFragments").FixLinkFragments], ['MultipleLineBreaks', require("./plugins/MultipleLineBreaks").MultipleLineBreaks], ['SimpleReplace', require("./plugins/SimpleReplace").SimpleReplace], ['SynchronizeInterlanguageLinks', require("./plugins/SynchronizeInterlanguageLinks").SynchronizeInterlanguageLinks], ['UpdateCategoryTree', require("./plugins/UpdateCategoryTree").UpdateCategoryTree]);
+WM = new WM_(['ArchWikiFixHeader', require("./plugins/ArchWikiFixHeader").ArchWikiFixHeader], ['ArchWikiFixHeadings', require("./plugins/ArchWikiFixHeadings").ArchWikiFixHeadings], ['ArchWikiFixLinks', require("./plugins/ArchWikiFixLinks").ArchWikiFixLinks], ['ArchWikiNewTemplates', require("./plugins/ArchWikiNewTemplates").ArchWikiNewTemplates], ['ArchWikiNPFilter', require("./plugins/ArchWikiNPFilter").ArchWikiNPFilter], ['ArchWikiOldAURLinks', require("./plugins/ArchWikiOldAURLinks").ArchWikiOldAURLinks], ['ArchWikiQuickReport', require("./plugins/ArchWikiQuickReport").ArchWikiQuickReport], ['ArchWikiSaveTalk', require("./plugins/ArchWikiSaveTalk").ArchWikiSaveTalk], ['ArchWikiSortContacts', require("./plugins/ArchWikiSortContacts").ArchWikiSortContacts], ['ArchWikiSummaryToRelated', require("./plugins/ArchWikiSummaryToRelated").ArchWikiSummaryToRelated], ['ArchWikiRCFilter', require("./plugins/ArchWikiRCFilter").ArchWikiRCFilter], ['ArchWikiUpdatePackageTemplates', require("./plugins/ArchWikiUpdatePackageTemplates").ArchWikiUpdatePackageTemplates], ['ArchWikiWantedCategories', require("./plugins/ArchWikiWantedCategories").ArchWikiWantedCategories], ['DeletePages', require("./plugins/DeletePages").DeletePages], ['ExpandContractions', require("./plugins/ExpandContractions").ExpandContractions], ['FixBacklinkFragments', require("./plugins/FixBacklinkFragments").FixBacklinkFragments], ['FixDoubleRedirects', require("./plugins/FixDoubleRedirects").FixDoubleRedirects], ['FixFragments', require("./plugins/FixFragments").FixFragments], ['FixLinkFragments', require("./plugins/FixLinkFragments").FixLinkFragments], ['MultipleLineBreaks', require("./plugins/MultipleLineBreaks").MultipleLineBreaks], ['SimpleReplace', require("./plugins/SimpleReplace").SimpleReplace], ['SynchronizeInterlanguageLinks', require("./plugins/SynchronizeInterlanguageLinks").SynchronizeInterlanguageLinks], ['UpdateCategoryTree', require("./plugins/UpdateCategoryTree").UpdateCategoryTree], ['TempZh', require("./plugins/TempZh").TempZh]);
 
 WM.main(require("../build/configurations/_local"));
 
-},{"../build/configurations/_local":2,"./modules/_Init":20,"./plugins/ArchWikiFixHeader":21,"./plugins/ArchWikiFixHeadings":22,"./plugins/ArchWikiFixLinks":23,"./plugins/ArchWikiNPFilter":24,"./plugins/ArchWikiNewTemplates":25,"./plugins/ArchWikiOldAURLinks":26,"./plugins/ArchWikiQuickReport":27,"./plugins/ArchWikiRCFilter":28,"./plugins/ArchWikiSaveTalk":29,"./plugins/ArchWikiSortContacts":30,"./plugins/ArchWikiSummaryToRelated":31,"./plugins/ArchWikiUpdatePackageTemplates":32,"./plugins/ArchWikiWantedCategories":33,"./plugins/DeletePages":34,"./plugins/ExpandContractions":35,"./plugins/FixBacklinkFragments":36,"./plugins/FixDoubleRedirects":37,"./plugins/FixFragments":38,"./plugins/FixLinkFragments":39,"./plugins/MultipleLineBreaks":40,"./plugins/SimpleReplace":41,"./plugins/SynchronizeInterlanguageLinks":42,"./plugins/UpdateCategoryTree":43}],2:[function(require,module,exports){
+},{"../build/configurations/_local":2,"./modules/_Init":20,"./plugins/ArchWikiFixHeader":21,"./plugins/ArchWikiFixHeadings":22,"./plugins/ArchWikiFixLinks":23,"./plugins/ArchWikiNPFilter":24,"./plugins/ArchWikiNewTemplates":25,"./plugins/ArchWikiOldAURLinks":26,"./plugins/ArchWikiQuickReport":27,"./plugins/ArchWikiRCFilter":28,"./plugins/ArchWikiSaveTalk":29,"./plugins/ArchWikiSortContacts":30,"./plugins/ArchWikiSummaryToRelated":31,"./plugins/ArchWikiUpdatePackageTemplates":32,"./plugins/ArchWikiWantedCategories":33,"./plugins/DeletePages":34,"./plugins/ExpandContractions":35,"./plugins/FixBacklinkFragments":36,"./plugins/FixDoubleRedirects":37,"./plugins/FixFragments":38,"./plugins/FixLinkFragments":39,"./plugins/MultipleLineBreaks":40,"./plugins/SimpleReplace":41,"./plugins/SynchronizeInterlanguageLinks":42,"./plugins/TempZh":43,"./plugins/UpdateCategoryTree":44}],2:[function(require,module,exports){
 module.exports = {
     "Mods": {
         "Contributions": {
@@ -665,6 +665,15 @@ module.exports = {
                     "The following Maintainers are currently inactive (less than 10 edits in the last 30 days):",
                     "automatically sort list according to recent activity"
                 ]
+            ],
+            "999TMPZH": [
+                "TempZh",
+                [
+                    "Update zh links"
+                ],
+                [
+                    "zh-cn"
+                ]
             ]
         }
     }
@@ -819,7 +828,7 @@ module.exports.ArchPackages = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/Obj":50,"../../lib.js.generic/dist/RegEx":51}],4:[function(require,module,exports){
+},{"../../lib.js.generic/dist/Obj":51,"../../lib.js.generic/dist/RegEx":52}],4:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.2
 module.exports.ArchWiki = (function() {
   var languages, tablesOfContents;
@@ -1857,7 +1866,7 @@ module.exports.Bot = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/CSS":46}],6:[function(require,module,exports){
+},{"../../lib.js.generic/dist/CSS":47}],6:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.2
 var Async, Obj;
 
@@ -1963,7 +1972,7 @@ module.exports.Cat = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/Async":45,"../../lib.js.generic/dist/Obj":50}],7:[function(require,module,exports){
+},{"../../lib.js.generic/dist/Async":46,"../../lib.js.generic/dist/Obj":51}],7:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.2
 var $, CSS, DOM,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -2184,7 +2193,7 @@ module.exports.Cfg = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/CSS":46,"../../lib.js.generic/dist/DOM":48,"jquery":44}],8:[function(require,module,exports){
+},{"../../lib.js.generic/dist/CSS":47,"../../lib.js.generic/dist/DOM":49,"jquery":45}],8:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.2
 var HTTP;
 
@@ -2236,7 +2245,7 @@ module.exports.Diff = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/HTTP":49}],9:[function(require,module,exports){
+},{"../../lib.js.generic/dist/HTTP":50}],9:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.2
 var Compatibility, HTTP;
 
@@ -2288,7 +2297,7 @@ module.exports.Editor = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/Compatibility":47,"../../lib.js.generic/dist/HTTP":49}],10:[function(require,module,exports){
+},{"../../lib.js.generic/dist/Compatibility":48,"../../lib.js.generic/dist/HTTP":50}],10:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.2
 var $, CSS,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -2385,7 +2394,7 @@ module.exports.Filters = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/CSS":46,"jquery":44}],11:[function(require,module,exports){
+},{"../../lib.js.generic/dist/CSS":47,"jquery":45}],11:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.2
 var Obj,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -2650,7 +2659,7 @@ module.exports.Interlanguage = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/Obj":50}],12:[function(require,module,exports){
+},{"../../lib.js.generic/dist/Obj":51}],12:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.2
 var CSS, Str;
 
@@ -2837,7 +2846,7 @@ module.exports.Log = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/CSS":46,"../../lib.js.generic/dist/Str":52}],13:[function(require,module,exports){
+},{"../../lib.js.generic/dist/CSS":47,"../../lib.js.generic/dist/Str":53}],13:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.2
 var HTTP, Obj;
 
@@ -3388,7 +3397,7 @@ module.exports.MW = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/HTTP":49,"../../lib.js.generic/dist/Obj":50}],14:[function(require,module,exports){
+},{"../../lib.js.generic/dist/HTTP":50,"../../lib.js.generic/dist/Obj":51}],14:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.2
 var $, Async, CSS,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -3525,7 +3534,7 @@ module.exports.Menu = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/Async":45,"../../lib.js.generic/dist/CSS":46,"jquery":44}],15:[function(require,module,exports){
+},{"../../lib.js.generic/dist/Async":46,"../../lib.js.generic/dist/CSS":47,"jquery":45}],15:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.2
 var $, CSS;
 
@@ -3600,7 +3609,7 @@ module.exports.Mods = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/CSS":46,"jquery":44}],16:[function(require,module,exports){
+},{"../../lib.js.generic/dist/CSS":47,"jquery":45}],16:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.2
 var RegEx, Str;
 
@@ -4019,7 +4028,7 @@ module.exports.Parser = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/RegEx":51,"../../lib.js.generic/dist/Str":52}],17:[function(require,module,exports){
+},{"../../lib.js.generic/dist/RegEx":52,"../../lib.js.generic/dist/Str":53}],17:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.2
 var Str;
 
@@ -4044,7 +4053,7 @@ module.exports.Tables = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/Str":52}],18:[function(require,module,exports){
+},{"../../lib.js.generic/dist/Str":53}],18:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.2
 var CSS, RegEx;
 
@@ -4198,7 +4207,7 @@ module.exports.UI = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/CSS":46,"../../lib.js.generic/dist/RegEx":51}],19:[function(require,module,exports){
+},{"../../lib.js.generic/dist/CSS":47,"../../lib.js.generic/dist/RegEx":52}],19:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.2
 module.exports.WhatLinksHere = (function() {
   function WhatLinksHere(WM) {
@@ -4706,7 +4715,7 @@ module.exports.ArchWikiNPFilter = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/CSS":46,"../../lib.js.generic/dist/DOM":48}],25:[function(require,module,exports){
+},{"../../lib.js.generic/dist/CSS":47,"../../lib.js.generic/dist/DOM":49}],25:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.2
 module.exports.ArchWikiNewTemplates = (function() {
   ArchWikiNewTemplates.REQUIRES_GM = false;
@@ -4924,7 +4933,7 @@ module.exports.ArchWikiOldAURLinks = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/RegEx":51}],27:[function(require,module,exports){
+},{"../../lib.js.generic/dist/RegEx":52}],27:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.2
 var CSS, HTTP,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -5035,7 +5044,7 @@ module.exports.ArchWikiQuickReport = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/CSS":46,"../../lib.js.generic/dist/HTTP":49}],28:[function(require,module,exports){
+},{"../../lib.js.generic/dist/CSS":47,"../../lib.js.generic/dist/HTTP":50}],28:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.2
 var CSS, DOM;
 
@@ -5111,7 +5120,7 @@ module.exports.ArchWikiRCFilter = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/CSS":46,"../../lib.js.generic/dist/DOM":48}],29:[function(require,module,exports){
+},{"../../lib.js.generic/dist/CSS":47,"../../lib.js.generic/dist/DOM":49}],29:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.2
 var CSS, HTTP,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -5194,7 +5203,7 @@ module.exports.ArchWikiSaveTalk = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/CSS":46,"../../lib.js.generic/dist/HTTP":49}],30:[function(require,module,exports){
+},{"../../lib.js.generic/dist/CSS":47,"../../lib.js.generic/dist/HTTP":50}],30:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.2
 var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
@@ -6251,7 +6260,7 @@ module.exports.FixBacklinkFragments = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/CSS":46}],37:[function(require,module,exports){
+},{"../../lib.js.generic/dist/CSS":47}],37:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.2
 var Str,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -6394,7 +6403,7 @@ module.exports.FixDoubleRedirects = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/Str":52}],38:[function(require,module,exports){
+},{"../../lib.js.generic/dist/Str":53}],38:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.2
 module.exports.FixFragments = (function() {
   FixFragments.REQUIRES_GM = false;
@@ -6907,7 +6916,7 @@ module.exports.SimpleReplace = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/CSS":46}],42:[function(require,module,exports){
+},{"../../lib.js.generic/dist/CSS":47}],42:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.2
 var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
@@ -7089,6 +7098,105 @@ module.exports.SynchronizeInterlanguageLinks = (function() {
 })();
 
 },{}],43:[function(require,module,exports){
+// Generated by CoffeeScript 1.12.2
+var SUMMARY, Str,
+  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+Str = require('../../lib.js.generic/dist/Str');
+
+SUMMARY = "update zh-cn/tw interlanguage links to zh-hans/hant, see [[Help talk:I18n#Chinese interlanguage links]]";
+
+module.exports.TempZh = (function() {
+  TempZh.REQUIRES_GM = false;
+
+  function TempZh(WM) {
+    this.WM = WM;
+    this.postWritePage = bind(this.postWritePage, this);
+    this.processPage = bind(this.processPage, this);
+    this.iteratePages = bind(this.iteratePages, this);
+    null;
+  }
+
+  TempZh.prototype.main = function(arg, callNext) {
+    var search_tag;
+    search_tag = arg[0];
+    this.callNext = callNext;
+    this.WM.Log.logInfo("Updating zh interlanguage links...");
+    return this.WM.MW.callAPIGet({
+      action: "query",
+      list: "langbacklinks",
+      lbllimit: 500,
+      lblprop: "lltitle",
+      lbllang: search_tag
+    }, null, (function(_this) {
+      return function(res, args) {
+        return _this.iteratePages(res.query.langbacklinks, 0);
+      };
+    })(this), [], null);
+  };
+
+  TempZh.prototype.iteratePages = function(links, index) {
+    var title;
+    if (links[index]) {
+      title = links[index].title;
+      this.WM.Log.logInfo("Updating " + title + " ...");
+      return this.WM.MW.callQueryEdit(title, this.processPage, [links, index]);
+    } else {
+      this.WM.Log.logInfo("Links updated");
+      if (this.callNext) {
+        return this.callNext();
+      }
+    }
+  };
+
+  TempZh.prototype.processPage = function(title, source, timestamp, edittoken, arg) {
+    var i, index, len, links, llinks, newText, newtag, oldtag, ref, ref1;
+    links = arg[0], index = arg[1];
+    newText = source;
+    ref = [['zh-cn', 'zh-hans'], ['zh-tw', 'zh-hant']];
+    for (i = 0, len = ref.length; i < len; i++) {
+      ref1 = ref[i], oldtag = ref1[0], newtag = ref1[1];
+      llinks = this.WM.Parser.findInterlanguageLinks(newText, oldtag);
+      if (llinks.length > 1) {
+        this.WM.Log.logWarning((this.WM.Log.linkToWikiPage(title, title)) + " must be updated manually since it may contain duplicated interlanguage links");
+        this.iteratePages(links, index + 1);
+        return false;
+      }
+      if (llinks.length) {
+        newText = Str.overwriteFor(newText, newtag, llinks[0].index + 2, oldtag.length);
+      }
+    }
+    if (source !== newText) {
+      return this.WM.MW.callAPIPost({
+        action: "edit",
+        bot: "1",
+        title: title,
+        summary: SUMMARY,
+        text: newText,
+        b1asetimestamp: timestamp,
+        token: edittoken
+      }, null, this.postWritePage, [links, index], null);
+    } else {
+      this.WM.Log.logWarning((this.WM.Log.linkToWikiPage(title, title)) + " must be checked manually");
+      return this.iteratePages(links, index + 1);
+    }
+  };
+
+  TempZh.prototype.postWritePage = function(res, arg) {
+    var index, links;
+    links = arg[0], index = arg[1];
+    if (res.edit && res.edit.result === 'Success') {
+      return this.iteratePages(links, index + 1);
+    } else {
+      return this.WM.Log.logError(res['error']['info'] + " (" + res['error']['code'] + ")");
+    }
+  };
+
+  return TempZh;
+
+})();
+
+},{"../../lib.js.generic/dist/Str":53}],44:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.2
 var Str,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
@@ -7329,7 +7437,7 @@ module.exports.UpdateCategoryTree = (function() {
 
 })();
 
-},{"../../lib.js.generic/dist/Str":52}],44:[function(require,module,exports){
+},{"../../lib.js.generic/dist/Str":53}],45:[function(require,module,exports){
 /*eslint-disable no-unused-vars*/
 /*!
  * jQuery JavaScript Library v3.1.0
@@ -17405,7 +17513,7 @@ if ( !noGlobal ) {
 return jQuery;
 } );
 
-},{}],45:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 // Generated by CoffeeScript 1.10.0
 module.exports.executeAsync = function(functions, id) {
   var callContinue, fid;
@@ -17495,7 +17603,7 @@ module.exports.recurseTreeAsync = function(params) {
   }
 };
 
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 // Generated by CoffeeScript 1.10.0
 module.exports.addStyleElement = function(css) {
   var style;
@@ -17505,13 +17613,13 @@ module.exports.addStyleElement = function(css) {
   return document.head.appendChild(style);
 };
 
-},{}],47:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 // Generated by CoffeeScript 1.10.0
 module.exports.normalizeCarriageReturns = function(source) {
   return source.replace(/\r\n/g, '\n');
 };
 
-},{}],48:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 // Generated by CoffeeScript 1.10.0
 module.exports.getPreviousElementSibling = function(node) {
   while (node.previousSibling.nodeType !== 1) {
@@ -17627,7 +17735,7 @@ module.exports.waitUntilJQuerySelectorMatches = function(selector, handler, args
   return recurse();
 };
 
-},{"jquery":53}],49:[function(require,module,exports){
+},{"jquery":54}],50:[function(require,module,exports){
 // Generated by CoffeeScript 1.10.0
 module.exports.getUrlLocation = function(url) {
   var link;
@@ -17704,7 +17812,7 @@ module.exports.sendPostSyncRequest = function(url, query, header, headervalue) {
   return req;
 };
 
-},{}],50:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 // Generated by CoffeeScript 1.10.0
 module.exports.getKeys = function(object) {
   var i, keys;
@@ -17731,7 +17839,7 @@ module.exports.getFirstItem = function(object) {
   }
 };
 
-},{}],51:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 // Generated by CoffeeScript 1.10.0
 module.exports.escapePattern = function(string) {
   return string.replace(/[-[\]{}()^$*+?.|\\]/g, "\\$&");
@@ -17775,7 +17883,7 @@ module.exports.matchAllConditional = function(source, regExp, test) {
   return result;
 };
 
-},{}],52:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 // Generated by CoffeeScript 1.10.0
 module.exports.insert = function(string, newString, id) {
   if (id == null) {
@@ -17922,6 +18030,6 @@ module.exports.findInnermostEnclosures = function(string, openTag, closeTag) {
   return results;
 };
 
-},{}],53:[function(require,module,exports){
-arguments[4][44][0].apply(exports,arguments)
-},{"dup":44}]},{},[1]);
+},{}],54:[function(require,module,exports){
+arguments[4][45][0].apply(exports,arguments)
+},{"dup":45}]},{},[1]);

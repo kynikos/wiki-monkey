@@ -104,6 +104,13 @@ LOCAL = {
                 "automatically sort list according to recent activity"
             )
         ),
+        "999TMPZH": (
+            "TempZh",
+            ("Update zh links", ),
+            (
+                'zh-cn',
+            ),
+        ),
     },
 }
 

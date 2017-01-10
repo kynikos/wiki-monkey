@@ -49,6 +49,8 @@ WM = new WM_(
         require("./plugins/SynchronizeInterlanguageLinks").SynchronizeInterlanguageLinks],
     ['UpdateCategoryTree',
         require("./plugins/UpdateCategoryTree").UpdateCategoryTree],
+    ['TempZh',
+        require("./plugins/TempZh").TempZh],
 )
 
 # Configuration files are generated automatically, don't keep them under
