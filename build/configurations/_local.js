@@ -561,7 +561,7 @@ module.exports = {
                     false
                 ]
             ],
-            "010CTzhcn": [
+            "010CTzhhans": [
                 "UpdateCategoryTree",
                 [
                     "Update category trees",
@@ -570,13 +570,13 @@ module.exports = {
                 [
                     [
                         "ArchWiki",
-                        "zh-cn"
+                        "zh-hans"
                     ],
                     "automatic update",
                     false
                 ]
             ],
-            "010CTzhtw": [
+            "010CTzhhant": [
                 "UpdateCategoryTree",
                 [
                     "Update category trees",
@@ -585,7 +585,7 @@ module.exports = {
                 [
                     [
                         "ArchWiki",
-                        "zh-tw"
+                        "zh-hant"
                     ],
                     "automatic update",
                     false
