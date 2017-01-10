@@ -58,8 +58,8 @@ class module.exports.ArchWiki
             "Türkçe": {subtag: "tr", english: "Turkish"},
             "Українська": {subtag: "uk", english: "Ukrainian"},
             "Tiếng Việt": {subtag: "vi", english: "Vietnamese"},
-            "简体中文": {subtag: "zh-cn", english: "Chinese (Simplified)"},
-            "正體中文": {subtag: "zh-tw", english: "Chinese (Traditional)"}
+            "简体中文": {subtag: "zh-hans", english: "Chinese (Simplified)"},
+            "正體中文": {subtag: "zh-hant", english: "Chinese (Traditional)"}
         },
         categories: [
             "العربية",
@@ -96,7 +96,7 @@ class module.exports.ArchWiki
             external: ["de", "fa", "fi", "fr", "ja", "ro", "sv", "tr"],
             internal: ["ar", "bg", "cs", "da", "el", "en", "es", "he", "hr",
                        "hu", "id", "it", "ko", "lt", "nl", "pl", "pt",
-                       "ru", "sk", "sr", "th", "uk", "zh-cn", "zh-tw"],
+                       "ru", "sk", "sr", "th", "uk", "zh-hans", "zh-hant"],
         }
     }
 
@@ -321,7 +321,7 @@ class module.exports.ArchWiki
             "showIndices": true,
             "rightToLeft": false
         },
-        "zh-cn": {
+        "zh-hans": {
             "page": "Table of contents (简体中文)",
             "root": "Category:简体中文",
             "alsoIn": "同时还属于",
@@ -331,7 +331,7 @@ class module.exports.ArchWiki
             "showIndices": true,
             "rightToLeft": false
         },
-        "zh-tw": {
+        "zh-hant": {
             "page": "Table of contents (正體中文)",
             "root": "Category:正體中文",
             "alsoIn": "還在",  # Unconfirmed

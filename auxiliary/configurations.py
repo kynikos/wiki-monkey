@@ -472,25 +472,25 @@ ARCHWIKI = {
                 False,
             )
         ),
-        "010CTzhcn": (
+        "010CTzhhans": (
             "UpdateCategoryTree",
             ("Update category trees", "Chinese (Simplified)"),
             (
                 (
                     "ArchWiki",
-                    "zh-cn"
+                    "zh-hans"
                 ),
                 "automatic update",
                 False,
             )
         ),
-        "010CTzhtw": (
+        "010CTzhhant": (
             "UpdateCategoryTree",
             ("Update category trees", "Chinese (Traditional)"),
             (
                 (
                     "ArchWiki",
-                    "zh-tw"
+                    "zh-hant"
                 ),
                 "automatic update",
                 False,
@@ -574,7 +574,7 @@ DISABLE_AW_BOT = {
                 "010CTen", "010CTes", "010CThe", "010CThr", "010CThu",
                 "010CTid", "010CTit", "010CTko", "010CTlt",
                 "010CTnl", "010CTpl", "010CTpt", "010CTru", "010CTsk",
-                "010CTsr", "010CTth", "010CTuk", "010CTzhcn", "010CTzhtw",
+                "010CTsr", "010CTth", "010CTuk", "010CTzhhans", "010CTzhhant",
                 "040ASCC"),
     "Bot": ("030IL", "040APT", "050AAL"),
 }
