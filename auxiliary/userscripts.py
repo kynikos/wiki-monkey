@@ -98,7 +98,7 @@ if (typeof GM_info === "undefined" || GM_info === null) {{
     window.GM_emulation = true;
 }};
 
-require('../../lib.js.generic/dist/GMAPIEmulation');
+require('../lib.js.generic/dist/GMAPIEmulation');
 """
 
 STANDALONE_START = "if (location.href.match({})) {{\n"
