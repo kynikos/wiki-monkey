@@ -69,20 +69,17 @@ class module.exports.ArchWikiFixHeader
         bslist = []
         tempcontent = ""
         contentId = 0
-        for b in behaviorswitches
-            bs = behaviorswitches[b].match[1]
-            if bs == "TOC" or bs == "START" or bs == "END"
+        for bswitch, b in behaviorswitches
+            if bswitch.match[1] in ["TOC", "START", "END"]
                 behaviorswitches.splice(b, 1)
             else
-                if bslist.indexOf(behaviorswitches[b].match[0]) == -1
-                    bslist.push(behaviorswitches[b].match[0])
+                if bswitch.match[0] not in bslist
+                    bslist.push(bswitch.match[0])
                 else
-                    @WM.Log.logWarning("Removed duplicate of " +
-                                                behaviorswitches[b].match[0])
-                tempcontent += content.substring(contentId,
-                                                    behaviorswitches[b].index)
-                contentId = behaviorswitches[b].index +
-                                                    behaviorswitches[b].length
+                    @WM.Log.logWarning("Removed duplicate of
+                                        #{bswitch.match[0]}")
+                tempcontent += content.substring(contentId, bswitch.index)
+                contentId = bswitch.index + bswitch.length
 
         tempcontent += content.substring(contentId)
         content = tempcontent
