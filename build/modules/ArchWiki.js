@@ -157,8 +157,8 @@ module.exports.ArchWiki = (function() {
     },
     categories: ["العربية", "Български", "Català", "Česky", "Dansk", "Ελληνικά", "English", "Esperanto", "Español", "Suomi", "עברית", "Hrvatski", "Magyar", "Indonesia", "Italiano", "日本語", "한국어", "Lietuviškai", "Norsk Bokmål", "Nederlands", "Polski", "Português", "Русский", "Slovenský", "Српски", "ไทย", "Українська", "简体中文", "正體中文"],
     interlanguage: {
-      external: ["de", "fa", "fi", "fr", "ja", "ro", "sv", "tr"],
-      internal: ["ar", "bg", "cs", "da", "el", "en", "es", "he", "hr", "hu", "id", "it", "ko", "lt", "nl", "pl", "pt", "ru", "sk", "sr", "th", "uk", "zh-hans", "zh-hant"]
+      external: ["de", "fa", "fr", "ja", "ro"],
+      internal: ["ar", "bg", "cs", "da", "el", "en", "es", "fi", "he", "hr", "hu", "id", "it", "ko", "lt", "nl", "pl", "pt", "ru", "sk", "sr", "sv", "th", "tr", "uk", "zh-hans", "zh-hant"]
     }
   };
 

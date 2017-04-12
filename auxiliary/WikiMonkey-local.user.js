@@ -979,8 +979,8 @@ module.exports.ArchWiki = (function() {
     },
     categories: ["العربية", "Български", "Català", "Česky", "Dansk", "Ελληνικά", "English", "Esperanto", "Español", "Suomi", "עברית", "Hrvatski", "Magyar", "Indonesia", "Italiano", "日本語", "한국어", "Lietuviškai", "Norsk Bokmål", "Nederlands", "Polski", "Português", "Русский", "Slovenský", "Српски", "ไทย", "Українська", "简体中文", "正體中文"],
     interlanguage: {
-      external: ["de", "fa", "fi", "fr", "ja", "ro", "sv", "tr"],
-      internal: ["ar", "bg", "cs", "da", "el", "en", "es", "he", "hr", "hu", "id", "it", "ko", "lt", "nl", "pl", "pt", "ru", "sk", "sr", "th", "uk", "zh-hans", "zh-hant"]
+      external: ["de", "fa", "fr", "ja", "ro"],
+      internal: ["ar", "bg", "cs", "da", "el", "en", "es", "fi", "he", "hr", "hu", "id", "it", "ko", "lt", "nl", "pl", "pt", "ru", "sk", "sr", "sv", "th", "tr", "uk", "zh-hans", "zh-hant"]
     }
   };
 
@@ -2893,26 +2893,6 @@ module.exports.MW = (function() {
         api: "/api.php"
       },
       "^http://wiki\.archlinux\.ro": {
-        short: "/index.php/",
-        full: "/index.php",
-        api: "/api.php"
-      },
-      "^http://(?:www\.)?archlinux\.fi": {
-        short: "/wiki/",
-        full: "/w/index.php",
-        api: "/w/api.php"
-      },
-      "^http://wiki\.archlinux\.se": {
-        short: "/index.php?title=",
-        full: "/index.php",
-        api: "/api.php"
-      },
-      "^http://(?:www\.)?archtr\.org": {
-        short: "/index.php?title=",
-        full: "/wiki/index.php",
-        api: "/wiki/api.php"
-      },
-      "^http://wiki\.archlinux\.rs": {
         short: "/index.php/",
         full: "/index.php",
         api: "/api.php"

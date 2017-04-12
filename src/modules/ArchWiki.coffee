@@ -93,10 +93,11 @@ class module.exports.ArchWiki
             "正體中文"
         ],
         interlanguage: {
-            external: ["de", "fa", "fi", "fr", "ja", "ro", "sv", "tr"],
-            internal: ["ar", "bg", "cs", "da", "el", "en", "es", "he", "hr",
-                       "hu", "id", "it", "ko", "lt", "nl", "pl", "pt",
-                       "ru", "sk", "sr", "th", "uk", "zh-hans", "zh-hant"],
+            external: ["de", "fa", "fr", "ja", "ro"],
+            internal: ["ar", "bg", "cs", "da", "el", "en", "es", "fi", "he",
+                       "hr", "hu", "id", "it", "ko", "lt", "nl", "pl", "pt",
+                       "ru", "sk", "sr", "sv", "th", "tr", "uk", "zh-hans",
+                       "zh-hant"],
         }
     }
 

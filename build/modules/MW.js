@@ -57,26 +57,6 @@ module.exports.MW = (function() {
         full: "/index.php",
         api: "/api.php"
       },
-      "^http://(?:www\.)?archlinux\.fi": {
-        short: "/wiki/",
-        full: "/w/index.php",
-        api: "/w/api.php"
-      },
-      "^http://wiki\.archlinux\.se": {
-        short: "/index.php?title=",
-        full: "/index.php",
-        api: "/api.php"
-      },
-      "^http://(?:www\.)?archtr\.org": {
-        short: "/index.php?title=",
-        full: "/wiki/index.php",
-        api: "/wiki/api.php"
-      },
-      "^http://wiki\.archlinux\.rs": {
-        short: "/index.php/",
-        full: "/index.php",
-        api: "/api.php"
-      },
       "^http://wiki\.archlinux\.ir": {
         short: "/index.php/",
         full: "/index.php",
