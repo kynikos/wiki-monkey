@@ -16,8 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+$ = require('jquery')
 CSS = require('../../lib.js.generic/dist/CSS')
-DOM = require('../../lib.js.generic/dist/DOM')
 
 
 class module.exports.ArchWikiRCFilter
@@ -26,56 +26,45 @@ class module.exports.ArchWikiRCFilter
     constructor: (@WM) ->
 
     main: (params) ->
-        h4s = DOM.getChildrenByTagName(
-                        document.getElementById('mw-content-text')
-                        .getElementsByClassName('mw-changeslist')[0], 'h4')
+        h4s = $('#mw-content-text .mw-changeslist > h4')
 
-        if DOM.getNextElementSibling(h4s[0]).localName.toLowerCase() !=
-                                                                    'div'
+        if h4s.eq(0).next()[0].localName.toLowerCase() != 'div'
             @WM.Log.logError("This filter is designed to work on top of
-                                        MediaWiki's filter, which you can
-                                        enable in your user preferences.")
+                              MediaWiki's filter, which you can
+                              enable in your user preferences.")
         else
             CSS.addStyleElement("#mw-content-text > div > h4
                                                 {background-color:#aaf;}
                     #mw-content-text > div > div > h5 {background-color:#afa;}")
 
             for h4 in h4s
-                groupDiv = DOM.getNextElementSibling(h4);
-                articleTables = DOM.getChildrenByTagName(groupDiv,
-                                                                    'table')
-                for articleTable in articleTables
-                    links = articleTable.getElementsByTagName('a')
-                    for link in links
-                        if link.className == 'mw-changeslist-title'
-                            title = link.title
-                            @WM.Plugins.ArchWikiRCFilter.moveArticle(params,
-                                                                groupDiv,
-                                                                articleTable,
-                                                                title)
-                            break
+                groupDiv = $(h4).next()
+                for articleTable in groupDiv.children('table')
+                    link = $(articleTable).find('a.mw-changeslist-title')
+                                                                    .first()
+                    if link[0]
+                        [pureTitle, language] = @WM.ArchWiki.detectLanguage(
+                                                                link[0].title)
+                        if language != params.language
+                            @WM.Plugins.ArchWikiRCFilter.moveArticle(
+                                        groupDiv, articleTable, language)
 
             @WM.Log.logInfo("Grouped articles by language")
 
-    moveArticle: (params, groupDiv, articleTable, title) ->
-        lang = @WM.ArchWiki.detectLanguage(title)
-        pureTitle = lang[0]
-        language = lang[1]
-        if language != params.language
-            langHs = DOM.getChildrenByTagName(groupDiv, 'h5')
-            langFound = false
-            for i in [0...langHs.length]
-                HLang = langHs[i];
-                if HLang.innerHTML == language
-                    if i + 1 < langHs.length
-                        groupDiv.insertBefore(articleTable, langHs[i + 1])
-                    else
-                        groupDiv.appendChild(articleTable)
-                    langFound = true
-                    break
+    moveArticle: (groupDiv, articleTable, language) ->
+        langHs = groupDiv.children('h5')
+        langFound = false
+        for HLang, i in langHs
+            if HLang.innerHTML == language
+                if i + 1 < langHs.length
+                    langHs.eq(i + 1).before(articleTable)
+                else
+                    groupDiv.append(articleTable)
+                langFound = true
+                break
 
-            if not langFound
-                langH = document.createElement('h5')
-                langH.innerHTML = language
-                groupDiv.appendChild(langH)
-                groupDiv.appendChild(articleTable)
+        if not langFound
+            groupDiv.append(
+                $('<h5>').text(language),
+                articleTable,
+            )

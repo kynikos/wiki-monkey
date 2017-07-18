@@ -16,8 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+$ = require('jquery')
 CSS = require('../../lib.js.generic/dist/CSS')
-DOM = require('../../lib.js.generic/dist/DOM')
 
 
 class module.exports.ArchWikiNPFilter
@@ -29,43 +29,30 @@ class module.exports.ArchWikiNPFilter
         CSS.addStyleElement("#mw-content-text > h5
                                   {background-color:#afa;}")
 
-        contentDiv = document.getElementById('mw-content-text')
-        ul = contentDiv.getElementsByTagName('ul')[0]
-        liList = DOM.getChildrenByTagName(ul, 'li')
-        insertMark = ul.nextSibling
+        contentDiv = $('#mw-content-text')
+        ul = contentDiv.find('ul').first()
+        liList = ul.children('li')
 
         for li in liList
-            links = li.getElementsByTagName('a')
-            for link in links
-                if link.className == 'mw-newpages-pagename'
-                    title = link.title
-                    @WM.Plugins.ArchWikiNPFilter.moveArticle(params,
-                                                            contentDiv,
-                                                            insertMark,
-                                                            li,
-                                                            title)
-                    break
+            link = $(li).find('a.mw-newpages-pagename').first()
+            [pureTitle, language] = @WM.ArchWiki.detectLanguage(link[0].title)
+            if language != params.language
+                @WM.Plugins.ArchWikiNPFilter.moveArticle(
+                                                    contentDiv, li, language)
 
         @WM.Log.logInfo("Grouped articles by language")
 
-    moveArticle: (params, contentDiv, insertMark, li, title) ->
-        lang = @WM.ArchWiki.detectLanguage(title)
-        pureTitle = lang[0]
-        language = lang[1]
-        if language != params.language
-            langHs = DOM.getChildrenByTagName(contentDiv, 'h5')
-            langFound = false
-            for HLang in langHs
-                if HLang.innerHTML == language
-                    ul = DOM.getNextElementSibling(HLang)
-                    ul.appendChild(li)
-                    langFound = true
-                    break
+    moveArticle: (contentDiv, li, language) ->
+        langHs = contentDiv.children('h5')
+        langFound = false
+        for HLang in langHs
+            if HLang.innerHTML == language
+                ul = $(HLang).next().append(li)
+                langFound = true
+                break
 
-            if not langFound
-                langH = document.createElement('h5')
-                langH.innerHTML = language
-                ul = document.createElement('ul')
-                contentDiv.insertBefore(langH, insertMark)
-                contentDiv.insertBefore(ul, insertMark)
-                ul.appendChild(li)
+        if not langFound
+            contentDiv.append(
+                $('<h5>').text(language),
+                $('<ul>').append(li),
+            )
