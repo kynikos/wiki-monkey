@@ -4,8 +4,6 @@
   up to date
 * Make sure to be on the develop branch
 
-* Remove the /scripts/ and /src/configurations/ folders (old versions)
-
 * Create and check out a 'v3.x.x' branch
 * Run `invoke release 3.x.x`
   Do *not* prepend the 'v' here
