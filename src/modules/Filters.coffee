@@ -24,17 +24,14 @@ class module.exports.Filters
     constructor: (@WM) ->
 
     _makeUI: (plugins) ->
-        CSS.addStyleElement("#WikiMonkeyFilters-Select,
-                    #WikiMonkeyFilters-Apply {float:left;}
-                    #WikiMonkeyFilters-Select {width:100%;
-                        margin-right:-16em;}
-                    #WikiMonkeyFilters-Select > p {margin:0 17em 0 0;}
-                    #WikiMonkeyFilters-Select > p > select {width:100%;}
-                    #WikiMonkeyFilters-Apply > input[type='button']
+        CSS.addStyleElement("#WikiMonkeyFilters-Commands {display:flex;
+                        align-items:center; justify-content:space-between;}
+                    #WikiMonkeyFilters-Commands > select {flex:auto;}
+                    #WikiMonkeyFilters-Commands > select,
+                    #WikiMonkeyFilters-Commands > input[type='button']
                         {margin-right:1em;}
-                    #WikiMonkeyFilters-Apply > input[type='checkbox']
-                        {margin-right:0.4em;}
-                    #WikiMonkeyFilters-Options {clear:both;}")
+                    #WikiMonkeyFilters-Commands > input[type='checkbox']
+                        {margin-right:0.4em;}")
 
         filters = []
         selectFilter = $('<select/>').change(@updateFilterUI(filters))
@@ -60,41 +57,36 @@ class module.exports.Filters
                                                 .appendTo(selectFilter)
 
         if filters.length
-            applyFilterDiv = $('<div/>')
-                .attr('id', 'WikiMonkeyFilters-Apply')
+            commandsFilterDiv = $('<div/>')
+                .attr('id', 'WikiMonkeyFilters-Commands')
+
+            commandsFilterDiv.append(selectFilter)
 
             $('<input/>')
                 .attr('type', 'button')
                 .val('Apply filter')
                 .click(@executePlugin(filters))
-                .appendTo(applyFilterDiv)
+                .appendTo(commandsFilterDiv)
 
             $('<input/>')
                 .attr('type', 'checkbox')
                 .change(@toggleLog)
-                .appendTo(applyFilterDiv)
+                .appendTo(commandsFilterDiv)
 
             $('<span/>')
                 .text('Show Log')
-                .appendTo(applyFilterDiv)
+                .appendTo(commandsFilterDiv)
 
             divFilter = $('<div/>')
                 .attr('id', "WikiMonkeyFilters-Options")
 
             # This allows updateFilterUI replace it the first time
-            $('<div/>').appendTo(divFilter);
+            $('<div/>').appendTo(divFilter)
             @doUpdateFilterUI(divFilter, filters, 0)
-
-            selectFilterP = $('<p/>').append(selectFilter)
-
-            selectFilterDiv = $('<div/>')
-                .attr('id', 'WikiMonkeyFilters-Select')
-                .append(selectFilterP)
 
             div = $('<div/>')
                 .attr('id', 'WikiMonkeyFilters')
-                .append(selectFilterDiv)
-                .append(applyFilterDiv)
+                .append(commandsFilterDiv)
                 .append(divFilter)
             return div[0]
         else
@@ -104,7 +96,7 @@ class module.exports.Filters
         self = this
         return (event) ->
             UI = $('#WikiMonkeyFilters-Options')
-            select = $('#WikiMonkeyFilters-Select')
+            select = $('#WikiMonkeyFilters-Commands')
                 .find('select')
                 .first()
             id = select[0].selectedIndex
@@ -124,7 +116,7 @@ class module.exports.Filters
     executePlugin: (filters) =>
         self = this
         return (event) ->
-            select = $('#WikiMonkeyFilters-Select')
+            select = $('#WikiMonkeyFilters-Commands')
                 .find('select')
                 .first()
             id = select[0].selectedIndex

@@ -2305,8 +2305,8 @@ module.exports.Filters = (function() {
   }
 
   Filters.prototype._makeUI = function(plugins) {
-    var applyFilterDiv, div, divFilter, filters, pid, pluginConf, pluginInst, pluginName, selectFilter, selectFilterDiv, selectFilterP;
-    CSS.addStyleElement("#WikiMonkeyFilters-Select, #WikiMonkeyFilters-Apply {float:left;} #WikiMonkeyFilters-Select {width:100%; margin-right:-16em;} #WikiMonkeyFilters-Select > p {margin:0 17em 0 0;} #WikiMonkeyFilters-Select > p > select {width:100%;} #WikiMonkeyFilters-Apply > input[type='button'] {margin-right:1em;} #WikiMonkeyFilters-Apply > input[type='checkbox'] {margin-right:0.4em;} #WikiMonkeyFilters-Options {clear:both;}");
+    var commandsFilterDiv, div, divFilter, filters, pid, pluginConf, pluginInst, pluginName, selectFilter;
+    CSS.addStyleElement("#WikiMonkeyFilters-Commands {display:flex; align-items:center; justify-content:space-between;} #WikiMonkeyFilters-Commands > select {flex:auto;} #WikiMonkeyFilters-Commands > select, #WikiMonkeyFilters-Commands > input[type='button'] {margin-right:1em;} #WikiMonkeyFilters-Commands > input[type='checkbox'] {margin-right:0.4em;}");
     filters = [];
     selectFilter = $('<select/>').change(this.updateFilterUI(filters));
     for (pid in plugins) {
@@ -2323,16 +2323,15 @@ module.exports.Filters = (function() {
       $('<option/>').text(pluginInst[pluginInst.length - 1]).appendTo(selectFilter);
     }
     if (filters.length) {
-      applyFilterDiv = $('<div/>').attr('id', 'WikiMonkeyFilters-Apply');
-      $('<input/>').attr('type', 'button').val('Apply filter').click(this.executePlugin(filters)).appendTo(applyFilterDiv);
-      $('<input/>').attr('type', 'checkbox').change(this.toggleLog).appendTo(applyFilterDiv);
-      $('<span/>').text('Show Log').appendTo(applyFilterDiv);
+      commandsFilterDiv = $('<div/>').attr('id', 'WikiMonkeyFilters-Commands');
+      commandsFilterDiv.append(selectFilter);
+      $('<input/>').attr('type', 'button').val('Apply filter').click(this.executePlugin(filters)).appendTo(commandsFilterDiv);
+      $('<input/>').attr('type', 'checkbox').change(this.toggleLog).appendTo(commandsFilterDiv);
+      $('<span/>').text('Show Log').appendTo(commandsFilterDiv);
       divFilter = $('<div/>').attr('id', "WikiMonkeyFilters-Options");
       $('<div/>').appendTo(divFilter);
       this.doUpdateFilterUI(divFilter, filters, 0);
-      selectFilterP = $('<p/>').append(selectFilter);
-      selectFilterDiv = $('<div/>').attr('id', 'WikiMonkeyFilters-Select').append(selectFilterP);
-      div = $('<div/>').attr('id', 'WikiMonkeyFilters').append(selectFilterDiv).append(applyFilterDiv).append(divFilter);
+      div = $('<div/>').attr('id', 'WikiMonkeyFilters').append(commandsFilterDiv).append(divFilter);
       return div[0];
     } else {
       return false;
@@ -2345,7 +2344,7 @@ module.exports.Filters = (function() {
     return function(event) {
       var UI, id, select;
       UI = $('#WikiMonkeyFilters-Options');
-      select = $('#WikiMonkeyFilters-Select').find('select').first();
+      select = $('#WikiMonkeyFilters-Commands').find('select').first();
       id = select[0].selectedIndex;
       return self.doUpdateFilterUI(UI, filters, id);
     };
@@ -2366,7 +2365,7 @@ module.exports.Filters = (function() {
     self = this;
     return function(event) {
       var id, select;
-      select = $('#WikiMonkeyFilters-Select').find('select').first();
+      select = $('#WikiMonkeyFilters-Commands').find('select').first();
       id = select[0].selectedIndex;
       self.WM.Plugins[filters[id][0]].main(filters[id][2]);
       return this.disabled = true;
