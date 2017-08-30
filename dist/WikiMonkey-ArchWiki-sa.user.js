@@ -25,7 +25,7 @@ if (location.href.match(/^https:\/\/wiki\.archlinux\.org/i)) {
 if (typeof GM_info === "undefined" || GM_info === null) {
     window.GM_info = {
         script: {
-            version: "3.0.3",
+            version: "3.0.4",
         },
     };
 
@@ -2259,8 +2259,8 @@ module.exports.Filters = (function() {
   }
 
   Filters.prototype._makeUI = function(plugins) {
-    var applyFilterDiv, div, divFilter, filters, pid, pluginConf, pluginInst, pluginName, selectFilter, selectFilterDiv, selectFilterP;
-    CSS.addStyleElement("#WikiMonkeyFilters-Select, #WikiMonkeyFilters-Apply {float:left;} #WikiMonkeyFilters-Select {width:100%; margin-right:-16em;} #WikiMonkeyFilters-Select > p {margin:0 17em 0 0;} #WikiMonkeyFilters-Select > p > select {width:100%;} #WikiMonkeyFilters-Apply > input[type='button'] {margin-right:1em;} #WikiMonkeyFilters-Apply > input[type='checkbox'] {margin-right:0.4em;} #WikiMonkeyFilters-Options {clear:both;}");
+    var commandsFilterDiv, div, divFilter, filters, pid, pluginConf, pluginInst, pluginName, selectFilter;
+    CSS.addStyleElement("#WikiMonkeyFilters-Commands {display:flex; align-items:center; justify-content:space-between;} #WikiMonkeyFilters-Commands > select {flex:auto;} #WikiMonkeyFilters-Commands > select, #WikiMonkeyFilters-Commands > input[type='button'] {margin-right:1em;} #WikiMonkeyFilters-Commands > input[type='checkbox'] {margin-right:0.4em;}");
     filters = [];
     selectFilter = $('<select/>').change(this.updateFilterUI(filters));
     for (pid in plugins) {
@@ -2277,16 +2277,15 @@ module.exports.Filters = (function() {
       $('<option/>').text(pluginInst[pluginInst.length - 1]).appendTo(selectFilter);
     }
     if (filters.length) {
-      applyFilterDiv = $('<div/>').attr('id', 'WikiMonkeyFilters-Apply');
-      $('<input/>').attr('type', 'button').val('Apply filter').click(this.executePlugin(filters)).appendTo(applyFilterDiv);
-      $('<input/>').attr('type', 'checkbox').change(this.toggleLog).appendTo(applyFilterDiv);
-      $('<span/>').text('Show Log').appendTo(applyFilterDiv);
+      commandsFilterDiv = $('<div/>').attr('id', 'WikiMonkeyFilters-Commands');
+      commandsFilterDiv.append(selectFilter);
+      $('<input/>').attr('type', 'button').val('Apply filter').click(this.executePlugin(filters)).appendTo(commandsFilterDiv);
+      $('<input/>').attr('type', 'checkbox').change(this.toggleLog).appendTo(commandsFilterDiv);
+      $('<span/>').text('Show Log').appendTo(commandsFilterDiv);
       divFilter = $('<div/>').attr('id', "WikiMonkeyFilters-Options");
       $('<div/>').appendTo(divFilter);
       this.doUpdateFilterUI(divFilter, filters, 0);
-      selectFilterP = $('<p/>').append(selectFilter);
-      selectFilterDiv = $('<div/>').attr('id', 'WikiMonkeyFilters-Select').append(selectFilterP);
-      div = $('<div/>').attr('id', 'WikiMonkeyFilters').append(selectFilterDiv).append(applyFilterDiv).append(divFilter);
+      div = $('<div/>').attr('id', 'WikiMonkeyFilters').append(commandsFilterDiv).append(divFilter);
       return div[0];
     } else {
       return false;
@@ -2299,7 +2298,7 @@ module.exports.Filters = (function() {
     return function(event) {
       var UI, id, select;
       UI = $('#WikiMonkeyFilters-Options');
-      select = $('#WikiMonkeyFilters-Select').find('select').first();
+      select = $('#WikiMonkeyFilters-Commands').find('select').first();
       id = select[0].selectedIndex;
       return self.doUpdateFilterUI(UI, filters, id);
     };
@@ -2320,7 +2319,7 @@ module.exports.Filters = (function() {
     self = this;
     return function(event) {
       var id, select;
-      select = $('#WikiMonkeyFilters-Select').find('select').first();
+      select = $('#WikiMonkeyFilters-Commands').find('select').first();
       id = select[0].selectedIndex;
       self.WM.Plugins[filters[id][0]].main(filters[id][2]);
       return this.disabled = true;
@@ -2622,7 +2621,7 @@ module.exports.Log = (function() {
 
   Log.prototype._makeLogArea = function() {
     var log, logarea, par;
-    CSS.addStyleElement("#WikiMonkeyLogArea {height:10em; border:2px solid #07b; padding:0.5em; overflow:auto; resize:vertical; background-color:#111;} #WikiMonkeyLogArea p.timestamp, #WikiMonkeyLog p.message {border:none; padding:0; font-family:monospace; color:#eee;} #WikiMonkeyLogArea p.timestamp {float:left; width:5em; margin:0 -5em 0 0; font-size:0.9em;} #WikiMonkeyLogArea p.message {margin:0 0 0.5em 5em;} #WikiMonkeyLogArea div.mhidden {display:none;} #WikiMonkeyLogArea div.mjson {display:none;} #WikiMonkeyLogArea div.mdebug p.message {color:cyan;} #WikiMonkeyLogArea div.minfo {} #WikiMonkeyLogArea div.mwarning p.message {color:gold;} #WikiMonkeyLogArea div.merror p.message {color:red;} #WikiMonkeyLogArea a {color:inherit; text-decoration:underline;}");
+    CSS.addStyleElement("#WikiMonkeyLogArea {height:10em; border:2px solid #07b; padding:0.5em; overflow:auto; resize:vertical; background-color:#111;} #WikiMonkeyLogArea p.timestamp, #WikiMonkeyLog p.message {border:none; padding:0; font-family:monospace; color:#eee;} #WikiMonkeyLogArea p.timestamp {margin:0 1em 0 0; white-space:nowrap;} #WikiMonkeyLogArea p.message {margin:0;} #WikiMonkeyLogArea div.mdebug, #WikiMonkeyLogArea div.minfo, #WikiMonkeyLogArea div.mwarning, #WikiMonkeyLogArea div.merror {display:flex;} #WikiMonkeyLogArea div.mhidden {display:none;} #WikiMonkeyLogArea div.mjson {display:none;} #WikiMonkeyLogArea div.mdebug p.message {color:cyan;} #WikiMonkeyLogArea div.mwarning p.message {color:gold;} #WikiMonkeyLogArea div.merror p.message {color:red;} #WikiMonkeyLogArea a {color:inherit; text-decoration:underline;}");
     log = document.createElement('div');
     log.id = 'WikiMonkeyLog';
     par = document.createElement('p');
@@ -2704,7 +2703,7 @@ module.exports.Log = (function() {
 
   Log.prototype.computeInfoDisplayStyle = function() {
     if (this._currentInfoDisplayState) {
-      return 'block';
+      return 'flex';
     } else {
       return 'none';
     }
