@@ -34,15 +34,17 @@ class module.exports.Log
                     #WikiMonkeyLogArea p.timestamp,
                         #WikiMonkeyLog p.message {border:none; padding:0;
                         font-family:monospace; color:#eee;}
-                    #WikiMonkeyLogArea p.timestamp {float:left; width:5em;
-                        margin:0 -5em 0 0; font-size:0.9em;}
-                    #WikiMonkeyLogArea p.message {margin:0 0 0.5em 5em;}
+                    #WikiMonkeyLogArea p.timestamp {margin:0 1em 0 0;
+                                                white-space:nowrap;}
+                    #WikiMonkeyLogArea p.message {margin:0;}
+                    #WikiMonkeyLogArea div.mdebug,
+                    #WikiMonkeyLogArea div.minfo,
+                    #WikiMonkeyLogArea div.mwarning,
+                    #WikiMonkeyLogArea div.merror {display:flex;}
                     #WikiMonkeyLogArea div.mhidden {display:none;}
                     #WikiMonkeyLogArea div.mjson {display:none;}
                     #WikiMonkeyLogArea div.mdebug p.message {color:cyan;}
-                    #WikiMonkeyLogArea div.minfo {}
-                    #WikiMonkeyLogArea div.mwarning p.message
-                        {color:gold;}
+                    #WikiMonkeyLogArea div.mwarning p.message {color:gold;}
                     #WikiMonkeyLogArea div.merror p.message {color:red;}
                     #WikiMonkeyLogArea a {color:inherit;
                                                 text-decoration:underline;}");
@@ -134,7 +136,7 @@ class module.exports.Log
                         '.log'
 
     computeInfoDisplayStyle: ->
-        return if @_currentInfoDisplayState then 'block' else 'none'
+        return if @_currentInfoDisplayState then 'flex' else 'none'
 
     computeFilterLinkAnchor: ->
         return if @_currentInfoDisplayState then '[hide info messages]' else
