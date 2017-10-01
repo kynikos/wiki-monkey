@@ -54,7 +54,7 @@ class module.exports.MW
                 short: "/"
                 full: "/index.php"
                 api: "/api.php"
-            "^https?://wiki\.archlinuxjp\.org":
+            "^https?://wiki\.archlinux\.jp":
                 short: "/index.php/"
                 full: "/index.php"
                 api: "/api.php"
