@@ -2886,7 +2886,7 @@ module.exports.MW = (function() {
         full: "/index.php",
         api: "/api.php"
       },
-      "^https?://wiki\.archlinuxjp\.org": {
+      "^https?://wiki\.archlinux\.jp": {
         short: "/index.php/",
         full: "/index.php",
         api: "/api.php"

@@ -25,7 +25,7 @@ if (location.href.match(/^http:\/\/[a-z]+\.wikipedia\.org/i)) {
 if (typeof GM_info === "undefined" || GM_info === null) {
     window.GM_info = {
         script: {
-            version: "3.0.4",
+            version: "3.0.5",
         },
     };
 
@@ -2364,7 +2364,7 @@ module.exports.MW = (function() {
         full: "/index.php",
         api: "/api.php"
       },
-      "^https?://wiki\.archlinuxjp\.org": {
+      "^https?://wiki\.archlinux\.jp": {
         short: "/index.php/",
         full: "/index.php",
         api: "/api.php"

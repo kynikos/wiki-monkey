@@ -3,14 +3,14 @@
 // @name Wiki Monkey (Wikipedia)
 // @namespace https://github.com/kynikos/wiki-monkey
 // @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 3.0.4-wikipedia
+// @version 3.0.5-wikipedia
 // @description MediaWiki-compatible bot and editor assistant that runs in the browser (Wikipedia version)
 // @website https://github.com/kynikos/wiki-monkey
 // @supportURL https://github.com/kynikos/wiki-monkey/issues
 // @updateURL https://raw.github.com/kynikos/wiki-monkey/master/scripts/WikiMonkey-Wikipedia.meta.js
 // @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/scripts/WikiMonkey-Wikipedia.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/v3.0.4/auxiliary/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/v3.0.4/auxiliary/wiki-monkey-64.png
+// @icon https://raw.github.com/kynikos/wiki-monkey/v3.0.5/auxiliary/wiki-monkey.png
+// @icon64 https://raw.github.com/kynikos/wiki-monkey/v3.0.5/auxiliary/wiki-monkey-64.png
 // @match http://*.wikipedia.org/*
 // @grant GM_info
 // @grant GM_xmlhttpRequest
@@ -2347,7 +2347,7 @@ module.exports.MW = (function() {
         full: "/index.php",
         api: "/api.php"
       },
-      "^https?://wiki\.archlinuxjp\.org": {
+      "^https?://wiki\.archlinux\.jp": {
         short: "/index.php/",
         full: "/index.php",
         api: "/api.php"
