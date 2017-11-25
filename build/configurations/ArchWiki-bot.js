@@ -517,6 +517,21 @@ module.exports = {
                     false
                 ]
             ],
+            "010CTtr": [
+                "UpdateCategoryTree",
+                [
+                    "Update category trees",
+                    "Turkish"
+                ],
+                [
+                    [
+                        "ArchWiki",
+                        "tr"
+                    ],
+                    "automatic update",
+                    false
+                ]
+            ],
             "010CTuk": [
                 "UpdateCategoryTree",
                 [

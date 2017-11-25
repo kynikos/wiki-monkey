@@ -88,6 +88,7 @@ class module.exports.ArchWiki
             "Slovenský",
             "Српски",
             "ไทย",
+            "Türkçe",
             "Українська",
             "简体中文",
             "正體中文"
@@ -308,6 +309,16 @@ class module.exports.ArchWiki
             "alsoIn": "ยังอยู่ใน",  # Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(ไทย\\)", "", ""],
+            "keepAltName": true,
+            "showIndices": true,
+            "rightToLeft": false
+        },
+        "tr": {
+            "page": "Table of contents (Türkçe)",
+            "root": "Category:Türkçe",
+            "alsoIn": "ayrıca",  # Unconfirmed
+            "indentType": ":",
+            "replace": ["[ _]\\(Türkçe\\)", "", ""],
             "keepAltName": true,
             "showIndices": true,
             "rightToLeft": false

@@ -460,6 +460,18 @@ ARCHWIKI = {
                 False,
             )
         ),
+        "010CTtr": (
+            "UpdateCategoryTree",
+            ("Update category trees", "Turkish"),
+            (
+                (
+                    "ArchWiki",
+                    "tr"
+                ),
+                "automatic update",
+                False,
+            )
+        ),
         "010CTuk": (
             "UpdateCategoryTree",
             ("Update category trees", "Ukrainian"),
@@ -574,8 +586,8 @@ DISABLE_AW_BOT = {
                 "010CTen", "010CTes", "010CThe", "010CThr", "010CThu",
                 "010CTid", "010CTit", "010CTko", "010CTlt",
                 "010CTnl", "010CTpl", "010CTpt", "010CTru", "010CTsk",
-                "010CTsr", "010CTth", "010CTuk", "010CTzhhans", "010CTzhhant",
-                "040ASCC"),
+                "010CTsr", "010CTth", "010CTtr", "010CTuk",
+                "010CTzhhans", "010CTzhhant", "040ASCC"),
     "Bot": ("030IL", "040APT", "050AAL"),
 }
 

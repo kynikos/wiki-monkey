@@ -561,6 +561,21 @@ module.exports = {
                     false
                 ]
             ],
+            "010CTtr": [
+                "UpdateCategoryTree",
+                [
+                    "Update category trees",
+                    "Turkish"
+                ],
+                [
+                    [
+                        "ArchWiki",
+                        "tr"
+                    ],
+                    "automatic update",
+                    false
+                ]
+            ],
             "010CTuk": [
                 "UpdateCategoryTree",
                 [
@@ -929,7 +944,7 @@ module.exports.ArchWiki = (function() {
         english: "Chinese (Traditional)"
       }
     },
-    categories: ["العربية", "Български", "Català", "Česky", "Dansk", "Ελληνικά", "English", "Esperanto", "Español", "Suomi", "עברית", "Hrvatski", "Magyar", "Indonesia", "Italiano", "日本語", "한국어", "Lietuviškai", "Norsk Bokmål", "Nederlands", "Polski", "Português", "Русский", "Slovenský", "Српски", "ไทย", "Українська", "简体中文", "正體中文"],
+    categories: ["العربية", "Български", "Català", "Česky", "Dansk", "Ελληνικά", "English", "Esperanto", "Español", "Suomi", "עברית", "Hrvatski", "Magyar", "Indonesia", "Italiano", "日本語", "한국어", "Lietuviškai", "Norsk Bokmål", "Nederlands", "Polski", "Português", "Русский", "Slovenský", "Српски", "ไทย", "Türkçe", "Українська", "简体中文", "正體中文"],
     interlanguage: {
       external: ["de", "fa", "fr", "ja", "ro"],
       internal: ["ar", "bg", "cs", "da", "el", "en", "es", "fi", "he", "hr", "hu", "id", "it", "ko", "lt", "nl", "pl", "pt", "ru", "sk", "sr", "sv", "th", "tr", "uk", "zh-hans", "zh-hant"]
@@ -1143,6 +1158,16 @@ module.exports.ArchWiki = (function() {
       "alsoIn": "ยังอยู่ใน",
       "indentType": ":",
       "replace": ["[ _]\\(ไทย\\)", "", ""],
+      "keepAltName": true,
+      "showIndices": true,
+      "rightToLeft": false
+    },
+    "tr": {
+      "page": "Table of contents (Türkçe)",
+      "root": "Category:Türkçe",
+      "alsoIn": "ayrıca",
+      "indentType": ":",
+      "replace": ["[ _]\\(Türkçe\\)", "", ""],
       "keepAltName": true,
       "showIndices": true,
       "rightToLeft": false

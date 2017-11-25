@@ -444,6 +444,18 @@ module.exports = {
                     false
                 ]
             ],
+            "010CTtr": [
+                "UpdateCategoryTree",
+                null,
+                [
+                    [
+                        "ArchWiki",
+                        "tr"
+                    ],
+                    "automatic update",
+                    false
+                ]
+            ],
             "010CTuk": [
                 "UpdateCategoryTree",
                 null,
