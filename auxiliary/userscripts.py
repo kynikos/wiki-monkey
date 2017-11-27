@@ -27,7 +27,8 @@ SRCDIR = "./build/"
 DISTDIR = './dist/'
 AUXDIR = './auxiliary/'
 DISTFILE = "{distdir}WikiMonkey-{fname}{suffix}.{preext}.js"
-BROWSERIFY = "browserify {args} {srcpath} -o {distfile}"
+COFFEE = "./node_modules/.bin/coffee --compile --bare --output {build} {src}"
+BROWSERIFY = "./node_modules/.bin/browserify {args} {srcpath} -o {distfile}"
 
 # This should be kept compatible with both JavaScript and CoffeeScript
 # require syntax
@@ -109,7 +110,7 @@ def compile(run, version):
     # It's important to recompile the configuration *before* the scripts
     configurations.compile()
 
-    run("coffee --compile --bare --output ./build/ ./src/")
+    run(COFFEE.format(build="./build/", src="./src/"))
 
     for srcfile in os.listdir(SRCDIR):
         srcpath = os.path.join(SRCDIR, srcfile)
