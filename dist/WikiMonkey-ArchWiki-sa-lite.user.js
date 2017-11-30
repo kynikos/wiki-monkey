@@ -41,19 +41,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     s(r[o]);
   }return s;
 })({ 1: [function (require, module, exports) {
-
-    if (typeof GM_info === "undefined" || GM_info === null) {
-      window.GM_info = {
-        script: {
-          version: "3.0.5"
-        }
-      };
-
-      window.GM_emulation = true;
-    };
-
-    require('../lib.js.generic/dist/GMAPIEmulation');
-
     var WM, WM_;
 
     WM_ = require('./modules/_Init').WM;
@@ -61,7 +48,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     WM = new WM_(['ArchWikiFixHeader', require("./plugins/ArchWikiFixHeader").ArchWikiFixHeader], ['ArchWikiFixHeadings', require("./plugins/ArchWikiFixHeadings").ArchWikiFixHeadings], ['ArchWikiFixLinks', require("./plugins/ArchWikiFixLinks").ArchWikiFixLinks], ['ArchWikiNewTemplates', require("./plugins/ArchWikiNewTemplates").ArchWikiNewTemplates], ['ArchWikiNPFilter', require("./plugins/ArchWikiNPFilter").ArchWikiNPFilter], ['ArchWikiOldAURLinks', require("./plugins/ArchWikiOldAURLinks").ArchWikiOldAURLinks], ['ArchWikiQuickReport', require("./plugins/ArchWikiQuickReport").ArchWikiQuickReport], ['ArchWikiSortContacts', require("./plugins/ArchWikiSortContacts").ArchWikiSortContacts], ['ArchWikiSummaryToRelated', require("./plugins/ArchWikiSummaryToRelated").ArchWikiSummaryToRelated], ['ArchWikiRCFilter', require("./plugins/ArchWikiRCFilter").ArchWikiRCFilter], ['ArchWikiUpdatePackageTemplates', require("./plugins/ArchWikiUpdatePackageTemplates").ArchWikiUpdatePackageTemplates], ['ExpandContractions', require("./plugins/ExpandContractions").ExpandContractions], ['FixBacklinkFragments', require("./plugins/FixBacklinkFragments").FixBacklinkFragments], ['FixDoubleRedirects', require("./plugins/FixDoubleRedirects").FixDoubleRedirects], ['FixFragments', require("./plugins/FixFragments").FixFragments], ['FixLinkFragments', require("./plugins/FixLinkFragments").FixLinkFragments], ['MultipleLineBreaks', require("./plugins/MultipleLineBreaks").MultipleLineBreaks], ['SimpleReplace', require("./plugins/SimpleReplace").SimpleReplace], ['SynchronizeInterlanguageLinks', require("./plugins/SynchronizeInterlanguageLinks").SynchronizeInterlanguageLinks], ['UpdateCategoryTree', require("./plugins/UpdateCategoryTree").UpdateCategoryTree]);
 
     WM.main(require("../build/configurations/ArchWiki-bot"));
-  }, { "../build/configurations/ArchWiki-bot": 2, "../lib.js.generic/dist/GMAPIEmulation": 45, "./modules/_Init": 20, "./plugins/ArchWikiFixHeader": 21, "./plugins/ArchWikiFixHeadings": 22, "./plugins/ArchWikiFixLinks": 23, "./plugins/ArchWikiNPFilter": 24, "./plugins/ArchWikiNewTemplates": 25, "./plugins/ArchWikiOldAURLinks": 26, "./plugins/ArchWikiQuickReport": 27, "./plugins/ArchWikiRCFilter": 28, "./plugins/ArchWikiSortContacts": 29, "./plugins/ArchWikiSummaryToRelated": 30, "./plugins/ArchWikiUpdatePackageTemplates": 31, "./plugins/ExpandContractions": 32, "./plugins/FixBacklinkFragments": 33, "./plugins/FixDoubleRedirects": 34, "./plugins/FixFragments": 35, "./plugins/FixLinkFragments": 36, "./plugins/MultipleLineBreaks": 37, "./plugins/SimpleReplace": 38, "./plugins/SynchronizeInterlanguageLinks": 39, "./plugins/UpdateCategoryTree": 40 }], 2: [function (require, module, exports) {
+  }, { "../build/configurations/ArchWiki-bot": 2, "./modules/_Init": 20, "./plugins/ArchWikiFixHeader": 21, "./plugins/ArchWikiFixHeadings": 22, "./plugins/ArchWikiFixLinks": 23, "./plugins/ArchWikiNPFilter": 24, "./plugins/ArchWikiNewTemplates": 25, "./plugins/ArchWikiOldAURLinks": 26, "./plugins/ArchWikiQuickReport": 27, "./plugins/ArchWikiRCFilter": 28, "./plugins/ArchWikiSortContacts": 29, "./plugins/ArchWikiSummaryToRelated": 30, "./plugins/ArchWikiUpdatePackageTemplates": 31, "./plugins/ExpandContractions": 32, "./plugins/FixBacklinkFragments": 33, "./plugins/FixDoubleRedirects": 34, "./plugins/FixFragments": 35, "./plugins/FixLinkFragments": 36, "./plugins/MultipleLineBreaks": 37, "./plugins/SimpleReplace": 38, "./plugins/SynchronizeInterlanguageLinks": 39, "./plugins/UpdateCategoryTree": 40 }], 2: [function (require, module, exports) {
     module.exports = {
       "Mods": {
         "Contributions": {
@@ -310,7 +297,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return ArchPackages;
     }();
-  }, { "../../lib.js.generic/dist/Obj": 47, "../../lib.js.generic/dist/RegEx": 48 }], 4: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Obj": 46, "../../lib.js.generic/dist/RegEx": 47 }], 4: [function (require, module, exports) {
     module.exports.ArchWiki = function () {
       var languages, tablesOfContents;
 
@@ -1544,7 +1531,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Cat;
     }();
-  }, { "../../lib.js.generic/dist/Async": 41, "../../lib.js.generic/dist/Obj": 47 }], 7: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Async": 41, "../../lib.js.generic/dist/Obj": 46 }], 7: [function (require, module, exports) {
     var $, CSS, DOM;
 
     $ = window.$;
@@ -1850,7 +1837,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Diff;
     }();
-  }, { "../../lib.js.generic/dist/HTTP": 46 }], 9: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/HTTP": 45 }], 9: [function (require, module, exports) {
     var Compatibility, HTTP;
 
     Compatibility = require('../../lib.js.generic/dist/Compatibility');
@@ -1911,7 +1898,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Editor;
     }();
-  }, { "../../lib.js.generic/dist/Compatibility": 43, "../../lib.js.generic/dist/HTTP": 46 }], 10: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Compatibility": 43, "../../lib.js.generic/dist/HTTP": 45 }], 10: [function (require, module, exports) {
     var $, CSS;
 
     $ = window.$;
@@ -2294,7 +2281,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Interlanguage;
     }();
-  }, { "../../lib.js.generic/dist/Obj": 47 }], 12: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Obj": 46 }], 12: [function (require, module, exports) {
     var CSS, Str;
 
     CSS = require('../../lib.js.generic/dist/CSS');
@@ -2509,7 +2496,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Log;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 42, "../../lib.js.generic/dist/Str": 49 }], 13: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/CSS": 42, "../../lib.js.generic/dist/Str": 48 }], 13: [function (require, module, exports) {
     var HTTP, Obj;
 
     HTTP = require('../../lib.js.generic/dist/HTTP');
@@ -3064,7 +3051,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return MW;
     }();
-  }, { "../../lib.js.generic/dist/HTTP": 46, "../../lib.js.generic/dist/Obj": 47 }], 14: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/HTTP": 45, "../../lib.js.generic/dist/Obj": 46 }], 14: [function (require, module, exports) {
     var $, Async, CSS;
 
     $ = window.$;
@@ -3775,7 +3762,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Parser;
     }();
-  }, { "../../lib.js.generic/dist/RegEx": 48, "../../lib.js.generic/dist/Str": 49 }], 17: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/RegEx": 47, "../../lib.js.generic/dist/Str": 48 }], 17: [function (require, module, exports) {
     var Str;
 
     Str = require('../../lib.js.generic/dist/Str');
@@ -3802,7 +3789,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Tables;
     }();
-  }, { "../../lib.js.generic/dist/Str": 49 }], 18: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Str": 48 }], 18: [function (require, module, exports) {
     var CSS, RegEx;
 
     CSS = require('../../lib.js.generic/dist/CSS');
@@ -3958,7 +3945,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return UI;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 42, "../../lib.js.generic/dist/RegEx": 48 }], 19: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/CSS": 42, "../../lib.js.generic/dist/RegEx": 47 }], 19: [function (require, module, exports) {
     module.exports.WhatLinksHere = function () {
       function WhatLinksHere(WM) {
         _classCallCheck(this, WhatLinksHere);
@@ -4759,7 +4746,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return ArchWikiOldAURLinks;
     }();
-  }, { "../../lib.js.generic/dist/RegEx": 48 }], 27: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/RegEx": 47 }], 27: [function (require, module, exports) {
     var CSS, HTTP;
 
     CSS = require('../../lib.js.generic/dist/CSS');
@@ -4882,7 +4869,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return ArchWikiQuickReport;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 42, "../../lib.js.generic/dist/HTTP": 46 }], 28: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/CSS": 42, "../../lib.js.generic/dist/HTTP": 45 }], 28: [function (require, module, exports) {
     var $, CSS;
 
     $ = window.$;
@@ -6148,7 +6135,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return FixDoubleRedirects;
     }();
-  }, { "../../lib.js.generic/dist/Str": 49 }], 35: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Str": 48 }], 35: [function (require, module, exports) {
     module.exports.FixFragments = function () {
       var FixFragments = function () {
         function FixFragments(WM) {
@@ -7173,7 +7160,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return UpdateCategoryTree;
     }();
-  }, { "../../lib.js.generic/dist/Str": 49 }], 41: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Str": 48 }], 41: [function (require, module, exports) {
     module.exports.executeAsync = function (functions, id) {
       var callContinue, fid;
       id++;
@@ -7379,72 +7366,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       return _recurse();
     };
   }, {}], 45: [function (require, module, exports) {
-    if (typeof GM_xmlhttpRequest === "undefined" || GM_xmlhttpRequest === null) {
-      window.GM_xmlhttpRequest = function () {
-        var header, req;
-        if (params.method == null) {
-          params.method = "GET";
-        }
-        if (params.data == null) {
-          params.data = null;
-        }
-        if (params.headers == null) {
-          params.headers = {};
-        }
-        if (params.user == null) {
-          params.user = null;
-        }
-        if (params.password == null) {
-          params.password = null;
-        }
-        if (params.onload == null) {
-          params.onload = function (req) {};
-        }
-        if (params.onerror == null) {
-          params.onerror = function (req) {};
-        }
-        if (params.onreadystatechange == null) {
-          params.onreadystatechange = function (req) {};
-        }
-        params.async = true;
-        req = new XMLHttpRequest();
-        req.open(params.method, params.url, params.async, params.user, params.password);
-        for (header in params.headers) {
-          req.setRequestHeader(header, params.headers[header]);
-        }
-        req.onreadystatechange = function () {
-          var err, error, response;
-          response = {
-            responseText: req.responseText,
-            readyState: req.readyState,
-            responseHeaders: req.getAllResponseHeaders(),
-            status: req.status,
-            statusText: req.statusText
-          };
-          try {
-            response.responseJSON = JSON.parse(req.responseText);
-          } catch (error) {
-            err = error;
-            response.responseJSON = void 0;
-          }
-          params.onreadystatechange(response);
-          if (req.readyState === 4) {
-            if (req.status === 200) {
-              return params.onload(response);
-            } else {
-              return params.onerror(response);
-            }
-          }
-        };
-        req.send(params.data);
-        return {
-          abort: function abort() {
-            return req.abort();
-          }
-        };
-      };
-    }
-  }, {}], 46: [function (require, module, exports) {
     module.exports.getUrlLocation = function (url) {
       var link;
       link = document.createElement('a');
@@ -7519,7 +7440,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       req.send(query);
       return req;
     };
-  }, {}], 47: [function (require, module, exports) {
+  }, {}], 46: [function (require, module, exports) {
     module.exports.getKeys = function (object) {
       var i, keys;
       keys = [];
@@ -7544,7 +7465,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         return object[i];
       }
     };
-  }, {}], 48: [function (require, module, exports) {
+  }, {}], 47: [function (require, module, exports) {
     module.exports.escapePattern = function (string) {
       return string.replace(/[-[\]{}()^$*+?.|\\]/g, "\\$&");
     };
@@ -7586,7 +7507,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
       return result;
     };
-  }, {}], 49: [function (require, module, exports) {
+  }, {}], 48: [function (require, module, exports) {
     module.exports.insert = function (string, newString, id) {
       if (id == null) {
         id = 0;

@@ -1,20 +1,22 @@
-// ==UserScript==
-// @id wiki-monkey-wikipedia
-// @name Wiki Monkey (Wikipedia)
-// @namespace https://github.com/kynikos/wiki-monkey
-// @author Dario Giovannetti <dev@dariogiovannetti.net>
-// @version 3.0.5-wikipedia
-// @description MediaWiki-compatible bot and editor assistant that runs in the browser (Wikipedia version)
-// @website https://github.com/kynikos/wiki-monkey
-// @supportURL https://github.com/kynikos/wiki-monkey/issues
-// @updateURL https://raw.github.com/kynikos/wiki-monkey/master/scripts/WikiMonkey-Wikipedia.meta.js
-// @downloadURL https://raw.github.com/kynikos/wiki-monkey/master/scripts/WikiMonkey-Wikipedia.user.js
-// @icon https://raw.github.com/kynikos/wiki-monkey/v3.0.5/auxiliary/wiki-monkey.png
-// @icon64 https://raw.github.com/kynikos/wiki-monkey/v3.0.5/auxiliary/wiki-monkey-64.png
-// @match http://*.wikipedia.org/*
-// @grant GM_info
-// @grant GM_xmlhttpRequest
-// ==/UserScript==
+/*
+ * Wiki Monkey - MediaWiki bot and editor-assistant user script
+ * Copyright (C) 2011 Dario Giovannetti <dev@dariogiovannetti.net>
+ *
+ * This file is part of Wiki Monkey.
+ *
+ * Wiki Monkey is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Wiki Monkey is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 "use strict";
 

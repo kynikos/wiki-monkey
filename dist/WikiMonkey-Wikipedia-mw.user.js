@@ -39,19 +39,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     s(r[o]);
   }return s;
 })({ 1: [function (require, module, exports) {
-
-    if (typeof GM_info === "undefined" || GM_info === null) {
-      window.GM_info = {
-        script: {
-          version: "3.0.5"
-        }
-      };
-
-      window.GM_emulation = true;
-    };
-
-    require('../lib.js.generic/dist/GMAPIEmulation');
-
     var WM, WM_;
 
     WM_ = require('./modules/_Init').WM;
@@ -59,7 +46,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     WM = new WM_(['ExpandContractions', require("./plugins/ExpandContractions").ExpandContractions], ['FixBacklinkFragments', require("./plugins/FixBacklinkFragments").FixBacklinkFragments], ['FixDoubleRedirects', require("./plugins/FixDoubleRedirects").FixDoubleRedirects], ['FixFragments', require("./plugins/FixFragments").FixFragments], ['FixLinkFragments', require("./plugins/FixLinkFragments").FixLinkFragments], ['MultipleLineBreaks', require("./plugins/MultipleLineBreaks").MultipleLineBreaks], ['SimpleReplace', require("./plugins/SimpleReplace").SimpleReplace], ['SynchronizeInterlanguageLinks', require("./plugins/SynchronizeInterlanguageLinks").SynchronizeInterlanguageLinks], ['UpdateCategoryTree', require("./plugins/UpdateCategoryTree").UpdateCategoryTree]);
 
     WM.main(require("../build/configurations/Wikipedia-bot"));
-  }, { "../build/configurations/Wikipedia-bot": 2, "../lib.js.generic/dist/GMAPIEmulation": 34, "./modules/_Init": 20, "./plugins/ExpandContractions": 21, "./plugins/FixBacklinkFragments": 22, "./plugins/FixDoubleRedirects": 23, "./plugins/FixFragments": 24, "./plugins/FixLinkFragments": 25, "./plugins/MultipleLineBreaks": 26, "./plugins/SimpleReplace": 27, "./plugins/SynchronizeInterlanguageLinks": 28, "./plugins/UpdateCategoryTree": 29 }], 2: [function (require, module, exports) {
+  }, { "../build/configurations/Wikipedia-bot": 2, "./modules/_Init": 20, "./plugins/ExpandContractions": 21, "./plugins/FixBacklinkFragments": 22, "./plugins/FixDoubleRedirects": 23, "./plugins/FixFragments": 24, "./plugins/FixLinkFragments": 25, "./plugins/MultipleLineBreaks": 26, "./plugins/SimpleReplace": 27, "./plugins/SynchronizeInterlanguageLinks": 28, "./plugins/UpdateCategoryTree": 29 }], 2: [function (require, module, exports) {
     module.exports = {
       "Mods": {
         "Contributions": {
@@ -264,7 +251,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return ArchPackages;
     }();
-  }, { "../../lib.js.generic/dist/Obj": 36, "../../lib.js.generic/dist/RegEx": 37 }], 4: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Obj": 35, "../../lib.js.generic/dist/RegEx": 36 }], 4: [function (require, module, exports) {
     module.exports.ArchWiki = function () {
       var languages, tablesOfContents;
 
@@ -1498,7 +1485,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Cat;
     }();
-  }, { "../../lib.js.generic/dist/Async": 30, "../../lib.js.generic/dist/Obj": 36 }], 7: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Async": 30, "../../lib.js.generic/dist/Obj": 35 }], 7: [function (require, module, exports) {
     var $, CSS, DOM;
 
     $ = window.$;
@@ -1804,7 +1791,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Diff;
     }();
-  }, { "../../lib.js.generic/dist/HTTP": 35 }], 9: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/HTTP": 34 }], 9: [function (require, module, exports) {
     var Compatibility, HTTP;
 
     Compatibility = require('../../lib.js.generic/dist/Compatibility');
@@ -1865,7 +1852,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Editor;
     }();
-  }, { "../../lib.js.generic/dist/Compatibility": 32, "../../lib.js.generic/dist/HTTP": 35 }], 10: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Compatibility": 32, "../../lib.js.generic/dist/HTTP": 34 }], 10: [function (require, module, exports) {
     var $, CSS;
 
     $ = window.$;
@@ -2248,7 +2235,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Interlanguage;
     }();
-  }, { "../../lib.js.generic/dist/Obj": 36 }], 12: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Obj": 35 }], 12: [function (require, module, exports) {
     var CSS, Str;
 
     CSS = require('../../lib.js.generic/dist/CSS');
@@ -2463,7 +2450,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Log;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 31, "../../lib.js.generic/dist/Str": 38 }], 13: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/CSS": 31, "../../lib.js.generic/dist/Str": 37 }], 13: [function (require, module, exports) {
     var HTTP, Obj;
 
     HTTP = require('../../lib.js.generic/dist/HTTP');
@@ -3018,7 +3005,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return MW;
     }();
-  }, { "../../lib.js.generic/dist/HTTP": 35, "../../lib.js.generic/dist/Obj": 36 }], 14: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/HTTP": 34, "../../lib.js.generic/dist/Obj": 35 }], 14: [function (require, module, exports) {
     var $, Async, CSS;
 
     $ = window.$;
@@ -3729,7 +3716,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Parser;
     }();
-  }, { "../../lib.js.generic/dist/RegEx": 37, "../../lib.js.generic/dist/Str": 38 }], 17: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/RegEx": 36, "../../lib.js.generic/dist/Str": 37 }], 17: [function (require, module, exports) {
     var Str;
 
     Str = require('../../lib.js.generic/dist/Str');
@@ -3756,7 +3743,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Tables;
     }();
-  }, { "../../lib.js.generic/dist/Str": 38 }], 18: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Str": 37 }], 18: [function (require, module, exports) {
     var CSS, RegEx;
 
     CSS = require('../../lib.js.generic/dist/CSS');
@@ -3912,7 +3899,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return UI;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 31, "../../lib.js.generic/dist/RegEx": 37 }], 19: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/CSS": 31, "../../lib.js.generic/dist/RegEx": 36 }], 19: [function (require, module, exports) {
     module.exports.WhatLinksHere = function () {
       function WhatLinksHere(WM) {
         _classCallCheck(this, WhatLinksHere);
@@ -4509,7 +4496,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return FixDoubleRedirects;
     }();
-  }, { "../../lib.js.generic/dist/Str": 38 }], 24: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Str": 37 }], 24: [function (require, module, exports) {
     module.exports.FixFragments = function () {
       var FixFragments = function () {
         function FixFragments(WM) {
@@ -5534,7 +5521,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return UpdateCategoryTree;
     }();
-  }, { "../../lib.js.generic/dist/Str": 38 }], 30: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Str": 37 }], 30: [function (require, module, exports) {
     module.exports.executeAsync = function (functions, id) {
       var callContinue, fid;
       id++;
@@ -5740,72 +5727,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       return _recurse();
     };
   }, {}], 34: [function (require, module, exports) {
-    if (typeof GM_xmlhttpRequest === "undefined" || GM_xmlhttpRequest === null) {
-      window.GM_xmlhttpRequest = function () {
-        var header, req;
-        if (params.method == null) {
-          params.method = "GET";
-        }
-        if (params.data == null) {
-          params.data = null;
-        }
-        if (params.headers == null) {
-          params.headers = {};
-        }
-        if (params.user == null) {
-          params.user = null;
-        }
-        if (params.password == null) {
-          params.password = null;
-        }
-        if (params.onload == null) {
-          params.onload = function (req) {};
-        }
-        if (params.onerror == null) {
-          params.onerror = function (req) {};
-        }
-        if (params.onreadystatechange == null) {
-          params.onreadystatechange = function (req) {};
-        }
-        params.async = true;
-        req = new XMLHttpRequest();
-        req.open(params.method, params.url, params.async, params.user, params.password);
-        for (header in params.headers) {
-          req.setRequestHeader(header, params.headers[header]);
-        }
-        req.onreadystatechange = function () {
-          var err, error, response;
-          response = {
-            responseText: req.responseText,
-            readyState: req.readyState,
-            responseHeaders: req.getAllResponseHeaders(),
-            status: req.status,
-            statusText: req.statusText
-          };
-          try {
-            response.responseJSON = JSON.parse(req.responseText);
-          } catch (error) {
-            err = error;
-            response.responseJSON = void 0;
-          }
-          params.onreadystatechange(response);
-          if (req.readyState === 4) {
-            if (req.status === 200) {
-              return params.onload(response);
-            } else {
-              return params.onerror(response);
-            }
-          }
-        };
-        req.send(params.data);
-        return {
-          abort: function abort() {
-            return req.abort();
-          }
-        };
-      };
-    }
-  }, {}], 35: [function (require, module, exports) {
     module.exports.getUrlLocation = function (url) {
       var link;
       link = document.createElement('a');
@@ -5880,7 +5801,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       req.send(query);
       return req;
     };
-  }, {}], 36: [function (require, module, exports) {
+  }, {}], 35: [function (require, module, exports) {
     module.exports.getKeys = function (object) {
       var i, keys;
       keys = [];
@@ -5905,7 +5826,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         return object[i];
       }
     };
-  }, {}], 37: [function (require, module, exports) {
+  }, {}], 36: [function (require, module, exports) {
     module.exports.escapePattern = function (string) {
       return string.replace(/[-[\]{}()^$*+?.|\\]/g, "\\$&");
     };
@@ -5947,7 +5868,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
       return result;
     };
-  }, {}], 38: [function (require, module, exports) {
+  }, {}], 37: [function (require, module, exports) {
     module.exports.insert = function (string, newString, id) {
       if (id == null) {
         id = 0;
