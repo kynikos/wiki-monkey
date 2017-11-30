@@ -16,30 +16,23 @@
 
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
-module.exports.MultipleLineBreaks = (function() {
-  class MultipleLineBreaks {
-    constructor(WM) {
-      this.WM = WM;
+module.exports.MultipleLineBreaks = class MultipleLineBreaks {
+  constructor(WM) {
+    this.WM = WM;
+  }
+
+  main(args, callNext) {
+    var newtext, source;
+    source = this.WM.Editor.readSource();
+    newtext = source;
+    newtext = newtext.replace(/[\n]{3,}/g, '\n\n');
+    if (newtext !== source) {
+      this.WM.Editor.writeSource(newtext);
+      this.WM.Log.logInfo("Removed multiple line breaks");
     }
-
-    main(args, callNext) {
-      var newtext, source;
-      source = this.WM.Editor.readSource();
-      newtext = source;
-      newtext = newtext.replace(/[\n]{3,}/g, '\n\n');
-      if (newtext !== source) {
-        this.WM.Editor.writeSource(newtext);
-        this.WM.Log.logInfo("Removed multiple line breaks");
-      }
-      if (callNext) {
-        return callNext();
-      }
+    if (callNext) {
+      return callNext();
     }
+  }
 
-  };
-
-  MultipleLineBreaks.REQUIRES_GM = false;
-
-  return MultipleLineBreaks;
-
-})();
+};

@@ -18,8 +18,6 @@
 
 
 class module.exports.ArchWikiFixLinks
-    @REQUIRES_GM = false
-
     constructor: (@WM) ->
 
     doReplace: (txt) ->

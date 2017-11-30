@@ -137,8 +137,6 @@ module.exports.SimpleReplace = (function() {
 
   };
 
-  SimpleReplace.REQUIRES_GM = false;
-
   makeUI = function() {
     var divMain, ignoreCase, ignoreCaseLabel, newString, newStringLabel, par1, par2, regexp, regexpLabel;
     CSS.addStyleElement("#WikiMonkey-SimpleReplace div " + "{margin-bottom:0.33em;} " + "#WikiMonkey-SimpleReplace input[type='text'] " + "{margin-left:0.33em; width:60%;}");

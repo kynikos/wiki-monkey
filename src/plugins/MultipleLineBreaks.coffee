@@ -18,8 +18,6 @@
 
 
 class module.exports.MultipleLineBreaks
-    @REQUIRES_GM = false
-
     constructor: (@WM) ->
 
     main: (args, callNext) ->

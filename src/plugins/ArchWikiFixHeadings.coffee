@@ -18,8 +18,6 @@
 
 
 class module.exports.ArchWikiFixHeadings
-    @REQUIRES_GM = false
-
     constructor: (@WM) ->
 
     main: (args, callNext) ->

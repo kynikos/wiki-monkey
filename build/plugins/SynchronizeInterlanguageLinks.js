@@ -16,189 +16,182 @@
 
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
-module.exports.SynchronizeInterlanguageLinks = (function() {
-  class SynchronizeInterlanguageLinks {
-    constructor(WM) {
-      this.detectLang = this.detectLang.bind(this);
-      this.computeWhiteList = this.computeWhiteList.bind(this);
-      this.computeSupportedLangs = this.computeSupportedLangs.bind(this);
-      this.mainContinue = this.mainContinue.bind(this);
-      this.mainEnd = this.mainEnd.bind(this);
-      this.mainAutoWrite = this.mainAutoWrite.bind(this);
-      this.mainAutoEnd = this.mainAutoEnd.bind(this);
-      this.WM = WM;
-    }
+module.exports.SynchronizeInterlanguageLinks = class SynchronizeInterlanguageLinks {
+  constructor(WM) {
+    this.detectLang = this.detectLang.bind(this);
+    this.computeWhiteList = this.computeWhiteList.bind(this);
+    this.computeSupportedLangs = this.computeSupportedLangs.bind(this);
+    this.mainContinue = this.mainContinue.bind(this);
+    this.mainEnd = this.mainEnd.bind(this);
+    this.mainAutoWrite = this.mainAutoWrite.bind(this);
+    this.mainAutoEnd = this.mainAutoEnd.bind(this);
+    this.WM = WM;
+  }
 
-    detectLang(title, tag) {
-      var detect, pureTitle;
-      // Without this check this plugin would be specific to ArchWiki
-      if (tag === "ArchWiki") {
-        detect = this.WM.ArchWiki.detectLanguage(title);
-        pureTitle = detect[0];
-        tag = this.WM.ArchWiki.getInterlanguageTag(detect[1]);
-      } else {
-        pureTitle = title;
-      }
-      return [pureTitle, tag];
-    }
-
-    computeWhiteList(whitelist) {
-      // Without this check this plugin would be specific to ArchWiki
-      if (whitelist === "ArchWiki") {
-        return this.WM.ArchWiki.getInternalInterwikiLanguages();
-      } else {
-        return whitelist;
-      }
-    }
-
-    computeSupportedLangs(supportedLangs) {
-      // Without this check this plugin would be specific to ArchWiki
-      if (supportedLangs === "ArchWiki") {
-        return this.WM.ArchWiki.getInterwikiLanguages();
-      } else {
-        return supportedLangs;
-      }
-    }
-
-    main(args, callNext) {
-      var detect, pureTitle, supportedLangs, tag, title, whitelist;
-      title = this.WM.Editor.getTitle();
-      detect = this.detectLang(title, args[0]);
+  detectLang(title, tag) {
+    var detect, pureTitle;
+    // Without this check this plugin would be specific to ArchWiki
+    if (tag === "ArchWiki") {
+      detect = this.WM.ArchWiki.detectLanguage(title);
       pureTitle = detect[0];
-      tag = detect[1];
-      whitelist = this.computeWhiteList(args[1]);
-      supportedLangs = this.computeSupportedLangs(args[2]);
-      this.WM.Log.logInfo("Synchronizing interlanguage links ...");
-      return this.WM.MW.getInterwikiMap(title, this.mainContinue, [tag, pureTitle, supportedLangs, whitelist, title, callNext]);
+      tag = this.WM.ArchWiki.getInterlanguageTag(detect[1]);
+    } else {
+      pureTitle = title;
     }
+    return [pureTitle, tag];
+  }
 
-    mainContinue(iwmap, args) {
-      var callNext, i, langlinks, len, link, newlinks, nlink, pureTitle, source, supportedLangs, tag, title, url, visitedlinks, vlink, whitelist, wikiUrls;
-      tag = args[0];
-      pureTitle = args[1];
-      supportedLangs = args[2];
-      whitelist = args[3];
-      title = args[4];
-      callNext = args[5];
-      source = this.WM.Editor.readSource();
-      langlinks = this.WM.Interlanguage.parseLinks(supportedLangs, source, iwmap);
-      wikiUrls = this.WM.MW.getWikiUrls();
-      url = wikiUrls.short + encodeURIComponent(this.WM.Parser.squashContiguousWhitespace(title));
-      visitedlinks = {};
-      visitedlinks[tag.toLowerCase()] = this.WM.Interlanguage.createVisitedLink(tag, pureTitle, url, iwmap, source, null, null, langlinks);
-      newlinks = {};
-      this.WM.Log.logInfo("Reading " + this.WM.Log.linkToPage(url, "edited article") + " ...");
-      if (langlinks) {
-        for (i = 0, len = langlinks.length; i < len; i++) {
-          link = langlinks[i];
-          nlink = newlinks[link.lang.toLowerCase()];
-          vlink = visitedlinks[link.lang.toLowerCase()];
-          if (!vlink && !nlink) {
-            newlinks[link.lang.toLowerCase()] = this.WM.Interlanguage.createNewLink(link.lang, link.title, link.url);
-          } else if (vlink && vlink.url !== link.url) {
-            // Just ignore any conflicting links and warn the user:
-            // if it's a real conflict, the user will investigate it,
-            // otherwise the user will ignore it
-            this.WM.Log.logWarning("Possibly conflicting interlanguage " + "links: " + this.WM.Log.linkToPage(link.url, "[[" + link.lang + ":" + link.title + "]]") + " and " + this.WM.Log.linkToPage(vlink.url, "[[" + link.lang + ":" + visitedlinks[link.lang.toLowerCase()].title + "]]"));
-          } else if (nlink && nlink.url !== link.url) {
-            // Just ignore any conflicting links and warn the user:
-            // if it's a real conflict, the user will investigate it,
-            // otherwise the user will ignore it
-            this.WM.Log.logWarning("Possibly conflicting interlanguage " + "links: " + this.WM.Log.linkToPage(link.url, "[[" + link.lang + ":" + link.title + "]]") + " and " + this.WM.Log.linkToPage(nlink.url, "[[" + link.lang + ":" + newlinks[link.lang.toLowerCase()].title + "]]"));
-          }
-        }
-        return this.WM.Interlanguage.collectLinks(visitedlinks, newlinks, supportedLangs, whitelist, false, this.mainEnd, [tag, url, source, langlinks, iwmap, callNext]);
-      } else {
-        this.WM.Log.logInfo("No interlanguage links found");
-        if (callNext) {
-          return callNext();
+  computeWhiteList(whitelist) {
+    // Without this check this plugin would be specific to ArchWiki
+    if (whitelist === "ArchWiki") {
+      return this.WM.ArchWiki.getInternalInterwikiLanguages();
+    } else {
+      return whitelist;
+    }
+  }
+
+  computeSupportedLangs(supportedLangs) {
+    // Without this check this plugin would be specific to ArchWiki
+    if (supportedLangs === "ArchWiki") {
+      return this.WM.ArchWiki.getInterwikiLanguages();
+    } else {
+      return supportedLangs;
+    }
+  }
+
+  main(args, callNext) {
+    var detect, pureTitle, supportedLangs, tag, title, whitelist;
+    title = this.WM.Editor.getTitle();
+    detect = this.detectLang(title, args[0]);
+    pureTitle = detect[0];
+    tag = detect[1];
+    whitelist = this.computeWhiteList(args[1]);
+    supportedLangs = this.computeSupportedLangs(args[2]);
+    this.WM.Log.logInfo("Synchronizing interlanguage links ...");
+    return this.WM.MW.getInterwikiMap(title, this.mainContinue, [tag, pureTitle, supportedLangs, whitelist, title, callNext]);
+  }
+
+  mainContinue(iwmap, args) {
+    var callNext, i, langlinks, len, link, newlinks, nlink, pureTitle, source, supportedLangs, tag, title, url, visitedlinks, vlink, whitelist, wikiUrls;
+    tag = args[0];
+    pureTitle = args[1];
+    supportedLangs = args[2];
+    whitelist = args[3];
+    title = args[4];
+    callNext = args[5];
+    source = this.WM.Editor.readSource();
+    langlinks = this.WM.Interlanguage.parseLinks(supportedLangs, source, iwmap);
+    wikiUrls = this.WM.MW.getWikiUrls();
+    url = wikiUrls.short + encodeURIComponent(this.WM.Parser.squashContiguousWhitespace(title));
+    visitedlinks = {};
+    visitedlinks[tag.toLowerCase()] = this.WM.Interlanguage.createVisitedLink(tag, pureTitle, url, iwmap, source, null, null, langlinks);
+    newlinks = {};
+    this.WM.Log.logInfo("Reading " + this.WM.Log.linkToPage(url, "edited article") + " ...");
+    if (langlinks) {
+      for (i = 0, len = langlinks.length; i < len; i++) {
+        link = langlinks[i];
+        nlink = newlinks[link.lang.toLowerCase()];
+        vlink = visitedlinks[link.lang.toLowerCase()];
+        if (!vlink && !nlink) {
+          newlinks[link.lang.toLowerCase()] = this.WM.Interlanguage.createNewLink(link.lang, link.title, link.url);
+        } else if (vlink && vlink.url !== link.url) {
+          // Just ignore any conflicting links and warn the user:
+          // if it's a real conflict, the user will investigate it,
+          // otherwise the user will ignore it
+          this.WM.Log.logWarning("Possibly conflicting interlanguage " + "links: " + this.WM.Log.linkToPage(link.url, "[[" + link.lang + ":" + link.title + "]]") + " and " + this.WM.Log.linkToPage(vlink.url, "[[" + link.lang + ":" + visitedlinks[link.lang.toLowerCase()].title + "]]"));
+        } else if (nlink && nlink.url !== link.url) {
+          // Just ignore any conflicting links and warn the user:
+          // if it's a real conflict, the user will investigate it,
+          // otherwise the user will ignore it
+          this.WM.Log.logWarning("Possibly conflicting interlanguage " + "links: " + this.WM.Log.linkToPage(link.url, "[[" + link.lang + ":" + link.title + "]]") + " and " + this.WM.Log.linkToPage(nlink.url, "[[" + link.lang + ":" + newlinks[link.lang.toLowerCase()].title + "]]"));
         }
       }
-    }
-
-    mainEnd(links, args) {
-      var callNext, iwmap, langlinks, newText, source, tag, url;
-      tag = args[0];
-      url = args[1];
-      source = args[2];
-      langlinks = args[3];
-      iwmap = args[4];
-      callNext = args[5];
-      newText = this.WM.Interlanguage.updateLinks(tag, url, iwmap, source, langlinks, links);
-      if (newText !== source) {
-        this.WM.Editor.writeSource(newText);
-        this.WM.Log.logInfo("Synchronized interlanguage links");
-      } else {
-        this.WM.Log.logInfo("Interlanguage links were already synchronized");
-      }
+      return this.WM.Interlanguage.collectLinks(visitedlinks, newlinks, supportedLangs, whitelist, false, this.mainEnd, [tag, url, source, langlinks, iwmap, callNext]);
+    } else {
+      this.WM.Log.logInfo("No interlanguage links found");
       if (callNext) {
         return callNext();
       }
     }
+  }
 
-    mainAuto(args, title, callBot, chainArgs) {
-      var detect, newlinks, pureTitle, summary, supportedLangs, tag, url, visitedlinks, whitelist, wikiUrls;
-      detect = this.detectLang(title, args[0]);
-      pureTitle = detect[0];
-      tag = detect[1];
-      whitelist = this.computeWhiteList(args[1]);
-      supportedLangs = this.computeSupportedLangs(args[2]);
-      summary = args[3];
-      wikiUrls = this.WM.MW.getWikiUrls();
-      url = wikiUrls.short + encodeURIComponent(this.WM.Parser.squashContiguousWhitespace(title));
-      visitedlinks = {};
-      newlinks = {};
-      newlinks[tag.toLowerCase()] = this.WM.Interlanguage.createNewLink(tag, pureTitle, url);
-      return this.WM.Interlanguage.collectLinks(visitedlinks, newlinks, supportedLangs, whitelist, true, this.mainAutoWrite, [title, url, tag, summary, callBot]);
+  mainEnd(links, args) {
+    var callNext, iwmap, langlinks, newText, source, tag, url;
+    tag = args[0];
+    url = args[1];
+    source = args[2];
+    langlinks = args[3];
+    iwmap = args[4];
+    callNext = args[5];
+    newText = this.WM.Interlanguage.updateLinks(tag, url, iwmap, source, langlinks, links);
+    if (newText !== source) {
+      this.WM.Editor.writeSource(newText);
+      this.WM.Log.logInfo("Synchronized interlanguage links");
+    } else {
+      this.WM.Log.logInfo("Interlanguage links were already synchronized");
     }
-
-    mainAutoWrite(links, args) {
-      var callBot, edittoken, iwmap, langlinks, lcTag, newText, source, summary, tag, timestamp, title, url;
-      title = args[0];
-      url = args[1];
-      tag = args[2];
-      summary = args[3];
-      callBot = args[4];
-      lcTag = tag.toLowerCase();
-      // New links that were not in the white list will have the "iwmap"
-      // attribute false, "timestamp" and "edittoken" null and "links" as an
-      // empty array, however links[lcTag] should always be safe
-      iwmap = links[lcTag].iwmap;
-      source = links[lcTag].source;
-      langlinks = links[lcTag].links;
-      timestamp = links[lcTag].timestamp;
-      edittoken = links[lcTag].edittoken;
-      newText = this.WM.Interlanguage.updateLinks(tag, url, iwmap, source, langlinks, links);
-      if (newText !== source) {
-        return this.WM.MW.callAPIPost({
-          action: "edit",
-          bot: "1",
-          title: title,
-          summary: summary,
-          text: newText,
-          basetimestamp: timestamp,
-          token: edittoken
-        }, this.mainAutoEnd, callBot, null);
-      } else {
-        return callBot(0, null);
-      }
+    if (callNext) {
+      return callNext();
     }
+  }
 
-    mainAutoEnd(res, callBot) {
-      if (res.edit && res.edit.result === 'Success') {
-        return callBot(1, null);
-      } else if (res.error) {
-        this.WM.Log.logError(res.error.info + " (" + res.error.code + ")");
-        return callBot(res.error.code, null);
-      } else {
-        return callBot(false, null);
-      }
+  mainAuto(args, title, callBot, chainArgs) {
+    var detect, newlinks, pureTitle, summary, supportedLangs, tag, url, visitedlinks, whitelist, wikiUrls;
+    detect = this.detectLang(title, args[0]);
+    pureTitle = detect[0];
+    tag = detect[1];
+    whitelist = this.computeWhiteList(args[1]);
+    supportedLangs = this.computeSupportedLangs(args[2]);
+    summary = args[3];
+    wikiUrls = this.WM.MW.getWikiUrls();
+    url = wikiUrls.short + encodeURIComponent(this.WM.Parser.squashContiguousWhitespace(title));
+    visitedlinks = {};
+    newlinks = {};
+    newlinks[tag.toLowerCase()] = this.WM.Interlanguage.createNewLink(tag, pureTitle, url);
+    return this.WM.Interlanguage.collectLinks(visitedlinks, newlinks, supportedLangs, whitelist, true, this.mainAutoWrite, [title, url, tag, summary, callBot]);
+  }
+
+  mainAutoWrite(links, args) {
+    var callBot, edittoken, iwmap, langlinks, lcTag, newText, source, summary, tag, timestamp, title, url;
+    title = args[0];
+    url = args[1];
+    tag = args[2];
+    summary = args[3];
+    callBot = args[4];
+    lcTag = tag.toLowerCase();
+    // New links that were not in the white list will have the "iwmap"
+    // attribute false, "timestamp" and "edittoken" null and "links" as an
+    // empty array, however links[lcTag] should always be safe
+    iwmap = links[lcTag].iwmap;
+    source = links[lcTag].source;
+    langlinks = links[lcTag].links;
+    timestamp = links[lcTag].timestamp;
+    edittoken = links[lcTag].edittoken;
+    newText = this.WM.Interlanguage.updateLinks(tag, url, iwmap, source, langlinks, links);
+    if (newText !== source) {
+      return this.WM.MW.callAPIPost({
+        action: "edit",
+        bot: "1",
+        title: title,
+        summary: summary,
+        text: newText,
+        basetimestamp: timestamp,
+        token: edittoken
+      }, this.mainAutoEnd, callBot, null);
+    } else {
+      return callBot(0, null);
     }
+  }
 
-  };
+  mainAutoEnd(res, callBot) {
+    if (res.edit && res.edit.result === 'Success') {
+      return callBot(1, null);
+    } else if (res.error) {
+      this.WM.Log.logError(res.error.info + " (" + res.error.code + ")");
+      return callBot(res.error.code, null);
+    } else {
+      return callBot(false, null);
+    }
+  }
 
-  SynchronizeInterlanguageLinks.REQUIRES_GM = false;
-
-  return SynchronizeInterlanguageLinks;
-
-})();
+};

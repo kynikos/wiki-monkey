@@ -18,172 +18,165 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 var indexOf = [].indexOf;
 
-module.exports.ArchWikiFixHeader = (function() {
-  class ArchWikiFixHeader {
-    constructor(WM) {
-      this.WM = WM;
-    }
+module.exports.ArchWikiFixHeader = class ArchWikiFixHeader {
+  constructor(WM) {
+    this.WM = WM;
+  }
 
-    main(args, callNext) {
-      var b, behaviorswitches, bslist, bswitch, cat, categories, catlang, catlink, catlinks, catlist, cattext, cleantitle, content, contentId, displaytitle, dlct, dt, firstChar, fulllink, header, i, interlanguage, iwlinks, iwlist, j, k, l, language, lct, len, len1, len2, len3, link, linklang, linktext, linktitle, lowercasetitle, newText, ref, ref1, source, tempcontent, titlemod, titlemods;
-      source = this.WM.Editor.readSource();
-      language = this.WM.ArchWiki.detectLanguage(this.WM.Editor.getTitle())[1];
-      header = "";
-      content = source;
-      // <noinclude>
-      content = content.replace(/^\s*<noinclude>/, "");
-      if (content !== source) {
-        header += "<noinclude>\n";
-      }
-      // DISPLAYTITLE and Template:Lowercase_title
-      displaytitle = this.WM.Parser.findVariables(content, "DISPLAYTITLE");
-      lowercasetitle = this.WM.Parser.findTemplates(content, "Lowercase title");
-      titlemods = displaytitle.concat(lowercasetitle);
-      titlemods.sort(function(a, b) {
-        return a.index - b.index;
-      });
-      tempcontent = "";
-      contentId = 0;
-      for (i = 0, len = titlemods.length; i < len; i++) {
-        titlemod = titlemods[i];
-        tempcontent += content.substring(contentId, titlemod.index);
-        contentId = titlemod.index + titlemod.length;
-      }
-      tempcontent += content.substring(contentId);
-      content = tempcontent;
-      dt = displaytitle.pop();
-      lct = lowercasetitle.pop();
-      dlct = "";
-      if (dt && !lct) {
-        dlct = "{{DISPLAYTITLE:" + dt.value + "}}";
-      } else if (!dt && lct) {
-        dlct = "{{Lowercase title}}";
-      } else if (dt && lct) {
-        dlct = dt.index < lct.index ? "{{Lowercase title}}" : `{{DISPLAYTITLE:${dt.value}}}`;
-      }
-      if (displaytitle.length || lowercasetitle.length) {
-        this.WM.Log.logWarning("Found multiple instances of {{DISPLAYTITLE:...}} or {{Lowercase title}}: only the last one has been used, the others have been deleted");
-      }
-      // Behavior switches
-      behaviorswitches = this.WM.Parser.findBehaviorSwitches(content);
-      bslist = [];
-      tempcontent = "";
-      contentId = 0;
-      for (b = j = 0, len1 = behaviorswitches.length; j < len1; b = ++j) {
-        bswitch = behaviorswitches[b];
-        if ((ref = bswitch.match[1]) === "TOC" || ref === "START" || ref === "END") {
-          behaviorswitches.splice(b, 1);
-        } else {
-          if (ref1 = bswitch.match[0], indexOf.call(bslist, ref1) < 0) {
-            bslist.push(bswitch.match[0]);
-          } else {
-            this.WM.Log.logWarning(`Removed duplicate of ${bswitch.match[0]}`);
-          }
-          tempcontent += content.substring(contentId, bswitch.index);
-          contentId = bswitch.index + bswitch.length;
-        }
-      }
-      tempcontent += content.substring(contentId);
-      content = tempcontent;
-      if (!dlct && bslist.length) {
-        header += bslist.join(" ") + "\n";
-      } else if (dlct && !bslist.length) {
-        header += dlct + "\n";
-      } else if (dlct && bslist.length) {
-        header += dlct + " " + bslist.join(" ") + "\n";
-      }
-      // Categories
-      categories = this.WM.Parser.findCategories(content);
-      catlist = [];
-      catlinks = [];
-      tempcontent = "";
-      contentId = 0;
-      for (k = 0, len2 = categories.length; k < len2; k++) {
-        cat = categories[k];
-        if (cat.fragment) {
-          this.WM.Log.logWarning(this.WM.Log.linkToWikiPage(cat.link, cat.rawLink) + " contains a fragment reference, but it doesn't make sense in categories and will be removed");
-        }
-        cleantitle = this.WM.Parser.squashContiguousWhitespace(cat.title);
-        cattext = "Category:" + cleantitle;
-        // Don't just pass cleantitle here, otherwise the language of
-        //   root language categories won't be properly detected
-        catlang = this.WM.ArchWiki.detectLanguage(cattext)[1];
-        catlink = "[[" + cattext + (cat.anchor ? "|" + cat.anchor : "") + "]]";
-        if (language !== catlang) {
-          this.WM.Log.logWarning(this.WM.Log.linkToWikiPage(cat.link, cattext) + " belongs to a different language than the one of the title (" + language + ")");
-        }
-        if (catlist.indexOf(cattext) < 0) {
-          catlist.push(cattext);
-          catlinks.push(catlink);
-        } else {
-          this.WM.Log.logWarning("Removed duplicate of " + this.WM.Log.linkToWikiPage(cat.link, cattext));
-        }
-        tempcontent += content.substring(contentId, cat.index);
-        contentId = cat.index + cat.length;
-      }
-      if (catlist.length) {
-        header += catlinks.join("\n") + "\n";
+  main(args, callNext) {
+    var b, behaviorswitches, bslist, bswitch, cat, categories, catlang, catlink, catlinks, catlist, cattext, cleantitle, content, contentId, displaytitle, dlct, dt, firstChar, fulllink, header, i, interlanguage, iwlinks, iwlist, j, k, l, language, lct, len, len1, len2, len3, link, linklang, linktext, linktitle, lowercasetitle, newText, ref, ref1, source, tempcontent, titlemod, titlemods;
+    source = this.WM.Editor.readSource();
+    language = this.WM.ArchWiki.detectLanguage(this.WM.Editor.getTitle())[1];
+    header = "";
+    content = source;
+    // <noinclude>
+    content = content.replace(/^\s*<noinclude>/, "");
+    if (content !== source) {
+      header += "<noinclude>\n";
+    }
+    // DISPLAYTITLE and Template:Lowercase_title
+    displaytitle = this.WM.Parser.findVariables(content, "DISPLAYTITLE");
+    lowercasetitle = this.WM.Parser.findTemplates(content, "Lowercase title");
+    titlemods = displaytitle.concat(lowercasetitle);
+    titlemods.sort(function(a, b) {
+      return a.index - b.index;
+    });
+    tempcontent = "";
+    contentId = 0;
+    for (i = 0, len = titlemods.length; i < len; i++) {
+      titlemod = titlemods[i];
+      tempcontent += content.substring(contentId, titlemod.index);
+      contentId = titlemod.index + titlemod.length;
+    }
+    tempcontent += content.substring(contentId);
+    content = tempcontent;
+    dt = displaytitle.pop();
+    lct = lowercasetitle.pop();
+    dlct = "";
+    if (dt && !lct) {
+      dlct = "{{DISPLAYTITLE:" + dt.value + "}}";
+    } else if (!dt && lct) {
+      dlct = "{{Lowercase title}}";
+    } else if (dt && lct) {
+      dlct = dt.index < lct.index ? "{{Lowercase title}}" : `{{DISPLAYTITLE:${dt.value}}}`;
+    }
+    if (displaytitle.length || lowercasetitle.length) {
+      this.WM.Log.logWarning("Found multiple instances of {{DISPLAYTITLE:...}} or {{Lowercase title}}: only the last one has been used, the others have been deleted");
+    }
+    // Behavior switches
+    behaviorswitches = this.WM.Parser.findBehaviorSwitches(content);
+    bslist = [];
+    tempcontent = "";
+    contentId = 0;
+    for (b = j = 0, len1 = behaviorswitches.length; j < len1; b = ++j) {
+      bswitch = behaviorswitches[b];
+      if ((ref = bswitch.match[1]) === "TOC" || ref === "START" || ref === "END") {
+        behaviorswitches.splice(b, 1);
       } else {
-        this.WM.Log.logWarning("The article is not categorized");
-      }
-      tempcontent += content.substring(contentId);
-      content = tempcontent;
-      // Interlanguage links
-      interlanguage = this.WM.ArchWiki.findAllInterlanguageLinks(content);
-      iwlist = [];
-      iwlinks = [];
-      tempcontent = "";
-      contentId = 0;
-      for (l = 0, len3 = interlanguage.length; l < len3; l++) {
-        link = interlanguage[l];
-        if (link.anchor) {
-          // Cannot use @WM.Log.linkToWikiPage because local interlanguage
-          //   links would not resolved correctly; linkToPage would need
-          //   to find the URL instead, which seems too complicated for
-          //   the purpose of this plugin
-          this.WM.Log.logWarning(link.rawLink + " contains an alternative text, but it doesn't make sense in interlanguage links and will be removed");
-        }
-        // Applying @WM.Parser.squashContiguousWhitespace is dangerous here
-        //   because we don't know how the target server handles whitespace
-        linktitle = link.title;
-        linklang = link.namespace;
-        linktext = linklang + ":" + linktitle;
-        fulllink = "[[" + linktext + (link.fragment ? "#" + link.fragment : "") + "]]";
-        if (iwlist.indexOf(linktext) < 0) {
-          iwlist.push(linktext);
-          iwlinks.push(fulllink);
+        if (ref1 = bswitch.match[0], indexOf.call(bslist, ref1) < 0) {
+          bslist.push(bswitch.match[0]);
         } else {
-          // Cannot use @WM.Log.linkToWikiPage because local interlanguage
-          //   links would not resolved correctly; linkToPage would need
-          //   to find the URL instead, which seems too complicated for
-          //   the purpose of this plugin
-          this.WM.Log.logWarning("Removed duplicate of " + linktext);
+          this.WM.Log.logWarning(`Removed duplicate of ${bswitch.match[0]}`);
         }
-        tempcontent += content.substring(contentId, link.index);
-        contentId = link.index + link.length;
-      }
-      if (iwlist.length) {
-        iwlinks.sort();
-        header += iwlinks.join("\n") + "\n";
-      }
-      tempcontent += content.substring(contentId);
-      content = tempcontent;
-      firstChar = content.search(/[^\s]/);
-      content = content.substr(firstChar);
-      newText = header + content;
-      if (newText !== source) {
-        this.WM.Editor.writeSource(newText);
-        this.WM.Log.logInfo("Fixed header");
-      }
-      if (callNext) {
-        return callNext();
+        tempcontent += content.substring(contentId, bswitch.index);
+        contentId = bswitch.index + bswitch.length;
       }
     }
+    tempcontent += content.substring(contentId);
+    content = tempcontent;
+    if (!dlct && bslist.length) {
+      header += bslist.join(" ") + "\n";
+    } else if (dlct && !bslist.length) {
+      header += dlct + "\n";
+    } else if (dlct && bslist.length) {
+      header += dlct + " " + bslist.join(" ") + "\n";
+    }
+    // Categories
+    categories = this.WM.Parser.findCategories(content);
+    catlist = [];
+    catlinks = [];
+    tempcontent = "";
+    contentId = 0;
+    for (k = 0, len2 = categories.length; k < len2; k++) {
+      cat = categories[k];
+      if (cat.fragment) {
+        this.WM.Log.logWarning(this.WM.Log.linkToWikiPage(cat.link, cat.rawLink) + " contains a fragment reference, but it doesn't make sense in categories and will be removed");
+      }
+      cleantitle = this.WM.Parser.squashContiguousWhitespace(cat.title);
+      cattext = "Category:" + cleantitle;
+      // Don't just pass cleantitle here, otherwise the language of
+      //   root language categories won't be properly detected
+      catlang = this.WM.ArchWiki.detectLanguage(cattext)[1];
+      catlink = "[[" + cattext + (cat.anchor ? "|" + cat.anchor : "") + "]]";
+      if (language !== catlang) {
+        this.WM.Log.logWarning(this.WM.Log.linkToWikiPage(cat.link, cattext) + " belongs to a different language than the one of the title (" + language + ")");
+      }
+      if (catlist.indexOf(cattext) < 0) {
+        catlist.push(cattext);
+        catlinks.push(catlink);
+      } else {
+        this.WM.Log.logWarning("Removed duplicate of " + this.WM.Log.linkToWikiPage(cat.link, cattext));
+      }
+      tempcontent += content.substring(contentId, cat.index);
+      contentId = cat.index + cat.length;
+    }
+    if (catlist.length) {
+      header += catlinks.join("\n") + "\n";
+    } else {
+      this.WM.Log.logWarning("The article is not categorized");
+    }
+    tempcontent += content.substring(contentId);
+    content = tempcontent;
+    // Interlanguage links
+    interlanguage = this.WM.ArchWiki.findAllInterlanguageLinks(content);
+    iwlist = [];
+    iwlinks = [];
+    tempcontent = "";
+    contentId = 0;
+    for (l = 0, len3 = interlanguage.length; l < len3; l++) {
+      link = interlanguage[l];
+      if (link.anchor) {
+        // Cannot use @WM.Log.linkToWikiPage because local interlanguage
+        //   links would not resolved correctly; linkToPage would need
+        //   to find the URL instead, which seems too complicated for
+        //   the purpose of this plugin
+        this.WM.Log.logWarning(link.rawLink + " contains an alternative text, but it doesn't make sense in interlanguage links and will be removed");
+      }
+      // Applying @WM.Parser.squashContiguousWhitespace is dangerous here
+      //   because we don't know how the target server handles whitespace
+      linktitle = link.title;
+      linklang = link.namespace;
+      linktext = linklang + ":" + linktitle;
+      fulllink = "[[" + linktext + (link.fragment ? "#" + link.fragment : "") + "]]";
+      if (iwlist.indexOf(linktext) < 0) {
+        iwlist.push(linktext);
+        iwlinks.push(fulllink);
+      } else {
+        // Cannot use @WM.Log.linkToWikiPage because local interlanguage
+        //   links would not resolved correctly; linkToPage would need
+        //   to find the URL instead, which seems too complicated for
+        //   the purpose of this plugin
+        this.WM.Log.logWarning("Removed duplicate of " + linktext);
+      }
+      tempcontent += content.substring(contentId, link.index);
+      contentId = link.index + link.length;
+    }
+    if (iwlist.length) {
+      iwlinks.sort();
+      header += iwlinks.join("\n") + "\n";
+    }
+    tempcontent += content.substring(contentId);
+    content = tempcontent;
+    firstChar = content.search(/[^\s]/);
+    content = content.substr(firstChar);
+    newText = header + content;
+    if (newText !== source) {
+      this.WM.Editor.writeSource(newText);
+      this.WM.Log.logInfo("Fixed header");
+    }
+    if (callNext) {
+      return callNext();
+    }
+  }
 
-  };
-
-  ArchWikiFixHeader.REQUIRES_GM = false;
-
-  return ArchWikiFixHeader;
-
-})();
+};

@@ -18,8 +18,6 @@
 
 
 class module.exports.FixLinkFragments
-    @REQUIRES_GM = false
-
     constructor: (@WM) ->
 
     processLink: (title, links, index, source, newText, prevId,

@@ -18,8 +18,6 @@
 
 
 class module.exports.ArchWikiUpdatePackageTemplates
-    @REQUIRES_GM = true
-
     constructor: (@WM) ->
 
     doUpdate: (source, call, callArgs) =>

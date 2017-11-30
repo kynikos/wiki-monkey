@@ -20,141 +20,134 @@ var Str;
 
 Str = require('../../lib.js.generic/dist/Str');
 
-module.exports.FixDoubleRedirects = (function() {
-  class FixDoubleRedirects {
-    constructor(WM) {
-      this.reverseResults = this.reverseResults.bind(this);
-      this.iterateList = this.iterateList.bind(this);
-      this.readMiddleRedirect = this.readMiddleRedirect.bind(this);
-      this.processDoubleRedirect = this.processDoubleRedirect.bind(this);
-      this.processDoubleRedirectEnd = this.processDoubleRedirectEnd.bind(this);
-      this.WM = WM;
-      null;
-    }
+module.exports.FixDoubleRedirects = class FixDoubleRedirects {
+  constructor(WM) {
+    this.reverseResults = this.reverseResults.bind(this);
+    this.iterateList = this.iterateList.bind(this);
+    this.readMiddleRedirect = this.readMiddleRedirect.bind(this);
+    this.processDoubleRedirect = this.processDoubleRedirect.bind(this);
+    this.processDoubleRedirectEnd = this.processDoubleRedirectEnd.bind(this);
+    this.WM = WM;
+    null;
+  }
 
-    main(args, callNext) {
-      var summary;
-      summary = args;
-      this.WM.Log.logInfo("Fixing double redirects ...");
-      return this.WM.MW.getSpecialList("DoubleRedirects", "namespaces", this.reverseResults, [summary, callNext]);
-    }
+  main(args, callNext) {
+    var summary;
+    summary = args;
+    this.WM.Log.logInfo("Fixing double redirects ...");
+    return this.WM.MW.getSpecialList("DoubleRedirects", "namespaces", this.reverseResults, [summary, callNext]);
+  }
 
-    reverseResults(results, siteinfo, args) {
-      var callNext, namespaces, summary;
-      summary = args[0];
-      callNext = args[1];
-      namespaces = siteinfo.namespaces;
-      results.reverse();
-      return this.iterateList(results, namespaces, [summary, callNext]);
-    }
+  reverseResults(results, siteinfo, args) {
+    var callNext, namespaces, summary;
+    summary = args[0];
+    callNext = args[1];
+    namespaces = siteinfo.namespaces;
+    results.reverse();
+    return this.iterateList(results, namespaces, [summary, callNext]);
+  }
 
-    iterateList(doubleRedirects, namespaces, args) {
-      var callNext, doubleRedirect, summary;
-      summary = args[0];
-      callNext = args[1];
-      doubleRedirect = doubleRedirects.pop();
-      if (doubleRedirect) {
-        return this.WM.MW.callQueryEdit(doubleRedirect.title, this.readMiddleRedirect, [doubleRedirect, doubleRedirects, namespaces, summary, callNext]);
-      } else {
-        this.WM.Log.logInfo("Fixed double redirects");
-        if (callNext) {
-          return callNext();
-        }
+  iterateList(doubleRedirects, namespaces, args) {
+    var callNext, doubleRedirect, summary;
+    summary = args[0];
+    callNext = args[1];
+    doubleRedirect = doubleRedirects.pop();
+    if (doubleRedirect) {
+      return this.WM.MW.callQueryEdit(doubleRedirect.title, this.readMiddleRedirect, [doubleRedirect, doubleRedirects, namespaces, summary, callNext]);
+    } else {
+      this.WM.Log.logInfo("Fixed double redirects");
+      if (callNext) {
+        return callNext();
       }
     }
+  }
 
-    readMiddleRedirect(doubleRedirectTitle, doubleRedirectSource, timestamp, edittoken, args) {
-      var callNext, doubleRedirect, doubleRedirects, middleRedirectTitle, namespaces, summary;
-      doubleRedirect = args[0];
-      doubleRedirects = args[1];
-      namespaces = args[2];
-      summary = args[3];
-      callNext = args[4];
-      middleRedirectTitle = namespaces[doubleRedirect.databaseResult.nsb]['*'] + ':' + doubleRedirect.databaseResult.tb;
-      return this.WM.MW.callQuery({
-        prop: "revisions",
-        rvprop: "content",
-        titles: middleRedirectTitle
-      }, this.processDoubleRedirect, [doubleRedirect, doubleRedirectTitle, doubleRedirectSource, timestamp, edittoken, doubleRedirects, namespaces, summary, callNext], null);
+  readMiddleRedirect(doubleRedirectTitle, doubleRedirectSource, timestamp, edittoken, args) {
+    var callNext, doubleRedirect, doubleRedirects, middleRedirectTitle, namespaces, summary;
+    doubleRedirect = args[0];
+    doubleRedirects = args[1];
+    namespaces = args[2];
+    summary = args[3];
+    callNext = args[4];
+    middleRedirectTitle = namespaces[doubleRedirect.databaseResult.nsb]['*'] + ':' + doubleRedirect.databaseResult.tb;
+    return this.WM.MW.callQuery({
+      prop: "revisions",
+      rvprop: "content",
+      titles: middleRedirectTitle
+    }, this.processDoubleRedirect, [doubleRedirect, doubleRedirectTitle, doubleRedirectSource, timestamp, edittoken, doubleRedirects, namespaces, summary, callNext], null);
+  }
+
+  processDoubleRedirect(middleRedirect, args) {
+    var callNext, doubleRedirect, doubleRedirectSource, doubleRedirectTitle, doubleRedirects, edittoken, middleRedirectSource, middleTarget, namespaces, newTarget, newTargetAltAnchor, newTargetFragment, newTargetInterlanguage, newTargetNamespace, newTargetTitle, newText, oldTarget, rawMiddleTarget, rawOldTarget, summary, timestamp;
+    middleRedirectSource = middleRedirect.revisions[0]["*"];
+    doubleRedirect = args[0];
+    doubleRedirectTitle = args[1];
+    doubleRedirectSource = args[2];
+    timestamp = args[3];
+    edittoken = args[4];
+    doubleRedirects = args[5];
+    namespaces = args[6];
+    summary = args[7];
+    callNext = args[8];
+    this.WM.Log.logInfo("Processing " + this.WM.Log.linkToWikiPage(doubleRedirectTitle, doubleRedirectTitle) + " ...");
+    rawOldTarget = doubleRedirectSource.match(/\s*#redirect\s*[^\n]+/i);
+    oldTarget = this.WM.Parser.findInternalLinks(rawOldTarget[0], null)[0];
+    rawMiddleTarget = middleRedirectSource.match(/\s*#redirect\s*[^\n]+/i);
+    middleTarget = this.WM.Parser.findInternalLinks(rawMiddleTarget[0], null)[0];
+    if (oldTarget.fragment) {
+      newTargetFragment = "#" + oldTarget.fragment;
+    } else if (middleTarget.fragment) {
+      newTargetFragment = "#" + middleTarget.fragment;
+    } else {
+      newTargetFragment = "";
     }
-
-    processDoubleRedirect(middleRedirect, args) {
-      var callNext, doubleRedirect, doubleRedirectSource, doubleRedirectTitle, doubleRedirects, edittoken, middleRedirectSource, middleTarget, namespaces, newTarget, newTargetAltAnchor, newTargetFragment, newTargetInterlanguage, newTargetNamespace, newTargetTitle, newText, oldTarget, rawMiddleTarget, rawOldTarget, summary, timestamp;
-      middleRedirectSource = middleRedirect.revisions[0]["*"];
-      doubleRedirect = args[0];
-      doubleRedirectTitle = args[1];
-      doubleRedirectSource = args[2];
-      timestamp = args[3];
-      edittoken = args[4];
-      doubleRedirects = args[5];
-      namespaces = args[6];
-      summary = args[7];
-      callNext = args[8];
-      this.WM.Log.logInfo("Processing " + this.WM.Log.linkToWikiPage(doubleRedirectTitle, doubleRedirectTitle) + " ...");
-      rawOldTarget = doubleRedirectSource.match(/\s*#redirect\s*[^\n]+/i);
-      oldTarget = this.WM.Parser.findInternalLinks(rawOldTarget[0], null)[0];
-      rawMiddleTarget = middleRedirectSource.match(/\s*#redirect\s*[^\n]+/i);
-      middleTarget = this.WM.Parser.findInternalLinks(rawMiddleTarget[0], null)[0];
-      if (oldTarget.fragment) {
-        newTargetFragment = "#" + oldTarget.fragment;
-      } else if (middleTarget.fragment) {
-        newTargetFragment = "#" + middleTarget.fragment;
-      } else {
-        newTargetFragment = "";
-      }
-      if (oldTarget.anchor) {
-        newTargetAltAnchor = "|" + oldTarget.anchor;
-      } else if (middleTarget.anchor) {
-        newTargetAltAnchor = "|" + middleTarget.anchor;
-      } else {
-        newTargetAltAnchor = "";
-      }
-      if (doubleRedirect.databaseResult.iwc) {
-        newTargetInterlanguage = doubleRedirect.databaseResult.iwc + ":";
-      } else {
-        newTargetInterlanguage = "";
-      }
-      if (namespaces[doubleRedirect.databaseResult.nsc]["*"]) {
-        newTargetNamespace = this.WM.Parser.squashContiguousWhitespace(namespaces[doubleRedirect.databaseResult.nsc]["*"]) + ":";
-      } else {
-        newTargetNamespace = "";
-      }
-      newTargetTitle = this.WM.Parser.squashContiguousWhitespace(doubleRedirect.databaseResult.tc);
-      newTarget = "[[" + newTargetInterlanguage + newTargetNamespace + newTargetTitle + newTargetFragment + newTargetAltAnchor + "]]";
-      newText = Str.overwriteFor(doubleRedirectSource, newTarget, oldTarget.index, oldTarget.length);
-      if (newText !== doubleRedirectSource) {
-        return this.WM.MW.callAPIPost({
-          action: "edit",
-          bot: "1",
-          title: doubleRedirectTitle,
-          summary: summary,
-          text: newText,
-          b1asetimestamp: timestamp,
-          token: edittoken
-        }, this.processDoubleRedirectEnd, [doubleRedirects, namespaces, summary, callNext], null);
-      } else {
-        this.WM.Log.logWarning("Could not fix " + this.WM.Log.linkToWikiPage(doubleRedirectTitle, doubleRedirectTitle));
-        return this.iterateList(doubleRedirects, namespaces, [summary, callNext]);
-      }
+    if (oldTarget.anchor) {
+      newTargetAltAnchor = "|" + oldTarget.anchor;
+    } else if (middleTarget.anchor) {
+      newTargetAltAnchor = "|" + middleTarget.anchor;
+    } else {
+      newTargetAltAnchor = "";
     }
-
-    processDoubleRedirectEnd(res, args) {
-      var callNext, doubleRedirects, namespaces, summary;
-      doubleRedirects = args[0];
-      namespaces = args[1];
-      summary = args[2];
-      callNext = args[3];
-      if (res.edit && res.edit.result === 'Success') {
-        return this.iterateList(doubleRedirects, namespaces, [summary, callNext]);
-      } else {
-        return this.WM.Log.logError(res['error']['info'] + " (" + res['error']['code'] + ")");
-      }
+    if (doubleRedirect.databaseResult.iwc) {
+      newTargetInterlanguage = doubleRedirect.databaseResult.iwc + ":";
+    } else {
+      newTargetInterlanguage = "";
     }
+    if (namespaces[doubleRedirect.databaseResult.nsc]["*"]) {
+      newTargetNamespace = this.WM.Parser.squashContiguousWhitespace(namespaces[doubleRedirect.databaseResult.nsc]["*"]) + ":";
+    } else {
+      newTargetNamespace = "";
+    }
+    newTargetTitle = this.WM.Parser.squashContiguousWhitespace(doubleRedirect.databaseResult.tc);
+    newTarget = "[[" + newTargetInterlanguage + newTargetNamespace + newTargetTitle + newTargetFragment + newTargetAltAnchor + "]]";
+    newText = Str.overwriteFor(doubleRedirectSource, newTarget, oldTarget.index, oldTarget.length);
+    if (newText !== doubleRedirectSource) {
+      return this.WM.MW.callAPIPost({
+        action: "edit",
+        bot: "1",
+        title: doubleRedirectTitle,
+        summary: summary,
+        text: newText,
+        b1asetimestamp: timestamp,
+        token: edittoken
+      }, this.processDoubleRedirectEnd, [doubleRedirects, namespaces, summary, callNext], null);
+    } else {
+      this.WM.Log.logWarning("Could not fix " + this.WM.Log.linkToWikiPage(doubleRedirectTitle, doubleRedirectTitle));
+      return this.iterateList(doubleRedirects, namespaces, [summary, callNext]);
+    }
+  }
 
-  };
+  processDoubleRedirectEnd(res, args) {
+    var callNext, doubleRedirects, namespaces, summary;
+    doubleRedirects = args[0];
+    namespaces = args[1];
+    summary = args[2];
+    callNext = args[3];
+    if (res.edit && res.edit.result === 'Success') {
+      return this.iterateList(doubleRedirects, namespaces, [summary, callNext]);
+    } else {
+      return this.WM.Log.logError(res['error']['info'] + " (" + res['error']['code'] + ")");
+    }
+  }
 
-  FixDoubleRedirects.REQUIRES_GM = false;
-
-  return FixDoubleRedirects;
-
-})();
+};

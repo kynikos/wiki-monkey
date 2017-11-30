@@ -18,8 +18,6 @@
 
 
 class module.exports.DeletePages
-    @REQUIRES_GM = false
-
     constructor: (@WM) ->
 
     mainAuto: (args, title, callBot, chainArgs) ->

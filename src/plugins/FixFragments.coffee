@@ -18,8 +18,6 @@
 
 
 class module.exports.FixFragments
-    @REQUIRES_GM = false
-
     constructor: (@WM) ->
 
     fixLinks: (source) ->

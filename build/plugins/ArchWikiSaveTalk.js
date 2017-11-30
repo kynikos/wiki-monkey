@@ -22,79 +22,72 @@ CSS = require('../../lib.js.generic/dist/CSS');
 
 HTTP = require('../../lib.js.generic/dist/HTTP');
 
-module.exports.ArchWikiSaveTalk = (function() {
-  class ArchWikiSaveTalk {
-    constructor(WM) {
-      this.mainGetEndTimestamp = this.mainGetEndTimestamp.bind(this);
-      this.mainWrite = this.mainWrite.bind(this);
-      this.mainEnd = this.mainEnd.bind(this);
-      this.WM = WM;
-    }
+module.exports.ArchWikiSaveTalk = class ArchWikiSaveTalk {
+  constructor(WM) {
+    this.mainGetEndTimestamp = this.mainGetEndTimestamp.bind(this);
+    this.mainWrite = this.mainWrite.bind(this);
+    this.mainEnd = this.mainEnd.bind(this);
+    this.WM = WM;
+  }
 
-    makeUI(args) {
-      var article, link;
-      CSS.addStyleElement("#WikiMonkey-ArchWikiSaveTalk {margin-left:0.33em;}");
-      article = args[0];
-      link = document.createElement('a');
-      link.id = "WikiMonkey-ArchWikiSaveTalk";
-      link.href = "/index.php/" + article;
-      link.innerHTML = article;
-      return link;
-    }
+  makeUI(args) {
+    var article, link;
+    CSS.addStyleElement("#WikiMonkey-ArchWikiSaveTalk {margin-left:0.33em;}");
+    article = args[0];
+    link = document.createElement('a');
+    link.id = "WikiMonkey-ArchWikiSaveTalk";
+    link.href = "/index.php/" + article;
+    link.innerHTML = article;
+    return link;
+  }
 
-    main(args, callNext) {
-      var article, summary;
-      article = args[0];
-      summary = args[1];
-      this.WM.Log.logInfo('Appending diff to ' + this.WM.Log.linkToWikiPage(article, article) + " ...");
-      return this.WM.Diff.getEndTimestamp(this.mainGetEndTimestamp, [article, summary, callNext]);
-    }
+  main(args, callNext) {
+    var article, summary;
+    article = args[0];
+    summary = args[1];
+    this.WM.Log.logInfo('Appending diff to ' + this.WM.Log.linkToWikiPage(article, article) + " ...");
+    return this.WM.Diff.getEndTimestamp(this.mainGetEndTimestamp, [article, summary, callNext]);
+  }
 
-    mainGetEndTimestamp(enddate, args) {
-      var article, callNext, summary;
-      article = args[0];
-      summary = args[1];
-      callNext = args[2];
-      return this.WM.MW.callQueryEdit(article, this.mainWrite, [summary, enddate, callNext]);
-    }
+  mainGetEndTimestamp(enddate, args) {
+    var article, callNext, summary;
+    article = args[0];
+    summary = args[1];
+    callNext = args[2];
+    return this.WM.MW.callQueryEdit(article, this.mainWrite, [summary, enddate, callNext]);
+  }
 
-    mainWrite(article, source, timestamp, edittoken, args) {
-      var callNext, enddate, newtext, pEnddate, summary, title;
-      summary = args[0];
-      enddate = args[1];
-      callNext = args[2];
-      title = HTTP.getURIParameter(null, 'title');
-      pEnddate = enddate.substr(0, 10) + "&nbsp;" + enddate.substr(11, 8);
-      newtext = this.WM.Tables.appendRow(source, "<!-- REPLY TABLE -->", ["[" + location.href + " " + title + "]", pEnddate]);
-      return this.WM.MW.callAPIPost({
-        action: "edit",
-        bot: "1",
-        title: article,
-        summary: summary,
-        text: newtext,
-        basetimestamp: timestamp,
-        token: edittoken
-      }, this.mainEnd, [article, callNext], null);
-    }
+  mainWrite(article, source, timestamp, edittoken, args) {
+    var callNext, enddate, newtext, pEnddate, summary, title;
+    summary = args[0];
+    enddate = args[1];
+    callNext = args[2];
+    title = HTTP.getURIParameter(null, 'title');
+    pEnddate = enddate.substr(0, 10) + "&nbsp;" + enddate.substr(11, 8);
+    newtext = this.WM.Tables.appendRow(source, "<!-- REPLY TABLE -->", ["[" + location.href + " " + title + "]", pEnddate]);
+    return this.WM.MW.callAPIPost({
+      action: "edit",
+      bot: "1",
+      title: article,
+      summary: summary,
+      text: newtext,
+      basetimestamp: timestamp,
+      token: edittoken
+    }, this.mainEnd, [article, callNext], null);
+  }
 
-    mainEnd(res, args) {
-      var article, callNext;
-      article = args[0];
-      callNext = args[1];
-      if (res.edit && res.edit.result === 'Success') {
-        this.WM.Log.logInfo('Diff correctly appended to ' + this.WM.Log.linkToWikiPage(article, article));
-        if (callNext) {
-          return callNext();
-        }
-      } else {
-        return this.WM.Log.logError('The diff has not been appended!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
+  mainEnd(res, args) {
+    var article, callNext;
+    article = args[0];
+    callNext = args[1];
+    if (res.edit && res.edit.result === 'Success') {
+      this.WM.Log.logInfo('Diff correctly appended to ' + this.WM.Log.linkToWikiPage(article, article));
+      if (callNext) {
+        return callNext();
       }
+    } else {
+      return this.WM.Log.logError('The diff has not been appended!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
     }
+  }
 
-  };
-
-  ArchWikiSaveTalk.REQUIRES_GM = false;
-
-  return ArchWikiSaveTalk;
-
-})();
+};

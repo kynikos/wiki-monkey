@@ -269,8 +269,6 @@ module.exports.FixBacklinkFragments = (function() {
 
   };
 
-  FixBacklinkFragments.REQUIRES_GM = false;
-
   readTarget = function() {
     return document.getElementById("WikiMonkey-FixBacklinkFragments-Target").value;
   };

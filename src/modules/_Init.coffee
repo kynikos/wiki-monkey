@@ -58,8 +58,7 @@ class module.exports.WM
         @Plugins = {}
 
         for [pname, Plugin] in installedPlugins
-            if not GM_emulation? or not Plugin.REQUIRES_GM
-                @Plugins[pname] = new Plugin(this)
+            @Plugins[pname] = new Plugin(this)
 
     main: (defaultConfig) ->
         @Cfg._load(defaultConfig)

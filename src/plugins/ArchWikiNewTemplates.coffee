@@ -18,8 +18,6 @@
 
 
 class module.exports.ArchWikiNewTemplates
-    @REQUIRES_GM = false
-
     constructor: (@WM) ->
 
     main: (args, callNext) ->

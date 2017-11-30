@@ -75,9 +75,7 @@ module.exports.WM = class WM {
     this.Plugins = {};
     for (i = 0, len = installedPlugins.length; i < len; i++) {
       [pname, Plugin] = installedPlugins[i];
-      if ((typeof GM_emulation === "undefined" || GM_emulation === null) || !Plugin.REQUIRES_GM) {
-        this.Plugins[pname] = new Plugin(this);
-      }
+      this.Plugins[pname] = new Plugin(this);
     }
   }
 

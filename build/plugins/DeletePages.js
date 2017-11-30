@@ -16,57 +16,50 @@
 
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
-module.exports.DeletePages = (function() {
-  class DeletePages {
-    constructor(WM) {
-      this.WM = WM;
-    }
+module.exports.DeletePages = class DeletePages {
+  constructor(WM) {
+    this.WM = WM;
+  }
 
-    mainAuto(args, title, callBot, chainArgs) {
-      var summary;
-      summary = args;
-      return this.WM.MW.callQuery({
-        prop: 'info',
-        intoken: 'delete',
-        titles: title
-      }, this.WM.Plugins.DeletePages.mainAutoWrite, [title, summary, callBot], null);
-    }
+  mainAuto(args, title, callBot, chainArgs) {
+    var summary;
+    summary = args;
+    return this.WM.MW.callQuery({
+      prop: 'info',
+      intoken: 'delete',
+      titles: title
+    }, this.WM.Plugins.DeletePages.mainAutoWrite, [title, summary, callBot], null);
+  }
 
-    mainAutoWrite(page, args) {
-      var callBot, deletetoken, summary, title;
-      title = args[0];
-      summary = args[1];
-      callBot = args[2];
-      deletetoken = page.deletetoken;
-      return this.WM.MW.callAPIPost({
-        action: 'delete',
-        bot: '1',
-        title: title,
-        token: deletetoken,
-        reason: summary
-      }, this.WM.Plugins.DeletePages.mainAutoEnd, [title, callBot], null);
-    }
+  mainAutoWrite(page, args) {
+    var callBot, deletetoken, summary, title;
+    title = args[0];
+    summary = args[1];
+    callBot = args[2];
+    deletetoken = page.deletetoken;
+    return this.WM.MW.callAPIPost({
+      action: 'delete',
+      bot: '1',
+      title: title,
+      token: deletetoken,
+      reason: summary
+    }, this.WM.Plugins.DeletePages.mainAutoEnd, [title, callBot], null);
+  }
 
-    mainAutoEnd(res, args) {
-      var callBot, title;
-      title = args[0];
-      callBot = args[1];
-      if (!res.delete) {
-        if (res.error) {
-          this.WM.Log.logError(`${this.WM.Log.linkToWikiPage(title, title)} has not been deleted!\n${res.error.info} (${res.error.code})`);
-          return callBot(res.error.code, null);
-        } else {
-          return callBot(false, null);
-        }
+  mainAutoEnd(res, args) {
+    var callBot, title;
+    title = args[0];
+    callBot = args[1];
+    if (!res.delete) {
+      if (res.error) {
+        this.WM.Log.logError(`${this.WM.Log.linkToWikiPage(title, title)} has not been deleted!\n${res.error.info} (${res.error.code})`);
+        return callBot(res.error.code, null);
       } else {
-        return callBot(1, null);
+        return callBot(false, null);
       }
+    } else {
+      return callBot(1, null);
     }
+  }
 
-  };
-
-  DeletePages.REQUIRES_GM = false;
-
-  return DeletePages;
-
-})();
+};

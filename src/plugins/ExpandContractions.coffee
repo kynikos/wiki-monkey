@@ -18,8 +18,6 @@
 
 
 class module.exports.ExpandContractions
-    @REQUIRES_GM = false
-
     constructor: (@WM) ->
 
     replace: (source, regExp, newString, checkString, checkStrings) ->

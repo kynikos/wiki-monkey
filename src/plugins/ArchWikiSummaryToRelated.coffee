@@ -18,8 +18,6 @@
 
 
 class module.exports.ArchWikiSummaryToRelated
-    @REQUIRES_GM = false
-
     constructor: (@WM) ->
 
     main: (args, callNext) ->
