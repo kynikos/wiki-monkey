@@ -29,6 +29,7 @@ AUXDIR = './auxiliary/'
 DISTFILE = "{distdir}WikiMonkey-{fname}{suffix}.{preext}.js"
 COFFEE = "./node_modules/.bin/coffee --compile --bare --output {build} {src}"
 BROWSERIFY = "./node_modules/.bin/browserify {args} {srcpath} -o {distfile}"
+BABEL = './node_modules/.bin/babel {} --out-file {}'
 
 # This should be kept compatible with both JavaScript and CoffeeScript
 # require syntax
@@ -142,6 +143,7 @@ def compile_gm(run, distdir, fname, cfname, srcpath, matches, version, suffix,
                                preext='user')
 
     run(BROWSERIFY.format(args=args, srcpath=srcpath, distfile=distfile))
+    run(BABEL.format(distfile, distfile))
 
     with open(distfile, 'r') as df:
         script = df.read()
@@ -190,8 +192,10 @@ def compile_mw_sa(run, fname, srcpath, version):
 
     run(BROWSERIFY.format(args='', srcpath=distfile_mw_temp,
                           distfile=distfile_mw))
+    run(BABEL.format(distfile_mw, distfile_mw))
     run(BROWSERIFY.format(args=SED, srcpath=distfile_mw_temp,
                           distfile=distfile_mw_lite))
+    run(BABEL.format(distfile_mw_lite, distfile_mw_lite))
 
     os.remove(distfile_mw_temp)
 
