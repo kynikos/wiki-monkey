@@ -2,7 +2,7 @@ import os.path
 
 from . import configurations
 
-LICENCE = """/*
+LICENSE = """/*
  * Wiki Monkey - MediaWiki bot and editor-assistant user script
  * Copyright (C) 2011 Dario Giovannetti <dev@dariogiovannetti.net>
  *
@@ -109,7 +109,7 @@ def compile_webext(run, distdir, fname, cfname, srcpath, version, suffix,
         script = df.read()
 
     with open(distfile, 'w') as df:
-        df.write('\n'.join((LICENCE, script)))
+        df.write('\n'.join((LICENSE, script)))
 
 
 def compile_mediawiki(run, fname, srcpath, version):
@@ -147,7 +147,7 @@ def compile_mediawiki(run, fname, srcpath, version):
     # The MediaWiki version doesn't require a non-lite script, since MediaWiki
     # always ships with jQuery
     with open(distfile_mw_lite, 'w') as df:
-        df.write('\n'.join((LICENCE, script_mw_lite)))
+        df.write('\n'.join((LICENSE, script_mw_lite)))
 
     distfile_sa = DISTFILE.format(distdir=DISTDIR, fname=fname,
                                   suffix='-sa', preext='user')
@@ -160,7 +160,7 @@ def compile_mediawiki(run, fname, srcpath, version):
             # TODO: For the moment this is only using the first of the
             #       CONFIG[fname]['matchlist_re'] expressions; when there are
             #       more than one, join them all with ||
-            df.write('\n'.join((LICENCE,
+            df.write('\n'.join((LICENSE,
                                 STANDALONE_START.format(
                                             CONFIG[fname]['matchlist_re'][0]),
                                 script,
