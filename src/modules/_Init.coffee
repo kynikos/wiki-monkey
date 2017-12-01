@@ -36,7 +36,7 @@ WhatLinksHere_ = require('./WhatLinksHere').WhatLinksHere
 
 
 class module.exports.WM
-    constructor: (installedPlugins...) ->
+    constructor: (default_config, installed_plugins...) ->
         @ArchPackages = new ArchPackages_(this)
         @ArchWiki = new ArchWiki_(this)
         @Bot = new Bot_(this)
@@ -57,9 +57,8 @@ class module.exports.WM
 
         @Plugins = {}
 
-        for [pname, Plugin] in installedPlugins
+        for [pname, Plugin] in installed_plugins
             @Plugins[pname] = new Plugin(this)
 
-    main: (defaultConfig) ->
-        @Cfg._load(defaultConfig)
+        @Cfg._load(default_config)
         @UI._makeUI()

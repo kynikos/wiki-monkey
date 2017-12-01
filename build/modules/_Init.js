@@ -53,7 +53,7 @@ UI_ = require('./UI').UI;
 WhatLinksHere_ = require('./WhatLinksHere').WhatLinksHere;
 
 module.exports.WM = class WM {
-  constructor(...installedPlugins) {
+  constructor(default_config, ...installed_plugins) {
     var Plugin, i, len, pname;
     this.ArchPackages = new ArchPackages_(this);
     this.ArchWiki = new ArchWiki_(this);
@@ -73,15 +73,12 @@ module.exports.WM = class WM {
     this.UI = new UI_(this);
     this.WhatLinksHere = new WhatLinksHere_(this);
     this.Plugins = {};
-    for (i = 0, len = installedPlugins.length; i < len; i++) {
-      [pname, Plugin] = installedPlugins[i];
+    for (i = 0, len = installed_plugins.length; i < len; i++) {
+      [pname, Plugin] = installed_plugins[i];
       this.Plugins[pname] = new Plugin(this);
     }
-  }
-
-  main(defaultConfig) {
-    this.Cfg._load(defaultConfig);
-    return this.UI._makeUI();
+    this.Cfg._load(default_config);
+    this.UI._makeUI();
   }
 
 };

@@ -41,13 +41,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 		s(r[o]);
 	}return s;
 })({ 1: [function (require, module, exports) {
-		var WM, WM_;
+		var WM;
 
-		WM_ = require('./modules/_Init').WM;
+		WM = require('./modules/_Init').WM;
 
-		WM = new WM_(['ArchWikiFixHeader', require("./plugins/ArchWikiFixHeader").ArchWikiFixHeader], ['ArchWikiFixHeadings', require("./plugins/ArchWikiFixHeadings").ArchWikiFixHeadings], ['ArchWikiFixLinks', require("./plugins/ArchWikiFixLinks").ArchWikiFixLinks], ['ArchWikiNewTemplates', require("./plugins/ArchWikiNewTemplates").ArchWikiNewTemplates], ['ArchWikiNPFilter', require("./plugins/ArchWikiNPFilter").ArchWikiNPFilter], ['ArchWikiOldAURLinks', require("./plugins/ArchWikiOldAURLinks").ArchWikiOldAURLinks], ['ArchWikiQuickReport', require("./plugins/ArchWikiQuickReport").ArchWikiQuickReport], ['ArchWikiSortContacts', require("./plugins/ArchWikiSortContacts").ArchWikiSortContacts], ['ArchWikiSummaryToRelated', require("./plugins/ArchWikiSummaryToRelated").ArchWikiSummaryToRelated], ['ArchWikiRCFilter', require("./plugins/ArchWikiRCFilter").ArchWikiRCFilter], ['ArchWikiUpdatePackageTemplates', require("./plugins/ArchWikiUpdatePackageTemplates").ArchWikiUpdatePackageTemplates], ['ExpandContractions', require("./plugins/ExpandContractions").ExpandContractions], ['FixBacklinkFragments', require("./plugins/FixBacklinkFragments").FixBacklinkFragments], ['FixDoubleRedirects', require("./plugins/FixDoubleRedirects").FixDoubleRedirects], ['FixFragments', require("./plugins/FixFragments").FixFragments], ['FixLinkFragments', require("./plugins/FixLinkFragments").FixLinkFragments], ['MultipleLineBreaks', require("./plugins/MultipleLineBreaks").MultipleLineBreaks], ['SimpleReplace', require("./plugins/SimpleReplace").SimpleReplace], ['SynchronizeInterlanguageLinks', require("./plugins/SynchronizeInterlanguageLinks").SynchronizeInterlanguageLinks], ['UpdateCategoryTree', require("./plugins/UpdateCategoryTree").UpdateCategoryTree]);
-
-		WM.main(require("../build/configurations/ArchWiki-bot"));
+		new WM(require("../build/configurations/ArchWiki-bot"), ['ArchWikiFixHeader', require("./plugins/ArchWikiFixHeader").ArchWikiFixHeader], ['ArchWikiFixHeadings', require("./plugins/ArchWikiFixHeadings").ArchWikiFixHeadings], ['ArchWikiFixLinks', require("./plugins/ArchWikiFixLinks").ArchWikiFixLinks], ['ArchWikiNewTemplates', require("./plugins/ArchWikiNewTemplates").ArchWikiNewTemplates], ['ArchWikiNPFilter', require("./plugins/ArchWikiNPFilter").ArchWikiNPFilter], ['ArchWikiOldAURLinks', require("./plugins/ArchWikiOldAURLinks").ArchWikiOldAURLinks], ['ArchWikiQuickReport', require("./plugins/ArchWikiQuickReport").ArchWikiQuickReport], ['ArchWikiSortContacts', require("./plugins/ArchWikiSortContacts").ArchWikiSortContacts], ['ArchWikiSummaryToRelated', require("./plugins/ArchWikiSummaryToRelated").ArchWikiSummaryToRelated], ['ArchWikiRCFilter', require("./plugins/ArchWikiRCFilter").ArchWikiRCFilter], ['ArchWikiUpdatePackageTemplates', require("./plugins/ArchWikiUpdatePackageTemplates").ArchWikiUpdatePackageTemplates], ['ExpandContractions', require("./plugins/ExpandContractions").ExpandContractions], ['FixBacklinkFragments', require("./plugins/FixBacklinkFragments").FixBacklinkFragments], ['FixDoubleRedirects', require("./plugins/FixDoubleRedirects").FixDoubleRedirects], ['FixFragments', require("./plugins/FixFragments").FixFragments], ['FixLinkFragments', require("./plugins/FixLinkFragments").FixLinkFragments], ['MultipleLineBreaks', require("./plugins/MultipleLineBreaks").MultipleLineBreaks], ['SimpleReplace', require("./plugins/SimpleReplace").SimpleReplace], ['SynchronizeInterlanguageLinks', require("./plugins/SynchronizeInterlanguageLinks").SynchronizeInterlanguageLinks], ['UpdateCategoryTree', require("./plugins/UpdateCategoryTree").UpdateCategoryTree]);
 	}, { "../build/configurations/ArchWiki-bot": 2, "./modules/_Init": 20, "./plugins/ArchWikiFixHeader": 21, "./plugins/ArchWikiFixHeadings": 22, "./plugins/ArchWikiFixLinks": 23, "./plugins/ArchWikiNPFilter": 24, "./plugins/ArchWikiNewTemplates": 25, "./plugins/ArchWikiOldAURLinks": 26, "./plugins/ArchWikiQuickReport": 27, "./plugins/ArchWikiRCFilter": 28, "./plugins/ArchWikiSortContacts": 29, "./plugins/ArchWikiSummaryToRelated": 30, "./plugins/ArchWikiUpdatePackageTemplates": 31, "./plugins/ExpandContractions": 32, "./plugins/FixBacklinkFragments": 33, "./plugins/FixDoubleRedirects": 34, "./plugins/FixFragments": 35, "./plugins/FixLinkFragments": 36, "./plugins/MultipleLineBreaks": 37, "./plugins/SimpleReplace": 38, "./plugins/SynchronizeInterlanguageLinks": 39, "./plugins/UpdateCategoryTree": 40 }], 2: [function (require, module, exports) {
 		module.exports = {
 			"Mods": {
@@ -3916,54 +3914,44 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 		WhatLinksHere_ = require('./WhatLinksHere').WhatLinksHere;
 
-		module.exports.WM = function () {
-			function WM() {
-				_classCallCheck(this, WM);
+		module.exports.WM = function WM(default_config) {
+			_classCallCheck(this, WM);
 
-				var Plugin, i, len, pname;
-				this.ArchPackages = new ArchPackages_(this);
-				this.ArchWiki = new ArchWiki_(this);
-				this.Bot = new Bot_(this);
-				this.Cat = new Cat_(this);
-				this.Cfg = new Cfg_(this);
-				this.Diff = new Diff_(this);
-				this.Editor = new Editor_(this);
-				this.Filters = new Filters_(this);
-				this.Interlanguage = new Interlanguage_(this);
-				this.Log = new Log_(this);
-				this.Menu = new Menu_(this);
-				this.Mods = new Mods_(this);
-				this.MW = new MW_(this);
-				this.Parser = new Parser_(this);
-				this.Tables = new Tables_(this);
-				this.UI = new UI_(this);
-				this.WhatLinksHere = new WhatLinksHere_(this);
-				this.Plugins = {};
+			var Plugin, i, len, pname;
+			this.ArchPackages = new ArchPackages_(this);
+			this.ArchWiki = new ArchWiki_(this);
+			this.Bot = new Bot_(this);
+			this.Cat = new Cat_(this);
+			this.Cfg = new Cfg_(this);
+			this.Diff = new Diff_(this);
+			this.Editor = new Editor_(this);
+			this.Filters = new Filters_(this);
+			this.Interlanguage = new Interlanguage_(this);
+			this.Log = new Log_(this);
+			this.Menu = new Menu_(this);
+			this.Mods = new Mods_(this);
+			this.MW = new MW_(this);
+			this.Parser = new Parser_(this);
+			this.Tables = new Tables_(this);
+			this.UI = new UI_(this);
+			this.WhatLinksHere = new WhatLinksHere_(this);
+			this.Plugins = {};
 
-				for (var _len = arguments.length, installedPlugins = Array(_len), _key = 0; _key < _len; _key++) {
-					installedPlugins[_key] = arguments[_key];
-				}
-
-				for (i = 0, len = installedPlugins.length; i < len; i++) {
-					var _installedPlugins$i = _slicedToArray(installedPlugins[i], 2);
-
-					pname = _installedPlugins$i[0];
-					Plugin = _installedPlugins$i[1];
-
-					this.Plugins[pname] = new Plugin(this);
-				}
+			for (var _len = arguments.length, installed_plugins = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+				installed_plugins[_key - 1] = arguments[_key];
 			}
 
-			_createClass(WM, [{
-				key: "main",
-				value: function main(defaultConfig) {
-					this.Cfg._load(defaultConfig);
-					return this.UI._makeUI();
-				}
-			}]);
+			for (i = 0, len = installed_plugins.length; i < len; i++) {
+				var _installed_plugins$i = _slicedToArray(installed_plugins[i], 2);
 
-			return WM;
-		}();
+				pname = _installed_plugins$i[0];
+				Plugin = _installed_plugins$i[1];
+
+				this.Plugins[pname] = new Plugin(this);
+			}
+			this.Cfg._load(default_config);
+			this.UI._makeUI();
+		};
 	}, { "./ArchPackages": 3, "./ArchWiki": 4, "./Bot": 5, "./Cat": 6, "./Cfg": 7, "./Diff": 8, "./Editor": 9, "./Filters": 10, "./Interlanguage": 11, "./Log": 12, "./MW": 13, "./Menu": 14, "./Mods": 15, "./Parser": 16, "./Tables": 17, "./UI": 18, "./WhatLinksHere": 19 }], 21: [function (require, module, exports) {
 		var indexOf = [].indexOf;
 

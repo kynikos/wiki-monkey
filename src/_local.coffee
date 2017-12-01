@@ -1,6 +1,10 @@
-WM_ = require('./modules/_Init').WM
+WM = require('./modules/_Init').WM
 
-WM = new WM_(
+new WM(
+    # Configuration files are generated automatically, don't keep them under
+    # ./src/configurations/
+    require("../build/configurations/_local"),
+
     # The require paths can't be constructed dynamically, or browserify won't
     # understand and import them
     ['ArchWikiFixHeader',
@@ -50,7 +54,3 @@ WM = new WM_(
     ['UpdateCategoryTree',
         require("./plugins/UpdateCategoryTree").UpdateCategoryTree],
 )
-
-# Configuration files are generated automatically, don't keep them under
-# ./src/configurations/
-WM.main(require("../build/configurations/_local"))
