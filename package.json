@@ -14,10 +14,13 @@
     "browserify": "",
     "coffeeify": "",
     "coffeelint": "",
-    "coffeescript": ""
+    "coffeescript": "",
+    "http-server": ""
   },
   "scripts": {
-    "build": "python auxiliary/build.py"
+    "build": "python auxiliary/build.py",
+    "serve-gencert": "cd auxiliary && sh ./gencert.sh",
+    "serve": "http-server --ssl --cert auxiliary/dev-cert.pem --key auxiliary/dev-key.pem"
   },
   "browserify": {
     "transform": [
