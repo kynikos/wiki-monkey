@@ -129,9 +129,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
     };
   }, {}], 3: [function (require, module, exports) {
-    var $, Obj, RegEx;
-
-    $ = window.$;
+    var Obj, RegEx;
 
     Obj = require('../../lib.js.generic/dist/Obj');
 
@@ -270,7 +268,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return ArchPackages;
     }();
-  }, { "../../lib.js.generic/dist/Obj": 46, "../../lib.js.generic/dist/RegEx": 47 }], 4: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Obj": 45, "../../lib.js.generic/dist/RegEx": 46 }], 4: [function (require, module, exports) {
     module.exports.ArchWiki = function () {
       var languages, tablesOfContents;
 
@@ -1504,14 +1502,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Cat;
     }();
-  }, { "../../lib.js.generic/dist/Async": 41, "../../lib.js.generic/dist/Obj": 46 }], 7: [function (require, module, exports) {
-    var $, CSS, DOM;
-
-    $ = window.$;
+  }, { "../../lib.js.generic/dist/Async": 41, "../../lib.js.generic/dist/Obj": 45 }], 7: [function (require, module, exports) {
+    var CSS;
 
     CSS = require('../../lib.js.generic/dist/CSS');
-
-    DOM = require('../../lib.js.generic/dist/DOM');
 
     module.exports.Cfg = function () {
       var DEFAULTS_REQUEST;
@@ -1534,7 +1528,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         _createClass(Cfg, [{
           key: "_makeUI",
           value: function _makeUI() {
-            return DOM.waitUntilJQuerySelectorMatches('#preftoc', this._doMakeUI, [], 500);
+            var waitdom;
+
+            waitdom = function waitdom() {
+              if ($('#preftoc')[0]) {
+                return this._doMakeUI();
+              } else {
+                return setTimeout(_recurse, 200);
+              }
+            };
+            return waitdom();
           }
         }, {
           key: "_doMakeUI",
@@ -1756,7 +1759,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Cfg;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 42, "../../lib.js.generic/dist/DOM": 44 }], 8: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/CSS": 42 }], 8: [function (require, module, exports) {
     var HTTP;
 
     HTTP = require('../../lib.js.generic/dist/HTTP');
@@ -1810,7 +1813,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Diff;
     }();
-  }, { "../../lib.js.generic/dist/HTTP": 45 }], 9: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/HTTP": 44 }], 9: [function (require, module, exports) {
     var Compatibility, HTTP;
 
     Compatibility = require('../../lib.js.generic/dist/Compatibility');
@@ -1871,10 +1874,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Editor;
     }();
-  }, { "../../lib.js.generic/dist/Compatibility": 43, "../../lib.js.generic/dist/HTTP": 45 }], 10: [function (require, module, exports) {
-    var $, CSS;
-
-    $ = window.$;
+  }, { "../../lib.js.generic/dist/Compatibility": 43, "../../lib.js.generic/dist/HTTP": 44 }], 10: [function (require, module, exports) {
+    var CSS;
 
     CSS = require('../../lib.js.generic/dist/CSS');
 
@@ -2248,7 +2249,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Interlanguage;
     }();
-  }, { "../../lib.js.generic/dist/Obj": 46 }], 12: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Obj": 45 }], 12: [function (require, module, exports) {
     var CSS, Str;
 
     CSS = require('../../lib.js.generic/dist/CSS');
@@ -2463,10 +2464,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Log;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 42, "../../lib.js.generic/dist/Str": 48 }], 13: [function (require, module, exports) {
-    var $, HTTP, Obj;
-
-    $ = window.$;
+  }, { "../../lib.js.generic/dist/CSS": 42, "../../lib.js.generic/dist/Str": 47 }], 13: [function (require, module, exports) {
+    var HTTP, Obj;
 
     HTTP = require('../../lib.js.generic/dist/HTTP');
 
@@ -2954,10 +2953,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return MW;
     }();
-  }, { "../../lib.js.generic/dist/HTTP": 45, "../../lib.js.generic/dist/Obj": 46 }], 14: [function (require, module, exports) {
-    var $, Async, CSS;
-
-    $ = window.$;
+  }, { "../../lib.js.generic/dist/HTTP": 44, "../../lib.js.generic/dist/Obj": 45 }], 14: [function (require, module, exports) {
+    var Async, CSS;
 
     CSS = require('../../lib.js.generic/dist/CSS');
 
@@ -3107,9 +3104,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       return Menu;
     }();
   }, { "../../lib.js.generic/dist/Async": 41, "../../lib.js.generic/dist/CSS": 42 }], 15: [function (require, module, exports) {
-    var $, CSS;
-
-    $ = window.$;
+    var CSS;
 
     CSS = require('../../lib.js.generic/dist/CSS');
 
@@ -3665,7 +3660,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Parser;
     }();
-  }, { "../../lib.js.generic/dist/RegEx": 47, "../../lib.js.generic/dist/Str": 48 }], 17: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/RegEx": 46, "../../lib.js.generic/dist/Str": 47 }], 17: [function (require, module, exports) {
     var Str;
 
     Str = require('../../lib.js.generic/dist/Str');
@@ -3692,7 +3687,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Tables;
     }();
-  }, { "../../lib.js.generic/dist/Str": 48 }], 18: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Str": 47 }], 18: [function (require, module, exports) {
     var CSS, RegEx;
 
     CSS = require('../../lib.js.generic/dist/CSS');
@@ -3848,7 +3843,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return UI;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 42, "../../lib.js.generic/dist/RegEx": 47 }], 19: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/CSS": 42, "../../lib.js.generic/dist/RegEx": 46 }], 19: [function (require, module, exports) {
     module.exports.WhatLinksHere = function () {
       function WhatLinksHere(WM) {
         _classCallCheck(this, WhatLinksHere);
@@ -4314,9 +4309,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       return ArchWikiFixLinks;
     }();
   }, {}], 24: [function (require, module, exports) {
-    var $, CSS;
-
-    $ = window.$;
+    var CSS;
 
     CSS = require('../../lib.js.generic/dist/CSS');
 
@@ -4600,7 +4593,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return ArchWikiOldAURLinks;
     }();
-  }, { "../../lib.js.generic/dist/RegEx": 47 }], 27: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/RegEx": 46 }], 27: [function (require, module, exports) {
     var CSS, HTTP;
 
     CSS = require('../../lib.js.generic/dist/CSS');
@@ -4715,10 +4708,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return ArchWikiQuickReport;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 42, "../../lib.js.generic/dist/HTTP": 45 }], 28: [function (require, module, exports) {
-    var $, CSS;
-
-    $ = window.$;
+  }, { "../../lib.js.generic/dist/CSS": 42, "../../lib.js.generic/dist/HTTP": 44 }], 28: [function (require, module, exports) {
+    var CSS;
 
     CSS = require('../../lib.js.generic/dist/CSS');
 
@@ -5937,7 +5928,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return FixDoubleRedirects;
     }();
-  }, { "../../lib.js.generic/dist/Str": 48 }], 35: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Str": 47 }], 35: [function (require, module, exports) {
     module.exports.FixFragments = function () {
       function FixFragments(WM) {
         _classCallCheck(this, FixFragments);
@@ -6915,7 +6906,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return UpdateCategoryTree;
     }();
-  }, { "../../lib.js.generic/dist/Str": 48 }], 41: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Str": 47 }], 41: [function (require, module, exports) {
     module.exports.executeAsync = function (functions, id) {
       var callContinue, fid;
       id++;
@@ -7007,120 +6998,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       return source.replace(/\r\n/g, '\n');
     };
   }, {}], 44: [function (require, module, exports) {
-    module.exports.getPreviousElementSibling = function (node) {
-      while (node.previousSibling.nodeType !== 1) {
-        node = node.previousSibling;
-      }
-      return node.previousSibling;
-    };
-
-    module.exports.getNextElementSibling = function (node) {
-      while (node.nextSibling.nodeType !== 1) {
-        node = node.nextSibling;
-      }
-      return node.nextSibling;
-    };
-
-    module.exports.getFirstElementChild = function (node) {
-      if (node.firstChild.nodeType === 1) {
-        return node.firstChild;
-      } else {
-        return module.exports.getNextElementSibling(node.firstChild);
-      }
-    };
-
-    module.exports.getLastElementChild = function (node) {
-      if (node.lastChild.nodeType === 1) {
-        return node.lastChild;
-      } else {
-        return module.exports.getPreviousElementSibling(node.lastChild);
-      }
-    };
-
-    module.exports.getChildElements = function (node) {
-      var child, children, j, len, list;
-      list = element.childNodes;
-      children = [];
-      for (j = 0, len = list.length; j < len; j++) {
-        child = list[j];
-        if (child.nodeType === 1) {
-          children.push(child);
-        }
-      }
-      return children;
-    };
-
-    module.exports.getChildrenByTagName = function (element, tag) {
-      var child, children, j, len, list, localName;
-      list = element.childNodes;
-      children = [];
-      for (j = 0, len = list.length; j < len; j++) {
-        child = list[j];
-        localName = child.localName;
-        if (localName && localName.toLowerCase() === tag.toLowerCase()) {
-          children.push(child);
-        }
-      }
-      return children;
-    };
-
-    module.exports.isDescendantOf = function (descendant, ancestor, identity) {
-      var response;
-      response = false;
-      if (identity && descendant.isSameNode(ancestor)) {
-        response = true;
-      } else {
-        while (descendant !== document.body) {
-          if (descendant.parentNode.isSameNode(ancestor)) {
-            response = true;
-            break;
-          }
-          descendant = descendant.parentNode;
-        }
-      }
-      return response;
-    };
-
-    module.exports.getSiblingPositionByTagName = function (element) {
-      var i, siblings;
-      i = 0;
-      siblings = module.exports.getChildrenByTagName(element.parentNode, element.localName);
-      while (!siblings[i].isSameNode(element)) {
-        i++;
-      }
-      if (i < siblings.length) {
-        return i;
-      } else {
-        return -1;
-      }
-    };
-
-    module.exports.getLongTextNode = function (element) {
-      var child, j, len, nodes, text;
-      text = "";
-      nodes = element.childNodes;
-      for (j = 0, len = nodes.length; j < len; j++) {
-        child = nodes[j];
-        if (child.nodeType === 3) {
-          text += child.nodeValue;
-        }
-      }
-      return text;
-    };
-
-    module.exports.waitUntilJQuerySelectorMatches = function (selector, handler, args, interval) {
-      var $, _recurse;
-      $ = window.$;
-      _recurse = function recurse() {
-        if ($(selector)[0]) {
-          return handler(args);
-        } else {
-          return setTimeout(_recurse, interval);
-        }
-      };
-      return _recurse();
-    };
-  }, {}], 45: [function (require, module, exports) {
     module.exports.getUrlLocation = function (url) {
       var link;
       link = document.createElement('a');
@@ -7195,7 +7072,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       req.send(query);
       return req;
     };
-  }, {}], 46: [function (require, module, exports) {
+  }, {}], 45: [function (require, module, exports) {
     module.exports.getKeys = function (object) {
       var i, keys;
       keys = [];
@@ -7220,7 +7097,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         return object[i];
       }
     };
-  }, {}], 47: [function (require, module, exports) {
+  }, {}], 46: [function (require, module, exports) {
     module.exports.escapePattern = function (string) {
       return string.replace(/[-[\]{}()^$*+?.|\\]/g, "\\$&");
     };
@@ -7262,7 +7139,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
       return result;
     };
-  }, {}], 48: [function (require, module, exports) {
+  }, {}], 47: [function (require, module, exports) {
     module.exports.insert = function (string, newString, id) {
       if (id == null) {
         id = 0;

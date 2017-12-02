@@ -16,13 +16,9 @@
 
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
-var $, CSS, DOM;
-
-$ = require('jquery');
+var CSS;
 
 CSS = require('../../lib.js.generic/dist/CSS');
-
-DOM = require('../../lib.js.generic/dist/DOM');
 
 module.exports.Cfg = (function() {
   var DEFAULTS_REQUEST;
@@ -41,9 +37,17 @@ module.exports.Cfg = (function() {
     }
 
     _makeUI() {
+      var waitdom;
       // We have to wait until #preftoc exists, because it's generated
       // dynamically by a MediaWiki script, hence racing with Wiki Monkey
-      return DOM.waitUntilJQuerySelectorMatches('#preftoc', this._doMakeUI, [], 500);
+      waitdom = function() {
+        if ($('#preftoc')[0]) {
+          return this._doMakeUI();
+        } else {
+          return setTimeout(_recurse, 200);
+        }
+      };
+      return waitdom();
     }
 
     _doMakeUI() {

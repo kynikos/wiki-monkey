@@ -20,7 +20,6 @@
 # - https://wiki.archlinux.org/index.php/Official_Repositories_Web_Interface
 # - https://wiki.archlinux.org/index.php/AurJson
 
-$ = require('jquery')
 Obj = require('../../lib.js.generic/dist/Obj')
 RegEx = require('../../lib.js.generic/dist/RegEx')
 

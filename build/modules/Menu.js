@@ -16,9 +16,7 @@
 
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
-var $, Async, CSS;
-
-$ = require('jquery');
+var Async, CSS;
 
 CSS = require('../../lib.js.generic/dist/CSS');
 

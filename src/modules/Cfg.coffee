@@ -16,9 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-$ = require('jquery')
 CSS = require('../../lib.js.generic/dist/CSS')
-DOM = require('../../lib.js.generic/dist/DOM')
 
 
 class module.exports.Cfg
@@ -33,8 +31,12 @@ class module.exports.Cfg
     _makeUI: ->
         # We have to wait until #preftoc exists, because it's generated
         # dynamically by a MediaWiki script, hence racing with Wiki Monkey
-        DOM.waitUntilJQuerySelectorMatches('#preftoc', @_doMakeUI, [],
-                                                500)
+        waitdom = ->
+          if $('#preftoc')[0]
+              @_doMakeUI()
+          else
+              return setTimeout(_recurse, 200)
+        waitdom()
 
     _doMakeUI: =>
         # Creating the preferences interface shouldn't rely on the saved

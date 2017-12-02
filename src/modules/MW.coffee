@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-$ = require('jquery')
 HTTP = require('../../lib.js.generic/dist/HTTP')
 Obj = require('../../lib.js.generic/dist/Obj')
 

@@ -5,8 +5,7 @@
   "description": "MediaWiki bot and editor-assistant user script.",
   "dependencies": {
     "hyperscript": "",
-    "hyperscript-helpers": "",
-    "jquery": ""
+    "hyperscript-helpers": ""
   },
   "devDependencies": {
     "babel-cli": "",

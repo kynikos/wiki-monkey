@@ -50,18 +50,9 @@ COFFEE = "./node_modules/.bin/coffee --compile --bare --output {build} {src}"
 #       * it adds a redundant function wrap to required scripts
 #       * it's much slower
 # "browserify --command 'coffee --stdio --compile' --extension='.coffee'"
-BROWSERIFY = "./node_modules/.bin/browserify {args} {srcpath} -o {distfile}"
+BROWSERIFY = ("./node_modules/.bin/browserify --exclude jquery {srcpath} "
+              "--outfile {distfile}")
 BABEL = './node_modules/.bin/babel {} --out-file {}'
-
-# This should be kept compatible with both JavaScript and CoffeeScript
-# require syntax
-GLOBAL_MODULES = ('jquery', )
-# Escaping sed's quotes isn't very easy, this is relying on the shell's
-# concatenation of adjacent strings
-SEDRE1 = (r"(\S+)\s*\=\s*require\s*\(\s*['\''\"]({})['\''\"]\s*\)"
-          "".format('|'.join(GLOBAL_MODULES)))
-SEDRE2 = r"\1 = window.\1"
-SED = "--command \"sed -r -e 's/{}/{}/'\"".format(SEDRE1, SEDRE2)
 
 
 def compile_(version):
@@ -91,45 +82,32 @@ def compile_(version):
             fname = os.path.splitext(srcfile)[0]
 
             if srcfile.startswith('_'):
-                compile_webext(fname[1:], srcpath)
+                compile_script(AUXDIR, fname[1:], srcpath)
+
             elif version:
-                compile_mediawiki(fname, srcpath)
+                distfile = compile_script(DISTDIR, fname, srcpath)
+
+                # Previous versions were using this file name
+                # TODO: Deprecate in a future version
+                distfile_bwcompat = DISTFILE.format(distdir=DISTDIR,
+                                                    wiki=fname,
+                                                    suffix="-mw.user")
+                shutil.copy(distfile, distfile_bwcompat)
 
 
-def compile_mediawiki(fname, srcpath):
-    distfile_temp = DISTFILE.format(distdir=BUILDDIR, wiki=fname,
-                                    suffix="-tmp")
-    shutil.copy(srcpath, distfile_temp)
-    distfile = DISTFILE.format(distdir=DISTDIR, wiki=fname, suffix='')
+def compile_script(distdir, fname, srcpath):
+    distfile = DISTFILE.format(distdir=distdir, wiki=fname, suffix='')
 
-    run(BROWSERIFY.format(args=SED, srcpath=distfile_temp, distfile=distfile))
-    run(BABEL.format(distfile, distfile))
-    os.remove(distfile_temp)
-
-    prepend_license(distfile)
-
-    # Previous versions were using this file name
-    # TODO: Deprecate in a future version
-    distfile_bwcompat = DISTFILE.format(distdir=DISTDIR, wiki=fname,
-                                        suffix="-mw.user")
-    shutil.copy(distfile, distfile_bwcompat)
-
-
-def compile_webext(fname, srcpath):
-    distfile = DISTFILE.format(distdir=AUXDIR, wiki=fname, suffix='')
-
-    run(BROWSERIFY.format(args='', srcpath=srcpath, distfile=distfile))
+    run(BROWSERIFY.format(srcpath=srcpath, distfile=distfile))
     run(BABEL.format(distfile, distfile))
 
-    prepend_license(distfile)
-
-
-def prepend_license(distfile):
     with open(distfile, 'r') as sf:
         script = sf.read()
 
     with open(distfile, 'w') as df:
         df.write('\n'.join((LICENSE, script)))
+
+    return distfile
 
 
 if __name__ == '__main__':
