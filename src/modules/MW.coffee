@@ -25,6 +25,8 @@ class module.exports.MW
     localWikiUrls = null
 
     constructor: (@WM) ->
+        @api = new mw.Api()
+
         wpaths = @_getWikiPaths(location.href)
         hostname = wpaths[0]
 
@@ -156,22 +158,10 @@ class module.exports.MW
         return "Failed query: #{@WM.Log.linkToPage(url, url)}"
 
     callAPIGet: (params, call, callArgs, callError) ->
-        api = localWikiUrls.api
         params.format = "json"
 
-        $.get(
-            url: api
-            data: params
-        ).done((data, textStatus, jqXHR) =>
-            if not data instanceof Object
-                @WM.Log.logError("It is likely that the " +
-                                        @WM.Log.linkToPage(api, "API") +
-                                        " for this wiki is disabled")
-                if callError
-                    callError(callArgs)
-
-            if data
-                call(data, callArgs)
+        @api.get(params).done((data, textStatus, jqXHR) =>
+            call(data, callArgs)
         ).fail((jqXHR, textStatus, errorThrown) =>
             @WM.Log.logError(@failedQueryError(api))
             if confirm("Wiki Monkey error: Failed query\n\nDo you want " +
@@ -183,22 +173,10 @@ class module.exports.MW
         )
 
     callAPIPost: (params, call, callArgs, callError) ->
-        api = localWikiUrls.api
         params.format = "json"
 
-        $.post(
-            url: api
-            data: params
-        ).done((data, textStatus, jqXHR) =>
-            if not data instanceof Object
-                @WM.Log.logError("It is likely that the " +
-                                        @WM.Log.linkToPage(api, "API") +
-                                        " for this wiki is disabled")
-                if callError
-                    callError(callArgs)
-
-            if data
-                call(data, callArgs)
+        @api.post(params).done((data, textStatus, jqXHR) =>
+            call(data, callArgs)
         ).fail((jqXHR, textStatus, errorThrown) =>
             @WM.Log.logError(@failedQueryError(api))
             if confirm("Wiki Monkey error: Failed query\n\nDo you want " +

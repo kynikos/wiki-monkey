@@ -59,8 +59,10 @@ module.exports.WM = (function() {
     constructor(default_config, ...installed_plugins) {
       this._onready = this._onready.bind(this);
       this.version = VERSION;
-      $(() => {
-        return this._onready(default_config, installed_plugins);
+      mw.loader.using('mediawiki.api').done(() => {
+        return $(() => {
+          return this._onready(default_config, installed_plugins);
+        });
       });
     }
 

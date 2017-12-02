@@ -41,7 +41,9 @@ class module.exports.WM
 
     constructor: (default_config, installed_plugins...) ->
         @version = VERSION
-        $( => @_onready(default_config, installed_plugins))
+        mw.loader.using('mediawiki.api').done( =>
+            $( => @_onready(default_config, installed_plugins))
+        )
 
     _onready: (default_config, installed_plugins) =>
         @ArchPackages = new ArchPackages_(this)

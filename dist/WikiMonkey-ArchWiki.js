@@ -2480,6 +2480,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           var hostname, key, wpaths;
           this.WM = WM;
+          this.api = new mw.Api();
           wpaths = this._getWikiPaths(location.href);
           hostname = wpaths[0];
           this.userInfo = null;
@@ -2582,22 +2583,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           value: function callAPIGet(params, call, callArgs, callError) {
             var _this5 = this;
 
-            var api;
-            api = localWikiUrls.api;
             params.format = "json";
-            return $.get({
-              url: api,
-              data: params
-            }).done(function (data, textStatus, jqXHR) {
-              if (!data instanceof Object) {
-                _this5.WM.Log.logError("It is likely that the " + _this5.WM.Log.linkToPage(api, "API") + " for this wiki is disabled");
-                if (callError) {
-                  callError(callArgs);
-                }
-              }
-              if (data) {
-                return call(data, callArgs);
-              }
+            return this.api.get(params).done(function (data, textStatus, jqXHR) {
+              return call(data, callArgs);
             }).fail(function (jqXHR, textStatus, errorThrown) {
               _this5.WM.Log.logError(_this5.failedQueryError(api));
               if (confirm("Wiki Monkey error: Failed query\n\nDo you want " + "to retry?")) {
@@ -2613,22 +2601,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           value: function callAPIPost(params, call, callArgs, callError) {
             var _this6 = this;
 
-            var api;
-            api = localWikiUrls.api;
             params.format = "json";
-            return $.post({
-              url: api,
-              data: params
-            }).done(function (data, textStatus, jqXHR) {
-              if (!data instanceof Object) {
-                _this6.WM.Log.logError("It is likely that the " + _this6.WM.Log.linkToPage(api, "API") + " for this wiki is disabled");
-                if (callError) {
-                  callError(callArgs);
-                }
-              }
-              if (data) {
-                return call(data, callArgs);
-              }
+            return this.api.post(params).done(function (data, textStatus, jqXHR) {
+              return call(data, callArgs);
             }).fail(function (jqXHR, textStatus, errorThrown) {
               _this6.WM.Log.logError(_this6.failedQueryError(api));
               if (confirm("Wiki Monkey error: Failed query\n\nDo you want " + "to retry?")) {
@@ -3922,8 +3897,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           this._onready = this._onready.bind(this);
           this.version = VERSION;
-          $(function () {
-            return _this15._onready(default_config, installed_plugins);
+          mw.loader.using('mediawiki.api').done(function () {
+            return $(function () {
+              return _this15._onready(default_config, installed_plugins);
+            });
           });
         }
 

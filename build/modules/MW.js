@@ -29,6 +29,7 @@ module.exports.MW = (function() {
     constructor(WM) {
       var hostname, key, wpaths;
       this.WM = WM;
+      this.api = new mw.Api();
       wpaths = this._getWikiPaths(location.href);
       hostname = wpaths[0];
       this.userInfo = null;
@@ -124,22 +125,9 @@ module.exports.MW = (function() {
     }
 
     callAPIGet(params, call, callArgs, callError) {
-      var api;
-      api = localWikiUrls.api;
       params.format = "json";
-      return $.get({
-        url: api,
-        data: params
-      }).done((data, textStatus, jqXHR) => {
-        if (!data instanceof Object) {
-          this.WM.Log.logError("It is likely that the " + this.WM.Log.linkToPage(api, "API") + " for this wiki is disabled");
-          if (callError) {
-            callError(callArgs);
-          }
-        }
-        if (data) {
-          return call(data, callArgs);
-        }
+      return this.api.get(params).done((data, textStatus, jqXHR) => {
+        return call(data, callArgs);
       }).fail((jqXHR, textStatus, errorThrown) => {
         this.WM.Log.logError(this.failedQueryError(api));
         if (confirm("Wiki Monkey error: Failed query\n\nDo you want " + "to retry?")) {
@@ -152,22 +140,9 @@ module.exports.MW = (function() {
     }
 
     callAPIPost(params, call, callArgs, callError) {
-      var api;
-      api = localWikiUrls.api;
       params.format = "json";
-      return $.post({
-        url: api,
-        data: params
-      }).done((data, textStatus, jqXHR) => {
-        if (!data instanceof Object) {
-          this.WM.Log.logError("It is likely that the " + this.WM.Log.linkToPage(api, "API") + " for this wiki is disabled");
-          if (callError) {
-            callError(callArgs);
-          }
-        }
-        if (data) {
-          return call(data, callArgs);
-        }
+      return this.api.post(params).done((data, textStatus, jqXHR) => {
+        return call(data, callArgs);
       }).fail((jqXHR, textStatus, errorThrown) => {
         this.WM.Log.logError(this.failedQueryError(api));
         if (confirm("Wiki Monkey error: Failed query\n\nDo you want " + "to retry?")) {
