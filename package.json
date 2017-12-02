@@ -17,6 +17,9 @@
     "coffeelint": "",
     "coffeescript": ""
   },
+  "scripts": {
+    "build": "python auxiliary/build.py"
+  },
   "browserify": {
     "transform": [
       "coffeeify"

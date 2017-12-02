@@ -1,8 +1,15 @@
+import sys
 import os.path
 import shutil
 import re
+import subprocess
 
-from . import configurations
+import configurations
+
+
+def run(*args, **kwargs):
+    return subprocess.run(*args, shell=True, **kwargs)
+
 
 LICENSE = """/*
  * Wiki Monkey - MediaWiki bot and editor-assistant user script
@@ -57,7 +64,7 @@ SEDRE2 = r"\1 = window.\1"
 SED = "--command \"sed -r -e 's/{}/{}/'\"".format(SEDRE1, SEDRE2)
 
 
-def compile(run, version):
+def compile_(version):
     if version:
         run('npm --allow-same-version --no-git-tag-version version {}'.format(
                                                                     version))
@@ -84,12 +91,12 @@ def compile(run, version):
             fname = os.path.splitext(srcfile)[0]
 
             if srcfile.startswith('_'):
-                compile_webext(run, fname[1:], srcpath)
+                compile_webext(fname[1:], srcpath)
             elif version:
-                compile_mediawiki(run, fname, srcpath)
+                compile_mediawiki(fname, srcpath)
 
 
-def compile_mediawiki(run, fname, srcpath):
+def compile_mediawiki(fname, srcpath):
     distfile_temp = DISTFILE.format(distdir=BUILDDIR, wiki=fname,
                                     suffix="-tmp")
     shutil.copy(srcpath, distfile_temp)
@@ -108,7 +115,7 @@ def compile_mediawiki(run, fname, srcpath):
     shutil.copy(distfile, distfile_bwcompat)
 
 
-def compile_webext(run, fname, srcpath):
+def compile_webext(fname, srcpath):
     distfile = DISTFILE.format(distdir=AUXDIR, wiki=fname, suffix='')
 
     run(BROWSERIFY.format(args='', srcpath=srcpath, distfile=distfile))
@@ -123,3 +130,7 @@ def prepend_license(distfile):
 
     with open(distfile, 'w') as df:
         df.write('\n'.join((LICENSE, script)))
+
+
+if __name__ == '__main__':
+    compile_(sys.argv[1] if len(sys.argv) == 2 else False)

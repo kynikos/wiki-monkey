@@ -4,14 +4,12 @@
   up to date
 * Make sure to be on the develop branch
 
-* Create and check out a 'v3.x.x' branch
-* Run `invoke release 3.x.x`
+* Create and check out a 'v4.x.x' branch
+* Run `npm run build 4.x.x`
   Do *not* prepend the 'v' here
-* Run `invoke build`
 * Commit
 * Push the new branch to the remote repository
-* Install all the generated scripts and check that they work correctly in
-  every supported browser
+* Test the in-wiki user scripts at least in Firefox and Chromium
   Also make sure to check the effects of any changes to the configuration
   object
 
@@ -20,11 +18,11 @@
   - GitHub wiki
   - ArchWiki article: https://wiki.archlinux.org/index.php/Wiki_Monkey
 
-* Merge the v3.x.x branch into the master and develop branches (should be
+* Merge the v4.x.x branch into the master and develop branches (should be
   fast-forwards)
   To force merge "theirs" branch: `git merge -X theirs branch`
-* Tag the release commit the v3.x.x version number
-* Remove the v3.x.x branch, also remotely
+* Tag the release commit the v4.x.x version number
+* Remove the v4.x.x branch, also remotely
   To delete a remote branch: `git push origin :tmpbranch`
    or `git push origin :refs/heads/tmpbranch`
 * Checkout the develop branch
