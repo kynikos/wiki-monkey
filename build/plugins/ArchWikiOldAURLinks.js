@@ -158,7 +158,7 @@ module.exports.ArchWikiOldAURLinks = (function() {
           text: newtext,
           basetimestamp: timestamp,
           token: edittoken
-        }, null, this.mainAutoEnd, callBot, null);
+        }, this.mainAutoEnd, callBot, null);
       } else {
         return callBot(0, null);
       }

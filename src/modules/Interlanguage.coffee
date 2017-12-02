@@ -46,7 +46,7 @@ class module.exports.Interlanguage
 
         return langlinks
 
-    queryLinks: (api, queryTitle, title, supportedLangs,
+    queryLinks: (queryTitle, title, supportedLangs,
                                     whitelist, firstPage, callEnd, callArgs) =>
         query =
             action: "query"
@@ -65,7 +65,6 @@ class module.exports.Interlanguage
 
         @WM.MW.callAPIGet(
             query,
-            api,
             (res, args) =>
                 if res.query.pages
                     page = Obj.getFirstItem(res.query.pages)
@@ -106,7 +105,6 @@ class module.exports.Interlanguage
                     langlinks = false
 
                 callEnd(
-                    api,
                     title,
                     supportedLangs,
                     whitelist,
@@ -123,7 +121,6 @@ class module.exports.Interlanguage
             callArgs,
             (args) ->
                 callEnd(
-                    api,
                     title,
                     supportedLangs,
                     whitelist,
@@ -141,14 +138,13 @@ class module.exports.Interlanguage
     createNewLink: (origTag, title, url) =>
         return {origTag: origTag, title: title, url: url}
 
-    createVisitedLink: (origTag, title, url, iwmap, api, source,
+    createVisitedLink: (origTag, title, url, iwmap, source,
                                                 timestamp, edittoken, links) =>
         entry =
             origTag: origTag
             title: title
             url: url
             iwmap: iwmap
-            api: api
             source: source
             timestamp: timestamp
             edittoken: edittoken
@@ -178,7 +174,6 @@ class module.exports.Interlanguage
             if queryTitle
                 origTag = link.origTag
                 title = link.title
-                api = @WM.MW.getWikiUrls(url).api
 
                 # If this is the first processed page, it's local for sure, so
                 #   query its links in any case. This e.g. prevents the
@@ -191,7 +186,6 @@ class module.exports.Interlanguage
                                 title + "]]") + " ...")
 
                     this.queryLinks(
-                        api,
                         queryTitle,
                         title,
                         supportedLangs,
@@ -203,13 +197,12 @@ class module.exports.Interlanguage
                     )
                 else
                     @WM.Interlanguage._collectLinksContinue(
-                        api,
                         title,
                         supportedLangs,
                         whitelist,
                         firstPage,
                         'notinwhitelist',
-                        null,
+                        [],
                         false,
                         null,
                         null,
@@ -235,7 +228,7 @@ class module.exports.Interlanguage
         else
             callEnd(visitedlinks, callArgs)
 
-    _collectLinksContinue: (api, title, supportedLangs,
+    _collectLinksContinue: (title, supportedLangs,
                                 whitelist, firstPage, error, langlinks,
                                 iwmap, source, timestamp, edittoken, args) =>
         url = args[0]
@@ -271,7 +264,7 @@ class module.exports.Interlanguage
                                 in the configuration")
 
             visitedlinks[tag] = @WM.Interlanguage.createVisitedLink(origTag,
-                                            title, url, iwmap, api, source,
+                                            title, url, iwmap, source,
                                             timestamp, edittoken, langlinks)
 
             for link in langlinks
@@ -327,16 +320,8 @@ class module.exports.Interlanguage
                 # Note the difference between 'iwmap' and 'link.iwmap'
                 for iw in iwmap
                     if iw.prefix.toLowerCase() == tag.toLowerCase()
-                        if @WM.MW.getWikiUrls(iw.url).api == link.api
-                            linkList.push("[[" + link.origTag + ":" +
-                                                            link.title + "]]")
-                        else
-                            @WM.Log.logWarning("On " + @WM.Log.linkToPage(url,
-                                    "[[" + link.origTag + ":" + link.title +
-                                    "]]") + " , " + tag + " interlanguage
-                                    links point to a different wiki than
-                                    the others, ignoring them")
-
+                        linkList.push("[[" + link.origTag + ":" +
+                                                        link.title + "]]")
                         tagFound = true
                         break
 

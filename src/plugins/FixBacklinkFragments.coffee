@@ -211,7 +211,6 @@ class module.exports.FixBacklinkFragments
                     so.")
 
                 @WM.MW.callAPIGet(params,
-                         null,
                          @mainAutoFindSections,
                          [title, target, summary, callBot],
                          null)
@@ -267,7 +266,6 @@ class module.exports.FixBacklinkFragments
                                     basetimestamp: timestamp,
                                     token: edittoken
                                 },
-                                null,
                                 @mainAutoEnd,
                                 [callBot, sections],
                                 null)

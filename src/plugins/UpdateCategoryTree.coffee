@@ -221,7 +221,6 @@ class module.exports.UpdateCategoryTree
                     basetimestamp: args.timestamp
                     token: args.edittoken
                 },
-                null,
                 @checkWrite,
                 args,
                 null)

@@ -234,7 +234,7 @@ module.exports.UpdateCategoryTree = (function() {
           text: newtext,
           basetimestamp: args.timestamp,
           token: args.edittoken
-        }, null, this.checkWrite, args, null);
+        }, this.checkWrite, args, null);
       } else {
         this.WM.Log.logInfo(this.WM.Log.linkToWikiPage(args.params.page, args.params.page) + ' is already up to date');
         if (args.callNext) {

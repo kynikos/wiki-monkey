@@ -138,7 +138,6 @@ class module.exports.FixDoubleRedirects
         if newText != doubleRedirectSource
             @WM.MW.callAPIPost(
                     {action: "edit", bot: "1", title: doubleRedirectTitle, summary: summary, text: newText, b1asetimestamp: timestamp, token: edittoken},
-                    null,
                     @processDoubleRedirectEnd,
                     [doubleRedirects, namespaces, summary, callNext],
                     null)

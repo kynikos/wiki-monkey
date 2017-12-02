@@ -79,7 +79,6 @@ class module.exports.ArchWikiSaveTalk
                 basetimestamp: timestamp,
                 token: edittoken
             },
-            null,
             @mainEnd,
             [article, callNext],
             null

@@ -73,7 +73,7 @@ module.exports.Cat = class Cat {
   }
 
   _getMembersContinue(query, call, callArgs, members) {
-    return WM.MW.callAPIGet(query, null, function(res, args) {
+    return WM.MW.callAPIGet(query, function(res, args) {
       members = members.concat(res.query.categorymembers);
       if (res["query-continue"]) {
         query.cmcontinue = res["query-continue"].categorymembers.cmcontinue;
@@ -97,7 +97,7 @@ module.exports.Cat = class Cat {
   }
 
   _getParentsAndInfoContinue(query, call, callArgs, parents, info) {
-    return WM.MW.callAPIGet(query, null, function(res, args) {
+    return WM.MW.callAPIGet(query, function(res, args) {
       var page;
       page = Obj.getFirstItem(res.query.pages);
       if (page.categories) {

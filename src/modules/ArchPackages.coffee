@@ -20,6 +20,7 @@
 # - https://wiki.archlinux.org/index.php/Official_Repositories_Web_Interface
 # - https://wiki.archlinux.org/index.php/AurJson
 
+$ = require('jquery')
 Obj = require('../../lib.js.generic/dist/Obj')
 RegEx = require('../../lib.js.generic/dist/RegEx')
 
@@ -28,33 +29,21 @@ class module.exports.ArchPackages
         null
 
     searchOfficialPackagesByExactName: (name, call, callArgs) ->
-        query = {
-            method: "GET",
-            url: "https://www.archlinux.org/packages/search/json/?name=" +
-                                                    encodeURIComponent(name),
-            onload: (res) ->
-                try
-                    if Obj.getFirstItem(res.responseJSON)
-                        json = res.responseJSON
-                    else
-                        json = JSON.parse(res.responseText)
-                catch err
-                    @WM.Log.logError("The Official Repositories web
-                                    interface returned an unexpected object")
+        url = "https://www.archlinux.org/packages/search/json/"
+        $.get(
+            url: url
+            data:
+                name: name
+        ).done((data, textStatus, jqXHR) ->
+            if not data instanceof Object
+                @WM.Log.logError("The Official Repositories web
+                                 interface returned an unexpected object")
 
-                if json
-                    # Don't put this into the try block or all its exceptions
-                    # will be caught printing the same error
-                    call(json, callArgs)
-            ,
-            onerror: (res) ->
-                @WM.Log.logError(@WM.MW.failedQueryError(res.finalUrl))
-        }
-
-        try
-            GM_xmlhttpRequest(query)
-        catch err
-            @WM.Log.logError(@WM.MW.failedHTTPRequestError(err))
+            if data
+                call(data, callArgs)
+        ).fail((jqXHR, textStatus, errorThrown) ->
+            @WM.Log.logError(@WM.MW.failedQueryError(url))
+        )
 
     isOfficialPackage: (pkg, call, callArgs) ->
         call2 = (res, args) ->
@@ -68,33 +57,22 @@ class module.exports.ArchPackages
 
     getAURInfo: (arg, call, callArgs) ->
         # arg can be either an exact package name (string) or an ID (integer)
-        query = {
-            method: "GET",
-            url: "https://aur.archlinux.org/rpc.php?type=info&arg=" +
-                                                    encodeURIComponent(arg),
-            onload: (res) ->
-                try
-                    if Obj.getFirstItem(res.responseJSON)
-                        json = res.responseJSON
-                    else
-                        json = JSON.parse(res.responseText)
-                catch err
-                    @WM.Log.logError("The AUR's RPC interface returned an
-                                                        unexpected object")
+        url = "https://aur.archlinux.org/rpc.php"
+        $.get(
+            url: url
+            data:
+                type: "info"
+                arg: arg
+        ).done((data, textStatus, jqXHR) =>
+            if not data instanceof Object
+                @WM.Log.logError("The AUR's RPC interface returned an
+                                                    unexpected object")
 
-                if json
-                    # Don't put this into the try block or all its exceptions
-                    # will be caught printing the same error
-                    call(json, callArgs)
-            ,
-            onerror: (res) ->
-                @WM.Log.logError(@WM.MW.failedQueryError(res.finalUrl))
-        }
-
-        try
-            GM_xmlhttpRequest(query)
-        catch err
-            @WM.Log.logError(@WM.MW.failedHTTPRequestError(err))
+            if data
+                call(data, callArgs)
+        ).fail((jqXHR, textStatus, errorThrown) =>
+            @WM.Log.logError(@WM.MW.failedQueryError(url))
+        )
 
     isAURPackage: (pkg, call, callArgs) ->
         call2 = (res, args) ->
@@ -110,34 +88,31 @@ class module.exports.ArchPackages
         @WM.ArchPackages.getAURInfo(pkg, call2, callArgs)
 
     isPackageGroup = (arch, grp, call, callArgs) ->
-        query = {
-            method: "GET",
-            url: "https://www.archlinux.org/groups/" +
-                    encodeURIComponent(arch) + "/" + encodeURIComponent(grp),
-            onload: (res) ->
-                # Cannot use the DOMParser because GreaseMonkey doesn't
-                # support XrayWrapper well
-                # See http://www.oreillynet.com/pub/a/network/2005/11/01/avoid-common-greasemonkey-pitfalls.html?page=3
-                # and https://developer.mozilla.org/en/docs/XPConnect_wrappers#XPCNativeWrapper_%28XrayWrapper%29
-                escgrp = RegEx.escapePattern(grp)
-                escarch = RegEx.escapePattern(arch)
+        url = "https://www.archlinux.org/groups/" +
+            encodeURIComponent(arch) + "/" + encodeURIComponent(grp)
+        $.get(
+            url: url
+        ).done((data, textStatus, jqXHR) =>
+            # Cannot use the DOMParser because GreaseMonkey doesn't
+            # support XrayWrapper well
+            # See http://www.oreillynet.com/pub/a/network/2005/11/01/avoid-common-greasemonkey-pitfalls.html?page=3
+            # and https://developer.mozilla.org/en/docs/XPConnect_wrappers#XPCNativeWrapper_%28XrayWrapper%29
+            escgrp = RegEx.escapePattern(grp)
+            escarch = RegEx.escapePattern(arch)
 
-                regExp = new RegExp("<h2>\\s*Group Details -\\s*" +
-                            escgrp + "\\s*\\(" + escarch + "\\)\\s*</h2>", "")
+            regExp = new RegExp("<h2>\\s*Group Details -\\s*" +
+                        escgrp + "\\s*\\(" + escarch + "\\)\\s*</h2>", "")
 
-                if res.responseText.search(regExp) > -1
-                    call(true, callArgs)
-                else
-                    call(false, callArgs)
-            ,
-            onerror: (res) ->
-                @WM.Log.logError(@WM.MW.failedQueryError(res.finalUrl))
-        }
-
-        try
-            GM_xmlhttpRequest(query)
-        catch err
-            @WM.Log.logError(@WM.MW.failedHTTPRequestError(err))
+            if data.search(regExp) > -1
+                call(true, callArgs)
+            else
+                call(false, callArgs)
+        ).fail((jqXHR, textStatus, errorThrown) =>
+            if jqXHR.status is 404
+                call(false, callArgs)
+            else
+                @WM.Log.logError(@WM.MW.failedQueryError(url))
+        )
 
     isPackageGroup64: (grp, call, callArgs) ->
         isPackageGroup('x86_64', grp, call, callArgs)

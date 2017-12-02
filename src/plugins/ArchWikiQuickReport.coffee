@@ -115,7 +115,6 @@ class module.exports.ArchWikiQuickReport
                             basetimestamp: timestamp,
                             token: edittoken
                            },
-                           null,
                            @mainEnd,
                            [article, callNext],
                            null)

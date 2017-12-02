@@ -161,7 +161,6 @@ class module.exports.ArchWikiOldAURLinks
                                 basetimestamp: timestamp
                                 token: edittoken
                                },
-                               null,
                                @mainAutoEnd,
                                callBot,
                                null)

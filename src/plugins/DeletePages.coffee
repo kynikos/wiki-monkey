@@ -48,7 +48,6 @@ class module.exports.DeletePages
                             token: deletetoken
                             reason: summary
                         },
-                        null,
                         @WM.Plugins.DeletePages.mainAutoEnd,
                         [title, callBot],
                         null)

@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+$ = require('jquery')
 HTTP = require('../../lib.js.generic/dist/HTTP')
 Obj = require('../../lib.js.generic/dist/Obj')
 
@@ -152,122 +153,63 @@ class module.exports.MW
 
         return title
 
-    failedQueryError: (finalUrl) ->
-        return "Failed query: " + @WM.Log.linkToPage(finalUrl, finalUrl) +
-            "\nYou may have tried to use a
-            plugin which requires cross-origin HTTP requests, but you are
-            not using Greasemonkey (Firefox), Tampermonkey
-            (Chrome/Chromium), Violentmonkey (Opera) or a similar extension"
+    failedQueryError: (url) ->
+        return "Failed query: #{@WM.Log.linkToPage(url, url)}"
 
-    failedHTTPRequestError: (err) ->
-        return "Failed HTTP request - " + err + "\nYou may have tried to
-            use a plugin which requires cross-origin HTTP requests, but
-            you are not using Greasemonkey (Firefox), Tampermonkey
-            (Chrome/Chromium), Violentmonkey (Opera) or a similar extension"
+    callAPIGet: (params, call, callArgs, callError) ->
+        api = localWikiUrls.api
+        params.format = "json"
 
-    callAPIGet: (params, api, call, callArgs, callError) ->
-        if not api
-            api = localWikiUrls.api
-
-        query =
-            method: "GET"
-            url: api + "?format=json" + joinParams(params)
-            onload: (res) =>
-                try
-                    if Obj.getFirstItem(res.responseJSON)
-                        json = res.responseJSON
-                    else
-                        json = JSON.parse(res.responseText)
-                catch err
-                    @WM.Log.logError("It is likely that the " +
-                                                @WM.Log.linkToPage(api, "API") +
-                                                " for this wiki is disabled")
-                    if callError
-                        callError(callArgs)
-
-                if json
-                    # Don't put this into the try block or all its exceptions
-                    # will be caught printing the same API error
-                    call(json, callArgs)
-            onerror: (res) =>
-                @WM.Log.logError(@failedQueryError(res.finalUrl))
-                if confirm("Wiki Monkey error: Failed query\n\nDo you want " +
-                                                                "to retry?")
-                    @WM.Log.logInfo("Retrying ...")
-                    @callAPIGet(params, api, call, callArgs, callError)
-                else if callError
-                    callError(callArgs)
-
-        try
-            GM_xmlhttpRequest(query)
-        catch err
-            @WM.Log.logError(@failedHTTPRequestError(err))
-
-    callAPIPost: (params, api, call, callArgs, callError) ->
-        if not api
-            api = localWikiUrls.api
-        query =
-            method: "POST"
+        $.get(
             url: api
-            onload: (res) =>
-                try
-                    if Obj.getFirstItem(res.responseJSON)
-                        json = res.responseJSON
-                    else
-                        json = JSON.parse(res.responseText)
-                catch err
-                    @WM.Log.logError("It is likely that the " +
-                                                @WM.Log.linkToPage(api, "API") +
-                                                " for this wiki is disabled")
-                    if callError
-                        callError(callArgs)
-
-                if json
-                    # Don't put this into the try block or all its exceptions
-                    # will be caught printing the same API error
-                    call(json, callArgs)
-            onerror: (res) =>
-                @WM.Log.logError(@failedQueryError(res.finalUrl))
-                if confirm("Wiki Monkey error: Failed query\n\nDo you want " +
-                                                                "to retry?")
-                    @WM.Log.logInfo("Retrying ...")
-                    @callAPIPost(params, api, call, callArgs, callError)
-
-                else if callError
+            data: params
+        ).done((data, textStatus, jqXHR) =>
+            if not data instanceof Object
+                @WM.Log.logError("It is likely that the " +
+                                        @WM.Log.linkToPage(api, "API") +
+                                        " for this wiki is disabled")
+                if callError
                     callError(callArgs)
 
-        string = "format=json" + joinParams(params)
+            if data
+                call(data, callArgs)
+        ).fail((jqXHR, textStatus, errorThrown) =>
+            @WM.Log.logError(@failedQueryError(api))
+            if confirm("Wiki Monkey error: Failed query\n\nDo you want " +
+                                                            "to retry?")
+                @WM.Log.logInfo("Retrying ...")
+                @callAPIGet(params, call, callArgs, callError)
+            else if callError
+                callError(callArgs)
+        )
 
-        # It's necessary to use try...catch because some browsers don't
-        # support FormData yet and will throw an exception
-        try
-            if string.length > 8000
-                query.data = new FormData()
-                query.data.append("format", "json")
-                for p of params
-                    query.data.append(p, params[p])
+    callAPIPost: (params, call, callArgs, callError) ->
+        api = localWikiUrls.api
+        params.format = "json"
 
-                # Do not add "multipart/form-data" explicitly or the query
-                #   will fail
-                #query.headers = {"Content-type": "multipart/form-data"};
-            else
-                throw "string <= 8000 characters"
+        $.post(
+            url: api
+            data: params
+        ).done((data, textStatus, jqXHR) =>
+            if not data instanceof Object
+                @WM.Log.logError("It is likely that the " +
+                                        @WM.Log.linkToPage(api, "API") +
+                                        " for this wiki is disabled")
+                if callError
+                    callError(callArgs)
 
-        catch err
-            query.data = string
-            query.headers =
-                "Content-type": "application/x-www-form-urlencoded"
+            if data
+                call(data, callArgs)
+        ).fail((jqXHR, textStatus, errorThrown) =>
+            @WM.Log.logError(@failedQueryError(api))
+            if confirm("Wiki Monkey error: Failed query\n\nDo you want " +
+                                                            "to retry?")
+                @WM.Log.logInfo("Retrying ...")
+                @callAPIPost(params, call, callArgs, callError)
 
-        try
-            GM_xmlhttpRequest(query)
-        catch err
-            @WM.Log.logError(@failedHTTPRequestError(err))
-
-    joinParams = (params) ->
-        string = ""
-        for key of params
-            string += ("&" + key + "=" + encodeURIComponent(params[key]))
-        return string
+            else if callError
+                callError(callArgs)
+        )
 
     callQuery: (params, call, callArgs, callError) ->
         params.action = "query"
@@ -275,7 +217,7 @@ class module.exports.MW
             page = Obj.getFirstItem(res.query.pages)
             call(page, args)
 
-        this.callAPIGet(params, null, callBack, callArgs, callError)
+        this.callAPIGet(params, callBack, callArgs, callError)
 
     callQueryEdit: (title, call, callArgs) ->
         callBack = (page, args) =>
@@ -301,7 +243,7 @@ class module.exports.MW
                 action: "query"
                 meta: "userinfo"
                 uiprop: "groups"
-            @callAPIGet(pars, null, storeInfo, call, null);
+            @callAPIGet(pars, storeInfo, call, null);
         else
             call()
 
@@ -336,7 +278,7 @@ class module.exports.MW
         this._getBacklinksContinue(query, call, callArgs, [])
 
     _getBacklinksContinue: (query, call, callArgs, backlinks) ->
-        @callAPIGet(query, null, (res, args) =>
+        @callAPIGet(query, (res, args) =>
             backlinks = backlinks.concat(res.query.backlinks)
             if res["query-continue"]
                 query.blcontinue = res["query-continue"].backlinks.blcontinue
@@ -363,7 +305,7 @@ class module.exports.MW
         this._getLanglinksContinue(query, call, callArgs, [], null)
 
     _getLanglinksContinue: (query, call, callArgs, langlinks, iwmap) ->
-        @callAPIGet(query, null, (res, args) =>
+        @callAPIGet(query, (res, args) =>
             page = Obj.getFirstItem(res.query.pages)
             langlinks = langlinks.concat(page.langlinks)
 
@@ -386,7 +328,6 @@ class module.exports.MW
 
     getInterwikiMap: (title, call, callArgs) ->
         @callAPIGet({action: "query", meta: "siteinfo", siprop: "interwikimap", sifilteriw: "local"},
-            null,
             (res, args) =>
                 call(res.query.interwikimap, args)
             ,
@@ -418,7 +359,7 @@ class module.exports.MW
         this._getSpecialListContinue(query, call, callArgs, [], {})
 
     _getSpecialListContinue: (query, call, callArgs, results, siteinfo) ->
-        @callAPIGet(query, null, (res, args) =>
+        @callAPIGet(query, (res, args) =>
             results = results.concat(res.query.querypage.results)
 
             for key of res.query
@@ -451,7 +392,7 @@ class module.exports.MW
         this._getUserContribsContinue(query, call, callArgs, [])
 
     _getUserContribsContinue: (query, call, callArgs, results) ->
-        @callAPIGet(query, null, (res, args) =>
+        @callAPIGet(query, (res, args) =>
             results = results.concat(res.query.usercontribs)
 
             if res["query-continue"]

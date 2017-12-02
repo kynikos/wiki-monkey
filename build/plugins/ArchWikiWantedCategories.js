@@ -48,7 +48,7 @@ module.exports.ArchWikiWantedCategories = (function() {
           text: text,
           createonly: "1",
           token: edittoken
-        }, null, this.mainAutoEnd, callBot, null);
+        }, this.mainAutoEnd, callBot, null);
       } else {
         return callBot(0, null);
       }

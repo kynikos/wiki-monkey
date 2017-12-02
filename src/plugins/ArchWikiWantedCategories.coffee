@@ -55,7 +55,6 @@ class module.exports.ArchWikiWantedCategories
                                 createonly: "1",
                                 token: edittoken
                                },
-                               null,
                                @mainAutoEnd,
                                callBot,
                                null)

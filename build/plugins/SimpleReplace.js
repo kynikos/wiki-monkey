@@ -118,7 +118,7 @@ module.exports.SimpleReplace = (function() {
           text: newtext,
           basetimestamp: timestamp,
           token: edittoken
-        }, null, this.WM.Plugins.SimpleReplace.mainAutoEnd, callBot, null);
+        }, this.WM.Plugins.SimpleReplace.mainAutoEnd, callBot, null);
       } else {
         return callBot(0, null);
       }

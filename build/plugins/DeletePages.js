@@ -44,7 +44,7 @@ module.exports.DeletePages = (function() {
         title: title,
         token: deletetoken,
         reason: summary
-      }, null, this.WM.Plugins.DeletePages.mainAutoEnd, [title, callBot], null);
+      }, this.WM.Plugins.DeletePages.mainAutoEnd, [title, callBot], null);
     }
 
     mainAutoEnd(res, args) {

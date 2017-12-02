@@ -49,7 +49,6 @@ class module.exports.FixLinkFragments
                         'redirects': 1
 
                     @WM.MW.callAPIGet(params,
-                             null,
                              @processLinkContinue,
                              [link, target, rawfragment, links, index, source,
                                     newText, prevId, title, call, callArgs],
@@ -193,7 +192,6 @@ class module.exports.FixLinkFragments
                                 'redirects': 1
 
                             @WM.MW.callAPIGet(params,
-                                 null,
                                  @processArchWikiLinkContinue,
                                  [template, target, rawfragment, templates,
                                  expectedArgs, index, source, newText,

@@ -163,7 +163,6 @@ class module.exports.SimpleReplace
 
         if newtext != source
             @WM.MW.callAPIPost({action: "edit", bot: "1", title: title, summary: summary, text: newtext, basetimestamp: timestamp, token: edittoken},
-                               null,
                                @WM.Plugins.SimpleReplace.mainAutoEnd,
                                callBot,
                                null)

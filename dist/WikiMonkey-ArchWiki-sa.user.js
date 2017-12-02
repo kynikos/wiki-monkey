@@ -135,7 +135,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 			}
 		};
 	}, {}], 3: [function (require, module, exports) {
-		var Obj, RegEx;
+		var $, Obj, RegEx;
+
+		$ = require('jquery');
 
 		Obj = require('../../lib.js.generic/dist/Obj');
 
@@ -155,36 +157,23 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 				_createClass(ArchPackages, [{
 					key: "searchOfficialPackagesByExactName",
 					value: function searchOfficialPackagesByExactName(name, call, callArgs) {
-						var err, query;
-						query = {
-							method: "GET",
-							url: "https://www.archlinux.org/packages/search/json/?name=" + encodeURIComponent(name),
-							onload: function onload(res) {
-								var err, json;
-								try {
-									if (Obj.getFirstItem(res.responseJSON)) {
-										json = res.responseJSON;
-									} else {
-										json = JSON.parse(res.responseText);
-									}
-								} catch (error) {
-									err = error;
-									this.WM.Log.logError("The Official Repositories web interface returned an unexpected object");
-								}
-								if (json) {
-									return call(json, callArgs);
-								}
-							},
-							onerror: function onerror(res) {
-								return this.WM.Log.logError(this.WM.MW.failedQueryError(res.finalUrl));
+						var url;
+						url = "https://www.archlinux.org/packages/search/json/";
+						return $.get({
+							url: url,
+							data: {
+								name: name
 							}
-						};
-						try {
-							return GM_xmlhttpRequest(query);
-						} catch (error) {
-							err = error;
-							return this.WM.Log.logError(this.WM.MW.failedHTTPRequestError(err));
-						}
+						}).done(function (data, textStatus, jqXHR) {
+							if (!data instanceof Object) {
+								this.WM.Log.logError("The Official Repositories web interface returned an unexpected object");
+							}
+							if (data) {
+								return call(data, callArgs);
+							}
+						}).fail(function (jqXHR, textStatus, errorThrown) {
+							return this.WM.Log.logError(this.WM.MW.failedQueryError(url));
+						});
 					}
 				}, {
 					key: "isOfficialPackage",
@@ -202,37 +191,27 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 				}, {
 					key: "getAURInfo",
 					value: function getAURInfo(arg, call, callArgs) {
-						var err, query;
+						var _this2 = this;
 
-						query = {
-							method: "GET",
-							url: "https://aur.archlinux.org/rpc.php?type=info&arg=" + encodeURIComponent(arg),
-							onload: function onload(res) {
-								var err, json;
-								try {
-									if (Obj.getFirstItem(res.responseJSON)) {
-										json = res.responseJSON;
-									} else {
-										json = JSON.parse(res.responseText);
-									}
-								} catch (error) {
-									err = error;
-									this.WM.Log.logError("The AUR's RPC interface returned an unexpected object");
-								}
-								if (json) {
-									return call(json, callArgs);
-								}
-							},
-							onerror: function onerror(res) {
-								return this.WM.Log.logError(this.WM.MW.failedQueryError(res.finalUrl));
+						var url;
+
+						url = "https://aur.archlinux.org/rpc.php";
+						return $.get({
+							url: url,
+							data: {
+								type: "info",
+								arg: arg
 							}
-						};
-						try {
-							return GM_xmlhttpRequest(query);
-						} catch (error) {
-							err = error;
-							return this.WM.Log.logError(this.WM.MW.failedHTTPRequestError(err));
-						}
+						}).done(function (data, textStatus, jqXHR) {
+							if (!data instanceof Object) {
+								_this2.WM.Log.logError("The AUR's RPC interface returned an unexpected object");
+							}
+							if (data) {
+								return call(data, callArgs);
+							}
+						}).fail(function (jqXHR, textStatus, errorThrown) {
+							return _this2.WM.Log.logError(_this2.WM.MW.failedQueryError(url));
+						});
 					}
 				}, {
 					key: "isAURPackage",
@@ -269,37 +248,35 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 			;
 
 			isPackageGroup = function isPackageGroup(arch, grp, call, callArgs) {
-				var err, query;
-				query = {
-					method: "GET",
-					url: "https://www.archlinux.org/groups/" + encodeURIComponent(arch) + "/" + encodeURIComponent(grp),
-					onload: function onload(res) {
-						var escarch, escgrp, regExp;
+				var _this3 = this;
 
-						escgrp = RegEx.escapePattern(grp);
-						escarch = RegEx.escapePattern(arch);
-						regExp = new RegExp("<h2>\\s*Group Details -\\s*" + escgrp + "\\s*\\(" + escarch + "\\)\\s*</h2>", "");
-						if (res.responseText.search(regExp) > -1) {
-							return call(true, callArgs);
-						} else {
-							return call(false, callArgs);
-						}
-					},
-					onerror: function onerror(res) {
-						return this.WM.Log.logError(this.WM.MW.failedQueryError(res.finalUrl));
+				var url;
+				url = "https://www.archlinux.org/groups/" + encodeURIComponent(arch) + "/" + encodeURIComponent(grp);
+				return $.get({
+					url: url
+				}).done(function (data, textStatus, jqXHR) {
+					var escarch, escgrp, regExp;
+
+					escgrp = RegEx.escapePattern(grp);
+					escarch = RegEx.escapePattern(arch);
+					regExp = new RegExp("<h2>\\s*Group Details -\\s*" + escgrp + "\\s*\\(" + escarch + "\\)\\s*</h2>", "");
+					if (data.search(regExp) > -1) {
+						return call(true, callArgs);
+					} else {
+						return call(false, callArgs);
 					}
-				};
-				try {
-					return GM_xmlhttpRequest(query);
-				} catch (error) {
-					err = error;
-					return this.WM.Log.logError(this.WM.MW.failedHTTPRequestError(err));
-				}
+				}).fail(function (jqXHR, textStatus, errorThrown) {
+					if (jqXHR.status === 404) {
+						return call(false, callArgs);
+					} else {
+						return _this3.WM.Log.logError(_this3.WM.MW.failedQueryError(url));
+					}
+				});
 			};
 
 			return ArchPackages;
 		}();
-	}, { "../../lib.js.generic/dist/Obj": 47, "../../lib.js.generic/dist/RegEx": 48 }], 4: [function (require, module, exports) {
+	}, { "../../lib.js.generic/dist/Obj": 47, "../../lib.js.generic/dist/RegEx": 48, "jquery": 41 }], 4: [function (require, module, exports) {
 		module.exports.ArchWiki = function () {
 			var languages, tablesOfContents;
 
@@ -1485,7 +1462,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 			}, {
 				key: "_getMembersContinue",
 				value: function _getMembersContinue(query, call, callArgs, members) {
-					return WM.MW.callAPIGet(query, null, function (res, args) {
+					return WM.MW.callAPIGet(query, function (res, args) {
 						members = members.concat(res.query.categorymembers);
 						if (res["query-continue"]) {
 							query.cmcontinue = res["query-continue"].categorymembers.cmcontinue;
@@ -1511,7 +1488,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 			}, {
 				key: "_getParentsAndInfoContinue",
 				value: function _getParentsAndInfoContinue(query, call, callArgs, parents, info) {
-					return WM.MW.callAPIGet(query, null, function (res, args) {
+					return WM.MW.callAPIGet(query, function (res, args) {
 						var page;
 						page = Obj.getFirstItem(res.query.pages);
 						if (page.categories) {
@@ -2054,8 +2031,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 				}
 			}, {
 				key: "queryLinks",
-				value: function queryLinks(api, queryTitle, title, supportedLangs, whitelist, firstPage, callEnd, callArgs) {
-					var _this2 = this;
+				value: function queryLinks(queryTitle, title, supportedLangs, whitelist, firstPage, callEnd, callArgs) {
+					var _this4 = this;
 
 					var query;
 					query = {
@@ -2072,7 +2049,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 					if (!firstPage) {
 						query.redirects = "1";
 					}
-					return this.WM.MW.callAPIGet(query, api, function (res, args) {
+					return this.WM.MW.callAPIGet(query, function (res, args) {
 						var edittoken, error, iwmap, langlinks, page, source, timestamp;
 						if (res.query.pages) {
 							page = Obj.getFirstItem(res.query.pages);
@@ -2082,7 +2059,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 								timestamp = page.revisions[0].timestamp;
 								edittoken = page.edittoken;
 								iwmap = res.query.interwikimap;
-								langlinks = _this2.WM.Interlanguage.parseLinks(supportedLangs, source, iwmap);
+								langlinks = _this4.WM.Interlanguage.parseLinks(supportedLangs, source, iwmap);
 							} else {
 								error = 'nonexisting';
 								source = false;
@@ -2106,9 +2083,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 							iwmap = res.query.interwikimap;
 							langlinks = false;
 						}
-						return callEnd(api, title, supportedLangs, whitelist, false, error, langlinks, iwmap, source, timestamp, edittoken, args);
+						return callEnd(title, supportedLangs, whitelist, false, error, langlinks, iwmap, source, timestamp, edittoken, args);
 					}, callArgs, function (args) {
-						return callEnd(api, title, supportedLangs, whitelist, false, 'unknown', false, false, false, false, false, args);
+						return callEnd(title, supportedLangs, whitelist, false, 'unknown', false, false, false, false, false, args);
 					});
 				}
 			}, {
@@ -2122,14 +2099,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 				}
 			}, {
 				key: "createVisitedLink",
-				value: function createVisitedLink(origTag, title, url, iwmap, api, source, timestamp, edittoken, links) {
+				value: function createVisitedLink(origTag, title, url, iwmap, source, timestamp, edittoken, links) {
 					var entry, i, len, link;
 					entry = {
 						origTag: origTag,
 						title: title,
 						url: url,
 						iwmap: iwmap,
-						api: api,
 						source: source,
 						timestamp: timestamp,
 						edittoken: edittoken,
@@ -2144,7 +2120,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 			}, {
 				key: "collectLinks",
 				value: function collectLinks(visitedlinks, newlinks, supportedLangs, whitelist, firstPage, callEnd, callArgs) {
-					var api, link, origTag, queryTitle, tag, title, url;
+					var link, origTag, queryTitle, tag, title, url;
 					for (tag in newlinks) {
 						link = newlinks[tag];
 						break;
@@ -2157,13 +2133,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 						if (queryTitle) {
 							origTag = link.origTag;
 							title = link.title;
-							api = this.WM.MW.getWikiUrls(url).api;
 
 							if (firstPage || whitelist.indexOf(tag) > -1) {
 								this.WM.Log.logInfo("Reading " + this.WM.Log.linkToPage(url, "[[" + origTag + ":" + title + "]]") + " ...");
-								return this.queryLinks(api, queryTitle, title, supportedLangs, whitelist, firstPage, this.WM.Interlanguage._collectLinksContinue, [url, tag, origTag, visitedlinks, newlinks, callEnd, callArgs]);
+								return this.queryLinks(queryTitle, title, supportedLangs, whitelist, firstPage, this.WM.Interlanguage._collectLinksContinue, [url, tag, origTag, visitedlinks, newlinks, callEnd, callArgs]);
 							} else {
-								return this.WM.Interlanguage._collectLinksContinue(api, title, supportedLangs, whitelist, firstPage, 'notinwhitelist', null, false, null, null, null, [url, tag, origTag, visitedlinks, newlinks, callEnd, callArgs]);
+								return this.WM.Interlanguage._collectLinksContinue(title, supportedLangs, whitelist, firstPage, 'notinwhitelist', [], false, null, null, null, [url, tag, origTag, visitedlinks, newlinks, callEnd, callArgs]);
 							}
 						} else {
 							this.WM.Log.logWarning("Cannot extract the page title from " + this.WM.Log.linkToPage(url, decodeURI(url)) + ", removing it if it was linked from the processed article");
@@ -2175,7 +2150,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 				}
 			}, {
 				key: "_collectLinksContinue",
-				value: function _collectLinksContinue(api, title, supportedLangs, whitelist, firstPage, error, langlinks, iwmap, source, timestamp, edittoken, args) {
+				value: function _collectLinksContinue(title, supportedLangs, whitelist, firstPage, error, langlinks, iwmap, source, timestamp, edittoken, args) {
 					var callArgs, callEnd, i, len, link, newlinks, nlink, origTag, tag, url, visitedlinks, vlink;
 					url = args[0];
 					tag = args[1];
@@ -2194,7 +2169,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 						} else if (error === 'notinwhitelist') {
 							this.WM.Log.logWarning(this.WM.Log.linkToPage(url, "[[" + origTag + ":" + title + "]]") + " will not be checked because " + tag + " is not included in the whitelist defined in the configuration");
 						}
-						visitedlinks[tag] = this.WM.Interlanguage.createVisitedLink(origTag, title, url, iwmap, api, source, timestamp, edittoken, langlinks);
+						visitedlinks[tag] = this.WM.Interlanguage.createVisitedLink(origTag, title, url, iwmap, source, timestamp, edittoken, langlinks);
 						for (i = 0, len = langlinks.length; i < len; i++) {
 							link = langlinks[i];
 							nlink = newlinks[link.lang.toLowerCase()];
@@ -2224,11 +2199,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 							for (i = 0, len = iwmap.length; i < len; i++) {
 								iw = iwmap[i];
 								if (iw.prefix.toLowerCase() === tag.toLowerCase()) {
-									if (this.WM.MW.getWikiUrls(iw.url).api === link.api) {
-										linkList.push("[[" + link.origTag + ":" + link.title + "]]");
-									} else {
-										this.WM.Log.logWarning("On " + this.WM.Log.linkToPage(url, "[[" + link.origTag + ":" + link.title + "]]") + " , " + tag + " interlanguage links point to a different wiki than the others, ignoring them");
-									}
+									linkList.push("[[" + link.origTag + ":" + link.title + "]]");
 									tagFound = true;
 									break;
 								}
@@ -2499,14 +2470,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 			return Log;
 		}();
 	}, { "../../lib.js.generic/dist/CSS": 43, "../../lib.js.generic/dist/Str": 49 }], 13: [function (require, module, exports) {
-		var HTTP, Obj;
+		var $, HTTP, Obj;
+
+		$ = require('jquery');
 
 		HTTP = require('../../lib.js.generic/dist/HTTP');
 
 		Obj = require('../../lib.js.generic/dist/Obj');
 
 		module.exports.MW = function () {
-			var interwikiFixes, joinParams, localWikiPaths, localWikiUrls, wikiPaths;
+			var interwikiFixes, localWikiPaths, localWikiUrls, wikiPaths;
 
 			var MW = function () {
 				function MW(WM) {
@@ -2608,127 +2581,70 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 					}
 				}, {
 					key: "failedQueryError",
-					value: function failedQueryError(finalUrl) {
-						return "Failed query: " + this.WM.Log.linkToPage(finalUrl, finalUrl) + "\nYou may have tried to use a plugin which requires cross-origin HTTP requests, but you are not using Greasemonkey (Firefox), Tampermonkey (Chrome/Chromium), Violentmonkey (Opera) or a similar extension";
-					}
-				}, {
-					key: "failedHTTPRequestError",
-					value: function failedHTTPRequestError(err) {
-						return "Failed HTTP request - " + err + "\nYou may have tried to use a plugin which requires cross-origin HTTP requests, but you are not using Greasemonkey (Firefox), Tampermonkey (Chrome/Chromium), Violentmonkey (Opera) or a similar extension";
+					value: function failedQueryError(url) {
+						return "Failed query: " + this.WM.Log.linkToPage(url, url);
 					}
 				}, {
 					key: "callAPIGet",
-					value: function callAPIGet(params, api, call, callArgs, callError) {
-						var _this3 = this;
+					value: function callAPIGet(params, call, callArgs, callError) {
+						var _this5 = this;
 
-						var err, query;
-						if (!api) {
-							api = localWikiUrls.api;
-						}
-						query = {
-							method: "GET",
-							url: api + "?format=json" + joinParams(params),
-							onload: function onload(res) {
-								var err, json;
-								try {
-									if (Obj.getFirstItem(res.responseJSON)) {
-										json = res.responseJSON;
-									} else {
-										json = JSON.parse(res.responseText);
-									}
-								} catch (error) {
-									err = error;
-									_this3.WM.Log.logError("It is likely that the " + _this3.WM.Log.linkToPage(api, "API") + " for this wiki is disabled");
-									if (callError) {
-										callError(callArgs);
-									}
-								}
-								if (json) {
-									return call(json, callArgs);
-								}
-							},
-							onerror: function onerror(res) {
-								_this3.WM.Log.logError(_this3.failedQueryError(res.finalUrl));
-								if (confirm("Wiki Monkey error: Failed query\n\nDo you want " + "to retry?")) {
-									_this3.WM.Log.logInfo("Retrying ...");
-									return _this3.callAPIGet(params, api, call, callArgs, callError);
-								} else if (callError) {
-									return callError(callArgs);
+						var api;
+						api = localWikiUrls.api;
+						params.format = "json";
+						return $.get({
+							url: api,
+							data: params
+						}).done(function (data, textStatus, jqXHR) {
+							if (!data instanceof Object) {
+								_this5.WM.Log.logError("It is likely that the " + _this5.WM.Log.linkToPage(api, "API") + " for this wiki is disabled");
+								if (callError) {
+									callError(callArgs);
 								}
 							}
-						};
-						try {
-							return GM_xmlhttpRequest(query);
-						} catch (error) {
-							err = error;
-							return this.WM.Log.logError(this.failedHTTPRequestError(err));
-						}
+							if (data) {
+								return call(data, callArgs);
+							}
+						}).fail(function (jqXHR, textStatus, errorThrown) {
+							_this5.WM.Log.logError(_this5.failedQueryError(api));
+							if (confirm("Wiki Monkey error: Failed query\n\nDo you want " + "to retry?")) {
+								_this5.WM.Log.logInfo("Retrying ...");
+								return _this5.callAPIGet(params, call, callArgs, callError);
+							} else if (callError) {
+								return callError(callArgs);
+							}
+						});
 					}
 				}, {
 					key: "callAPIPost",
-					value: function callAPIPost(params, api, call, callArgs, callError) {
-						var _this4 = this;
+					value: function callAPIPost(params, call, callArgs, callError) {
+						var _this6 = this;
 
-						var err, p, query, string;
-						if (!api) {
-							api = localWikiUrls.api;
-						}
-						query = {
-							method: "POST",
+						var api;
+						api = localWikiUrls.api;
+						params.format = "json";
+						return $.post({
 							url: api,
-							onload: function onload(res) {
-								var err, json;
-								try {
-									if (Obj.getFirstItem(res.responseJSON)) {
-										json = res.responseJSON;
-									} else {
-										json = JSON.parse(res.responseText);
-									}
-								} catch (error) {
-									err = error;
-									_this4.WM.Log.logError("It is likely that the " + _this4.WM.Log.linkToPage(api, "API") + " for this wiki is disabled");
-									if (callError) {
-										callError(callArgs);
-									}
-								}
-								if (json) {
-									return call(json, callArgs);
-								}
-							},
-							onerror: function onerror(res) {
-								_this4.WM.Log.logError(_this4.failedQueryError(res.finalUrl));
-								if (confirm("Wiki Monkey error: Failed query\n\nDo you want " + "to retry?")) {
-									_this4.WM.Log.logInfo("Retrying ...");
-									return _this4.callAPIPost(params, api, call, callArgs, callError);
-								} else if (callError) {
-									return callError(callArgs);
+							data: params
+						}).done(function (data, textStatus, jqXHR) {
+							if (!data instanceof Object) {
+								_this6.WM.Log.logError("It is likely that the " + _this6.WM.Log.linkToPage(api, "API") + " for this wiki is disabled");
+								if (callError) {
+									callError(callArgs);
 								}
 							}
-						};
-						string = "format=json" + joinParams(params);
-						try {
-							if (string.length > 8000) {
-								query.data = new FormData();
-								query.data.append("format", "json");
-								for (p in params) {
-									query.data.append(p, params[p]);
-								}
-							} else {
-								throw "string <= 8000 characters";
+							if (data) {
+								return call(data, callArgs);
 							}
-						} catch (error) {
-							err = error;
-							query.data = string;
-							query.headers = {
-								"Content-type": "application/x-www-form-urlencoded"
-							};
-						}
-						try {
-							return GM_xmlhttpRequest(query);
-						} catch (error) {
-							err = error;
-							return this.WM.Log.logError(this.failedHTTPRequestError(err));
-						}
+						}).fail(function (jqXHR, textStatus, errorThrown) {
+							_this6.WM.Log.logError(_this6.failedQueryError(api));
+							if (confirm("Wiki Monkey error: Failed query\n\nDo you want " + "to retry?")) {
+								_this6.WM.Log.logInfo("Retrying ...");
+								return _this6.callAPIPost(params, call, callArgs, callError);
+							} else if (callError) {
+								return callError(callArgs);
+							}
+						});
 					}
 				}, {
 					key: "callQuery",
@@ -2740,7 +2656,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 							page = Obj.getFirstItem(res.query.pages);
 							return call(page, args);
 						};
-						return this.callAPIGet(params, null, callBack, callArgs, callError);
+						return this.callAPIGet(params, callBack, callArgs, callError);
 					}
 				}, {
 					key: "callQueryEdit",
@@ -2764,11 +2680,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 				}, {
 					key: "getUserInfo",
 					value: function getUserInfo(call) {
-						var _this5 = this;
+						var _this7 = this;
 
 						var pars, storeInfo;
 						storeInfo = function storeInfo(res, call) {
-							_this5.userInfo = res;
+							_this7.userInfo = res;
 							return call();
 						};
 						if (!this.userInfo) {
@@ -2777,7 +2693,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 								meta: "userinfo",
 								uiprop: "groups"
 							};
-							return this.callAPIGet(pars, null, storeInfo, call, null);
+							return this.callAPIGet(pars, storeInfo, call, null);
 						} else {
 							return call();
 						}
@@ -2785,31 +2701,31 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 				}, {
 					key: "isLoggedIn",
 					value: function isLoggedIn(call, args) {
-						var _this6 = this;
+						var _this8 = this;
 
 						return this.getUserInfo(function () {
 							var test;
-							test = _this6.userInfo.query.userinfo.id !== 0;
+							test = _this8.userInfo.query.userinfo.id !== 0;
 							return call(test, args);
 						});
 					}
 				}, {
 					key: "getUserName",
 					value: function getUserName(call, args) {
-						var _this7 = this;
+						var _this9 = this;
 
 						return this.getUserInfo(function () {
-							return call(_this7.userInfo.query.userinfo.name, args);
+							return call(_this9.userInfo.query.userinfo.name, args);
 						});
 					}
 				}, {
 					key: "isUserBot",
 					value: function isUserBot(call, args) {
-						var _this8 = this;
+						var _this10 = this;
 
 						return this.getUserInfo(function () {
 							var groups, res;
-							groups = _this8.userInfo.query.userinfo.groups;
+							groups = _this10.userInfo.query.userinfo.groups;
 							res = groups.indexOf("bot") > -1;
 							return call(res, args);
 						});
@@ -2832,13 +2748,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 				}, {
 					key: "_getBacklinksContinue",
 					value: function _getBacklinksContinue(query, call, callArgs, backlinks) {
-						var _this9 = this;
+						var _this11 = this;
 
-						return this.callAPIGet(query, null, function (res, args) {
+						return this.callAPIGet(query, function (res, args) {
 							backlinks = backlinks.concat(res.query.backlinks);
 							if (res["query-continue"]) {
 								query.blcontinue = res["query-continue"].backlinks.blcontinue;
-								return _this9._getBacklinksContinue(query, call, args, backlinks);
+								return _this11._getBacklinksContinue(query, call, args, backlinks);
 							} else {
 								return call(backlinks, args);
 							}
@@ -2866,9 +2782,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 				}, {
 					key: "_getLanglinksContinue",
 					value: function _getLanglinksContinue(query, call, callArgs, langlinks, iwmap) {
-						var _this10 = this;
+						var _this12 = this;
 
-						return this.callAPIGet(query, null, function (res, args) {
+						return this.callAPIGet(query, function (res, args) {
 							var page;
 							page = Obj.getFirstItem(res.query.pages);
 							langlinks = langlinks.concat(page.langlinks);
@@ -2882,7 +2798,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 							}
 							if (res["query-continue"]) {
 								query.llcontinue = res["query-continue"].langlinks.llcontinue;
-								return _this10._getLanglinksContinue(query, call, args, langlinks, iwmap);
+								return _this12._getLanglinksContinue(query, call, args, langlinks, iwmap);
 							} else {
 								return call(langlinks, iwmap, args);
 							}
@@ -2896,7 +2812,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 							meta: "siteinfo",
 							siprop: "interwikimap",
 							sifilteriw: "local"
-						}, null, function (res, args) {
+						}, function (res, args) {
 							return call(res.query.interwikimap, args);
 						}, callArgs, null);
 					}
@@ -2932,9 +2848,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 				}, {
 					key: "_getSpecialListContinue",
 					value: function _getSpecialListContinue(query, call, callArgs, results, siteinfo) {
-						var _this11 = this;
+						var _this13 = this;
 
-						return this.callAPIGet(query, null, function (res, args) {
+						return this.callAPIGet(query, function (res, args) {
 							var key;
 							results = results.concat(res.query.querypage.results);
 							for (key in res.query) {
@@ -2948,7 +2864,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 							}
 							if (res["query-continue"]) {
 								query.qpoffset = res["query-continue"].querypage.qpoffset;
-								return _this11._getSpecialListContinue(query, call, args, results, siteinfo);
+								return _this13._getSpecialListContinue(query, call, args, results, siteinfo);
 							} else {
 								return call(results, siteinfo, args);
 							}
@@ -2972,13 +2888,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 				}, {
 					key: "_getUserContribsContinue",
 					value: function _getUserContribsContinue(query, call, callArgs, results) {
-						var _this12 = this;
+						var _this14 = this;
 
-						return this.callAPIGet(query, null, function (res, args) {
+						return this.callAPIGet(query, function (res, args) {
 							results = results.concat(res.query.usercontribs);
 							if (res["query-continue"]) {
 								query.uccontinue = res["query-continue"].usercontribs.uccontinue;
-								return _this12._getUserContribsContinue(query, call, args, results);
+								return _this14._getUserContribsContinue(query, call, args, results);
 							} else {
 								return call(results, args);
 							}
@@ -3042,18 +2958,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 			interwikiFixes = [["https://wiki.archlinux.org/index.php/$1_(", "https://wiki.archlinux.org/index.php/$1%20("]];
 
-			joinParams = function joinParams(params) {
-				var key, string;
-				string = "";
-				for (key in params) {
-					string += "&" + key + "=" + encodeURIComponent(params[key]);
-				}
-				return string;
-			};
-
 			return MW;
 		}();
-	}, { "../../lib.js.generic/dist/HTTP": 46, "../../lib.js.generic/dist/Obj": 47 }], 14: [function (require, module, exports) {
+	}, { "../../lib.js.generic/dist/HTTP": 46, "../../lib.js.generic/dist/Obj": 47, "jquery": 41 }], 14: [function (require, module, exports) {
 		var $, Async, CSS;
 
 		$ = require('jquery');
@@ -4720,7 +4627,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 								text: newtext,
 								basetimestamp: timestamp,
 								token: edittoken
-							}, null, this.mainAutoEnd, callBot, null);
+							}, this.mainAutoEnd, callBot, null);
 						} else {
 							return callBot(0, null);
 						}
@@ -4843,7 +4750,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 							text: newtext,
 							basetimestamp: timestamp,
 							token: edittoken
-						}, null, this.mainEnd, [article, callNext], null);
+						}, this.mainEnd, [article, callNext], null);
 					}
 				}, {
 					key: "mainEnd",
@@ -5103,7 +5010,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 								text: newText,
 								b1asetimestamp: timestamp,
 								token: edittoken
-							}, null, this.writePage, [title, callNext], null);
+							}, this.writePage, [title, callNext], null);
 						} else {
 							this.WM.Log.logInfo(this.WM.Log.linkToWikiPage(title, title) + " was already up to date");
 							if (callNext) {
@@ -5626,7 +5533,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 								text: newtext,
 								basetimestamp: timestamp,
 								token: edittoken
-							}, null, this.mainAutoEnd, callBot, null);
+							}, this.mainAutoEnd, callBot, null);
 						} else {
 							return callBot(0, null);
 						}
@@ -5890,7 +5797,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 									'redirects': 1
 								};
 								this.WM.Log.logWarning("If some articles in the list are linking to the target article through a redirect, you should process the backlinks of that redirect page separately through its Special:WhatLinksHere page, as this plugin can only fix links that exactly match the title of the target article.\nIn order to save time you are advised to hide the redirects in the page lists that allow to do so.");
-								return this.WM.MW.callAPIGet(params, null, this.mainAutoFindSections, [title, target, summary, callBot], null);
+								return this.WM.MW.callAPIGet(params, this.mainAutoFindSections, [title, target, summary, callBot], null);
 							} else {
 								return this.mainAutoRead(target, chainArgs, title, summary, callBot);
 							}
@@ -5947,7 +5854,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 								text: newtext,
 								basetimestamp: timestamp,
 								token: edittoken
-							}, null, this.mainAutoEnd, [callBot, sections], null);
+							}, this.mainAutoEnd, [callBot, sections], null);
 						} else {
 							return callBot(0, sections);
 						}
@@ -6106,7 +6013,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 								text: newText,
 								b1asetimestamp: timestamp,
 								token: edittoken
-							}, null, this.processDoubleRedirectEnd, [doubleRedirects, namespaces, summary, callNext], null);
+							}, this.processDoubleRedirectEnd, [doubleRedirects, namespaces, summary, callNext], null);
 						} else {
 							this.WM.Log.logWarning("Could not fix " + this.WM.Log.linkToWikiPage(doubleRedirectTitle, doubleRedirectTitle));
 							return this.iterateList(doubleRedirects, namespaces, [summary, callNext]);
@@ -6266,7 +6173,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 										'page': target,
 										'redirects': 1
 									};
-									return this.WM.MW.callAPIGet(params, null, this.processLinkContinue, [link, target, rawfragment, links, index, source, newText, prevId, title, call, callArgs], null);
+									return this.WM.MW.callAPIGet(params, this.processLinkContinue, [link, target, rawfragment, links, index, source, newText, prevId, title, call, callArgs], null);
 								} else {
 									index++;
 									return this.processLink(title, links, index, source, newText, prevId, call, callArgs);
@@ -6381,7 +6288,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 												'page': target,
 												'redirects': 1
 											};
-											return this.WM.MW.callAPIGet(params, null, this.processArchWikiLinkContinue, [template, target, rawfragment, templates, expectedArgs, index, source, newText, prevId, title, call, callArgs], null);
+											return this.WM.MW.callAPIGet(params, this.processArchWikiLinkContinue, [template, target, rawfragment, templates, expectedArgs, index, source, newText, prevId, title, call, callArgs], null);
 										} else {
 											index++;
 											return this.processArchWikiLink(title, templates, expectedArgs, index, source, newText, prevId, call, callArgs);
@@ -6638,7 +6545,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 								text: newtext,
 								basetimestamp: timestamp,
 								token: edittoken
-							}, null, this.WM.Plugins.SimpleReplace.mainAutoEnd, callBot, null);
+							}, this.WM.Plugins.SimpleReplace.mainAutoEnd, callBot, null);
 						} else {
 							return callBot(0, null);
 						}
@@ -6739,11 +6646,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 					key: "computeWhiteList",
 					value: function computeWhiteList(whitelist) {
 						if (whitelist === "ArchWiki") {
-							if (typeof GM_emulation !== "undefined" && GM_emulation !== null) {
-								return this.WM.ArchWiki.getInternalInterwikiLanguages();
-							} else {
-								return this.WM.ArchWiki.getInterwikiLanguages();
-							}
+							return this.WM.ArchWiki.getInternalInterwikiLanguages();
 						} else {
 							return whitelist;
 						}
@@ -6773,7 +6676,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 				}, {
 					key: "mainContinue",
 					value: function mainContinue(iwmap, args) {
-						var api, callNext, i, langlinks, len, link, newlinks, nlink, pureTitle, source, supportedLangs, tag, title, url, visitedlinks, vlink, whitelist, wikiUrls;
+						var callNext, i, langlinks, len, link, newlinks, nlink, pureTitle, source, supportedLangs, tag, title, url, visitedlinks, vlink, whitelist, wikiUrls;
 						tag = args[0];
 						pureTitle = args[1];
 						supportedLangs = args[2];
@@ -6784,9 +6687,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 						langlinks = this.WM.Interlanguage.parseLinks(supportedLangs, source, iwmap);
 						wikiUrls = this.WM.MW.getWikiUrls();
 						url = wikiUrls.short + encodeURIComponent(this.WM.Parser.squashContiguousWhitespace(title));
-						api = wikiUrls.api;
 						visitedlinks = {};
-						visitedlinks[tag.toLowerCase()] = this.WM.Interlanguage.createVisitedLink(tag, pureTitle, url, iwmap, api, source, null, null, langlinks);
+						visitedlinks[tag.toLowerCase()] = this.WM.Interlanguage.createVisitedLink(tag, pureTitle, url, iwmap, source, null, null, langlinks);
 						newlinks = {};
 						this.WM.Log.logInfo("Reading " + this.WM.Log.linkToPage(url, "edited article") + " ...");
 						if (langlinks) {
@@ -6874,7 +6776,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 								text: newText,
 								basetimestamp: timestamp,
 								token: edittoken
-							}, null, this.mainAutoEnd, callBot, null);
+							}, this.mainAutoEnd, callBot, null);
 						} else {
 							return callBot(0, null);
 						}
@@ -7131,7 +7033,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 								text: newtext,
 								basetimestamp: args.timestamp,
 								token: args.edittoken
-							}, null, this.checkWrite, args, null);
+							}, this.checkWrite, args, null);
 						} else {
 							this.WM.Log.logInfo(this.WM.Log.linkToWikiPage(args.params.page, args.params.page) + ' is already up to date');
 							if (args.callNext) {

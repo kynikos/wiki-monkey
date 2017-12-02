@@ -184,7 +184,6 @@ class module.exports.ArchWikiSortContacts
                                     b1asetimestamp: timestamp
                                     token: edittoken
                             },
-                            null,
                             @writePage,
                             [title, callNext],
                             null)

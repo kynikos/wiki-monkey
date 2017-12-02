@@ -52,7 +52,7 @@ module.exports.FixLinkFragments = (function() {
               'page': target,
               'redirects': 1
             };
-            return this.WM.MW.callAPIGet(params, null, this.processLinkContinue, [link, target, rawfragment, links, index, source, newText, prevId, title, call, callArgs], null);
+            return this.WM.MW.callAPIGet(params, this.processLinkContinue, [link, target, rawfragment, links, index, source, newText, prevId, title, call, callArgs], null);
           } else {
             index++;
             return this.processLink(title, links, index, source, newText, prevId, call, callArgs);
@@ -188,7 +188,7 @@ module.exports.FixLinkFragments = (function() {
                   'page': target,
                   'redirects': 1
                 };
-                return this.WM.MW.callAPIGet(params, null, this.processArchWikiLinkContinue, [template, target, rawfragment, templates, expectedArgs, index, source, newText, prevId, title, call, callArgs], null);
+                return this.WM.MW.callAPIGet(params, this.processArchWikiLinkContinue, [template, target, rawfragment, templates, expectedArgs, index, source, newText, prevId, title, call, callArgs], null);
               } else {
                 index++;
                 return this.processArchWikiLink(title, templates, expectedArgs, index, source, newText, prevId, call, callArgs);

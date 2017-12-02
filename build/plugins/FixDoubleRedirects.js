@@ -131,7 +131,7 @@ module.exports.FixDoubleRedirects = (function() {
           text: newText,
           b1asetimestamp: timestamp,
           token: edittoken
-        }, null, this.processDoubleRedirectEnd, [doubleRedirects, namespaces, summary, callNext], null);
+        }, this.processDoubleRedirectEnd, [doubleRedirects, namespaces, summary, callNext], null);
       } else {
         this.WM.Log.logWarning("Could not fix " + this.WM.Log.linkToWikiPage(doubleRedirectTitle, doubleRedirectTitle));
         return this.iterateList(doubleRedirects, namespaces, [summary, callNext]);

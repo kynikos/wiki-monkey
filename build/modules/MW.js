@@ -16,14 +16,16 @@
 
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
-var HTTP, Obj;
+var $, HTTP, Obj;
+
+$ = require('jquery');
 
 HTTP = require('../../lib.js.generic/dist/HTTP');
 
 Obj = require('../../lib.js.generic/dist/Obj');
 
 module.exports.MW = (function() {
-  var interwikiFixes, joinParams, localWikiPaths, localWikiUrls, wikiPaths;
+  var interwikiFixes, localWikiPaths, localWikiUrls, wikiPaths;
 
   class MW {
     constructor(WM) {
@@ -119,129 +121,64 @@ module.exports.MW = (function() {
       return title;
     }
 
-    failedQueryError(finalUrl) {
-      return "Failed query: " + this.WM.Log.linkToPage(finalUrl, finalUrl) + "\nYou may have tried to use a plugin which requires cross-origin HTTP requests, but you are not using Greasemonkey (Firefox), Tampermonkey (Chrome/Chromium), Violentmonkey (Opera) or a similar extension";
+    failedQueryError(url) {
+      return `Failed query: ${this.WM.Log.linkToPage(url, url)}`;
     }
 
-    failedHTTPRequestError(err) {
-      return "Failed HTTP request - " + err + "\nYou may have tried to use a plugin which requires cross-origin HTTP requests, but you are not using Greasemonkey (Firefox), Tampermonkey (Chrome/Chromium), Violentmonkey (Opera) or a similar extension";
-    }
-
-    callAPIGet(params, api, call, callArgs, callError) {
-      var err, query;
-      if (!api) {
-        api = localWikiUrls.api;
-      }
-      query = {
-        method: "GET",
-        url: api + "?format=json" + joinParams(params),
-        onload: (res) => {
-          var err, json;
-          try {
-            if (Obj.getFirstItem(res.responseJSON)) {
-              json = res.responseJSON;
-            } else {
-              json = JSON.parse(res.responseText);
-            }
-          } catch (error) {
-            err = error;
-            this.WM.Log.logError("It is likely that the " + this.WM.Log.linkToPage(api, "API") + " for this wiki is disabled");
-            if (callError) {
-              callError(callArgs);
-            }
-          }
-          if (json) {
-            // Don't put this into the try block or all its exceptions
-            // will be caught printing the same API error
-            return call(json, callArgs);
-          }
-        },
-        onerror: (res) => {
-          this.WM.Log.logError(this.failedQueryError(res.finalUrl));
-          if (confirm("Wiki Monkey error: Failed query\n\nDo you want " + "to retry?")) {
-            this.WM.Log.logInfo("Retrying ...");
-            return this.callAPIGet(params, api, call, callArgs, callError);
-          } else if (callError) {
-            return callError(callArgs);
-          }
-        }
-      };
-      try {
-        return GM_xmlhttpRequest(query);
-      } catch (error) {
-        err = error;
-        return this.WM.Log.logError(this.failedHTTPRequestError(err));
-      }
-    }
-
-    callAPIPost(params, api, call, callArgs, callError) {
-      var err, p, query, string;
-      if (!api) {
-        api = localWikiUrls.api;
-      }
-      query = {
-        method: "POST",
+    callAPIGet(params, call, callArgs, callError) {
+      var api;
+      api = localWikiUrls.api;
+      params.format = "json";
+      return $.get({
         url: api,
-        onload: (res) => {
-          var err, json;
-          try {
-            if (Obj.getFirstItem(res.responseJSON)) {
-              json = res.responseJSON;
-            } else {
-              json = JSON.parse(res.responseText);
-            }
-          } catch (error) {
-            err = error;
-            this.WM.Log.logError("It is likely that the " + this.WM.Log.linkToPage(api, "API") + " for this wiki is disabled");
-            if (callError) {
-              callError(callArgs);
-            }
-          }
-          if (json) {
-            // Don't put this into the try block or all its exceptions
-            // will be caught printing the same API error
-            return call(json, callArgs);
-          }
-        },
-        onerror: (res) => {
-          this.WM.Log.logError(this.failedQueryError(res.finalUrl));
-          if (confirm("Wiki Monkey error: Failed query\n\nDo you want " + "to retry?")) {
-            this.WM.Log.logInfo("Retrying ...");
-            return this.callAPIPost(params, api, call, callArgs, callError);
-          } else if (callError) {
-            return callError(callArgs);
+        data: params
+      }).done((data, textStatus, jqXHR) => {
+        if (!data instanceof Object) {
+          this.WM.Log.logError("It is likely that the " + this.WM.Log.linkToPage(api, "API") + " for this wiki is disabled");
+          if (callError) {
+            callError(callArgs);
           }
         }
-      };
-      string = "format=json" + joinParams(params);
-      try {
-        // It's necessary to use try...catch because some browsers don't
-        // support FormData yet and will throw an exception
-        if (string.length > 8000) {
-          query.data = new FormData();
-          query.data.append("format", "json");
-          for (p in params) {
-            query.data.append(p, params[p]);
-          }
-        } else {
-          // Do not add "multipart/form-data" explicitly or the query
-          //   will fail
-          //query.headers = {"Content-type": "multipart/form-data"};
-          throw "string <= 8000 characters";
+        if (data) {
+          return call(data, callArgs);
         }
-      } catch (error) {
-        err = error;
-        query.data = string;
-        query.headers = {
-          "Content-type": "application/x-www-form-urlencoded"
-        };
-      }
-      try {
-        return GM_xmlhttpRequest(query);
-      } catch (error) {
-        err = error;
-        return this.WM.Log.logError(this.failedHTTPRequestError(err));
-      }
+      }).fail((jqXHR, textStatus, errorThrown) => {
+        this.WM.Log.logError(this.failedQueryError(api));
+        if (confirm("Wiki Monkey error: Failed query\n\nDo you want " + "to retry?")) {
+          this.WM.Log.logInfo("Retrying ...");
+          return this.callAPIGet(params, call, callArgs, callError);
+        } else if (callError) {
+          return callError(callArgs);
+        }
+      });
+    }
+
+    callAPIPost(params, call, callArgs, callError) {
+      var api;
+      api = localWikiUrls.api;
+      params.format = "json";
+      return $.post({
+        url: api,
+        data: params
+      }).done((data, textStatus, jqXHR) => {
+        if (!data instanceof Object) {
+          this.WM.Log.logError("It is likely that the " + this.WM.Log.linkToPage(api, "API") + " for this wiki is disabled");
+          if (callError) {
+            callError(callArgs);
+          }
+        }
+        if (data) {
+          return call(data, callArgs);
+        }
+      }).fail((jqXHR, textStatus, errorThrown) => {
+        this.WM.Log.logError(this.failedQueryError(api));
+        if (confirm("Wiki Monkey error: Failed query\n\nDo you want " + "to retry?")) {
+          this.WM.Log.logInfo("Retrying ...");
+          return this.callAPIPost(params, call, callArgs, callError);
+        } else if (callError) {
+          return callError(callArgs);
+        }
+      });
     }
 
     callQuery(params, call, callArgs, callError) {
@@ -252,7 +189,7 @@ module.exports.MW = (function() {
         page = Obj.getFirstItem(res.query.pages);
         return call(page, args);
       };
-      return this.callAPIGet(params, null, callBack, callArgs, callError);
+      return this.callAPIGet(params, callBack, callArgs, callError);
     }
 
     callQueryEdit(title, call, callArgs) {
@@ -285,7 +222,7 @@ module.exports.MW = (function() {
           meta: "userinfo",
           uiprop: "groups"
         };
-        return this.callAPIGet(pars, null, storeInfo, call, null);
+        return this.callAPIGet(pars, storeInfo, call, null);
       } else {
         return call();
       }
@@ -329,7 +266,7 @@ module.exports.MW = (function() {
     }
 
     _getBacklinksContinue(query, call, callArgs, backlinks) {
-      return this.callAPIGet(query, null, (res, args) => {
+      return this.callAPIGet(query, (res, args) => {
         backlinks = backlinks.concat(res.query.backlinks);
         if (res["query-continue"]) {
           query.blcontinue = res["query-continue"].backlinks.blcontinue;
@@ -359,7 +296,7 @@ module.exports.MW = (function() {
     }
 
     _getLanglinksContinue(query, call, callArgs, langlinks, iwmap) {
-      return this.callAPIGet(query, null, (res, args) => {
+      return this.callAPIGet(query, (res, args) => {
         var page;
         page = Obj.getFirstItem(res.query.pages);
         langlinks = langlinks.concat(page.langlinks);
@@ -386,7 +323,7 @@ module.exports.MW = (function() {
         meta: "siteinfo",
         siprop: "interwikimap",
         sifilteriw: "local"
-      }, null, (res, args) => {
+      }, (res, args) => {
         return call(res.query.interwikimap, args);
       }, callArgs, null);
     }
@@ -419,7 +356,7 @@ module.exports.MW = (function() {
     }
 
     _getSpecialListContinue(query, call, callArgs, results, siteinfo) {
-      return this.callAPIGet(query, null, (res, args) => {
+      return this.callAPIGet(query, (res, args) => {
         var key;
         results = results.concat(res.query.querypage.results);
         for (key in res.query) {
@@ -455,7 +392,7 @@ module.exports.MW = (function() {
     }
 
     _getUserContribsContinue(query, call, callArgs, results) {
-      return this.callAPIGet(query, null, (res, args) => {
+      return this.callAPIGet(query, (res, args) => {
         results = results.concat(res.query.usercontribs);
         if (res["query-continue"]) {
           query.uccontinue = res["query-continue"].usercontribs.uccontinue;
@@ -518,15 +455,6 @@ module.exports.MW = (function() {
   };
 
   interwikiFixes = [["https://wiki.archlinux.org/index.php/$1_(", "https://wiki.archlinux.org/index.php/$1%20("]];
-
-  joinParams = function(params) {
-    var key, string;
-    string = "";
-    for (key in params) {
-      string += "&" + key + "=" + encodeURIComponent(params[key]);
-    }
-    return string;
-  };
 
   return MW;
 

@@ -36,10 +36,7 @@ class module.exports.SynchronizeInterlanguageLinks
     computeWhiteList: (whitelist) =>
         # Without this check this plugin would be specific to ArchWiki
         if whitelist == "ArchWiki"
-            if GM_emulation?
-                return @WM.ArchWiki.getInternalInterwikiLanguages()
-            else
-                return @WM.ArchWiki.getInterwikiLanguages()
+            return @WM.ArchWiki.getInternalInterwikiLanguages()
         else
             return whitelist
 
@@ -83,11 +80,10 @@ class module.exports.SynchronizeInterlanguageLinks
         wikiUrls = @WM.MW.getWikiUrls()
         url = wikiUrls.short + encodeURIComponent(
                                 @WM.Parser.squashContiguousWhitespace(title))
-        api = wikiUrls.api
 
         visitedlinks = {}
         visitedlinks[tag.toLowerCase()] = @WM.Interlanguage.createVisitedLink(
-                                            tag, pureTitle, url, iwmap, api,
+                                            tag, pureTitle, url, iwmap,
                                             source, null, null, langlinks)
 
         newlinks = {}
@@ -217,7 +213,6 @@ class module.exports.SynchronizeInterlanguageLinks
                  basetimestamp: timestamp
                  token: edittoken
                 },
-                null,
                 @mainAutoEnd,
                 callBot,
                 null

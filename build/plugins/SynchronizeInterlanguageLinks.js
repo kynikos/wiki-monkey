@@ -45,11 +45,7 @@ module.exports.SynchronizeInterlanguageLinks = (function() {
     computeWhiteList(whitelist) {
       // Without this check this plugin would be specific to ArchWiki
       if (whitelist === "ArchWiki") {
-        if (typeof GM_emulation !== "undefined" && GM_emulation !== null) {
-          return this.WM.ArchWiki.getInternalInterwikiLanguages();
-        } else {
-          return this.WM.ArchWiki.getInterwikiLanguages();
-        }
+        return this.WM.ArchWiki.getInternalInterwikiLanguages();
       } else {
         return whitelist;
       }
@@ -77,7 +73,7 @@ module.exports.SynchronizeInterlanguageLinks = (function() {
     }
 
     mainContinue(iwmap, args) {
-      var api, callNext, i, langlinks, len, link, newlinks, nlink, pureTitle, source, supportedLangs, tag, title, url, visitedlinks, vlink, whitelist, wikiUrls;
+      var callNext, i, langlinks, len, link, newlinks, nlink, pureTitle, source, supportedLangs, tag, title, url, visitedlinks, vlink, whitelist, wikiUrls;
       tag = args[0];
       pureTitle = args[1];
       supportedLangs = args[2];
@@ -88,9 +84,8 @@ module.exports.SynchronizeInterlanguageLinks = (function() {
       langlinks = this.WM.Interlanguage.parseLinks(supportedLangs, source, iwmap);
       wikiUrls = this.WM.MW.getWikiUrls();
       url = wikiUrls.short + encodeURIComponent(this.WM.Parser.squashContiguousWhitespace(title));
-      api = wikiUrls.api;
       visitedlinks = {};
-      visitedlinks[tag.toLowerCase()] = this.WM.Interlanguage.createVisitedLink(tag, pureTitle, url, iwmap, api, source, null, null, langlinks);
+      visitedlinks[tag.toLowerCase()] = this.WM.Interlanguage.createVisitedLink(tag, pureTitle, url, iwmap, source, null, null, langlinks);
       newlinks = {};
       this.WM.Log.logInfo("Reading " + this.WM.Log.linkToPage(url, "edited article") + " ...");
       if (langlinks) {
@@ -183,7 +178,7 @@ module.exports.SynchronizeInterlanguageLinks = (function() {
           text: newText,
           basetimestamp: timestamp,
           token: edittoken
-        }, null, this.mainAutoEnd, callBot, null);
+        }, this.mainAutoEnd, callBot, null);
       } else {
         return callBot(0, null);
       }

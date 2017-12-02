@@ -59,7 +59,7 @@ class module.exports.Cat
         @_getMembersContinue(query, call, callArgs, [])
 
     _getMembersContinue: (query, call, callArgs, members) ->
-        WM.MW.callAPIGet(query, null, (res, args) ->
+        WM.MW.callAPIGet(query, (res, args) ->
             members = members.concat(res.query.categorymembers)
             if res["query-continue"]
                 query.cmcontinue = res["query-continue"]
@@ -81,7 +81,7 @@ class module.exports.Cat
         @_getParentsAndInfoContinue(query, call, callArgs, [], null)
 
     _getParentsAndInfoContinue: (query, call, callArgs, parents, info) ->
-        WM.MW.callAPIGet(query, null, (res, args) ->
+        WM.MW.callAPIGet(query, (res, args) ->
             page = Obj.getFirstItem(res.query.pages)
 
             if page.categories

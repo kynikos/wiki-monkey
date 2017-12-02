@@ -62,7 +62,7 @@ module.exports.Interlanguage = class Interlanguage {
     return langlinks;
   }
 
-  queryLinks(api, queryTitle, title, supportedLangs, whitelist, firstPage, callEnd, callArgs) {
+  queryLinks(queryTitle, title, supportedLangs, whitelist, firstPage, callEnd, callArgs) {
     var query;
     query = {
       action: "query",
@@ -79,7 +79,7 @@ module.exports.Interlanguage = class Interlanguage {
     if (!firstPage) {
       query.redirects = "1";
     }
-    return this.WM.MW.callAPIGet(query, api, (res, args) => {
+    return this.WM.MW.callAPIGet(query, (res, args) => {
       var edittoken, error, iwmap, langlinks, page, source, timestamp;
       if (res.query.pages) {
         page = Obj.getFirstItem(res.query.pages);
@@ -117,9 +117,9 @@ module.exports.Interlanguage = class Interlanguage {
         iwmap = res.query.interwikimap;
         langlinks = false;
       }
-      return callEnd(api, title, supportedLangs, whitelist, false, error, langlinks, iwmap, source, timestamp, edittoken, args);
+      return callEnd(title, supportedLangs, whitelist, false, error, langlinks, iwmap, source, timestamp, edittoken, args);
     }, callArgs, function(args) {
-      return callEnd(api, title, supportedLangs, whitelist, false, 'unknown', false, false, false, false, false, args);
+      return callEnd(title, supportedLangs, whitelist, false, 'unknown', false, false, false, false, false, args);
     });
   }
 
@@ -131,14 +131,13 @@ module.exports.Interlanguage = class Interlanguage {
     };
   }
 
-  createVisitedLink(origTag, title, url, iwmap, api, source, timestamp, edittoken, links) {
+  createVisitedLink(origTag, title, url, iwmap, source, timestamp, edittoken, links) {
     var entry, i, len, link;
     entry = {
       origTag: origTag,
       title: title,
       url: url,
       iwmap: iwmap,
-      api: api,
       source: source,
       timestamp: timestamp,
       edittoken: edittoken,
@@ -152,7 +151,7 @@ module.exports.Interlanguage = class Interlanguage {
   }
 
   collectLinks(visitedlinks, newlinks, supportedLangs, whitelist, firstPage, callEnd, callArgs) {
-    var api, link, origTag, queryTitle, tag, title, url;
+    var link, origTag, queryTitle, tag, title, url;
     for (tag in newlinks) {
       link = newlinks[tag];
       break;
@@ -167,7 +166,6 @@ module.exports.Interlanguage = class Interlanguage {
       if (queryTitle) {
         origTag = link.origTag;
         title = link.title;
-        api = this.WM.MW.getWikiUrls(url).api;
         // If this is the first processed page, it's local for sure, so
         //   query its links in any case. This e.g. prevents the
         //   application from crashing in case the local page is in a
@@ -175,9 +173,9 @@ module.exports.Interlanguage = class Interlanguage {
         // tag is already lower-cased
         if (firstPage || whitelist.indexOf(tag) > -1) {
           this.WM.Log.logInfo("Reading " + this.WM.Log.linkToPage(url, "[[" + origTag + ":" + title + "]]") + " ...");
-          return this.queryLinks(api, queryTitle, title, supportedLangs, whitelist, firstPage, this.WM.Interlanguage._collectLinksContinue, [url, tag, origTag, visitedlinks, newlinks, callEnd, callArgs]);
+          return this.queryLinks(queryTitle, title, supportedLangs, whitelist, firstPage, this.WM.Interlanguage._collectLinksContinue, [url, tag, origTag, visitedlinks, newlinks, callEnd, callArgs]);
         } else {
-          return this.WM.Interlanguage._collectLinksContinue(api, title, supportedLangs, whitelist, firstPage, 'notinwhitelist', null, false, null, null, null, [url, tag, origTag, visitedlinks, newlinks, callEnd, callArgs]);
+          return this.WM.Interlanguage._collectLinksContinue(title, supportedLangs, whitelist, firstPage, 'notinwhitelist', [], false, null, null, null, [url, tag, origTag, visitedlinks, newlinks, callEnd, callArgs]);
         }
       } else {
         this.WM.Log.logWarning("Cannot extract the page title from " + this.WM.Log.linkToPage(url, decodeURI(url)) + ", removing it if it was linked from the processed article");
@@ -188,7 +186,7 @@ module.exports.Interlanguage = class Interlanguage {
     }
   }
 
-  _collectLinksContinue(api, title, supportedLangs, whitelist, firstPage, error, langlinks, iwmap, source, timestamp, edittoken, args) {
+  _collectLinksContinue(title, supportedLangs, whitelist, firstPage, error, langlinks, iwmap, source, timestamp, edittoken, args) {
     var callArgs, callEnd, i, len, link, newlinks, nlink, origTag, tag, url, visitedlinks, vlink;
     url = args[0];
     tag = args[1];
@@ -207,7 +205,7 @@ module.exports.Interlanguage = class Interlanguage {
       } else if (error === 'notinwhitelist') {
         this.WM.Log.logWarning(this.WM.Log.linkToPage(url, "[[" + origTag + ":" + title + "]]") + " will not be checked because " + tag + " is not included in the whitelist defined in the configuration");
       }
-      visitedlinks[tag] = this.WM.Interlanguage.createVisitedLink(origTag, title, url, iwmap, api, source, timestamp, edittoken, langlinks);
+      visitedlinks[tag] = this.WM.Interlanguage.createVisitedLink(origTag, title, url, iwmap, source, timestamp, edittoken, langlinks);
       for (i = 0, len = langlinks.length; i < len; i++) {
         link = langlinks[i];
         nlink = newlinks[link.lang.toLowerCase()];
@@ -245,11 +243,7 @@ module.exports.Interlanguage = class Interlanguage {
         for (i = 0, len = iwmap.length; i < len; i++) {
           iw = iwmap[i];
           if (iw.prefix.toLowerCase() === tag.toLowerCase()) {
-            if (this.WM.MW.getWikiUrls(iw.url).api === link.api) {
-              linkList.push("[[" + link.origTag + ":" + link.title + "]]");
-            } else {
-              this.WM.Log.logWarning("On " + this.WM.Log.linkToPage(url, "[[" + link.origTag + ":" + link.title + "]]") + " , " + tag + " interlanguage links point to a different wiki than the others, ignoring them");
-            }
+            linkList.push("[[" + link.origTag + ":" + link.title + "]]");
             tagFound = true;
             break;
           }

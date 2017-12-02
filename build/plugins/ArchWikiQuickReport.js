@@ -103,7 +103,7 @@ module.exports.ArchWikiQuickReport = (function() {
         text: newtext,
         basetimestamp: timestamp,
         token: edittoken
-      }, null, this.mainEnd, [article, callNext], null);
+      }, this.mainEnd, [article, callNext], null);
     }
 
     mainEnd(res, args) {

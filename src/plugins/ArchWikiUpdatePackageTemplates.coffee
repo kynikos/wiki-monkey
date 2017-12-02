@@ -473,7 +473,6 @@ class module.exports.ArchWikiUpdatePackageTemplates
                                     basetimestamp: timestamp,
                                     token: edittoken
                                },
-                               null,
                                @mainAutoEnd,
                                callBot,
                                null)

@@ -193,7 +193,7 @@ module.exports.FixBacklinkFragments = (function() {
             'redirects': 1
           };
           this.WM.Log.logWarning("If some articles in the list are linking to the target article through a redirect, you should process the backlinks of that redirect page separately through its Special:WhatLinksHere page, as this plugin can only fix links that exactly match the title of the target article.\nIn order to save time you are advised to hide the redirects in the page lists that allow to do so.");
-          return this.WM.MW.callAPIGet(params, null, this.mainAutoFindSections, [title, target, summary, callBot], null);
+          return this.WM.MW.callAPIGet(params, this.mainAutoFindSections, [title, target, summary, callBot], null);
         } else {
           return this.mainAutoRead(target, chainArgs, title, summary, callBot);
         }
@@ -247,7 +247,7 @@ module.exports.FixBacklinkFragments = (function() {
           text: newtext,
           basetimestamp: timestamp,
           token: edittoken
-        }, null, this.mainAutoEnd, [callBot, sections], null);
+        }, this.mainAutoEnd, [callBot, sections], null);
       } else {
         return callBot(0, sections);
       }

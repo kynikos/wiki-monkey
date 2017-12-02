@@ -159,7 +159,7 @@ module.exports.ArchWikiSortContacts = (function() {
           text: newText,
           b1asetimestamp: timestamp,
           token: edittoken
-        }, null, this.writePage, [title, callNext], null);
+        }, this.writePage, [title, callNext], null);
       } else {
         this.WM.Log.logInfo(this.WM.Log.linkToWikiPage(title, title) + " was already up to date");
         if (callNext) {

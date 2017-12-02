@@ -20,7 +20,9 @@
 // References:
 // - https://wiki.archlinux.org/index.php/Official_Repositories_Web_Interface
 // - https://wiki.archlinux.org/index.php/AurJson
-var Obj, RegEx;
+var $, Obj, RegEx;
+
+$ = require('jquery');
 
 Obj = require('../../lib.js.generic/dist/Obj');
 
@@ -36,38 +38,23 @@ module.exports.ArchPackages = (function() {
     }
 
     searchOfficialPackagesByExactName(name, call, callArgs) {
-      var err, query;
-      query = {
-        method: "GET",
-        url: "https://www.archlinux.org/packages/search/json/?name=" + encodeURIComponent(name),
-        onload: function(res) {
-          var err, json;
-          try {
-            if (Obj.getFirstItem(res.responseJSON)) {
-              json = res.responseJSON;
-            } else {
-              json = JSON.parse(res.responseText);
-            }
-          } catch (error) {
-            err = error;
-            this.WM.Log.logError("The Official Repositories web interface returned an unexpected object");
-          }
-          if (json) {
-            // Don't put this into the try block or all its exceptions
-            // will be caught printing the same error
-            return call(json, callArgs);
-          }
-        },
-        onerror: function(res) {
-          return this.WM.Log.logError(this.WM.MW.failedQueryError(res.finalUrl));
+      var url;
+      url = "https://www.archlinux.org/packages/search/json/";
+      return $.get({
+        url: url,
+        data: {
+          name: name
         }
-      };
-      try {
-        return GM_xmlhttpRequest(query);
-      } catch (error) {
-        err = error;
-        return this.WM.Log.logError(this.WM.MW.failedHTTPRequestError(err));
-      }
+      }).done(function(data, textStatus, jqXHR) {
+        if (!data instanceof Object) {
+          this.WM.Log.logError("The Official Repositories web interface returned an unexpected object");
+        }
+        if (data) {
+          return call(data, callArgs);
+        }
+      }).fail(function(jqXHR, textStatus, errorThrown) {
+        return this.WM.Log.logError(this.WM.MW.failedQueryError(url));
+      });
     }
 
     isOfficialPackage(pkg, call, callArgs) {
@@ -83,39 +70,25 @@ module.exports.ArchPackages = (function() {
     }
 
     getAURInfo(arg, call, callArgs) {
-      var err, query;
+      var url;
       // arg can be either an exact package name (string) or an ID (integer)
-      query = {
-        method: "GET",
-        url: "https://aur.archlinux.org/rpc.php?type=info&arg=" + encodeURIComponent(arg),
-        onload: function(res) {
-          var err, json;
-          try {
-            if (Obj.getFirstItem(res.responseJSON)) {
-              json = res.responseJSON;
-            } else {
-              json = JSON.parse(res.responseText);
-            }
-          } catch (error) {
-            err = error;
-            this.WM.Log.logError("The AUR's RPC interface returned an unexpected object");
-          }
-          if (json) {
-            // Don't put this into the try block or all its exceptions
-            // will be caught printing the same error
-            return call(json, callArgs);
-          }
-        },
-        onerror: function(res) {
-          return this.WM.Log.logError(this.WM.MW.failedQueryError(res.finalUrl));
+      url = "https://aur.archlinux.org/rpc.php";
+      return $.get({
+        url: url,
+        data: {
+          type: "info",
+          arg: arg
         }
-      };
-      try {
-        return GM_xmlhttpRequest(query);
-      } catch (error) {
-        err = error;
-        return this.WM.Log.logError(this.WM.MW.failedHTTPRequestError(err));
-      }
+      }).done((data, textStatus, jqXHR) => {
+        if (!data instanceof Object) {
+          this.WM.Log.logError("The AUR's RPC interface returned an unexpected object");
+        }
+        if (data) {
+          return call(data, callArgs);
+        }
+      }).fail((jqXHR, textStatus, errorThrown) => {
+        return this.WM.Log.logError(this.WM.MW.failedQueryError(url));
+      });
     }
 
     isAURPackage(pkg, call, callArgs) {
@@ -145,35 +118,31 @@ module.exports.ArchPackages = (function() {
   };
 
   isPackageGroup = function(arch, grp, call, callArgs) {
-    var err, query;
-    query = {
-      method: "GET",
-      url: "https://www.archlinux.org/groups/" + encodeURIComponent(arch) + "/" + encodeURIComponent(grp),
-      onload: function(res) {
-        var escarch, escgrp, regExp;
-        // Cannot use the DOMParser because GreaseMonkey doesn't
-        // support XrayWrapper well
-        // See http://www.oreillynet.com/pub/a/network/2005/11/01/avoid-common-greasemonkey-pitfalls.html?page=3
-        // and https://developer.mozilla.org/en/docs/XPConnect_wrappers#XPCNativeWrapper_%28XrayWrapper%29
-        escgrp = RegEx.escapePattern(grp);
-        escarch = RegEx.escapePattern(arch);
-        regExp = new RegExp("<h2>\\s*Group Details -\\s*" + escgrp + "\\s*\\(" + escarch + "\\)\\s*</h2>", "");
-        if (res.responseText.search(regExp) > -1) {
-          return call(true, callArgs);
-        } else {
-          return call(false, callArgs);
-        }
-      },
-      onerror: function(res) {
-        return this.WM.Log.logError(this.WM.MW.failedQueryError(res.finalUrl));
+    var url;
+    url = "https://www.archlinux.org/groups/" + encodeURIComponent(arch) + "/" + encodeURIComponent(grp);
+    return $.get({
+      url: url
+    }).done((data, textStatus, jqXHR) => {
+      var escarch, escgrp, regExp;
+      // Cannot use the DOMParser because GreaseMonkey doesn't
+      // support XrayWrapper well
+      // See http://www.oreillynet.com/pub/a/network/2005/11/01/avoid-common-greasemonkey-pitfalls.html?page=3
+      // and https://developer.mozilla.org/en/docs/XPConnect_wrappers#XPCNativeWrapper_%28XrayWrapper%29
+      escgrp = RegEx.escapePattern(grp);
+      escarch = RegEx.escapePattern(arch);
+      regExp = new RegExp("<h2>\\s*Group Details -\\s*" + escgrp + "\\s*\\(" + escarch + "\\)\\s*</h2>", "");
+      if (data.search(regExp) > -1) {
+        return call(true, callArgs);
+      } else {
+        return call(false, callArgs);
       }
-    };
-    try {
-      return GM_xmlhttpRequest(query);
-    } catch (error) {
-      err = error;
-      return this.WM.Log.logError(this.WM.MW.failedHTTPRequestError(err));
-    }
+    }).fail((jqXHR, textStatus, errorThrown) => {
+      if (jqXHR.status === 404) {
+        return call(false, callArgs);
+      } else {
+        return this.WM.Log.logError(this.WM.MW.failedQueryError(url));
+      }
+    });
   };
 
   return ArchPackages;
