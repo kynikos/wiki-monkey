@@ -1573,7 +1573,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             help = $("<a/>").attr("href", "https://github.com/kynikos/wiki-monkey/wiki").text("[help]");
             $("<p/>").addClass("message").text("All pages running Wiki Monkey need to be refreshed for saved changes to take effect. ").append(help).appendTo(editor);
             $("<textarea/>").attr("id", "WikiMonkey-editor").appendTo(editor);
-            $("<p/>").text('Wiki Monkey version: ' + GM_info.script.version).appendTo(editor);
+            $("<p/>").text('Wiki Monkey version: ' + this.WM.version).appendTo(editor);
             $("<p/>").text("Actually installed plugins (in general, a subset of those set in the loaded configuration):").appendTo(editor);
             list = $("<ul/>");
             for (plugin in this.WM.Plugins) {
@@ -3838,7 +3838,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             }
             main.appendChild(main2);
             nextNode.parentNode.insertBefore(main, nextNode);
-            this.WM.Log.logHidden('Wiki Monkey version: ' + GM_info.script.version);
+            this.WM.Log.logHidden('Wiki Monkey version: ' + this.WM.version);
             date = new Date();
             this.WM.Log.logHidden('Date: ' + date.toString());
             return this.WM.Log.logHidden('URL: ' + location.href);
@@ -3912,44 +3912,55 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
     WhatLinksHere_ = require('./WhatLinksHere').WhatLinksHere;
 
-    module.exports.WM = function WM(default_config) {
-      _classCallCheck(this, WM);
+    module.exports.WM = function () {
+      var VERSION;
 
-      var Plugin, i, len, pname;
-      this.ArchPackages = new ArchPackages_(this);
-      this.ArchWiki = new ArchWiki_(this);
-      this.Bot = new Bot_(this);
-      this.Cat = new Cat_(this);
-      this.Cfg = new Cfg_(this);
-      this.Diff = new Diff_(this);
-      this.Editor = new Editor_(this);
-      this.Filters = new Filters_(this);
-      this.Interlanguage = new Interlanguage_(this);
-      this.Log = new Log_(this);
-      this.Menu = new Menu_(this);
-      this.Mods = new Mods_(this);
-      this.MW = new MW_(this);
-      this.Parser = new Parser_(this);
-      this.Tables = new Tables_(this);
-      this.UI = new UI_(this);
-      this.WhatLinksHere = new WhatLinksHere_(this);
-      this.Plugins = {};
+      var WM = function WM(default_config) {
+        _classCallCheck(this, WM);
 
-      for (var _len = arguments.length, installed_plugins = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        installed_plugins[_key - 1] = arguments[_key];
-      }
+        var Plugin, i, len, pname;
+        this.version = VERSION;
+        this.ArchPackages = new ArchPackages_(this);
+        this.ArchWiki = new ArchWiki_(this);
+        this.Bot = new Bot_(this);
+        this.Cat = new Cat_(this);
+        this.Cfg = new Cfg_(this);
+        this.Diff = new Diff_(this);
+        this.Editor = new Editor_(this);
+        this.Filters = new Filters_(this);
+        this.Interlanguage = new Interlanguage_(this);
+        this.Log = new Log_(this);
+        this.Menu = new Menu_(this);
+        this.Mods = new Mods_(this);
+        this.MW = new MW_(this);
+        this.Parser = new Parser_(this);
+        this.Tables = new Tables_(this);
+        this.UI = new UI_(this);
+        this.WhatLinksHere = new WhatLinksHere_(this);
+        this.Plugins = {};
 
-      for (i = 0, len = installed_plugins.length; i < len; i++) {
-        var _installed_plugins$i = _slicedToArray(installed_plugins[i], 2);
+        for (var _len = arguments.length, installed_plugins = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+          installed_plugins[_key - 1] = arguments[_key];
+        }
 
-        pname = _installed_plugins$i[0];
-        Plugin = _installed_plugins$i[1];
+        for (i = 0, len = installed_plugins.length; i < len; i++) {
+          var _installed_plugins$i = _slicedToArray(installed_plugins[i], 2);
 
-        this.Plugins[pname] = new Plugin(this);
-      }
-      this.Cfg._load(default_config);
-      this.UI._makeUI();
-    };
+          pname = _installed_plugins$i[0];
+          Plugin = _installed_plugins$i[1];
+
+          this.Plugins[pname] = new Plugin(this);
+        }
+        this.Cfg._load(default_config);
+        this.UI._makeUI();
+      };
+
+      ;
+
+      VERSION = '4.0.0';
+
+      return WM;
+    }();
   }, { "./ArchPackages": 3, "./ArchWiki": 4, "./Bot": 5, "./Cat": 6, "./Cfg": 7, "./Diff": 8, "./Editor": 9, "./Filters": 10, "./Interlanguage": 11, "./Log": 12, "./MW": 13, "./Menu": 14, "./Mods": 15, "./Parser": 16, "./Tables": 17, "./UI": 18, "./WhatLinksHere": 19 }], 21: [function (require, module, exports) {
     var indexOf = [].indexOf;
 

@@ -52,33 +52,44 @@ UI_ = require('./UI').UI;
 
 WhatLinksHere_ = require('./WhatLinksHere').WhatLinksHere;
 
-module.exports.WM = class WM {
-  constructor(default_config, ...installed_plugins) {
-    var Plugin, i, len, pname;
-    this.ArchPackages = new ArchPackages_(this);
-    this.ArchWiki = new ArchWiki_(this);
-    this.Bot = new Bot_(this);
-    this.Cat = new Cat_(this);
-    this.Cfg = new Cfg_(this);
-    this.Diff = new Diff_(this);
-    this.Editor = new Editor_(this);
-    this.Filters = new Filters_(this);
-    this.Interlanguage = new Interlanguage_(this);
-    this.Log = new Log_(this);
-    this.Menu = new Menu_(this);
-    this.Mods = new Mods_(this);
-    this.MW = new MW_(this);
-    this.Parser = new Parser_(this);
-    this.Tables = new Tables_(this);
-    this.UI = new UI_(this);
-    this.WhatLinksHere = new WhatLinksHere_(this);
-    this.Plugins = {};
-    for (i = 0, len = installed_plugins.length; i < len; i++) {
-      [pname, Plugin] = installed_plugins[i];
-      this.Plugins[pname] = new Plugin(this);
-    }
-    this.Cfg._load(default_config);
-    this.UI._makeUI();
-  }
+module.exports.WM = (function() {
+  var VERSION;
 
-};
+  class WM {
+    constructor(default_config, ...installed_plugins) {
+      var Plugin, i, len, pname;
+      this.version = VERSION;
+      this.ArchPackages = new ArchPackages_(this);
+      this.ArchWiki = new ArchWiki_(this);
+      this.Bot = new Bot_(this);
+      this.Cat = new Cat_(this);
+      this.Cfg = new Cfg_(this);
+      this.Diff = new Diff_(this);
+      this.Editor = new Editor_(this);
+      this.Filters = new Filters_(this);
+      this.Interlanguage = new Interlanguage_(this);
+      this.Log = new Log_(this);
+      this.Menu = new Menu_(this);
+      this.Mods = new Mods_(this);
+      this.MW = new MW_(this);
+      this.Parser = new Parser_(this);
+      this.Tables = new Tables_(this);
+      this.UI = new UI_(this);
+      this.WhatLinksHere = new WhatLinksHere_(this);
+      this.Plugins = {};
+      for (i = 0, len = installed_plugins.length; i < len; i++) {
+        [pname, Plugin] = installed_plugins[i];
+        this.Plugins[pname] = new Plugin(this);
+      }
+      this.Cfg._load(default_config);
+      this.UI._makeUI();
+    }
+
+  };
+
+  // The build script updates the version number
+  VERSION = '4.0.0';
+
+  return WM;
+
+})();

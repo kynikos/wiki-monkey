@@ -1,5 +1,6 @@
 import os.path
 import shutil
+import re
 
 from . import configurations
 
@@ -28,6 +29,7 @@ SRCDIR = "./src/"
 BUILDDIR = "./build/"
 DISTDIR = './dist/'
 AUXDIR = './auxiliary/'
+INITFILE = os.path.join(SRCDIR, 'modules/_Init.coffee')
 DISTFILE = "{distdir}WikiMonkey-{wiki}{suffix}.js"
 
 COFFEE = "./node_modules/.bin/coffee --compile --bare --output {build} {src}"
@@ -56,6 +58,20 @@ SED = "--command \"sed -r -e 's/{}/{}/'\"".format(SEDRE1, SEDRE2)
 
 
 def compile(run, version):
+    if version:
+        run('npm --allow-same-version --no-git-tag-version version {}'.format(
+                                                                    version))
+
+        with open(INITFILE, 'r') as sf:
+            initfile = sf.read()
+
+        initfile = re.sub(r'VERSION *= *[\'"][0-9.]+[\'"]',
+                          "VERSION = '{}'".format(version),
+                          initfile)
+
+        with open(INITFILE, 'w') as df:
+            df.write(initfile)
+
     # It's important to recompile the configuration *before* the scripts
     configurations.compile()
 

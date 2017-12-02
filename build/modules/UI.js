@@ -159,7 +159,7 @@ module.exports.UI = class UI {
       }
       main.appendChild(main2);
       nextNode.parentNode.insertBefore(main, nextNode);
-      this.WM.Log.logHidden('Wiki Monkey version: ' + GM_info.script.version);
+      this.WM.Log.logHidden('Wiki Monkey version: ' + this.WM.version);
       date = new Date();
       this.WM.Log.logHidden('Date: ' + date.toString());
       return this.WM.Log.logHidden('URL: ' + location.href);

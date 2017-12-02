@@ -36,7 +36,12 @@ WhatLinksHere_ = require('./WhatLinksHere').WhatLinksHere
 
 
 class module.exports.WM
+    # The build script updates the version number
+    VERSION = '4.0.0'
+
     constructor: (default_config, installed_plugins...) ->
+        @version = VERSION
+
         @ArchPackages = new ArchPackages_(this)
         @ArchWiki = new ArchWiki_(this)
         @Bot = new Bot_(this)

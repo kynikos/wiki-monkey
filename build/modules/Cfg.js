@@ -83,7 +83,7 @@ module.exports.Cfg = (function() {
       help = $("<a/>").attr("href", "https://github.com/kynikos/wiki-monkey/wiki").text("[help]");
       $("<p/>").addClass("message").text("All pages running Wiki Monkey need to be refreshed for saved changes to take effect. ").append(help).appendTo(editor);
       $("<textarea/>").attr("id", "WikiMonkey-editor").appendTo(editor);
-      $("<p/>").text('Wiki Monkey version: ' + GM_info.script.version).appendTo(editor);
+      $("<p/>").text('Wiki Monkey version: ' + this.WM.version).appendTo(editor);
       $("<p/>").text("Actually installed plugins (in general, a subset of those set in the loaded configuration):").appendTo(editor);
       list = $("<ul/>");
       for (plugin in this.WM.Plugins) {

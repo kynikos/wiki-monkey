@@ -122,7 +122,7 @@ class module.exports.Cfg
         $("<textarea/>").attr("id", "WikiMonkey-editor").appendTo(editor)
 
         $("<p/>")
-            .text('Wiki Monkey version: ' + GM_info.script.version)
+            .text('Wiki Monkey version: ' + @WM.version)
             .appendTo(editor)
 
         $("<p/>")
