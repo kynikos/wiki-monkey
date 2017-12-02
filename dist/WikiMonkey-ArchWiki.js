@@ -18,8 +18,6 @@
  * along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-if (location.href.match(/^http:\/\/[a-z]+\.wikipedia\.org/i)) {
-
 "use strict";
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
@@ -45,8 +43,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
     WM = require('./modules/_Init').WM;
 
-    new WM(require("../build/configurations/Wikipedia-bot"), ['ExpandContractions', require("./plugins/ExpandContractions").ExpandContractions], ['FixBacklinkFragments', require("./plugins/FixBacklinkFragments").FixBacklinkFragments], ['FixDoubleRedirects', require("./plugins/FixDoubleRedirects").FixDoubleRedirects], ['FixFragments', require("./plugins/FixFragments").FixFragments], ['FixLinkFragments', require("./plugins/FixLinkFragments").FixLinkFragments], ['MultipleLineBreaks', require("./plugins/MultipleLineBreaks").MultipleLineBreaks], ['SimpleReplace', require("./plugins/SimpleReplace").SimpleReplace], ['SynchronizeInterlanguageLinks', require("./plugins/SynchronizeInterlanguageLinks").SynchronizeInterlanguageLinks], ['UpdateCategoryTree', require("./plugins/UpdateCategoryTree").UpdateCategoryTree]);
-  }, { "../build/configurations/Wikipedia-bot": 2, "./modules/_Init": 20, "./plugins/ExpandContractions": 21, "./plugins/FixBacklinkFragments": 22, "./plugins/FixDoubleRedirects": 23, "./plugins/FixFragments": 24, "./plugins/FixLinkFragments": 25, "./plugins/MultipleLineBreaks": 26, "./plugins/SimpleReplace": 27, "./plugins/SynchronizeInterlanguageLinks": 28, "./plugins/UpdateCategoryTree": 29 }], 2: [function (require, module, exports) {
+    new WM(require("../build/configurations/ArchWiki-bot"), ['ArchWikiFixHeader', require("./plugins/ArchWikiFixHeader").ArchWikiFixHeader], ['ArchWikiFixHeadings', require("./plugins/ArchWikiFixHeadings").ArchWikiFixHeadings], ['ArchWikiFixLinks', require("./plugins/ArchWikiFixLinks").ArchWikiFixLinks], ['ArchWikiNewTemplates', require("./plugins/ArchWikiNewTemplates").ArchWikiNewTemplates], ['ArchWikiNPFilter', require("./plugins/ArchWikiNPFilter").ArchWikiNPFilter], ['ArchWikiOldAURLinks', require("./plugins/ArchWikiOldAURLinks").ArchWikiOldAURLinks], ['ArchWikiQuickReport', require("./plugins/ArchWikiQuickReport").ArchWikiQuickReport], ['ArchWikiSortContacts', require("./plugins/ArchWikiSortContacts").ArchWikiSortContacts], ['ArchWikiSummaryToRelated', require("./plugins/ArchWikiSummaryToRelated").ArchWikiSummaryToRelated], ['ArchWikiRCFilter', require("./plugins/ArchWikiRCFilter").ArchWikiRCFilter], ['ArchWikiUpdatePackageTemplates', require("./plugins/ArchWikiUpdatePackageTemplates").ArchWikiUpdatePackageTemplates], ['ExpandContractions', require("./plugins/ExpandContractions").ExpandContractions], ['FixBacklinkFragments', require("./plugins/FixBacklinkFragments").FixBacklinkFragments], ['FixDoubleRedirects', require("./plugins/FixDoubleRedirects").FixDoubleRedirects], ['FixFragments', require("./plugins/FixFragments").FixFragments], ['FixLinkFragments', require("./plugins/FixLinkFragments").FixLinkFragments], ['MultipleLineBreaks', require("./plugins/MultipleLineBreaks").MultipleLineBreaks], ['SimpleReplace', require("./plugins/SimpleReplace").SimpleReplace], ['SynchronizeInterlanguageLinks', require("./plugins/SynchronizeInterlanguageLinks").SynchronizeInterlanguageLinks], ['UpdateCategoryTree', require("./plugins/UpdateCategoryTree").UpdateCategoryTree]);
+  }, { "../build/configurations/ArchWiki-bot": 2, "./modules/_Init": 20, "./plugins/ArchWikiFixHeader": 21, "./plugins/ArchWikiFixHeadings": 22, "./plugins/ArchWikiFixLinks": 23, "./plugins/ArchWikiNPFilter": 24, "./plugins/ArchWikiNewTemplates": 25, "./plugins/ArchWikiOldAURLinks": 26, "./plugins/ArchWikiQuickReport": 27, "./plugins/ArchWikiRCFilter": 28, "./plugins/ArchWikiSortContacts": 29, "./plugins/ArchWikiSummaryToRelated": 30, "./plugins/ArchWikiUpdatePackageTemplates": 31, "./plugins/ExpandContractions": 32, "./plugins/FixBacklinkFragments": 33, "./plugins/FixDoubleRedirects": 34, "./plugins/FixFragments": 35, "./plugins/FixLinkFragments": 36, "./plugins/MultipleLineBreaks": 37, "./plugins/SimpleReplace": 38, "./plugins/SynchronizeInterlanguageLinks": 39, "./plugins/UpdateCategoryTree": 40 }], 2: [function (require, module, exports) {
     module.exports = {
       "Mods": {
         "Contributions": {
@@ -67,22 +65,66 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         "Bot": {
           "010SR": ["SimpleReplace", ["RegExp substitution"], null],
           "020BL": ["FixBacklinkFragments", ["Fix links to specific sections of a target page"], "fix links to specific sections"],
-          "030IL": ["SynchronizeInterlanguageLinks", null, null]
+          "030IL": ["SynchronizeInterlanguageLinks", ["Synchronize interlanguage links"], ["ArchWiki", "ArchWiki", "ArchWiki", "synchronized interlanguage links with the other wikis"]],
+          "040APT": ["ArchWikiUpdatePackageTemplates", ["Check packages linked with Pkg/AUR templates and possibly update them"], "update Pkg/AUR templates to reflect new package status"],
+          "050AAL": ["ArchWikiOldAURLinks", ["Replace old-style direct AUR package links with Template:AUR"], "replace old-style direct package links with Pkg/AUR templates"]
         },
-        "Diff": {},
+        "Diff": {
+          "010AQR": ["ArchWikiQuickReport", ["Quick report"], ["ArchWiki:Reports", "add report for %t"]]
+        },
         "Editor": {
+          "010AHE": ["ArchWikiFixHeader", ["Text plugins", "Fix header"], null],
+          "020ASE": ["ArchWikiFixHeadings", ["Text plugins", "Fix headings"], null],
+          "030AEL": ["ArchWikiFixLinks", ["Text plugins", "Fix external links"], null],
           "040SL": ["FixFragments", ["Text plugins", "Fix section links"], null],
+          "050ACT": ["ArchWikiNewTemplates", ["Text plugins", "Use code templates"], null],
           "060EC": ["ExpandContractions", ["Text plugins", "Expand contractions"], null],
           "070ML": ["MultipleLineBreaks", ["Text plugins", "Squash multiple line breaks"], null],
+          "080ASR": ["ArchWikiSummaryToRelated", ["Text plugins", "Convert summary to related"], null],
           "110SR": ["SimpleReplace", ["RegExp substitution"], null],
           "210ES": ["FixLinkFragments", ["Query plugins", "Fix external section links"], null],
-          "220IL": ["SynchronizeInterlanguageLinks", null, null]
+          "220AIL": ["SynchronizeInterlanguageLinks", ["Query plugins", "Sync interlanguage links"], ["ArchWiki", "ArchWiki", "ArchWiki", null]],
+          "230AAL": ["ArchWikiOldAURLinks", ["Query plugins", "Fix old AUR links"], null],
+          "240APT": ["ArchWikiUpdatePackageTemplates", ["Query plugins", "Update package templates"], null]
         },
-        "NewPages": {},
-        "RecentChanges": {},
+        "NewPages": {
+          "010ANP": ["ArchWikiNPFilter", ["Default filter"], {
+            "language": "English"
+          }]
+        },
+        "RecentChanges": {
+          "010ARC": ["ArchWikiRCFilter", ["Default filter"], {
+            "language": "English"
+          }]
+        },
         "Special": {
+          "010CTar": ["UpdateCategoryTree", ["Update category trees", "Arabic"], [["ArchWiki", "ar"], "automatic update", false]],
+          "010CTbg": ["UpdateCategoryTree", ["Update category trees", "Bulgarian"], [["ArchWiki", "bg"], "automatic update", false]],
+          "010CTcs": ["UpdateCategoryTree", ["Update category trees", "Czech"], [["ArchWiki", "cs"], "automatic update", false]],
+          "010CTda": ["UpdateCategoryTree", ["Update category trees", "Danish"], [["ArchWiki", "da"], "automatic update", false]],
+          "010CTel": ["UpdateCategoryTree", ["Update category trees", "Greek"], [["ArchWiki", "el"], "automatic update", false]],
+          "010CTen": ["UpdateCategoryTree", ["Update category trees", "English"], [["ArchWiki", "en"], "automatic update", false]],
+          "010CTes": ["UpdateCategoryTree", ["Update category trees", "Spanish"], [["ArchWiki", "es"], "automatic update", false]],
+          "010CThe": ["UpdateCategoryTree", ["Update category trees", "Hebrew"], [["ArchWiki", "he"], "automatic update", false]],
+          "010CThr": ["UpdateCategoryTree", ["Update category trees", "Croatian"], [["ArchWiki", "hr"], "automatic update", false]],
+          "010CThu": ["UpdateCategoryTree", ["Update category trees", "Hungarian"], [["ArchWiki", "hu"], "automatic update", false]],
+          "010CTid": ["UpdateCategoryTree", ["Update category trees", "Indonesian"], [["ArchWiki", "id"], "automatic update", false]],
+          "010CTit": ["UpdateCategoryTree", ["Update category trees", "Italian"], [["ArchWiki", "it"], "automatic update", false]],
+          "010CTko": ["UpdateCategoryTree", ["Update category trees", "Korean"], [["ArchWiki", "ko"], "automatic update", false]],
+          "010CTlt": ["UpdateCategoryTree", ["Update category trees", "Lithuanian"], [["ArchWiki", "lt"], "automatic update", false]],
+          "010CTnl": ["UpdateCategoryTree", ["Update category trees", "Dutch"], [["ArchWiki", "nl"], "automatic update", false]],
+          "010CTpl": ["UpdateCategoryTree", ["Update category trees", "Polish"], [["ArchWiki", "pl"], "automatic update", false]],
+          "010CTpt": ["UpdateCategoryTree", ["Update category trees", "Portuguese"], [["ArchWiki", "pt"], "automatic update", false]],
+          "010CTru": ["UpdateCategoryTree", ["Update category trees", "Russian"], [["ArchWiki", "ru"], "automatic update", false]],
+          "010CTsk": ["UpdateCategoryTree", ["Update category trees", "Slovak"], [["ArchWiki", "sk"], "automatic update", false]],
+          "010CTsr": ["UpdateCategoryTree", ["Update category trees", "Serbian"], [["ArchWiki", "sr"], "automatic update", false]],
+          "010CTth": ["UpdateCategoryTree", ["Update category trees", "Thai"], [["ArchWiki", "th"], "automatic update", false]],
+          "010CTtr": ["UpdateCategoryTree", ["Update category trees", "Turkish"], [["ArchWiki", "tr"], "automatic update", false]],
+          "010CTuk": ["UpdateCategoryTree", ["Update category trees", "Ukrainian"], [["ArchWiki", "uk"], "automatic update", false]],
+          "010CTzhhans": ["UpdateCategoryTree", ["Update category trees", "Chinese (Simplified)"], [["ArchWiki", "zh-hans"], "automatic update", false]],
+          "010CTzhhant": ["UpdateCategoryTree", ["Update category trees", "Chinese (Traditional)"], [["ArchWiki", "zh-hant"], "automatic update", false]],
           "020DR": ["FixDoubleRedirects", ["Fix double redirects"], "fix double redirect"],
-          "030CT": ["UpdateCategoryTree", null, null]
+          "040ASCC": ["ArchWikiSortContacts", null, null]
         }
       }
     };
@@ -228,7 +270,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return ArchPackages;
     }();
-  }, { "../../lib.js.generic/dist/Obj": 35, "../../lib.js.generic/dist/RegEx": 36 }], 4: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Obj": 46, "../../lib.js.generic/dist/RegEx": 47 }], 4: [function (require, module, exports) {
     module.exports.ArchWiki = function () {
       var languages, tablesOfContents;
 
@@ -1345,7 +1387,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Bot;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 31 }], 6: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/CSS": 42 }], 6: [function (require, module, exports) {
     var Async, Obj;
 
     Async = require('../../lib.js.generic/dist/Async');
@@ -1462,7 +1504,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Cat;
     }();
-  }, { "../../lib.js.generic/dist/Async": 30, "../../lib.js.generic/dist/Obj": 35 }], 7: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Async": 41, "../../lib.js.generic/dist/Obj": 46 }], 7: [function (require, module, exports) {
     var $, CSS, DOM;
 
     $ = window.$;
@@ -1714,7 +1756,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Cfg;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 31, "../../lib.js.generic/dist/DOM": 33 }], 8: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/CSS": 42, "../../lib.js.generic/dist/DOM": 44 }], 8: [function (require, module, exports) {
     var HTTP;
 
     HTTP = require('../../lib.js.generic/dist/HTTP');
@@ -1768,7 +1810,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Diff;
     }();
-  }, { "../../lib.js.generic/dist/HTTP": 34 }], 9: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/HTTP": 45 }], 9: [function (require, module, exports) {
     var Compatibility, HTTP;
 
     Compatibility = require('../../lib.js.generic/dist/Compatibility');
@@ -1829,7 +1871,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Editor;
     }();
-  }, { "../../lib.js.generic/dist/Compatibility": 32, "../../lib.js.generic/dist/HTTP": 34 }], 10: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Compatibility": 43, "../../lib.js.generic/dist/HTTP": 45 }], 10: [function (require, module, exports) {
     var $, CSS;
 
     $ = window.$;
@@ -1933,7 +1975,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Filters;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 31 }], 11: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/CSS": 42 }], 11: [function (require, module, exports) {
     var Obj;
 
     Obj = require('../../lib.js.generic/dist/Obj');
@@ -2206,7 +2248,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Interlanguage;
     }();
-  }, { "../../lib.js.generic/dist/Obj": 35 }], 12: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Obj": 46 }], 12: [function (require, module, exports) {
     var CSS, Str;
 
     CSS = require('../../lib.js.generic/dist/CSS');
@@ -2421,7 +2463,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Log;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 31, "../../lib.js.generic/dist/Str": 37 }], 13: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/CSS": 42, "../../lib.js.generic/dist/Str": 48 }], 13: [function (require, module, exports) {
     var $, HTTP, Obj;
 
     $ = window.$;
@@ -2912,7 +2954,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return MW;
     }();
-  }, { "../../lib.js.generic/dist/HTTP": 34, "../../lib.js.generic/dist/Obj": 35 }], 14: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/HTTP": 45, "../../lib.js.generic/dist/Obj": 46 }], 14: [function (require, module, exports) {
     var $, Async, CSS;
 
     $ = window.$;
@@ -3064,7 +3106,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Menu;
     }();
-  }, { "../../lib.js.generic/dist/Async": 30, "../../lib.js.generic/dist/CSS": 31 }], 15: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Async": 41, "../../lib.js.generic/dist/CSS": 42 }], 15: [function (require, module, exports) {
     var $, CSS;
 
     $ = window.$;
@@ -3150,7 +3192,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Mods;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 31 }], 16: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/CSS": 42 }], 16: [function (require, module, exports) {
     var RegEx, Str;
 
     RegEx = require('../../lib.js.generic/dist/RegEx');
@@ -3623,7 +3665,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Parser;
     }();
-  }, { "../../lib.js.generic/dist/RegEx": 36, "../../lib.js.generic/dist/Str": 37 }], 17: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/RegEx": 47, "../../lib.js.generic/dist/Str": 48 }], 17: [function (require, module, exports) {
     var Str;
 
     Str = require('../../lib.js.generic/dist/Str');
@@ -3650,7 +3692,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return Tables;
     }();
-  }, { "../../lib.js.generic/dist/Str": 37 }], 18: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Str": 48 }], 18: [function (require, module, exports) {
     var CSS, RegEx;
 
     CSS = require('../../lib.js.generic/dist/CSS');
@@ -3806,7 +3848,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return UI;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 31, "../../lib.js.generic/dist/RegEx": 36 }], 19: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/CSS": 42, "../../lib.js.generic/dist/RegEx": 47 }], 19: [function (require, module, exports) {
     module.exports.WhatLinksHere = function () {
       function WhatLinksHere(WM) {
         _classCallCheck(this, WhatLinksHere);
@@ -3909,6 +3951,1517 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       this.UI._makeUI();
     };
   }, { "./ArchPackages": 3, "./ArchWiki": 4, "./Bot": 5, "./Cat": 6, "./Cfg": 7, "./Diff": 8, "./Editor": 9, "./Filters": 10, "./Interlanguage": 11, "./Log": 12, "./MW": 13, "./Menu": 14, "./Mods": 15, "./Parser": 16, "./Tables": 17, "./UI": 18, "./WhatLinksHere": 19 }], 21: [function (require, module, exports) {
+    var indexOf = [].indexOf;
+
+    module.exports.ArchWikiFixHeader = function () {
+      function ArchWikiFixHeader(WM) {
+        _classCallCheck(this, ArchWikiFixHeader);
+
+        this.WM = WM;
+      }
+
+      _createClass(ArchWikiFixHeader, [{
+        key: "main",
+        value: function main(args, callNext) {
+          var b, behaviorswitches, bslist, bswitch, cat, categories, catlang, catlink, catlinks, catlist, cattext, cleantitle, content, contentId, displaytitle, dlct, dt, firstChar, fulllink, header, i, interlanguage, iwlinks, iwlist, j, k, l, language, lct, len, len1, len2, len3, link, linklang, linktext, linktitle, lowercasetitle, newText, ref, ref1, source, tempcontent, titlemod, titlemods;
+          source = this.WM.Editor.readSource();
+          language = this.WM.ArchWiki.detectLanguage(this.WM.Editor.getTitle())[1];
+          header = "";
+          content = source;
+
+          content = content.replace(/^\s*<noinclude>/, "");
+          if (content !== source) {
+            header += "<noinclude>\n";
+          }
+
+          displaytitle = this.WM.Parser.findVariables(content, "DISPLAYTITLE");
+          lowercasetitle = this.WM.Parser.findTemplates(content, "Lowercase title");
+          titlemods = displaytitle.concat(lowercasetitle);
+          titlemods.sort(function (a, b) {
+            return a.index - b.index;
+          });
+          tempcontent = "";
+          contentId = 0;
+          for (i = 0, len = titlemods.length; i < len; i++) {
+            titlemod = titlemods[i];
+            tempcontent += content.substring(contentId, titlemod.index);
+            contentId = titlemod.index + titlemod.length;
+          }
+          tempcontent += content.substring(contentId);
+          content = tempcontent;
+          dt = displaytitle.pop();
+          lct = lowercasetitle.pop();
+          dlct = "";
+          if (dt && !lct) {
+            dlct = "{{DISPLAYTITLE:" + dt.value + "}}";
+          } else if (!dt && lct) {
+            dlct = "{{Lowercase title}}";
+          } else if (dt && lct) {
+            dlct = dt.index < lct.index ? "{{Lowercase title}}" : "{{DISPLAYTITLE:" + dt.value + "}}";
+          }
+          if (displaytitle.length || lowercasetitle.length) {
+            this.WM.Log.logWarning("Found multiple instances of {{DISPLAYTITLE:...}} or {{Lowercase title}}: only the last one has been used, the others have been deleted");
+          }
+
+          behaviorswitches = this.WM.Parser.findBehaviorSwitches(content);
+          bslist = [];
+          tempcontent = "";
+          contentId = 0;
+          for (b = j = 0, len1 = behaviorswitches.length; j < len1; b = ++j) {
+            bswitch = behaviorswitches[b];
+            if ((ref = bswitch.match[1]) === "TOC" || ref === "START" || ref === "END") {
+              behaviorswitches.splice(b, 1);
+            } else {
+              if (ref1 = bswitch.match[0], indexOf.call(bslist, ref1) < 0) {
+                bslist.push(bswitch.match[0]);
+              } else {
+                this.WM.Log.logWarning("Removed duplicate of " + bswitch.match[0]);
+              }
+              tempcontent += content.substring(contentId, bswitch.index);
+              contentId = bswitch.index + bswitch.length;
+            }
+          }
+          tempcontent += content.substring(contentId);
+          content = tempcontent;
+          if (!dlct && bslist.length) {
+            header += bslist.join(" ") + "\n";
+          } else if (dlct && !bslist.length) {
+            header += dlct + "\n";
+          } else if (dlct && bslist.length) {
+            header += dlct + " " + bslist.join(" ") + "\n";
+          }
+
+          categories = this.WM.Parser.findCategories(content);
+          catlist = [];
+          catlinks = [];
+          tempcontent = "";
+          contentId = 0;
+          for (k = 0, len2 = categories.length; k < len2; k++) {
+            cat = categories[k];
+            if (cat.fragment) {
+              this.WM.Log.logWarning(this.WM.Log.linkToWikiPage(cat.link, cat.rawLink) + " contains a fragment reference, but it doesn't make sense in categories and will be removed");
+            }
+            cleantitle = this.WM.Parser.squashContiguousWhitespace(cat.title);
+            cattext = "Category:" + cleantitle;
+
+            catlang = this.WM.ArchWiki.detectLanguage(cattext)[1];
+            catlink = "[[" + cattext + (cat.anchor ? "|" + cat.anchor : "") + "]]";
+            if (language !== catlang) {
+              this.WM.Log.logWarning(this.WM.Log.linkToWikiPage(cat.link, cattext) + " belongs to a different language than the one of the title (" + language + ")");
+            }
+            if (catlist.indexOf(cattext) < 0) {
+              catlist.push(cattext);
+              catlinks.push(catlink);
+            } else {
+              this.WM.Log.logWarning("Removed duplicate of " + this.WM.Log.linkToWikiPage(cat.link, cattext));
+            }
+            tempcontent += content.substring(contentId, cat.index);
+            contentId = cat.index + cat.length;
+          }
+          if (catlist.length) {
+            header += catlinks.join("\n") + "\n";
+          } else {
+            this.WM.Log.logWarning("The article is not categorized");
+          }
+          tempcontent += content.substring(contentId);
+          content = tempcontent;
+
+          interlanguage = this.WM.ArchWiki.findAllInterlanguageLinks(content);
+          iwlist = [];
+          iwlinks = [];
+          tempcontent = "";
+          contentId = 0;
+          for (l = 0, len3 = interlanguage.length; l < len3; l++) {
+            link = interlanguage[l];
+            if (link.anchor) {
+              this.WM.Log.logWarning(link.rawLink + " contains an alternative text, but it doesn't make sense in interlanguage links and will be removed");
+            }
+
+            linktitle = link.title;
+            linklang = link.namespace;
+            linktext = linklang + ":" + linktitle;
+            fulllink = "[[" + linktext + (link.fragment ? "#" + link.fragment : "") + "]]";
+            if (iwlist.indexOf(linktext) < 0) {
+              iwlist.push(linktext);
+              iwlinks.push(fulllink);
+            } else {
+              this.WM.Log.logWarning("Removed duplicate of " + linktext);
+            }
+            tempcontent += content.substring(contentId, link.index);
+            contentId = link.index + link.length;
+          }
+          if (iwlist.length) {
+            iwlinks.sort();
+            header += iwlinks.join("\n") + "\n";
+          }
+          tempcontent += content.substring(contentId);
+          content = tempcontent;
+          firstChar = content.search(/[^\s]/);
+          content = content.substr(firstChar);
+          newText = header + content;
+          if (newText !== source) {
+            this.WM.Editor.writeSource(newText);
+            this.WM.Log.logInfo("Fixed header");
+          }
+          if (callNext) {
+            return callNext();
+          }
+        }
+      }]);
+
+      return ArchWikiFixHeader;
+    }();
+  }, {}], 22: [function (require, module, exports) {
+    module.exports.ArchWikiFixHeadings = function () {
+      function ArchWikiFixHeadings(WM) {
+        _classCallCheck(this, ArchWikiFixHeadings);
+
+        this.WM = WM;
+      }
+
+      _createClass(ArchWikiFixHeadings, [{
+        key: "main",
+        value: function main(args, callNext) {
+          var i, increaseLevel, info, len, newtext, prevId, ref, section, source;
+          source = this.WM.Editor.readSource();
+          info = this.WM.Parser.findSectionHeadings(source);
+          if (this.WM.Editor.isSection()) {
+            increaseLevel = info.minLevel - 1;
+          } else {
+            if (info.maxTocLevel < 6) {
+              increaseLevel = 1;
+            } else {
+              increaseLevel = 0;
+              this.WM.Log.logWarning("There are 6 levels of headings, it has been necessary to start creating them from level 1 although usually it is suggested to start from level 2");
+            }
+          }
+          newtext = "";
+          prevId = 0;
+          ref = info.sections;
+          for (i = 0, len = ref.length; i < len; i++) {
+            section = ref[i];
+            newtext += source.substring(prevId, section.index);
+            newtext += new Array(section.tocLevel + increaseLevel + 1).join("=");
+            newtext += section.rawheading;
+            newtext += new Array(section.tocLevel + increaseLevel + 1).join("=");
+            prevId = section.index + section.length0;
+          }
+          newtext += source.substr(prevId);
+          if (newtext !== source) {
+            this.WM.Editor.writeSource(newtext);
+            this.WM.Log.logInfo("Fixed section headings");
+          }
+          if (callNext) {
+            return callNext();
+          }
+        }
+      }]);
+
+      return ArchWikiFixHeadings;
+    }();
+  }, {}], 23: [function (require, module, exports) {
+    module.exports.ArchWikiFixLinks = function () {
+      function ArchWikiFixLinks(WM) {
+        _classCallCheck(this, ArchWikiFixLinks);
+
+        this.WM = WM;
+      }
+
+      _createClass(ArchWikiFixLinks, [{
+        key: "doReplace",
+        value: function doReplace(txt) {
+          var L, match, newText, prevId, re;
+
+          re = /http:\/\/([a-z]+\.)?archlinux\.org(?!\.[a-z])/ig;
+          txt = txt.replace(re, 'https://$1archlinux.org');
+
+          re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/Category:([^\]]+?) (.+?)\]/ig;
+          txt = txt.replace(re, '[[:Category:$1|$2]]');
+          re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/Category:(.+?)\]/ig;
+          txt = txt.replace(re, '[[:Category:$1]]');
+          re = /https?:\/\/wiki\.archlinux\.org\/index\.php\/Category:([^\s]+)/ig;
+          txt = txt.replace(re, '[[:Category:$1]]');
+          re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/([^\]]+?) (.+?)\]/ig;
+          txt = txt.replace(re, '[[$1|$2]]');
+          re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/(.+?)\]/ig;
+          txt = txt.replace(re, '[[$1]]');
+          re = /https?:\/\/wiki\.archlinux\.org\/index\.php\/([^\s]+)/ig;
+          txt = txt.replace(re, '[[$1]]');
+          re = /https?:\/\/wiki\.archlinux\.org(?!\.)/ig;
+          if (re.test(txt)) {
+            this.WM.Log.logWarning("It hasn't been possible to convert some " + "links to wiki.archlinux.org");
+          }
+
+          re = /\[https?:\/\/en\.wikipedia\.org\/wiki\/([^\]]+?) (.+?)\]/ig;
+          txt = txt.replace(re, '[[wikipedia:$1|$2]]');
+          re = /\[https?:\/\/en\.wikipedia\.org\/wiki\/(.+?)\]/ig;
+          txt = txt.replace(re, '[[wikipedia:$1]]');
+          re = /https?:\/\/en\.wikipedia\.org\/wiki\/([^\s]+)/ig;
+          txt = txt.replace(re, '[[wikipedia:$1]]');
+          re = /https?:\/\/([a-z]+?)\.wikipedia\.org(?!\.)/ig;
+          if (re.test(txt)) {
+            this.WM.Log.logWarning("It hasn't been possible to convert some " + "links to Wikipedia");
+          }
+
+          re = /\[https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s]+?)\/? +(.+?)?\]/ig;
+          newText = '';
+          prevId = 0;
+          while (true) {
+            match = re.exec(txt);
+            if (match) {
+              if (match[1] === match[2]) {
+                L = match[0].length;
+                newText += txt.substring(prevId, re.lastIndex - L) + '{{Pkg|' + match[1] + '}}';
+                prevId = re.lastIndex;
+              }
+            } else {
+              break;
+            }
+          }
+          newText += txt.substr(prevId);
+          txt = newText;
+          re = /\[https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s]+?)\/?\]/ig;
+          txt = txt.replace(re, '{{Pkg|$1}}');
+          re = /([^\[])https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s\/]+)\/?/ig;
+          txt = txt.replace(re, '$1{{Pkg|$2}}');
+          re = /https?:\/\/(?:www\.)?archlinux\.org\/packages(?!\/?\s)/ig;
+          if (re.test(txt)) {
+            this.WM.Log.logWarning("It hasn't been possible to convert some " + "links to archlinux.org/packages");
+          }
+
+          re = /\[https?:\/\/aur\.archlinux\.org\/packages\/([^\s]+?)\/? +(.+?)?\]/ig;
+          newText = '';
+          prevId = 0;
+          while (true) {
+            match = re.exec(txt);
+            if (match) {
+              if (match[1] === match[2]) {
+                L = match[0].length;
+                newText += txt.substring(prevId, re.lastIndex - L) + '{{AUR|' + match[1] + '}}';
+                prevId = re.lastIndex;
+              }
+            } else {
+              break;
+            }
+          }
+          newText += txt.substr(prevId);
+          txt = newText;
+          re = /\[https?:\/\/aur\.archlinux\.org\/packages\/([^\s]+?)\/?\]/ig;
+          txt = txt.replace(re, '{{AUR|$1}}');
+          re = /([^\[])https?:\/\/aur\.archlinux\.org\/packages\/([^\s\/]+)\/?/ig;
+          txt = txt.replace(re, '$1{{AUR|$2}}');
+          re = /https?:\/\/aur\.archlinux\.org(?!(?:\.|(?:\/?packages)?\/?\s))/ig;
+          if (re.test(txt)) {
+            this.WM.Log.logWarning("It hasn't been possible to convert some links to aur.archlinux.org (try the \"Fix old AUR links\" function, if installed)");
+          }
+
+          re = /\[https?:\/\/bugs\.archlinux\.org\/task\/([^\s]+?)\/? +(.+?)?\]/ig;
+          newText = '';
+          prevId = 0;
+          while (true) {
+            match = re.exec(txt);
+            if (match) {
+              if (match[1] === match[2]) {
+                L = match[0].length;
+                newText += txt.substring(prevId, re.lastIndex - L) + '{{Bug|' + match[1] + '}}';
+                prevId = re.lastIndex;
+              }
+            } else {
+              break;
+            }
+          }
+          newText += txt.substr(prevId);
+          txt = newText;
+          re = /\[https?:\/\/bugs\.archlinux\.org\/task\/([^\s]+?)\/?\]/ig;
+          txt = txt.replace(re, '{{Bug|$1}}');
+          re = /([^\[])https?:\/\/bugs\.archlinux\.org\/task\/([^\s\/]+)\/?/ig;
+          txt = txt.replace(re, '$1{{Bug|$2}}');
+          re = /https?:\/\/bugs\.archlinux\.org\/task/ig;
+          if (re.test(txt)) {
+            this.WM.Log.logWarning("It hasn't been possible to convert some " + "links to bugs.archlinux.org/task");
+          }
+          return txt;
+        }
+      }, {
+        key: "main",
+        value: function main(args, callNext) {
+          var newtext, source;
+          source = this.WM.Editor.readSource();
+          newtext = this.doReplace(source);
+          if (newtext !== source) {
+            this.WM.Editor.writeSource(newtext);
+            this.WM.Log.logInfo("Fixed links");
+          } else {
+            this.WM.Log.logInfo("No fixable links found");
+          }
+          if (callNext) {
+            return callNext();
+          }
+        }
+      }]);
+
+      return ArchWikiFixLinks;
+    }();
+  }, {}], 24: [function (require, module, exports) {
+    var $, CSS;
+
+    $ = window.$;
+
+    CSS = require('../../lib.js.generic/dist/CSS');
+
+    module.exports.ArchWikiNPFilter = function () {
+      function ArchWikiNPFilter(WM) {
+        _classCallCheck(this, ArchWikiNPFilter);
+
+        this.WM = WM;
+      }
+
+      _createClass(ArchWikiNPFilter, [{
+        key: "main",
+        value: function main(params) {
+          var contentDiv, i, language, len, li, liList, link, pureTitle, ul;
+          CSS.addStyleElement("#mw-content-text > h5 {background-color:#afa;}");
+          contentDiv = $('#mw-content-text');
+          ul = contentDiv.find('ul').first();
+          liList = ul.children('li');
+          for (i = 0, len = liList.length; i < len; i++) {
+            li = liList[i];
+            link = $(li).find('a.mw-newpages-pagename').first();
+
+            var _WM$ArchWiki$detectLa = this.WM.ArchWiki.detectLanguage(link[0].title);
+
+            var _WM$ArchWiki$detectLa2 = _slicedToArray(_WM$ArchWiki$detectLa, 2);
+
+            pureTitle = _WM$ArchWiki$detectLa2[0];
+            language = _WM$ArchWiki$detectLa2[1];
+
+            if (language !== params.language) {
+              this.WM.Plugins.ArchWikiNPFilter.moveArticle(contentDiv, li, language);
+            }
+          }
+          return this.WM.Log.logInfo("Grouped articles by language");
+        }
+      }, {
+        key: "moveArticle",
+        value: function moveArticle(contentDiv, li, language) {
+          var HLang, i, langFound, langHs, len, ul;
+          langHs = contentDiv.children('h5');
+          langFound = false;
+          for (i = 0, len = langHs.length; i < len; i++) {
+            HLang = langHs[i];
+            if (HLang.innerHTML === language) {
+              ul = $(HLang).next().append(li);
+              langFound = true;
+              break;
+            }
+          }
+          if (!langFound) {
+            return contentDiv.append($('<h5>').text(language), $('<ul>').append(li));
+          }
+        }
+      }]);
+
+      return ArchWikiNPFilter;
+    }();
+  }, { "../../lib.js.generic/dist/CSS": 42 }], 25: [function (require, module, exports) {
+    module.exports.ArchWikiNewTemplates = function () {
+      function ArchWikiNewTemplates(WM) {
+        _classCallCheck(this, ArchWikiNewTemplates);
+
+        this.WM = WM;
+      }
+
+      _createClass(ArchWikiNewTemplates, [{
+        key: "main",
+        value: function main(args, callNext) {
+          var i, len, newtext, re10, re11, re12, re13, re14, re15, re16, re8, re9, source, test, tests;
+          source = this.WM.Editor.readSource();
+          newtext = source;
+          re8 = /<pre>(((?!<(pre|nowiki)>)[^\=\|])*?((?!<(pre|nowiki)>)[^\=\|\}]))<\/pre>/ig;
+          re9 = /<pre>(((?!<(pre|nowiki)>)[^\|])*?((?!<(pre|nowiki)>)[^\|\}]))<\/pre>/ig;
+          re10 = /<pre>(\n*((?!<(pre|nowiki)>).\n*)+?)<\/pre>/ig;
+          re11 = /<code>(((?!<(code|nowiki)>)[^\=\|\n])*?((?!<(code|nowiki)>)[^\=\|\}\n]))<\/code>/ig;
+          re12 = /<code>(((?!<(code|nowiki)>)[^\|\n])*?((?!<(code|nowiki)>)[^\|\}\n]))<\/code>/ig;
+          re13 = /<code>(((?!<(code|nowiki)>)[^\n])+?)<\/code>/ig;
+          re14 = /<tt>(((?!<(tt|nowiki)>)[^\=\|\n])*?((?!<(tt|nowiki)>)[^\=\|\}\n]))<\/tt>/ig;
+          re15 = /<tt>(((?!<(tt|nowiki)>)[^\|\n])*?((?!<(tt|nowiki)>)[^\|\}\n]))<\/tt>/ig;
+          re16 = /<tt>(((?!<(tt|nowiki)>)[^\n])+?)<\/tt>/ig;
+          newtext = newtext.replace(re8, '{{bc|$1}}');
+          newtext = newtext.replace(re9, '{{bc|1=$1}}');
+          newtext = newtext.replace(re10, '{{bc|<nowiki>$1</nowiki>}}');
+          newtext = newtext.replace(re11, '{{ic|$1}}');
+          newtext = newtext.replace(re12, '{{ic|1=$1}}');
+          newtext = newtext.replace(re13, '{{ic|<nowiki>$1</nowiki>}}');
+          newtext = newtext.replace(re14, '{{ic|$1}}');
+          newtext = newtext.replace(re15, '{{ic|1=$1}}');
+          newtext = newtext.replace(re16, '{{ic|<nowiki>$1</nowiki>}}');
+          if (newtext !== source) {
+            this.WM.Editor.writeSource(newtext);
+            this.WM.Log.logInfo("Turned HTML tags into proper templates");
+          }
+          tests = [['&lt;pre>', newtext.match(/<pre/ig)], ['&lt;code>', newtext.match(/<code/ig)], ['&lt;tt>', newtext.match(/<tt/ig)]];
+          for (i = 0, len = tests.length; i < len; i++) {
+            test = tests[i];
+            if (test[1]) {
+              this.WM.Log.logWarning(test[1].length + ' ' + test[0] + ' instances require manual intervention');
+            }
+          }
+          if (callNext) {
+            return callNext();
+          }
+        }
+      }]);
+
+      return ArchWikiNewTemplates;
+    }();
+  }, {}], 26: [function (require, module, exports) {
+    var RegEx;
+
+    RegEx = require('../../lib.js.generic/dist/RegEx');
+
+    module.exports.ArchWikiOldAURLinks = function () {
+      function ArchWikiOldAURLinks(WM) {
+        _classCallCheck(this, ArchWikiOldAURLinks);
+
+        this.doReplace = this.doReplace.bind(this);
+        this.doReplaceContinue = this.doReplaceContinue.bind(this);
+        this.checkIfOfficial = this.checkIfOfficial.bind(this);
+        this.doReplaceContinue2 = this.doReplaceContinue2.bind(this);
+        this.mainEnd = this.mainEnd.bind(this);
+        this.mainAutoReplace = this.mainAutoReplace.bind(this);
+        this.mainAutoWrite = this.mainAutoWrite.bind(this);
+        this.mainAutoEnd = this.mainAutoEnd.bind(this);
+        this.WM = WM;
+      }
+
+      _createClass(ArchWikiOldAURLinks, [{
+        key: "doReplace",
+        value: function doReplace(source, call, callArgs) {
+          var links, newText, regExp;
+          regExp = /\[(https?\:\/\/aur\.archlinux\.org\/packages\.php\?ID\=([0-9]+)) ([^\]]+?)\]/g;
+          links = RegEx.matchAll(source, regExp);
+          newText = source;
+          if (links.length > 0) {
+            return this.WM.ArchPackages.getAURInfo(links[0].match[2], this.doReplaceContinue, [source, newText, links, 0, call, callArgs]);
+          } else {
+            return call(source, newText, callArgs);
+          }
+        }
+      }, {
+        key: "doReplaceContinue",
+        value: function doReplaceContinue(res, args) {
+          var call, callArgs, index, link, links, newText, newlink, pkgname, source;
+          source = args[0];
+          newText = args[1];
+          links = args[2];
+          index = args[3];
+          call = args[4];
+          callArgs = args[5];
+          link = links[index];
+          this.WM.Log.logInfo("Processing " + this.WM.Log.linkToPage(link.match[1], link.match[0]) + " ...");
+          if (res.type === "error") {
+            this.WM.Log.logError("The AUR's RPC interface returned an error: " + res.results);
+            return call(-1, -1, callArgs);
+          } else {
+            if (res.resultcount > 0) {
+              pkgname = res.results.Name;
+              if (link.match[3] === pkgname) {
+                newlink = "{{AUR|" + pkgname + "}}";
+                newText = newText.replace(link.match[0], newlink);
+                this.WM.Log.logInfo("Checked and replaced link with " + newlink);
+                return this.doReplaceContinue2(source, newText, links, index, call, callArgs);
+              } else {
+                this.WM.Log.logWarning("Couldn't replace: the link doesn't use the package name (" + pkgname + ") as the anchor text");
+                return this.doReplaceContinue2(source, newText, links, index, call, callArgs);
+              }
+            } else {
+              return this.WM.ArchPackages.isOfficialPackage(link.match[3], this.checkIfOfficial, [link, source, newText, links, index, call, callArgs]);
+            }
+          }
+        }
+      }, {
+        key: "checkIfOfficial",
+        value: function checkIfOfficial(res, args) {
+          var call, callArgs, index, link, links, newText, newlink, source;
+          link = args[0];
+          source = args[1];
+          newText = args[2];
+          links = args[3];
+          index = args[4];
+          call = args[5];
+          callArgs = args[6];
+          if (res) {
+            newlink = "{{Pkg|" + link.match[3] + "}}";
+            newText = newText.replace(link.match[0], newlink);
+            this.WM.Log.logInfo("Replaced link with " + newlink);
+            this.WM.Log.logWarning("The package doesn't exist anymore in the AUR, but a package with the same name as the link anchor has been found in the official repositories");
+          } else {
+            this.WM.Log.logWarning("Couldn't replace: the package doesn't exist anymore in the AUR and there's no package in the official repositories that has the same name as the link anchor");
+          }
+          return this.doReplaceContinue2(source, newText, links, index, call, callArgs);
+        }
+      }, {
+        key: "doReplaceContinue2",
+        value: function doReplaceContinue2(source, newText, links, index, call, callArgs) {
+          index++;
+          if (links[index]) {
+            return this.WM.ArchPackages.getAURInfo(links[index].match[2], this.doReplaceContinue, [source, newText, links, index, call, callArgs]);
+          } else {
+            return call(source, newText, callArgs);
+          }
+        }
+      }, {
+        key: "main",
+        value: function main(args, callNext) {
+          var source;
+          source = this.WM.Editor.readSource();
+          this.WM.Log.logInfo("Replacing old-style direct AUR package links ...");
+          return this.doReplace(source, this.mainEnd, callNext);
+        }
+      }, {
+        key: "mainEnd",
+        value: function mainEnd(source, newtext, callNext) {
+          if (source === -1) {
+            callNext = false;
+          } else if (newtext !== source) {
+            this.WM.Editor.writeSource(newtext);
+            this.WM.Log.logInfo("Replaced old-style direct AUR package links");
+          } else {
+            this.WM.Log.logInfo("No automatically replaceable old-style AUR " + "package links found");
+          }
+          if (callNext) {
+            return callNext();
+          }
+        }
+      }, {
+        key: "mainAuto",
+        value: function mainAuto(args, title, callBot, chainArgs) {
+          var summary;
+          summary = args;
+          return this.WM.MW.callQueryEdit(title, this.mainAutoReplace, [summary, callBot]);
+        }
+      }, {
+        key: "mainAutoReplace",
+        value: function mainAutoReplace(title, source, timestamp, edittoken, args) {
+          var callBot, summary;
+          summary = args[0];
+          callBot = args[1];
+          return this.doReplace(source, this.mainAutoWrite, [title, edittoken, timestamp, summary, callBot]);
+        }
+      }, {
+        key: "mainAutoWrite",
+        value: function mainAutoWrite(source, newtext, args) {
+          var callBot, edittoken, summary, timestamp, title;
+          title = args[0];
+          edittoken = args[1];
+          timestamp = args[2];
+          summary = args[3];
+          callBot = args[4];
+          if (source === -1) {
+            return callBot(false, null);
+          } else if (newtext !== source) {
+            return this.WM.MW.callAPIPost({
+              action: "edit",
+              bot: "1",
+              title: title,
+              summary: summary,
+              text: newtext,
+              basetimestamp: timestamp,
+              token: edittoken
+            }, this.mainAutoEnd, callBot, null);
+          } else {
+            return callBot(0, null);
+          }
+        }
+      }, {
+        key: "mainAutoEnd",
+        value: function mainAutoEnd(res, callBot) {
+          if (res.edit && res.edit.result === 'Success') {
+            return callBot(1, null);
+          } else if (res.error) {
+            this.WM.Log.logError(res.error.info + " (" + res.error.code + ")");
+            return callBot(res.error.code, null);
+          } else {
+            return callBot(false, null);
+          }
+        }
+      }]);
+
+      return ArchWikiOldAURLinks;
+    }();
+  }, { "../../lib.js.generic/dist/RegEx": 47 }], 27: [function (require, module, exports) {
+    var CSS, HTTP;
+
+    CSS = require('../../lib.js.generic/dist/CSS');
+
+    HTTP = require('../../lib.js.generic/dist/HTTP');
+
+    module.exports.ArchWikiQuickReport = function () {
+      function ArchWikiQuickReport(WM) {
+        _classCallCheck(this, ArchWikiQuickReport);
+
+        this.mainGetEndTimestamp = this.mainGetEndTimestamp.bind(this);
+        this.mainWrite = this.mainWrite.bind(this);
+        this.mainEnd = this.mainEnd.bind(this);
+        this.WM = WM;
+      }
+
+      _createClass(ArchWikiQuickReport, [{
+        key: "makeUI",
+        value: function makeUI(args) {
+          var article, i, input, len, link, option, select, span, types, value;
+          CSS.addStyleElement("#WikiMonkey-ArchWikiQuickReport > select, #WikiMonkey-ArchWikiQuickReport > input, #WikiMonkey-ArchWikiQuickReport > a {margin-left:0.33em;}");
+          article = args[0];
+          select = document.createElement('select');
+          types = ["&lt;TYPE&gt;", "content", "style"];
+          for (i = 0, len = types.length; i < len; i++) {
+            value = types[i];
+            option = document.createElement('option');
+            option.setAttribute('value', value);
+            option.innerHTML = value;
+            select.appendChild(option);
+          }
+          select.id = "WikiMonkey-ArchWikiQuickReport-select";
+          input = document.createElement('input');
+          input.setAttribute('type', 'text');
+          input.id = "WikiMonkey-ArchWikiQuickReport-input";
+          link = document.createElement('a');
+          link.href = "/index.php/" + article;
+          link.innerHTML = article;
+          span = document.createElement('span');
+          span.id = "WikiMonkey-ArchWikiQuickReport";
+          span.appendChild(select);
+          span.appendChild(input);
+          span.appendChild(link);
+          return span;
+        }
+      }, {
+        key: "main",
+        value: function main(args, callNext) {
+          var article, select, summary, type;
+          article = args[0];
+          summary = args[1];
+          this.WM.Log.logInfo('Appending diff to ' + this.WM.Log.linkToWikiPage(article, article) + " ...");
+          select = document.getElementById("WikiMonkey-ArchWikiQuickReport-select");
+          type = select.options[select.selectedIndex].value;
+          if (type !== 'content' && type !== 'style') {
+            return this.WM.Log.logError('Select a valid report type');
+          } else {
+            return this.WM.Diff.getEndTimestamp(this.mainGetEndTimestamp, [article, type, summary, callNext]);
+          }
+        }
+      }, {
+        key: "mainGetEndTimestamp",
+        value: function mainGetEndTimestamp(enddate, args) {
+          var article, callNext, summary, type;
+          article = args[0];
+          type = args[1];
+          summary = args[2];
+          callNext = args[3];
+          return this.WM.MW.callQueryEdit(article, this.mainWrite, [type, summary, enddate, callNext]);
+        }
+      }, {
+        key: "mainWrite",
+        value: function mainWrite(article, source, timestamp, edittoken, args) {
+          var callNext, enddate, expsummary, newtext, notes, pEnddate, summary, title, type;
+          type = args[0];
+          summary = args[1];
+          enddate = args[2];
+          callNext = args[3];
+          title = HTTP.getURIParameter(null, 'title');
+          pEnddate = enddate.substr(0, 10) + "&nbsp;" + enddate.substr(11, 8);
+          notes = document.getElementById("WikiMonkey-ArchWikiQuickReport-input").value;
+          newtext = this.WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", pEnddate, type, notes]);
+
+          expsummary = summary.replace(/(^|[^%])(%%)*%t/g, '$1$2[[' + title + ']]');
+          expsummary = expsummary.replace(/%(.)/g, '$1');
+          return this.WM.MW.callAPIPost({
+            action: "edit",
+            bot: "1",
+            title: article,
+            summary: expsummary,
+            text: newtext,
+            basetimestamp: timestamp,
+            token: edittoken
+          }, this.mainEnd, [article, callNext], null);
+        }
+      }, {
+        key: "mainEnd",
+        value: function mainEnd(res, args) {
+          var article, callNext;
+          article = args[0];
+          callNext = args[1];
+          if (res.edit && res.edit.result === 'Success') {
+            this.WM.Log.logInfo('Diff correctly appended to ' + this.WM.Log.linkToWikiPage(article, article));
+            if (callNext) {
+              return callNext();
+            }
+          } else {
+            return this.WM.Log.logError('The diff has not been appended!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
+          }
+        }
+      }]);
+
+      return ArchWikiQuickReport;
+    }();
+  }, { "../../lib.js.generic/dist/CSS": 42, "../../lib.js.generic/dist/HTTP": 45 }], 28: [function (require, module, exports) {
+    var $, CSS;
+
+    $ = window.$;
+
+    CSS = require('../../lib.js.generic/dist/CSS');
+
+    module.exports.ArchWikiRCFilter = function () {
+      function ArchWikiRCFilter(WM) {
+        _classCallCheck(this, ArchWikiRCFilter);
+
+        this.WM = WM;
+      }
+
+      _createClass(ArchWikiRCFilter, [{
+        key: "main",
+        value: function main(params) {
+          var articleTable, groupDiv, h4, h4s, j, k, language, len, len1, link, pureTitle, ref;
+          h4s = $('#mw-content-text .mw-changeslist > h4');
+          if (h4s.eq(0).next()[0].localName.toLowerCase() !== 'div') {
+            return this.WM.Log.logError("This filter is designed to work on top of MediaWiki's filter, which you can enable in your user preferences.");
+          } else {
+            CSS.addStyleElement("#mw-content-text > div > h4 {background-color:#aaf;} #mw-content-text > div > div > h5 {background-color:#afa;}");
+            for (j = 0, len = h4s.length; j < len; j++) {
+              h4 = h4s[j];
+              groupDiv = $(h4).next();
+              ref = groupDiv.children('table');
+              for (k = 0, len1 = ref.length; k < len1; k++) {
+                articleTable = ref[k];
+                link = $(articleTable).find('a.mw-changeslist-title').first();
+                if (link[0]) {
+                  var _WM$ArchWiki$detectLa3 = this.WM.ArchWiki.detectLanguage(link[0].title);
+
+                  var _WM$ArchWiki$detectLa4 = _slicedToArray(_WM$ArchWiki$detectLa3, 2);
+
+                  pureTitle = _WM$ArchWiki$detectLa4[0];
+                  language = _WM$ArchWiki$detectLa4[1];
+
+                  if (language !== params.language) {
+                    this.WM.Plugins.ArchWikiRCFilter.moveArticle(groupDiv, articleTable, language);
+                  }
+                }
+              }
+            }
+            return this.WM.Log.logInfo("Grouped articles by language");
+          }
+        }
+      }, {
+        key: "moveArticle",
+        value: function moveArticle(groupDiv, articleTable, language) {
+          var HLang, i, j, langFound, langHs, len;
+          langHs = groupDiv.children('h5');
+          langFound = false;
+          for (i = j = 0, len = langHs.length; j < len; i = ++j) {
+            HLang = langHs[i];
+            if (HLang.innerHTML === language) {
+              if (i + 1 < langHs.length) {
+                langHs.eq(i + 1).before(articleTable);
+              } else {
+                groupDiv.append(articleTable);
+              }
+              langFound = true;
+              break;
+            }
+          }
+          if (!langFound) {
+            return groupDiv.append($('<h5>').text(language), articleTable);
+          }
+        }
+      }]);
+
+      return ArchWikiRCFilter;
+    }();
+  }, { "../../lib.js.generic/dist/CSS": 42 }], 29: [function (require, module, exports) {
+    module.exports.ArchWikiSortContacts = function () {
+      var endMark, regExp, startMark;
+
+      var ArchWikiSortContacts = function () {
+        function ArchWikiSortContacts(WM) {
+          _classCallCheck(this, ArchWikiSortContacts);
+
+          this.parseList = this.parseList.bind(this);
+          this.iterateUsers = this.iterateUsers.bind(this);
+          this.storeUserContribs = this.storeUserContribs.bind(this);
+          this.updateList = this.updateList.bind(this);
+          this.writePage = this.writePage.bind(this);
+          this.WM = WM;
+        }
+
+        _createClass(ArchWikiSortContacts, [{
+          key: "main",
+          value: function main(args, callNext) {
+            var inactiveIntro, inactiveLimit, page, recentDays, summary;
+            page = args[0];
+            recentDays = args[1];
+            inactiveLimit = args[2];
+            inactiveIntro = args[3];
+            summary = args[4];
+            this.WM.Log.logInfo("Sorting " + this.WM.Log.linkToWikiPage(page, page) + " ...");
+            return this.WM.MW.callQueryEdit(page, this.parseList, [recentDays, inactiveLimit, inactiveIntro, summary, callNext]);
+          }
+        }, {
+          key: "parseList",
+          value: function parseList(title, source, timestamp, edittoken, args) {
+            var callNext, date, endList, inactiveIntro, inactiveLimit, recentDays, startList, summary, ucend, ucstart, users, usersArray;
+            recentDays = args[0];
+            inactiveLimit = args[1];
+            inactiveIntro = args[2];
+            summary = args[3];
+            callNext = args[4];
+            startList = source.indexOf(startMark);
+            endList = source.indexOf(endMark);
+            if (startList > -1 && endList > -1) {
+              startList += startMark.length;
+              date = new Date();
+              ucstart = Math.floor(Date.now() / 1000);
+              ucend = ucstart - 86400 * recentDays;
+              users = {
+                active: [],
+                inactive: []
+              };
+              usersArray = source.substring(startList, endList).split("\n");
+              return this.iterateUsers(usersArray, -1, ucstart, ucend, users, title, source, startList, endList, timestamp, edittoken, inactiveLimit, inactiveIntro, summary, callNext);
+            } else {
+              return this.WM.Log.logError("Cannot find the needed marks");
+            }
+          }
+        }, {
+          key: "iterateUsers",
+          value: function iterateUsers(usersArray, index, ucstart, ucend, users, title, source, startList, endList, timestamp, edittoken, inactiveLimit, inactiveIntro, summary, callNext) {
+            var match, ucuser, userString;
+            index++;
+            if (index < usersArray.length) {
+              userString = usersArray[index];
+              match = regExp.exec(userString);
+              if (match) {
+                ucuser = match[1].charAt(0).toUpperCase() + match[1].substr(1);
+                if (match[2]) {
+                  ucuser += "|" + match[2].charAt(0).toUpperCase() + match[2].substr(1);
+                }
+                this.WM.Log.logInfo("Querying " + ucuser + " ...");
+                return this.WM.MW.getUserContribs(ucuser, ucstart, ucend, this.storeUserContribs, [usersArray, index, ucstart, ucend, users, title, source, startList, endList, timestamp, edittoken, inactiveLimit, inactiveIntro, summary, callNext]);
+              } else if (userString !== "" && userString.indexOf(inactiveIntro) !== 0) {
+                return this.WM.Log.logError("An entry in the list may not be correctly " + "formatted");
+              } else {
+                return this.iterateUsers(usersArray, index, ucstart, ucend, users, title, source, startList, endList, timestamp, edittoken, inactiveLimit, inactiveIntro, summary, callNext);
+              }
+            } else {
+              return this.updateList(users, title, source, startList, endList, timestamp, edittoken, inactiveIntro, summary, callNext);
+            }
+          }
+        }, {
+          key: "storeUserContribs",
+          value: function storeUserContribs(results, args) {
+            var callNext, edits, edittoken, endList, inactiveIntro, inactiveLimit, index, source, startList, summary, timestamp, title, ucend, ucstart, users, usersArray;
+            usersArray = args[0];
+            index = args[1];
+            ucstart = args[2];
+            ucend = args[3];
+            users = args[4];
+            title = args[5];
+            source = args[6];
+            startList = args[7];
+            endList = args[8];
+            timestamp = args[9];
+            edittoken = args[10];
+            inactiveLimit = args[11];
+            inactiveIntro = args[12];
+            summary = args[13];
+            callNext = args[14];
+            edits = results.length;
+            if (edits < inactiveLimit) {
+              users.inactive.push({
+                "text": usersArray[index],
+                "edits": edits
+              });
+            } else {
+              users.active.push({
+                "text": usersArray[index],
+                "edits": edits
+              });
+            }
+            return this.iterateUsers(usersArray, index, ucstart, ucend, users, title, source, startList, endList, timestamp, edittoken, inactiveLimit, inactiveIntro, summary, callNext);
+          }
+        }, {
+          key: "updateList",
+          value: function updateList(users, title, source, startList, endList, timestamp, edittoken, inactiveIntro, summary, callNext) {
+            var i, j, len, len1, newList, newText, ref, ref1, sorter, user;
+            sorter = function sorter(a, b) {
+              if (a.edits < b.edits) {
+                return 1;
+              } else if (a.edits > b.edits) {
+                return -1;
+              } else {
+                return 0;
+              }
+            };
+            users.active.sort(sorter);
+            users.inactive.sort(sorter);
+            newList = "\n";
+            ref = users.active;
+            for (i = 0, len = ref.length; i < len; i++) {
+              user = ref[i];
+              newList += user.text + "\n";
+            }
+            if (users.inactive.length > 0) {
+              newList += "\n" + inactiveIntro + "\n\n";
+              ref1 = users.inactive;
+              for (j = 0, len1 = ref1.length; j < len1; j++) {
+                user = ref1[j];
+                newList += user.text + "\n";
+              }
+            }
+            newText = source.substring(0, startList) + newList + source.substring(endList);
+            if (newText !== source) {
+              return this.WM.MW.callAPIPost({
+                action: "edit",
+                bot: "1",
+                minor: "1",
+                title: title,
+                summary: summary,
+                text: newText,
+                b1asetimestamp: timestamp,
+                token: edittoken
+              }, this.writePage, [title, callNext], null);
+            } else {
+              this.WM.Log.logInfo(this.WM.Log.linkToWikiPage(title, title) + " was already up to date");
+              if (callNext) {
+                return callNext();
+              }
+            }
+          }
+        }, {
+          key: "writePage",
+          value: function writePage(res, args) {
+            var callNext, title;
+            title = args[0];
+            callNext = args[1];
+            if (res.edit && res.edit.result === 'Success') {
+              this.WM.Log.logInfo(this.WM.Log.linkToWikiPage(title, title) + " was correctly updated");
+              if (callNext) {
+                return callNext();
+              }
+            } else {
+              return this.WM.Log.logError(res['error']['info'] + " (" + res['error']['code'] + ")");
+            }
+          }
+        }]);
+
+        return ArchWikiSortContacts;
+      }();
+
+      ;
+
+      startMark = "START AUTO LIST - DO NOT REMOVE OR MODIFY THIS MARK-->";
+
+      endMark = "<!--END AUTO LIST - DO NOT REMOVE OR MODIFY THIS MARK";
+
+      regExp = new RegExp("^\\*.*?\\[\\[User:(.+?)\\|.+?" + "(?: \\<!-- associated bot: (.+?) -->.*)?$", "");
+
+      return ArchWikiSortContacts;
+    }();
+  }, {}], 30: [function (require, module, exports) {
+    module.exports.ArchWikiSummaryToRelated = function () {
+      function ArchWikiSummaryToRelated(WM) {
+        _classCallCheck(this, ArchWikiSummaryToRelated);
+
+        this.WM = WM;
+      }
+
+      _createClass(ArchWikiSummaryToRelated, [{
+        key: "main",
+        value: function main(args, callNext) {
+          var asend, asends, asstart, asstarts, aswiki, aswikis, i, language, len, link, newText, source, suffix;
+          source = this.WM.Editor.readSource();
+          asstarts = this.WM.Parser.findTemplates(source, 'Article summary start');
+          asends = this.WM.Parser.findTemplates(source, 'Article summary end');
+          if (asstarts.length && asends.length && asstarts[0].index < asends[0].index) {
+            asstart = asstarts[0];
+            asend = asends[0];
+            newText = source.substring(0, asstart.index).trim();
+            aswikis = this.WM.Parser.findTemplates(source, 'Article summary wiki');
+            if (aswikis.length) {
+              language = this.WM.ArchWiki.detectLanguage(this.WM.Editor.getTitle())[1];
+              suffix = language === "English" ? "" : " (" + language + ")";
+              newText += "\n{{Related articles start" + suffix + "}}\n";
+              for (i = 0, len = aswikis.length; i < len; i++) {
+                aswiki = aswikis[i];
+                link = aswiki.arguments[0].value;
+                newText += "{{Related|" + link + "}}\n";
+              }
+              newText += "{{Related articles end}}";
+            }
+            newText += "\n\n-----------------------------------------------\n";
+            newText += source.substring(asstart.index, asend.index + asend.length).trim();
+            newText += "\n-----------------------------------------------\n\n";
+            newText += source.substr(asend.index + asend.length).trim();
+            this.WM.Editor.writeSource(newText);
+            this.WM.Log.logWarning("Started converting Article summary to " + "Related articles, but manual intervention is required.");
+          }
+          if (callNext) {
+            return callNext();
+          }
+        }
+      }]);
+
+      return ArchWikiSummaryToRelated;
+    }();
+  }, {}], 31: [function (require, module, exports) {
+    module.exports.ArchWikiUpdatePackageTemplates = function () {
+      function ArchWikiUpdatePackageTemplates(WM) {
+        _classCallCheck(this, ArchWikiUpdatePackageTemplates);
+
+        this.doUpdate = this.doUpdate.bind(this);
+        this.doUpdateContinue = this.doUpdateContinue.bind(this);
+        this.doUpdateContinue2 = this.doUpdateContinue2.bind(this);
+        this.checkOfficial = this.checkOfficial.bind(this);
+        this.checkOfficiallc = this.checkOfficiallc.bind(this);
+        this.checkAUR = this.checkAUR.bind(this);
+        this.checkAURlc = this.checkAURlc.bind(this);
+        this.checkGroup64 = this.checkGroup64.bind(this);
+        this.checkGroup64lc = this.checkGroup64lc.bind(this);
+        this.checkGroup32 = this.checkGroup32.bind(this);
+        this.checkGroup32lc = this.checkGroup32lc.bind(this);
+        this.checkOfficial2 = this.checkOfficial2.bind(this);
+        this.checkOfficiallc2 = this.checkOfficiallc2.bind(this);
+        this.checkAUR2 = this.checkAUR2.bind(this);
+        this.checkAURlc2 = this.checkAURlc2.bind(this);
+        this.checkGroup64_2 = this.checkGroup64_2.bind(this);
+        this.checkGroup64lc2 = this.checkGroup64lc2.bind(this);
+        this.checkGroup32_2 = this.checkGroup32_2.bind(this);
+        this.checkGroup32lc2 = this.checkGroup32lc2.bind(this);
+        this.doUpdateContinue3 = this.doUpdateContinue3.bind(this);
+        this.mainEnd = this.mainEnd.bind(this);
+        this.mainAutoReplace = this.mainAutoReplace.bind(this);
+        this.mainAutoWrite = this.mainAutoWrite.bind(this);
+        this.mainAutoEnd = this.mainAutoEnd.bind(this);
+        this.WM = WM;
+      }
+
+      _createClass(ArchWikiUpdatePackageTemplates, [{
+        key: "doUpdate",
+        value: function doUpdate(source, call, callArgs) {
+          var newText, templates;
+
+          templates = this.WM.Parser.findTemplatesPattern(source, "[Pp]kg|[Aa]ur|AUR|[Gg]rp");
+          newText = "";
+          if (templates.length > 0) {
+            return this.doUpdateContinue(source, newText, templates, 0, call, callArgs);
+          } else {
+            return call(source, source, callArgs);
+          }
+        }
+      }, {
+        key: "doUpdateContinue",
+        value: function doUpdateContinue(source, newText, templates, index, call, callArgs) {
+          this.WM.Log.logInfo("Processing " + templates[index].rawTransclusion + " ...");
+          newText += source.substring(index === 0 ? 0 : templates[index - 1].index + templates[index - 1].length, templates[index].index);
+          switch (templates[index].title.toLowerCase()) {
+            case 'pkg':
+              return this.doUpdateContinue2([this.checkGroup32lc, this.checkGroup32, this.checkGroup64lc, this.checkGroup64, this.checkAURlc, this.checkAUR, this.checkOfficiallc, this.checkOfficial], source, newText, templates, index, call, callArgs);
+            case 'aur':
+              return this.doUpdateContinue2([this.checkGroup32lc, this.checkGroup32, this.checkGroup64lc, this.checkGroup64, this.checkOfficiallc, this.checkOfficial, this.checkAURlc, this.checkAUR], source, newText, templates, index, call, callArgs);
+            case 'grp':
+              return this.doUpdateContinue2([this.checkAURlc, this.checkAUR, this.checkOfficiallc, this.checkOfficial, this.checkGroup32lc, this.checkGroup32, this.checkGroup64lc, this.checkGroup64], source, newText, templates, index, call, callArgs);
+            default:
+              newText += templates[index].rawTransclusion;
+              return this.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+          }
+        }
+      }, {
+        key: "doUpdateContinue2",
+        value: function doUpdateContinue2(checks, source, newText, templates, index, call, callArgs) {
+          var check, pkg;
+          check = checks.pop();
+          if (check) {
+            return check(checks, source, newText, templates, index, call, callArgs);
+          } else {
+            pkg = templates[index].arguments[0].value.trim();
+            this.WM.Log.logWarning(pkg + " hasn't been found neither in the official " + "repositories nor in the AUR nor as a package group");
+            this.WM.Log.logJson("Plugins.ArchWikiUpdatePackageTemplates", {
+              "error": "notfound",
+              "page": callArgs[0],
+              "pagelanguage": this.WM.ArchWiki.detectLanguage(callArgs[0])[1],
+              "package": pkg
+            });
+            newText += templates[index].rawTransclusion;
+            return this.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+          }
+        }
+      }, {
+        key: "checkOfficial",
+        value: function checkOfficial(checks, source, newText, templates, index, call, callArgs) {
+          var pkgname;
+          pkgname = templates[index].arguments[0].value.trim();
+          this.WM.Log.logInfo("Looking for " + pkgname + " in the official repositories ...");
+          return this.WM.ArchPackages.isOfficialPackage(pkgname, this.checkOfficial2, [checks, source, newText, templates, index, call, callArgs]);
+        }
+      }, {
+        key: "checkOfficiallc",
+        value: function checkOfficiallc(checks, source, newText, templates, index, call, callArgs) {
+          var pkgname;
+          pkgname = templates[index].arguments[0].value.trim();
+          if (pkgname.toLowerCase() !== pkgname) {
+            this.WM.Log.logInfo("Looking for " + pkgname.toLowerCase() + " (lowercase) in the official repositories ...");
+            return this.WM.ArchPackages.isOfficialPackage(pkgname.toLowerCase(), this.checkOfficiallc2, [checks, source, newText, templates, index, call, callArgs]);
+          } else {
+            return this.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+          }
+        }
+      }, {
+        key: "checkAUR",
+        value: function checkAUR(checks, source, newText, templates, index, call, callArgs) {
+          var pkgname;
+          pkgname = templates[index].arguments[0].value.trim();
+          this.WM.Log.logInfo("Looking for " + pkgname + " in the AUR ...");
+          return this.WM.ArchPackages.isAURPackage(pkgname, this.checkAUR2, [checks, source, newText, templates, index, call, callArgs]);
+        }
+      }, {
+        key: "checkAURlc",
+        value: function checkAURlc(checks, source, newText, templates, index, call, callArgs) {
+          var pkgname;
+          pkgname = templates[index].arguments[0].value.trim();
+          if (pkgname.toLowerCase() !== pkgname) {
+            this.WM.Log.logInfo("Looking for " + pkgname.toLowerCase() + " (lowercase) in the AUR ...");
+            return this.WM.ArchPackages.isAURPackage(pkgname.toLowerCase(), this.checkAURlc2, [checks, source, newText, templates, index, call, callArgs]);
+          } else {
+            return this.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+          }
+        }
+      }, {
+        key: "checkGroup64",
+        value: function checkGroup64(checks, source, newText, templates, index, call, callArgs) {
+          var grpname;
+          grpname = templates[index].arguments[0].value.trim();
+          this.WM.Log.logInfo("Looking for " + grpname + " as an x86_64 package group ...");
+          return this.WM.ArchPackages.isPackageGroup64(grpname, this.checkGroup64_2, [checks, source, newText, templates, index, call, callArgs]);
+        }
+      }, {
+        key: "checkGroup64lc",
+        value: function checkGroup64lc(checks, source, newText, templates, index, call, callArgs) {
+          var grpname;
+          grpname = templates[index].arguments[0].value.trim();
+          if (grpname.toLowerCase() !== grpname) {
+            this.WM.Log.logInfo("Looking for " + grpname.toLowerCase() + " (lowercase) as an x86_64 package group ...");
+            return this.WM.ArchPackages.isPackageGroup64(grpname.toLowerCase(), this.checkGroup64lc2, [checks, source, newText, templates, index, call, callArgs]);
+          } else {
+            return this.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+          }
+        }
+      }, {
+        key: "checkGroup32",
+        value: function checkGroup32(checks, source, newText, templates, index, call, callArgs) {
+          var grpname;
+          grpname = templates[index].arguments[0].value.trim();
+          this.WM.Log.logInfo("Looking for " + grpname + " as an i686 package group ...");
+          return this.WM.ArchPackages.isPackageGroup32(grpname, this.checkGroup32_2, [checks, source, newText, templates, index, call, callArgs]);
+        }
+      }, {
+        key: "checkGroup32lc",
+        value: function checkGroup32lc(checks, source, newText, templates, index, call, callArgs) {
+          var grpname;
+          grpname = templates[index].arguments[0].value.trim();
+          if (grpname.toLowerCase() !== grpname) {
+            this.WM.Log.logInfo("Looking for " + grpname.toLowerCase() + " (lowercase) as an i686 package group ...");
+            return this.WM.ArchPackages.isPackageGroup32(grpname.toLowerCase(), this.checkGroup32lc2, [checks, source, newText, templates, index, call, callArgs]);
+          } else {
+            return this.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+          }
+        }
+      }, {
+        key: "checkOfficial2",
+        value: function checkOfficial2(res, args) {
+          var call, callArgs, checks, index, newText, newtemplate, pkgname, source, template, templates;
+          checks = args[0];
+          source = args[1];
+          newText = args[2];
+          templates = args[3];
+          index = args[4];
+          call = args[5];
+          callArgs = args[6];
+          template = templates[index];
+          pkgname = template.arguments[0].value.trim();
+          if (res) {
+            if (template.title.toLowerCase() !== 'pkg') {
+              newtemplate = "{{Pkg|" + pkgname + "}}";
+              newText += newtemplate;
+              this.WM.Log.logInfo("Replacing template with " + newtemplate);
+            } else {
+              newText += template.rawTransclusion;
+            }
+            return this.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+          } else {
+            return this.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+          }
+        }
+      }, {
+        key: "checkOfficiallc2",
+        value: function checkOfficiallc2(res, args) {
+          var call, callArgs, checks, index, newText, newtemplate, pkgname, source, template, templates;
+          checks = args[0];
+          source = args[1];
+          newText = args[2];
+          templates = args[3];
+          index = args[4];
+          call = args[5];
+          callArgs = args[6];
+          template = templates[index];
+          pkgname = template.arguments[0].value.trim();
+          if (res) {
+            newtemplate = "{{Pkg|" + pkgname.toLowerCase() + "}}";
+            newText += newtemplate;
+            this.WM.Log.logInfo("Replacing template with " + newtemplate);
+            return this.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+          } else {
+            return this.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+          }
+        }
+      }, {
+        key: "checkAUR2",
+        value: function checkAUR2(res, args) {
+          var call, callArgs, checks, index, newText, newtemplate, pkgname, source, template, templates;
+          checks = args[0];
+          source = args[1];
+          newText = args[2];
+          templates = args[3];
+          index = args[4];
+          call = args[5];
+          callArgs = args[6];
+          template = templates[index];
+          pkgname = template.arguments[0].value.trim();
+          if (res) {
+            if (template.title.toLowerCase() !== 'aur') {
+              newtemplate = "{{AUR|" + pkgname + "}}";
+              newText += newtemplate;
+              this.WM.Log.logInfo("Replacing template with " + newtemplate);
+            } else {
+              newText += template.rawTransclusion;
+            }
+            return this.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+          } else {
+            return this.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+          }
+        }
+      }, {
+        key: "checkAURlc2",
+        value: function checkAURlc2(res, args) {
+          var call, callArgs, checks, index, newText, newtemplate, pkgname, source, template, templates;
+          checks = args[0];
+          source = args[1];
+          newText = args[2];
+          templates = args[3];
+          index = args[4];
+          call = args[5];
+          callArgs = args[6];
+          template = templates[index];
+          pkgname = template.arguments[0].value.trim();
+          if (res) {
+            newtemplate = "{{AUR|" + pkgname.toLowerCase() + "}}";
+            newText += newtemplate;
+            this.WM.Log.logInfo("Replacing template with " + newtemplate);
+            return this.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+          } else {
+            return this.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+          }
+        }
+      }, {
+        key: "checkGroup64_2",
+        value: function checkGroup64_2(res, args) {
+          var call, callArgs, checks, grpname, index, newText, newtemplate, source, template, templates;
+          checks = args[0];
+          source = args[1];
+          newText = args[2];
+          templates = args[3];
+          index = args[4];
+          call = args[5];
+          callArgs = args[6];
+          template = templates[index];
+          grpname = template.arguments[0].value.trim();
+          if (res) {
+            if (template.title.toLowerCase() !== 'grp') {
+              newtemplate = "{{Grp|" + grpname + "}}";
+              newText += newtemplate;
+              this.WM.Log.logInfo("Replacing template with " + newtemplate);
+            } else {
+              newText += template.rawTransclusion;
+            }
+            return this.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+          } else {
+            return this.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+          }
+        }
+      }, {
+        key: "checkGroup64lc2",
+        value: function checkGroup64lc2(res, args) {
+          var call, callArgs, checks, grpname, index, newText, newtemplate, source, template, templates;
+          checks = args[0];
+          source = args[1];
+          newText = args[2];
+          templates = args[3];
+          index = args[4];
+          call = args[5];
+          callArgs = args[6];
+          template = templates[index];
+          grpname = template.arguments[0].value.trim();
+          if (res) {
+            newtemplate = "{{Grp|" + grpname.toLowerCase() + "}}";
+            newText += newtemplate;
+            this.WM.Log.logInfo("Replacing template with " + newtemplate);
+            return this.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+          } else {
+            return this.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+          }
+        }
+      }, {
+        key: "checkGroup32_2",
+        value: function checkGroup32_2(res, args) {
+          var call, callArgs, checks, grpname, index, newText, source, template, templates;
+          checks = args[0];
+          source = args[1];
+          newText = args[2];
+          templates = args[3];
+          index = args[4];
+          call = args[5];
+          callArgs = args[6];
+          template = templates[index];
+          grpname = template.arguments[0].value.trim();
+          if (res) {
+            newText += template.rawTransclusion;
+            this.WM.Log.logWarning(grpname + " is a package group for i686 only, " + "and Template:Grp only supports x86_64");
+            this.WM.Log.logJson("Plugins.ArchWikiUpdatePackageTemplates", {
+              "error": "group64",
+              "page": callArgs[0],
+              "pagelanguage": this.WM.ArchWiki.detectLanguage(callArgs[0])[1],
+              "package": grpname
+            });
+            return this.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+          } else {
+            return this.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+          }
+        }
+      }, {
+        key: "checkGroup32lc2",
+        value: function checkGroup32lc2(res, args) {
+          var call, callArgs, checks, grpname, index, newText, source, template, templates;
+          checks = args[0];
+          source = args[1];
+          newText = args[2];
+          templates = args[3];
+          index = args[4];
+          call = args[5];
+          callArgs = args[6];
+          template = templates[index];
+          grpname = template.arguments[0].value.trim();
+          if (res) {
+            newText += template.rawTransclusion;
+            this.WM.Log.logWarning(grpname + " is a package group for i686 only, " + "and Template:Grp only supports x86_64");
+            this.WM.Log.logJson("Plugins.ArchWikiUpdatePackageTemplates", {
+              "error": "group64",
+              "page": callArgs[0],
+              "pagelanguage": this.WM.ArchWiki.detectLanguage(callArgs[0])[1],
+              "package": grpname
+            });
+            return this.doUpdateContinue3(source, newText, templates, index, call, callArgs);
+          } else {
+            return this.doUpdateContinue2(checks, source, newText, templates, index, call, callArgs);
+          }
+        }
+      }, {
+        key: "doUpdateContinue3",
+        value: function doUpdateContinue3(source, newText, templates, index, call, callArgs) {
+          index++;
+          if (templates[index]) {
+            return this.doUpdateContinue(source, newText, templates, index, call, callArgs);
+          } else {
+            newText += source.substring(templates[index - 1].index + templates[index - 1].length);
+            return call(source, newText, callArgs);
+          }
+        }
+      }, {
+        key: "main",
+        value: function main(args, callNext) {
+          var source, title;
+          title = this.WM.Editor.getTitle();
+          source = this.WM.Editor.readSource();
+          this.WM.Log.logInfo("Updating package templates ...");
+          return this.doUpdate(source, this.mainEnd, [title, callNext]);
+        }
+      }, {
+        key: "mainEnd",
+        value: function mainEnd(source, newtext, args) {
+          var callNext;
+          callNext = args[1];
+          if (newtext !== source) {
+            this.WM.Editor.writeSource(newtext);
+            this.WM.Log.logInfo("Updated package templates");
+          } else {
+            this.WM.Log.logInfo("No automatically updatable package templates " + "found");
+          }
+          if (callNext) {
+            return callNext();
+          }
+        }
+      }, {
+        key: "mainAuto",
+        value: function mainAuto(args, title, callBot, chainArgs) {
+          var summary;
+          summary = args;
+          return this.WM.MW.callQueryEdit(title, this.mainAutoReplace, [summary, callBot]);
+        }
+      }, {
+        key: "mainAutoReplace",
+        value: function mainAutoReplace(title, source, timestamp, edittoken, args) {
+          var callBot, summary;
+          summary = args[0];
+          callBot = args[1];
+          return this.doUpdate(source, this.mainAutoWrite, [title, edittoken, timestamp, summary, callBot]);
+        }
+      }, {
+        key: "mainAutoWrite",
+        value: function mainAutoWrite(source, newtext, args) {
+          var callBot, edittoken, summary, timestamp, title;
+          title = args[0];
+          edittoken = args[1];
+          timestamp = args[2];
+          summary = args[3];
+          callBot = args[4];
+          if (newtext !== source) {
+            return this.WM.MW.callAPIPost({
+              action: "edit",
+              bot: "1",
+              title: title,
+              summary: summary,
+              text: newtext,
+              basetimestamp: timestamp,
+              token: edittoken
+            }, this.mainAutoEnd, callBot, null);
+          } else {
+            return callBot(0, null);
+          }
+        }
+      }, {
+        key: "mainAutoEnd",
+        value: function mainAutoEnd(res, callBot) {
+          if (res.edit && res.edit.result === 'Success') {
+            return callBot(1, null);
+          } else if (res.error) {
+            this.WM.Log.logError(res.error.info + " (" + res.error.code + ")");
+            return callBot(res.error.code, null);
+          } else {
+            return callBot(false, null);
+          }
+        }
+      }]);
+
+      return ArchWikiUpdatePackageTemplates;
+    }();
+  }, {}], 32: [function (require, module, exports) {
     module.exports.ExpandContractions = function () {
       function ExpandContractions(WM) {
         _classCallCheck(this, ExpandContractions);
@@ -3962,7 +5515,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return ExpandContractions;
     }();
-  }, {}], 22: [function (require, module, exports) {
+  }, {}], 33: [function (require, module, exports) {
     var CSS;
 
     CSS = require('../../lib.js.generic/dist/CSS');
@@ -4226,7 +5779,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return FixBacklinkFragments;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 31 }], 23: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/CSS": 42 }], 34: [function (require, module, exports) {
     var Str;
 
     Str = require('../../lib.js.generic/dist/Str');
@@ -4373,7 +5926,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return FixDoubleRedirects;
     }();
-  }, { "../../lib.js.generic/dist/Str": 37 }], 24: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Str": 48 }], 35: [function (require, module, exports) {
     module.exports.FixFragments = function () {
       function FixFragments(WM) {
         _classCallCheck(this, FixFragments);
@@ -4458,7 +6011,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return FixFragments;
     }();
-  }, {}], 25: [function (require, module, exports) {
+  }, {}], 36: [function (require, module, exports) {
     module.exports.FixLinkFragments = function () {
       function FixLinkFragments(WM) {
         _classCallCheck(this, FixLinkFragments);
@@ -4711,7 +6264,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return FixLinkFragments;
     }();
-  }, {}], 26: [function (require, module, exports) {
+  }, {}], 37: [function (require, module, exports) {
     module.exports.MultipleLineBreaks = function () {
       function MultipleLineBreaks(WM) {
         _classCallCheck(this, MultipleLineBreaks);
@@ -4738,7 +6291,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return MultipleLineBreaks;
     }();
-  }, {}], 27: [function (require, module, exports) {
+  }, {}], 38: [function (require, module, exports) {
     var CSS;
 
     CSS = require('../../lib.js.generic/dist/CSS');
@@ -4915,7 +6468,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return SimpleReplace;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 31 }], 28: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/CSS": 42 }], 39: [function (require, module, exports) {
     module.exports.SynchronizeInterlanguageLinks = function () {
       function SynchronizeInterlanguageLinks(WM) {
         _classCallCheck(this, SynchronizeInterlanguageLinks);
@@ -5099,7 +6652,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return SynchronizeInterlanguageLinks;
     }();
-  }, {}], 29: [function (require, module, exports) {
+  }, {}], 40: [function (require, module, exports) {
     var Str,
         indexOf = [].indexOf;
 
@@ -5351,7 +6904,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       return UpdateCategoryTree;
     }();
-  }, { "../../lib.js.generic/dist/Str": 37 }], 30: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Str": 48 }], 41: [function (require, module, exports) {
     module.exports.executeAsync = function (functions, id) {
       var callContinue, fid;
       id++;
@@ -5430,7 +6983,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         ;
       }
     };
-  }, {}], 31: [function (require, module, exports) {
+  }, {}], 42: [function (require, module, exports) {
     module.exports.addStyleElement = function (css) {
       var style;
       style = document.createElement('style');
@@ -5438,11 +6991,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       style.innerHTML = css;
       return document.head.appendChild(style);
     };
-  }, {}], 32: [function (require, module, exports) {
+  }, {}], 43: [function (require, module, exports) {
     module.exports.normalizeCarriageReturns = function (source) {
       return source.replace(/\r\n/g, '\n');
     };
-  }, {}], 33: [function (require, module, exports) {
+  }, {}], 44: [function (require, module, exports) {
     module.exports.getPreviousElementSibling = function (node) {
       while (node.previousSibling.nodeType !== 1) {
         node = node.previousSibling;
@@ -5556,7 +7109,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       };
       return _recurse();
     };
-  }, {}], 34: [function (require, module, exports) {
+  }, {}], 45: [function (require, module, exports) {
     module.exports.getUrlLocation = function (url) {
       var link;
       link = document.createElement('a');
@@ -5631,7 +7184,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       req.send(query);
       return req;
     };
-  }, {}], 35: [function (require, module, exports) {
+  }, {}], 46: [function (require, module, exports) {
     module.exports.getKeys = function (object) {
       var i, keys;
       keys = [];
@@ -5656,7 +7209,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         return object[i];
       }
     };
-  }, {}], 36: [function (require, module, exports) {
+  }, {}], 47: [function (require, module, exports) {
     module.exports.escapePattern = function (string) {
       return string.replace(/[-[\]{}()^$*+?.|\\]/g, "\\$&");
     };
@@ -5698,7 +7251,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
       return result;
     };
-  }, {}], 37: [function (require, module, exports) {
+  }, {}], 48: [function (require, module, exports) {
     module.exports.insert = function (string, newString, id) {
       if (id == null) {
         id = 0;
@@ -5844,5 +7397,3 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       return results;
     };
   }, {}] }, {}, [1]);
-
-}

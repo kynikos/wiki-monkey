@@ -1,4 +1,5 @@
 import os.path
+import shutil
 
 from . import configurations
 
@@ -23,10 +24,12 @@ LICENSE = """/*
  */
 """
 
-SRCDIR = "./build/"
+SRCDIR = "./src/"
+BUILDDIR = "./build/"
 DISTDIR = './dist/'
 AUXDIR = './auxiliary/'
-DISTFILE = "{distdir}WikiMonkey-{fname}{suffix}.{preext}.js"
+DISTFILE = "{distdir}WikiMonkey-{wiki}{suffix}.js"
+
 COFFEE = "./node_modules/.bin/coffee --compile --bare --output {build} {src}"
 # TODO: The following recompiles only the scripts inside /dist, i.e. those
 #       inside /build are not recompiled (requires coffeeify). For this
@@ -51,117 +54,56 @@ SEDRE1 = (r"(\S+)\s*\=\s*require\s*\(\s*['\''\"]({})['\''\"]\s*\)"
 SEDRE2 = r"\1 = window.\1"
 SED = "--command \"sed -r -e 's/{}/{}/'\"".format(SEDRE1, SEDRE2)
 
-CONFIG = {
-    '_local': {
-        # TODO: For the moment only the first matchlist_re is used, see below
-        'matchlist_re': ("/^http:\/\/[a-z]+\.wikipedia\.org/i",
-                         "/^https:\/\/wiki\.archlinux\.org/i")
-    },
-    'ArchWiki': {
-        'matchlist_re': ("/^https:\/\/wiki\.archlinux\.org/i", )
-    },
-    'Wikipedia': {
-        'matchlist_re': ("/^http:\/\/[a-z]+\.wikipedia\.org/i", )
-    },
-}
-
-
-STANDALONE_START = "if (location.href.match({})) {{\n"
-STANDALONE_END = "}\n"
-
 
 def compile(run, version):
     # It's important to recompile the configuration *before* the scripts
     configurations.compile()
 
-    run(COFFEE.format(build="./build/", src="./src/"))
+    run(COFFEE.format(build=BUILDDIR, src=SRCDIR))
 
-    for srcfile in os.listdir(SRCDIR):
-        srcpath = os.path.join(SRCDIR, srcfile)
+    for srcfile in os.listdir(BUILDDIR):
+        srcpath = os.path.join(BUILDDIR, srcfile)
 
         if os.path.isfile(srcpath):
             fname = os.path.splitext(srcfile)[0]
 
             if srcfile.startswith('_'):
-                compile_webext(run, AUXDIR, fname[1:], fname, srcpath,
-                               version or 'dev', '', '')
+                compile_webext(run, fname[1:], srcpath)
             elif version:
-                compile_webext(run, DISTDIR, fname, fname, srcpath, version,
-                               '', '')
-                # The user script is loaded *before* MediaWiki loads jQuery,
-                # so it doesn't make sense to build a lite version of the
-                # webextension version
-                # compile_webext(run, DISTDIR, fname, fname, srcpath, version,
-                #                'lite', SED)
-                compile_mediawiki(run, fname, srcpath, version)
+                compile_mediawiki(run, fname, srcpath)
 
 
-def compile_webext(run, distdir, fname, cfname, srcpath, version, suffix,
-                   args):
-    distfile = DISTFILE.format(distdir=distdir, fname=fname,
-                               suffix=('-' + suffix) if suffix else '',
-                               preext='user')
+def compile_mediawiki(run, fname, srcpath):
+    distfile_temp = DISTFILE.format(distdir=BUILDDIR, wiki=fname,
+                                    suffix="-tmp")
+    shutil.copy(srcpath, distfile_temp)
+    distfile = DISTFILE.format(distdir=DISTDIR, wiki=fname, suffix='')
 
-    run(BROWSERIFY.format(args=args, srcpath=srcpath, distfile=distfile))
+    run(BROWSERIFY.format(args=SED, srcpath=distfile_temp, distfile=distfile))
+    run(BABEL.format(distfile, distfile))
+    os.remove(distfile_temp)
+
+    prepend_license(distfile)
+
+    # Previous versions were using this file name
+    # TODO: Deprecate in a future version
+    distfile_bwcompat = DISTFILE.format(distdir=DISTDIR, wiki=fname,
+                                        suffix="-mw.user")
+    shutil.copy(distfile, distfile_bwcompat)
+
+
+def compile_webext(run, fname, srcpath):
+    distfile = DISTFILE.format(distdir=AUXDIR, wiki=fname, suffix='')
+
+    run(BROWSERIFY.format(args='', srcpath=srcpath, distfile=distfile))
     run(BABEL.format(distfile, distfile))
 
-    with open(distfile, 'r') as df:
-        script = df.read()
+    prepend_license(distfile)
+
+
+def prepend_license(distfile):
+    with open(distfile, 'r') as sf:
+        script = sf.read()
 
     with open(distfile, 'w') as df:
         df.write('\n'.join((LICENSE, script)))
-
-
-def compile_mediawiki(run, fname, srcpath, version):
-    with open(srcpath, 'r') as sf:
-        srcscript = sf.read()
-
-    distfile_mw_temp = DISTFILE.format(distdir=SRCDIR, fname=fname,
-                                       suffix='-mw', preext='temp')
-
-    with open(distfile_mw_temp, 'w') as df:
-        df.write(srcscript)
-
-    distfile_mw = DISTFILE.format(distdir=DISTDIR, fname=fname,
-                                  suffix='-mw-temp', preext='user')
-    distfile_mw_lite = DISTFILE.format(distdir=DISTDIR, fname=fname,
-                                       suffix='-mw', preext='user')
-
-    run(BROWSERIFY.format(args='', srcpath=distfile_mw_temp,
-                          distfile=distfile_mw))
-    run(BABEL.format(distfile_mw, distfile_mw))
-    run(BROWSERIFY.format(args=SED, srcpath=distfile_mw_temp,
-                          distfile=distfile_mw_lite))
-    run(BABEL.format(distfile_mw_lite, distfile_mw_lite))
-
-    os.remove(distfile_mw_temp)
-
-    with open(distfile_mw, 'r') as sf:
-        script_mw = sf.read()
-
-    os.remove(distfile_mw)
-
-    with open(distfile_mw_lite, 'r') as sf:
-        script_mw_lite = sf.read()
-
-    # The MediaWiki version doesn't require a non-lite script, since MediaWiki
-    # always ships with jQuery
-    with open(distfile_mw_lite, 'w') as df:
-        df.write('\n'.join((LICENSE, script_mw_lite)))
-
-    distfile_sa = DISTFILE.format(distdir=DISTDIR, fname=fname,
-                                  suffix='-sa', preext='user')
-    distfile_sa_lite = DISTFILE.format(distdir=DISTDIR, fname=fname,
-                                       suffix='-sa-lite', preext='user')
-
-    for distfile, script in ((distfile_sa, script_mw),
-                             (distfile_sa_lite, script_mw_lite)):
-        with open(distfile, 'w') as df:
-            # TODO: For the moment this is only using the first of the
-            #       CONFIG[fname]['matchlist_re'] expressions; when there are
-            #       more than one, join them all with ||
-            df.write('\n'.join((LICENSE,
-                                STANDALONE_START.format(
-                                            CONFIG[fname]['matchlist_re'][0]),
-                                script,
-                                STANDALONE_END)))
