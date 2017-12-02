@@ -57,8 +57,15 @@ module.exports.WM = (function() {
 
   class WM {
     constructor(default_config, ...installed_plugins) {
-      var Plugin, i, len, pname;
+      this._onready = this._onready.bind(this);
       this.version = VERSION;
+      $(() => {
+        return this._onready(default_config, installed_plugins);
+      });
+    }
+
+    _onready(default_config, installed_plugins) {
+      var Plugin, i, len, pname;
       this.ArchPackages = new ArchPackages_(this);
       this.ArchWiki = new ArchWiki_(this);
       this.Bot = new Bot_(this);
@@ -82,7 +89,7 @@ module.exports.WM = (function() {
         this.Plugins[pname] = new Plugin(this);
       }
       this.Cfg._load(default_config);
-      this.UI._makeUI();
+      return this.UI._makeUI();
     }
 
   };

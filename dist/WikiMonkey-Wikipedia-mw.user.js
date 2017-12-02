@@ -3866,45 +3866,60 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     module.exports.WM = function () {
       var VERSION;
 
-      var WM = function WM(default_config) {
-        _classCallCheck(this, WM);
+      var WM = function () {
+        function WM(default_config) {
+          var _this15 = this;
 
-        var Plugin, i, len, pname;
-        this.version = VERSION;
-        this.ArchPackages = new ArchPackages_(this);
-        this.ArchWiki = new ArchWiki_(this);
-        this.Bot = new Bot_(this);
-        this.Cat = new Cat_(this);
-        this.Cfg = new Cfg_(this);
-        this.Diff = new Diff_(this);
-        this.Editor = new Editor_(this);
-        this.Filters = new Filters_(this);
-        this.Interlanguage = new Interlanguage_(this);
-        this.Log = new Log_(this);
-        this.Menu = new Menu_(this);
-        this.Mods = new Mods_(this);
-        this.MW = new MW_(this);
-        this.Parser = new Parser_(this);
-        this.Tables = new Tables_(this);
-        this.UI = new UI_(this);
-        this.WhatLinksHere = new WhatLinksHere_(this);
-        this.Plugins = {};
+          for (var _len = arguments.length, installed_plugins = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+            installed_plugins[_key - 1] = arguments[_key];
+          }
 
-        for (var _len = arguments.length, installed_plugins = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-          installed_plugins[_key - 1] = arguments[_key];
+          _classCallCheck(this, WM);
+
+          this._onready = this._onready.bind(this);
+          this.version = VERSION;
+          $(function () {
+            return _this15._onready(default_config, installed_plugins);
+          });
         }
 
-        for (i = 0, len = installed_plugins.length; i < len; i++) {
-          var _installed_plugins$i = _slicedToArray(installed_plugins[i], 2);
+        _createClass(WM, [{
+          key: "_onready",
+          value: function _onready(default_config, installed_plugins) {
+            var Plugin, i, len, pname;
+            this.ArchPackages = new ArchPackages_(this);
+            this.ArchWiki = new ArchWiki_(this);
+            this.Bot = new Bot_(this);
+            this.Cat = new Cat_(this);
+            this.Cfg = new Cfg_(this);
+            this.Diff = new Diff_(this);
+            this.Editor = new Editor_(this);
+            this.Filters = new Filters_(this);
+            this.Interlanguage = new Interlanguage_(this);
+            this.Log = new Log_(this);
+            this.Menu = new Menu_(this);
+            this.Mods = new Mods_(this);
+            this.MW = new MW_(this);
+            this.Parser = new Parser_(this);
+            this.Tables = new Tables_(this);
+            this.UI = new UI_(this);
+            this.WhatLinksHere = new WhatLinksHere_(this);
+            this.Plugins = {};
+            for (i = 0, len = installed_plugins.length; i < len; i++) {
+              var _installed_plugins$i = _slicedToArray(installed_plugins[i], 2);
 
-          pname = _installed_plugins$i[0];
-          Plugin = _installed_plugins$i[1];
+              pname = _installed_plugins$i[0];
+              Plugin = _installed_plugins$i[1];
 
-          this.Plugins[pname] = new Plugin(this);
-        }
-        this.Cfg._load(default_config);
-        this.UI._makeUI();
-      };
+              this.Plugins[pname] = new Plugin(this);
+            }
+            this.Cfg._load(default_config);
+            return this.UI._makeUI();
+          }
+        }]);
+
+        return WM;
+      }();
 
       ;
 

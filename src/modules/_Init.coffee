@@ -41,7 +41,9 @@ class module.exports.WM
 
     constructor: (default_config, installed_plugins...) ->
         @version = VERSION
+        $( => @_onready(default_config, installed_plugins))
 
+    _onready: (default_config, installed_plugins) =>
         @ArchPackages = new ArchPackages_(this)
         @ArchWiki = new ArchWiki_(this)
         @Bot = new Bot_(this)
