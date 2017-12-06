@@ -4,8 +4,12 @@
   "author": "Dario Giovannetti",
   "description": "MediaWiki bot and editor-assistant user script.",
   "dependencies": {
+    "babel-polyfill": "",
     "hyperscript": "",
-    "hyperscript-helpers": ""
+    "hyperscript-helpers": "",
+    "jss": "",
+    "jss-preset-default": "",
+    "moment": ""
   },
   "devDependencies": {
     "babel-cli": "",

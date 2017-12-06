@@ -16,6 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+# Initialize the libraries immediately (especially babel-polyfill)
+require('./libs')
+
 ArchPackages_ = require('./ArchPackages').ArchPackages
 ArchWiki_ = require('./ArchWiki').ArchWiki
 Bot_ = require('./Bot').Bot
