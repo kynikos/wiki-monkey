@@ -178,7 +178,8 @@ class module.exports.UI
             hide = document.createElement('a')
             hide.href = '#WikiMonkey'
             hide.innerHTML = '[hide]'
-            hide.addEventListener("click", ->
+            hide.addEventListener("click", (event) ->
+                event.preventDefault()
                 wmmain = document.getElementById('WikiMonkeyMain')
                 if wmmain.style.display == 'none'
                     wmmain.style.display = 'block'
@@ -186,7 +187,6 @@ class module.exports.UI
                 else
                     wmmain.style.display = 'none'
                     this.innerHTML = '[show]'
-                return false
             , false)
             legend.appendChild(hide)
 

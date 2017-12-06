@@ -70,7 +70,8 @@ class module.exports.Log
         link.href = '#WikiMonkey'
         link.innerHTML = @computeFilterLinkAnchor()
 
-        link.addEventListener("click", ->
+        link.addEventListener("click", (event) ->
+            event.preventDefault()
             # Change _currentInfoDisplayState *before* the loop, to prevent
             # race bugs
             self._currentInfoDisplayState = not self._currentInfoDisplayState

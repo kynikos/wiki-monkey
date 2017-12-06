@@ -55,8 +55,9 @@ module.exports.Log = (function() {
       link = document.createElement('a');
       link.href = '#WikiMonkey';
       link.innerHTML = this.computeFilterLinkAnchor();
-      link.addEventListener("click", function() {
+      link.addEventListener("click", function(event) {
         var i, len, msg, msgs;
+        event.preventDefault();
         // Change _currentInfoDisplayState *before* the loop, to prevent
         // race bugs
         self._currentInfoDisplayState = !self._currentInfoDisplayState;

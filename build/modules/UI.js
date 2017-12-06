@@ -121,17 +121,17 @@ module.exports.UI = class UI {
       hide = document.createElement('a');
       hide.href = '#WikiMonkey';
       hide.innerHTML = '[hide]';
-      hide.addEventListener("click", function() {
+      hide.addEventListener("click", function(event) {
         var wmmain;
+        event.preventDefault();
         wmmain = document.getElementById('WikiMonkeyMain');
         if (wmmain.style.display === 'none') {
           wmmain.style.display = 'block';
-          this.innerHTML = '[hide]';
+          return this.innerHTML = '[hide]';
         } else {
           wmmain.style.display = 'none';
-          this.innerHTML = '[show]';
+          return this.innerHTML = '[show]';
         }
-        return false;
       }, false);
       legend.appendChild(hide);
       legend.appendChild(document.createTextNode(' '));
