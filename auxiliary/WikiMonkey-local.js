@@ -2261,9 +2261,12 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       return Interlanguage;
     }();
   }, { "../../lib.js.generic/dist/Obj": 440 }], 12: [function (require, module, exports) {
-    var CSS, Str;
+    var Str, jss;
 
-    CSS = require('../../lib.js.generic/dist/CSS');
+    var _require = require('./libs');
+
+    jss = _require.jss;
+
 
     Str = require('../../lib.js.generic/dist/Str');
 
@@ -2274,16 +2277,69 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         function Log(WM) {
           _classCallCheck2(this, Log);
 
+          var classes, styles;
           this.WM = WM;
           this._currentInfoDisplayState = true;
+
+          styles = {
+            log: {
+              height: '10em',
+              border: '2px solid #07b',
+              padding: '0.5em',
+              overflow: 'auto',
+              resize: 'vertical',
+              'background-color': '#111',
+              '& p.timestamp, & p.message': {
+                border: 'none',
+                padding: 0,
+                'font-family': 'monospace',
+                color: '#eee'
+              },
+              '& p.timestamp': {
+                margin: '0 1em 0 0',
+                'white-space': 'nowrap'
+              },
+              '& p.message': {
+                margin: 0
+              },
+              '& div.mdebug, & div.minfo, & div.mwarning, & div.merror': {
+                display: 'flex'
+              },
+              '& div.mhidden': {
+                display: 'none'
+              },
+              '& div.mjson': {
+                display: 'none'
+              },
+              '& div.mdebug p.message': {
+                color: 'cyan'
+              },
+              '& div.mwarning p.message': {
+                color: 'gold'
+              },
+              '& div.merror p.message': {
+                color: 'red'
+              },
+              '& a': {
+                color: 'inherit',
+                'text-decoration': 'underline'
+              }
+            }
+          };
+
+          var _jss$createStyleSheet = jss.createStyleSheet(styles, {
+            classNamePrefix: "WikiMonkey-"
+          }).attach();
+
+          classes = _jss$createStyleSheet.classes;
+
+          this.classes = classes;
         }
 
         _createClass2(Log, [{
           key: "_makeLogArea",
           value: function _makeLogArea() {
-            var log, logarea, par;
-
-            CSS.addStyleElement("#WikiMonkeyLogArea {height:10em; border:2px solid #07b; padding:0.5em; overflow:auto; resize:vertical; background-color:#111;} #WikiMonkeyLogArea p.timestamp, #WikiMonkeyLog p.message {border:none; padding:0; font-family:monospace; color:#eee;} #WikiMonkeyLogArea p.timestamp {margin:0 1em 0 0; white-space:nowrap;} #WikiMonkeyLogArea p.message {margin:0;} #WikiMonkeyLogArea div.mdebug, #WikiMonkeyLogArea div.minfo, #WikiMonkeyLogArea div.mwarning, #WikiMonkeyLogArea div.merror {display:flex;} #WikiMonkeyLogArea div.mhidden {display:none;} #WikiMonkeyLogArea div.mjson {display:none;} #WikiMonkeyLogArea div.mdebug p.message {color:cyan;} #WikiMonkeyLogArea div.mwarning p.message {color:gold;} #WikiMonkeyLogArea div.merror p.message {color:red;} #WikiMonkeyLogArea a {color:inherit; text-decoration:underline;}");
+            var log, par;
             log = document.createElement('div');
             log.id = 'WikiMonkeyLog';
             par = document.createElement('p');
@@ -2291,16 +2347,17 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
             par.appendChild(document.createTextNode(' '));
             par.appendChild(this.makeSaveLink());
             log.appendChild(par);
-            logarea = document.createElement('div');
-            logarea.id = 'WikiMonkeyLogArea';
-            log.appendChild(logarea);
+            this.logarea = document.createElement('div');
+            this.logarea.className = this.classes.log;
+            log.appendChild(this.logarea);
             return log;
           }
         }, {
           key: "makeFilterLink",
           value: function makeFilterLink() {
-            var link, self;
-            self = this;
+            var _this5 = this;
+
+            var link;
             link = document.createElement('a');
             link.href = '#WikiMonkey';
             link.innerHTML = this.computeFilterLinkAnchor();
@@ -2308,39 +2365,39 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
               var i, len, msg, msgs;
               event.preventDefault();
 
-              self._currentInfoDisplayState = !self._currentInfoDisplayState;
-              this.innerHTML = self.computeFilterLinkAnchor();
-              msgs = document.getElementById('WikiMonkeyLogArea').getElementsByClassName('minfo');
+              _this5._currentInfoDisplayState = !_this5._currentInfoDisplayState;
+              link.innerHTML = _this5.computeFilterLinkAnchor();
+              msgs = _this5.logarea.getElementsByClassName('minfo');
               for (i = 0, len = msgs.length; i < len; i++) {
                 msg = msgs[i];
-                msg.style.display = self.computeInfoDisplayStyle();
+                msg.style.display = _this5.computeInfoDisplayStyle();
               }
-              return this.scrollToBottom();
+              return _this5.scrollToBottom();
             }, false);
             return link;
           }
         }, {
           key: "makeSaveLink",
           value: function makeSaveLink() {
-            var link, self;
-            self = this;
+            var _this6 = this;
+
+            var link;
             link = document.createElement('a');
             link.href = '#';
             link.download = 'WikiMonkey.log';
             link.innerHTML = '[save log]';
             link.id = 'WikiMonkeyLog-Save';
             link.addEventListener("click", function () {
-              link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(self.composeSaveLogText());
-              return link.download = self.composeSaveLogFilename();
+              link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(_this6.composeSaveLogText());
+              return link.download = _this6.composeSaveLogFilename();
             }, false);
             return link;
           }
         }, {
           key: "composeSaveLogText",
           value: function composeSaveLogText() {
-            var div, divs, i, len, level, log, message, ps, text, tstamp;
-            log = document.getElementById('WikiMonkeyLogArea');
-            divs = log.getElementsByTagName('div');
+            var div, divs, i, len, level, message, ps, text, tstamp;
+            divs = this.logarea.getElementsByTagName('div');
             text = '';
             for (i = 0, len = divs.length; i < len; i++) {
               div = divs[i];
@@ -2380,14 +2437,12 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "scrollToBottom",
           value: function scrollToBottom() {
-            var log;
-            log = document.getElementById('WikiMonkeyLogArea');
-            return log.scrollTop = log.scrollHeight - log.clientHeight;
+            return this.logarea.scrollTop = this.logarea.scrollHeight - this.logarea.clientHeight;
           }
         }, {
           key: "appendMessage",
           value: function appendMessage(text, type) {
-            var line, log, msg, now, test, tstamp;
+            var line, msg, now, test, tstamp;
             tstamp = document.createElement('p');
             tstamp.className = 'timestamp';
             now = new Date();
@@ -2403,9 +2458,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
             if (type === 'minfo') {
               line.style.display = this.computeInfoDisplayStyle();
             }
-            log = document.getElementById('WikiMonkeyLogArea');
-            test = log.scrollTop + log.clientHeight === log.scrollHeight;
-            log.appendChild(line);
+
+            test = this.logarea.scrollTop + this.logarea.clientHeight === this.logarea.scrollHeight;
+            this.logarea.appendChild(line);
             if (test) {
               return this.scrollToBottom();
             }
@@ -2476,16 +2531,16 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return Log;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 437, "../../lib.js.generic/dist/Str": 442 }], 13: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Str": 442, "./libs": 22 }], 13: [function (require, module, exports) {
     var A, HTTP, Obj;
 
     HTTP = require('../../lib.js.generic/dist/HTTP');
 
     Obj = require('../../lib.js.generic/dist/Obj');
 
-    var _require = require('./libs');
+    var _require2 = require('./libs');
 
-    A = _require.A;
+    A = _require2.A;
 
 
     module.exports.MW = function () {
@@ -2605,16 +2660,16 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "callAPIGet",
           value: function callAPIGet(params, call, callArgs, callError) {
-            var _this5 = this;
+            var _this7 = this;
 
             params.format = "json";
             return this.api.get(params).done(function (data, textStatus, jqXHR) {
               return call(data, callArgs);
             }).fail(function (jqXHR, textStatus, errorThrown) {
-              _this5.WM.Log.logError(_this5.failedQueryError(api));
+              _this7.WM.Log.logError(_this7.failedQueryError(api));
               if (confirm("Wiki Monkey error: Failed query\n\nDo you want " + "to retry?")) {
-                _this5.WM.Log.logInfo("Retrying ...");
-                return _this5.callAPIGet(params, call, callArgs, callError);
+                _this7.WM.Log.logInfo("Retrying ...");
+                return _this7.callAPIGet(params, call, callArgs, callError);
               } else if (callError) {
                 return callError(callArgs);
               }
@@ -2623,16 +2678,16 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "callAPIPost",
           value: function callAPIPost(params, call, callArgs, callError) {
-            var _this6 = this;
+            var _this8 = this;
 
             params.format = "json";
             return this.api.post(params).done(function (data, textStatus, jqXHR) {
               return call(data, callArgs);
             }).fail(function (jqXHR, textStatus, errorThrown) {
-              _this6.WM.Log.logError(_this6.failedQueryError(api));
+              _this8.WM.Log.logError(_this8.failedQueryError(api));
               if (confirm("Wiki Monkey error: Failed query\n\nDo you want " + "to retry?")) {
-                _this6.WM.Log.logInfo("Retrying ...");
-                return _this6.callAPIPost(params, call, callArgs, callError);
+                _this8.WM.Log.logInfo("Retrying ...");
+                return _this8.callAPIPost(params, call, callArgs, callError);
               } else if (callError) {
                 return callError(callArgs);
               }
@@ -2672,11 +2727,11 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "getUserInfo",
           value: function getUserInfo(call) {
-            var _this7 = this;
+            var _this9 = this;
 
             var pars, storeInfo;
             storeInfo = function storeInfo(res, call) {
-              _this7.userInfo = res;
+              _this9.userInfo = res;
               return call();
             };
             if (!this.userInfo) {
@@ -2693,31 +2748,31 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "isLoggedIn",
           value: function isLoggedIn(call, args) {
-            var _this8 = this;
+            var _this10 = this;
 
             return this.getUserInfo(function () {
               var test;
-              test = _this8.userInfo.query.userinfo.id !== 0;
+              test = _this10.userInfo.query.userinfo.id !== 0;
               return call(test, args);
             });
           }
         }, {
           key: "getUserName",
           value: function getUserName(call, args) {
-            var _this9 = this;
+            var _this11 = this;
 
             return this.getUserInfo(function () {
-              return call(_this9.userInfo.query.userinfo.name, args);
+              return call(_this11.userInfo.query.userinfo.name, args);
             });
           }
         }, {
           key: "isUserBot",
           value: function isUserBot(call, args) {
-            var _this10 = this;
+            var _this12 = this;
 
             return this.getUserInfo(function () {
               var groups, res;
-              groups = _this10.userInfo.query.userinfo.groups;
+              groups = _this12.userInfo.query.userinfo.groups;
               res = groups.indexOf("bot") > -1;
               return call(res, args);
             });
@@ -2740,13 +2795,13 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "_getBacklinksContinue",
           value: function _getBacklinksContinue(query, call, callArgs, backlinks) {
-            var _this11 = this;
+            var _this13 = this;
 
             return this.callAPIGet(query, function (res, args) {
               backlinks = backlinks.concat(res.query.backlinks);
               if (res["query-continue"]) {
                 query.blcontinue = res["query-continue"].backlinks.blcontinue;
-                return _this11._getBacklinksContinue(query, call, args, backlinks);
+                return _this13._getBacklinksContinue(query, call, args, backlinks);
               } else {
                 return call(backlinks, args);
               }
@@ -2774,7 +2829,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "_getLanglinksContinue",
           value: function _getLanglinksContinue(query, call, callArgs, langlinks, iwmap) {
-            var _this12 = this;
+            var _this14 = this;
 
             return this.callAPIGet(query, function (res, args) {
               var page;
@@ -2790,7 +2845,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
               }
               if (res["query-continue"]) {
                 query.llcontinue = res["query-continue"].langlinks.llcontinue;
-                return _this12._getLanglinksContinue(query, call, args, langlinks, iwmap);
+                return _this14._getLanglinksContinue(query, call, args, langlinks, iwmap);
               } else {
                 return call(langlinks, iwmap, args);
               }
@@ -2840,7 +2895,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "_getSpecialListContinue",
           value: function _getSpecialListContinue(query, call, callArgs, results, siteinfo) {
-            var _this13 = this;
+            var _this15 = this;
 
             return this.callAPIGet(query, function (res, args) {
               var key;
@@ -2856,7 +2911,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
               }
               if (res["query-continue"]) {
                 query.qpoffset = res["query-continue"].querypage.qpoffset;
-                return _this13._getSpecialListContinue(query, call, args, results, siteinfo);
+                return _this15._getSpecialListContinue(query, call, args, results, siteinfo);
               } else {
                 return call(results, siteinfo, args);
               }
@@ -2880,13 +2935,13 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "_getUserContribsContinue",
           value: function _getUserContribsContinue(query, call, callArgs, results) {
-            var _this14 = this;
+            var _this16 = this;
 
             return this.callAPIGet(query, function (res, args) {
               results = results.concat(res.query.usercontribs);
               if (res["query-continue"]) {
                 query.uccontinue = res["query-continue"].usercontribs.uccontinue;
-                return _this14._getUserContribsContinue(query, call, args, results);
+                return _this16._getUserContribsContinue(query, call, args, results);
               } else {
                 return call(results, args);
               }
@@ -3845,12 +3900,12 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
   }, { "../../lib.js.generic/dist/CSS": 437, "../../lib.js.generic/dist/RegEx": 441 }], 19: [function (require, module, exports) {
     var A, Br, Div, moment;
 
-    var _require2 = require('./libs');
+    var _require3 = require('./libs');
 
-    moment = _require2.moment;
-    A = _require2.A;
-    Br = _require2.Br;
-    Div = _require2.Div;
+    moment = _require3.moment;
+    A = _require3.A;
+    Br = _require3.Br;
+    Div = _require3.Div;
 
 
     module.exports = function () {
@@ -3867,7 +3922,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           key: "check_and_notify",
           value: function () {
             var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
-              var _this15 = this;
+              var _this17 = this;
 
               var upstream_version;
               return regeneratorRuntime.wrap(function _callee$(_context) {
@@ -3892,7 +3947,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
                       return _context.abrupt("return", this.display_notification(["Version " + upstream_version + " is available.", Br(), A('Run upgrade', {
                         onclick: function onclick() {
-                          return _this15.upgrade(upstream_version);
+                          return _this17.upgrade(upstream_version);
                         }
                       })]));
 
@@ -3947,7 +4002,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "upgrade",
           value: function upgrade(upstream_version) {
-            var _this16 = this;
+            var _this18 = this;
 
             var page, pagelink, regex;
             page = "User:" + mw.user.getName() + "/common.js";
@@ -3968,12 +4023,12 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
               };
             }).done(function (result) {
               console.log(result);
-              return _this16.display_notification("Upgrade successful: you need to refresh the open wiki page(s) in order to use the new version.");
+              return _this18.display_notification("Upgrade successful: you need to refresh the open wiki page(s) in order to use the new version.");
             }).fail(function (code, error) {
               console.error(code, error);
-              return _this16.display_notification(["Could not complete the upgrade to version " + upstream_version + ": ", A({
+              return _this18.display_notification(["Could not complete the upgrade to version " + upstream_version + ": ", A({
                 onclick: function onclick() {
-                  return _this16.upgrade(upstream_version);
+                  return _this18.upgrade(upstream_version);
                 }
               }, "retry"), " in case it was a temporary problem; it is also possible that Wiki Monkey is installed in a non-standard way in ", pagelink, " and the upgrade should be executed manually; finally, it is possible that the upgrade was already launched and completed from another page: in this case refresh the page to verify."], 'error');
             });
@@ -4062,7 +4117,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       var WM = function () {
         function WM(default_config) {
-          var _this17 = this;
+          var _this19 = this;
 
           for (var _len2 = arguments.length, installed_plugins = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
             installed_plugins[_key2 - 1] = arguments[_key2];
@@ -4074,7 +4129,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           this.version = VERSION;
           mw.loader.using(['mediawiki.api.edit', 'mediawiki.notification']).done(function () {
             return $(function () {
-              return _this17._onready(default_config, installed_plugins);
+              return _this19._onready(default_config, installed_plugins);
             });
           });
         }

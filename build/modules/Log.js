@@ -16,9 +16,9 @@
 
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
-var CSS, Str;
+var Str, jss;
 
-CSS = require('../../lib.js.generic/dist/CSS');
+({jss} = require('./libs'));
 
 Str = require('../../lib.js.generic/dist/Str');
 
@@ -27,15 +27,64 @@ module.exports.Log = (function() {
 
   class Log {
     constructor(WM) {
+      var classes, styles;
       this.WM = WM;
       this._currentInfoDisplayState = true;
+      // The .warning and .error classes are already used by
+      // MediaWiki, without associating them with an id and a tag
+      styles = {
+        log: {
+          height: '10em',
+          border: '2px solid #07b',
+          padding: '0.5em',
+          overflow: 'auto',
+          resize: 'vertical',
+          'background-color': '#111',
+          '& p.timestamp, & p.message': {
+            border: 'none',
+            padding: 0,
+            'font-family': 'monospace',
+            color: '#eee'
+          },
+          '& p.timestamp': {
+            margin: '0 1em 0 0',
+            'white-space': 'nowrap'
+          },
+          '& p.message': {
+            margin: 0
+          },
+          '& div.mdebug, & div.minfo, & div.mwarning, & div.merror': {
+            display: 'flex'
+          },
+          '& div.mhidden': {
+            display: 'none'
+          },
+          '& div.mjson': {
+            display: 'none'
+          },
+          '& div.mdebug p.message': {
+            color: 'cyan'
+          },
+          '& div.mwarning p.message': {
+            color: 'gold'
+          },
+          '& div.merror p.message': {
+            color: 'red'
+          },
+          '& a': {
+            color: 'inherit',
+            'text-decoration': 'underline'
+          }
+        }
+      };
+      ({classes} = jss.createStyleSheet(styles, {
+        classNamePrefix: "WikiMonkey-"
+      }).attach());
+      this.classes = classes;
     }
 
     _makeLogArea() {
-      var log, logarea, par;
-      // The .warning and .error classes are already used by
-      // MediaWiki, without associating them with an id and a tag
-      CSS.addStyleElement("#WikiMonkeyLogArea {height:10em; border:2px solid #07b; padding:0.5em; overflow:auto; resize:vertical; background-color:#111;} #WikiMonkeyLogArea p.timestamp, #WikiMonkeyLog p.message {border:none; padding:0; font-family:monospace; color:#eee;} #WikiMonkeyLogArea p.timestamp {margin:0 1em 0 0; white-space:nowrap;} #WikiMonkeyLogArea p.message {margin:0;} #WikiMonkeyLogArea div.mdebug, #WikiMonkeyLogArea div.minfo, #WikiMonkeyLogArea div.mwarning, #WikiMonkeyLogArea div.merror {display:flex;} #WikiMonkeyLogArea div.mhidden {display:none;} #WikiMonkeyLogArea div.mjson {display:none;} #WikiMonkeyLogArea div.mdebug p.message {color:cyan;} #WikiMonkeyLogArea div.mwarning p.message {color:gold;} #WikiMonkeyLogArea div.merror p.message {color:red;} #WikiMonkeyLogArea a {color:inherit; text-decoration:underline;}");
+      var log, par;
       log = document.createElement('div');
       log.id = 'WikiMonkeyLog';
       par = document.createElement('p');
@@ -43,29 +92,28 @@ module.exports.Log = (function() {
       par.appendChild(document.createTextNode(' '));
       par.appendChild(this.makeSaveLink());
       log.appendChild(par);
-      logarea = document.createElement('div');
-      logarea.id = 'WikiMonkeyLogArea';
-      log.appendChild(logarea);
+      this.logarea = document.createElement('div');
+      this.logarea.className = this.classes.log;
+      log.appendChild(this.logarea);
       return log;
     }
 
     makeFilterLink() {
-      var link, self;
-      self = this;
+      var link;
       link = document.createElement('a');
       link.href = '#WikiMonkey';
       link.innerHTML = this.computeFilterLinkAnchor();
-      link.addEventListener("click", function(event) {
+      link.addEventListener("click", (event) => {
         var i, len, msg, msgs;
         event.preventDefault();
         // Change _currentInfoDisplayState *before* the loop, to prevent
         // race bugs
-        self._currentInfoDisplayState = !self._currentInfoDisplayState;
-        this.innerHTML = self.computeFilterLinkAnchor();
-        msgs = document.getElementById('WikiMonkeyLogArea').getElementsByClassName('minfo');
+        this._currentInfoDisplayState = !this._currentInfoDisplayState;
+        link.innerHTML = this.computeFilterLinkAnchor();
+        msgs = this.logarea.getElementsByClassName('minfo');
         for (i = 0, len = msgs.length; i < len; i++) {
           msg = msgs[i];
-          msg.style.display = self.computeInfoDisplayStyle();
+          msg.style.display = this.computeInfoDisplayStyle();
         }
         return this.scrollToBottom();
       }, false);
@@ -73,24 +121,22 @@ module.exports.Log = (function() {
     }
 
     makeSaveLink() {
-      var link, self;
-      self = this;
+      var link;
       link = document.createElement('a');
       link.href = '#';
       link.download = 'WikiMonkey.log';
       link.innerHTML = '[save log]';
       link.id = 'WikiMonkeyLog-Save';
-      link.addEventListener("click", function() {
-        link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(self.composeSaveLogText());
-        return link.download = self.composeSaveLogFilename();
+      link.addEventListener("click", () => {
+        link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(this.composeSaveLogText());
+        return link.download = this.composeSaveLogFilename();
       }, false);
       return link;
     }
 
     composeSaveLogText() {
-      var div, divs, i, len, level, log, message, ps, text, tstamp;
-      log = document.getElementById('WikiMonkeyLogArea');
-      divs = log.getElementsByTagName('div');
+      var div, divs, i, len, level, message, ps, text, tstamp;
+      divs = this.logarea.getElementsByTagName('div');
       text = '';
       for (i = 0, len = divs.length; i < len; i++) {
         div = divs[i];
@@ -126,13 +172,11 @@ module.exports.Log = (function() {
     }
 
     scrollToBottom() {
-      var log;
-      log = document.getElementById('WikiMonkeyLogArea');
-      return log.scrollTop = log.scrollHeight - log.clientHeight;
+      return this.logarea.scrollTop = this.logarea.scrollHeight - this.logarea.clientHeight;
     }
 
     appendMessage(text, type) {
-      var line, log, msg, now, test, tstamp;
+      var line, msg, now, test, tstamp;
       tstamp = document.createElement('p');
       tstamp.className = 'timestamp';
       now = new Date();
@@ -149,9 +193,9 @@ module.exports.Log = (function() {
       if (type === 'minfo') {
         line.style.display = this.computeInfoDisplayStyle();
       }
-      log = document.getElementById('WikiMonkeyLogArea');
-      test = log.scrollTop + log.clientHeight === log.scrollHeight;
-      log.appendChild(line);
+      // This test must be done *before* appending the new line
+      test = this.logarea.scrollTop + this.logarea.clientHeight === this.logarea.scrollHeight;
+      this.logarea.appendChild(line);
       if (test) {
         return this.scrollToBottom();
       }

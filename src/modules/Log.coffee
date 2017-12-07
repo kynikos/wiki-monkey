@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-CSS = require('../../lib.js.generic/dist/CSS')
+{jss} = require('./libs')
 Str = require('../../lib.js.generic/dist/Str')
 
 
@@ -24,31 +24,57 @@ class module.exports.Log
     constructor: (@WM) ->
         @_currentInfoDisplayState = true
 
-    _makeLogArea: ->
         # The .warning and .error classes are already used by
         # MediaWiki, without associating them with an id and a tag
-        CSS.addStyleElement("#WikiMonkeyLogArea {height:10em;
-                        border:2px solid #07b; padding:0.5em;
-                        overflow:auto; resize:vertical;
-                        background-color:#111;}
-                    #WikiMonkeyLogArea p.timestamp,
-                        #WikiMonkeyLog p.message {border:none; padding:0;
-                        font-family:monospace; color:#eee;}
-                    #WikiMonkeyLogArea p.timestamp {margin:0 1em 0 0;
-                                                white-space:nowrap;}
-                    #WikiMonkeyLogArea p.message {margin:0;}
-                    #WikiMonkeyLogArea div.mdebug,
-                    #WikiMonkeyLogArea div.minfo,
-                    #WikiMonkeyLogArea div.mwarning,
-                    #WikiMonkeyLogArea div.merror {display:flex;}
-                    #WikiMonkeyLogArea div.mhidden {display:none;}
-                    #WikiMonkeyLogArea div.mjson {display:none;}
-                    #WikiMonkeyLogArea div.mdebug p.message {color:cyan;}
-                    #WikiMonkeyLogArea div.mwarning p.message {color:gold;}
-                    #WikiMonkeyLogArea div.merror p.message {color:red;}
-                    #WikiMonkeyLogArea a {color:inherit;
-                                                text-decoration:underline;}");
+        styles =
+            log:
+                height: '10em'
+                border: '2px solid #07b'
+                padding: '0.5em'
+                overflow: 'auto'
+                resize: 'vertical'
+                'background-color': '#111'
 
+                '& p.timestamp, & p.message':
+                    border: 'none'
+                    padding: 0
+                    'font-family': 'monospace'
+                    color: '#eee'
+
+                '& p.timestamp':
+                    margin: '0 1em 0 0'
+                    'white-space': 'nowrap'
+
+                '& p.message':
+                    margin: 0
+
+                '& div.mdebug, & div.minfo, & div.mwarning, & div.merror':
+                    display: 'flex'
+
+                '& div.mhidden':
+                    display: 'none'
+
+                '& div.mjson':
+                    display: 'none'
+
+                '& div.mdebug p.message':
+                    color: 'cyan'
+
+                '& div.mwarning p.message':
+                    color: 'gold'
+
+                '& div.merror p.message':
+                     color: 'red'
+
+                '& a':
+                    color: 'inherit'
+                    'text-decoration': 'underline'
+
+        {classes} = jss.createStyleSheet(
+            styles, {classNamePrefix: "WikiMonkey-"}).attach()
+        @classes = classes
+
+    _makeLogArea: ->
         log = document.createElement('div')
         log.id = 'WikiMonkeyLog'
 
@@ -58,30 +84,28 @@ class module.exports.Log
         par.appendChild(@makeSaveLink())
         log.appendChild(par)
 
-        logarea = document.createElement('div')
-        logarea.id = 'WikiMonkeyLogArea'
-        log.appendChild(logarea)
+        @logarea = document.createElement('div')
+        @logarea.className = @classes.log
+        log.appendChild(@logarea)
 
         return log
 
     makeFilterLink: ->
-        self = this
         link = document.createElement('a')
         link.href = '#WikiMonkey'
         link.innerHTML = @computeFilterLinkAnchor()
 
-        link.addEventListener("click", (event) ->
+        link.addEventListener("click", (event) =>
             event.preventDefault()
             # Change _currentInfoDisplayState *before* the loop, to prevent
             # race bugs
-            self._currentInfoDisplayState = not self._currentInfoDisplayState
-            this.innerHTML = self.computeFilterLinkAnchor()
+            @_currentInfoDisplayState = not @_currentInfoDisplayState
+            link.innerHTML = @computeFilterLinkAnchor()
 
-            msgs = document.getElementById('WikiMonkeyLogArea')
-                                            .getElementsByClassName('minfo')
+            msgs = @logarea.getElementsByClassName('minfo')
 
             for msg in msgs
-                msg.style.display = self.computeInfoDisplayStyle()
+                msg.style.display = @computeInfoDisplayStyle()
 
             @scrollToBottom()
         , false)
@@ -89,17 +113,16 @@ class module.exports.Log
         return link
 
     makeSaveLink: ->
-        self = this
         link = document.createElement('a')
         link.href = '#'
         link.download = 'WikiMonkey.log'
         link.innerHTML = '[save log]'
         link.id = 'WikiMonkeyLog-Save'
 
-        link.addEventListener("click", ->
+        link.addEventListener("click", =>
             link.href = 'data:text/plain;charset=utf-8,' +
-                                    encodeURIComponent(self.composeSaveLogText())
-            link.download = self.composeSaveLogFilename()
+                                    encodeURIComponent(@composeSaveLogText())
+            link.download = @composeSaveLogFilename()
         , false)
 
         return link
@@ -113,8 +136,7 @@ class module.exports.Log
         'merror': 'ERR'
 
     composeSaveLogText: ->
-        log = document.getElementById('WikiMonkeyLogArea')
-        divs = log.getElementsByTagName('div')
+        divs = @logarea.getElementsByTagName('div')
         text = ''
 
         for div in divs
@@ -144,8 +166,7 @@ class module.exports.Log
                                                         '[show info messages]'
 
     scrollToBottom: ->
-        log = document.getElementById('WikiMonkeyLogArea')
-        log.scrollTop = log.scrollHeight - log.clientHeight
+        @logarea.scrollTop = @logarea.scrollHeight - @logarea.clientHeight
 
     appendMessage: (text, type) ->
         tstamp = document.createElement('p')
@@ -167,11 +188,11 @@ class module.exports.Log
         if type == 'minfo'
             line.style.display = @computeInfoDisplayStyle()
 
-        log = document.getElementById('WikiMonkeyLogArea')
+        # This test must be done *before* appending the new line
+        test = @logarea.scrollTop + @logarea.clientHeight == \
+                                                        @logarea.scrollHeight
 
-        test = log.scrollTop + log.clientHeight == log.scrollHeight
-
-        log.appendChild(line)
+        @logarea.appendChild(line)
 
         if test
             @scrollToBottom()
