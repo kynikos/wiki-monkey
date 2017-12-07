@@ -18,6 +18,7 @@
 
 HTTP = require('../../lib.js.generic/dist/HTTP')
 Obj = require('../../lib.js.generic/dist/Obj')
+{A} = require('./libs')
 
 
 class module.exports.MW
@@ -108,6 +109,9 @@ class module.exports.MW
             return @_getWikiPaths(href)[1]
         else
             return localWikiPaths
+
+    linkArticle: (page, label) ->
+        return A({href: mw.util.getUrl(page)}, label or page)
 
     getWikiUrls: (href) ->
         if href

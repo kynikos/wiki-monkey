@@ -2475,11 +2475,16 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       return Log;
     }();
   }, { "../../lib.js.generic/dist/CSS": 436, "../../lib.js.generic/dist/Str": 441 }], 13: [function (require, module, exports) {
-    var HTTP, Obj;
+    var A, HTTP, Obj;
 
     HTTP = require('../../lib.js.generic/dist/HTTP');
 
     Obj = require('../../lib.js.generic/dist/Obj');
+
+    var _require = require('./libs');
+
+    A = _require.A;
+
 
     module.exports.MW = function () {
       var interwikiFixes, localWikiPaths, localWikiUrls, wikiPaths;
@@ -2535,6 +2540,13 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
             } else {
               return localWikiPaths;
             }
+          }
+        }, {
+          key: "linkArticle",
+          value: function linkArticle(page, label) {
+            return A({
+              href: mw.util.getUrl(page)
+            }, label || page);
           }
         }, {
           key: "getWikiUrls",
@@ -2938,7 +2950,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return MW;
     }();
-  }, { "../../lib.js.generic/dist/HTTP": 438, "../../lib.js.generic/dist/Obj": 439 }], 14: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/HTTP": 438, "../../lib.js.generic/dist/Obj": 439, "./libs": 21 }], 14: [function (require, module, exports) {
     var Async, CSS;
 
     CSS = require('../../lib.js.generic/dist/CSS');

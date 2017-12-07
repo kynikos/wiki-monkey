@@ -16,11 +16,13 @@
 
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
-var HTTP, Obj;
+var A, HTTP, Obj;
 
 HTTP = require('../../lib.js.generic/dist/HTTP');
 
 Obj = require('../../lib.js.generic/dist/Obj');
+
+({A} = require('./libs'));
 
 module.exports.MW = (function() {
   var interwikiFixes, localWikiPaths, localWikiUrls, wikiPaths;
@@ -72,6 +74,12 @@ module.exports.MW = (function() {
       } else {
         return localWikiPaths;
       }
+    }
+
+    linkArticle(page, label) {
+      return A({
+        href: mw.util.getUrl(page)
+      }, label || page);
     }
 
     getWikiUrls(href) {
