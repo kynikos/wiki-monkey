@@ -21,6 +21,8 @@ var RegEx;
 RegEx = require('../../lib.js.generic/dist/RegEx');
 
 module.exports.ArchWikiOldAURLinks = class ArchWikiOldAURLinks {
+  // TODO: Plugin disabled because the ArchPackages module is currently
+  //       unusable
   constructor(WM) {
     this.doReplace = this.doReplace.bind(this);
     this.doReplaceContinue = this.doReplaceContinue.bind(this);

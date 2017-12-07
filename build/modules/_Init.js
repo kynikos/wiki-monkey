@@ -18,12 +18,12 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 // Initialize the libraries immediately (especially babel-polyfill)
-var ArchPackages_, ArchWiki_, Bot_, Cat_, Cfg_, Diff_, Editor_, Filters_, Interlanguage_, Log_, MW_, Menu_, Mods_, Parser_, Tables_, UI_, Upgrade, WhatLinksHere_;
+var ArchWiki_, Bot_, Cat_, Cfg_, Diff_, Editor_, Filters_, Interlanguage_, Log_, MW_, Menu_, Mods_, Parser_, Tables_, UI_, Upgrade, WhatLinksHere_;
 
 require('./libs');
 
-ArchPackages_ = require('./ArchPackages').ArchPackages;
-
+// The ArchPackages module is currently unusable
+// ArchPackages_ = require('./ArchPackages').ArchPackages
 ArchWiki_ = require('./ArchWiki').ArchWiki;
 
 Bot_ = require('./Bot').Bot;
@@ -74,7 +74,8 @@ module.exports.WM = (function() {
 
     _onready(default_config, installed_plugins) {
       var Plugin, i, len, pname;
-      this.ArchPackages = new ArchPackages_(this);
+      // The ArchPackages module is currently unusable
+      // @ArchPackages = new ArchPackages_(this)
       this.ArchWiki = new ArchWiki_(this);
       this.Bot = new Bot_(this);
       this.Cat = new Cat_(this);

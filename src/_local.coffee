@@ -17,8 +17,9 @@ new WM(
         require("./plugins/ArchWikiNewTemplates").ArchWikiNewTemplates],
     ['ArchWikiNPFilter',
         require("./plugins/ArchWikiNPFilter").ArchWikiNPFilter],
-    ['ArchWikiOldAURLinks',
-        require("./plugins/ArchWikiOldAURLinks").ArchWikiOldAURLinks],
+    # The ArchPackages module is currently unusable
+    # ['ArchWikiOldAURLinks',
+    #     require("./plugins/ArchWikiOldAURLinks").ArchWikiOldAURLinks],
     ['ArchWikiQuickReport',
         require("./plugins/ArchWikiQuickReport").ArchWikiQuickReport],
     ['ArchWikiSaveTalk',
@@ -29,8 +30,9 @@ new WM(
         require("./plugins/ArchWikiSummaryToRelated").ArchWikiSummaryToRelated],
     ['ArchWikiRCFilter',
         require("./plugins/ArchWikiRCFilter").ArchWikiRCFilter],
-    ['ArchWikiUpdatePackageTemplates',
-        require("./plugins/ArchWikiUpdatePackageTemplates").ArchWikiUpdatePackageTemplates],
+    # The ArchPackages module is currently unusable
+    # ['ArchWikiUpdatePackageTemplates',
+    #     require("./plugins/ArchWikiUpdatePackageTemplates").ArchWikiUpdatePackageTemplates],
     ['ArchWikiWantedCategories',
         require("./plugins/ArchWikiWantedCategories").ArchWikiWantedCategories],
     ['DeletePages',

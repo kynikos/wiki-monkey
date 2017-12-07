@@ -30,6 +30,10 @@ module.exports.ArchPackages = (function() {
   var isPackageGroup;
 
   class ArchPackages {
+    // TODO: Module disabled because it's no longer possible to get around the
+    //       same-origin policy
+    //       Perhaps ask the Arch devs if it's possible to enable CORS requests
+    //       on the archlinux.org websites
     constructor(WM) {
       this.WM = WM;
       null;

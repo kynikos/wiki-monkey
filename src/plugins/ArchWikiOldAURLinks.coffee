@@ -20,6 +20,9 @@ RegEx = require('../../lib.js.generic/dist/RegEx')
 
 
 class module.exports.ArchWikiOldAURLinks
+    # TODO: Plugin disabled because the ArchPackages module is currently
+    #       unusable
+
     constructor: (@WM) ->
 
     doReplace: (source, call, callArgs) =>

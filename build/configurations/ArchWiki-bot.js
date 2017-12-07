@@ -41,20 +41,6 @@ module.exports = {
                     "ArchWiki",
                     "synchronized interlanguage links with the other wikis"
                 ]
-            ],
-            "040APT": [
-                "ArchWikiUpdatePackageTemplates",
-                [
-                    "Check packages linked with Pkg/AUR templates and possibly update them"
-                ],
-                "update Pkg/AUR templates to reflect new package status"
-            ],
-            "050AAL": [
-                "ArchWikiOldAURLinks",
-                [
-                    "Replace old-style direct AUR package links with Template:AUR"
-                ],
-                "replace old-style direct package links with Pkg/AUR templates"
             ]
         },
         "Diff": {
@@ -161,22 +147,6 @@ module.exports = {
                     "ArchWiki",
                     null
                 ]
-            ],
-            "230AAL": [
-                "ArchWikiOldAURLinks",
-                [
-                    "Query plugins",
-                    "Fix old AUR links"
-                ],
-                null
-            ],
-            "240APT": [
-                "ArchWikiUpdatePackageTemplates",
-                [
-                    "Query plugins",
-                    "Update package templates"
-                ],
-                null
             ]
         },
         "NewPages": {

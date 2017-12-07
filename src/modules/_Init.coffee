@@ -19,7 +19,8 @@
 # Initialize the libraries immediately (especially babel-polyfill)
 require('./libs')
 
-ArchPackages_ = require('./ArchPackages').ArchPackages
+# The ArchPackages module is currently unusable
+# ArchPackages_ = require('./ArchPackages').ArchPackages
 ArchWiki_ = require('./ArchWiki').ArchWiki
 Bot_ = require('./Bot').Bot
 Cat_ = require('./Cat').Cat
@@ -51,7 +52,8 @@ class module.exports.WM
         )
 
     _onready: (default_config, installed_plugins) =>
-        @ArchPackages = new ArchPackages_(this)
+        # The ArchPackages module is currently unusable
+        # @ArchPackages = new ArchPackages_(this)
         @ArchWiki = new ArchWiki_(this)
         @Bot = new Bot_(this)
         @Cat = new Cat_(this)

@@ -18,6 +18,9 @@
 
 
 class module.exports.ArchWikiUpdatePackageTemplates
+    # TODO: Plugin disabled because the ArchPackages module is currently
+    #       unusable
+
     constructor: (@WM) ->
 
     doUpdate: (source, call, callArgs) =>

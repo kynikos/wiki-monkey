@@ -68,6 +68,19 @@ LOCAL = {
             ("Delete pages", ),
             "delete page"
         ),
+        # The ArchPackages module is currently unusable
+        # "040APT": (
+        #     "ArchWikiUpdatePackageTemplates",
+        #     ("Check packages linked with Pkg/AUR templates and "
+        #      "possibly update them", ),
+        #     "update Pkg/AUR templates to reflect new package status"
+        # ),
+        # "050AAL": (
+        #     "ArchWikiOldAURLinks",
+        #     ("Replace old-style direct AUR package links with "
+        #      "Template:AUR", ),
+        #     "replace old-style direct package links with Pkg/AUR templates"
+        # ),
     },
     "Diff": {
         "020AST": (
@@ -78,6 +91,19 @@ LOCAL = {
                 "add discussion"
             )
         ),
+    },
+    "Editor": {
+        # The ArchPackages module is currently unusable
+        # "240APT": (
+        #     "ArchWikiUpdatePackageTemplates",
+        #     ("Query plugins", "Update package templates"),
+        #     None,
+        # ),
+        # "230AAL": (
+        #     "ArchWikiOldAURLinks",
+        #     ("Query plugins", "Fix old AUR links"),
+        #     None,
+        # ),
     },
     "Special": {
         "030ASC": (
@@ -119,18 +145,6 @@ ARCHWIKI = {
                 "synchronized interlanguage links with the other wikis"
             )
         ),
-        "040APT": (
-            "ArchWikiUpdatePackageTemplates",
-            ("Check packages linked with Pkg/AUR templates and "
-             "possibly update them", ),
-            "update Pkg/AUR templates to reflect new package status"
-        ),
-        "050AAL": (
-            "ArchWikiOldAURLinks",
-            ("Replace old-style direct AUR package links with "
-             "Template:AUR", ),
-            "replace old-style direct package links with Pkg/AUR templates"
-        ),
     },
     "Editor": {
         "010AHE": (
@@ -167,16 +181,6 @@ ARCHWIKI = {
                 "ArchWiki",
                 None,
             )
-        ),
-        "230AAL": (
-            "ArchWikiOldAURLinks",
-            ("Query plugins", "Fix old AUR links"),
-            None,
-        ),
-        "240APT": (
-            "ArchWikiUpdatePackageTemplates",
-            ("Query plugins", "Update package templates"),
-            None,
         ),
     },
     "Diff": {
@@ -566,8 +570,7 @@ DISABLE_EDITOR = {
 }
 
 DISABLE_AW_EDITOR = {
-    "Editor": ("010AHE", "020ASE", "030AEL", "050ACT", "080ASR", "220AIL",
-               "230AAL", "240APT"),
+    "Editor": ("010AHE", "020ASE", "030AEL", "050ACT", "080ASR", "220AIL"),
 }
 
 DISABLE_AW_PATROL = {
@@ -588,7 +591,7 @@ DISABLE_AW_BOT = {
                 "010CTnl", "010CTpl", "010CTpt", "010CTru", "010CTsk",
                 "010CTsr", "010CTth", "010CTtr", "010CTuk",
                 "010CTzhhans", "010CTzhhant", "040ASCC"),
-    "Bot": ("030IL", "040APT", "050AAL"),
+    "Bot": ("030IL", ),
 }
 
 DISABLE_W_BOT = {

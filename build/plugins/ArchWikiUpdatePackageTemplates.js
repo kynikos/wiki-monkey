@@ -17,6 +17,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 module.exports.ArchWikiUpdatePackageTemplates = class ArchWikiUpdatePackageTemplates {
+  // TODO: Plugin disabled because the ArchPackages module is currently
+  //       unusable
   constructor(WM) {
     this.doUpdate = this.doUpdate.bind(this);
     this.doUpdateContinue = this.doUpdateContinue.bind(this);
