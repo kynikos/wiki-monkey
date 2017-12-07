@@ -36,6 +36,7 @@ SRCDIR = "./src/"
 BUILDDIR = "./build/"
 DISTDIR = './dist/'
 AUXDIR = './auxiliary/'
+VERSIONFILE = './VERSION'
 INITFILE = os.path.join(SRCDIR, 'modules/_Init.coffee')
 DISTFILE = "{distdir}WikiMonkey-{wiki}{suffix}.js"
 
@@ -69,6 +70,9 @@ def compile_(version):
 
         with open(INITFILE, 'w') as df:
             df.write(initfile)
+
+        with open(VERSIONFILE, 'w') as df:
+            df.write(version)
 
     # It's important to recompile the configuration *before* the scripts
     configurations.compile()

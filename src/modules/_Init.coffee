@@ -35,6 +35,7 @@ MW_ = require('./MW').MW
 Parser_ = require('./Parser').Parser
 Tables_ = require('./Tables').Tables
 UI_ = require('./UI').UI
+Upgrade = require('./Upgrade')
 WhatLinksHere_ = require('./WhatLinksHere').WhatLinksHere
 
 
@@ -44,7 +45,8 @@ class module.exports.WM
 
     constructor: (default_config, installed_plugins...) ->
         @version = VERSION
-        mw.loader.using('mediawiki.api').done( =>
+        mw.loader.using(['mediawiki.api.edit',
+                         'mediawiki.notification']).done( =>
             $( => @_onready(default_config, installed_plugins))
         )
 
@@ -65,6 +67,7 @@ class module.exports.WM
         @Parser = new Parser_(this)
         @Tables = new Tables_(this)
         @UI = new UI_(this)
+        @Upgrade = new Upgrade(this)
         @WhatLinksHere = new WhatLinksHere_(this)
 
         @Plugins = {}
@@ -72,5 +75,6 @@ class module.exports.WM
         for [pname, Plugin] in installed_plugins
             @Plugins[pname] = new Plugin(this)
 
+        @Upgrade.check_and_notify()
         @Cfg._load(default_config)
         @UI._makeUI()

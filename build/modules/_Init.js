@@ -18,7 +18,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 // Initialize the libraries immediately (especially babel-polyfill)
-var ArchPackages_, ArchWiki_, Bot_, Cat_, Cfg_, Diff_, Editor_, Filters_, Interlanguage_, Log_, MW_, Menu_, Mods_, Parser_, Tables_, UI_, WhatLinksHere_;
+var ArchPackages_, ArchWiki_, Bot_, Cat_, Cfg_, Diff_, Editor_, Filters_, Interlanguage_, Log_, MW_, Menu_, Mods_, Parser_, Tables_, UI_, Upgrade, WhatLinksHere_;
 
 require('./libs');
 
@@ -54,6 +54,8 @@ Tables_ = require('./Tables').Tables;
 
 UI_ = require('./UI').UI;
 
+Upgrade = require('./Upgrade');
+
 WhatLinksHere_ = require('./WhatLinksHere').WhatLinksHere;
 
 module.exports.WM = (function() {
@@ -63,7 +65,7 @@ module.exports.WM = (function() {
     constructor(default_config, ...installed_plugins) {
       this._onready = this._onready.bind(this);
       this.version = VERSION;
-      mw.loader.using('mediawiki.api').done(() => {
+      mw.loader.using(['mediawiki.api.edit', 'mediawiki.notification']).done(() => {
         return $(() => {
           return this._onready(default_config, installed_plugins);
         });
@@ -88,12 +90,14 @@ module.exports.WM = (function() {
       this.Parser = new Parser_(this);
       this.Tables = new Tables_(this);
       this.UI = new UI_(this);
+      this.Upgrade = new Upgrade(this);
       this.WhatLinksHere = new WhatLinksHere_(this);
       this.Plugins = {};
       for (i = 0, len = installed_plugins.length; i < len; i++) {
         [pname, Plugin] = installed_plugins[i];
         this.Plugins[pname] = new Plugin(this);
       }
+      this.Upgrade.check_and_notify();
       this.Cfg._load(default_config);
       return this.UI._makeUI();
     }
