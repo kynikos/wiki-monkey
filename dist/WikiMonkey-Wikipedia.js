@@ -3923,7 +3923,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     WhatLinksHere = require('./WhatLinksHere');
 
     module.exports = function () {
-      var VERSION;
+      var MW_MODULES, VERSION;
 
       var exports = function () {
         function exports(default_config, installed_plugins) {
@@ -3933,7 +3933,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
           this._onready = this._onready.bind(this);
           this.version = VERSION;
-          mw.loader.using(['mediawiki.api.edit', 'mediawiki.notification']).done(function () {
+          mw.loader.using(MW_MODULES).done(function () {
             return $(function () {
               return _this17._onready(default_config, installed_plugins);
             });
@@ -3979,6 +3979,8 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       ;
 
       VERSION = '4.0.0';
+
+      MW_MODULES = ['mediawiki.api.edit', 'mediawiki.notification'];
 
       return exports;
     }();

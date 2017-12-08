@@ -59,13 +59,13 @@ Upgrade = require('./Upgrade');
 WhatLinksHere = require('./WhatLinksHere');
 
 module.exports = (function() {
-  var VERSION;
+  var MW_MODULES, VERSION;
 
   class exports {
     constructor(default_config, installed_plugins) {
       this._onready = this._onready.bind(this);
       this.version = VERSION;
-      mw.loader.using(['mediawiki.api.edit', 'mediawiki.notification']).done(() => {
+      mw.loader.using(MW_MODULES).done(() => {
         return $(() => {
           return this._onready(default_config, installed_plugins);
         });
@@ -107,6 +107,8 @@ module.exports = (function() {
 
   // The build script updates the version number
   VERSION = '4.0.0';
+
+  MW_MODULES = ['mediawiki.api.edit', 'mediawiki.notification'];
 
   return exports;
 

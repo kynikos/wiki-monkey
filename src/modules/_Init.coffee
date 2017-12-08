@@ -43,11 +43,12 @@ WhatLinksHere = require('./WhatLinksHere')
 class module.exports
     # The build script updates the version number
     VERSION = '4.0.0'
+    MW_MODULES = ['mediawiki.api.edit',
+                  'mediawiki.notification']
 
     constructor: (default_config, installed_plugins) ->
         @version = VERSION
-        mw.loader.using(['mediawiki.api.edit',
-                         'mediawiki.notification']).done( =>
+        mw.loader.using(MW_MODULES).done( =>
             $( => @_onready(default_config, installed_plugins))
         )
 
