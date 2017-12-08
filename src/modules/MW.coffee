@@ -159,7 +159,9 @@ class module.exports
         return title
 
     failedQueryError: (url) ->
-        return "Failed query: #{@WM.Log.linkToPage(url, url)}"
+        if url
+            return "Failed query: #{@WM.Log.linkToPage(url, url)}"
+        return "Failed query"
 
     callAPIGet: (params, call, callArgs, callError) ->
         params.format = "json"
@@ -167,7 +169,8 @@ class module.exports
         @api.get(params).done((data, textStatus, jqXHR) =>
             call(data, callArgs)
         ).fail((jqXHR, textStatus, errorThrown) =>
-            @WM.Log.logError(@failedQueryError(api))
+            console.error(jqXHR, textStatus, errorThrown)
+            @WM.Log.logError(@failedQueryError())
             if confirm("Wiki Monkey error: Failed query\n\nDo you want " +
                                                             "to retry?")
                 @WM.Log.logInfo("Retrying ...")
@@ -182,7 +185,8 @@ class module.exports
         @api.post(params).done((data, textStatus, jqXHR) =>
             call(data, callArgs)
         ).fail((jqXHR, textStatus, errorThrown) =>
-            @WM.Log.logError(@failedQueryError(api))
+            console.error(jqXHR, textStatus, errorThrown)
+            @WM.Log.logError(@failedQueryError())
             if confirm("Wiki Monkey error: Failed query\n\nDo you want " +
                                                             "to retry?")
                 @WM.Log.logInfo("Retrying ...")

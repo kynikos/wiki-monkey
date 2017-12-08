@@ -2468,7 +2468,10 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "failedQueryError",
           value: function failedQueryError(url) {
-            return "Failed query: " + this.WM.Log.linkToPage(url, url);
+            if (url) {
+              return "Failed query: " + this.WM.Log.linkToPage(url, url);
+            }
+            return "Failed query";
           }
         }, {
           key: "callAPIGet",
@@ -2479,7 +2482,8 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
             return this.api.get(params).done(function (data, textStatus, jqXHR) {
               return call(data, callArgs);
             }).fail(function (jqXHR, textStatus, errorThrown) {
-              _this5.WM.Log.logError(_this5.failedQueryError(api));
+              console.error(jqXHR, textStatus, errorThrown);
+              _this5.WM.Log.logError(_this5.failedQueryError());
               if (confirm("Wiki Monkey error: Failed query\n\nDo you want " + "to retry?")) {
                 _this5.WM.Log.logInfo("Retrying ...");
                 return _this5.callAPIGet(params, call, callArgs, callError);
@@ -2497,7 +2501,8 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
             return this.api.post(params).done(function (data, textStatus, jqXHR) {
               return call(data, callArgs);
             }).fail(function (jqXHR, textStatus, errorThrown) {
-              _this6.WM.Log.logError(_this6.failedQueryError(api));
+              console.error(jqXHR, textStatus, errorThrown);
+              _this6.WM.Log.logError(_this6.failedQueryError());
               if (confirm("Wiki Monkey error: Failed query\n\nDo you want " + "to retry?")) {
                 _this6.WM.Log.logInfo("Retrying ...");
                 return _this6.callAPIPost(params, call, callArgs, callError);

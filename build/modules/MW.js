@@ -129,7 +129,10 @@ module.exports = (function() {
     }
 
     failedQueryError(url) {
-      return `Failed query: ${this.WM.Log.linkToPage(url, url)}`;
+      if (url) {
+        return `Failed query: ${this.WM.Log.linkToPage(url, url)}`;
+      }
+      return "Failed query";
     }
 
     callAPIGet(params, call, callArgs, callError) {
@@ -137,7 +140,8 @@ module.exports = (function() {
       return this.api.get(params).done((data, textStatus, jqXHR) => {
         return call(data, callArgs);
       }).fail((jqXHR, textStatus, errorThrown) => {
-        this.WM.Log.logError(this.failedQueryError(api));
+        console.error(jqXHR, textStatus, errorThrown);
+        this.WM.Log.logError(this.failedQueryError());
         if (confirm("Wiki Monkey error: Failed query\n\nDo you want " + "to retry?")) {
           this.WM.Log.logInfo("Retrying ...");
           return this.callAPIGet(params, call, callArgs, callError);
@@ -152,7 +156,8 @@ module.exports = (function() {
       return this.api.post(params).done((data, textStatus, jqXHR) => {
         return call(data, callArgs);
       }).fail((jqXHR, textStatus, errorThrown) => {
-        this.WM.Log.logError(this.failedQueryError(api));
+        console.error(jqXHR, textStatus, errorThrown);
+        this.WM.Log.logError(this.failedQueryError());
         if (confirm("Wiki Monkey error: Failed query\n\nDo you want " + "to retry?")) {
           this.WM.Log.logInfo("Retrying ...");
           return this.callAPIPost(params, call, callArgs, callError);
