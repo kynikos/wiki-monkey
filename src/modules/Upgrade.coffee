@@ -20,13 +20,14 @@
 
 
 class module.exports
+    VERSION_URL = 'https://raw.githubusercontent.com/kynikos/wiki-monkey/master/VERSION'
     CHECK_INTERVAL = 7
 
     constructor: (@WM) ->
 
     check_and_notify: ->
         if @should_check()
-            upstream_version = await @get_upstream_version()
+            upstream_version = await $.get(VERSION_URL)
             # Well, ok, this is assuming that if the versions are
             # different, upstream has the latest
             if @WM.version != upstream_version
@@ -49,9 +50,6 @@ class module.exports
         if diff >= CHECK_INTERVAL
             return true
         return false
-
-    get_upstream_version: ->
-        return $.get('https://raw.githubusercontent.com/kynikos/wiki-monkey/master/VERSION')
 
     display_notification: (content, type = 'info') ->
         mw.notification.notify(content, {

@@ -3776,7 +3776,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
 
     module.exports = function () {
-      var CHECK_INTERVAL;
+      var CHECK_INTERVAL, VERSION_URL;
 
       var exports = function () {
         function exports(WM) {
@@ -3802,7 +3802,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
                       }
 
                       _context.next = 3;
-                      return this.get_upstream_version();
+                      return $.get(VERSION_URL);
 
                     case 3:
                       upstream_version = _context.sent;
@@ -3848,11 +3848,6 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
               return true;
             }
             return false;
-          }
-        }, {
-          key: "get_upstream_version",
-          value: function get_upstream_version() {
-            return $.get('https://raw.githubusercontent.com/kynikos/wiki-monkey/master/VERSION');
           }
         }, {
           key: "display_notification",
@@ -3906,6 +3901,8 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       }();
 
       ;
+
+      VERSION_URL = 'https://raw.githubusercontent.com/kynikos/wiki-monkey/master/VERSION';
 
       CHECK_INTERVAL = 7;
 

@@ -21,7 +21,7 @@ var A, Br, Div, moment;
 ({moment, A, Br, Div} = require('./libs'));
 
 module.exports = (function() {
-  var CHECK_INTERVAL;
+  var CHECK_INTERVAL, VERSION_URL;
 
   class exports {
     constructor(WM) {
@@ -31,7 +31,7 @@ module.exports = (function() {
     async check_and_notify() {
       var upstream_version;
       if (this.should_check()) {
-        upstream_version = (await this.get_upstream_version());
+        upstream_version = (await $.get(VERSION_URL));
         // Well, ok, this is assuming that if the versions are
         // different, upstream has the latest
         if (this.WM.version !== upstream_version) {
@@ -62,10 +62,6 @@ module.exports = (function() {
         return true;
       }
       return false;
-    }
-
-    get_upstream_version() {
-      return $.get('https://raw.githubusercontent.com/kynikos/wiki-monkey/master/VERSION');
     }
 
     display_notification(content, type = 'info') {
@@ -119,6 +115,8 @@ module.exports = (function() {
     }
 
   };
+
+  VERSION_URL = 'https://raw.githubusercontent.com/kynikos/wiki-monkey/master/VERSION';
 
   CHECK_INTERVAL = 7;
 
