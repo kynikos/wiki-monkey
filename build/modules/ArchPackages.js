@@ -26,17 +26,16 @@ Obj = require('../../lib.js.generic/dist/Obj');
 
 RegEx = require('../../lib.js.generic/dist/RegEx');
 
-module.exports.ArchPackages = (function() {
+module.exports = (function() {
   var isPackageGroup;
 
-  class ArchPackages {
+  class exports {
     // TODO: Module disabled because it's no longer possible to get around the
     //       same-origin policy
     //       Perhaps ask the Arch devs if it's possible to enable CORS requests
     //       on the archlinux.org websites
     constructor(WM) {
       this.WM = WM;
-      null;
     }
 
     searchOfficialPackagesByExactName(name, call, callArgs) {
@@ -147,6 +146,6 @@ module.exports.ArchPackages = (function() {
     });
   };
 
-  return ArchPackages;
+  return exports;
 
 })();

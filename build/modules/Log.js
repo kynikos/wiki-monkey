@@ -22,10 +22,10 @@ var Str, jss;
 
 Str = require('../../lib.js.generic/dist/Str');
 
-module.exports.Log = (function() {
+module.exports = (function() {
   var classesToLevels;
 
-  class Log {
+  class exports {
     constructor(WM) {
       var classes, styles;
       this.WM = WM;
@@ -258,6 +258,6 @@ module.exports.Log = (function() {
     'merror': 'ERR'
   };
 
-  return Log;
+  return exports;
 
 })();

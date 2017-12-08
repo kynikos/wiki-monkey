@@ -18,51 +18,51 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 // Initialize the libraries immediately (especially babel-polyfill)
-var ArchWiki_, Bot_, Cat_, Cfg_, Diff_, Editor_, Filters_, Interlanguage_, Log_, MW_, Menu_, Mods_, Parser_, Tables_, UI_, Upgrade, WhatLinksHere_;
+var ArchWiki, Bot, Cat, Cfg, Diff, Editor, Filters, Interlanguage, Log, MW, Menu, Mods, Parser, Tables, UI, Upgrade, WhatLinksHere;
 
 require('./libs');
 
 // The ArchPackages module is currently unusable
-// ArchPackages_ = require('./ArchPackages').ArchPackages
-ArchWiki_ = require('./ArchWiki').ArchWiki;
+// ArchPackages = require('./ArchPackages')
+ArchWiki = require('./ArchWiki');
 
-Bot_ = require('./Bot').Bot;
+Bot = require('./Bot');
 
-Cat_ = require('./Cat').Cat;
+Cat = require('./Cat');
 
-Cfg_ = require('./Cfg').Cfg;
+Cfg = require('./Cfg');
 
-Diff_ = require('./Diff').Diff;
+Diff = require('./Diff');
 
-Editor_ = require('./Editor').Editor;
+Editor = require('./Editor');
 
-Filters_ = require('./Filters').Filters;
+Filters = require('./Filters');
 
-Interlanguage_ = require('./Interlanguage').Interlanguage;
+Interlanguage = require('./Interlanguage');
 
-Log_ = require('./Log').Log;
+Log = require('./Log');
 
-Menu_ = require('./Menu').Menu;
+Menu = require('./Menu');
 
-Mods_ = require('./Mods').Mods;
+Mods = require('./Mods');
 
-MW_ = require('./MW').MW;
+MW = require('./MW');
 
-Parser_ = require('./Parser').Parser;
+Parser = require('./Parser');
 
-Tables_ = require('./Tables').Tables;
+Tables = require('./Tables');
 
-UI_ = require('./UI').UI;
+UI = require('./UI');
 
 Upgrade = require('./Upgrade');
 
-WhatLinksHere_ = require('./WhatLinksHere').WhatLinksHere;
+WhatLinksHere = require('./WhatLinksHere');
 
-module.exports.WM = (function() {
+module.exports = (function() {
   var VERSION;
 
-  class WM {
-    constructor(default_config, ...installed_plugins) {
+  class exports {
+    constructor(default_config, installed_plugins) {
       this._onready = this._onready.bind(this);
       this.version = VERSION;
       mw.loader.using(['mediawiki.api.edit', 'mediawiki.notification']).done(() => {
@@ -73,29 +73,29 @@ module.exports.WM = (function() {
     }
 
     _onready(default_config, installed_plugins) {
-      var Plugin, i, len, pname;
+      var Plugin, pname;
       // The ArchPackages module is currently unusable
-      // @ArchPackages = new ArchPackages_(this)
-      this.ArchWiki = new ArchWiki_(this);
-      this.Bot = new Bot_(this);
-      this.Cat = new Cat_(this);
-      this.Cfg = new Cfg_(this);
-      this.Diff = new Diff_(this);
-      this.Editor = new Editor_(this);
-      this.Filters = new Filters_(this);
-      this.Interlanguage = new Interlanguage_(this);
-      this.Log = new Log_(this);
-      this.Menu = new Menu_(this);
-      this.Mods = new Mods_(this);
-      this.MW = new MW_(this);
-      this.Parser = new Parser_(this);
-      this.Tables = new Tables_(this);
-      this.UI = new UI_(this);
+      // @ArchPackages = new ArchPackages(this)
+      this.ArchWiki = new ArchWiki(this);
+      this.Bot = new Bot(this);
+      this.Cat = new Cat(this);
+      this.Cfg = new Cfg(this);
+      this.Diff = new Diff(this);
+      this.Editor = new Editor(this);
+      this.Filters = new Filters(this);
+      this.Interlanguage = new Interlanguage(this);
+      this.Log = new Log(this);
+      this.Menu = new Menu(this);
+      this.Mods = new Mods(this);
+      this.MW = new MW(this);
+      this.Parser = new Parser(this);
+      this.Tables = new Tables(this);
+      this.UI = new UI(this);
       this.Upgrade = new Upgrade(this);
-      this.WhatLinksHere = new WhatLinksHere_(this);
+      this.WhatLinksHere = new WhatLinksHere(this);
       this.Plugins = {};
-      for (i = 0, len = installed_plugins.length; i < len; i++) {
-        [pname, Plugin] = installed_plugins[i];
+      for (pname in installed_plugins) {
+        Plugin = installed_plugins[pname];
         this.Plugins[pname] = new Plugin(this);
       }
       this.Upgrade.check_and_notify();
@@ -108,6 +108,6 @@ module.exports.WM = (function() {
   // The build script updates the version number
   VERSION = '4.0.0';
 
-  return WM;
+  return exports;
 
 })();

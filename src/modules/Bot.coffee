@@ -19,7 +19,7 @@
 CSS = require('../../lib.js.generic/dist/CSS')
 
 
-class module.exports.Bot
+class module.exports
     constructor: (@WM) ->
         @configuration =
             plugin: null

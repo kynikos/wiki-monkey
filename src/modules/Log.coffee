@@ -20,7 +20,7 @@
 Str = require('../../lib.js.generic/dist/Str')
 
 
-class module.exports.Log
+class module.exports
     constructor: (@WM) ->
         @_currentInfoDisplayState = true
 

@@ -22,10 +22,10 @@ CSS = require('../../lib.js.generic/dist/CSS');
 
 Async = require('../../lib.js.generic/dist/Async');
 
-module.exports.Menu = (function() {
+module.exports = (function() {
   var makeChangeMenu, makeGroupAction;
 
-  class Menu {
+  class exports {
     constructor(WM) {
       this.executeEntryAction = this.executeEntryAction.bind(this);
       this.warnInputNeeded = this.warnInputNeeded.bind(this);
@@ -158,6 +158,6 @@ module.exports.Menu = (function() {
     };
   };
 
-  return Menu;
+  return exports;
 
 })();

@@ -19,7 +19,7 @@
 CSS = require('../../lib.js.generic/dist/CSS')
 
 
-class module.exports.Filters
+class module.exports
     constructor: (@WM) ->
 
     _makeUI: (plugins) ->

@@ -18,7 +18,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 var indexOf = [].indexOf;
 
-module.exports.ArchWikiFixHeader = class ArchWikiFixHeader {
+module.exports = class exports {
   constructor(WM) {
     this.WM = WM;
   }

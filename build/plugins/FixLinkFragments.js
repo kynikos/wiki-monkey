@@ -16,7 +16,7 @@
 
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
-module.exports.FixLinkFragments = class FixLinkFragments {
+module.exports = class exports {
   constructor(WM) {
     this.processLink = this.processLink.bind(this);
     this.processLinkContinue = this.processLinkContinue.bind(this);

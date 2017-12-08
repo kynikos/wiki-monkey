@@ -19,7 +19,7 @@
 CSS = require('../../lib.js.generic/dist/CSS')
 
 
-class module.exports.ArchWikiNPFilter
+class module.exports
     constructor: (@WM) ->
 
     main: (params) ->

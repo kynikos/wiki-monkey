@@ -21,7 +21,7 @@ var Str,
 
 Str = require('../../lib.js.generic/dist/Str');
 
-module.exports.UpdateCategoryTree = class UpdateCategoryTree {
+module.exports = class exports {
   constructor(WM) {
     this.mainContinue = this.mainContinue.bind(this);
     this.readToC = this.readToC.bind(this);

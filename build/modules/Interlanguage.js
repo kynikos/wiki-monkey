@@ -20,7 +20,7 @@ var Obj;
 
 Obj = require('../../lib.js.generic/dist/Obj');
 
-module.exports.Interlanguage = class Interlanguage {
+module.exports = class exports {
   constructor(WM) {
     this.parseLinks = this.parseLinks.bind(this);
     this.queryLinks = this.queryLinks.bind(this);

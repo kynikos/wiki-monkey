@@ -17,7 +17,7 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class module.exports.ArchWikiUpdatePackageTemplates
+class module.exports
     # TODO: Plugin disabled because the ArchPackages module is currently
     #       unusable
 

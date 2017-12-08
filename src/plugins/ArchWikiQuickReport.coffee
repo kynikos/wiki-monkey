@@ -20,7 +20,7 @@ CSS = require('../../lib.js.generic/dist/CSS')
 HTTP = require('../../lib.js.generic/dist/HTTP')
 
 
-class module.exports.ArchWikiQuickReport
+class module.exports
     constructor: (@WM) ->
 
     makeUI: (args) ->

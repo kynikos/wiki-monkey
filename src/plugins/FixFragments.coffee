@@ -17,7 +17,7 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class module.exports.FixFragments
+class module.exports
     constructor: (@WM) ->
 
     fixLinks: (source) ->

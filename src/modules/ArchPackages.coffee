@@ -23,14 +23,13 @@
 Obj = require('../../lib.js.generic/dist/Obj')
 RegEx = require('../../lib.js.generic/dist/RegEx')
 
-class module.exports.ArchPackages
+class module.exports
     # TODO: Module disabled because it's no longer possible to get around the
     #       same-origin policy
     #       Perhaps ask the Arch devs if it's possible to enable CORS requests
     #       on the archlinux.org websites
 
     constructor: (@WM) ->
-        null
 
     searchOfficialPackagesByExactName: (name, call, callArgs) ->
         url = "https://www.archlinux.org/packages/search/json/"

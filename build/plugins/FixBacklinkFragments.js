@@ -20,10 +20,10 @@ var CSS;
 
 CSS = require('../../lib.js.generic/dist/CSS');
 
-module.exports.FixBacklinkFragments = (function() {
+module.exports = (function() {
   var readTarget;
 
-  class FixBacklinkFragments {
+  class exports {
     constructor(WM) {
       this.makeBotUI = this.makeBotUI.bind(this);
       this.fixLinks = this.fixLinks.bind(this);
@@ -273,6 +273,6 @@ module.exports.FixBacklinkFragments = (function() {
     return document.getElementById("WikiMonkey-FixBacklinkFragments-Target").value;
   };
 
-  return FixBacklinkFragments;
+  return exports;
 
 })();

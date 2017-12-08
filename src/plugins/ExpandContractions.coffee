@@ -17,7 +17,7 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class module.exports.ExpandContractions
+class module.exports
     constructor: (@WM) ->
 
     replace: (source, regExp, newString, checkString, checkStrings) ->

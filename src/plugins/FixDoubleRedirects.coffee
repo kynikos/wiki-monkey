@@ -19,7 +19,7 @@
 Str = require('../../lib.js.generic/dist/Str')
 
 
-class module.exports.FixDoubleRedirects
+class module.exports
     constructor: (@WM) ->
         null
 

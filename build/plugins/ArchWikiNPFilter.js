@@ -20,7 +20,7 @@ var CSS;
 
 CSS = require('../../lib.js.generic/dist/CSS');
 
-module.exports.ArchWikiNPFilter = class ArchWikiNPFilter {
+module.exports = class exports {
   constructor(WM) {
     this.WM = WM;
   }

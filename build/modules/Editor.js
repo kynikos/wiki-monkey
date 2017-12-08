@@ -22,10 +22,9 @@ Compatibility = require('../../lib.js.generic/dist/Compatibility');
 
 HTTP = require('../../lib.js.generic/dist/HTTP');
 
-module.exports.Editor = class Editor {
+module.exports = class exports {
   constructor(WM) {
     this.WM = WM;
-    null;
   }
 
   getTitle() {

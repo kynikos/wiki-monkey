@@ -19,7 +19,7 @@
 CSS = require('../../lib.js.generic/dist/CSS')
 
 
-class module.exports.Cfg
+class module.exports
     DEFAULTS_REQUEST = "WARNING: If you click on the \"Save\" button
     now, the saved configuration will be reset to the default values
     at the next refresh!\nTo cancel this request, simply click on the

@@ -17,9 +17,8 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class module.exports.WhatLinksHere
+class module.exports
     constructor: (@WM) ->
-        null
 
     isWhatLinksHerePage: ->
         return if document.getElementById('mw-whatlinkshere-list') then true else

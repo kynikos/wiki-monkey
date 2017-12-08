@@ -20,10 +20,9 @@ var Str;
 
 Str = require('../../lib.js.generic/dist/Str');
 
-module.exports.Tables = class Tables {
+module.exports = class exports {
   constructor(WM) {
     this.WM = WM;
-    null;
   }
 
   appendRow(source, mark, values) {

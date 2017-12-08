@@ -16,10 +16,10 @@
 
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
-module.exports.ArchWikiSortContacts = (function() {
+module.exports = (function() {
   var endMark, regExp, startMark;
 
-  class ArchWikiSortContacts {
+  class exports {
     constructor(WM) {
       this.parseList = this.parseList.bind(this);
       this.iterateUsers = this.iterateUsers.bind(this);
@@ -196,6 +196,6 @@ module.exports.ArchWikiSortContacts = (function() {
   // Don't do "(?: \\<!-- associated bot: (.+?) -->)?.*$"
   regExp = new RegExp("^\\*.*?\\[\\[User:(.+?)\\|.+?" + "(?: \\<!-- associated bot: (.+?) -->.*)?$", "");
 
-  return ArchWikiSortContacts;
+  return exports;
 
 })();

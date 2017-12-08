@@ -22,10 +22,9 @@ CSS = require('../../lib.js.generic/dist/CSS');
 
 RegEx = require('../../lib.js.generic/dist/RegEx');
 
-module.exports.UI = class UI {
+module.exports = class exports {
   constructor(WM) {
     this.WM = WM;
-    null;
   }
 
   _makeUI() {

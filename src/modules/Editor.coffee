@@ -20,9 +20,8 @@ Compatibility = require('../../lib.js.generic/dist/Compatibility')
 HTTP = require('../../lib.js.generic/dist/HTTP')
 
 
-class module.exports.Editor
+class module.exports
     constructor: (@WM) ->
-        null
 
     getTitle: ->
         return @WM.Parser.squashContiguousWhitespace(decodeURIComponent(

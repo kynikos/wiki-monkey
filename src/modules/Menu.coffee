@@ -20,7 +20,7 @@ CSS = require('../../lib.js.generic/dist/CSS')
 Async = require('../../lib.js.generic/dist/Async')
 
 
-class module.exports.Menu
+class module.exports
     constructor: (@WM) ->
 
     _makeUI: (plugins) ->

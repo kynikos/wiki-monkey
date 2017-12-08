@@ -17,7 +17,7 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class module.exports.FixLinkFragments
+class module.exports
     constructor: (@WM) ->
 
     processLink: (title, links, index, source, newText, prevId,

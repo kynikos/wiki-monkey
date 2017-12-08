@@ -45,9 +45,33 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 })({ 1: [function (require, module, exports) {
     var WM;
 
-    WM = require('./modules/_Init').WM;
+    WM = require('./modules/_Init');
 
-    new WM(require("../build/configurations/_local"), ['ArchWikiFixHeader', require("./plugins/ArchWikiFixHeader").ArchWikiFixHeader], ['ArchWikiFixHeadings', require("./plugins/ArchWikiFixHeadings").ArchWikiFixHeadings], ['ArchWikiFixLinks', require("./plugins/ArchWikiFixLinks").ArchWikiFixLinks], ['ArchWikiNewTemplates', require("./plugins/ArchWikiNewTemplates").ArchWikiNewTemplates], ['ArchWikiNPFilter', require("./plugins/ArchWikiNPFilter").ArchWikiNPFilter], ['ArchWikiQuickReport', require("./plugins/ArchWikiQuickReport").ArchWikiQuickReport], ['ArchWikiSaveTalk', require("./plugins/ArchWikiSaveTalk").ArchWikiSaveTalk], ['ArchWikiSortContacts', require("./plugins/ArchWikiSortContacts").ArchWikiSortContacts], ['ArchWikiSummaryToRelated', require("./plugins/ArchWikiSummaryToRelated").ArchWikiSummaryToRelated], ['ArchWikiRCFilter', require("./plugins/ArchWikiRCFilter").ArchWikiRCFilter], ['ArchWikiWantedCategories', require("./plugins/ArchWikiWantedCategories").ArchWikiWantedCategories], ['DeletePages', require("./plugins/DeletePages").DeletePages], ['ExpandContractions', require("./plugins/ExpandContractions").ExpandContractions], ['FixBacklinkFragments', require("./plugins/FixBacklinkFragments").FixBacklinkFragments], ['FixDoubleRedirects', require("./plugins/FixDoubleRedirects").FixDoubleRedirects], ['FixFragments', require("./plugins/FixFragments").FixFragments], ['FixLinkFragments', require("./plugins/FixLinkFragments").FixLinkFragments], ['MultipleLineBreaks', require("./plugins/MultipleLineBreaks").MultipleLineBreaks], ['SimpleReplace', require("./plugins/SimpleReplace").SimpleReplace], ['SynchronizeInterlanguageLinks', require("./plugins/SynchronizeInterlanguageLinks").SynchronizeInterlanguageLinks], ['UpdateCategoryTree', require("./plugins/UpdateCategoryTree").UpdateCategoryTree]);
+    new WM(require("../build/configurations/_local"), {
+      ArchWikiFixHeader: require("./plugins/ArchWikiFixHeader"),
+      ArchWikiFixHeadings: require("./plugins/ArchWikiFixHeadings"),
+      ArchWikiFixLinks: require("./plugins/ArchWikiFixLinks"),
+      ArchWikiNewTemplates: require("./plugins/ArchWikiNewTemplates"),
+      ArchWikiNPFilter: require("./plugins/ArchWikiNPFilter"),
+
+      ArchWikiQuickReport: require("./plugins/ArchWikiQuickReport"),
+      ArchWikiSaveTalk: require("./plugins/ArchWikiSaveTalk"),
+      ArchWikiSortContacts: require("./plugins/ArchWikiSortContacts"),
+      ArchWikiSummaryToRelated: require("./plugins/ArchWikiSummaryToRelated"),
+      ArchWikiRCFilter: require("./plugins/ArchWikiRCFilter"),
+
+      ArchWikiWantedCategories: require("./plugins/ArchWikiWantedCategories"),
+      DeletePages: require("./plugins/DeletePages"),
+      ExpandContractions: require("./plugins/ExpandContractions"),
+      FixBacklinkFragments: require("./plugins/FixBacklinkFragments"),
+      FixDoubleRedirects: require("./plugins/FixDoubleRedirects"),
+      FixFragments: require("./plugins/FixFragments"),
+      FixLinkFragments: require("./plugins/FixLinkFragments"),
+      MultipleLineBreaks: require("./plugins/MultipleLineBreaks"),
+      SimpleReplace: require("./plugins/SimpleReplace"),
+      SynchronizeInterlanguageLinks: require("./plugins/SynchronizeInterlanguageLinks"),
+      UpdateCategoryTree: require("./plugins/UpdateCategoryTree")
+    });
   }, { "../build/configurations/_local": 2, "./modules/_Init": 20, "./plugins/ArchWikiFixHeader": 22, "./plugins/ArchWikiFixHeadings": 23, "./plugins/ArchWikiFixLinks": 24, "./plugins/ArchWikiNPFilter": 25, "./plugins/ArchWikiNewTemplates": 26, "./plugins/ArchWikiQuickReport": 27, "./plugins/ArchWikiRCFilter": 28, "./plugins/ArchWikiSaveTalk": 29, "./plugins/ArchWikiSortContacts": 30, "./plugins/ArchWikiSummaryToRelated": 31, "./plugins/ArchWikiWantedCategories": 32, "./plugins/DeletePages": 33, "./plugins/ExpandContractions": 34, "./plugins/FixBacklinkFragments": 35, "./plugins/FixDoubleRedirects": 36, "./plugins/FixFragments": 37, "./plugins/FixLinkFragments": 38, "./plugins/MultipleLineBreaks": 39, "./plugins/SimpleReplace": 40, "./plugins/SynchronizeInterlanguageLinks": 41, "./plugins/UpdateCategoryTree": 42 }], 2: [function (require, module, exports) {
     module.exports = {
       "Mods": {
@@ -136,18 +160,17 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       }
     };
   }, {}], 3: [function (require, module, exports) {
-    module.exports.ArchWiki = function () {
+    module.exports = function () {
       var languages, tablesOfContents;
 
-      var ArchWiki = function () {
-        function ArchWiki(WM) {
-          _classCallCheck2(this, ArchWiki);
+      var exports = function () {
+        function exports(WM) {
+          _classCallCheck2(this, exports);
 
           this.WM = WM;
-          null;
         }
 
-        _createClass2(ArchWiki, [{
+        _createClass2(exports, [{
           key: "getLocalLanguage",
           value: function getLocalLanguage() {
             return languages.local;
@@ -223,7 +246,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           }
         }]);
 
-        return ArchWiki;
+        return exports;
       }();
 
       ;
@@ -636,16 +659,16 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       };
 
-      return ArchWiki;
+      return exports;
     }();
   }, {}], 4: [function (require, module, exports) {
     var CSS;
 
     CSS = require('../../lib.js.generic/dist/CSS');
 
-    module.exports.Bot = function () {
-      function Bot(WM) {
-        _classCallCheck2(this, Bot);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this._previewFilter = this._previewFilter.bind(this);
         this._startAutomatic = this._startAutomatic.bind(this);
@@ -665,7 +688,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         this.botToken = "0";
       }
 
-      _createClass2(Bot, [{
+      _createClass2(exports, [{
         key: "_makeUI",
         value: function _makeUI(functions, lists) {
           var divContainer, fdiv;
@@ -1250,7 +1273,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return Bot;
+      return exports;
     }();
   }, { "../../lib.js.generic/dist/CSS": 434 }], 5: [function (require, module, exports) {
     var Async, Obj;
@@ -1259,15 +1282,14 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
     Obj = require('../../lib.js.generic/dist/Obj');
 
-    module.exports.Cat = function () {
-      function Cat(WM1) {
-        _classCallCheck2(this, Cat);
+    module.exports = function () {
+      function exports(WM1) {
+        _classCallCheck2(this, exports);
 
         this.WM = WM1;
-        null;
       }
 
-      _createClass2(Cat, [{
+      _createClass2(exports, [{
         key: "recurseTree",
         value: function recurseTree(params) {
           params.callChildren = WM.Cat._recurseTreeCallChildren;
@@ -1367,19 +1389,19 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return Cat;
+      return exports;
     }();
   }, { "../../lib.js.generic/dist/Async": 433, "../../lib.js.generic/dist/Obj": 437 }], 6: [function (require, module, exports) {
     var CSS;
 
     CSS = require('../../lib.js.generic/dist/CSS');
 
-    module.exports.Cfg = function () {
+    module.exports = function () {
       var DEFAULTS_REQUEST;
 
-      var Cfg = function () {
-        function Cfg(WM) {
-          _classCallCheck2(this, Cfg);
+      var exports = function () {
+        function exports(WM) {
+          _classCallCheck2(this, exports);
 
           this._doMakeUI = this._doMakeUI.bind(this);
           this.save = this.save.bind(this);
@@ -1392,7 +1414,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           this.config = {};
         }
 
-        _createClass2(Cfg, [{
+        _createClass2(exports, [{
           key: "_makeUI",
           value: function _makeUI() {
             var waitdom;
@@ -1617,29 +1639,28 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           }
         }]);
 
-        return Cfg;
+        return exports;
       }();
 
       ;
 
       DEFAULTS_REQUEST = "WARNING: If you click on the \"Save\" button now, the saved configuration will be reset to the default values at the next refresh!\nTo cancel this request, simply click on the \"Reset\" button.";
 
-      return Cfg;
+      return exports;
     }();
   }, { "../../lib.js.generic/dist/CSS": 434 }], 7: [function (require, module, exports) {
     var HTTP;
 
     HTTP = require('../../lib.js.generic/dist/HTTP');
 
-    module.exports.Diff = function () {
-      function Diff(WM) {
-        _classCallCheck2(this, Diff);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.WM = WM;
-        null;
       }
 
-      _createClass2(Diff, [{
+      _createClass2(exports, [{
         key: "getEndTimestamp",
         value: function getEndTimestamp(call, callArgs) {
           var diff, giveEndTimestamp, oldid, pars, title;
@@ -1678,7 +1699,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return Diff;
+      return exports;
     }();
   }, { "../../lib.js.generic/dist/HTTP": 436 }], 8: [function (require, module, exports) {
     var Compatibility, HTTP;
@@ -1687,15 +1708,14 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
     HTTP = require('../../lib.js.generic/dist/HTTP');
 
-    module.exports.Editor = function () {
-      function Editor(WM) {
-        _classCallCheck2(this, Editor);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.WM = WM;
-        null;
       }
 
-      _createClass2(Editor, [{
+      _createClass2(exports, [{
         key: "getTitle",
         value: function getTitle() {
           return this.WM.Parser.squashContiguousWhitespace(decodeURIComponent(HTTP.getURIParameter(null, 'title')));
@@ -1739,23 +1759,23 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return Editor;
+      return exports;
     }();
   }, { "../../lib.js.generic/dist/Compatibility": 435, "../../lib.js.generic/dist/HTTP": 436 }], 9: [function (require, module, exports) {
     var CSS;
 
     CSS = require('../../lib.js.generic/dist/CSS');
 
-    module.exports.Filters = function () {
-      function Filters(WM) {
-        _classCallCheck2(this, Filters);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.updateFilterUI = this.updateFilterUI.bind(this);
         this.executePlugin = this.executePlugin.bind(this);
         this.WM = WM;
       }
 
-      _createClass2(Filters, [{
+      _createClass2(exports, [{
         key: "_makeUI",
         value: function _makeUI(plugins) {
           var commandsFilterDiv, div, divFilter, filters, pid, pluginConf, pluginInst, pluginName, selectFilter;
@@ -1841,16 +1861,16 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return Filters;
+      return exports;
     }();
   }, { "../../lib.js.generic/dist/CSS": 434 }], 10: [function (require, module, exports) {
     var Obj;
 
     Obj = require('../../lib.js.generic/dist/Obj');
 
-    module.exports.Interlanguage = function () {
-      function Interlanguage(WM) {
-        _classCallCheck2(this, Interlanguage);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.parseLinks = this.parseLinks.bind(this);
         this.queryLinks = this.queryLinks.bind(this);
@@ -1862,7 +1882,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         this.WM = WM;
       }
 
-      _createClass2(Interlanguage, [{
+      _createClass2(exports, [{
         key: "parseLinks",
         value: function parseLinks(supportedLangs, source, iwmap) {
           var i, iw, j, langlinks, len, len1, link, ltag, ltitle, lurl, parsedLinks;
@@ -2114,7 +2134,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return Interlanguage;
+      return exports;
     }();
   }, { "../../lib.js.generic/dist/Obj": 437 }], 11: [function (require, module, exports) {
     var Str, jss;
@@ -2126,12 +2146,12 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
     Str = require('../../lib.js.generic/dist/Str');
 
-    module.exports.Log = function () {
+    module.exports = function () {
       var classesToLevels;
 
-      var Log = function () {
-        function Log(WM) {
-          _classCallCheck2(this, Log);
+      var exports = function () {
+        function exports(WM) {
+          _classCallCheck2(this, exports);
 
           var classes, styles;
           this.WM = WM;
@@ -2192,7 +2212,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           this.classes = classes;
         }
 
-        _createClass2(Log, [{
+        _createClass2(exports, [{
           key: "_makeLogArea",
           value: function _makeLogArea() {
             var log, par;
@@ -2371,7 +2391,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           }
         }]);
 
-        return Log;
+        return exports;
       }();
 
       ;
@@ -2385,7 +2405,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         'merror': 'ERR'
       };
 
-      return Log;
+      return exports;
     }();
   }, { "../../lib.js.generic/dist/Str": 439, "./libs": 21 }], 12: [function (require, module, exports) {
     var A, HTTP, Obj;
@@ -2399,12 +2419,12 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     A = _require2.A;
 
 
-    module.exports.MW = function () {
+    module.exports = function () {
       var interwikiFixes, localWikiPaths, localWikiUrls, wikiPaths;
 
-      var MW = function () {
-        function MW(WM) {
-          _classCallCheck2(this, MW);
+      var exports = function () {
+        function exports(WM) {
+          _classCallCheck2(this, exports);
 
           var hostname, key, wpaths;
           this.WM = WM;
@@ -2419,7 +2439,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           }
         }
 
-        _createClass2(MW, [{
+        _createClass2(exports, [{
           key: "_getWikiPaths",
           value: function _getWikiPaths(href) {
             var hostname, match, p, paths, r, re;
@@ -2805,7 +2825,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           }
         }]);
 
-        return MW;
+        return exports;
       }();
 
       ;
@@ -2861,7 +2881,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       interwikiFixes = [["https://wiki.archlinux.org/index.php/$1_(", "https://wiki.archlinux.org/index.php/$1%20("]];
 
-      return MW;
+      return exports;
     }();
   }, { "../../lib.js.generic/dist/HTTP": 436, "../../lib.js.generic/dist/Obj": 437, "./libs": 21 }], 13: [function (require, module, exports) {
     var Async, CSS;
@@ -2870,19 +2890,19 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
     Async = require('../../lib.js.generic/dist/Async');
 
-    module.exports.Menu = function () {
+    module.exports = function () {
       var makeChangeMenu, makeGroupAction;
 
-      var Menu = function () {
-        function Menu(WM) {
-          _classCallCheck2(this, Menu);
+      var exports = function () {
+        function exports(WM) {
+          _classCallCheck2(this, exports);
 
           this.executeEntryAction = this.executeEntryAction.bind(this);
           this.warnInputNeeded = this.warnInputNeeded.bind(this);
           this.WM = WM;
         }
 
-        _createClass2(Menu, [{
+        _createClass2(exports, [{
           key: "_makeUI",
           value: function _makeUI(plugins) {
             var currId, currMenu, entry, execAll, groupAction, groupActions, i, m, mainDiv, menuSel, menus, parentId, parentMenu, pid, plugin, pluginConf, pluginInst, pluginName, ref;
@@ -2993,7 +3013,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           }
         }]);
 
-        return Menu;
+        return exports;
       }();
 
       ;
@@ -3011,24 +3031,24 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         };
       };
 
-      return Menu;
+      return exports;
     }();
   }, { "../../lib.js.generic/dist/Async": 433, "../../lib.js.generic/dist/CSS": 434 }], 14: [function (require, module, exports) {
     var CSS;
 
     CSS = require('../../lib.js.generic/dist/CSS');
 
-    module.exports.Mods = function () {
+    module.exports = function () {
       var changeHeadingNumberStyle, disableEditSummarySubmitOnEnter, hideRollbackLinks, scrollToFirstHeading;
 
-      var Mods = function () {
-        function Mods(WM) {
-          _classCallCheck2(this, Mods);
+      var exports = function () {
+        function exports(WM) {
+          _classCallCheck2(this, exports);
 
           this.WM = WM;
         }
 
-        _createClass2(Mods, [{
+        _createClass2(exports, [{
           key: "applyGeneralMods",
           value: function applyGeneralMods() {
             var conf;
@@ -3069,7 +3089,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           }
         }]);
 
-        return Mods;
+        return exports;
       }();
 
       ;
@@ -3095,7 +3115,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return window.scrollTo(0, $('#firstHeading').offset().top);
       };
 
-      return Mods;
+      return exports;
     }();
   }, { "../../lib.js.generic/dist/CSS": 434 }], 15: [function (require, module, exports) {
     var RegEx, Str;
@@ -3104,17 +3124,17 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
     Str = require('../../lib.js.generic/dist/Str');
 
-    module.exports.Parser = function () {
+    module.exports = function () {
       var prepareRegexpWhitespace, prepareTitleCasing;
 
-      var Parser = function () {
-        function Parser(WM) {
-          _classCallCheck2(this, Parser);
+      var exports = function () {
+        function exports(WM) {
+          _classCallCheck2(this, exports);
 
           this.WM = WM;
         }
 
-        _createClass2(Parser, [{
+        _createClass2(exports, [{
           key: "squashContiguousWhitespace",
           value: function squashContiguousWhitespace(title) {
             return title.replace(/[_ ]+/g, " ");
@@ -3548,7 +3568,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           }
         }]);
 
-        return Parser;
+        return exports;
       }();
 
       ;
@@ -3568,22 +3588,21 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return pattern;
       };
 
-      return Parser;
+      return exports;
     }();
   }, { "../../lib.js.generic/dist/RegEx": 438, "../../lib.js.generic/dist/Str": 439 }], 16: [function (require, module, exports) {
     var Str;
 
     Str = require('../../lib.js.generic/dist/Str');
 
-    module.exports.Tables = function () {
-      function Tables(WM) {
-        _classCallCheck2(this, Tables);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.WM = WM;
-        null;
       }
 
-      _createClass2(Tables, [{
+      _createClass2(exports, [{
         key: "appendRow",
         value: function appendRow(source, mark, values) {
           var endtable, lastId, newText, row;
@@ -3595,7 +3614,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return Tables;
+      return exports;
     }();
   }, { "../../lib.js.generic/dist/Str": 439 }], 17: [function (require, module, exports) {
     var CSS, RegEx;
@@ -3604,15 +3623,14 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
     RegEx = require('../../lib.js.generic/dist/RegEx');
 
-    module.exports.UI = function () {
-      function UI(WM) {
-        _classCallCheck2(this, UI);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.WM = WM;
-        null;
       }
 
-      _createClass2(UI, [{
+      _createClass2(exports, [{
         key: "_makeUI",
         value: function _makeUI() {
           var UI, conf, date, display, displayLog, help, hide, legend, logArea, main, main2, nextNode, patt1A, patt1B, patt2A, patt2B, patt3A, patt3B, patt4A, patt4B, patt5A, patt5B, wikiUrls;
@@ -3751,7 +3769,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return UI;
+      return exports;
     }();
   }, { "../../lib.js.generic/dist/CSS": 434, "../../lib.js.generic/dist/RegEx": 438 }], 18: [function (require, module, exports) {
     var A, Br, Div, moment;
@@ -3901,15 +3919,14 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       return exports;
     }();
   }, { "./libs": 21 }], 19: [function (require, module, exports) {
-    module.exports.WhatLinksHere = function () {
-      function WhatLinksHere(WM) {
-        _classCallCheck2(this, WhatLinksHere);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.WM = WM;
-        null;
       }
 
-      _createClass2(WhatLinksHere, [{
+      _createClass2(exports, [{
         key: "isWhatLinksHerePage",
         value: function isWhatLinksHerePage() {
           if (document.getElementById('mw-whatlinkshere-list')) {
@@ -3925,59 +3942,55 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return WhatLinksHere;
+      return exports;
     }();
   }, {}], 20: [function (require, module, exports) {
-    var ArchWiki_, Bot_, Cat_, Cfg_, Diff_, Editor_, Filters_, Interlanguage_, Log_, MW_, Menu_, Mods_, Parser_, Tables_, UI_, Upgrade, WhatLinksHere_;
+    var ArchWiki, Bot, Cat, Cfg, Diff, Editor, Filters, Interlanguage, Log, MW, Menu, Mods, Parser, Tables, UI, Upgrade, WhatLinksHere;
 
     require('./libs');
 
-    ArchWiki_ = require('./ArchWiki').ArchWiki;
+    ArchWiki = require('./ArchWiki');
 
-    Bot_ = require('./Bot').Bot;
+    Bot = require('./Bot');
 
-    Cat_ = require('./Cat').Cat;
+    Cat = require('./Cat');
 
-    Cfg_ = require('./Cfg').Cfg;
+    Cfg = require('./Cfg');
 
-    Diff_ = require('./Diff').Diff;
+    Diff = require('./Diff');
 
-    Editor_ = require('./Editor').Editor;
+    Editor = require('./Editor');
 
-    Filters_ = require('./Filters').Filters;
+    Filters = require('./Filters');
 
-    Interlanguage_ = require('./Interlanguage').Interlanguage;
+    Interlanguage = require('./Interlanguage');
 
-    Log_ = require('./Log').Log;
+    Log = require('./Log');
 
-    Menu_ = require('./Menu').Menu;
+    Menu = require('./Menu');
 
-    Mods_ = require('./Mods').Mods;
+    Mods = require('./Mods');
 
-    MW_ = require('./MW').MW;
+    MW = require('./MW');
 
-    Parser_ = require('./Parser').Parser;
+    Parser = require('./Parser');
 
-    Tables_ = require('./Tables').Tables;
+    Tables = require('./Tables');
 
-    UI_ = require('./UI').UI;
+    UI = require('./UI');
 
     Upgrade = require('./Upgrade');
 
-    WhatLinksHere_ = require('./WhatLinksHere').WhatLinksHere;
+    WhatLinksHere = require('./WhatLinksHere');
 
-    module.exports.WM = function () {
+    module.exports = function () {
       var VERSION;
 
-      var WM = function () {
-        function WM(default_config) {
+      var exports = function () {
+        function exports(default_config, installed_plugins) {
           var _this17 = this;
 
-          for (var _len2 = arguments.length, installed_plugins = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-            installed_plugins[_key2 - 1] = arguments[_key2];
-          }
-
-          _classCallCheck2(this, WM);
+          _classCallCheck2(this, exports);
 
           this._onready = this._onready.bind(this);
           this.version = VERSION;
@@ -3988,35 +4001,31 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           });
         }
 
-        _createClass2(WM, [{
+        _createClass2(exports, [{
           key: "_onready",
           value: function _onready(default_config, installed_plugins) {
-            var Plugin, i, len, pname;
+            var Plugin, pname;
 
-            this.ArchWiki = new ArchWiki_(this);
-            this.Bot = new Bot_(this);
-            this.Cat = new Cat_(this);
-            this.Cfg = new Cfg_(this);
-            this.Diff = new Diff_(this);
-            this.Editor = new Editor_(this);
-            this.Filters = new Filters_(this);
-            this.Interlanguage = new Interlanguage_(this);
-            this.Log = new Log_(this);
-            this.Menu = new Menu_(this);
-            this.Mods = new Mods_(this);
-            this.MW = new MW_(this);
-            this.Parser = new Parser_(this);
-            this.Tables = new Tables_(this);
-            this.UI = new UI_(this);
+            this.ArchWiki = new ArchWiki(this);
+            this.Bot = new Bot(this);
+            this.Cat = new Cat(this);
+            this.Cfg = new Cfg(this);
+            this.Diff = new Diff(this);
+            this.Editor = new Editor(this);
+            this.Filters = new Filters(this);
+            this.Interlanguage = new Interlanguage(this);
+            this.Log = new Log(this);
+            this.Menu = new Menu(this);
+            this.Mods = new Mods(this);
+            this.MW = new MW(this);
+            this.Parser = new Parser(this);
+            this.Tables = new Tables(this);
+            this.UI = new UI(this);
             this.Upgrade = new Upgrade(this);
-            this.WhatLinksHere = new WhatLinksHere_(this);
+            this.WhatLinksHere = new WhatLinksHere(this);
             this.Plugins = {};
-            for (i = 0, len = installed_plugins.length; i < len; i++) {
-              var _installed_plugins$i = _slicedToArray(installed_plugins[i], 2);
-
-              pname = _installed_plugins$i[0];
-              Plugin = _installed_plugins$i[1];
-
+            for (pname in installed_plugins) {
+              Plugin = installed_plugins[pname];
               this.Plugins[pname] = new Plugin(this);
             }
             this.Upgrade.check_and_notify();
@@ -4025,14 +4034,14 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           }
         }]);
 
-        return WM;
+        return exports;
       }();
 
       ;
 
       VERSION = '4.0.0';
 
-      return WM;
+      return exports;
     }();
   }, { "./ArchWiki": 3, "./Bot": 4, "./Cat": 5, "./Cfg": 6, "./Diff": 7, "./Editor": 8, "./Filters": 9, "./Interlanguage": 10, "./Log": 11, "./MW": 12, "./Menu": 13, "./Mods": 14, "./Parser": 15, "./Tables": 16, "./UI": 17, "./Upgrade": 18, "./WhatLinksHere": 19, "./libs": 21 }], 21: [function (require, module, exports) {
     var helper, hh, jss, tag;
@@ -4057,14 +4066,14 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
   }, { "babel-polyfill": 43, "hyperscript": 377, "hyperscript-helpers": 376, "jss": 403, "jss-preset-default": 392, "moment": 427 }], 22: [function (require, module, exports) {
     var indexOf = [].indexOf;
 
-    module.exports.ArchWikiFixHeader = function () {
-      function ArchWikiFixHeader(WM) {
-        _classCallCheck2(this, ArchWikiFixHeader);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.WM = WM;
       }
 
-      _createClass2(ArchWikiFixHeader, [{
+      _createClass2(exports, [{
         key: "main",
         value: function main(args, callNext) {
           var b, behaviorswitches, bslist, bswitch, cat, categories, catlang, catlink, catlinks, catlist, cattext, cleantitle, content, contentId, displaytitle, dlct, dt, firstChar, fulllink, header, i, interlanguage, iwlinks, iwlist, j, k, l, language, lct, len, len1, len2, len3, link, linklang, linktext, linktitle, lowercasetitle, newText, ref, ref1, source, tempcontent, titlemod, titlemods;
@@ -4213,17 +4222,17 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return ArchWikiFixHeader;
+      return exports;
     }();
   }, {}], 23: [function (require, module, exports) {
-    module.exports.ArchWikiFixHeadings = function () {
-      function ArchWikiFixHeadings(WM) {
-        _classCallCheck2(this, ArchWikiFixHeadings);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.WM = WM;
       }
 
-      _createClass2(ArchWikiFixHeadings, [{
+      _createClass2(exports, [{
         key: "main",
         value: function main(args, callNext) {
           var i, increaseLevel, info, len, newtext, prevId, ref, section, source;
@@ -4261,17 +4270,17 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return ArchWikiFixHeadings;
+      return exports;
     }();
   }, {}], 24: [function (require, module, exports) {
-    module.exports.ArchWikiFixLinks = function () {
-      function ArchWikiFixLinks(WM) {
-        _classCallCheck2(this, ArchWikiFixLinks);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.WM = WM;
       }
 
-      _createClass2(ArchWikiFixLinks, [{
+      _createClass2(exports, [{
         key: "doReplace",
         value: function doReplace(txt) {
           var L, match, newText, prevId, re;
@@ -4404,21 +4413,21 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return ArchWikiFixLinks;
+      return exports;
     }();
   }, {}], 25: [function (require, module, exports) {
     var CSS;
 
     CSS = require('../../lib.js.generic/dist/CSS');
 
-    module.exports.ArchWikiNPFilter = function () {
-      function ArchWikiNPFilter(WM) {
-        _classCallCheck2(this, ArchWikiNPFilter);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.WM = WM;
       }
 
-      _createClass2(ArchWikiNPFilter, [{
+      _createClass2(exports, [{
         key: "main",
         value: function main(params) {
           var contentDiv, i, language, len, li, liList, link, pureTitle, ul;
@@ -4463,17 +4472,17 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return ArchWikiNPFilter;
+      return exports;
     }();
   }, { "../../lib.js.generic/dist/CSS": 434 }], 26: [function (require, module, exports) {
-    module.exports.ArchWikiNewTemplates = function () {
-      function ArchWikiNewTemplates(WM) {
-        _classCallCheck2(this, ArchWikiNewTemplates);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.WM = WM;
       }
 
-      _createClass2(ArchWikiNewTemplates, [{
+      _createClass2(exports, [{
         key: "main",
         value: function main(args, callNext) {
           var i, len, newtext, re10, re11, re12, re13, re14, re15, re16, re8, re9, source, test, tests;
@@ -4514,7 +4523,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return ArchWikiNewTemplates;
+      return exports;
     }();
   }, {}], 27: [function (require, module, exports) {
     var CSS, HTTP;
@@ -4523,9 +4532,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
     HTTP = require('../../lib.js.generic/dist/HTTP');
 
-    module.exports.ArchWikiQuickReport = function () {
-      function ArchWikiQuickReport(WM) {
-        _classCallCheck2(this, ArchWikiQuickReport);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.mainGetEndTimestamp = this.mainGetEndTimestamp.bind(this);
         this.mainWrite = this.mainWrite.bind(this);
@@ -4533,7 +4542,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         this.WM = WM;
       }
 
-      _createClass2(ArchWikiQuickReport, [{
+      _createClass2(exports, [{
         key: "makeUI",
         value: function makeUI(args) {
           var article, i, input, len, link, option, select, span, types, value;
@@ -4629,21 +4638,21 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return ArchWikiQuickReport;
+      return exports;
     }();
   }, { "../../lib.js.generic/dist/CSS": 434, "../../lib.js.generic/dist/HTTP": 436 }], 28: [function (require, module, exports) {
     var CSS;
 
     CSS = require('../../lib.js.generic/dist/CSS');
 
-    module.exports.ArchWikiRCFilter = function () {
-      function ArchWikiRCFilter(WM) {
-        _classCallCheck2(this, ArchWikiRCFilter);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.WM = WM;
       }
 
-      _createClass2(ArchWikiRCFilter, [{
+      _createClass2(exports, [{
         key: "main",
         value: function main(params) {
           var articleTable, groupDiv, h4, h4s, j, k, language, len, len1, link, pureTitle, ref;
@@ -4700,7 +4709,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return ArchWikiRCFilter;
+      return exports;
     }();
   }, { "../../lib.js.generic/dist/CSS": 434 }], 29: [function (require, module, exports) {
     var CSS, HTTP;
@@ -4709,9 +4718,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
     HTTP = require('../../lib.js.generic/dist/HTTP');
 
-    module.exports.ArchWikiSaveTalk = function () {
-      function ArchWikiSaveTalk(WM) {
-        _classCallCheck2(this, ArchWikiSaveTalk);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.mainGetEndTimestamp = this.mainGetEndTimestamp.bind(this);
         this.mainWrite = this.mainWrite.bind(this);
@@ -4719,7 +4728,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         this.WM = WM;
       }
 
-      _createClass2(ArchWikiSaveTalk, [{
+      _createClass2(exports, [{
         key: "makeUI",
         value: function makeUI(args) {
           var article, link;
@@ -4786,15 +4795,15 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return ArchWikiSaveTalk;
+      return exports;
     }();
   }, { "../../lib.js.generic/dist/CSS": 434, "../../lib.js.generic/dist/HTTP": 436 }], 30: [function (require, module, exports) {
-    module.exports.ArchWikiSortContacts = function () {
+    module.exports = function () {
       var endMark, regExp, startMark;
 
-      var ArchWikiSortContacts = function () {
-        function ArchWikiSortContacts(WM) {
-          _classCallCheck2(this, ArchWikiSortContacts);
+      var exports = function () {
+        function exports(WM) {
+          _classCallCheck2(this, exports);
 
           this.parseList = this.parseList.bind(this);
           this.iterateUsers = this.iterateUsers.bind(this);
@@ -4804,7 +4813,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           this.WM = WM;
         }
 
-        _createClass2(ArchWikiSortContacts, [{
+        _createClass2(exports, [{
           key: "main",
           value: function main(args, callNext) {
             var inactiveIntro, inactiveLimit, page, recentDays, summary;
@@ -4964,7 +4973,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           }
         }]);
 
-        return ArchWikiSortContacts;
+        return exports;
       }();
 
       ;
@@ -4975,17 +4984,17 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       regExp = new RegExp("^\\*.*?\\[\\[User:(.+?)\\|.+?" + "(?: \\<!-- associated bot: (.+?) -->.*)?$", "");
 
-      return ArchWikiSortContacts;
+      return exports;
     }();
   }, {}], 31: [function (require, module, exports) {
-    module.exports.ArchWikiSummaryToRelated = function () {
-      function ArchWikiSummaryToRelated(WM) {
-        _classCallCheck2(this, ArchWikiSummaryToRelated);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.WM = WM;
       }
 
-      _createClass2(ArchWikiSummaryToRelated, [{
+      _createClass2(exports, [{
         key: "main",
         value: function main(args, callNext) {
           var asend, asends, asstart, asstarts, aswiki, aswikis, i, language, len, link, newText, source, suffix;
@@ -5021,17 +5030,17 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return ArchWikiSummaryToRelated;
+      return exports;
     }();
   }, {}], 32: [function (require, module, exports) {
-    module.exports.ArchWikiWantedCategories = function () {
-      function ArchWikiWantedCategories(WM) {
-        _classCallCheck2(this, ArchWikiWantedCategories);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.WM = WM;
       }
 
-      _createClass2(ArchWikiWantedCategories, [{
+      _createClass2(exports, [{
         key: "mainAuto",
         value: function mainAuto(args, title, callBot, chainArgs) {
           title = title.replace(" (page does not exist)", "");
@@ -5079,17 +5088,17 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return ArchWikiWantedCategories;
+      return exports;
     }();
   }, {}], 33: [function (require, module, exports) {
-    module.exports.DeletePages = function () {
-      function DeletePages(WM) {
-        _classCallCheck2(this, DeletePages);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.WM = WM;
       }
 
-      _createClass2(DeletePages, [{
+      _createClass2(exports, [{
         key: "mainAuto",
         value: function mainAuto(args, title, callBot, chainArgs) {
           var summary;
@@ -5135,17 +5144,17 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return DeletePages;
+      return exports;
     }();
   }, {}], 34: [function (require, module, exports) {
-    module.exports.ExpandContractions = function () {
-      function ExpandContractions(WM) {
-        _classCallCheck2(this, ExpandContractions);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.WM = WM;
       }
 
-      _createClass2(ExpandContractions, [{
+      _createClass2(exports, [{
         key: "replace",
         value: function replace(source, regExp, newString, checkString, checkStrings) {
           var newtext;
@@ -5189,19 +5198,19 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return ExpandContractions;
+      return exports;
     }();
   }, {}], 35: [function (require, module, exports) {
     var CSS;
 
     CSS = require('../../lib.js.generic/dist/CSS');
 
-    module.exports.FixBacklinkFragments = function () {
+    module.exports = function () {
       var readTarget;
 
-      var FixBacklinkFragments = function () {
-        function FixBacklinkFragments(WM) {
-          _classCallCheck2(this, FixBacklinkFragments);
+      var exports = function () {
+        function exports(WM) {
+          _classCallCheck2(this, exports);
 
           this.makeBotUI = this.makeBotUI.bind(this);
           this.fixLinks = this.fixLinks.bind(this);
@@ -5215,7 +5224,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           this.WM = WM;
         }
 
-        _createClass2(FixBacklinkFragments, [{
+        _createClass2(exports, [{
           key: "makeBotUI",
           value: function makeBotUI(args) {
             var divMain, label, target;
@@ -5444,7 +5453,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           }
         }]);
 
-        return FixBacklinkFragments;
+        return exports;
       }();
 
       ;
@@ -5453,16 +5462,16 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return document.getElementById("WikiMonkey-FixBacklinkFragments-Target").value;
       };
 
-      return FixBacklinkFragments;
+      return exports;
     }();
   }, { "../../lib.js.generic/dist/CSS": 434 }], 36: [function (require, module, exports) {
     var Str;
 
     Str = require('../../lib.js.generic/dist/Str');
 
-    module.exports.FixDoubleRedirects = function () {
-      function FixDoubleRedirects(WM) {
-        _classCallCheck2(this, FixDoubleRedirects);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.reverseResults = this.reverseResults.bind(this);
         this.iterateList = this.iterateList.bind(this);
@@ -5473,7 +5482,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         null;
       }
 
-      _createClass2(FixDoubleRedirects, [{
+      _createClass2(exports, [{
         key: "main",
         value: function main(args, callNext) {
           var summary;
@@ -5600,17 +5609,17 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return FixDoubleRedirects;
+      return exports;
     }();
   }, { "../../lib.js.generic/dist/Str": 439 }], 37: [function (require, module, exports) {
-    module.exports.FixFragments = function () {
-      function FixFragments(WM) {
-        _classCallCheck2(this, FixFragments);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.WM = WM;
       }
 
-      _createClass2(FixFragments, [{
+      _createClass2(exports, [{
         key: "fixLinks",
         value: function fixLinks(source) {
           var i, ilinks, j, len, len1, link, newtext1, newtext2, prevId, rawfragment, sections, slinks, title;
@@ -5685,12 +5694,12 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return FixFragments;
+      return exports;
     }();
   }, {}], 38: [function (require, module, exports) {
-    module.exports.FixLinkFragments = function () {
-      function FixLinkFragments(WM) {
-        _classCallCheck2(this, FixLinkFragments);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.processLink = this.processLink.bind(this);
         this.processLinkContinue = this.processLinkContinue.bind(this);
@@ -5704,7 +5713,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         this.WM = WM;
       }
 
-      _createClass2(FixLinkFragments, [{
+      _createClass2(exports, [{
         key: "processLink",
         value: function processLink(title, links, index, source, newText, prevId, call, callArgs) {
           var link, params, rawfragment, target;
@@ -5938,17 +5947,17 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return FixLinkFragments;
+      return exports;
     }();
   }, {}], 39: [function (require, module, exports) {
-    module.exports.MultipleLineBreaks = function () {
-      function MultipleLineBreaks(WM) {
-        _classCallCheck2(this, MultipleLineBreaks);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.WM = WM;
       }
 
-      _createClass2(MultipleLineBreaks, [{
+      _createClass2(exports, [{
         key: "main",
         value: function main(args, callNext) {
           var newtext, source;
@@ -5965,19 +5974,19 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return MultipleLineBreaks;
+      return exports;
     }();
   }, {}], 40: [function (require, module, exports) {
     var CSS;
 
     CSS = require('../../lib.js.generic/dist/CSS');
 
-    module.exports.SimpleReplace = function () {
+    module.exports = function () {
       var configuration, _makeUI2, storeRegExp;
 
-      var SimpleReplace = function () {
-        function SimpleReplace(WM) {
-          _classCallCheck2(this, SimpleReplace);
+      var exports = function () {
+        function exports(WM) {
+          _classCallCheck2(this, exports);
 
           this.storeConfiguration = this.storeConfiguration.bind(this);
           this.mainAutoWrite = this.mainAutoWrite.bind(this);
@@ -5985,7 +5994,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           this.WM = WM;
         }
 
-        _createClass2(SimpleReplace, [{
+        _createClass2(exports, [{
           key: "makeUI",
           value: function makeUI(args) {
             return _makeUI2();
@@ -6098,7 +6107,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           }
         }]);
 
-        return SimpleReplace;
+        return exports;
       }();
 
       ;
@@ -6142,12 +6151,12 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return configuration.regExp = new RegExp(configuration.pattern, "g" + (configuration.ignoreCase ? "i" : ""));
       };
 
-      return SimpleReplace;
+      return exports;
     }();
   }, { "../../lib.js.generic/dist/CSS": 434 }], 41: [function (require, module, exports) {
-    module.exports.SynchronizeInterlanguageLinks = function () {
-      function SynchronizeInterlanguageLinks(WM) {
-        _classCallCheck2(this, SynchronizeInterlanguageLinks);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.detectLang = this.detectLang.bind(this);
         this.computeWhiteList = this.computeWhiteList.bind(this);
@@ -6159,7 +6168,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         this.WM = WM;
       }
 
-      _createClass2(SynchronizeInterlanguageLinks, [{
+      _createClass2(exports, [{
         key: "detectLang",
         value: function detectLang(title, tag) {
           var detect, pureTitle;
@@ -6326,7 +6335,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return SynchronizeInterlanguageLinks;
+      return exports;
     }();
   }, {}], 42: [function (require, module, exports) {
     var Str,
@@ -6334,9 +6343,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
     Str = require('../../lib.js.generic/dist/Str');
 
-    module.exports.UpdateCategoryTree = function () {
-      function UpdateCategoryTree(WM) {
-        _classCallCheck2(this, UpdateCategoryTree);
+    module.exports = function () {
+      function exports(WM) {
+        _classCallCheck2(this, exports);
 
         this.mainContinue = this.mainContinue.bind(this);
         this.readToC = this.readToC.bind(this);
@@ -6351,7 +6360,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         this.WM = WM;
       }
 
-      _createClass2(UpdateCategoryTree, [{
+      _createClass2(exports, [{
         key: "main",
         value: function main(args, callNext) {
           var inparams, params, showRootAlsoIn, summary;
@@ -6578,7 +6587,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }]);
 
-      return UpdateCategoryTree;
+      return exports;
     }();
   }, { "../../lib.js.generic/dist/Str": 439 }], 43: [function (require, module, exports) {
     (function (global) {

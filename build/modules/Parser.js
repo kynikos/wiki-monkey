@@ -22,10 +22,10 @@ RegEx = require('../../lib.js.generic/dist/RegEx');
 
 Str = require('../../lib.js.generic/dist/Str');
 
-module.exports.Parser = (function() {
+module.exports = (function() {
   var prepareRegexpWhitespace, prepareTitleCasing;
 
-  class Parser {
+  class exports {
     constructor(WM) {
       this.WM = WM;
     }
@@ -582,6 +582,6 @@ module.exports.Parser = (function() {
     return pattern;
   };
 
-  return Parser;
+  return exports;
 
 })();

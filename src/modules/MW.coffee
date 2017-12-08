@@ -21,7 +21,7 @@ Obj = require('../../lib.js.generic/dist/Obj')
 {A} = require('./libs')
 
 
-class module.exports.MW
+class module.exports
     localWikiPaths = null
     localWikiUrls = null
 

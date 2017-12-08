@@ -20,10 +20,10 @@ var CSS;
 
 CSS = require('../../lib.js.generic/dist/CSS');
 
-module.exports.Mods = (function() {
+module.exports = (function() {
   var changeHeadingNumberStyle, disableEditSummarySubmitOnEnter, hideRollbackLinks, scrollToFirstHeading;
 
-  class Mods {
+  class exports {
     constructor(WM) {
       this.WM = WM;
     }
@@ -87,6 +87,6 @@ module.exports.Mods = (function() {
     return window.scrollTo(0, $('#firstHeading').offset().top);
   };
 
-  return Mods;
+  return exports;
 
 })();

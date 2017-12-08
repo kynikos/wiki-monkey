@@ -20,10 +20,10 @@ var CSS;
 
 CSS = require('../../lib.js.generic/dist/CSS');
 
-module.exports.Cfg = (function() {
+module.exports = (function() {
   var DEFAULTS_REQUEST;
 
-  class Cfg {
+  class exports {
     constructor(WM) {
       this._doMakeUI = this._doMakeUI.bind(this);
       this.save = this.save.bind(this);
@@ -252,6 +252,6 @@ module.exports.Cfg = (function() {
 
   DEFAULTS_REQUEST = "WARNING: If you click on the \"Save\" button now, the saved configuration will be reset to the default values at the next refresh!\nTo cancel this request, simply click on the \"Reset\" button.";
 
-  return Cfg;
+  return exports;
 
 })();

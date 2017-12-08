@@ -22,7 +22,7 @@ CSS = require('../../lib.js.generic/dist/CSS');
 
 HTTP = require('../../lib.js.generic/dist/HTTP');
 
-module.exports.ArchWikiSaveTalk = class ArchWikiSaveTalk {
+module.exports = class exports {
   constructor(WM) {
     this.mainGetEndTimestamp = this.mainGetEndTimestamp.bind(this);
     this.mainWrite = this.mainWrite.bind(this);

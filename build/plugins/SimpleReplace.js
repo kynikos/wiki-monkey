@@ -20,10 +20,10 @@ var CSS;
 
 CSS = require('../../lib.js.generic/dist/CSS');
 
-module.exports.SimpleReplace = (function() {
+module.exports = (function() {
   var configuration, makeUI, storeRegExp;
 
-  class SimpleReplace {
+  class exports {
     constructor(WM) {
       this.storeConfiguration = this.storeConfiguration.bind(this);
       this.mainAutoWrite = this.mainAutoWrite.bind(this);
@@ -176,6 +176,6 @@ module.exports.SimpleReplace = (function() {
     return configuration.regExp = new RegExp(configuration.pattern, "g" + (configuration.ignoreCase ? "i" : ""));
   };
 
-  return SimpleReplace;
+  return exports;
 
 })();

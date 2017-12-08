@@ -20,9 +20,8 @@ Async = require('../../lib.js.generic/dist/Async')
 Obj = require('../../lib.js.generic/dist/Obj')
 
 
-class module.exports.Cat
+class module.exports
     constructor: (@WM) ->
-        null
 
     recurseTree: (params) ->
         params.callChildren = WM.Cat._recurseTreeCallChildren

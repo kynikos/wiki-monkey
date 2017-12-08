@@ -20,7 +20,7 @@ RegEx = require('../../lib.js.generic/dist/RegEx')
 Str = require('../../lib.js.generic/dist/Str')
 
 
-class module.exports.Parser
+class module.exports
     constructor: (@WM) ->
 
     squashContiguousWhitespace: (title) ->

@@ -17,7 +17,7 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class module.exports.ArchWikiSortContacts
+class module.exports
     constructor: (@WM) ->
 
     # This plugin was originally based on list=allusers, but because of bug

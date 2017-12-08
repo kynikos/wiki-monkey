@@ -20,31 +20,31 @@
 require('./libs')
 
 # The ArchPackages module is currently unusable
-# ArchPackages_ = require('./ArchPackages').ArchPackages
-ArchWiki_ = require('./ArchWiki').ArchWiki
-Bot_ = require('./Bot').Bot
-Cat_ = require('./Cat').Cat
-Cfg_ = require('./Cfg').Cfg
-Diff_ = require('./Diff').Diff
-Editor_ = require('./Editor').Editor
-Filters_ = require('./Filters').Filters
-Interlanguage_ = require('./Interlanguage').Interlanguage
-Log_ = require('./Log').Log
-Menu_ = require('./Menu').Menu
-Mods_ = require('./Mods').Mods
-MW_ = require('./MW').MW
-Parser_ = require('./Parser').Parser
-Tables_ = require('./Tables').Tables
-UI_ = require('./UI').UI
+# ArchPackages = require('./ArchPackages')
+ArchWiki = require('./ArchWiki')
+Bot = require('./Bot')
+Cat = require('./Cat')
+Cfg = require('./Cfg')
+Diff = require('./Diff')
+Editor = require('./Editor')
+Filters = require('./Filters')
+Interlanguage = require('./Interlanguage')
+Log = require('./Log')
+Menu = require('./Menu')
+Mods = require('./Mods')
+MW = require('./MW')
+Parser = require('./Parser')
+Tables = require('./Tables')
+UI = require('./UI')
 Upgrade = require('./Upgrade')
-WhatLinksHere_ = require('./WhatLinksHere').WhatLinksHere
+WhatLinksHere = require('./WhatLinksHere')
 
 
-class module.exports.WM
+class module.exports
     # The build script updates the version number
     VERSION = '4.0.0'
 
-    constructor: (default_config, installed_plugins...) ->
+    constructor: (default_config, installed_plugins) ->
         @version = VERSION
         mw.loader.using(['mediawiki.api.edit',
                          'mediawiki.notification']).done( =>
@@ -53,28 +53,28 @@ class module.exports.WM
 
     _onready: (default_config, installed_plugins) =>
         # The ArchPackages module is currently unusable
-        # @ArchPackages = new ArchPackages_(this)
-        @ArchWiki = new ArchWiki_(this)
-        @Bot = new Bot_(this)
-        @Cat = new Cat_(this)
-        @Cfg = new Cfg_(this)
-        @Diff = new Diff_(this)
-        @Editor = new Editor_(this)
-        @Filters = new Filters_(this)
-        @Interlanguage = new Interlanguage_(this)
-        @Log = new Log_(this)
-        @Menu = new Menu_(this)
-        @Mods = new Mods_(this)
-        @MW = new MW_(this)
-        @Parser = new Parser_(this)
-        @Tables = new Tables_(this)
-        @UI = new UI_(this)
+        # @ArchPackages = new ArchPackages(this)
+        @ArchWiki = new ArchWiki(this)
+        @Bot = new Bot(this)
+        @Cat = new Cat(this)
+        @Cfg = new Cfg(this)
+        @Diff = new Diff(this)
+        @Editor = new Editor(this)
+        @Filters = new Filters(this)
+        @Interlanguage = new Interlanguage(this)
+        @Log = new Log(this)
+        @Menu = new Menu(this)
+        @Mods = new Mods(this)
+        @MW = new MW(this)
+        @Parser = new Parser(this)
+        @Tables = new Tables(this)
+        @UI = new UI(this)
         @Upgrade = new Upgrade(this)
-        @WhatLinksHere = new WhatLinksHere_(this)
+        @WhatLinksHere = new WhatLinksHere(this)
 
         @Plugins = {}
 
-        for [pname, Plugin] in installed_plugins
+        for pname, Plugin of installed_plugins
             @Plugins[pname] = new Plugin(this)
 
         @Upgrade.check_and_notify()

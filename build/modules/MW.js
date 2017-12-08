@@ -24,10 +24,10 @@ Obj = require('../../lib.js.generic/dist/Obj');
 
 ({A} = require('./libs'));
 
-module.exports.MW = (function() {
+module.exports = (function() {
   var interwikiFixes, localWikiPaths, localWikiUrls, wikiPaths;
 
-  class MW {
+  class exports {
     constructor(WM) {
       var hostname, key, wpaths;
       this.WM = WM;
@@ -437,6 +437,6 @@ module.exports.MW = (function() {
 
   interwikiFixes = [["https://wiki.archlinux.org/index.php/$1_(", "https://wiki.archlinux.org/index.php/$1%20("]];
 
-  return MW;
+  return exports;
 
 })();

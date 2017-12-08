@@ -20,7 +20,7 @@ var Str;
 
 Str = require('../../lib.js.generic/dist/Str');
 
-module.exports.FixDoubleRedirects = class FixDoubleRedirects {
+module.exports = class exports {
   constructor(WM) {
     this.reverseResults = this.reverseResults.bind(this);
     this.iterateList = this.iterateList.bind(this);

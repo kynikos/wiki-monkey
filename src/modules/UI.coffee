@@ -20,9 +20,8 @@ CSS = require('../../lib.js.generic/dist/CSS')
 RegEx = require('../../lib.js.generic/dist/RegEx')
 
 
-class module.exports.UI
+class module.exports
     constructor: (@WM) ->
-        null
 
     _makeUI: ->
         display = true

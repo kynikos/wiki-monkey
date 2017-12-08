@@ -19,7 +19,7 @@
 Obj = require('../../lib.js.generic/dist/Obj')
 
 
-class module.exports.Interlanguage
+class module.exports
     constructor: (@WM) ->
 
     parseLinks: (supportedLangs, source, iwmap) =>

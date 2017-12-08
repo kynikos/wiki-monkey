@@ -19,7 +19,7 @@
 RegEx = require('../../lib.js.generic/dist/RegEx')
 
 
-class module.exports.ArchWikiOldAURLinks
+class module.exports
     # TODO: Plugin disabled because the ArchPackages module is currently
     #       unusable
 

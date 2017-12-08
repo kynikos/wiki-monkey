@@ -19,9 +19,8 @@
 HTTP = require('../../lib.js.generic/dist/HTTP')
 
 
-class module.exports.Diff
+class module.exports
     constructor: (@WM) ->
-        null
 
     getEndTimestamp: (call, callArgs) ->
         title = decodeURIComponent(HTTP.getURIParameter(null, 'title'))

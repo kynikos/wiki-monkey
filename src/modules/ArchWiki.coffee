@@ -17,9 +17,8 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class module.exports.ArchWiki
+class module.exports
     constructor: (@WM) ->
-        null
 
     languages = {
         local: "English",

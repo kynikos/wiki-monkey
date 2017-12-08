@@ -20,7 +20,7 @@ var CSS;
 
 CSS = require('../../lib.js.generic/dist/CSS');
 
-module.exports.Bot = class Bot {
+module.exports = class exports {
   constructor(WM) {
     this._previewFilter = this._previewFilter.bind(this);
     this._startAutomatic = this._startAutomatic.bind(this);

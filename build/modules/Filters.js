@@ -20,7 +20,7 @@ var CSS;
 
 CSS = require('../../lib.js.generic/dist/CSS');
 
-module.exports.Filters = class Filters {
+module.exports = class exports {
   constructor(WM) {
     this.updateFilterUI = this.updateFilterUI.bind(this);
     this.executePlugin = this.executePlugin.bind(this);

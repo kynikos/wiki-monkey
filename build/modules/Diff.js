@@ -20,10 +20,9 @@ var HTTP;
 
 HTTP = require('../../lib.js.generic/dist/HTTP');
 
-module.exports.Diff = class Diff {
+module.exports = class exports {
   constructor(WM) {
     this.WM = WM;
-    null;
   }
 
   getEndTimestamp(call, callArgs) {

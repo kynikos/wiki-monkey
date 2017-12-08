@@ -22,10 +22,9 @@ Async = require('../../lib.js.generic/dist/Async');
 
 Obj = require('../../lib.js.generic/dist/Obj');
 
-module.exports.Cat = class Cat {
+module.exports = class exports {
   constructor(WM1) {
     this.WM = WM1;
-    null;
   }
 
   recurseTree(params) {
