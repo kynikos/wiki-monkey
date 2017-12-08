@@ -23,12 +23,12 @@ Async = require('../../lib.js.generic/dist/Async');
 Obj = require('../../lib.js.generic/dist/Obj');
 
 module.exports = class exports {
-  constructor(WM1) {
-    this.WM = WM1;
+  constructor(WM) {
+    this.WM = WM;
   }
 
   recurseTree(params) {
-    params.callChildren = WM.Cat._recurseTreeCallChildren;
+    params.callChildren = this.WM.Cat._recurseTreeCallChildren;
     return Async.recurseTreeAsync(params);
   }
 
@@ -37,7 +37,7 @@ module.exports = class exports {
   }
 
   _recurseTreeCallChildren(params) {
-    return WM.Cat.getSubCategories(params.node, WM.Cat._recurseTreeCallChildrenContinue, params);
+    return this.WM.Cat.getSubCategories(params.node, this.WM.Cat._recurseTreeCallChildrenContinue, params);
   }
 
   _recurseTreeCallChildrenContinue(subCats, params) {
@@ -50,11 +50,11 @@ module.exports = class exports {
   }
 
   getSubCategories(parent, call, callArgs) {
-    return WM.Cat._getMembers(parent, "subcat", call, callArgs);
+    return this.WM.Cat._getMembers(parent, "subcat", call, callArgs);
   }
 
   getAllMembers(parent, call, callArgs) {
-    return WM.Cat._getMembers(parent, null, call, callArgs);
+    return this.WM.Cat._getMembers(parent, null, call, callArgs);
   }
 
   _getMembers(name, cmtype, call, callArgs) {
@@ -72,7 +72,7 @@ module.exports = class exports {
   }
 
   _getMembersContinue(query, call, callArgs, members) {
-    return WM.MW.callAPIGet(query, function(res, args) {
+    return this.WM.MW.callAPIGet(query, function(res, args) {
       members = members.concat(res.query.categorymembers);
       if (res["query-continue"]) {
         query.cmcontinue = res["query-continue"].categorymembers.cmcontinue;
@@ -96,7 +96,7 @@ module.exports = class exports {
   }
 
   _getParentsAndInfoContinue(query, call, callArgs, parents, info) {
-    return WM.MW.callAPIGet(query, function(res, args) {
+    return this.WM.MW.callAPIGet(query, function(res, args) {
       var page;
       page = Obj.getFirstItem(res.query.pages);
       if (page.categories) {

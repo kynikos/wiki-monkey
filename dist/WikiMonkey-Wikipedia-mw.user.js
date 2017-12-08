@@ -1220,16 +1220,16 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     Obj = require('../../lib.js.generic/dist/Obj');
 
     module.exports = function () {
-      function exports(WM1) {
+      function exports(WM) {
         _classCallCheck2(this, exports);
 
-        this.WM = WM1;
+        this.WM = WM;
       }
 
       _createClass2(exports, [{
         key: "recurseTree",
         value: function recurseTree(params) {
-          params.callChildren = WM.Cat._recurseTreeCallChildren;
+          params.callChildren = this.WM.Cat._recurseTreeCallChildren;
           return Async.recurseTreeAsync(params);
         }
       }, {
@@ -1240,7 +1240,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       }, {
         key: "_recurseTreeCallChildren",
         value: function _recurseTreeCallChildren(params) {
-          return WM.Cat.getSubCategories(params.node, WM.Cat._recurseTreeCallChildrenContinue, params);
+          return this.WM.Cat.getSubCategories(params.node, this.WM.Cat._recurseTreeCallChildrenContinue, params);
         }
       }, {
         key: "_recurseTreeCallChildrenContinue",
@@ -1255,12 +1255,12 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       }, {
         key: "getSubCategories",
         value: function getSubCategories(parent, call, callArgs) {
-          return WM.Cat._getMembers(parent, "subcat", call, callArgs);
+          return this.WM.Cat._getMembers(parent, "subcat", call, callArgs);
         }
       }, {
         key: "getAllMembers",
         value: function getAllMembers(parent, call, callArgs) {
-          return WM.Cat._getMembers(parent, null, call, callArgs);
+          return this.WM.Cat._getMembers(parent, null, call, callArgs);
         }
       }, {
         key: "_getMembers",
@@ -1280,7 +1280,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       }, {
         key: "_getMembersContinue",
         value: function _getMembersContinue(query, call, callArgs, members) {
-          return WM.MW.callAPIGet(query, function (res, args) {
+          return this.WM.MW.callAPIGet(query, function (res, args) {
             members = members.concat(res.query.categorymembers);
             if (res["query-continue"]) {
               query.cmcontinue = res["query-continue"].categorymembers.cmcontinue;
@@ -1306,7 +1306,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       }, {
         key: "_getParentsAndInfoContinue",
         value: function _getParentsAndInfoContinue(query, call, callArgs, parents, info) {
-          return WM.MW.callAPIGet(query, function (res, args) {
+          return this.WM.MW.callAPIGet(query, function (res, args) {
             var page;
             page = Obj.getFirstItem(res.query.pages);
             if (page.categories) {

@@ -24,15 +24,15 @@ class module.exports
     constructor: (@WM) ->
 
     recurseTree: (params) ->
-        params.callChildren = WM.Cat._recurseTreeCallChildren
+        params.callChildren = @WM.Cat._recurseTreeCallChildren
         Async.recurseTreeAsync(params)
 
     recurseTreeContinue: (params) ->
         Async.recurseTreeAsync(params)
 
     _recurseTreeCallChildren: (params) ->
-        WM.Cat.getSubCategories(params.node,
-                            WM.Cat._recurseTreeCallChildrenContinue, params)
+        @WM.Cat.getSubCategories(params.node,
+                            @WM.Cat._recurseTreeCallChildrenContinue, params)
 
     _recurseTreeCallChildrenContinue: (subCats, params) ->
         for subCat in subCats
@@ -40,10 +40,10 @@ class module.exports
         Async.recurseTreeAsync(params)
 
     getSubCategories: (parent, call, callArgs) ->
-        WM.Cat._getMembers(parent, "subcat", call, callArgs)
+        @WM.Cat._getMembers(parent, "subcat", call, callArgs)
 
     getAllMembers: (parent, call, callArgs) ->
-        WM.Cat._getMembers(parent, null, call, callArgs)
+        @WM.Cat._getMembers(parent, null, call, callArgs)
 
     _getMembers: (name, cmtype, call, callArgs) ->
         query =
@@ -58,7 +58,7 @@ class module.exports
         @_getMembersContinue(query, call, callArgs, [])
 
     _getMembersContinue: (query, call, callArgs, members) ->
-        WM.MW.callAPIGet(query, (res, args) ->
+        @WM.MW.callAPIGet(query, (res, args) ->
             members = members.concat(res.query.categorymembers)
             if res["query-continue"]
                 query.cmcontinue = res["query-continue"]
@@ -80,7 +80,7 @@ class module.exports
         @_getParentsAndInfoContinue(query, call, callArgs, [], null)
 
     _getParentsAndInfoContinue: (query, call, callArgs, parents, info) ->
-        WM.MW.callAPIGet(query, (res, args) ->
+        @WM.MW.callAPIGet(query, (res, args) ->
             page = Obj.getFirstItem(res.query.pages)
 
             if page.categories
