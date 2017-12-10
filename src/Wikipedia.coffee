@@ -3,7 +3,7 @@ wmsetup = require('./modules/_Init')
 wmsetup(
     # Configuration files are generated automatically, don't keep them under
     # ./src/configurations/
-    require("../build/configurations/Wikipedia-bot"),
+    require("../build/configurations/Wikipedia"),
 
     # The require paths can't be constructed dynamically, or browserify won't
     # understand and import them

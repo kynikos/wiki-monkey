@@ -45,7 +45,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
     wmsetup = require('./modules/_Init');
 
-    wmsetup(require("../build/configurations/Wikipedia-bot"), {
+    wmsetup(require("../build/configurations/Wikipedia"), {
       ExpandContractions: require("./plugins/ExpandContractions"),
       FixBacklinkFragments: require("./plugins/FixBacklinkFragments"),
       FixDoubleRedirects: require("./plugins/FixDoubleRedirects"),
@@ -56,7 +56,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       SynchronizeInterlanguageLinks: require("./plugins/SynchronizeInterlanguageLinks"),
       UpdateCategoryTree: require("./plugins/UpdateCategoryTree")
     });
-  }, { "../build/configurations/Wikipedia-bot": 2, "./modules/_Init": 20, "./plugins/ExpandContractions": 22, "./plugins/FixBacklinkFragments": 23, "./plugins/FixDoubleRedirects": 24, "./plugins/FixFragments": 25, "./plugins/FixLinkFragments": 26, "./plugins/MultipleLineBreaks": 27, "./plugins/SimpleReplace": 28, "./plugins/SynchronizeInterlanguageLinks": 29, "./plugins/UpdateCategoryTree": 30 }], 2: [function (require, module, exports) {
+  }, { "../build/configurations/Wikipedia": 2, "./modules/_Init": 20, "./plugins/ExpandContractions": 22, "./plugins/FixBacklinkFragments": 23, "./plugins/FixDoubleRedirects": 24, "./plugins/FixFragments": 25, "./plugins/FixLinkFragments": 26, "./plugins/MultipleLineBreaks": 27, "./plugins/SimpleReplace": 28, "./plugins/SynchronizeInterlanguageLinks": 29, "./plugins/UpdateCategoryTree": 30 }], 2: [function (require, module, exports) {
     module.exports = {
       "Mods": {
         "Contributions": {

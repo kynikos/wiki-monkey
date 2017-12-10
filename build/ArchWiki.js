@@ -5,7 +5,7 @@ wmsetup = require('./modules/_Init');
 
 // Configuration files are generated automatically, don't keep them under
 // ./src/configurations/
-wmsetup(require("../build/configurations/ArchWiki-bot"), {
+wmsetup(require("../build/configurations/ArchWiki"), {
   // The require paths can't be constructed dynamically, or browserify won't
   // understand and import them
   ArchWikiFixHeader: require("./plugins/ArchWikiFixHeader"),

@@ -47,7 +47,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
     wmsetup = require('./modules/_Init');
 
-    wmsetup(require("../build/configurations/ArchWiki-bot"), {
+    wmsetup(require("../build/configurations/ArchWiki"), {
       ArchWikiFixHeader: require("./plugins/ArchWikiFixHeader"),
       ArchWikiFixHeadings: require("./plugins/ArchWikiFixHeadings"),
       ArchWikiFixLinks: require("./plugins/ArchWikiFixLinks"),
@@ -67,7 +67,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       SynchronizeInterlanguageLinks: require("./plugins/SynchronizeInterlanguageLinks"),
       UpdateCategoryTree: require("./plugins/UpdateCategoryTree")
     });
-  }, { "../build/configurations/ArchWiki-bot": 2, "./modules/_Init": 20, "./plugins/ArchWikiFixHeader": 22, "./plugins/ArchWikiFixHeadings": 23, "./plugins/ArchWikiFixLinks": 24, "./plugins/ArchWikiNPFilter": 25, "./plugins/ArchWikiNewTemplates": 26, "./plugins/ArchWikiQuickReport": 27, "./plugins/ArchWikiRCFilter": 28, "./plugins/ArchWikiSortContacts": 29, "./plugins/ArchWikiSummaryToRelated": 30, "./plugins/ExpandContractions": 31, "./plugins/FixBacklinkFragments": 32, "./plugins/FixDoubleRedirects": 33, "./plugins/FixFragments": 34, "./plugins/FixLinkFragments": 35, "./plugins/MultipleLineBreaks": 36, "./plugins/SimpleReplace": 37, "./plugins/SynchronizeInterlanguageLinks": 38, "./plugins/UpdateCategoryTree": 39 }], 2: [function (require, module, exports) {
+  }, { "../build/configurations/ArchWiki": 2, "./modules/_Init": 20, "./plugins/ArchWikiFixHeader": 22, "./plugins/ArchWikiFixHeadings": 23, "./plugins/ArchWikiFixLinks": 24, "./plugins/ArchWikiNPFilter": 25, "./plugins/ArchWikiNewTemplates": 26, "./plugins/ArchWikiQuickReport": 27, "./plugins/ArchWikiRCFilter": 28, "./plugins/ArchWikiSortContacts": 29, "./plugins/ArchWikiSummaryToRelated": 30, "./plugins/ExpandContractions": 31, "./plugins/FixBacklinkFragments": 32, "./plugins/FixDoubleRedirects": 33, "./plugins/FixFragments": 34, "./plugins/FixLinkFragments": 35, "./plugins/MultipleLineBreaks": 36, "./plugins/SimpleReplace": 37, "./plugins/SynchronizeInterlanguageLinks": 38, "./plugins/UpdateCategoryTree": 39 }], 2: [function (require, module, exports) {
     module.exports = {
       "Mods": {
         "Contributions": {

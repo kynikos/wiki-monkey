@@ -565,64 +565,13 @@ MODS = {
     },
 }
 
-DISABLE_EDITOR = {
-    "Editor": ("040SL", "060EC", "070ML", "110SR", "210ES"),
-}
-
-DISABLE_AW_EDITOR = {
-    "Editor": ("010AHE", "020ASE", "030AEL", "050ACT", "080ASR", "220AIL"),
-}
-
-DISABLE_AW_PATROL = {
-    "Diff": ("010AQR", ),
-    "RecentChanges": ("010ARC", ),
-    "NewPages": ("010ANP", ),
-}
-
-DISABLE_BOT = {
-    "Special": ("020DR", ),
-    "Bot": ("010SR", "020BL"),
-}
-
-DISABLE_AW_BOT = {
-    "Special": ("010CTar", "010CTbg", "010CTcs", "010CTda", "010CTel",
-                "010CTen", "010CTes", "010CThe", "010CThr", "010CThu",
-                "010CTid", "010CTit", "010CTko", "010CTlt",
-                "010CTnl", "010CTpl", "010CTpt", "010CTru", "010CTsk",
-                "010CTsr", "010CTth", "010CTtr", "010CTuk",
-                "010CTzhhans", "010CTzhhant", "040ASCC"),
-    "Bot": ("030IL", ),
-}
-
-DISABLE_W_BOT = {
-    "Special": ("030CT", ),
-    "Bot": ("030IL", ),
-}
-
-DISABLE_LOCAL = {
-    "Diff": ("020AST", ),
-    "Special": ("030ASC", "040ASCM"),
-    "Bot": ("060AWC", "070DP"),
-}
-
 CONFIGS = {
     # COMMON is included by default
     # Names that start with an underscore ("_") are not turned into
     #  /configurations/*.json files
-    '_local': ((WIKIPEDIA, ARCHWIKI, LOCAL), ()),
-    'ArchWiki-bot': ((ARCHWIKI, ), ()),
-    'ArchWiki-editor': ((ARCHWIKI, ), (DISABLE_BOT,
-                                       DISABLE_AW_BOT,
-                                       DISABLE_AW_PATROL)),
-    'ArchWiki-patrol-lite': ((ARCHWIKI, ), (DISABLE_EDITOR,
-                                            DISABLE_AW_EDITOR,
-                                            DISABLE_BOT,
-                                            DISABLE_AW_BOT)),
-    'ArchWiki-patrol': ((ARCHWIKI, ), (DISABLE_BOT,
-                                       DISABLE_AW_BOT)),
-    'Wikipedia-bot': ((WIKIPEDIA, ), ()),
-    'Wikipedia-editor': ((WIKIPEDIA, ), (DISABLE_BOT,
-                                         DISABLE_W_BOT)),
+    '_local': (WIKIPEDIA, ARCHWIKI, LOCAL),
+    'ArchWiki': (ARCHWIKI, ),
+    'Wikipedia': (WIKIPEDIA, ),
 }
 
 
@@ -630,7 +579,7 @@ def compile():
     os.makedirs(BUILD_PATH, exist_ok=True)
     os.makedirs(CONF_PATH, exist_ok=True)
 
-    for cname, (dicts, disables) in CONFIGS.items():
+    for cname, dicts in CONFIGS.items():
         cfg = {
             'Plugins': {},
             'Mods': MODS.copy(),
@@ -646,11 +595,6 @@ def compile():
             for interface, plugins in dict_.items():
                 for pluginid, plugincfg in plugins.items():
                     cfg['Plugins'][interface][pluginid] = list(plugincfg)
-
-        for disable in disables:
-            for interface, pluginids in disable.items():
-                for pluginid in pluginids:
-                    cfg['Plugins'][interface][pluginid][1] = None
 
         jdump = json.dumps(cfg, indent=4, sort_keys=True)
 
