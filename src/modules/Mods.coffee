@@ -41,23 +41,23 @@ class module.exports
         window.scrollTo(0, $('#firstHeading').offset().top)
 
     applyGeneralMods: ->
-        conf = @WM.Cfg._getGeneralMods()
+        conf = @WM.Cfg.Mods.General
         if conf['heading_number_style']
             changeHeadingNumberStyle(conf['heading_number_style'])
 
     applyEditorMods: ->
-        conf = @WM.Cfg._getEditorMods()
+        conf = @WM.Cfg.Mods.Editor
         if conf['disable_edit_summary_submit_on_enter']
             disableEditSummarySubmitOnEnter()
         if conf['scroll_to_first_heading']
             scrollToFirstHeading()
 
     applyRecentChangesMods: ->
-        conf = @WM.Cfg._getRecentChangesMods()
+        conf = @WM.Cfg.Mods.RecentChanges
         if conf['hide_rollback_links']
             hideRollbackLinks()
 
     applyContributionsMods: ->
-        conf = @WM.Cfg._getContributionsMods()
+        conf = @WM.Cfg.Mods.Contributions
         if conf['hide_rollback_links']
             hideRollbackLinks()

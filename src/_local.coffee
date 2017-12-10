@@ -1,6 +1,6 @@
-WM = require('./modules/_Init')
+wmsetup = require('./modules/_Init')
 
-new WM(
+wmsetup(
     # Configuration files are generated automatically, don't keep them under
     # ./src/configurations/
     require("../build/configurations/_local"),

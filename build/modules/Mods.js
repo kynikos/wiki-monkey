@@ -30,7 +30,7 @@ module.exports = (function() {
 
     applyGeneralMods() {
       var conf;
-      conf = this.WM.Cfg._getGeneralMods();
+      conf = this.WM.Cfg.Mods.General;
       if (conf['heading_number_style']) {
         return changeHeadingNumberStyle(conf['heading_number_style']);
       }
@@ -38,7 +38,7 @@ module.exports = (function() {
 
     applyEditorMods() {
       var conf;
-      conf = this.WM.Cfg._getEditorMods();
+      conf = this.WM.Cfg.Mods.Editor;
       if (conf['disable_edit_summary_submit_on_enter']) {
         disableEditSummarySubmitOnEnter();
       }
@@ -49,7 +49,7 @@ module.exports = (function() {
 
     applyRecentChangesMods() {
       var conf;
-      conf = this.WM.Cfg._getRecentChangesMods();
+      conf = this.WM.Cfg.Mods.RecentChanges;
       if (conf['hide_rollback_links']) {
         return hideRollbackLinks();
       }
@@ -57,7 +57,7 @@ module.exports = (function() {
 
     applyContributionsMods() {
       var conf;
-      conf = this.WM.Cfg._getContributionsMods();
+      conf = this.WM.Cfg.Mods.Contributions;
       if (conf['hide_rollback_links']) {
         return hideRollbackLinks();
       }

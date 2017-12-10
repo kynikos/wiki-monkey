@@ -32,20 +32,20 @@ class module.exports
         if document.getElementById('editform')
             nextNode = document.getElementById('wpSummaryLabel')
                                                         .parentNode.nextSibling
-            conf = @WM.Cfg._getEditorPlugins()
+            conf = @WM.Cfg.Plugins.Editor
             UI = if conf then @WM.Menu._makeUI(conf) else null
             @WM.Mods.applyEditorMods()
 
         else if document.getElementById('mw-diff-otitle1')
             nextNode = document.getElementById('bodyContent')
                                                 .getElementsByTagName('h2')[0]
-            conf = @WM.Cfg._getDiffPlugins()
+            conf = @WM.Cfg.Plugins.Diff
             UI = if conf then @WM.Menu._makeUI(conf) else null
 
         else if document.getElementById('mw-subcategories') or
                                         document.getElementById('mw-pages')
             nextNode = document.getElementById('bodyContent')
-            conf = @WM.Cfg._getBotPlugins()
+            conf = @WM.Cfg.Plugins.Bot
             UI = if conf then @WM.Bot._makeUI(conf,
                             [[document.getElementById('mw-pages'), 0, "Pages"],
                             [document.getElementById('mw-subcategories'), 0,
@@ -55,7 +55,7 @@ class module.exports
         else if document.getElementById('mw-whatlinkshere-list')
             nextNode = document.getElementById('bodyContent')
                                 .getElementsByTagName('form')[0].nextSibling
-            conf = @WM.Cfg._getBotPlugins()
+            conf = @WM.Cfg.Plugins.Bot
             UI = if conf then @WM.Bot._makeUI(conf,
                             [[document.getElementById('mw-whatlinkshere-list'),
                             0, "Pages"]]) else null
@@ -65,7 +65,7 @@ class module.exports
                                         document.getElementById('bodyContent'
                                         ).getElementsByTagName('ol')[0]
             nextNode = document.getElementsByClassName('mw-spcontent')[0]
-            conf = @WM.Cfg._getBotPlugins()
+            conf = @WM.Cfg.Plugins.Bot
             UI = if conf then @WM.Bot._makeUI(conf,
                         [[document.getElementById('bodyContent'
                         ).getElementsByTagName('ol')[0], 1, "Pages"]]) else null
@@ -73,7 +73,7 @@ class module.exports
 
         else if document.getElementById('mw-prefixindex-list-table')
             nextNode = document.getElementById('mw-prefixindex-list-table')
-            conf = @WM.Cfg._getBotPlugins()
+            conf = @WM.Cfg.Plugins.Bot
             UI = if conf then @WM.Bot._makeUI(conf,
                                 [[nextNode.getElementsByTagName('tbody')[0],
                                 0, "Pages"]]) else null
@@ -110,14 +110,14 @@ class module.exports
             if location.href.search(patt1A) > -1 or
                                         location.href.search(patt1B) > -1
                 nextNode = document.getElementById('bodyContent')
-                conf = @WM.Cfg._getSpecialPlugins()
+                conf = @WM.Cfg.Plugins.Special
                 UI = if conf then @WM.Menu._makeUI(conf) else null
 
             else if location.href.search(patt2A) > -1 or
                                         location.href.search(patt2B) > -1
                 nextNode = document.getElementById('mw-content-text')
                                             .getElementsByTagName('h4')[0]
-                conf = @WM.Cfg._getRecentChangesPlugins()
+                conf = @WM.Cfg.Plugins.RecentChanges
                 UI = if conf then @WM.Filters._makeUI(conf) else null
                 displayLog = false
                 @WM.Mods.applyRecentChangesMods()
@@ -126,7 +126,7 @@ class module.exports
                                         location.href.search(patt3B) > -1
                 nextNode = document.getElementById('mw-content-text')
                                             .getElementsByTagName('ul')[0]
-                conf = @WM.Cfg._getNewPagesPlugins()
+                conf = @WM.Cfg.Plugins.NewPages
                 UI = if conf then @WM.Filters._makeUI(conf) else null
                 displayLog = false
 
@@ -134,7 +134,7 @@ class module.exports
                                         location.href.search(patt4B) > -1
                 nextNode = document.getElementById('mw-content-text')
                                             .getElementsByTagName('ul')[0]
-                conf = @WM.Cfg._getBotPlugins()
+                conf = @WM.Cfg.Plugins.Bot
                 UI = if conf then @WM.Bot._makeUI(conf,
                                 [[document.getElementById('mw-content-text')
                                         .getElementsByTagName('ul')[0],
@@ -148,7 +148,7 @@ class module.exports
             else if document.getElementsByClassName('mw-spcontent')
                                                                 .length > 0
                 nextNode = document.getElementsByClassName('mw-spcontent')[0]
-                conf = @WM.Cfg._getBotPlugins()
+                conf = @WM.Cfg.Plugins.Bot
                 UI = if conf then @WM.Bot._makeUI(conf,
                                     [[nextNode.getElementsByTagName('ol')[0],
                                     0, "Pages"]]) else null
@@ -158,7 +158,7 @@ class module.exports
                                                                 .length > 0
                 nextNode = document.getElementsByClassName(
                                                 'mw-allpages-table-chunk')[0]
-                conf = @WM.Cfg._getBotPlugins()
+                conf = @WM.Cfg.Plugins.Bot
                 UI = if conf then @WM.Bot._makeUI(conf,
                                 [[nextNode.getElementsByTagName('tbody')[0],
                                 0, "Pages"]]) else null
@@ -188,21 +188,6 @@ class module.exports
                     this.innerHTML = '[show]'
             , false)
             legend.appendChild(hide)
-
-            legend.appendChild(document.createTextNode(' '))
-
-            conf = document.createElement('a')
-            conf.href = @WM.MW.getWikiPaths().short +
-                                            'Special:Preferences#wiki-monkey'
-            conf.innerHTML = '[conf]'
-            legend.appendChild(conf)
-
-            legend.appendChild(document.createTextNode(' '))
-
-            help = document.createElement('a')
-            help.href = 'https://github.com/kynikos/wiki-monkey/wiki'
-            help.innerHTML = '[help]'
-            legend.appendChild(help)
 
             main.appendChild(legend)
 

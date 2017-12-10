@@ -18,7 +18,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 // Initialize the libraries immediately (especially babel-polyfill)
-var ArchWiki, Bot, Cat, Cfg, Diff, Editor, Filters, Interlanguage, Log, MW, Menu, Mods, Parser, Tables, UI, Upgrade, WhatLinksHere;
+var ArchWiki, Bot, Cat, Cfg, Diff, Editor, Filters, Interlanguage, Log, MW, Menu, Mods, Parser, Tables, UI, Upgrade, WM, WhatLinksHere, wm;
 
 require('./libs');
 
@@ -58,28 +58,29 @@ Upgrade = require('./Upgrade');
 
 WhatLinksHere = require('./WhatLinksHere');
 
-module.exports = (function() {
+WM = (function() {
   var MW_MODULES, VERSION;
 
-  class exports {
-    constructor(default_config, installed_plugins) {
-      this._onready = this._onready.bind(this);
+  class WM {
+    constructor() {
+      this.setup = this.setup.bind(this);
+      this.init = this.init.bind(this);
       this.version = VERSION;
-      mw.loader.using(MW_MODULES).done(() => {
-        return $(() => {
-          return this._onready(default_config, installed_plugins);
-        });
-      });
     }
 
-    _onready(default_config, installed_plugins) {
-      var Plugin, pname;
+    setup(default_config, installed_plugins) {
+      return this.Cfg = new Cfg(this, default_config, installed_plugins);
+    }
+
+    async init(user_config) {
+      var Plugin, pname, ref;
+      this.Cfg.load(user_config);
+      await $.when(mw.loader.using(MW_MODULES), $.ready);
       // The ArchPackages module is currently unusable
       // @ArchPackages = new ArchPackages(this)
       this.ArchWiki = new ArchWiki(this);
       this.Bot = new Bot(this);
       this.Cat = new Cat(this);
-      this.Cfg = new Cfg(this);
       this.Diff = new Diff(this);
       this.Editor = new Editor(this);
       this.Filters = new Filters(this);
@@ -94,12 +95,12 @@ module.exports = (function() {
       this.Upgrade = new Upgrade(this);
       this.WhatLinksHere = new WhatLinksHere(this);
       this.Plugins = {};
-      for (pname in installed_plugins) {
-        Plugin = installed_plugins[pname];
+      ref = this.Cfg.installed_plugins;
+      for (pname in ref) {
+        Plugin = ref[pname];
         this.Plugins[pname] = new Plugin(this);
       }
       this.Upgrade.check_and_notify();
-      this.Cfg._load(default_config);
       return this.UI._makeUI();
     }
 
@@ -110,6 +111,12 @@ module.exports = (function() {
 
   MW_MODULES = ['mediawiki.api.edit', 'mediawiki.notification'];
 
-  return exports;
+  return WM;
 
 })();
+
+wm = new WM();
+
+module.exports = wm.setup;
+
+window.wikimonkey = wm.init;

@@ -43,11 +43,11 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     s(r[o]);
   }return s;
 })({ 1: [function (require, module, exports) {
-    var WM;
+    var wmsetup;
 
-    WM = require('./modules/_Init');
+    wmsetup = require('./modules/_Init');
 
-    new WM(require("../build/configurations/_local"), {
+    wmsetup(require("../build/configurations/_local"), {
       ArchWikiFixHeader: require("./plugins/ArchWikiFixHeader"),
       ArchWikiFixHeadings: require("./plugins/ArchWikiFixHeadings"),
       ArchWikiFixLinks: require("./plugins/ArchWikiFixLinks"),
@@ -1392,263 +1392,51 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       return exports;
     }();
   }, { "../../lib.js.generic/dist/Async": 433, "../../lib.js.generic/dist/Obj": 437 }], 6: [function (require, module, exports) {
-    var CSS;
-
-    CSS = require('../../lib.js.generic/dist/CSS');
-
     module.exports = function () {
-      var DEFAULTS_REQUEST;
+      function exports(WM, config, installed_plugins) {
+        _classCallCheck2(this, exports);
 
-      var exports = function () {
-        function exports(WM) {
-          _classCallCheck2(this, exports);
+        this.WM = WM;
+        this.installed_plugins = installed_plugins;
+        this.load(config);
+      }
 
-          this._doMakeUI = this._doMakeUI.bind(this);
-          this.save = this.save.bind(this);
-          this.saveEditor = this.saveEditor.bind(this);
-          this.resetEditor = this.resetEditor.bind(this);
-          this.requestDefaults = this.requestDefaults.bind(this);
-          this.importFile = this.importFile.bind(this);
-          this.exportEditor = this.exportEditor.bind(this);
-          this.WM = WM;
-          this.config = {};
-        }
-
-        _createClass2(exports, [{
-          key: "_makeUI",
-          value: function _makeUI() {
-            var waitdom;
-
-            waitdom = function waitdom() {
-              if ($('#preftoc')[0]) {
-                return this._doMakeUI();
-              } else {
-                return setTimeout(_recurse, 200);
-              }
-            };
-            return waitdom();
-          }
-        }, {
-          key: "_doMakeUI",
-          value: function _doMakeUI() {
-            var bdiv, editor, help, link, list, plugin, toc;
-
-            CSS.addStyleElement("#WikiMonkey-prefsection textarea { height:30em;} #WikiMonkey-prefsection div, #WikiMonkey-prefsection p.message {display:inline-block; margin-bottom:0.5em;} #WikiMonkey-prefsection input {margin-right:0.5em;} #WikiMonkey-prefsection input[value='Save'] {font-weight:bold;}");
-            toc = $("#preftoc");
-            toc.find("a").click(this._hideEditor);
-            link = $("<a/>").attr({
-              "id": "WikiMonkey-preftab",
-              "href": "#wiki-monkey",
-              "role": "tab",
-              "aria-controls": "WikiMonkey-config",
-              "tabindex": "-1",
-              "aria-selected": "false"
-            }).text("Wiki Monkey").click(this._showEditor);
-            $("<li/>").appendTo(toc).append(link);
-            editor = $("<fieldset/>").addClass("prefsection").attr("id", "WikiMonkey-prefsection").hide();
-            $("<legend/>").addClass("mainLegend").text("Wiki Monkey").appendTo(editor);
-            bdiv = $("<div/>");
-            $("<input/>").attr("type", "button").val("Save").click(this.saveEditor).appendTo(bdiv);
-            $("<input/>").attr("type", "button").val("Reset").click(this.resetEditor).appendTo(bdiv);
-            $("<input/>").attr("type", "button").val("Defaults").click(this.requestDefaults).appendTo(bdiv);
-            $("<input/>").attr("type", "button").val("Import").click(this.importFile).appendTo(bdiv);
-            $("<input/>").attr({
-              "type": "file",
-              "id": "WikiMonkey-import"
-            }).change(this.doImportFile).appendTo(bdiv).hide();
-            $("<input/>").attr("type", "button").val("Export").click(this.exportEditor).appendTo(bdiv);
-            $("<a/>").attr({
-              "id": "WikiMonkey-export",
-              "download": "WikiMonkey.conf"
-            }).appendTo(bdiv);
-            editor.append(bdiv);
-            help = $("<a/>").attr("href", "https://github.com/kynikos/wiki-monkey/wiki").text("[help]");
-            $("<p/>").addClass("message").text("All pages running Wiki Monkey need to be refreshed for saved changes to take effect. ").append(help).appendTo(editor);
-            $("<textarea/>").attr("id", "WikiMonkey-editor").appendTo(editor);
-            $("<p/>").text('Wiki Monkey version: ' + this.WM.version).appendTo(editor);
-            $("<p/>").text("Actually installed plugins (in general, a subset of those set in the loaded configuration):").appendTo(editor);
-            list = $("<ul/>");
-            for (plugin in this.WM.Plugins) {
-              $("<li/>").text(plugin).appendTo(list);
+      _createClass2(exports, [{
+        key: "load",
+        value: function load(config) {
+          var results, sconfig, section, tconfig, thissection, thistype, type;
+          results = [];
+          for (section in config) {
+            sconfig = config[section];
+            if (this[section] == null) {
+              this[section] = {};
             }
-            list.appendTo(editor);
-            $("#preferences").children("fieldset").last().after(editor);
-            this.resetEditor();
-            if (location.hash === "#wiki-monkey") {
-              return this._showEditor();
-            }
-          }
-        }, {
-          key: "_showEditor",
-          value: function _showEditor() {
-            var editor, tab;
-            tab = $("#WikiMonkey-preftab").parent();
-            tab.siblings(".selected").removeClass("selected").children("a:first").attr({
-              "tabindex": "-1",
-              "aria-selected": "false"
-            });
-            tab.addClass("selected").children("a:first").attr({
-              "tabindex": "0",
-              "aria-selected": "true"
-            });
-            editor = $("#WikiMonkey-prefsection");
-            editor.siblings("fieldset").hide();
-            editor.show();
-            return editor.siblings(".mw-prefs-buttons").hide();
-          }
-        }, {
-          key: "_hideEditor",
-          value: function _hideEditor() {
-            var editor;
-            $("#WikiMonkey-preftab").attr({
-              "tabindex": "-1",
-              "aria-selected": "false"
-            }).parent().removeClass("selected");
-            editor = $("#WikiMonkey-prefsection");
-            editor.hide();
-            return editor.siblings(".mw-prefs-buttons").show();
-          }
-        }, {
-          key: "_load",
-          value: function _load(defaultConfig) {
-            var savedConfig, section, type;
-
-            this.config = defaultConfig;
-            savedConfig = JSON.parse(localStorage.getItem("WikiMonkey"));
-            if (savedConfig) {
-              for (section in savedConfig) {
-                for (type in this.config[section]) {
-                  if (savedConfig[section][type]) {
-                    $.extend(this.config[section][type], savedConfig[section][type]);
-                  }
+            thissection = this[section];
+            results.push(function () {
+              var results1;
+              results1 = [];
+              for (type in sconfig) {
+                tconfig = sconfig[type];
+                if (thissection[type] == null) {
+                  thissection[type] = {};
+                }
+                thistype = thissection[type];
+                if (tconfig) {
+                  results1.push($.extend(thistype, tconfig));
+                } else {
+                  results1.push(void 0);
                 }
               }
-            }
-            return this.save();
+              return results1;
+            }());
           }
-        }, {
-          key: "_getEditorPlugins",
-          value: function _getEditorPlugins() {
-            return this.config["Plugins"]["Editor"];
-          }
-        }, {
-          key: "_getDiffPlugins",
-          value: function _getDiffPlugins() {
-            return this.config["Plugins"]["Diff"];
-          }
-        }, {
-          key: "_getBotPlugins",
-          value: function _getBotPlugins() {
-            return this.config["Plugins"]["Bot"];
-          }
-        }, {
-          key: "_getSpecialPlugins",
-          value: function _getSpecialPlugins() {
-            return this.config["Plugins"]["Special"];
-          }
-        }, {
-          key: "_getRecentChangesPlugins",
-          value: function _getRecentChangesPlugins() {
-            return this.config["Plugins"]["RecentChanges"];
-          }
-        }, {
-          key: "_getNewPagesPlugins",
-          value: function _getNewPagesPlugins() {
-            return this.config["Plugins"]["NewPages"];
-          }
-        }, {
-          key: "_getGeneralMods",
-          value: function _getGeneralMods() {
-            return this.config["Mods"]["General"];
-          }
-        }, {
-          key: "_getEditorMods",
-          value: function _getEditorMods() {
-            return this.config["Mods"]["Editor"];
-          }
-        }, {
-          key: "_getRecentChangesMods",
-          value: function _getRecentChangesMods() {
-            return this.config["Mods"]["RecentChanges"];
-          }
-        }, {
-          key: "_getContributionsMods",
-          value: function _getContributionsMods() {
-            return this.config["Mods"]["Contributions"];
-          }
-        }, {
-          key: "save",
-          value: function save() {
-            return localStorage.setItem("WikiMonkey", JSON.stringify(this.config));
-          }
-        }, {
-          key: "saveEditor",
-          value: function saveEditor() {
-            var err, text;
-            text = $("#WikiMonkey-editor").val();
-            try {
-              this.config = JSON.parse(text);
-            } catch (error) {
-              err = error;
-              if (text === DEFAULTS_REQUEST) {
-                this.config = {};
-                $("#WikiMonkey-editor").val("The configuration has been reset to the default values and will be available after refreshing the page.");
-              } else {
-                alert("Not a valid JSON object, the configuration has not been saved.");
-                return false;
-              }
-            }
-            return this.save();
-          }
-        }, {
-          key: "resetEditor",
-          value: function resetEditor() {
-            return $("#WikiMonkey-editor").val(JSON.stringify(this.config, void 0, 4));
-          }
-        }, {
-          key: "requestDefaults",
-          value: function requestDefaults() {
-            return $("#WikiMonkey-editor").val(DEFAULTS_REQUEST);
-          }
-        }, {
-          key: "importFile",
-          value: function importFile() {
-            return $("#WikiMonkey-import").trigger("click");
-          }
-        }, {
-          key: "doImportFile",
-          value: function doImportFile() {
-            var file, freader;
-            file = this.files[0];
-            freader = new FileReader();
-            freader.onload = function (fileLoadedEvent) {
-              return $("#WikiMonkey-editor").val(fileLoadedEvent.target.result);
-            };
-            return freader.readAsText(file, "UTF-8");
-          }
-        }, {
-          key: "exportEditor",
-          value: function exportEditor() {
-            var blob, link;
-            blob = new Blob([$("#WikiMonkey-editor").val()], {
-              type: 'text/plain'
-            });
-            link = $("#WikiMonkey-export").attr("href", window.URL.createObjectURL(blob));
-
-            return link[0].click();
-          }
-        }]);
-
-        return exports;
-      }();
-
-      ;
-
-      DEFAULTS_REQUEST = "WARNING: If you click on the \"Save\" button now, the saved configuration will be reset to the default values at the next refresh!\nTo cancel this request, simply click on the \"Reset\" button.";
+          return results;
+        }
+      }]);
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 434 }], 7: [function (require, module, exports) {
+  }, {}], 7: [function (require, module, exports) {
     var HTTP;
 
     HTTP = require('../../lib.js.generic/dist/HTTP');
@@ -3057,7 +2845,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           key: "applyGeneralMods",
           value: function applyGeneralMods() {
             var conf;
-            conf = this.WM.Cfg._getGeneralMods();
+            conf = this.WM.Cfg.Mods.General;
             if (conf['heading_number_style']) {
               return changeHeadingNumberStyle(conf['heading_number_style']);
             }
@@ -3066,7 +2854,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           key: "applyEditorMods",
           value: function applyEditorMods() {
             var conf;
-            conf = this.WM.Cfg._getEditorMods();
+            conf = this.WM.Cfg.Mods.Editor;
             if (conf['disable_edit_summary_submit_on_enter']) {
               disableEditSummarySubmitOnEnter();
             }
@@ -3078,7 +2866,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           key: "applyRecentChangesMods",
           value: function applyRecentChangesMods() {
             var conf;
-            conf = this.WM.Cfg._getRecentChangesMods();
+            conf = this.WM.Cfg.Mods.RecentChanges;
             if (conf['hide_rollback_links']) {
               return hideRollbackLinks();
             }
@@ -3087,7 +2875,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           key: "applyContributionsMods",
           value: function applyContributionsMods() {
             var conf;
-            conf = this.WM.Cfg._getContributionsMods();
+            conf = this.WM.Cfg.Mods.Contributions;
             if (conf['hide_rollback_links']) {
               return hideRollbackLinks();
             }
@@ -3638,37 +3426,37 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       _createClass2(exports, [{
         key: "_makeUI",
         value: function _makeUI() {
-          var UI, conf, date, display, displayLog, help, hide, legend, logArea, main, main2, nextNode, patt1A, patt1B, patt2A, patt2B, patt3A, patt3B, patt4A, patt4B, patt5A, patt5B, wikiUrls;
+          var UI, conf, date, display, displayLog, hide, legend, logArea, main, main2, nextNode, patt1A, patt1B, patt2A, patt2B, patt3A, patt3B, patt4A, patt4B, patt5A, patt5B, wikiUrls;
           display = true;
           displayLog = true;
           this.WM.Mods.applyGeneralMods();
           if (document.getElementById('editform')) {
             nextNode = document.getElementById('wpSummaryLabel').parentNode.nextSibling;
-            conf = this.WM.Cfg._getEditorPlugins();
+            conf = this.WM.Cfg.Plugins.Editor;
             UI = conf ? this.WM.Menu._makeUI(conf) : null;
             this.WM.Mods.applyEditorMods();
           } else if (document.getElementById('mw-diff-otitle1')) {
             nextNode = document.getElementById('bodyContent').getElementsByTagName('h2')[0];
-            conf = this.WM.Cfg._getDiffPlugins();
+            conf = this.WM.Cfg.Plugins.Diff;
             UI = conf ? this.WM.Menu._makeUI(conf) : null;
           } else if (document.getElementById('mw-subcategories') || document.getElementById('mw-pages')) {
             nextNode = document.getElementById('bodyContent');
-            conf = this.WM.Cfg._getBotPlugins();
+            conf = this.WM.Cfg.Plugins.Bot;
             UI = conf ? this.WM.Bot._makeUI(conf, [[document.getElementById('mw-pages'), 0, "Pages"], [document.getElementById('mw-subcategories'), 0, "Subcategories"]]) : null;
             display = false;
           } else if (document.getElementById('mw-whatlinkshere-list')) {
             nextNode = document.getElementById('bodyContent').getElementsByTagName('form')[0].nextSibling;
-            conf = this.WM.Cfg._getBotPlugins();
+            conf = this.WM.Cfg.Plugins.Bot;
             UI = conf ? this.WM.Bot._makeUI(conf, [[document.getElementById('mw-whatlinkshere-list'), 0, "Pages"]]) : null;
             display = false;
           } else if (document.body.classList.contains('mw-special-LinkSearch') && document.getElementById('bodyContent').getElementsByTagName('ol')[0]) {
             nextNode = document.getElementsByClassName('mw-spcontent')[0];
-            conf = this.WM.Cfg._getBotPlugins();
+            conf = this.WM.Cfg.Plugins.Bot;
             UI = conf ? this.WM.Bot._makeUI(conf, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 1, "Pages"]]) : null;
             display = false;
           } else if (document.getElementById('mw-prefixindex-list-table')) {
             nextNode = document.getElementById('mw-prefixindex-list-table');
-            conf = this.WM.Cfg._getBotPlugins();
+            conf = this.WM.Cfg.Plugins.Bot;
             UI = conf ? this.WM.Bot._makeUI(conf, [[nextNode.getElementsByTagName('tbody')[0], 0, "Pages"]]) : null;
             display = false;
           } else if (document.getElementById('mw-prefs-form')) {
@@ -3687,34 +3475,34 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
             patt5B = new RegExp(RegEx.escapePattern(wikiUrls.short) + "Special(\\:|%3[Aa])Contributions", '');
             if (location.href.search(patt1A) > -1 || location.href.search(patt1B) > -1) {
               nextNode = document.getElementById('bodyContent');
-              conf = this.WM.Cfg._getSpecialPlugins();
+              conf = this.WM.Cfg.Plugins.Special;
               UI = conf ? this.WM.Menu._makeUI(conf) : null;
             } else if (location.href.search(patt2A) > -1 || location.href.search(patt2B) > -1) {
               nextNode = document.getElementById('mw-content-text').getElementsByTagName('h4')[0];
-              conf = this.WM.Cfg._getRecentChangesPlugins();
+              conf = this.WM.Cfg.Plugins.RecentChanges;
               UI = conf ? this.WM.Filters._makeUI(conf) : null;
               displayLog = false;
               this.WM.Mods.applyRecentChangesMods();
             } else if (location.href.search(patt3A) > -1 || location.href.search(patt3B) > -1) {
               nextNode = document.getElementById('mw-content-text').getElementsByTagName('ul')[0];
-              conf = this.WM.Cfg._getNewPagesPlugins();
+              conf = this.WM.Cfg.Plugins.NewPages;
               UI = conf ? this.WM.Filters._makeUI(conf) : null;
               displayLog = false;
             } else if (location.href.search(patt4A) > -1 || location.href.search(patt4B) > -1) {
               nextNode = document.getElementById('mw-content-text').getElementsByTagName('ul')[0];
-              conf = this.WM.Cfg._getBotPlugins();
+              conf = this.WM.Cfg.Plugins.Bot;
               UI = conf ? this.WM.Bot._makeUI(conf, [[document.getElementById('mw-content-text').getElementsByTagName('ul')[0], 0, "Pages"]]) : null;
               display = false;
             } else if (location.href.search(patt5A) > -1 || location.href.search(patt5B) > -1) {
               this.WM.Mods.applyContributionsMods();
             } else if (document.getElementsByClassName('mw-spcontent').length > 0) {
               nextNode = document.getElementsByClassName('mw-spcontent')[0];
-              conf = this.WM.Cfg._getBotPlugins();
+              conf = this.WM.Cfg.Plugins.Bot;
               UI = conf ? this.WM.Bot._makeUI(conf, [[nextNode.getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
               display = false;
             } else if (document.getElementsByClassName('mw-allpages-table-chunk').length > 0) {
               nextNode = document.getElementsByClassName('mw-allpages-table-chunk')[0];
-              conf = this.WM.Cfg._getBotPlugins();
+              conf = this.WM.Cfg.Plugins.Bot;
               UI = conf ? this.WM.Bot._makeUI(conf, [[nextNode.getElementsByTagName('tbody')[0], 0, "Pages"]]) : null;
               display = false;
             }
@@ -3741,16 +3529,6 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
               }
             }, false);
             legend.appendChild(hide);
-            legend.appendChild(document.createTextNode(' '));
-            conf = document.createElement('a');
-            conf.href = this.WM.MW.getWikiPaths().short + 'Special:Preferences#wiki-monkey';
-            conf.innerHTML = '[conf]';
-            legend.appendChild(conf);
-            legend.appendChild(document.createTextNode(' '));
-            help = document.createElement('a');
-            help.href = 'https://github.com/kynikos/wiki-monkey/wiki';
-            help.innerHTML = '[help]';
-            legend.appendChild(help);
             main.appendChild(legend);
             main2 = document.createElement('div');
             main2.id = 'WikiMonkeyMain';
@@ -3883,7 +3661,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
             pagelink = this.WM.MW.linkArticle(page);
             this.display_notification("Upgrading to version " + upstream_version + "...");
 
-            regex = new RegExp("(mw\\.loader\\.load\\(\\s*" + "[\"']https?://[^/]+/kynikos/wiki-monkey/" + ("v)" + mw.RegExp.escape(this.WM.version) + "(/dist/") + "WikiMonkey-[^/]+\\.js[\"']\\s*\\))", 'g');
+            regex = new RegExp("([\"']https?://[^/]+/kynikos/wiki-monkey/" + ("v)" + mw.RegExp.escape(this.WM.version) + "(/dist/") + "WikiMonkey-[^/]+\\.js[\"'])", 'g');
             return this.WM.MW.api.edit(page, function (revision) {
               var newtext;
               newtext = revision.content.replace(regex, "$1" + upstream_version + "$2");
@@ -3947,7 +3725,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       return exports;
     }();
   }, {}], 20: [function (require, module, exports) {
-    var ArchWiki, Bot, Cat, Cfg, Diff, Editor, Filters, Interlanguage, Log, MW, Menu, Mods, Parser, Tables, UI, Upgrade, WhatLinksHere;
+    var ArchWiki, Bot, Cat, Cfg, Diff, Editor, Filters, Interlanguage, Log, MW, Menu, Mods, Parser, Tables, UI, Upgrade, WM, WhatLinksHere, wm;
 
     require('./libs');
 
@@ -3985,58 +3763,79 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
     WhatLinksHere = require('./WhatLinksHere');
 
-    module.exports = function () {
+    WM = function () {
       var MW_MODULES, VERSION;
 
-      var exports = function () {
-        function exports(default_config, installed_plugins) {
-          var _this17 = this;
+      var WM = function () {
+        function WM() {
+          _classCallCheck2(this, WM);
 
-          _classCallCheck2(this, exports);
-
-          this._onready = this._onready.bind(this);
+          this.setup = this.setup.bind(this);
+          this.init = this.init.bind(this);
           this.version = VERSION;
-          mw.loader.using(MW_MODULES).done(function () {
-            return $(function () {
-              return _this17._onready(default_config, installed_plugins);
-            });
-          });
         }
 
-        _createClass2(exports, [{
-          key: "_onready",
-          value: function _onready(default_config, installed_plugins) {
-            var Plugin, pname;
-
-            this.ArchWiki = new ArchWiki(this);
-            this.Bot = new Bot(this);
-            this.Cat = new Cat(this);
-            this.Cfg = new Cfg(this);
-            this.Diff = new Diff(this);
-            this.Editor = new Editor(this);
-            this.Filters = new Filters(this);
-            this.Interlanguage = new Interlanguage(this);
-            this.Log = new Log(this);
-            this.Menu = new Menu(this);
-            this.Mods = new Mods(this);
-            this.MW = new MW(this);
-            this.Parser = new Parser(this);
-            this.Tables = new Tables(this);
-            this.UI = new UI(this);
-            this.Upgrade = new Upgrade(this);
-            this.WhatLinksHere = new WhatLinksHere(this);
-            this.Plugins = {};
-            for (pname in installed_plugins) {
-              Plugin = installed_plugins[pname];
-              this.Plugins[pname] = new Plugin(this);
-            }
-            this.Upgrade.check_and_notify();
-            this.Cfg._load(default_config);
-            return this.UI._makeUI();
+        _createClass2(WM, [{
+          key: "setup",
+          value: function setup(default_config, installed_plugins) {
+            return this.Cfg = new Cfg(this, default_config, installed_plugins);
           }
+        }, {
+          key: "init",
+          value: function () {
+            var _ref3 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(user_config) {
+              var Plugin, pname, ref;
+              return regeneratorRuntime.wrap(function _callee2$(_context2) {
+                while (1) {
+                  switch (_context2.prev = _context2.next) {
+                    case 0:
+                      this.Cfg.load(user_config);
+                      _context2.next = 3;
+                      return $.when(mw.loader.using(MW_MODULES), $.ready);
+
+                    case 3:
+                      this.ArchWiki = new ArchWiki(this);
+                      this.Bot = new Bot(this);
+                      this.Cat = new Cat(this);
+                      this.Diff = new Diff(this);
+                      this.Editor = new Editor(this);
+                      this.Filters = new Filters(this);
+                      this.Interlanguage = new Interlanguage(this);
+                      this.Log = new Log(this);
+                      this.Menu = new Menu(this);
+                      this.Mods = new Mods(this);
+                      this.MW = new MW(this);
+                      this.Parser = new Parser(this);
+                      this.Tables = new Tables(this);
+                      this.UI = new UI(this);
+                      this.Upgrade = new Upgrade(this);
+                      this.WhatLinksHere = new WhatLinksHere(this);
+                      this.Plugins = {};
+                      ref = this.Cfg.installed_plugins;
+                      for (pname in ref) {
+                        Plugin = ref[pname];
+                        this.Plugins[pname] = new Plugin(this);
+                      }
+                      this.Upgrade.check_and_notify();
+                      return _context2.abrupt("return", this.UI._makeUI());
+
+                    case 24:
+                    case "end":
+                      return _context2.stop();
+                  }
+                }
+              }, _callee2, this);
+            }));
+
+            function init(_x2) {
+              return _ref3.apply(this, arguments);
+            }
+
+            return init;
+          }()
         }]);
 
-        return exports;
+        return WM;
       }();
 
       ;
@@ -4045,8 +3844,14 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       MW_MODULES = ['mediawiki.api.edit', 'mediawiki.notification'];
 
-      return exports;
+      return WM;
     }();
+
+    wm = new WM();
+
+    module.exports = wm.setup;
+
+    window.wikimonkey = wm.init;
   }, { "./ArchWiki": 3, "./Bot": 4, "./Cat": 5, "./Cfg": 6, "./Diff": 7, "./Editor": 8, "./Filters": 9, "./Interlanguage": 10, "./Log": 11, "./MW": 12, "./Menu": 13, "./Mods": 14, "./Parser": 15, "./Tables": 16, "./UI": 17, "./Upgrade": 18, "./WhatLinksHere": 19, "./libs": 21 }], 21: [function (require, module, exports) {
     var helper, hh, jss, tag;
 

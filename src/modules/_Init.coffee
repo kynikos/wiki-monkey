@@ -40,25 +40,28 @@ Upgrade = require('./Upgrade')
 WhatLinksHere = require('./WhatLinksHere')
 
 
-class module.exports
+class WM
     # The build script updates the version number
     VERSION = '4.0.0'
     MW_MODULES = ['mediawiki.api.edit',
                   'mediawiki.notification']
 
-    constructor: (default_config, installed_plugins) ->
+    constructor: ->
         @version = VERSION
-        mw.loader.using(MW_MODULES).done( =>
-            $( => @_onready(default_config, installed_plugins))
-        )
 
-    _onready: (default_config, installed_plugins) =>
+    setup: (default_config, installed_plugins) =>
+        @Cfg = new Cfg(this, default_config, installed_plugins)
+
+    init: (user_config) =>
+        @Cfg.load(user_config)
+
+        await $.when(mw.loader.using(MW_MODULES), $.ready)
+
         # The ArchPackages module is currently unusable
         # @ArchPackages = new ArchPackages(this)
         @ArchWiki = new ArchWiki(this)
         @Bot = new Bot(this)
         @Cat = new Cat(this)
-        @Cfg = new Cfg(this)
         @Diff = new Diff(this)
         @Editor = new Editor(this)
         @Filters = new Filters(this)
@@ -75,9 +78,13 @@ class module.exports
 
         @Plugins = {}
 
-        for pname, Plugin of installed_plugins
+        for pname, Plugin of @Cfg.installed_plugins
             @Plugins[pname] = new Plugin(this)
 
         @Upgrade.check_and_notify()
-        @Cfg._load(default_config)
         @UI._makeUI()
+
+
+wm = new WM()
+module.exports = wm.setup
+window.wikimonkey = wm.init

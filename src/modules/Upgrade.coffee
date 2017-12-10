@@ -67,10 +67,9 @@ class module.exports
 
         # TODO: Allow preventing upgrades per-line with //noupgrade comments?
         #       Don't upgrade commented lines?
-        regex = new RegExp("(mw\\.loader\\.load\\(\\s*" +
-            "[\"']https?://[^/]+/kynikos/wiki-monkey/" +
+        regex = new RegExp("([\"']https?://[^/]+/kynikos/wiki-monkey/" +
             "v)#{mw.RegExp.escape(@WM.version)}(/dist/" +
-            "WikiMonkey-[^/]+\\.js[\"']\\s*\\))", 'g')
+            "WikiMonkey-[^/]+\\.js[\"'])", 'g')
 
         @WM.MW.api.edit(page, (revision) =>
             newtext = revision.content.replace(regex,
