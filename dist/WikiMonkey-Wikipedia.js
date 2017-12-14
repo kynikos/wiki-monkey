@@ -3492,7 +3492,11 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       return exports;
     }();
   }, { "../../lib.js.generic/dist/CSS": 422, "../../lib.js.generic/dist/RegEx": 426 }], 18: [function (require, module, exports) {
-    var A, Br, Div, moment;
+    var A,
+        Br,
+        Div,
+        moment,
+        indexOf = [].indexOf;
 
     var _require3 = require('./libs');
 
@@ -3503,7 +3507,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
 
     module.exports = function () {
-      var CHECK_INTERVAL, VERSION_URL;
+      var CHECK_WDAYS, VERSION_URL;
 
       var exports = function () {
         function exports(WM) {
@@ -3565,13 +3569,14 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "should_check",
           value: function should_check() {
-            var diff, lastupdcheck;
+            var diff, lastupdcheck, ref;
             lastupdcheck = mw.storage.get('WikiMonkey-last-update-check');
             if (!lastupdcheck) {
               return true;
             }
             diff = moment().diff(moment(lastupdcheck), 'days');
-            if (diff >= CHECK_INTERVAL) {
+
+            if (diff >= 1 && (ref = moment().day(), indexOf.call(CHECK_WDAYS, ref) >= 0) || diff >= 7) {
               return true;
             }
             return false;
@@ -3631,7 +3636,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       VERSION_URL = 'https://raw.githubusercontent.com/kynikos/wiki-monkey/master/VERSION';
 
-      CHECK_INTERVAL = 7;
+      CHECK_WDAYS = [6];
 
       return exports;
     }();
