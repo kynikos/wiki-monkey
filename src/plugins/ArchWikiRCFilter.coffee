@@ -16,13 +16,17 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+{Plugin} = require('./_Plugin')
+
 CSS = require('../../lib.js.generic/dist/CSS')
 
 
-class module.exports
-    constructor: (@WM) ->
+class module.exports.ArchWikiRCFilter extends Plugin
+    @conf_default:
+        option_label: "Default filter"
+        default_language: "English"
 
-    main: (params) ->
+    main_recentchanges: ->
         h4s = $('#mw-content-text .mw-changeslist > h4')
 
         if h4s.eq(0).next()[0].localName.toLowerCase() != 'div'
@@ -42,9 +46,8 @@ class module.exports
                     if link[0]
                         [pureTitle, language] = @WM.ArchWiki.detectLanguage(
                                                                 link[0].title)
-                        if language != params.language
-                            @WM.Plugins.ArchWikiRCFilter.moveArticle(
-                                        groupDiv, articleTable, language)
+                        if language != @conf.default_language
+                            @moveArticle(groupDiv, articleTable, language)
 
             @WM.Log.logInfo("Grouped articles by language")
 

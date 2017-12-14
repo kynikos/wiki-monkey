@@ -35,7 +35,7 @@ module.exports = (function() {
         upstream_version = (await $.get(VERSION_URL));
         // Well, ok, this is assuming that if the versions are
         // different, upstream has the latest
-        if (this.WM.version !== upstream_version) {
+        if (this.WM.VERSION !== upstream_version) {
           return this.display_notification([
             `Version ${upstream_version} is available.`,
             Br(),
@@ -83,7 +83,7 @@ module.exports = (function() {
       this.display_notification(`Upgrading to version ${upstream_version}...`);
       // TODO: Allow preventing upgrades per-line with //noupgrade comments?
       //       Don't upgrade commented lines?
-      regex = new RegExp("([\"']https?://[^/]+/kynikos/wiki-monkey/" + `v)${mw.RegExp.escape(this.WM.version)}(/dist/` + "WikiMonkey-[^/]+\\.js[\"'])", 'g');
+      regex = new RegExp("([\"']https?://[^/]+/kynikos/wiki-monkey/" + `v)${mw.RegExp.escape(this.WM.VERSION)}(/dist/` + "WikiMonkey-[^/]+\\.js[\"'])", 'g');
       return this.WM.MW.api.edit(page, (revision) => {
         var newtext;
         newtext = revision.content.replace(regex, `$1${upstream_version}$2`);

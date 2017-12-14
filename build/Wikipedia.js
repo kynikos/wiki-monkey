@@ -3,18 +3,6 @@ var wmsetup;
 
 wmsetup = require('./modules/_Init');
 
-// Configuration files are generated automatically, don't keep them under
-// ./src/configurations/
-wmsetup(require("../build/configurations/Wikipedia"), {
-  // The require paths can't be constructed dynamically, or browserify won't
-  // understand and import them
-  ExpandContractions: require("./plugins/ExpandContractions"),
-  FixBacklinkFragments: require("./plugins/FixBacklinkFragments"),
-  FixDoubleRedirects: require("./plugins/FixDoubleRedirects"),
-  FixFragments: require("./plugins/FixFragments"),
-  FixLinkFragments: require("./plugins/FixLinkFragments"),
-  MultipleLineBreaks: require("./plugins/MultipleLineBreaks"),
-  SimpleReplace: require("./plugins/SimpleReplace"),
-  SynchronizeInterlanguageLinks: require("./plugins/SynchronizeInterlanguageLinks"),
-  UpdateCategoryTree: require("./plugins/UpdateCategoryTree")
-});
+// The require paths can't be constructed dynamically, or browserify won't
+// understand and import them
+wmsetup("Wikipedia", require("./plugins/ExpandContractions"), require("./plugins/FixBacklinkFragments"), require("./plugins/FixDoubleRedirects"), require("./plugins/FixFragments"), require("./plugins/FixLinkFragments"), require("./plugins/MultipleLineBreaks"), require("./plugins/SimpleReplace"), require("./plugins/SynchronizeInterlanguageLinks"), require("./plugins/UpdateCategoryTree"));

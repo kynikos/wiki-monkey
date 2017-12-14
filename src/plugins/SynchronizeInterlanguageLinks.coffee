@@ -16,9 +16,23 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+{Plugin} = require('./_Plugin')
 
-class module.exports
-    constructor: (@WM) ->
+
+class module.exports.SynchronizeInterlanguageLinks extends Plugin
+    @conf_default:
+        editor_menu: ["Query plugins", "Sync interlanguage links"]
+        option_label: "Synchronize interlanguage links"
+        language_tag: "en"
+        tag_whitelist: ["en"]
+        supported_tags: ["en"]
+        edit_summary: "synchronized interlanguage links with the other wikis"
+    @wiki_to_conf_default:
+        ArchWiki:
+            language_tag: "ArchWiki"
+            tag_whitelist: "ArchWiki"
+            supported_tags: "ArchWiki"
+        Wikipedia: {}
 
     detectLang: (title, tag) =>
         # Without this check this plugin would be specific to ArchWiki
@@ -45,15 +59,15 @@ class module.exports
         else
             return supportedLangs
 
-    main: (args, callNext) ->
+    main_editor: (callNext) ->
         title = @WM.Editor.getTitle()
 
-        detect = @detectLang(title, args[0])
+        detect = @detectLang(title, @conf.language_tag)
         pureTitle = detect[0]
         tag = detect[1]
 
-        whitelist = @computeWhiteList(args[1])
-        supportedLangs = @computeSupportedLangs(args[2])
+        whitelist = @computeWhiteList(@conf.tag_whitelist)
+        supportedLangs = @computeSupportedLangs(@conf.supported_tags)
 
         @WM.Log.logInfo("Synchronizing interlanguage links ...")
 
@@ -151,15 +165,15 @@ class module.exports
         if callNext
             callNext()
 
-    mainAuto: (args, title, callBot, chainArgs) ->
-        detect = @detectLang(title, args[0])
+    main_bot: (title, callBot, chainArgs) ->
+        detect = @detectLang(title, @conf.language_tag)
         pureTitle = detect[0]
         tag = detect[1]
 
-        whitelist = @computeWhiteList(args[1])
-        supportedLangs = @computeSupportedLangs(args[2])
+        whitelist = @computeWhiteList(@conf.tag_whitelist)
+        supportedLangs = @computeSupportedLangs(@conf.supported_tags)
 
-        summary = args[3]
+        summary = @conf.edit_summary
 
         wikiUrls = @WM.MW.getWikiUrls()
         url = wikiUrls.short + encodeURIComponent(

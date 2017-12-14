@@ -16,9 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+{Plugin} = require('./_Plugin')
 
-class module.exports
-    constructor: (@WM) ->
+
+class module.exports.FixFragments extends Plugin
+    @conf_default:
+        editor_menu: ["Text plugins", "Fix section links"]
 
     fixLinks: (source) ->
         title = @WM.Editor.getTitle()
@@ -98,7 +101,7 @@ class module.exports
         @WM.Log.logWarning("Cannot fix broken section link: " + rawlink)
         return rawlink
 
-    main: (args, callNext) ->
+    main_editor: (callNext) ->
         source = @WM.Editor.readSource()
         newtext = @fixLinks(source)
 

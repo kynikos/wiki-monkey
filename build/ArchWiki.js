@@ -3,27 +3,6 @@ var wmsetup;
 
 wmsetup = require('./modules/_Init');
 
-// Configuration files are generated automatically, don't keep them under
-// ./src/configurations/
-wmsetup(require("../build/configurations/ArchWiki"), {
-  // The require paths can't be constructed dynamically, or browserify won't
-  // understand and import them
-  ArchWikiFixHeader: require("./plugins/ArchWikiFixHeader"),
-  ArchWikiFixHeadings: require("./plugins/ArchWikiFixHeadings"),
-  ArchWikiFixLinks: require("./plugins/ArchWikiFixLinks"),
-  ArchWikiNewTemplates: require("./plugins/ArchWikiNewTemplates"),
-  ArchWikiNPFilter: require("./plugins/ArchWikiNPFilter"),
-  ArchWikiQuickReport: require("./plugins/ArchWikiQuickReport"),
-  ArchWikiSortContacts: require("./plugins/ArchWikiSortContacts"),
-  ArchWikiSummaryToRelated: require("./plugins/ArchWikiSummaryToRelated"),
-  ArchWikiRCFilter: require("./plugins/ArchWikiRCFilter"),
-  ExpandContractions: require("./plugins/ExpandContractions"),
-  FixBacklinkFragments: require("./plugins/FixBacklinkFragments"),
-  FixDoubleRedirects: require("./plugins/FixDoubleRedirects"),
-  FixFragments: require("./plugins/FixFragments"),
-  FixLinkFragments: require("./plugins/FixLinkFragments"),
-  MultipleLineBreaks: require("./plugins/MultipleLineBreaks"),
-  SimpleReplace: require("./plugins/SimpleReplace"),
-  SynchronizeInterlanguageLinks: require("./plugins/SynchronizeInterlanguageLinks"),
-  UpdateCategoryTree: require("./plugins/UpdateCategoryTree")
-});
+// The require paths can't be constructed dynamically, or browserify won't
+// understand and import them
+wmsetup("ArchWiki", require("./plugins/ArchWikiFixHeader"), require("./plugins/ArchWikiFixHeadings"), require("./plugins/ArchWikiFixLinks"), require("./plugins/ArchWikiNewTemplates"), require("./plugins/ArchWikiNPFilter"), require("./plugins/ArchWikiQuickReport"), require("./plugins/ArchWikiSortContacts"), require("./plugins/ArchWikiSummaryToRelated"), require("./plugins/ArchWikiRCFilter"), require("./plugins/ExpandContractions"), require("./plugins/FixBacklinkFragments"), require("./plugins/FixDoubleRedirects"), require("./plugins/FixFragments"), require("./plugins/FixLinkFragments"), require("./plugins/MultipleLineBreaks"), require("./plugins/SimpleReplace"), require("./plugins/SynchronizeInterlanguageLinks"), require("./plugins/UpdateCategoryTree"));

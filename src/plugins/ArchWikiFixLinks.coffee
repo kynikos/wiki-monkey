@@ -16,9 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+{Plugin} = require('./_Plugin')
 
-class module.exports
-    constructor: (@WM) ->
+
+class module.exports.ArchWikiFixLinks extends Plugin
+    @conf_default:
+        editor_menu: ["Text plugins", "Fix external links"]
 
     doReplace: (txt) ->
         # archlinux.org HTTP -> HTTPS
@@ -177,7 +180,7 @@ class module.exports
 
         return txt
 
-    main: (args, callNext) ->
+    main_editor: (callNext) ->
         source = @WM.Editor.readSource()
         newtext = @doReplace(source)
 

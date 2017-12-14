@@ -4,8 +4,6 @@ import shutil
 import re
 import subprocess
 
-import configurations
-
 
 def run(*args, **kwargs):
     return subprocess.run(*args, shell=True, **kwargs)
@@ -73,9 +71,6 @@ def compile_(version):
 
         with open(VERSIONFILE, 'w') as df:
             df.write(version)
-
-    # It's important to recompile the configuration *before* the scripts
-    configurations.compile()
 
     run(COFFEE.format(build=BUILDDIR, src=SRCDIR))
 

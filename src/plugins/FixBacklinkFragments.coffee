@@ -16,13 +16,17 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+{Plugin} = require('./_Plugin')
+
 CSS = require('../../lib.js.generic/dist/CSS')
 
 
-class module.exports
-    constructor: (@WM) ->
+class module.exports.FixBacklinkFragments extends Plugin
+    @conf_default:
+        option_label: "Fix links to specific sections of a target page"
+        edit_summary: "fix links to specific sections"
 
-    makeBotUI: (args) =>
+    makeBotUI: =>
         CSS.addStyleElement("#WikiMonkey-FixBacklinkFragments " +
                                 "input[type='text'] {margin-left:0.33em;}")
 
@@ -184,8 +188,8 @@ class module.exports
         else
             return true
 
-    mainAuto: (args, title, callBot, chainArgs) ->
-        summary = args
+    main_bot: (title, callBot, chainArgs) ->
+        summary = @conf.edit_summary
 
         target = readTarget()
         @WM.Log.logHidden("Target page: " + target)

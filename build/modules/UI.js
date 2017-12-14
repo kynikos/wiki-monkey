@@ -34,37 +34,33 @@ module.exports = class exports {
     this.WM.Mods.applyGeneralMods();
     if (document.getElementById('editform')) {
       nextNode = document.getElementById('wpSummaryLabel').parentNode.nextSibling;
-      conf = this.WM.Cfg.Plugins.Editor;
-      UI = conf ? this.WM.Menu._makeUI(conf) : null;
+      conf = this.WM.Plugins.editor;
+      UI = conf.length ? this.WM.Menu._makeUI('editor', conf) : null;
       this.WM.Mods.applyEditorMods();
     } else if (document.getElementById('mw-diff-otitle1')) {
       nextNode = document.getElementById('bodyContent').getElementsByTagName('h2')[0];
-      conf = this.WM.Cfg.Plugins.Diff;
-      UI = conf ? this.WM.Menu._makeUI(conf) : null;
+      conf = this.WM.Plugins.diff;
+      UI = conf.length ? this.WM.Menu._makeUI('diff', conf) : null;
     } else if (document.getElementById('mw-subcategories') || document.getElementById('mw-pages')) {
       nextNode = document.getElementById('bodyContent');
-      conf = this.WM.Cfg.Plugins.Bot;
-      UI = conf ? this.WM.Bot._makeUI(conf, [[document.getElementById('mw-pages'), 0, "Pages"], [document.getElementById('mw-subcategories'), 0, "Subcategories"]]) : null;
+      conf = this.WM.Plugins.bot;
+      UI = conf.length ? this.WM.Bot._makeUI(conf, [[document.getElementById('mw-pages'), 0, "Pages"], [document.getElementById('mw-subcategories'), 0, "Subcategories"]]) : null;
       display = false;
     } else if (document.getElementById('mw-whatlinkshere-list')) {
       nextNode = document.getElementById('bodyContent').getElementsByTagName('form')[0].nextSibling;
-      conf = this.WM.Cfg.Plugins.Bot;
-      UI = conf ? this.WM.Bot._makeUI(conf, [[document.getElementById('mw-whatlinkshere-list'), 0, "Pages"]]) : null;
+      conf = this.WM.Plugins.bot;
+      UI = conf.length ? this.WM.Bot._makeUI(conf, [[document.getElementById('mw-whatlinkshere-list'), 0, "Pages"]]) : null;
       display = false;
     } else if (document.body.classList.contains('mw-special-LinkSearch') && document.getElementById('bodyContent').getElementsByTagName('ol')[0]) {
       nextNode = document.getElementsByClassName('mw-spcontent')[0];
-      conf = this.WM.Cfg.Plugins.Bot;
-      UI = conf ? this.WM.Bot._makeUI(conf, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 1, "Pages"]]) : null;
+      conf = this.WM.Plugins.bot;
+      UI = conf.length ? this.WM.Bot._makeUI(conf, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 1, "Pages"]]) : null;
       display = false;
     } else if (document.getElementById('mw-prefixindex-list-table')) {
       nextNode = document.getElementById('mw-prefixindex-list-table');
-      conf = this.WM.Cfg.Plugins.Bot;
-      UI = conf ? this.WM.Bot._makeUI(conf, [[nextNode.getElementsByTagName('tbody')[0], 0, "Pages"]]) : null;
+      conf = this.WM.Plugins.bot;
+      UI = conf.length ? this.WM.Bot._makeUI(conf, [[nextNode.getElementsByTagName('tbody')[0], 0, "Pages"]]) : null;
       display = false;
-    // Making the interface shouldn't rely on saved configuration, in order
-    // to always make it possible to fix a misconfiguration
-    } else if (document.getElementById('mw-prefs-form')) {
-      this.WM.Cfg._makeUI();
     } else {
       wikiUrls = this.WM.MW.getWikiUrls();
       patt1A = new RegExp(RegEx.escapePattern(wikiUrls.full) + "\?.*?" + "title\\=Special(\\:|%3[Aa])SpecialPages", '');
@@ -79,35 +75,35 @@ module.exports = class exports {
       patt5B = new RegExp(RegEx.escapePattern(wikiUrls.short) + "Special(\\:|%3[Aa])Contributions", '');
       if (location.href.search(patt1A) > -1 || location.href.search(patt1B) > -1) {
         nextNode = document.getElementById('bodyContent');
-        conf = this.WM.Cfg.Plugins.Special;
-        UI = conf ? this.WM.Menu._makeUI(conf) : null;
+        conf = this.WM.Plugins.special;
+        UI = conf.length ? this.WM.Menu._makeUI('special', conf) : null;
       } else if (location.href.search(patt2A) > -1 || location.href.search(patt2B) > -1) {
         nextNode = document.getElementById('mw-content-text').getElementsByTagName('h4')[0];
-        conf = this.WM.Cfg.Plugins.RecentChanges;
-        UI = conf ? this.WM.Filters._makeUI(conf) : null;
+        conf = this.WM.Plugins.recentchanges;
+        UI = conf.length ? this.WM.Filters._makeUI('recentchanges', conf) : null;
         displayLog = false;
         this.WM.Mods.applyRecentChangesMods();
       } else if (location.href.search(patt3A) > -1 || location.href.search(patt3B) > -1) {
         nextNode = document.getElementById('mw-content-text').getElementsByTagName('ul')[0];
-        conf = this.WM.Cfg.Plugins.NewPages;
-        UI = conf ? this.WM.Filters._makeUI(conf) : null;
+        conf = this.WM.Plugins.newpages;
+        UI = conf.length ? this.WM.Filters._makeUI('newpages', conf) : null;
         displayLog = false;
       } else if (location.href.search(patt4A) > -1 || location.href.search(patt4B) > -1) {
         nextNode = document.getElementById('mw-content-text').getElementsByTagName('ul')[0];
-        conf = this.WM.Cfg.Plugins.Bot;
-        UI = conf ? this.WM.Bot._makeUI(conf, [[document.getElementById('mw-content-text').getElementsByTagName('ul')[0], 0, "Pages"]]) : null;
+        conf = this.WM.Plugins.bot;
+        UI = conf.length ? this.WM.Bot._makeUI(conf, [[document.getElementById('mw-content-text').getElementsByTagName('ul')[0], 0, "Pages"]]) : null;
         display = false;
       } else if (location.href.search(patt5A) > -1 || location.href.search(patt5B) > -1) {
         this.WM.Mods.applyContributionsMods();
       } else if (document.getElementsByClassName('mw-spcontent').length > 0) {
         nextNode = document.getElementsByClassName('mw-spcontent')[0];
-        conf = this.WM.Cfg.Plugins.Bot;
-        UI = conf ? this.WM.Bot._makeUI(conf, [[nextNode.getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
+        conf = this.WM.Plugins.bot;
+        UI = conf.length ? this.WM.Bot._makeUI(conf, [[nextNode.getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
         display = false;
       } else if (document.getElementsByClassName('mw-allpages-table-chunk').length > 0) {
         nextNode = document.getElementsByClassName('mw-allpages-table-chunk')[0];
-        conf = this.WM.Cfg.Plugins.Bot;
-        UI = conf ? this.WM.Bot._makeUI(conf, [[nextNode.getElementsByTagName('tbody')[0], 0, "Pages"]]) : null;
+        conf = this.WM.Plugins.bot;
+        UI = conf.length ? this.WM.Bot._makeUI(conf, [[nextNode.getElementsByTagName('tbody')[0], 0, "Pages"]]) : null;
         display = false;
       }
     }
@@ -148,7 +144,7 @@ module.exports = class exports {
       }
       main.appendChild(main2);
       nextNode.parentNode.insertBefore(main, nextNode);
-      this.WM.Log.logHidden('Wiki Monkey version: ' + this.WM.version);
+      this.WM.Log.logHidden('Wiki Monkey version: ' + this.WM.VERSION);
       date = new Date();
       this.WM.Log.logHidden('Date: ' + date.toString());
       return this.WM.Log.logHidden('URL: ' + location.href);

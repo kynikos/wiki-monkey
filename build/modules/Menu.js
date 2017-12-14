@@ -32,36 +32,29 @@ module.exports = (function() {
       this.WM = WM;
     }
 
-    _makeUI(plugins) {
-      var currId, currMenu, entry, execAll, groupAction, groupActions, i, m, mainDiv, menuSel, menus, parentId, parentMenu, pid, plugin, pluginConf, pluginInst, pluginName, ref;
+    _makeUI(page_type, plugins) {
+      var Plugin, currId, currMenu, entry, execAll, groupAction, groupActions, i, j, len, m, mainDiv, menuSel, menus, parentId, parentMenu, plugin, pluginInst, ref;
+      this.page_type = page_type;
       CSS.addStyleElement("#WikiMonkeyMenu input.margin {margin:0 0.33em 0.33em 0;}");
       mainDiv = $('<div/>').attr('id', 'WikiMonkeyMenu');
       groupActions = {};
-      for (pid in plugins) {
-        pluginConf = plugins[pid];
-        pluginName = pluginConf[0];
-        pluginInst = pluginConf[1];
-        // This protects from configurations that define plugins
-        // that are actually not installed
-        // A try-catch doesn't work...
-        if (this.WM.Plugins[pluginName]) {
-          plugin = this.WM.Plugins[pluginName];
-        } else {
-          continue;
-        }
-        // This allows to disable an entry by giving it any second
+      for (i = 0, len = plugins.length; i < len; i++) {
+        Plugin = plugins[i];
+        plugin = new Plugin(this.WM);
+        pluginInst = plugin.conf[`${this.page_type}_menu`];
+        // This allows to disable an entry by giving it a menu_entry
         // parameter that evaluates to false
         if (!pluginInst || !pluginInst.length) {
           continue;
         }
         if (plugin.makeUI) {
-          groupAction = [this.warnInputNeeded, pluginConf[0]];
+          groupAction = [this.warnInputNeeded, plugin];
         } else {
-          groupAction = [this.executeEntryAction, [plugin, pluginConf]];
+          groupAction = [this.executeEntryAction, plugin];
         }
         pluginInst.unshift("WikiMonkeyMenuRoot");
         currId = false;
-        for (m = i = 0, ref = pluginInst.length - 1; 0 <= ref ? i < ref : i > ref; m = 0 <= ref ? ++i : --i) {
+        for (m = j = 0, ref = pluginInst.length - 1; 0 <= ref ? j < ref : j > ref; m = 0 <= ref ? ++j : --j) {
           parentId = currId;
           currId = pluginInst.slice(0, m + 1).join("-").replace(/ /g, "_");
           // I can't simply do $("#" + currId) because mainDiv
@@ -85,9 +78,9 @@ module.exports = (function() {
         }
         entry = $("<input/>").attr('type', 'button').val(pluginInst[pluginInst.length - 1]).addClass('margin').appendTo(currMenu);
         if (plugin.makeUI) {
-          entry.click(this.makeEntryUI(currMenu, plugin, pluginConf));
+          entry.click(this.makeEntryUI(currMenu, plugin));
         } else {
-          entry.click(this.makeEntryAction(plugin, pluginConf));
+          entry.click(this.makeEntryAction(plugin));
         }
       }
       menus = mainDiv.children();
@@ -103,10 +96,8 @@ module.exports = (function() {
       }
     }
 
-    makeEntryUI(currMenu, plugin, pluginConf) {
-      var self;
-      self = this;
-      return function(event) {
+    makeEntryUI(currMenu, plugin) {
+      return (event) => {
         var UI, UIdiv;
         currMenu.hide();
         UIdiv = $('<div/>');
@@ -114,30 +105,25 @@ module.exports = (function() {
           UIdiv.remove();
           return currMenu.show();
         }).appendTo(UIdiv);
-        $('<input/>').attr('type', 'button').val('Execute').click(self.makeEntryAction(plugin, pluginConf)).appendTo(UIdiv);
-        UI = plugin.makeUI(pluginConf[2]);
+        $('<input/>').attr('type', 'button').val('Execute').click(this.makeEntryAction(plugin)).appendTo(UIdiv);
+        UI = plugin.makeUI();
         return UIdiv.append(UI).insertAfter(currMenu);
       };
     }
 
-    makeEntryAction(plugin, pluginConf) {
-      var self;
-      self = this;
-      return function(event) {
-        return self.executeEntryAction([plugin, pluginConf], null);
+    makeEntryAction(plugin) {
+      return (event) => {
+        return this.executeEntryAction(plugin, null);
       };
     }
 
-    executeEntryAction(args, callNext) {
-      var plugin, pluginConf;
-      plugin = args[0];
-      pluginConf = args[1];
-      this.WM.Log.logHidden("Plugin: " + pluginConf[0]);
-      return plugin.main(pluginConf[2], callNext);
+    executeEntryAction(plugin, callNext) {
+      this.WM.Log.logHidden("Plugin: " + plugin.constructor.name);
+      return plugin[`main_${this.page_type}`](callNext);
     }
 
-    warnInputNeeded(pluginName, callNext) {
-      this.WM.Log.logWarning("Plugin " + pluginName + " was not executed because it requires input from its interface.");
+    warnInputNeeded(plugin, callNext) {
+      this.WM.Log.logWarning("Plugin " + plugin.constructor.name + " was not executed because it requires input from its interface.");
       if (callNext) {
         return callNext();
       }

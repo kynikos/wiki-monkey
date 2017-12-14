@@ -22,7 +22,7 @@ CSS = require('../../lib.js.generic/dist/CSS')
 class module.exports
     constructor: (@WM) ->
         @configuration =
-            plugin: null
+            plugin_name: null
             function_: ->
             filters: []
             list:
@@ -79,25 +79,22 @@ class module.exports
 
         ffunctions = []
 
-        for f of functions
-            pluginConf = functions[f]
-            pluginName = pluginConf[0]
-            pluginInst = pluginConf[1]
-
-            # This protects from configurations that define plugins
-            # that are actually not installed
-            # A try-catch doesn't work...
-            if not @WM.Plugins[pluginName]
-                continue
+        for Plugin in functions
+            plugin = new Plugin(@WM)
+            pluginInst = plugin.conf.option_label
 
             # This allows to disable an entry by giving it any second
             # parameter that evaluates to false
             if not pluginInst or not pluginInst.length
                 continue
 
-            ffunctions.push(pluginConf)
+            ffunctions.push(plugin)
             option = document.createElement('option')
-            option.innerHTML = pluginInst[pluginInst.length - 1]
+            option.innerHTML = pluginInst
+
+            if plugin.constructor.name is @WM.conf.default_bot_plugin
+                option.selected = true
+
             selectFunctions.appendChild(option)
 
         if ffunctions.length
@@ -107,39 +104,37 @@ class module.exports
                                                 'WikiMonkeyBot-PluginSelect')
                     id = select.selectedIndex
                     UI = document.getElementById('WikiMonkeyBotFunction')
-                    pluginConf = ffunctions[id]
+                    plugin = ffunctions[id]
                     # [1] Note that this must also be executed immediately,
                     #   see [2]
-                    makeUI = self.WM.Plugins[pluginConf[0]].makeBotUI
+                    makeUI = plugin.makeBotUI
                     if makeUI instanceof Function
-                        UI.replaceChild(makeUI(pluginConf[2]), UI.firstChild)
+                        UI.replaceChild(makeUI(), UI.firstChild)
                     else
                         # Don't removeChild, otherwise if another plugin with
                         # interface is selected, replaceChild won't work
                         UI.replaceChild(document.createElement('div'),
                                                                 UI.firstChild)
-                    self.configuration.plugin = pluginConf[0]
+                    self.configuration.plugin_name = plugin.constructor.name
                     self.configuration.function_ = (title,
                                                     callContinue, chainArgs) ->
-                        self.WM.Plugins[pluginConf[0]].mainAuto(pluginConf[2],
-                                            title, callContinue, chainArgs)
+                        plugin.main_bot(title, callContinue, chainArgs)
             )(ffunctions), false)
 
             divFunction = document.createElement('div')
             divFunction.id = "WikiMonkeyBotFunction"
 
-            pluginConf = ffunctions[0]
+            plugin = ffunctions[selectFunctions.selectedIndex]
 
             # [2] Note that this is also executed onchange, see [1]
-            makeUI = @WM.Plugins[pluginConf[0]].makeBotUI
+            makeUI = plugin.makeBotUI
             if makeUI instanceof Function
-                divFunction.appendChild(makeUI(pluginConf[2]))
+                divFunction.appendChild(makeUI())
             else
                 divFunction.appendChild(document.createElement('div'))
-            @configuration.plugin = pluginConf[0]
+            @configuration.plugin_name = plugin.constructor.name
             @configuration.function_ = (title, callContinue, chainArgs) ->
-                self.WM.Plugins[pluginConf[0]].mainAuto(pluginConf[2], title,
-                                                    callContinue, chainArgs)
+                plugin.main_bot(title, callContinue, chainArgs)
 
             fieldset.appendChild(legend)
             fieldset.appendChild(selectFunctions)
@@ -528,7 +523,7 @@ class module.exports
             @_disableForceStart()
             @_setBotToken()
             @WM.Log.logInfo('Starting bot ...')
-            @WM.Log.logHidden("Plugin: " + @configuration.plugin)
+            @WM.Log.logHidden("Plugin: " + @configuration.plugin_name)
             @WM.Log.logHidden("Filter: " + document.getElementById(
                                                 'WikiMonkeyBotFilter').value)
             @_disableStartBot('Bot is running ...')

@@ -16,9 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+{Plugin} = require('./_Plugin')
 
-class module.exports
-    constructor: (@WM) ->
+
+class module.exports.FixLinkFragments extends Plugin
+    @conf_default:
+        editor_menu: ["Query plugins", "Fix external section links"]
 
     processLink: (title, links, index, source, newText, prevId,
                                                             call, callArgs) =>
@@ -267,7 +270,7 @@ class module.exports
         @processArchWikiLink(title, templates,
                 expectedArgs, index, source, newText, prevId, call, callArgs)
 
-    main: (args, callNext) ->
+    main_editor: (callNext) ->
         source = @WM.Editor.readSource()
         @WM.Log.logInfo("Fixing links to sections of other articles ...")
         links = @WM.Parser.findInternalLinks(source, null, null)

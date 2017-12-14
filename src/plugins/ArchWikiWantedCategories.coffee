@@ -16,11 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+{Plugin} = require('./_Plugin')
 
-class module.exports
-    constructor: (@WM) ->
 
-    mainAuto: (args, title, callBot, chainArgs) ->
+class module.exports.ArchWikiWantedCategories extends Plugin
+    @conf_default:
+        option_label: "Create wanted categories"
+
+    main_bot: (title, callBot, chainArgs) ->
         title = title.replace(" (page does not exist)", "")
 
         @WM.MW.callQuery({

@@ -16,42 +16,51 @@
 
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
-module.exports = class exports {
-  constructor(WM) {
-    this.WM = WM;
-  }
+var Plugin;
 
-  main(args, callNext) {
-    var asend, asends, asstart, asstarts, aswiki, aswikis, i, language, len, link, newText, source, suffix;
-    source = this.WM.Editor.readSource();
-    asstarts = this.WM.Parser.findTemplates(source, 'Article summary start');
-    asends = this.WM.Parser.findTemplates(source, 'Article summary end');
-    if (asstarts.length && asends.length && asstarts[0].index < asends[0].index) {
-      asstart = asstarts[0];
-      asend = asends[0];
-      newText = source.substring(0, asstart.index).trim();
-      aswikis = this.WM.Parser.findTemplates(source, 'Article summary wiki');
-      if (aswikis.length) {
-        language = this.WM.ArchWiki.detectLanguage(this.WM.Editor.getTitle())[1];
-        suffix = language === "English" ? "" : " (" + language + ")";
-        newText += "\n{{Related articles start" + suffix + "}}\n";
-        for (i = 0, len = aswikis.length; i < len; i++) {
-          aswiki = aswikis[i];
-          link = aswiki.arguments[0].value;
-          newText += "{{Related|" + link + "}}\n";
+({Plugin} = require('./_Plugin'));
+
+module.exports.ArchWikiSummaryToRelated = (function() {
+  class ArchWikiSummaryToRelated extends Plugin {
+    main_editor(callNext) {
+      var asend, asends, asstart, asstarts, aswiki, aswikis, i, language, len, link, newText, source, suffix;
+      source = this.WM.Editor.readSource();
+      asstarts = this.WM.Parser.findTemplates(source, 'Article summary start');
+      asends = this.WM.Parser.findTemplates(source, 'Article summary end');
+      if (asstarts.length && asends.length && asstarts[0].index < asends[0].index) {
+        asstart = asstarts[0];
+        asend = asends[0];
+        newText = source.substring(0, asstart.index).trim();
+        aswikis = this.WM.Parser.findTemplates(source, 'Article summary wiki');
+        if (aswikis.length) {
+          language = this.WM.ArchWiki.detectLanguage(this.WM.Editor.getTitle())[1];
+          suffix = language === "English" ? "" : " (" + language + ")";
+          newText += "\n{{Related articles start" + suffix + "}}\n";
+          for (i = 0, len = aswikis.length; i < len; i++) {
+            aswiki = aswikis[i];
+            link = aswiki.arguments[0].value;
+            newText += "{{Related|" + link + "}}\n";
+          }
+          newText += "{{Related articles end}}";
         }
-        newText += "{{Related articles end}}";
+        newText += "\n\n-----------------------------------------------\n";
+        newText += source.substring(asstart.index, asend.index + asend.length).trim();
+        newText += "\n-----------------------------------------------\n\n";
+        newText += source.substr(asend.index + asend.length).trim();
+        this.WM.Editor.writeSource(newText);
+        this.WM.Log.logWarning("Started converting Article summary to " + "Related articles, but manual intervention is required.");
       }
-      newText += "\n\n-----------------------------------------------\n";
-      newText += source.substring(asstart.index, asend.index + asend.length).trim();
-      newText += "\n-----------------------------------------------\n\n";
-      newText += source.substr(asend.index + asend.length).trim();
-      this.WM.Editor.writeSource(newText);
-      this.WM.Log.logWarning("Started converting Article summary to " + "Related articles, but manual intervention is required.");
+      if (callNext) {
+        return callNext();
+      }
     }
-    if (callNext) {
-      return callNext();
-    }
-  }
 
-};
+  };
+
+  ArchWikiSummaryToRelated.conf_default = {
+    editor_menu: ["Text plugins", "Convert summary to related"]
+  };
+
+  return ArchWikiSummaryToRelated;
+
+})();

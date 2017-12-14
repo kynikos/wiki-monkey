@@ -16,11 +16,15 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+{Plugin} = require('./_Plugin')
+
 CSS = require('../../lib.js.generic/dist/CSS')
 
 
-class module.exports
-    constructor: (@WM) ->
+class module.exports.SimpleReplace extends Plugin
+    @conf_default:
+        editor_menu: ["RegExp substitution"]
+        option_label: "RegExp substitution"
 
     makeUI = ->
         CSS.addStyleElement("#WikiMonkey-SimpleReplace div " +
@@ -69,10 +73,10 @@ class module.exports
 
         return divMain
 
-    makeUI: (args) ->
+    makeUI: ->
         return makeUI()
 
-    makeBotUI: (args) ->
+    makeBotUI: ->
         divMain = makeUI()
         par3 = document.createElement('div')
 
@@ -109,7 +113,7 @@ class module.exports
         configuration.regExp = new RegExp(configuration.pattern,
                         "g" + (if configuration.ignoreCase then "i" else ""))
 
-    main: (args, callNext) ->
+    main_editor: (callNext) ->
         @storeConfiguration()
 
         try
@@ -130,7 +134,7 @@ class module.exports
         if callNext
             callNext()
 
-    mainAuto: (args, title, callBot, chainArgs) ->
+    main_bot: (title, callBot, chainArgs) ->
         @storeConfiguration()
 
         try

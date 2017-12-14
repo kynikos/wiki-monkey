@@ -16,13 +16,17 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+{Plugin} = require('./_Plugin')
+
 CSS = require('../../lib.js.generic/dist/CSS')
 
 
-class module.exports
-    constructor: (@WM) ->
+class module.exports.ArchWikiNPFilter extends Plugin
+    @conf_default:
+        option_label: "Default filter"
+        default_language: "English"
 
-    main: (params) ->
+    main_newpages: ->
         CSS.addStyleElement("#mw-content-text > h5
                                   {background-color:#afa;}")
 
@@ -33,9 +37,8 @@ class module.exports
         for li in liList
             link = $(li).find('a.mw-newpages-pagename').first()
             [pureTitle, language] = @WM.ArchWiki.detectLanguage(link[0].title)
-            if language != params.language
-                @WM.Plugins.ArchWikiNPFilter.moveArticle(
-                                                    contentDiv, li, language)
+            if language != @conf.default_language
+                @moveArticle(contentDiv, li, language)
 
         @WM.Log.logInfo("Grouped articles by language")
 

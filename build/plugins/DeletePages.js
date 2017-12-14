@@ -16,50 +16,60 @@
 
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
-module.exports = class exports {
-  constructor(WM) {
-    this.WM = WM;
-  }
+var Plugin;
 
-  mainAuto(args, title, callBot, chainArgs) {
-    var summary;
-    summary = args;
-    return this.WM.MW.callQuery({
-      prop: 'info',
-      intoken: 'delete',
-      titles: title
-    }, this.WM.Plugins.DeletePages.mainAutoWrite, [title, summary, callBot], null);
-  }
+({Plugin} = require('./_Plugin'));
 
-  mainAutoWrite(page, args) {
-    var callBot, deletetoken, summary, title;
-    title = args[0];
-    summary = args[1];
-    callBot = args[2];
-    deletetoken = page.deletetoken;
-    return this.WM.MW.callAPIPost({
-      action: 'delete',
-      bot: '1',
-      title: title,
-      token: deletetoken,
-      reason: summary
-    }, this.WM.Plugins.DeletePages.mainAutoEnd, [title, callBot], null);
-  }
-
-  mainAutoEnd(res, args) {
-    var callBot, title;
-    title = args[0];
-    callBot = args[1];
-    if (!res.delete) {
-      if (res.error) {
-        this.WM.Log.logError(`${this.WM.Log.linkToWikiPage(title, title)} has not been deleted!\n${res.error.info} (${res.error.code})`);
-        return callBot(res.error.code, null);
-      } else {
-        return callBot(false, null);
-      }
-    } else {
-      return callBot(1, null);
+module.exports.DeletePages = (function() {
+  class DeletePages extends Plugin {
+    main_bot(title, callBot, chainArgs) {
+      var summary;
+      summary = this.conf.edit_summary;
+      return this.WM.MW.callQuery({
+        prop: 'info',
+        intoken: 'delete',
+        titles: title
+      }, this.WM.Plugins.DeletePages.mainAutoWrite, [title, summary, callBot], null);
     }
-  }
 
-};
+    mainAutoWrite(page, args) {
+      var callBot, deletetoken, summary, title;
+      title = args[0];
+      summary = args[1];
+      callBot = args[2];
+      deletetoken = page.deletetoken;
+      return this.WM.MW.callAPIPost({
+        action: 'delete',
+        bot: '1',
+        title: title,
+        token: deletetoken,
+        reason: summary
+      }, this.WM.Plugins.DeletePages.mainAutoEnd, [title, callBot], null);
+    }
+
+    mainAutoEnd(res, args) {
+      var callBot, title;
+      title = args[0];
+      callBot = args[1];
+      if (!res.delete) {
+        if (res.error) {
+          this.WM.Log.logError(`${this.WM.Log.linkToWikiPage(title, title)} has not been deleted!\n${res.error.info} (${res.error.code})`);
+          return callBot(res.error.code, null);
+        } else {
+          return callBot(false, null);
+        }
+      } else {
+        return callBot(1, null);
+      }
+    }
+
+  };
+
+  DeletePages.conf_default = {
+    option_label: "Delete pages",
+    edit_summary: "delete page"
+  };
+
+  return DeletePages;
+
+})();

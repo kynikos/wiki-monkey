@@ -16,60 +16,68 @@
 
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
-var CSS;
+var CSS, Plugin;
+
+({Plugin} = require('./_Plugin'));
 
 CSS = require('../../lib.js.generic/dist/CSS');
 
-module.exports = class exports {
-  constructor(WM) {
-    this.WM = WM;
-  }
-
-  main(params) {
-    var articleTable, groupDiv, h4, h4s, j, k, language, len, len1, link, pureTitle, ref;
-    h4s = $('#mw-content-text .mw-changeslist > h4');
-    if (h4s.eq(0).next()[0].localName.toLowerCase() !== 'div') {
-      return this.WM.Log.logError("This filter is designed to work on top of MediaWiki's filter, which you can enable in your user preferences.");
-    } else {
-      CSS.addStyleElement("#mw-content-text > div > h4 {background-color:#aaf;} #mw-content-text > div > div > h5 {background-color:#afa;}");
-      for (j = 0, len = h4s.length; j < len; j++) {
-        h4 = h4s[j];
-        groupDiv = $(h4).next();
-        ref = groupDiv.children('table');
-        for (k = 0, len1 = ref.length; k < len1; k++) {
-          articleTable = ref[k];
-          link = $(articleTable).find('a.mw-changeslist-title').first();
-          if (link[0]) {
-            [pureTitle, language] = this.WM.ArchWiki.detectLanguage(link[0].title);
-            if (language !== params.language) {
-              this.WM.Plugins.ArchWikiRCFilter.moveArticle(groupDiv, articleTable, language);
+module.exports.ArchWikiRCFilter = (function() {
+  class ArchWikiRCFilter extends Plugin {
+    main_recentchanges() {
+      var articleTable, groupDiv, h4, h4s, j, k, language, len, len1, link, pureTitle, ref;
+      h4s = $('#mw-content-text .mw-changeslist > h4');
+      if (h4s.eq(0).next()[0].localName.toLowerCase() !== 'div') {
+        return this.WM.Log.logError("This filter is designed to work on top of MediaWiki's filter, which you can enable in your user preferences.");
+      } else {
+        CSS.addStyleElement("#mw-content-text > div > h4 {background-color:#aaf;} #mw-content-text > div > div > h5 {background-color:#afa;}");
+        for (j = 0, len = h4s.length; j < len; j++) {
+          h4 = h4s[j];
+          groupDiv = $(h4).next();
+          ref = groupDiv.children('table');
+          for (k = 0, len1 = ref.length; k < len1; k++) {
+            articleTable = ref[k];
+            link = $(articleTable).find('a.mw-changeslist-title').first();
+            if (link[0]) {
+              [pureTitle, language] = this.WM.ArchWiki.detectLanguage(link[0].title);
+              if (language !== this.conf.default_language) {
+                this.moveArticle(groupDiv, articleTable, language);
+              }
             }
           }
         }
+        return this.WM.Log.logInfo("Grouped articles by language");
       }
-      return this.WM.Log.logInfo("Grouped articles by language");
     }
-  }
 
-  moveArticle(groupDiv, articleTable, language) {
-    var HLang, i, j, langFound, langHs, len;
-    langHs = groupDiv.children('h5');
-    langFound = false;
-    for (i = j = 0, len = langHs.length; j < len; i = ++j) {
-      HLang = langHs[i];
-      if (HLang.innerHTML === language) {
-        if (i + 1 < langHs.length) {
-          langHs.eq(i + 1).before(articleTable);
-        } else {
-          groupDiv.append(articleTable);
+    moveArticle(groupDiv, articleTable, language) {
+      var HLang, i, j, langFound, langHs, len;
+      langHs = groupDiv.children('h5');
+      langFound = false;
+      for (i = j = 0, len = langHs.length; j < len; i = ++j) {
+        HLang = langHs[i];
+        if (HLang.innerHTML === language) {
+          if (i + 1 < langHs.length) {
+            langHs.eq(i + 1).before(articleTable);
+          } else {
+            groupDiv.append(articleTable);
+          }
+          langFound = true;
+          break;
         }
-        langFound = true;
-        break;
+      }
+      if (!langFound) {
+        return groupDiv.append($('<h5>').text(language), articleTable);
       }
     }
-    if (!langFound) {
-      return groupDiv.append($('<h5>').text(language), articleTable);
-    }
-  }
 
-};
+  };
+
+  ArchWikiRCFilter.conf_default = {
+    option_label: "Default filter",
+    default_language: "English"
+  };
+
+  return ArchWikiRCFilter;
+
+})();

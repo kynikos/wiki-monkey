@@ -16,6 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+mwmodpromise = mw.loader.using(['mediawiki.api.edit',
+                                'mediawiki.notification'])
+
 # Initialize the libraries immediately (especially babel-polyfill)
 require('./libs')
 
@@ -24,7 +27,6 @@ require('./libs')
 ArchWiki = require('./ArchWiki')
 Bot = require('./Bot')
 Cat = require('./Cat')
-Cfg = require('./Cfg')
 Diff = require('./Diff')
 Editor = require('./Editor')
 Filters = require('./Filters')
@@ -39,23 +41,53 @@ UI = require('./UI')
 Upgrade = require('./Upgrade')
 WhatLinksHere = require('./WhatLinksHere')
 
+{Plugin} = require('../plugins/_Plugin')
+
 
 class WM
     # The build script updates the version number
-    VERSION = '4.0.0'
-    MW_MODULES = ['mediawiki.api.edit',
-                  'mediawiki.notification']
+    VERSION: '4.0.0'
+    conf:
+        default_bot_plugin: "SimpleReplace"
+        default_recentchanges_plugin: null
+        default_newpages_plugin: null
+        hide_rollback_links: true
+        disable_edit_summary_submit_on_enter: true
+        scroll_to_first_heading: false
+        heading_number_style: false
 
     constructor: ->
-        @version = VERSION
 
-    setup: (default_config, installed_plugins) =>
-        @Cfg = new Cfg(this, default_config, installed_plugins)
+    setup: (@wiki_name, @installed_plugins_temp...) =>
 
-    init: (user_config) =>
-        @Cfg.load(user_config)
+    init: (user_config = {}) =>
+        for option, value of user_config when option of @conf
+            @conf[option] = value
+            delete user_config[option]
 
-        await $.when(mw.loader.using(MW_MODULES), $.ready)
+        @Plugins =
+            bot: []
+            diff: []
+            editor: []
+            newpages: []
+            recentchanges: []
+            special: []
+
+        for pmod in @installed_plugins_temp
+            for pname, PluginSub of pmod \
+                                    when PluginSub.prototype instanceof Plugin
+                PluginSub.__configure(@wiki_name, user_config)
+
+                for interface_ of @Plugins \
+                                        when PluginSub::["main_#{interface_}"]
+                    @Plugins[interface_].push(PluginSub)
+
+        if not $.isEmptyObject(user_config)
+            console.warn("Unkown configuration options", user_config)
+
+        delete @installed_plugins_temp
+
+        await $.when(mwmodpromise, $.ready)
 
         # The ArchPackages module is currently unusable
         # @ArchPackages = new ArchPackages(this)
@@ -75,11 +107,6 @@ class WM
         @UI = new UI(this)
         @Upgrade = new Upgrade(this)
         @WhatLinksHere = new WhatLinksHere(this)
-
-        @Plugins = {}
-
-        for pname, Plugin of @Cfg.installed_plugins
-            @Plugins[pname] = new Plugin(this)
 
         @Upgrade.check_and_notify()
         @UI._makeUI()

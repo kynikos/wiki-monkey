@@ -16,11 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+{Plugin} = require('./_Plugin')
 
-class module.exports
-    constructor: (@WM) ->
 
-    main: (args, callNext) ->
+class module.exports.ArchWikiFixHeadings extends Plugin
+    @conf_default:
+        editor_menu: ["Text plugins", "Fix headings"]
+
+    main_editor: (callNext) ->
         source = @WM.Editor.readSource()
 
         info = @WM.Parser.findSectionHeadings(source)

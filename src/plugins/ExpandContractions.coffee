@@ -16,9 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+{Plugin} = require('./_Plugin')
 
-class module.exports
-    constructor: (@WM) ->
+
+class module.exports.ExpandContractions extends Plugin
+    @conf_default:
+        editor_menu: ["Text plugins", "Expand contractions"]
 
     replace: (source, regExp, newString, checkString, checkStrings) ->
         newtext = source.replace(regExp, newString)
@@ -29,7 +32,7 @@ class module.exports
                                instead")
         return newtext
 
-    main: (args, callNext) ->
+    main_editor: (callNext) ->
         source = @WM.Editor.readSource()
         newtext = source
 

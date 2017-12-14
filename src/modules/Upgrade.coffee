@@ -30,7 +30,7 @@ class module.exports
             upstream_version = await $.get(VERSION_URL)
             # Well, ok, this is assuming that if the versions are
             # different, upstream has the latest
-            if @WM.version != upstream_version
+            if @WM.VERSION != upstream_version
                 @display_notification(
                     ["Version #{upstream_version} is available.", Br(),
                      A('Run upgrade', {onclick: =>
@@ -70,7 +70,7 @@ class module.exports
         # TODO: Allow preventing upgrades per-line with //noupgrade comments?
         #       Don't upgrade commented lines?
         regex = new RegExp("([\"']https?://[^/]+/kynikos/wiki-monkey/" +
-            "v)#{mw.RegExp.escape(@WM.version)}(/dist/" +
+            "v)#{mw.RegExp.escape(@WM.VERSION)}(/dist/" +
             "WikiMonkey-[^/]+\\.js[\"'])", 'g')
 
         @WM.MW.api.edit(page, (revision) =>

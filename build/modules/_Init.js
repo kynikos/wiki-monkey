@@ -16,10 +16,11 @@
 
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
+var ArchWiki, Bot, Cat, Diff, Editor, Filters, Interlanguage, Log, MW, Menu, Mods, Parser, Plugin, Tables, UI, Upgrade, WM, WhatLinksHere, mwmodpromise, wm;
+
+mwmodpromise = mw.loader.using(['mediawiki.api.edit', 'mediawiki.notification']);
 
 // Initialize the libraries immediately (especially babel-polyfill)
-var ArchWiki, Bot, Cat, Cfg, Diff, Editor, Filters, Interlanguage, Log, MW, Menu, Mods, Parser, Tables, UI, Upgrade, WM, WhatLinksHere, wm;
-
 require('./libs');
 
 // The ArchPackages module is currently unusable
@@ -29,8 +30,6 @@ ArchWiki = require('./ArchWiki');
 Bot = require('./Bot');
 
 Cat = require('./Cat');
-
-Cfg = require('./Cfg');
 
 Diff = require('./Diff');
 
@@ -58,24 +57,59 @@ Upgrade = require('./Upgrade');
 
 WhatLinksHere = require('./WhatLinksHere');
 
-WM = (function() {
-  var MW_MODULES, VERSION;
+({Plugin} = require('../plugins/_Plugin'));
 
+WM = (function() {
   class WM {
     constructor() {
       this.setup = this.setup.bind(this);
       this.init = this.init.bind(this);
-      this.version = VERSION;
     }
 
-    setup(default_config, installed_plugins) {
-      return this.Cfg = new Cfg(this, default_config, installed_plugins);
+    setup(wiki_name, ...installed_plugins_temp) {
+      this.wiki_name = wiki_name;
+      this.installed_plugins_temp = installed_plugins_temp;
     }
 
-    async init(user_config) {
-      var Plugin, pname, ref;
-      this.Cfg.load(user_config);
-      await $.when(mw.loader.using(MW_MODULES), $.ready);
+    async init(user_config = {}) {
+      var PluginSub, i, interface_, len, option, pmod, pname, ref, value;
+      for (option in user_config) {
+        value = user_config[option];
+        if (!(option in this.conf)) {
+          continue;
+        }
+        this.conf[option] = value;
+        delete user_config[option];
+      }
+      this.Plugins = {
+        bot: [],
+        diff: [],
+        editor: [],
+        newpages: [],
+        recentchanges: [],
+        special: []
+      };
+      ref = this.installed_plugins_temp;
+      for (i = 0, len = ref.length; i < len; i++) {
+        pmod = ref[i];
+        for (pname in pmod) {
+          PluginSub = pmod[pname];
+          if (!(PluginSub.prototype instanceof Plugin)) {
+            continue;
+          }
+          PluginSub.__configure(this.wiki_name, user_config);
+          for (interface_ in this.Plugins) {
+            if (PluginSub.prototype[`main_${interface_}`]) {
+              this.Plugins[interface_].push(PluginSub);
+            }
+          }
+        }
+      }
+      if (!$.isEmptyObject(user_config)) {
+        console.warn("Unkown configuration options", user_config);
+      }
+      delete this.installed_plugins_temp;
+      await $.when(mwmodpromise, $.ready);
       // The ArchPackages module is currently unusable
       // @ArchPackages = new ArchPackages(this)
       this.ArchWiki = new ArchWiki(this);
@@ -94,12 +128,6 @@ WM = (function() {
       this.UI = new UI(this);
       this.Upgrade = new Upgrade(this);
       this.WhatLinksHere = new WhatLinksHere(this);
-      this.Plugins = {};
-      ref = this.Cfg.installed_plugins;
-      for (pname in ref) {
-        Plugin = ref[pname];
-        this.Plugins[pname] = new Plugin(this);
-      }
       this.Upgrade.check_and_notify();
       return this.UI._makeUI();
     }
@@ -107,9 +135,17 @@ WM = (function() {
   };
 
   // The build script updates the version number
-  VERSION = '4.0.0';
+  WM.prototype.VERSION = '4.0.0';
 
-  MW_MODULES = ['mediawiki.api.edit', 'mediawiki.notification'];
+  WM.prototype.conf = {
+    default_bot_plugin: "SimpleReplace",
+    default_recentchanges_plugin: null,
+    default_newpages_plugin: null,
+    hide_rollback_links: true,
+    disable_edit_summary_submit_on_enter: true,
+    scroll_to_first_heading: false,
+    heading_number_style: false
+  };
 
   return WM;
 

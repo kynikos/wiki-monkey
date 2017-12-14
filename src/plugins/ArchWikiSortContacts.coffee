@@ -16,10 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+{Plugin} = require('./_Plugin')
 
-class module.exports
-    constructor: (@WM) ->
 
+class module.exports.ArchWikiSortContacts extends Plugin
     # This plugin was originally based on list=allusers, but because of bug
     #  #208 it can't rely on that anymore, so it was rewritten with
     #  60bb2ac2a2dcd0b15b7aac80725c83151173eeb3
@@ -32,20 +32,46 @@ class module.exports
     regExp = new RegExp("^\\*.*?\\[\\[User:(.+?)\\|.+?" +
                     "(?: \\<!-- associated bot: (.+?) -->.*)?$", "")
 
-    main: (args, callNext) ->
-        page = args[0]
-        recentDays = args[1]
-        inactiveLimit = args[2]
-        inactiveIntro = args[3]
-        summary = args[4]
 
-        @WM.Log.logInfo("Sorting " + @WM.Log.linkToWikiPage(page, page) +
-                                                                    " ...")
+    @conf_default:
+        special_menu: ["Sort staff contacts"]
+        edit_summary: "automatically sort list according to recent activity"
+        pages: [{
+            title: "ArchWiki:Administrators"
+            recent_days: 30
+            inactive_limit: 30
+            inactive_message: "The following Administrators are currently
+                inactive (less than 30 edits in the last 30 days):"
+        },
+        {
+            title: "ArchWiki:Maintainers"
+            recent_days: 30
+            inactive_limit: 10
+            inactive_message: "The following Maintainers are currently
+                inactive (less than 10 edits in the last 30 days):"
+        }]
 
-        @WM.MW.callQueryEdit(page,
-                            @parseList,
-                            [recentDays, inactiveLimit, inactiveIntro,
-                             summary, callNext])
+    main_special: (callNext) ->
+        @iteratePages(0, callNext)
+
+    iteratePages: (pageid, callNext) ->
+        pconf = @conf.pages[pageid]
+        if pconf
+            page = pconf.title
+            recentDays = pconf.recent_days
+            inactiveLimit = pconf.inactive_limit
+            inactiveIntro = pconf.inactive_message
+            summary = @conf.edit_summary
+
+            @WM.Log.logInfo("Sorting " + @WM.Log.linkToWikiPage(page, page) +
+                                                                        " ...")
+
+            @WM.MW.callQueryEdit(page,
+                                @parseList,
+                                [recentDays, inactiveLimit, inactiveIntro,
+                                 summary, callNext, pageid])
+        else if callNext
+            callNext()
 
     parseList: (title, source, timestamp, edittoken, args) =>
         recentDays = args[0]
@@ -53,6 +79,7 @@ class module.exports
         inactiveIntro = args[2]
         summary = args[3]
         callNext = args[4]
+        pageid = args[5]
 
         startList = source.indexOf(startMark)
         endList = source.indexOf(endMark)
@@ -69,13 +96,13 @@ class module.exports
             usersArray = source.substring(startList, endList).split("\n")
             @iterateUsers(usersArray, -1, ucstart, ucend, users, title, source,
                             startList, endList, timestamp, edittoken,
-                            inactiveLimit, inactiveIntro, summary, callNext)
+                            inactiveLimit, inactiveIntro, summary, callNext, pageid)
         else
             @WM.Log.logError("Cannot find the needed marks")
 
     iterateUsers: (usersArray, index, ucstart, ucend, users,
                     title, source, startList, endList, timestamp, edittoken,
-                    inactiveLimit, inactiveIntro, summary, callNext) =>
+                    inactiveLimit, inactiveIntro, summary, callNext, pageid) =>
         index++
 
         if index < usersArray.length
@@ -95,7 +122,7 @@ class module.exports
                     @storeUserContribs,
                     [usersArray, index, ucstart, ucend, users, title, source,
                      startList, endList, timestamp, edittoken, inactiveLimit,
-                     inactiveIntro, summary, callNext])
+                     inactiveIntro, summary, callNext, pageid])
 
             else if userString != "" and
                                     userString.indexOf(inactiveIntro) != 0
@@ -104,10 +131,10 @@ class module.exports
             else
                 @iterateUsers(usersArray, index, ucstart, ucend, users, title,
                             source, startList, endList, timestamp, edittoken,
-                            inactiveLimit, inactiveIntro, summary, callNext)
+                            inactiveLimit, inactiveIntro, summary, callNext, pageid)
         else
             @updateList(users, title, source, startList, endList, timestamp,
-                                edittoken, inactiveIntro, summary, callNext)
+                                edittoken, inactiveIntro, summary, callNext, pageid)
 
     storeUserContribs: (results, args) =>
         usersArray = args[0]
@@ -124,7 +151,7 @@ class module.exports
         inactiveLimit = args[11]
         inactiveIntro = args[12]
         summary = args[13]
-        callNext = args[14]
+        pageid = args[14]
 
         edits = results.length
 
@@ -141,10 +168,10 @@ class module.exports
 
         @iterateUsers(usersArray, index, ucstart, ucend, users, title, source,
                             startList, endList, timestamp, edittoken,
-                            inactiveLimit, inactiveIntro, summary, callNext)
+                            inactiveLimit, inactiveIntro, summary, callNext, pageid)
 
     updateList: (users, title, source, startList, endList,
-                    timestamp, edittoken, inactiveIntro, summary, callNext) =>
+                    timestamp, edittoken, inactiveIntro, summary, callNext, pageid) =>
         sorter = (a, b) ->
             # Users must be sorted in descending order
             if a.edits < b.edits
@@ -183,23 +210,22 @@ class module.exports
                                     token: edittoken
                             },
                             @writePage,
-                            [title, callNext],
+                            [title, callNext, pageid],
                             null)
         else
             @WM.Log.logInfo(@WM.Log.linkToWikiPage(title, title) +
                                             " was already up to date")
-            if callNext
-                callNext()
+            @iteratePages(pageid, callNext)
 
     writePage: (res, args) =>
         title = args[0]
         callNext = args[1]
+        pageid = args[2]
 
         if res.edit and res.edit.result == 'Success'
             @WM.Log.logInfo(@WM.Log.linkToWikiPage(title, title) +
                                                     " was correctly updated")
-            if callNext
-                callNext()
+            @iteratePages(pageid, callNext)
         else
             @WM.Log.logError(res['error']['info'] +
                                             " (" + res['error']['code'] + ")")

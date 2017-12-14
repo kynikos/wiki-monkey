@@ -16,12 +16,17 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+{Plugin} = require('./_Plugin')
 
-class module.exports
+
+class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
     # TODO: Plugin disabled because the ArchPackages module is currently
     #       unusable
-
-    constructor: (@WM) ->
+    @conf_default:
+        editor_menu: ["Query plugins", "Update package templates"]
+        option_label: "Check packages linked with Pkg/AUR templates and
+                      possibly update them"
+        edit_summary: "update Pkg/AUR templates to reflect new package status"
 
     doUpdate: (source, call, callArgs) =>
         # Note that findTemplatesPattern puts the pattern in a capturing group
@@ -423,7 +428,7 @@ class module.exports
                                                 templates[index - 1].length)
             call(source, newText, callArgs)
 
-    main: (args, callNext) ->
+    main_editor: (callNext) ->
         title = @WM.Editor.getTitle()
         source = @WM.Editor.readSource()
         @WM.Log.logInfo("Updating package templates ...")
@@ -442,8 +447,8 @@ class module.exports
         if callNext
             callNext()
 
-    mainAuto: (args, title, callBot, chainArgs) ->
-        summary = args
+    main_bot: (title, callBot, chainArgs) ->
+        summary = @conf.edit_summary
 
         @WM.MW.callQueryEdit(title,
                     @mainAutoReplace,

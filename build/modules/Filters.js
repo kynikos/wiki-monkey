@@ -27,28 +27,27 @@ module.exports = class exports {
     this.WM = WM;
   }
 
-  _makeUI(plugins) {
-    var commandsFilterDiv, div, divFilter, filters, pid, pluginConf, pluginInst, pluginName, selectFilter;
+  _makeUI(page_type, plugins) {
+    var Plugin, commandsFilterDiv, div, divFilter, filters, i, len, option, plugin, pluginInst, selectFilter;
+    this.page_type = page_type;
     CSS.addStyleElement("#WikiMonkeyFilters-Commands {display:flex; align-items:center; justify-content:space-between;} #WikiMonkeyFilters-Commands > select {flex:auto;} #WikiMonkeyFilters-Commands > select, #WikiMonkeyFilters-Commands > input[type='button'] {margin-right:1em;} #WikiMonkeyFilters-Commands > input[type='checkbox'] {margin-right:0.4em;}");
     filters = [];
     selectFilter = $('<select/>').change(this.updateFilterUI(filters));
-    for (pid in plugins) {
-      pluginConf = plugins[pid];
-      pluginName = pluginConf[0];
-      pluginInst = pluginConf[1];
-      // This protects from configurations that define plugins
-      // that are actually not installed
-      // A try-catch doesn't work...
-      if (!this.WM.Plugins[pluginName]) {
-        continue;
-      }
+    for (i = 0, len = plugins.length; i < len; i++) {
+      Plugin = plugins[i];
+      plugin = new Plugin(this.WM);
+      pluginInst = plugin.conf.option_label;
       // This allows to disable an entry by giving it any second
       // parameter that evaluates to false
-      if (!pluginInst || !pluginInst.length) {
+      if (!pluginInst) {
         continue;
       }
-      filters.push(pluginConf);
-      $('<option/>').text(pluginInst[pluginInst.length - 1]).appendTo(selectFilter);
+      filters.push(plugin);
+      option = $('<option/>').text(pluginInst);
+      if (plugin.constructor.name === this.WM.conf[`default_${this.page_type}_plugin`]) {
+        option[0].selected = true;
+      }
+      option.appendTo(selectFilter);
     }
     if (filters.length) {
       commandsFilterDiv = $('<div/>').attr('id', 'WikiMonkeyFilters-Commands');
@@ -59,7 +58,7 @@ module.exports = class exports {
       divFilter = $('<div/>').attr('id', "WikiMonkeyFilters-Options");
       // This allows updateFilterUI replace it the first time
       $('<div/>').appendTo(divFilter);
-      this.doUpdateFilterUI(divFilter, filters, 0);
+      this.doUpdateFilterUI(divFilter, filters, selectFilter[0].selectedIndex);
       div = $('<div/>').attr('id', 'WikiMonkeyFilters').append(commandsFilterDiv).append(divFilter);
       return div[0];
     } else {
@@ -68,22 +67,20 @@ module.exports = class exports {
   }
 
   updateFilterUI(filters) {
-    var self;
-    self = this;
-    return function(event) {
+    return (event) => {
       var UI, id, select;
       UI = $('#WikiMonkeyFilters-Options');
       select = $('#WikiMonkeyFilters-Commands').find('select').first();
       id = select[0].selectedIndex;
-      return self.doUpdateFilterUI(UI, filters, id);
+      return this.doUpdateFilterUI(UI, filters, id);
     };
   }
 
   doUpdateFilterUI(UI, filters, id) {
     var makeUI;
-    makeUI = this.WM.Plugins[filters[id][0]].makeUI;
+    makeUI = filters[id].makeUI;
     if (makeUI instanceof Function) {
-      return UI.children().first().replaceWith(makeUI(filters[id][2]));
+      return UI.children().first().replaceWith(makeUI());
     } else {
       // Don't remove, otherwise if another plugin with interface is
       // selected, replaceWith won't work
@@ -92,14 +89,12 @@ module.exports = class exports {
   }
 
   executePlugin(filters) {
-    var self;
-    self = this;
-    return function(event) {
+    return (event) => {
       var id, select;
       select = $('#WikiMonkeyFilters-Commands').find('select').first();
       id = select[0].selectedIndex;
-      self.WM.Plugins[filters[id][0]].main(filters[id][2]);
-      return this.disabled = true;
+      filters[id][`main_${this.page_type}`]();
+      return event.target.disabled = true;
     };
   }
 

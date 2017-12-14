@@ -16,20 +16,25 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+{Plugin} = require('./_Plugin')
+
 CSS = require('../../lib.js.generic/dist/CSS')
 HTTP = require('../../lib.js.generic/dist/HTTP')
 
 
-class module.exports
-    constructor: (@WM) ->
+class module.exports.ArchWikiQuickReport extends Plugin
+    @conf_default:
+        diff_menu: ["Quick report"]
+        title: "ArchWiki:Reports"
+        edit_summary: "add report for %t"
 
-    makeUI: (args) ->
+    makeUI: ->
         CSS.addStyleElement("#WikiMonkey-ArchWikiQuickReport > select,
                     #WikiMonkey-ArchWikiQuickReport > input,
                     #WikiMonkey-ArchWikiQuickReport > a
                     {margin-left:0.33em;}")
 
-        article = args[0]
+        article = @conf.title
 
         select = document.createElement('select')
         types = ["&lt;TYPE&gt;", "content", "style"]
@@ -57,9 +62,9 @@ class module.exports
 
         return span
 
-    main: (args, callNext) ->
-        article = args[0]
-        summary = args[1]
+    main_diff: (callNext) ->
+        article = @conf.title
+        summary = @conf.edit_summary
 
         @WM.Log.logInfo('Appending diff to ' +
                             @WM.Log.linkToWikiPage(article, article) + " ...")

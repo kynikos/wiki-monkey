@@ -16,44 +16,39 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+{Plugin} = require('./_Plugin')
+
 Str = require('../../lib.js.generic/dist/Str')
 
 
-class module.exports
-    constructor: (@WM) ->
-        null
+class module.exports.FixDoubleRedirects extends Plugin
+    @conf_default:
+        special_menu: ["Fix double redirects"]
+        edit_summary: "fix double redirect"
 
-    main: (args, callNext) ->
-        summary = args
-
+    main_special: (callNext) ->
         @WM.Log.logInfo("Fixing double redirects ...")
 
         @WM.MW.getSpecialList("DoubleRedirects",
                              "namespaces",
                              @reverseResults,
-                             [summary, callNext])
+                             callNext)
 
-    reverseResults: (results, siteinfo, args) =>
-        summary = args[0]
-        callNext = args[1]
-
+    reverseResults: (results, siteinfo, callNext) =>
         namespaces = siteinfo.namespaces
 
         results.reverse()
 
-        @iterateList(results, namespaces, [summary, callNext])
+        @iterateList(results, namespaces, callNext)
 
-    iterateList: (doubleRedirects, namespaces, args) =>
-        summary = args[0]
-        callNext = args[1]
-
+    iterateList: (doubleRedirects, namespaces, callNext) =>
         doubleRedirect = doubleRedirects.pop()
 
         if doubleRedirect
             @WM.MW.callQueryEdit(doubleRedirect.title,
                             @readMiddleRedirect,
                             [doubleRedirect, doubleRedirects, namespaces,
-                             summary, callNext])
+                             callNext])
         else
             @WM.Log.logInfo("Fixed double redirects")
             if callNext
@@ -64,8 +59,7 @@ class module.exports
         doubleRedirect = args[0]
         doubleRedirects = args[1]
         namespaces = args[2]
-        summary = args[3]
-        callNext = args[4]
+        callNext = args[3]
         middleRedirectTitle = namespaces[doubleRedirect.databaseResult.nsb]['*'] + ':' +
                                 doubleRedirect.databaseResult.tb
 
@@ -73,7 +67,7 @@ class module.exports
                          @processDoubleRedirect,
                          [doubleRedirect, doubleRedirectTitle,
                           doubleRedirectSource, timestamp, edittoken,
-                          doubleRedirects, namespaces, summary, callNext],
+                          doubleRedirects, namespaces, callNext],
                          null)
 
     processDoubleRedirect: (middleRedirect, args) =>
@@ -85,8 +79,7 @@ class module.exports
         edittoken = args[4]
         doubleRedirects = args[5]
         namespaces = args[6]
-        summary = args[7]
-        callNext = args[8]
+        callNext = args[7]
 
         @WM.Log.logInfo("Processing " + @WM.Log.linkToWikiPage(
                         doubleRedirectTitle, doubleRedirectTitle) + " ...")
@@ -135,24 +128,31 @@ class module.exports
 
         if newText != doubleRedirectSource
             @WM.MW.callAPIPost(
-                    {action: "edit", bot: "1", title: doubleRedirectTitle, summary: summary, text: newText, b1asetimestamp: timestamp, token: edittoken},
+                    {
+                        action: "edit"
+                        bot: "1"
+                        title: doubleRedirectTitle
+                        summary: @conf.edit_summary
+                        text: newText
+                        b1asetimestamp: timestamp
+                        token: edittoken
+                    },
                     @processDoubleRedirectEnd,
-                    [doubleRedirects, namespaces, summary, callNext],
+                    [doubleRedirects, namespaces, callNext],
                     null)
         else
             @WM.Log.logWarning("Could not fix " +
                                 @WM.Log.linkToWikiPage(doubleRedirectTitle,
                                 doubleRedirectTitle))
-            @iterateList(doubleRedirects, namespaces, [summary, callNext])
+            @iterateList(doubleRedirects, namespaces, callNext)
 
     processDoubleRedirectEnd: (res, args) =>
         doubleRedirects = args[0]
         namespaces = args[1]
-        summary = args[2]
-        callNext = args[3]
+        callNext = args[2]
 
         if res.edit and res.edit.result == 'Success'
-            @iterateList(doubleRedirects, namespaces, [summary, callNext])
+            @iterateList(doubleRedirects, namespaces, callNext)
         else
             @WM.Log.logError(res['error']['info'] +
                                             " (" + res['error']['code'] + ")")

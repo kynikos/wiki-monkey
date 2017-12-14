@@ -16,12 +16,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+{Plugin} = require('./_Plugin')
 
-class module.exports
-    constructor: (@WM) ->
 
-    mainAuto: (args, title, callBot, chainArgs) ->
-        summary = args
+class module.exports.DeletePages extends Plugin
+    @conf_default:
+        option_label: "Delete pages"
+        edit_summary: "delete page"
+
+    main_bot: (title, callBot, chainArgs) ->
+        summary = @conf.edit_summary
 
         @WM.MW.callQuery({
                             prop: 'info'

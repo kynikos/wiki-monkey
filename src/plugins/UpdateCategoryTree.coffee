@@ -16,35 +16,42 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+{Plugin} = require('./_Plugin')
+
 Str = require('../../lib.js.generic/dist/Str')
 
 
-class module.exports
-    constructor: (@WM) ->
+class module.exports.UpdateCategoryTree extends Plugin
+    @conf_default:
+        special_menu: ["Update category trees"]
+        edit_summary: "automatic update"
+        show_root_also_in: false
+    @wiki_to_conf_default:
+        ArchWiki:
+            pages: ["ar", "cs", "cs", "da", "el", "en", "es", "he", "hr", "hu",
+                    "id", "it", "ko", "lt", "nl", "pl", "pt", "ru", "sk", "sr",
+                    "th", "tr", "uk", "zh-hans", "zh-hant"]
+        Wikipedia: {}
 
-    main: (args, callNext) ->
-        inparams = args[0]
-        summary = args[1]
-        # The third argument was added in 2.0.7, therefore previous
-        # configurations don't have it
-        if args[2]?
-            showRootAlsoIn = args[2]
-        else
-            showRootAlsoIn = false
-            @WM.Log.logInfo("The configuration does not specify the " +
-                           "showRootAlsoIn value, defaulting to false")
+    main_special: (callNext) ->
+        @iteratePages(0, callNext)
 
-        if inparams.constructor is Array
-            if inparams[0] == "ArchWiki"
-                params = @WM.ArchWiki.getTableOfContents(inparams[1])
+    iteratePages: (pageid, callNext) ->
+        summary = @conf.edit_summary
+        showRootAlsoIn = @conf.show_root_also_in
+        pconf = @conf.pages[pageid]
+        if pconf
+            if $.type(pconf) is "string"
+                params = @WM.ArchWiki.getTableOfContents(pconf)
             else
-                @WM.Log.logError("Unrecognized parameter")
-                return false
-        else
-            params = inparams
+                # This should be a custom configuration object
+                params = pconf
 
-        @WM.MW.isUserBot(this.mainContinue, [params, showRootAlsoIn, summary,
-                                            callNext])
+            @WM.MW.isUserBot(this.mainContinue, [params, showRootAlsoIn, summary,
+                                                 callNext, pageid])
+
+        else if callNext
+            callNext()
 
     mainContinue: (botTest, args) =>
         @readToC({
@@ -62,6 +69,7 @@ class module.exports
             showRootAlsoIn: args[1]
             summary: args[2]
             callNext: args[3]
+            pageid: args[4]
         })
 
     readToC: (args) =>
@@ -96,13 +104,11 @@ class module.exports
             else
                 @WM.Log.logError("Cannot find insertion marks in " +
                     @WM.Log.linkToWikiPage(args.params.page, args.params.page))
-                if args.callNext
-                    args.callNext()
+                @iteratePages(args.pageid, args.callNext)
         else
             @WM.Log.logWarning(@WM.Log.linkToWikiPage(args.params.page,
                         args.params.page) + ' has been updated too recently')
-            if args.callNext
-                args.callNext()
+            @iteratePages(args.pageid, args.callNext)
 
     storeAlternativeNames: (source) =>
         dict = {}
@@ -226,16 +232,14 @@ class module.exports
             @WM.Log.logInfo(@WM.Log.linkToWikiPage(args.params.page,
                                 args.params.page) + ' is already up to date')
 
-            if args.callNext
-                args.callNext()
+            @iteratePages(args.pageid, args.callNext)
 
     checkWrite: (res, args) =>
         if res.edit and res.edit.result == 'Success'
             @WM.Log.logInfo(@WM.Log.linkToWikiPage(args.params.page,
                                     args.params.page) + ' correctly updated')
 
-            if args.callNext
-                args.callNext()
+            @iteratePages(args.pageid, args.callNext)
 
         else
             @WM.Log.logError(@WM.Log.linkToWikiPage(args.params.page,

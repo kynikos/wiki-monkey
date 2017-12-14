@@ -26,6 +26,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 var _createClass2 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -47,107 +51,8 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
     wmsetup = require('./modules/_Init');
 
-    wmsetup(require("../build/configurations/ArchWiki"), {
-      ArchWikiFixHeader: require("./plugins/ArchWikiFixHeader"),
-      ArchWikiFixHeadings: require("./plugins/ArchWikiFixHeadings"),
-      ArchWikiFixLinks: require("./plugins/ArchWikiFixLinks"),
-      ArchWikiNewTemplates: require("./plugins/ArchWikiNewTemplates"),
-      ArchWikiNPFilter: require("./plugins/ArchWikiNPFilter"),
-      ArchWikiQuickReport: require("./plugins/ArchWikiQuickReport"),
-      ArchWikiSortContacts: require("./plugins/ArchWikiSortContacts"),
-      ArchWikiSummaryToRelated: require("./plugins/ArchWikiSummaryToRelated"),
-      ArchWikiRCFilter: require("./plugins/ArchWikiRCFilter"),
-      ExpandContractions: require("./plugins/ExpandContractions"),
-      FixBacklinkFragments: require("./plugins/FixBacklinkFragments"),
-      FixDoubleRedirects: require("./plugins/FixDoubleRedirects"),
-      FixFragments: require("./plugins/FixFragments"),
-      FixLinkFragments: require("./plugins/FixLinkFragments"),
-      MultipleLineBreaks: require("./plugins/MultipleLineBreaks"),
-      SimpleReplace: require("./plugins/SimpleReplace"),
-      SynchronizeInterlanguageLinks: require("./plugins/SynchronizeInterlanguageLinks"),
-      UpdateCategoryTree: require("./plugins/UpdateCategoryTree")
-    });
-  }, { "../build/configurations/ArchWiki": 2, "./modules/_Init": 20, "./plugins/ArchWikiFixHeader": 22, "./plugins/ArchWikiFixHeadings": 23, "./plugins/ArchWikiFixLinks": 24, "./plugins/ArchWikiNPFilter": 25, "./plugins/ArchWikiNewTemplates": 26, "./plugins/ArchWikiQuickReport": 27, "./plugins/ArchWikiRCFilter": 28, "./plugins/ArchWikiSortContacts": 29, "./plugins/ArchWikiSummaryToRelated": 30, "./plugins/ExpandContractions": 31, "./plugins/FixBacklinkFragments": 32, "./plugins/FixDoubleRedirects": 33, "./plugins/FixFragments": 34, "./plugins/FixLinkFragments": 35, "./plugins/MultipleLineBreaks": 36, "./plugins/SimpleReplace": 37, "./plugins/SynchronizeInterlanguageLinks": 38, "./plugins/UpdateCategoryTree": 39 }], 2: [function (require, module, exports) {
-    module.exports = {
-      "Mods": {
-        "Contributions": {
-          "hide_rollback_links": true
-        },
-        "Editor": {
-          "disable_edit_summary_submit_on_enter": true,
-          "scroll_to_first_heading": false
-        },
-        "General": {
-          "heading_number_style": false
-        },
-        "RecentChanges": {
-          "hide_rollback_links": true
-        }
-      },
-      "Plugins": {
-        "Bot": {
-          "010SR": ["SimpleReplace", ["RegExp substitution"], null],
-          "020BL": ["FixBacklinkFragments", ["Fix links to specific sections of a target page"], "fix links to specific sections"],
-          "030IL": ["SynchronizeInterlanguageLinks", ["Synchronize interlanguage links"], ["ArchWiki", "ArchWiki", "ArchWiki", "synchronized interlanguage links with the other wikis"]]
-        },
-        "Diff": {
-          "010AQR": ["ArchWikiQuickReport", ["Quick report"], ["ArchWiki:Reports", "add report for %t"]]
-        },
-        "Editor": {
-          "010AHE": ["ArchWikiFixHeader", ["Text plugins", "Fix header"], null],
-          "020ASE": ["ArchWikiFixHeadings", ["Text plugins", "Fix headings"], null],
-          "030AEL": ["ArchWikiFixLinks", ["Text plugins", "Fix external links"], null],
-          "040SL": ["FixFragments", ["Text plugins", "Fix section links"], null],
-          "050ACT": ["ArchWikiNewTemplates", ["Text plugins", "Use code templates"], null],
-          "060EC": ["ExpandContractions", ["Text plugins", "Expand contractions"], null],
-          "070ML": ["MultipleLineBreaks", ["Text plugins", "Squash multiple line breaks"], null],
-          "080ASR": ["ArchWikiSummaryToRelated", ["Text plugins", "Convert summary to related"], null],
-          "110SR": ["SimpleReplace", ["RegExp substitution"], null],
-          "210ES": ["FixLinkFragments", ["Query plugins", "Fix external section links"], null],
-          "220AIL": ["SynchronizeInterlanguageLinks", ["Query plugins", "Sync interlanguage links"], ["ArchWiki", "ArchWiki", "ArchWiki", null]]
-        },
-        "NewPages": {
-          "010ANP": ["ArchWikiNPFilter", ["Default filter"], {
-            "language": "English"
-          }]
-        },
-        "RecentChanges": {
-          "010ARC": ["ArchWikiRCFilter", ["Default filter"], {
-            "language": "English"
-          }]
-        },
-        "Special": {
-          "010CTar": ["UpdateCategoryTree", ["Update category trees", "Arabic"], [["ArchWiki", "ar"], "automatic update", false]],
-          "010CTbg": ["UpdateCategoryTree", ["Update category trees", "Bulgarian"], [["ArchWiki", "bg"], "automatic update", false]],
-          "010CTcs": ["UpdateCategoryTree", ["Update category trees", "Czech"], [["ArchWiki", "cs"], "automatic update", false]],
-          "010CTda": ["UpdateCategoryTree", ["Update category trees", "Danish"], [["ArchWiki", "da"], "automatic update", false]],
-          "010CTel": ["UpdateCategoryTree", ["Update category trees", "Greek"], [["ArchWiki", "el"], "automatic update", false]],
-          "010CTen": ["UpdateCategoryTree", ["Update category trees", "English"], [["ArchWiki", "en"], "automatic update", false]],
-          "010CTes": ["UpdateCategoryTree", ["Update category trees", "Spanish"], [["ArchWiki", "es"], "automatic update", false]],
-          "010CThe": ["UpdateCategoryTree", ["Update category trees", "Hebrew"], [["ArchWiki", "he"], "automatic update", false]],
-          "010CThr": ["UpdateCategoryTree", ["Update category trees", "Croatian"], [["ArchWiki", "hr"], "automatic update", false]],
-          "010CThu": ["UpdateCategoryTree", ["Update category trees", "Hungarian"], [["ArchWiki", "hu"], "automatic update", false]],
-          "010CTid": ["UpdateCategoryTree", ["Update category trees", "Indonesian"], [["ArchWiki", "id"], "automatic update", false]],
-          "010CTit": ["UpdateCategoryTree", ["Update category trees", "Italian"], [["ArchWiki", "it"], "automatic update", false]],
-          "010CTko": ["UpdateCategoryTree", ["Update category trees", "Korean"], [["ArchWiki", "ko"], "automatic update", false]],
-          "010CTlt": ["UpdateCategoryTree", ["Update category trees", "Lithuanian"], [["ArchWiki", "lt"], "automatic update", false]],
-          "010CTnl": ["UpdateCategoryTree", ["Update category trees", "Dutch"], [["ArchWiki", "nl"], "automatic update", false]],
-          "010CTpl": ["UpdateCategoryTree", ["Update category trees", "Polish"], [["ArchWiki", "pl"], "automatic update", false]],
-          "010CTpt": ["UpdateCategoryTree", ["Update category trees", "Portuguese"], [["ArchWiki", "pt"], "automatic update", false]],
-          "010CTru": ["UpdateCategoryTree", ["Update category trees", "Russian"], [["ArchWiki", "ru"], "automatic update", false]],
-          "010CTsk": ["UpdateCategoryTree", ["Update category trees", "Slovak"], [["ArchWiki", "sk"], "automatic update", false]],
-          "010CTsr": ["UpdateCategoryTree", ["Update category trees", "Serbian"], [["ArchWiki", "sr"], "automatic update", false]],
-          "010CTth": ["UpdateCategoryTree", ["Update category trees", "Thai"], [["ArchWiki", "th"], "automatic update", false]],
-          "010CTtr": ["UpdateCategoryTree", ["Update category trees", "Turkish"], [["ArchWiki", "tr"], "automatic update", false]],
-          "010CTuk": ["UpdateCategoryTree", ["Update category trees", "Ukrainian"], [["ArchWiki", "uk"], "automatic update", false]],
-          "010CTzhhans": ["UpdateCategoryTree", ["Update category trees", "Chinese (Simplified)"], [["ArchWiki", "zh-hans"], "automatic update", false]],
-          "010CTzhhant": ["UpdateCategoryTree", ["Update category trees", "Chinese (Traditional)"], [["ArchWiki", "zh-hant"], "automatic update", false]],
-          "020DR": ["FixDoubleRedirects", ["Fix double redirects"], "fix double redirect"],
-          "040ASCC": ["ArchWikiSortContacts", null, null]
-        }
-      }
-    };
-  }, {}], 3: [function (require, module, exports) {
+    wmsetup("ArchWiki", require("./plugins/ArchWikiFixHeader"), require("./plugins/ArchWikiFixHeadings"), require("./plugins/ArchWikiFixLinks"), require("./plugins/ArchWikiNewTemplates"), require("./plugins/ArchWikiNPFilter"), require("./plugins/ArchWikiQuickReport"), require("./plugins/ArchWikiSortContacts"), require("./plugins/ArchWikiSummaryToRelated"), require("./plugins/ArchWikiRCFilter"), require("./plugins/ExpandContractions"), require("./plugins/FixBacklinkFragments"), require("./plugins/FixDoubleRedirects"), require("./plugins/FixFragments"), require("./plugins/FixLinkFragments"), require("./plugins/MultipleLineBreaks"), require("./plugins/SimpleReplace"), require("./plugins/SynchronizeInterlanguageLinks"), require("./plugins/UpdateCategoryTree"));
+  }, { "./modules/_Init": 18, "./plugins/ArchWikiFixHeader": 20, "./plugins/ArchWikiFixHeadings": 21, "./plugins/ArchWikiFixLinks": 22, "./plugins/ArchWikiNPFilter": 23, "./plugins/ArchWikiNewTemplates": 24, "./plugins/ArchWikiQuickReport": 25, "./plugins/ArchWikiRCFilter": 26, "./plugins/ArchWikiSortContacts": 27, "./plugins/ArchWikiSummaryToRelated": 28, "./plugins/ExpandContractions": 29, "./plugins/FixBacklinkFragments": 30, "./plugins/FixDoubleRedirects": 31, "./plugins/FixFragments": 32, "./plugins/FixLinkFragments": 33, "./plugins/MultipleLineBreaks": 34, "./plugins/SimpleReplace": 35, "./plugins/SynchronizeInterlanguageLinks": 36, "./plugins/UpdateCategoryTree": 37 }], 2: [function (require, module, exports) {
     module.exports = function () {
       var languages, tablesOfContents;
 
@@ -649,7 +554,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, {}], 4: [function (require, module, exports) {
+  }, {}], 3: [function (require, module, exports) {
     var CSS;
 
     CSS = require('../../lib.js.generic/dist/CSS');
@@ -663,7 +568,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         this._startAutomaticContinue = this._startAutomaticContinue.bind(this);
         this.WM = WM;
         this.configuration = {
-          plugin: null,
+          plugin_name: null,
           function_: function function_() {},
           filters: [],
           list: {
@@ -695,7 +600,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       }, {
         key: "makeFunctionUI",
         value: function makeFunctionUI(functions) {
-          var divFunction, f, ffunctions, fieldset, legend, makeUI, option, pluginConf, pluginInst, pluginName, selectFunctions, self;
+          var Plugin, divFunction, ffunctions, fieldset, i, legend, len, makeUI, option, plugin, pluginInst, selectFunctions, self;
           self = this;
           fieldset = document.createElement('fieldset');
           legend = document.createElement('legend');
@@ -703,21 +608,20 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           selectFunctions = document.createElement('select');
           selectFunctions.id = 'WikiMonkeyBot-PluginSelect';
           ffunctions = [];
-          for (f in functions) {
-            pluginConf = functions[f];
-            pluginName = pluginConf[0];
-            pluginInst = pluginConf[1];
-
-            if (!this.WM.Plugins[pluginName]) {
-              continue;
-            }
+          for (i = 0, len = functions.length; i < len; i++) {
+            Plugin = functions[i];
+            plugin = new Plugin(this.WM);
+            pluginInst = plugin.conf.option_label;
 
             if (!pluginInst || !pluginInst.length) {
               continue;
             }
-            ffunctions.push(pluginConf);
+            ffunctions.push(plugin);
             option = document.createElement('option');
-            option.innerHTML = pluginInst[pluginInst.length - 1];
+            option.innerHTML = pluginInst;
+            if (plugin.constructor.name === this.WM.conf.default_bot_plugin) {
+              option.selected = true;
+            }
             selectFunctions.appendChild(option);
           }
           if (ffunctions.length) {
@@ -727,33 +631,33 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
                 select = document.getElementById('WikiMonkeyBot-PluginSelect');
                 id = select.selectedIndex;
                 UI = document.getElementById('WikiMonkeyBotFunction');
-                pluginConf = ffunctions[id];
+                plugin = ffunctions[id];
 
-                makeUI = self.WM.Plugins[pluginConf[0]].makeBotUI;
+                makeUI = plugin.makeBotUI;
                 if (makeUI instanceof Function) {
-                  UI.replaceChild(makeUI(pluginConf[2]), UI.firstChild);
+                  UI.replaceChild(makeUI(), UI.firstChild);
                 } else {
                   UI.replaceChild(document.createElement('div'), UI.firstChild);
                 }
-                self.configuration.plugin = pluginConf[0];
+                self.configuration.plugin_name = plugin.constructor.name;
                 return self.configuration.function_ = function (title, callContinue, chainArgs) {
-                  return self.WM.Plugins[pluginConf[0]].mainAuto(pluginConf[2], title, callContinue, chainArgs);
+                  return plugin.main_bot(title, callContinue, chainArgs);
                 };
               };
             }(ffunctions), false);
             divFunction = document.createElement('div');
             divFunction.id = "WikiMonkeyBotFunction";
-            pluginConf = ffunctions[0];
+            plugin = ffunctions[selectFunctions.selectedIndex];
 
-            makeUI = this.WM.Plugins[pluginConf[0]].makeBotUI;
+            makeUI = plugin.makeBotUI;
             if (makeUI instanceof Function) {
-              divFunction.appendChild(makeUI(pluginConf[2]));
+              divFunction.appendChild(makeUI());
             } else {
               divFunction.appendChild(document.createElement('div'));
             }
-            this.configuration.plugin = pluginConf[0];
+            this.configuration.plugin_name = plugin.constructor.name;
             this.configuration.function_ = function (title, callContinue, chainArgs) {
-              return self.WM.Plugins[pluginConf[0]].mainAuto(pluginConf[2], title, callContinue, chainArgs);
+              return plugin.main_bot(title, callContinue, chainArgs);
             };
             fieldset.appendChild(legend);
             fieldset.appendChild(selectFunctions);
@@ -1160,7 +1064,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
             this._disableForceStart();
             this._setBotToken();
             this.WM.Log.logInfo('Starting bot ...');
-            this.WM.Log.logHidden("Plugin: " + this.configuration.plugin);
+            this.WM.Log.logHidden("Plugin: " + this.configuration.plugin_name);
             this.WM.Log.logHidden("Filter: " + document.getElementById('WikiMonkeyBotFilter').value);
             this._disableStartBot('Bot is running ...');
             this._disableControls();
@@ -1263,7 +1167,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 431 }], 5: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/CSS": 430 }], 4: [function (require, module, exports) {
     var Async, Obj;
 
     Async = require('../../lib.js.generic/dist/Async');
@@ -1379,52 +1283,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/Async": 430, "../../lib.js.generic/dist/Obj": 434 }], 6: [function (require, module, exports) {
-    module.exports = function () {
-      function exports(WM, config, installed_plugins) {
-        _classCallCheck2(this, exports);
-
-        this.WM = WM;
-        this.installed_plugins = installed_plugins;
-        this.load(config);
-      }
-
-      _createClass2(exports, [{
-        key: "load",
-        value: function load(config) {
-          var results, sconfig, section, tconfig, thissection, thistype, type;
-          results = [];
-          for (section in config) {
-            sconfig = config[section];
-            if (this[section] == null) {
-              this[section] = {};
-            }
-            thissection = this[section];
-            results.push(function () {
-              var results1;
-              results1 = [];
-              for (type in sconfig) {
-                tconfig = sconfig[type];
-                if (thissection[type] == null) {
-                  thissection[type] = {};
-                }
-                thistype = thissection[type];
-                if (tconfig) {
-                  results1.push($.extend(thistype, tconfig));
-                } else {
-                  results1.push(void 0);
-                }
-              }
-              return results1;
-            }());
-          }
-          return results;
-        }
-      }]);
-
-      return exports;
-    }();
-  }, {}], 7: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Async": 429, "../../lib.js.generic/dist/Obj": 433 }], 5: [function (require, module, exports) {
     var HTTP;
 
     HTTP = require('../../lib.js.generic/dist/HTTP');
@@ -1477,7 +1336,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/HTTP": 433 }], 8: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/HTTP": 432 }], 6: [function (require, module, exports) {
     var Compatibility, HTTP;
 
     Compatibility = require('../../lib.js.generic/dist/Compatibility');
@@ -1537,7 +1396,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/Compatibility": 432, "../../lib.js.generic/dist/HTTP": 433 }], 9: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Compatibility": 431, "../../lib.js.generic/dist/HTTP": 432 }], 7: [function (require, module, exports) {
     var CSS;
 
     CSS = require('../../lib.js.generic/dist/CSS');
@@ -1553,25 +1412,26 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       _createClass2(exports, [{
         key: "_makeUI",
-        value: function _makeUI(plugins) {
-          var commandsFilterDiv, div, divFilter, filters, pid, pluginConf, pluginInst, pluginName, selectFilter;
+        value: function _makeUI(page_type, plugins) {
+          var Plugin, commandsFilterDiv, div, divFilter, filters, i, len, option, plugin, pluginInst, selectFilter;
+          this.page_type = page_type;
           CSS.addStyleElement("#WikiMonkeyFilters-Commands {display:flex; align-items:center; justify-content:space-between;} #WikiMonkeyFilters-Commands > select {flex:auto;} #WikiMonkeyFilters-Commands > select, #WikiMonkeyFilters-Commands > input[type='button'] {margin-right:1em;} #WikiMonkeyFilters-Commands > input[type='checkbox'] {margin-right:0.4em;}");
           filters = [];
           selectFilter = $('<select/>').change(this.updateFilterUI(filters));
-          for (pid in plugins) {
-            pluginConf = plugins[pid];
-            pluginName = pluginConf[0];
-            pluginInst = pluginConf[1];
+          for (i = 0, len = plugins.length; i < len; i++) {
+            Plugin = plugins[i];
+            plugin = new Plugin(this.WM);
+            pluginInst = plugin.conf.option_label;
 
-            if (!this.WM.Plugins[pluginName]) {
+            if (!pluginInst) {
               continue;
             }
-
-            if (!pluginInst || !pluginInst.length) {
-              continue;
+            filters.push(plugin);
+            option = $('<option/>').text(pluginInst);
+            if (plugin.constructor.name === this.WM.conf["default_" + this.page_type + "_plugin"]) {
+              option[0].selected = true;
             }
-            filters.push(pluginConf);
-            $('<option/>').text(pluginInst[pluginInst.length - 1]).appendTo(selectFilter);
+            option.appendTo(selectFilter);
           }
           if (filters.length) {
             commandsFilterDiv = $('<div/>').attr('id', 'WikiMonkeyFilters-Commands');
@@ -1582,7 +1442,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
             divFilter = $('<div/>').attr('id', "WikiMonkeyFilters-Options");
 
             $('<div/>').appendTo(divFilter);
-            this.doUpdateFilterUI(divFilter, filters, 0);
+            this.doUpdateFilterUI(divFilter, filters, selectFilter[0].selectedIndex);
             div = $('<div/>').attr('id', 'WikiMonkeyFilters').append(commandsFilterDiv).append(divFilter);
             return div[0];
           } else {
@@ -1592,23 +1452,23 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       }, {
         key: "updateFilterUI",
         value: function updateFilterUI(filters) {
-          var self;
-          self = this;
+          var _this2 = this;
+
           return function (event) {
             var UI, id, select;
             UI = $('#WikiMonkeyFilters-Options');
             select = $('#WikiMonkeyFilters-Commands').find('select').first();
             id = select[0].selectedIndex;
-            return self.doUpdateFilterUI(UI, filters, id);
+            return _this2.doUpdateFilterUI(UI, filters, id);
           };
         }
       }, {
         key: "doUpdateFilterUI",
         value: function doUpdateFilterUI(UI, filters, id) {
           var makeUI;
-          makeUI = this.WM.Plugins[filters[id][0]].makeUI;
+          makeUI = filters[id].makeUI;
           if (makeUI instanceof Function) {
-            return UI.children().first().replaceWith(makeUI(filters[id][2]));
+            return UI.children().first().replaceWith(makeUI());
           } else {
             return UI.children().first().replaceWith($('<div/>'));
           }
@@ -1616,14 +1476,14 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       }, {
         key: "executePlugin",
         value: function executePlugin(filters) {
-          var self;
-          self = this;
+          var _this3 = this;
+
           return function (event) {
             var id, select;
             select = $('#WikiMonkeyFilters-Commands').find('select').first();
             id = select[0].selectedIndex;
-            self.WM.Plugins[filters[id][0]].main(filters[id][2]);
-            return this.disabled = true;
+            filters[id]["main_" + _this3.page_type]();
+            return event.target.disabled = true;
           };
         }
       }, {
@@ -1639,7 +1499,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 431 }], 10: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/CSS": 430 }], 8: [function (require, module, exports) {
     var Obj;
 
     Obj = require('../../lib.js.generic/dist/Obj');
@@ -1690,7 +1550,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       }, {
         key: "queryLinks",
         value: function queryLinks(queryTitle, title, supportedLangs, whitelist, firstPage, callEnd, callArgs) {
-          var _this2 = this;
+          var _this4 = this;
 
           var query;
           query = {
@@ -1717,7 +1577,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
                 timestamp = page.revisions[0].timestamp;
                 edittoken = page.edittoken;
                 iwmap = res.query.interwikimap;
-                langlinks = _this2.WM.Interlanguage.parseLinks(supportedLangs, source, iwmap);
+                langlinks = _this4.WM.Interlanguage.parseLinks(supportedLangs, source, iwmap);
               } else {
                 error = 'nonexisting';
                 source = false;
@@ -1912,7 +1772,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/Obj": 434 }], 11: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Obj": 433 }], 9: [function (require, module, exports) {
     var Str, jss;
 
     var _require = require('./libs');
@@ -2007,7 +1867,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "makeFilterLink",
           value: function makeFilterLink() {
-            var _this3 = this;
+            var _this5 = this;
 
             var link;
             link = document.createElement('a');
@@ -2017,21 +1877,21 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
               var i, len, msg, msgs;
               event.preventDefault();
 
-              _this3._currentInfoDisplayState = !_this3._currentInfoDisplayState;
-              link.innerHTML = _this3.computeFilterLinkAnchor();
-              msgs = _this3.logarea.getElementsByClassName('minfo');
+              _this5._currentInfoDisplayState = !_this5._currentInfoDisplayState;
+              link.innerHTML = _this5.computeFilterLinkAnchor();
+              msgs = _this5.logarea.getElementsByClassName('minfo');
               for (i = 0, len = msgs.length; i < len; i++) {
                 msg = msgs[i];
-                msg.style.display = _this3.computeInfoDisplayStyle();
+                msg.style.display = _this5.computeInfoDisplayStyle();
               }
-              return _this3.scrollToBottom();
+              return _this5.scrollToBottom();
             }, false);
             return link;
           }
         }, {
           key: "makeSaveLink",
           value: function makeSaveLink() {
-            var _this4 = this;
+            var _this6 = this;
 
             var link;
             link = document.createElement('a');
@@ -2040,8 +1900,8 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
             link.innerHTML = '[save log]';
             link.id = 'WikiMonkeyLog-Save';
             link.addEventListener("click", function () {
-              link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(_this4.composeSaveLogText());
-              return link.download = _this4.composeSaveLogFilename();
+              link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(_this6.composeSaveLogText());
+              return link.download = _this6.composeSaveLogFilename();
             }, false);
             return link;
           }
@@ -2183,7 +2043,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/Str": 436, "./libs": 21 }], 12: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Str": 435, "./libs": 19 }], 10: [function (require, module, exports) {
     var A, HTTP, Obj;
 
     HTTP = require('../../lib.js.generic/dist/HTTP');
@@ -2315,17 +2175,17 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "callAPIGet",
           value: function callAPIGet(params, call, callArgs, callError) {
-            var _this5 = this;
+            var _this7 = this;
 
             params.format = "json";
             return this.api.get(params).done(function (data, textStatus, jqXHR) {
               return call(data, callArgs);
             }).fail(function (jqXHR, textStatus, errorThrown) {
               console.error(jqXHR, textStatus, errorThrown);
-              _this5.WM.Log.logError(_this5.failedQueryError());
+              _this7.WM.Log.logError(_this7.failedQueryError());
               if (confirm("Wiki Monkey error: Failed query\n\nDo you want " + "to retry?")) {
-                _this5.WM.Log.logInfo("Retrying ...");
-                return _this5.callAPIGet(params, call, callArgs, callError);
+                _this7.WM.Log.logInfo("Retrying ...");
+                return _this7.callAPIGet(params, call, callArgs, callError);
               } else if (callError) {
                 return callError(callArgs);
               }
@@ -2334,17 +2194,17 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "callAPIPost",
           value: function callAPIPost(params, call, callArgs, callError) {
-            var _this6 = this;
+            var _this8 = this;
 
             params.format = "json";
             return this.api.post(params).done(function (data, textStatus, jqXHR) {
               return call(data, callArgs);
             }).fail(function (jqXHR, textStatus, errorThrown) {
               console.error(jqXHR, textStatus, errorThrown);
-              _this6.WM.Log.logError(_this6.failedQueryError());
+              _this8.WM.Log.logError(_this8.failedQueryError());
               if (confirm("Wiki Monkey error: Failed query\n\nDo you want " + "to retry?")) {
-                _this6.WM.Log.logInfo("Retrying ...");
-                return _this6.callAPIPost(params, call, callArgs, callError);
+                _this8.WM.Log.logInfo("Retrying ...");
+                return _this8.callAPIPost(params, call, callArgs, callError);
               } else if (callError) {
                 return callError(callArgs);
               }
@@ -2384,11 +2244,11 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "getUserInfo",
           value: function getUserInfo(call) {
-            var _this7 = this;
+            var _this9 = this;
 
             var pars, storeInfo;
             storeInfo = function storeInfo(res, call) {
-              _this7.userInfo = res;
+              _this9.userInfo = res;
               return call();
             };
             if (!this.userInfo) {
@@ -2405,31 +2265,31 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "isLoggedIn",
           value: function isLoggedIn(call, args) {
-            var _this8 = this;
+            var _this10 = this;
 
             return this.getUserInfo(function () {
               var test;
-              test = _this8.userInfo.query.userinfo.id !== 0;
+              test = _this10.userInfo.query.userinfo.id !== 0;
               return call(test, args);
             });
           }
         }, {
           key: "getUserName",
           value: function getUserName(call, args) {
-            var _this9 = this;
+            var _this11 = this;
 
             return this.getUserInfo(function () {
-              return call(_this9.userInfo.query.userinfo.name, args);
+              return call(_this11.userInfo.query.userinfo.name, args);
             });
           }
         }, {
           key: "isUserBot",
           value: function isUserBot(call, args) {
-            var _this10 = this;
+            var _this12 = this;
 
             return this.getUserInfo(function () {
               var groups, res;
-              groups = _this10.userInfo.query.userinfo.groups;
+              groups = _this12.userInfo.query.userinfo.groups;
               res = groups.indexOf("bot") > -1;
               return call(res, args);
             });
@@ -2452,13 +2312,13 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "_getBacklinksContinue",
           value: function _getBacklinksContinue(query, call, callArgs, backlinks) {
-            var _this11 = this;
+            var _this13 = this;
 
             return this.callAPIGet(query, function (res, args) {
               backlinks = backlinks.concat(res.query.backlinks);
               if (res["query-continue"]) {
                 query.blcontinue = res["query-continue"].backlinks.blcontinue;
-                return _this11._getBacklinksContinue(query, call, args, backlinks);
+                return _this13._getBacklinksContinue(query, call, args, backlinks);
               } else {
                 return call(backlinks, args);
               }
@@ -2486,7 +2346,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "_getLanglinksContinue",
           value: function _getLanglinksContinue(query, call, callArgs, langlinks, iwmap) {
-            var _this12 = this;
+            var _this14 = this;
 
             return this.callAPIGet(query, function (res, args) {
               var page;
@@ -2502,7 +2362,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
               }
               if (res["query-continue"]) {
                 query.llcontinue = res["query-continue"].langlinks.llcontinue;
-                return _this12._getLanglinksContinue(query, call, args, langlinks, iwmap);
+                return _this14._getLanglinksContinue(query, call, args, langlinks, iwmap);
               } else {
                 return call(langlinks, iwmap, args);
               }
@@ -2552,7 +2412,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "_getSpecialListContinue",
           value: function _getSpecialListContinue(query, call, callArgs, results, siteinfo) {
-            var _this13 = this;
+            var _this15 = this;
 
             return this.callAPIGet(query, function (res, args) {
               var key;
@@ -2568,7 +2428,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
               }
               if (res["query-continue"]) {
                 query.qpoffset = res["query-continue"].querypage.qpoffset;
-                return _this13._getSpecialListContinue(query, call, args, results, siteinfo);
+                return _this15._getSpecialListContinue(query, call, args, results, siteinfo);
               } else {
                 return call(results, siteinfo, args);
               }
@@ -2592,13 +2452,13 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "_getUserContribsContinue",
           value: function _getUserContribsContinue(query, call, callArgs, results) {
-            var _this14 = this;
+            var _this16 = this;
 
             return this.callAPIGet(query, function (res, args) {
               results = results.concat(res.query.usercontribs);
               if (res["query-continue"]) {
                 query.uccontinue = res["query-continue"].usercontribs.uccontinue;
-                return _this14._getUserContribsContinue(query, call, args, results);
+                return _this16._getUserContribsContinue(query, call, args, results);
               } else {
                 return call(results, args);
               }
@@ -2664,7 +2524,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/HTTP": 433, "../../lib.js.generic/dist/Obj": 434, "./libs": 21 }], 13: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/HTTP": 432, "../../lib.js.generic/dist/Obj": 433, "./libs": 19 }], 11: [function (require, module, exports) {
     var Async, CSS;
 
     CSS = require('../../lib.js.generic/dist/CSS');
@@ -2685,33 +2545,28 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
         _createClass2(exports, [{
           key: "_makeUI",
-          value: function _makeUI(plugins) {
-            var currId, currMenu, entry, execAll, groupAction, groupActions, i, m, mainDiv, menuSel, menus, parentId, parentMenu, pid, plugin, pluginConf, pluginInst, pluginName, ref;
+          value: function _makeUI(page_type, plugins) {
+            var Plugin, currId, currMenu, entry, execAll, groupAction, groupActions, i, j, len, m, mainDiv, menuSel, menus, parentId, parentMenu, plugin, pluginInst, ref;
+            this.page_type = page_type;
             CSS.addStyleElement("#WikiMonkeyMenu input.margin {margin:0 0.33em 0.33em 0;}");
             mainDiv = $('<div/>').attr('id', 'WikiMonkeyMenu');
             groupActions = {};
-            for (pid in plugins) {
-              pluginConf = plugins[pid];
-              pluginName = pluginConf[0];
-              pluginInst = pluginConf[1];
-
-              if (this.WM.Plugins[pluginName]) {
-                plugin = this.WM.Plugins[pluginName];
-              } else {
-                continue;
-              }
+            for (i = 0, len = plugins.length; i < len; i++) {
+              Plugin = plugins[i];
+              plugin = new Plugin(this.WM);
+              pluginInst = plugin.conf[this.page_type + "_menu"];
 
               if (!pluginInst || !pluginInst.length) {
                 continue;
               }
               if (plugin.makeUI) {
-                groupAction = [this.warnInputNeeded, pluginConf[0]];
+                groupAction = [this.warnInputNeeded, plugin];
               } else {
-                groupAction = [this.executeEntryAction, [plugin, pluginConf]];
+                groupAction = [this.executeEntryAction, plugin];
               }
               pluginInst.unshift("WikiMonkeyMenuRoot");
               currId = false;
-              for (m = i = 0, ref = pluginInst.length - 1; 0 <= ref ? i < ref : i > ref; m = 0 <= ref ? ++i : --i) {
+              for (m = j = 0, ref = pluginInst.length - 1; 0 <= ref ? j < ref : j > ref; m = 0 <= ref ? ++j : --j) {
                 parentId = currId;
                 currId = pluginInst.slice(0, m + 1).join("-").replace(/ /g, "_");
 
@@ -2732,9 +2587,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
               }
               entry = $("<input/>").attr('type', 'button').val(pluginInst[pluginInst.length - 1]).addClass('margin').appendTo(currMenu);
               if (plugin.makeUI) {
-                entry.click(this.makeEntryUI(currMenu, plugin, pluginConf));
+                entry.click(this.makeEntryUI(currMenu, plugin));
               } else {
-                entry.click(this.makeEntryAction(plugin, pluginConf));
+                entry.click(this.makeEntryAction(plugin));
               }
             }
             menus = mainDiv.children();
@@ -2750,9 +2605,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           }
         }, {
           key: "makeEntryUI",
-          value: function makeEntryUI(currMenu, plugin, pluginConf) {
-            var self;
-            self = this;
+          value: function makeEntryUI(currMenu, plugin) {
+            var _this17 = this;
+
             return function (event) {
               var UI, UIdiv;
               currMenu.hide();
@@ -2761,33 +2616,30 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
                 UIdiv.remove();
                 return currMenu.show();
               }).appendTo(UIdiv);
-              $('<input/>').attr('type', 'button').val('Execute').click(self.makeEntryAction(plugin, pluginConf)).appendTo(UIdiv);
-              UI = plugin.makeUI(pluginConf[2]);
+              $('<input/>').attr('type', 'button').val('Execute').click(_this17.makeEntryAction(plugin)).appendTo(UIdiv);
+              UI = plugin.makeUI();
               return UIdiv.append(UI).insertAfter(currMenu);
             };
           }
         }, {
           key: "makeEntryAction",
-          value: function makeEntryAction(plugin, pluginConf) {
-            var self;
-            self = this;
+          value: function makeEntryAction(plugin) {
+            var _this18 = this;
+
             return function (event) {
-              return self.executeEntryAction([plugin, pluginConf], null);
+              return _this18.executeEntryAction(plugin, null);
             };
           }
         }, {
           key: "executeEntryAction",
-          value: function executeEntryAction(args, callNext) {
-            var plugin, pluginConf;
-            plugin = args[0];
-            pluginConf = args[1];
-            this.WM.Log.logHidden("Plugin: " + pluginConf[0]);
-            return plugin.main(pluginConf[2], callNext);
+          value: function executeEntryAction(plugin, callNext) {
+            this.WM.Log.logHidden("Plugin: " + plugin.constructor.name);
+            return plugin["main_" + this.page_type](callNext);
           }
         }, {
           key: "warnInputNeeded",
-          value: function warnInputNeeded(pluginName, callNext) {
-            this.WM.Log.logWarning("Plugin " + pluginName + " was not executed because it requires input from its interface.");
+          value: function warnInputNeeded(plugin, callNext) {
+            this.WM.Log.logWarning("Plugin " + plugin.constructor.name + " was not executed because it requires input from its interface.");
             if (callNext) {
               return callNext();
             }
@@ -2814,7 +2666,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/Async": 430, "../../lib.js.generic/dist/CSS": 431 }], 14: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Async": 429, "../../lib.js.generic/dist/CSS": 430 }], 12: [function (require, module, exports) {
     var CSS;
 
     CSS = require('../../lib.js.generic/dist/CSS');
@@ -2832,39 +2684,31 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         _createClass2(exports, [{
           key: "applyGeneralMods",
           value: function applyGeneralMods() {
-            var conf;
-            conf = this.WM.Cfg.Mods.General;
-            if (conf['heading_number_style']) {
+            if (this.WM.conf.heading_number_style) {
               return changeHeadingNumberStyle(conf['heading_number_style']);
             }
           }
         }, {
           key: "applyEditorMods",
           value: function applyEditorMods() {
-            var conf;
-            conf = this.WM.Cfg.Mods.Editor;
-            if (conf['disable_edit_summary_submit_on_enter']) {
+            if (this.WM.conf.disable_edit_summary_submit_on_enter) {
               disableEditSummarySubmitOnEnter();
             }
-            if (conf['scroll_to_first_heading']) {
+            if (this.WM.conf.scroll_to_first_heading) {
               return scrollToFirstHeading();
             }
           }
         }, {
           key: "applyRecentChangesMods",
           value: function applyRecentChangesMods() {
-            var conf;
-            conf = this.WM.Cfg.Mods.RecentChanges;
-            if (conf['hide_rollback_links']) {
+            if (this.WM.conf.hide_rollback_links) {
               return hideRollbackLinks();
             }
           }
         }, {
           key: "applyContributionsMods",
           value: function applyContributionsMods() {
-            var conf;
-            conf = this.WM.Cfg.Mods.Contributions;
-            if (conf['hide_rollback_links']) {
+            if (this.WM.conf.hide_rollback_links) {
               return hideRollbackLinks();
             }
           }
@@ -2898,7 +2742,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 431 }], 15: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/CSS": 430 }], 13: [function (require, module, exports) {
     var RegEx, Str;
 
     RegEx = require('../../lib.js.generic/dist/RegEx');
@@ -3371,7 +3215,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/RegEx": 435, "../../lib.js.generic/dist/Str": 436 }], 16: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/RegEx": 434, "../../lib.js.generic/dist/Str": 435 }], 14: [function (require, module, exports) {
     var Str;
 
     Str = require('../../lib.js.generic/dist/Str');
@@ -3397,7 +3241,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/Str": 436 }], 17: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Str": 435 }], 15: [function (require, module, exports) {
     var CSS, RegEx;
 
     CSS = require('../../lib.js.generic/dist/CSS');
@@ -3420,35 +3264,33 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           this.WM.Mods.applyGeneralMods();
           if (document.getElementById('editform')) {
             nextNode = document.getElementById('wpSummaryLabel').parentNode.nextSibling;
-            conf = this.WM.Cfg.Plugins.Editor;
-            UI = conf ? this.WM.Menu._makeUI(conf) : null;
+            conf = this.WM.Plugins.editor;
+            UI = conf.length ? this.WM.Menu._makeUI('editor', conf) : null;
             this.WM.Mods.applyEditorMods();
           } else if (document.getElementById('mw-diff-otitle1')) {
             nextNode = document.getElementById('bodyContent').getElementsByTagName('h2')[0];
-            conf = this.WM.Cfg.Plugins.Diff;
-            UI = conf ? this.WM.Menu._makeUI(conf) : null;
+            conf = this.WM.Plugins.diff;
+            UI = conf.length ? this.WM.Menu._makeUI('diff', conf) : null;
           } else if (document.getElementById('mw-subcategories') || document.getElementById('mw-pages')) {
             nextNode = document.getElementById('bodyContent');
-            conf = this.WM.Cfg.Plugins.Bot;
-            UI = conf ? this.WM.Bot._makeUI(conf, [[document.getElementById('mw-pages'), 0, "Pages"], [document.getElementById('mw-subcategories'), 0, "Subcategories"]]) : null;
+            conf = this.WM.Plugins.bot;
+            UI = conf.length ? this.WM.Bot._makeUI(conf, [[document.getElementById('mw-pages'), 0, "Pages"], [document.getElementById('mw-subcategories'), 0, "Subcategories"]]) : null;
             display = false;
           } else if (document.getElementById('mw-whatlinkshere-list')) {
             nextNode = document.getElementById('bodyContent').getElementsByTagName('form')[0].nextSibling;
-            conf = this.WM.Cfg.Plugins.Bot;
-            UI = conf ? this.WM.Bot._makeUI(conf, [[document.getElementById('mw-whatlinkshere-list'), 0, "Pages"]]) : null;
+            conf = this.WM.Plugins.bot;
+            UI = conf.length ? this.WM.Bot._makeUI(conf, [[document.getElementById('mw-whatlinkshere-list'), 0, "Pages"]]) : null;
             display = false;
           } else if (document.body.classList.contains('mw-special-LinkSearch') && document.getElementById('bodyContent').getElementsByTagName('ol')[0]) {
             nextNode = document.getElementsByClassName('mw-spcontent')[0];
-            conf = this.WM.Cfg.Plugins.Bot;
-            UI = conf ? this.WM.Bot._makeUI(conf, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 1, "Pages"]]) : null;
+            conf = this.WM.Plugins.bot;
+            UI = conf.length ? this.WM.Bot._makeUI(conf, [[document.getElementById('bodyContent').getElementsByTagName('ol')[0], 1, "Pages"]]) : null;
             display = false;
           } else if (document.getElementById('mw-prefixindex-list-table')) {
             nextNode = document.getElementById('mw-prefixindex-list-table');
-            conf = this.WM.Cfg.Plugins.Bot;
-            UI = conf ? this.WM.Bot._makeUI(conf, [[nextNode.getElementsByTagName('tbody')[0], 0, "Pages"]]) : null;
+            conf = this.WM.Plugins.bot;
+            UI = conf.length ? this.WM.Bot._makeUI(conf, [[nextNode.getElementsByTagName('tbody')[0], 0, "Pages"]]) : null;
             display = false;
-          } else if (document.getElementById('mw-prefs-form')) {
-            this.WM.Cfg._makeUI();
           } else {
             wikiUrls = this.WM.MW.getWikiUrls();
             patt1A = new RegExp(RegEx.escapePattern(wikiUrls.full) + "\?.*?" + "title\\=Special(\\:|%3[Aa])SpecialPages", '');
@@ -3463,35 +3305,35 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
             patt5B = new RegExp(RegEx.escapePattern(wikiUrls.short) + "Special(\\:|%3[Aa])Contributions", '');
             if (location.href.search(patt1A) > -1 || location.href.search(patt1B) > -1) {
               nextNode = document.getElementById('bodyContent');
-              conf = this.WM.Cfg.Plugins.Special;
-              UI = conf ? this.WM.Menu._makeUI(conf) : null;
+              conf = this.WM.Plugins.special;
+              UI = conf.length ? this.WM.Menu._makeUI('special', conf) : null;
             } else if (location.href.search(patt2A) > -1 || location.href.search(patt2B) > -1) {
               nextNode = document.getElementById('mw-content-text').getElementsByTagName('h4')[0];
-              conf = this.WM.Cfg.Plugins.RecentChanges;
-              UI = conf ? this.WM.Filters._makeUI(conf) : null;
+              conf = this.WM.Plugins.recentchanges;
+              UI = conf.length ? this.WM.Filters._makeUI('recentchanges', conf) : null;
               displayLog = false;
               this.WM.Mods.applyRecentChangesMods();
             } else if (location.href.search(patt3A) > -1 || location.href.search(patt3B) > -1) {
               nextNode = document.getElementById('mw-content-text').getElementsByTagName('ul')[0];
-              conf = this.WM.Cfg.Plugins.NewPages;
-              UI = conf ? this.WM.Filters._makeUI(conf) : null;
+              conf = this.WM.Plugins.newpages;
+              UI = conf.length ? this.WM.Filters._makeUI('newpages', conf) : null;
               displayLog = false;
             } else if (location.href.search(patt4A) > -1 || location.href.search(patt4B) > -1) {
               nextNode = document.getElementById('mw-content-text').getElementsByTagName('ul')[0];
-              conf = this.WM.Cfg.Plugins.Bot;
-              UI = conf ? this.WM.Bot._makeUI(conf, [[document.getElementById('mw-content-text').getElementsByTagName('ul')[0], 0, "Pages"]]) : null;
+              conf = this.WM.Plugins.bot;
+              UI = conf.length ? this.WM.Bot._makeUI(conf, [[document.getElementById('mw-content-text').getElementsByTagName('ul')[0], 0, "Pages"]]) : null;
               display = false;
             } else if (location.href.search(patt5A) > -1 || location.href.search(patt5B) > -1) {
               this.WM.Mods.applyContributionsMods();
             } else if (document.getElementsByClassName('mw-spcontent').length > 0) {
               nextNode = document.getElementsByClassName('mw-spcontent')[0];
-              conf = this.WM.Cfg.Plugins.Bot;
-              UI = conf ? this.WM.Bot._makeUI(conf, [[nextNode.getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
+              conf = this.WM.Plugins.bot;
+              UI = conf.length ? this.WM.Bot._makeUI(conf, [[nextNode.getElementsByTagName('ol')[0], 0, "Pages"]]) : null;
               display = false;
             } else if (document.getElementsByClassName('mw-allpages-table-chunk').length > 0) {
               nextNode = document.getElementsByClassName('mw-allpages-table-chunk')[0];
-              conf = this.WM.Cfg.Plugins.Bot;
-              UI = conf ? this.WM.Bot._makeUI(conf, [[nextNode.getElementsByTagName('tbody')[0], 0, "Pages"]]) : null;
+              conf = this.WM.Plugins.bot;
+              UI = conf.length ? this.WM.Bot._makeUI(conf, [[nextNode.getElementsByTagName('tbody')[0], 0, "Pages"]]) : null;
               display = false;
             }
           }
@@ -3532,7 +3374,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
             }
             main.appendChild(main2);
             nextNode.parentNode.insertBefore(main, nextNode);
-            this.WM.Log.logHidden('Wiki Monkey version: ' + this.WM.version);
+            this.WM.Log.logHidden('Wiki Monkey version: ' + this.WM.VERSION);
             date = new Date();
             this.WM.Log.logHidden('Date: ' + date.toString());
             return this.WM.Log.logHidden('URL: ' + location.href);
@@ -3542,7 +3384,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 431, "../../lib.js.generic/dist/RegEx": 435 }], 18: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/CSS": 430, "../../lib.js.generic/dist/RegEx": 434 }], 16: [function (require, module, exports) {
     var A,
         Br,
         Div,
@@ -3571,7 +3413,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           key: "check_and_notify",
           value: function () {
             var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
-              var _this15 = this;
+              var _this19 = this;
 
               var upstream_version;
               return regeneratorRuntime.wrap(function _callee$(_context) {
@@ -3589,14 +3431,14 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
                     case 3:
                       upstream_version = _context.sent;
 
-                      if (!(this.WM.version !== upstream_version)) {
+                      if (!(this.WM.VERSION !== upstream_version)) {
                         _context.next = 8;
                         break;
                       }
 
                       return _context.abrupt("return", this.display_notification(["Version " + upstream_version + " is available.", Br(), A('Run upgrade', {
                         onclick: function onclick() {
-                          return _this15.upgrade(upstream_version);
+                          return _this19.upgrade(upstream_version);
                         }
                       })]));
 
@@ -3647,14 +3489,14 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "upgrade",
           value: function upgrade(upstream_version) {
-            var _this16 = this;
+            var _this20 = this;
 
             var page, pagelink, regex;
             page = "User:" + mw.user.getName() + "/common.js";
             pagelink = this.WM.MW.linkArticle(page);
             this.display_notification("Upgrading to version " + upstream_version + "...");
 
-            regex = new RegExp("([\"']https?://[^/]+/kynikos/wiki-monkey/" + ("v)" + mw.RegExp.escape(this.WM.version) + "(/dist/") + "WikiMonkey-[^/]+\\.js[\"'])", 'g');
+            regex = new RegExp("([\"']https?://[^/]+/kynikos/wiki-monkey/" + ("v)" + mw.RegExp.escape(this.WM.VERSION) + "(/dist/") + "WikiMonkey-[^/]+\\.js[\"'])", 'g');
             return this.WM.MW.api.edit(page, function (revision) {
               var newtext;
               newtext = revision.content.replace(regex, "$1" + upstream_version + "$2");
@@ -3668,12 +3510,12 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
               };
             }).done(function (result) {
               console.log(result);
-              return _this16.display_notification("Upgrade successful: you need to refresh the open wiki page(s) in order to use the new version.");
+              return _this20.display_notification("Upgrade successful: you need to refresh the open wiki page(s) in order to use the new version.");
             }).fail(function (code, error) {
               console.error(code, error);
-              return _this16.display_notification(["Could not complete the upgrade to version " + upstream_version + ": ", A({
+              return _this20.display_notification(["Could not complete the upgrade to version " + upstream_version + ": ", A({
                 onclick: function onclick() {
-                  return _this16.upgrade(upstream_version);
+                  return _this20.upgrade(upstream_version);
                 }
               }, "retry"), " in case it was a temporary problem; it is also possible that Wiki Monkey is installed in a non-standard way in ", pagelink, " and the upgrade should be executed manually; finally, it is possible that the upgrade was already launched and completed from another page: in this case refresh the page to verify."], 'error');
             });
@@ -3691,7 +3533,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "./libs": 21 }], 19: [function (require, module, exports) {
+  }, { "./libs": 19 }], 17: [function (require, module, exports) {
     module.exports = function () {
       function exports(WM) {
         _classCallCheck2(this, exports);
@@ -3717,8 +3559,10 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, {}], 20: [function (require, module, exports) {
-    var ArchWiki, Bot, Cat, Cfg, Diff, Editor, Filters, Interlanguage, Log, MW, Menu, Mods, Parser, Tables, UI, Upgrade, WM, WhatLinksHere, wm;
+  }, {}], 18: [function (require, module, exports) {
+    var ArchWiki, Bot, Cat, Diff, Editor, Filters, Interlanguage, Log, MW, Menu, Mods, Parser, Plugin, Tables, UI, Upgrade, WM, WhatLinksHere, mwmodpromise, wm;
+
+    mwmodpromise = mw.loader.using(['mediawiki.api.edit', 'mediawiki.notification']);
 
     require('./libs');
 
@@ -3727,8 +3571,6 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     Bot = require('./Bot');
 
     Cat = require('./Cat');
-
-    Cfg = require('./Cfg');
 
     Diff = require('./Diff');
 
@@ -3756,37 +3598,128 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
     WhatLinksHere = require('./WhatLinksHere');
 
-    WM = function () {
-      var MW_MODULES, VERSION;
+    var _require4 = require('../plugins/_Plugin');
 
+    Plugin = _require4.Plugin;
+
+
+    WM = function () {
       var WM = function () {
         function WM() {
           _classCallCheck2(this, WM);
 
           this.setup = this.setup.bind(this);
           this.init = this.init.bind(this);
-          this.version = VERSION;
         }
 
         _createClass2(WM, [{
           key: "setup",
-          value: function setup(default_config, installed_plugins) {
-            return this.Cfg = new Cfg(this, default_config, installed_plugins);
+          value: function setup(wiki_name) {
+            this.wiki_name = wiki_name;
+
+            for (var _len2 = arguments.length, installed_plugins_temp = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+              installed_plugins_temp[_key2 - 1] = arguments[_key2];
+            }
+
+            this.installed_plugins_temp = installed_plugins_temp;
           }
         }, {
           key: "init",
           value: function () {
-            var _ref3 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(user_config) {
-              var Plugin, pname, ref;
+            var _ref3 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2() {
+              var user_config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+              var PluginSub, i, interface_, len, option, pmod, pname, ref, value;
               return regeneratorRuntime.wrap(function _callee2$(_context2) {
                 while (1) {
                   switch (_context2.prev = _context2.next) {
                     case 0:
-                      this.Cfg.load(user_config);
-                      _context2.next = 3;
-                      return $.when(mw.loader.using(MW_MODULES), $.ready);
+                      _context2.t0 = regeneratorRuntime.keys(user_config);
 
-                    case 3:
+                    case 1:
+                      if ((_context2.t1 = _context2.t0()).done) {
+                        _context2.next = 10;
+                        break;
+                      }
+
+                      option = _context2.t1.value;
+
+                      value = user_config[option];
+
+                      if (option in this.conf) {
+                        _context2.next = 6;
+                        break;
+                      }
+
+                      return _context2.abrupt("continue", 1);
+
+                    case 6:
+                      this.conf[option] = value;
+                      delete user_config[option];
+                      _context2.next = 1;
+                      break;
+
+                    case 10:
+                      this.Plugins = {
+                        bot: [],
+                        diff: [],
+                        editor: [],
+                        newpages: [],
+                        recentchanges: [],
+                        special: []
+                      };
+                      ref = this.installed_plugins_temp;
+                      i = 0, len = ref.length;
+
+                    case 13:
+                      if (!(i < len)) {
+                        _context2.next = 28;
+                        break;
+                      }
+
+                      pmod = ref[i];
+                      _context2.t2 = regeneratorRuntime.keys(pmod);
+
+                    case 16:
+                      if ((_context2.t3 = _context2.t2()).done) {
+                        _context2.next = 25;
+                        break;
+                      }
+
+                      pname = _context2.t3.value;
+
+                      PluginSub = pmod[pname];
+
+                      if (PluginSub.prototype instanceof Plugin) {
+                        _context2.next = 21;
+                        break;
+                      }
+
+                      return _context2.abrupt("continue", 16);
+
+                    case 21:
+                      PluginSub.__configure(this.wiki_name, user_config);
+                      for (interface_ in this.Plugins) {
+                        if (PluginSub.prototype["main_" + interface_]) {
+                          this.Plugins[interface_].push(PluginSub);
+                        }
+                      }
+                      _context2.next = 16;
+                      break;
+
+                    case 25:
+                      i++;
+                      _context2.next = 13;
+                      break;
+
+                    case 28:
+                      if (!$.isEmptyObject(user_config)) {
+                        console.warn("Unkown configuration options", user_config);
+                      }
+                      delete this.installed_plugins_temp;
+                      _context2.next = 32;
+                      return $.when(mwmodpromise, $.ready);
+
+                    case 32:
                       this.ArchWiki = new ArchWiki(this);
                       this.Bot = new Bot(this);
                       this.Cat = new Cat(this);
@@ -3803,16 +3736,10 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
                       this.UI = new UI(this);
                       this.Upgrade = new Upgrade(this);
                       this.WhatLinksHere = new WhatLinksHere(this);
-                      this.Plugins = {};
-                      ref = this.Cfg.installed_plugins;
-                      for (pname in ref) {
-                        Plugin = ref[pname];
-                        this.Plugins[pname] = new Plugin(this);
-                      }
                       this.Upgrade.check_and_notify();
                       return _context2.abrupt("return", this.UI._makeUI());
 
-                    case 24:
+                    case 50:
                     case "end":
                       return _context2.stop();
                   }
@@ -3820,7 +3747,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
               }, _callee2, this);
             }));
 
-            function init(_x2) {
+            function init() {
               return _ref3.apply(this, arguments);
             }
 
@@ -3833,9 +3760,17 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       ;
 
-      VERSION = '4.0.0';
+      WM.prototype.VERSION = '4.0.0';
 
-      MW_MODULES = ['mediawiki.api.edit', 'mediawiki.notification'];
+      WM.prototype.conf = {
+        default_bot_plugin: "SimpleReplace",
+        default_recentchanges_plugin: null,
+        default_newpages_plugin: null,
+        hide_rollback_links: true,
+        disable_edit_summary_submit_on_enter: true,
+        scroll_to_first_heading: false,
+        heading_number_style: false
+      };
 
       return WM;
     }();
@@ -3845,7 +3780,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     module.exports = wm.setup;
 
     window.wikimonkey = wm.init;
-  }, { "./ArchWiki": 3, "./Bot": 4, "./Cat": 5, "./Cfg": 6, "./Diff": 7, "./Editor": 8, "./Filters": 9, "./Interlanguage": 10, "./Log": 11, "./MW": 12, "./Menu": 13, "./Mods": 14, "./Parser": 15, "./Tables": 16, "./UI": 17, "./Upgrade": 18, "./WhatLinksHere": 19, "./libs": 21 }], 21: [function (require, module, exports) {
+  }, { "../plugins/_Plugin": 38, "./ArchWiki": 2, "./Bot": 3, "./Cat": 4, "./Diff": 5, "./Editor": 6, "./Filters": 7, "./Interlanguage": 8, "./Log": 9, "./MW": 10, "./Menu": 11, "./Mods": 12, "./Parser": 13, "./Tables": 14, "./UI": 15, "./Upgrade": 16, "./WhatLinksHere": 17, "./libs": 19 }], 19: [function (require, module, exports) {
     var helper, hh, jss, tag;
 
     require('babel-polyfill');
@@ -3865,691 +3800,863 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     jss.setup(require('jss-preset-default').default());
 
     module.exports.jss = jss;
-  }, { "babel-polyfill": 40, "hyperscript": 374, "hyperscript-helpers": 373, "jss": 400, "jss-preset-default": 389, "moment": 424 }], 22: [function (require, module, exports) {
-    var indexOf = [].indexOf;
+  }, { "babel-polyfill": 39, "hyperscript": 373, "hyperscript-helpers": 372, "jss": 399, "jss-preset-default": 388, "moment": 423 }], 20: [function (require, module, exports) {
+    var Plugin,
+        indexOf = [].indexOf;
 
-    module.exports = function () {
-      function exports(WM) {
-        _classCallCheck2(this, exports);
+    var _require5 = require('./_Plugin');
 
-        this.WM = WM;
-      }
+    Plugin = _require5.Plugin;
 
-      _createClass2(exports, [{
-        key: "main",
-        value: function main(args, callNext) {
-          var b, behaviorswitches, bslist, bswitch, cat, categories, catlang, catlink, catlinks, catlist, cattext, cleantitle, content, contentId, displaytitle, dlct, dt, firstChar, fulllink, header, i, interlanguage, iwlinks, iwlist, j, k, l, language, lct, len, len1, len2, len3, link, linklang, linktext, linktitle, lowercasetitle, newText, ref, ref1, source, tempcontent, titlemod, titlemods;
-          source = this.WM.Editor.readSource();
-          language = this.WM.ArchWiki.detectLanguage(this.WM.Editor.getTitle())[1];
-          header = "";
-          content = source;
 
-          content = content.replace(/^\s*<noinclude>/, "");
-          if (content !== source) {
-            header += "<noinclude>\n";
-          }
+    module.exports.ArchWikiFixHeader = function () {
+      var ArchWikiFixHeader = function (_Plugin) {
+        _inherits(ArchWikiFixHeader, _Plugin);
 
-          displaytitle = this.WM.Parser.findVariables(content, "DISPLAYTITLE");
-          lowercasetitle = this.WM.Parser.findTemplates(content, "Lowercase title");
-          titlemods = displaytitle.concat(lowercasetitle);
-          titlemods.sort(function (a, b) {
-            return a.index - b.index;
-          });
-          tempcontent = "";
-          contentId = 0;
-          for (i = 0, len = titlemods.length; i < len; i++) {
-            titlemod = titlemods[i];
-            tempcontent += content.substring(contentId, titlemod.index);
-            contentId = titlemod.index + titlemod.length;
-          }
-          tempcontent += content.substring(contentId);
-          content = tempcontent;
-          dt = displaytitle.pop();
-          lct = lowercasetitle.pop();
-          dlct = "";
-          if (dt && !lct) {
-            dlct = "{{DISPLAYTITLE:" + dt.value + "}}";
-          } else if (!dt && lct) {
-            dlct = "{{Lowercase title}}";
-          } else if (dt && lct) {
-            dlct = dt.index < lct.index ? "{{Lowercase title}}" : "{{DISPLAYTITLE:" + dt.value + "}}";
-          }
-          if (displaytitle.length || lowercasetitle.length) {
-            this.WM.Log.logWarning("Found multiple instances of {{DISPLAYTITLE:...}} or {{Lowercase title}}: only the last one has been used, the others have been deleted");
-          }
+        function ArchWikiFixHeader() {
+          _classCallCheck2(this, ArchWikiFixHeader);
 
-          behaviorswitches = this.WM.Parser.findBehaviorSwitches(content);
-          bslist = [];
-          tempcontent = "";
-          contentId = 0;
-          for (b = j = 0, len1 = behaviorswitches.length; j < len1; b = ++j) {
-            bswitch = behaviorswitches[b];
-            if ((ref = bswitch.match[1]) === "TOC" || ref === "START" || ref === "END") {
-              behaviorswitches.splice(b, 1);
-            } else {
-              if (ref1 = bswitch.match[0], indexOf.call(bslist, ref1) < 0) {
-                bslist.push(bswitch.match[0]);
+          return _possibleConstructorReturn(this, (ArchWikiFixHeader.__proto__ || Object.getPrototypeOf(ArchWikiFixHeader)).apply(this, arguments));
+        }
+
+        _createClass2(ArchWikiFixHeader, [{
+          key: "main_editor",
+          value: function main_editor(callNext) {
+            var b, behaviorswitches, bslist, bswitch, cat, categories, catlang, catlink, catlinks, catlist, cattext, cleantitle, content, contentId, displaytitle, dlct, dt, firstChar, fulllink, header, i, interlanguage, iwlinks, iwlist, j, k, l, language, lct, len, len1, len2, len3, link, linklang, linktext, linktitle, lowercasetitle, newText, ref, ref1, source, tempcontent, titlemod, titlemods;
+            source = this.WM.Editor.readSource();
+            language = this.WM.ArchWiki.detectLanguage(this.WM.Editor.getTitle())[1];
+            header = "";
+            content = source;
+
+            content = content.replace(/^\s*<noinclude>/, "");
+            if (content !== source) {
+              header += "<noinclude>\n";
+            }
+
+            displaytitle = this.WM.Parser.findVariables(content, "DISPLAYTITLE");
+            lowercasetitle = this.WM.Parser.findTemplates(content, "Lowercase title");
+            titlemods = displaytitle.concat(lowercasetitle);
+            titlemods.sort(function (a, b) {
+              return a.index - b.index;
+            });
+            tempcontent = "";
+            contentId = 0;
+            for (i = 0, len = titlemods.length; i < len; i++) {
+              titlemod = titlemods[i];
+              tempcontent += content.substring(contentId, titlemod.index);
+              contentId = titlemod.index + titlemod.length;
+            }
+            tempcontent += content.substring(contentId);
+            content = tempcontent;
+            dt = displaytitle.pop();
+            lct = lowercasetitle.pop();
+            dlct = "";
+            if (dt && !lct) {
+              dlct = "{{DISPLAYTITLE:" + dt.value + "}}";
+            } else if (!dt && lct) {
+              dlct = "{{Lowercase title}}";
+            } else if (dt && lct) {
+              dlct = dt.index < lct.index ? "{{Lowercase title}}" : "{{DISPLAYTITLE:" + dt.value + "}}";
+            }
+            if (displaytitle.length || lowercasetitle.length) {
+              this.WM.Log.logWarning("Found multiple instances of {{DISPLAYTITLE:...}} or {{Lowercase title}}: only the last one has been used, the others have been deleted");
+            }
+
+            behaviorswitches = this.WM.Parser.findBehaviorSwitches(content);
+            bslist = [];
+            tempcontent = "";
+            contentId = 0;
+            for (b = j = 0, len1 = behaviorswitches.length; j < len1; b = ++j) {
+              bswitch = behaviorswitches[b];
+              if ((ref = bswitch.match[1]) === "TOC" || ref === "START" || ref === "END") {
+                behaviorswitches.splice(b, 1);
               } else {
-                this.WM.Log.logWarning("Removed duplicate of " + bswitch.match[0]);
+                if (ref1 = bswitch.match[0], indexOf.call(bslist, ref1) < 0) {
+                  bslist.push(bswitch.match[0]);
+                } else {
+                  this.WM.Log.logWarning("Removed duplicate of " + bswitch.match[0]);
+                }
+                tempcontent += content.substring(contentId, bswitch.index);
+                contentId = bswitch.index + bswitch.length;
               }
-              tempcontent += content.substring(contentId, bswitch.index);
-              contentId = bswitch.index + bswitch.length;
             }
-          }
-          tempcontent += content.substring(contentId);
-          content = tempcontent;
-          if (!dlct && bslist.length) {
-            header += bslist.join(" ") + "\n";
-          } else if (dlct && !bslist.length) {
-            header += dlct + "\n";
-          } else if (dlct && bslist.length) {
-            header += dlct + " " + bslist.join(" ") + "\n";
-          }
+            tempcontent += content.substring(contentId);
+            content = tempcontent;
+            if (!dlct && bslist.length) {
+              header += bslist.join(" ") + "\n";
+            } else if (dlct && !bslist.length) {
+              header += dlct + "\n";
+            } else if (dlct && bslist.length) {
+              header += dlct + " " + bslist.join(" ") + "\n";
+            }
 
-          categories = this.WM.Parser.findCategories(content);
-          catlist = [];
-          catlinks = [];
-          tempcontent = "";
-          contentId = 0;
-          for (k = 0, len2 = categories.length; k < len2; k++) {
-            cat = categories[k];
-            if (cat.fragment) {
-              this.WM.Log.logWarning(this.WM.Log.linkToWikiPage(cat.link, cat.rawLink) + " contains a fragment reference, but it doesn't make sense in categories and will be removed");
-            }
-            cleantitle = this.WM.Parser.squashContiguousWhitespace(cat.title);
-            cattext = "Category:" + cleantitle;
+            categories = this.WM.Parser.findCategories(content);
+            catlist = [];
+            catlinks = [];
+            tempcontent = "";
+            contentId = 0;
+            for (k = 0, len2 = categories.length; k < len2; k++) {
+              cat = categories[k];
+              if (cat.fragment) {
+                this.WM.Log.logWarning(this.WM.Log.linkToWikiPage(cat.link, cat.rawLink) + " contains a fragment reference, but it doesn't make sense in categories and will be removed");
+              }
+              cleantitle = this.WM.Parser.squashContiguousWhitespace(cat.title);
+              cattext = "Category:" + cleantitle;
 
-            catlang = this.WM.ArchWiki.detectLanguage(cattext)[1];
-            catlink = "[[" + cattext + (cat.anchor ? "|" + cat.anchor : "") + "]]";
-            if (language !== catlang) {
-              this.WM.Log.logWarning(this.WM.Log.linkToWikiPage(cat.link, cattext) + " belongs to a different language than the one of the title (" + language + ")");
+              catlang = this.WM.ArchWiki.detectLanguage(cattext)[1];
+              catlink = "[[" + cattext + (cat.anchor ? "|" + cat.anchor : "") + "]]";
+              if (language !== catlang) {
+                this.WM.Log.logWarning(this.WM.Log.linkToWikiPage(cat.link, cattext) + " belongs to a different language than the one of the title (" + language + ")");
+              }
+              if (catlist.indexOf(cattext) < 0) {
+                catlist.push(cattext);
+                catlinks.push(catlink);
+              } else {
+                this.WM.Log.logWarning("Removed duplicate of " + this.WM.Log.linkToWikiPage(cat.link, cattext));
+              }
+              tempcontent += content.substring(contentId, cat.index);
+              contentId = cat.index + cat.length;
             }
-            if (catlist.indexOf(cattext) < 0) {
-              catlist.push(cattext);
-              catlinks.push(catlink);
+            if (catlist.length) {
+              header += catlinks.join("\n") + "\n";
             } else {
-              this.WM.Log.logWarning("Removed duplicate of " + this.WM.Log.linkToWikiPage(cat.link, cattext));
+              this.WM.Log.logWarning("The article is not categorized");
             }
-            tempcontent += content.substring(contentId, cat.index);
-            contentId = cat.index + cat.length;
-          }
-          if (catlist.length) {
-            header += catlinks.join("\n") + "\n";
-          } else {
-            this.WM.Log.logWarning("The article is not categorized");
-          }
-          tempcontent += content.substring(contentId);
-          content = tempcontent;
+            tempcontent += content.substring(contentId);
+            content = tempcontent;
 
-          interlanguage = this.WM.ArchWiki.findAllInterlanguageLinks(content);
-          iwlist = [];
-          iwlinks = [];
-          tempcontent = "";
-          contentId = 0;
-          for (l = 0, len3 = interlanguage.length; l < len3; l++) {
-            link = interlanguage[l];
-            if (link.anchor) {
-              this.WM.Log.logWarning(link.rawLink + " contains an alternative text, but it doesn't make sense in interlanguage links and will be removed");
+            interlanguage = this.WM.ArchWiki.findAllInterlanguageLinks(content);
+            iwlist = [];
+            iwlinks = [];
+            tempcontent = "";
+            contentId = 0;
+            for (l = 0, len3 = interlanguage.length; l < len3; l++) {
+              link = interlanguage[l];
+              if (link.anchor) {
+                this.WM.Log.logWarning(link.rawLink + " contains an alternative text, but it doesn't make sense in interlanguage links and will be removed");
+              }
+
+              linktitle = link.title;
+              linklang = link.namespace;
+              linktext = linklang + ":" + linktitle;
+              fulllink = "[[" + linktext + (link.fragment ? "#" + link.fragment : "") + "]]";
+              if (iwlist.indexOf(linktext) < 0) {
+                iwlist.push(linktext);
+                iwlinks.push(fulllink);
+              } else {
+                this.WM.Log.logWarning("Removed duplicate of " + linktext);
+              }
+              tempcontent += content.substring(contentId, link.index);
+              contentId = link.index + link.length;
             }
-
-            linktitle = link.title;
-            linklang = link.namespace;
-            linktext = linklang + ":" + linktitle;
-            fulllink = "[[" + linktext + (link.fragment ? "#" + link.fragment : "") + "]]";
-            if (iwlist.indexOf(linktext) < 0) {
-              iwlist.push(linktext);
-              iwlinks.push(fulllink);
-            } else {
-              this.WM.Log.logWarning("Removed duplicate of " + linktext);
+            if (iwlist.length) {
+              iwlinks.sort();
+              header += iwlinks.join("\n") + "\n";
             }
-            tempcontent += content.substring(contentId, link.index);
-            contentId = link.index + link.length;
+            tempcontent += content.substring(contentId);
+            content = tempcontent;
+            firstChar = content.search(/[^\s]/);
+            content = content.substr(firstChar);
+            newText = header + content;
+            if (newText !== source) {
+              this.WM.Editor.writeSource(newText);
+              this.WM.Log.logInfo("Fixed header");
+            }
+            if (callNext) {
+              return callNext();
+            }
           }
-          if (iwlist.length) {
-            iwlinks.sort();
-            header += iwlinks.join("\n") + "\n";
-          }
-          tempcontent += content.substring(contentId);
-          content = tempcontent;
-          firstChar = content.search(/[^\s]/);
-          content = content.substr(firstChar);
-          newText = header + content;
-          if (newText !== source) {
-            this.WM.Editor.writeSource(newText);
-            this.WM.Log.logInfo("Fixed header");
-          }
-          if (callNext) {
-            return callNext();
-          }
-        }
-      }]);
+        }]);
 
-      return exports;
+        return ArchWikiFixHeader;
+      }(Plugin);
+
+      ;
+
+      ArchWikiFixHeader.conf_default = {
+        editor_menu: ["Text plugins", "Fix header"]
+      };
+
+      return ArchWikiFixHeader;
     }();
-  }, {}], 23: [function (require, module, exports) {
-    module.exports = function () {
-      function exports(WM) {
-        _classCallCheck2(this, exports);
+  }, { "./_Plugin": 38 }], 21: [function (require, module, exports) {
+    var Plugin;
 
-        this.WM = WM;
-      }
+    var _require6 = require('./_Plugin');
 
-      _createClass2(exports, [{
-        key: "main",
-        value: function main(args, callNext) {
-          var i, increaseLevel, info, len, newtext, prevId, ref, section, source;
-          source = this.WM.Editor.readSource();
-          info = this.WM.Parser.findSectionHeadings(source);
-          if (this.WM.Editor.isSection()) {
-            increaseLevel = info.minLevel - 1;
-          } else {
-            if (info.maxTocLevel < 6) {
-              increaseLevel = 1;
+    Plugin = _require6.Plugin;
+
+
+    module.exports.ArchWikiFixHeadings = function () {
+      var ArchWikiFixHeadings = function (_Plugin2) {
+        _inherits(ArchWikiFixHeadings, _Plugin2);
+
+        function ArchWikiFixHeadings() {
+          _classCallCheck2(this, ArchWikiFixHeadings);
+
+          return _possibleConstructorReturn(this, (ArchWikiFixHeadings.__proto__ || Object.getPrototypeOf(ArchWikiFixHeadings)).apply(this, arguments));
+        }
+
+        _createClass2(ArchWikiFixHeadings, [{
+          key: "main_editor",
+          value: function main_editor(callNext) {
+            var i, increaseLevel, info, len, newtext, prevId, ref, section, source;
+            source = this.WM.Editor.readSource();
+            info = this.WM.Parser.findSectionHeadings(source);
+            if (this.WM.Editor.isSection()) {
+              increaseLevel = info.minLevel - 1;
             } else {
-              increaseLevel = 0;
-              this.WM.Log.logWarning("There are 6 levels of headings, it has been necessary to start creating them from level 1 although usually it is suggested to start from level 2");
+              if (info.maxTocLevel < 6) {
+                increaseLevel = 1;
+              } else {
+                increaseLevel = 0;
+                this.WM.Log.logWarning("There are 6 levels of headings, it has been necessary to start creating them from level 1 although usually it is suggested to start from level 2");
+              }
+            }
+            newtext = "";
+            prevId = 0;
+            ref = info.sections;
+            for (i = 0, len = ref.length; i < len; i++) {
+              section = ref[i];
+              newtext += source.substring(prevId, section.index);
+              newtext += new Array(section.tocLevel + increaseLevel + 1).join("=");
+              newtext += section.rawheading;
+              newtext += new Array(section.tocLevel + increaseLevel + 1).join("=");
+              prevId = section.index + section.length0;
+            }
+            newtext += source.substr(prevId);
+            if (newtext !== source) {
+              this.WM.Editor.writeSource(newtext);
+              this.WM.Log.logInfo("Fixed section headings");
+            }
+            if (callNext) {
+              return callNext();
             }
           }
-          newtext = "";
-          prevId = 0;
-          ref = info.sections;
-          for (i = 0, len = ref.length; i < len; i++) {
-            section = ref[i];
-            newtext += source.substring(prevId, section.index);
-            newtext += new Array(section.tocLevel + increaseLevel + 1).join("=");
-            newtext += section.rawheading;
-            newtext += new Array(section.tocLevel + increaseLevel + 1).join("=");
-            prevId = section.index + section.length0;
-          }
-          newtext += source.substr(prevId);
-          if (newtext !== source) {
-            this.WM.Editor.writeSource(newtext);
-            this.WM.Log.logInfo("Fixed section headings");
-          }
-          if (callNext) {
-            return callNext();
-          }
-        }
-      }]);
+        }]);
 
-      return exports;
+        return ArchWikiFixHeadings;
+      }(Plugin);
+
+      ;
+
+      ArchWikiFixHeadings.conf_default = {
+        editor_menu: ["Text plugins", "Fix headings"]
+      };
+
+      return ArchWikiFixHeadings;
     }();
-  }, {}], 24: [function (require, module, exports) {
-    module.exports = function () {
-      function exports(WM) {
-        _classCallCheck2(this, exports);
+  }, { "./_Plugin": 38 }], 22: [function (require, module, exports) {
+    var Plugin;
 
-        this.WM = WM;
-      }
+    var _require7 = require('./_Plugin');
 
-      _createClass2(exports, [{
-        key: "doReplace",
-        value: function doReplace(txt) {
-          var L, match, newText, prevId, re;
+    Plugin = _require7.Plugin;
 
-          re = /http:\/\/([a-z]+\.)?archlinux\.org(?!\.[a-z])/ig;
-          txt = txt.replace(re, 'https://$1archlinux.org');
 
-          re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/Category:([^\]]+?) (.+?)\]/ig;
-          txt = txt.replace(re, '[[:Category:$1|$2]]');
-          re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/Category:(.+?)\]/ig;
-          txt = txt.replace(re, '[[:Category:$1]]');
-          re = /https?:\/\/wiki\.archlinux\.org\/index\.php\/Category:([^\s]+)/ig;
-          txt = txt.replace(re, '[[:Category:$1]]');
-          re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/([^\]]+?) (.+?)\]/ig;
-          txt = txt.replace(re, '[[$1|$2]]');
-          re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/(.+?)\]/ig;
-          txt = txt.replace(re, '[[$1]]');
-          re = /https?:\/\/wiki\.archlinux\.org\/index\.php\/([^\s]+)/ig;
-          txt = txt.replace(re, '[[$1]]');
-          re = /https?:\/\/wiki\.archlinux\.org(?!\.)/ig;
-          if (re.test(txt)) {
-            this.WM.Log.logWarning("It hasn't been possible to convert some " + "links to wiki.archlinux.org");
-          }
+    module.exports.ArchWikiFixLinks = function () {
+      var ArchWikiFixLinks = function (_Plugin3) {
+        _inherits(ArchWikiFixLinks, _Plugin3);
 
-          re = /\[https?:\/\/en\.wikipedia\.org\/wiki\/([^\]]+?) (.+?)\]/ig;
-          txt = txt.replace(re, '[[wikipedia:$1|$2]]');
-          re = /\[https?:\/\/en\.wikipedia\.org\/wiki\/(.+?)\]/ig;
-          txt = txt.replace(re, '[[wikipedia:$1]]');
-          re = /https?:\/\/en\.wikipedia\.org\/wiki\/([^\s]+)/ig;
-          txt = txt.replace(re, '[[wikipedia:$1]]');
-          re = /https?:\/\/([a-z]+?)\.wikipedia\.org(?!\.)/ig;
-          if (re.test(txt)) {
-            this.WM.Log.logWarning("It hasn't been possible to convert some " + "links to Wikipedia");
-          }
+        function ArchWikiFixLinks() {
+          _classCallCheck2(this, ArchWikiFixLinks);
 
-          re = /\[https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s]+?)\/? +(.+?)?\]/ig;
-          newText = '';
-          prevId = 0;
-          while (true) {
-            match = re.exec(txt);
-            if (match) {
-              if (match[1] === match[2]) {
-                L = match[0].length;
-                newText += txt.substring(prevId, re.lastIndex - L) + '{{Pkg|' + match[1] + '}}';
-                prevId = re.lastIndex;
-              }
-            } else {
-              break;
-            }
-          }
-          newText += txt.substr(prevId);
-          txt = newText;
-          re = /\[https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s]+?)\/?\]/ig;
-          txt = txt.replace(re, '{{Pkg|$1}}');
-          re = /([^\[])https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s\/]+)\/?/ig;
-          txt = txt.replace(re, '$1{{Pkg|$2}}');
-          re = /https?:\/\/(?:www\.)?archlinux\.org\/packages(?!\/?\s)/ig;
-          if (re.test(txt)) {
-            this.WM.Log.logWarning("It hasn't been possible to convert some " + "links to archlinux.org/packages");
-          }
-
-          re = /\[https?:\/\/aur\.archlinux\.org\/packages\/([^\s]+?)\/? +(.+?)?\]/ig;
-          newText = '';
-          prevId = 0;
-          while (true) {
-            match = re.exec(txt);
-            if (match) {
-              if (match[1] === match[2]) {
-                L = match[0].length;
-                newText += txt.substring(prevId, re.lastIndex - L) + '{{AUR|' + match[1] + '}}';
-                prevId = re.lastIndex;
-              }
-            } else {
-              break;
-            }
-          }
-          newText += txt.substr(prevId);
-          txt = newText;
-          re = /\[https?:\/\/aur\.archlinux\.org\/packages\/([^\s]+?)\/?\]/ig;
-          txt = txt.replace(re, '{{AUR|$1}}');
-          re = /([^\[])https?:\/\/aur\.archlinux\.org\/packages\/([^\s\/]+)\/?/ig;
-          txt = txt.replace(re, '$1{{AUR|$2}}');
-          re = /https?:\/\/aur\.archlinux\.org(?!(?:\.|(?:\/?packages)?\/?\s))/ig;
-          if (re.test(txt)) {
-            this.WM.Log.logWarning("It hasn't been possible to convert some links to aur.archlinux.org (try the \"Fix old AUR links\" function, if installed)");
-          }
-
-          re = /\[https?:\/\/bugs\.archlinux\.org\/task\/([^\s]+?)\/? +(.+?)?\]/ig;
-          newText = '';
-          prevId = 0;
-          while (true) {
-            match = re.exec(txt);
-            if (match) {
-              if (match[1] === match[2]) {
-                L = match[0].length;
-                newText += txt.substring(prevId, re.lastIndex - L) + '{{Bug|' + match[1] + '}}';
-                prevId = re.lastIndex;
-              }
-            } else {
-              break;
-            }
-          }
-          newText += txt.substr(prevId);
-          txt = newText;
-          re = /\[https?:\/\/bugs\.archlinux\.org\/task\/([^\s]+?)\/?\]/ig;
-          txt = txt.replace(re, '{{Bug|$1}}');
-          re = /([^\[])https?:\/\/bugs\.archlinux\.org\/task\/([^\s\/]+)\/?/ig;
-          txt = txt.replace(re, '$1{{Bug|$2}}');
-          re = /https?:\/\/bugs\.archlinux\.org\/task/ig;
-          if (re.test(txt)) {
-            this.WM.Log.logWarning("It hasn't been possible to convert some " + "links to bugs.archlinux.org/task");
-          }
-          return txt;
+          return _possibleConstructorReturn(this, (ArchWikiFixLinks.__proto__ || Object.getPrototypeOf(ArchWikiFixLinks)).apply(this, arguments));
         }
-      }, {
-        key: "main",
-        value: function main(args, callNext) {
-          var newtext, source;
-          source = this.WM.Editor.readSource();
-          newtext = this.doReplace(source);
-          if (newtext !== source) {
-            this.WM.Editor.writeSource(newtext);
-            this.WM.Log.logInfo("Fixed links");
-          } else {
-            this.WM.Log.logInfo("No fixable links found");
-          }
-          if (callNext) {
-            return callNext();
-          }
-        }
-      }]);
 
-      return exports;
+        _createClass2(ArchWikiFixLinks, [{
+          key: "doReplace",
+          value: function doReplace(txt) {
+            var L, match, newText, prevId, re;
+
+            re = /http:\/\/([a-z]+\.)?archlinux\.org(?!\.[a-z])/ig;
+            txt = txt.replace(re, 'https://$1archlinux.org');
+
+            re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/Category:([^\]]+?) (.+?)\]/ig;
+            txt = txt.replace(re, '[[:Category:$1|$2]]');
+            re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/Category:(.+?)\]/ig;
+            txt = txt.replace(re, '[[:Category:$1]]');
+            re = /https?:\/\/wiki\.archlinux\.org\/index\.php\/Category:([^\s]+)/ig;
+            txt = txt.replace(re, '[[:Category:$1]]');
+            re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/([^\]]+?) (.+?)\]/ig;
+            txt = txt.replace(re, '[[$1|$2]]');
+            re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/(.+?)\]/ig;
+            txt = txt.replace(re, '[[$1]]');
+            re = /https?:\/\/wiki\.archlinux\.org\/index\.php\/([^\s]+)/ig;
+            txt = txt.replace(re, '[[$1]]');
+            re = /https?:\/\/wiki\.archlinux\.org(?!\.)/ig;
+            if (re.test(txt)) {
+              this.WM.Log.logWarning("It hasn't been possible to convert some " + "links to wiki.archlinux.org");
+            }
+
+            re = /\[https?:\/\/en\.wikipedia\.org\/wiki\/([^\]]+?) (.+?)\]/ig;
+            txt = txt.replace(re, '[[wikipedia:$1|$2]]');
+            re = /\[https?:\/\/en\.wikipedia\.org\/wiki\/(.+?)\]/ig;
+            txt = txt.replace(re, '[[wikipedia:$1]]');
+            re = /https?:\/\/en\.wikipedia\.org\/wiki\/([^\s]+)/ig;
+            txt = txt.replace(re, '[[wikipedia:$1]]');
+            re = /https?:\/\/([a-z]+?)\.wikipedia\.org(?!\.)/ig;
+            if (re.test(txt)) {
+              this.WM.Log.logWarning("It hasn't been possible to convert some " + "links to Wikipedia");
+            }
+
+            re = /\[https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s]+?)\/? +(.+?)?\]/ig;
+            newText = '';
+            prevId = 0;
+            while (true) {
+              match = re.exec(txt);
+              if (match) {
+                if (match[1] === match[2]) {
+                  L = match[0].length;
+                  newText += txt.substring(prevId, re.lastIndex - L) + '{{Pkg|' + match[1] + '}}';
+                  prevId = re.lastIndex;
+                }
+              } else {
+                break;
+              }
+            }
+            newText += txt.substr(prevId);
+            txt = newText;
+            re = /\[https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s]+?)\/?\]/ig;
+            txt = txt.replace(re, '{{Pkg|$1}}');
+            re = /([^\[])https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s\/]+)\/?/ig;
+            txt = txt.replace(re, '$1{{Pkg|$2}}');
+            re = /https?:\/\/(?:www\.)?archlinux\.org\/packages(?!\/?\s)/ig;
+            if (re.test(txt)) {
+              this.WM.Log.logWarning("It hasn't been possible to convert some " + "links to archlinux.org/packages");
+            }
+
+            re = /\[https?:\/\/aur\.archlinux\.org\/packages\/([^\s]+?)\/? +(.+?)?\]/ig;
+            newText = '';
+            prevId = 0;
+            while (true) {
+              match = re.exec(txt);
+              if (match) {
+                if (match[1] === match[2]) {
+                  L = match[0].length;
+                  newText += txt.substring(prevId, re.lastIndex - L) + '{{AUR|' + match[1] + '}}';
+                  prevId = re.lastIndex;
+                }
+              } else {
+                break;
+              }
+            }
+            newText += txt.substr(prevId);
+            txt = newText;
+            re = /\[https?:\/\/aur\.archlinux\.org\/packages\/([^\s]+?)\/?\]/ig;
+            txt = txt.replace(re, '{{AUR|$1}}');
+            re = /([^\[])https?:\/\/aur\.archlinux\.org\/packages\/([^\s\/]+)\/?/ig;
+            txt = txt.replace(re, '$1{{AUR|$2}}');
+            re = /https?:\/\/aur\.archlinux\.org(?!(?:\.|(?:\/?packages)?\/?\s))/ig;
+            if (re.test(txt)) {
+              this.WM.Log.logWarning("It hasn't been possible to convert some links to aur.archlinux.org (try the \"Fix old AUR links\" function, if installed)");
+            }
+
+            re = /\[https?:\/\/bugs\.archlinux\.org\/task\/([^\s]+?)\/? +(.+?)?\]/ig;
+            newText = '';
+            prevId = 0;
+            while (true) {
+              match = re.exec(txt);
+              if (match) {
+                if (match[1] === match[2]) {
+                  L = match[0].length;
+                  newText += txt.substring(prevId, re.lastIndex - L) + '{{Bug|' + match[1] + '}}';
+                  prevId = re.lastIndex;
+                }
+              } else {
+                break;
+              }
+            }
+            newText += txt.substr(prevId);
+            txt = newText;
+            re = /\[https?:\/\/bugs\.archlinux\.org\/task\/([^\s]+?)\/?\]/ig;
+            txt = txt.replace(re, '{{Bug|$1}}');
+            re = /([^\[])https?:\/\/bugs\.archlinux\.org\/task\/([^\s\/]+)\/?/ig;
+            txt = txt.replace(re, '$1{{Bug|$2}}');
+            re = /https?:\/\/bugs\.archlinux\.org\/task/ig;
+            if (re.test(txt)) {
+              this.WM.Log.logWarning("It hasn't been possible to convert some " + "links to bugs.archlinux.org/task");
+            }
+            return txt;
+          }
+        }, {
+          key: "main_editor",
+          value: function main_editor(callNext) {
+            var newtext, source;
+            source = this.WM.Editor.readSource();
+            newtext = this.doReplace(source);
+            if (newtext !== source) {
+              this.WM.Editor.writeSource(newtext);
+              this.WM.Log.logInfo("Fixed links");
+            } else {
+              this.WM.Log.logInfo("No fixable links found");
+            }
+            if (callNext) {
+              return callNext();
+            }
+          }
+        }]);
+
+        return ArchWikiFixLinks;
+      }(Plugin);
+
+      ;
+
+      ArchWikiFixLinks.conf_default = {
+        editor_menu: ["Text plugins", "Fix external links"]
+      };
+
+      return ArchWikiFixLinks;
     }();
-  }, {}], 25: [function (require, module, exports) {
-    var CSS;
+  }, { "./_Plugin": 38 }], 23: [function (require, module, exports) {
+    var CSS, Plugin;
+
+    var _require8 = require('./_Plugin');
+
+    Plugin = _require8.Plugin;
+
 
     CSS = require('../../lib.js.generic/dist/CSS');
 
-    module.exports = function () {
-      function exports(WM) {
-        _classCallCheck2(this, exports);
+    module.exports.ArchWikiNPFilter = function () {
+      var ArchWikiNPFilter = function (_Plugin4) {
+        _inherits(ArchWikiNPFilter, _Plugin4);
 
-        this.WM = WM;
-      }
+        function ArchWikiNPFilter() {
+          _classCallCheck2(this, ArchWikiNPFilter);
 
-      _createClass2(exports, [{
-        key: "main",
-        value: function main(params) {
-          var contentDiv, i, language, len, li, liList, link, pureTitle, ul;
-          CSS.addStyleElement("#mw-content-text > h5 {background-color:#afa;}");
-          contentDiv = $('#mw-content-text');
-          ul = contentDiv.find('ul').first();
-          liList = ul.children('li');
-          for (i = 0, len = liList.length; i < len; i++) {
-            li = liList[i];
-            link = $(li).find('a.mw-newpages-pagename').first();
+          return _possibleConstructorReturn(this, (ArchWikiNPFilter.__proto__ || Object.getPrototypeOf(ArchWikiNPFilter)).apply(this, arguments));
+        }
 
-            var _WM$ArchWiki$detectLa = this.WM.ArchWiki.detectLanguage(link[0].title);
+        _createClass2(ArchWikiNPFilter, [{
+          key: "main_newpages",
+          value: function main_newpages() {
+            var contentDiv, i, language, len, li, liList, link, pureTitle, ul;
+            CSS.addStyleElement("#mw-content-text > h5 {background-color:#afa;}");
+            contentDiv = $('#mw-content-text');
+            ul = contentDiv.find('ul').first();
+            liList = ul.children('li');
+            for (i = 0, len = liList.length; i < len; i++) {
+              li = liList[i];
+              link = $(li).find('a.mw-newpages-pagename').first();
 
-            var _WM$ArchWiki$detectLa2 = _slicedToArray(_WM$ArchWiki$detectLa, 2);
+              var _WM$ArchWiki$detectLa = this.WM.ArchWiki.detectLanguage(link[0].title);
 
-            pureTitle = _WM$ArchWiki$detectLa2[0];
-            language = _WM$ArchWiki$detectLa2[1];
+              var _WM$ArchWiki$detectLa2 = _slicedToArray(_WM$ArchWiki$detectLa, 2);
 
-            if (language !== params.language) {
-              this.WM.Plugins.ArchWikiNPFilter.moveArticle(contentDiv, li, language);
+              pureTitle = _WM$ArchWiki$detectLa2[0];
+              language = _WM$ArchWiki$detectLa2[1];
+
+              if (language !== this.conf.default_language) {
+                this.moveArticle(contentDiv, li, language);
+              }
+            }
+            return this.WM.Log.logInfo("Grouped articles by language");
+          }
+        }, {
+          key: "moveArticle",
+          value: function moveArticle(contentDiv, li, language) {
+            var HLang, i, langFound, langHs, len, ul;
+            langHs = contentDiv.children('h5');
+            langFound = false;
+            for (i = 0, len = langHs.length; i < len; i++) {
+              HLang = langHs[i];
+              if (HLang.innerHTML === language) {
+                ul = $(HLang).next().append(li);
+                langFound = true;
+                break;
+              }
+            }
+            if (!langFound) {
+              return contentDiv.append($('<h5>').text(language), $('<ul>').append(li));
             }
           }
-          return this.WM.Log.logInfo("Grouped articles by language");
-        }
-      }, {
-        key: "moveArticle",
-        value: function moveArticle(contentDiv, li, language) {
-          var HLang, i, langFound, langHs, len, ul;
-          langHs = contentDiv.children('h5');
-          langFound = false;
-          for (i = 0, len = langHs.length; i < len; i++) {
-            HLang = langHs[i];
-            if (HLang.innerHTML === language) {
-              ul = $(HLang).next().append(li);
-              langFound = true;
-              break;
-            }
-          }
-          if (!langFound) {
-            return contentDiv.append($('<h5>').text(language), $('<ul>').append(li));
-          }
-        }
-      }]);
+        }]);
 
-      return exports;
+        return ArchWikiNPFilter;
+      }(Plugin);
+
+      ;
+
+      ArchWikiNPFilter.conf_default = {
+        option_label: "Default filter",
+        default_language: "English"
+      };
+
+      return ArchWikiNPFilter;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 431 }], 26: [function (require, module, exports) {
-    module.exports = function () {
-      function exports(WM) {
-        _classCallCheck2(this, exports);
+  }, { "../../lib.js.generic/dist/CSS": 430, "./_Plugin": 38 }], 24: [function (require, module, exports) {
+    var Plugin;
 
-        this.WM = WM;
-      }
+    var _require9 = require('./_Plugin');
 
-      _createClass2(exports, [{
-        key: "main",
-        value: function main(args, callNext) {
-          var i, len, newtext, re10, re11, re12, re13, re14, re15, re16, re8, re9, source, test, tests;
-          source = this.WM.Editor.readSource();
-          newtext = source;
-          re8 = /<pre>(((?!<(pre|nowiki)>)[^\=\|])*?((?!<(pre|nowiki)>)[^\=\|\}]))<\/pre>/ig;
-          re9 = /<pre>(((?!<(pre|nowiki)>)[^\|])*?((?!<(pre|nowiki)>)[^\|\}]))<\/pre>/ig;
-          re10 = /<pre>(\n*((?!<(pre|nowiki)>).\n*)+?)<\/pre>/ig;
-          re11 = /<code>(((?!<(code|nowiki)>)[^\=\|\n])*?((?!<(code|nowiki)>)[^\=\|\}\n]))<\/code>/ig;
-          re12 = /<code>(((?!<(code|nowiki)>)[^\|\n])*?((?!<(code|nowiki)>)[^\|\}\n]))<\/code>/ig;
-          re13 = /<code>(((?!<(code|nowiki)>)[^\n])+?)<\/code>/ig;
-          re14 = /<tt>(((?!<(tt|nowiki)>)[^\=\|\n])*?((?!<(tt|nowiki)>)[^\=\|\}\n]))<\/tt>/ig;
-          re15 = /<tt>(((?!<(tt|nowiki)>)[^\|\n])*?((?!<(tt|nowiki)>)[^\|\}\n]))<\/tt>/ig;
-          re16 = /<tt>(((?!<(tt|nowiki)>)[^\n])+?)<\/tt>/ig;
-          newtext = newtext.replace(re8, '{{bc|$1}}');
-          newtext = newtext.replace(re9, '{{bc|1=$1}}');
-          newtext = newtext.replace(re10, '{{bc|<nowiki>$1</nowiki>}}');
-          newtext = newtext.replace(re11, '{{ic|$1}}');
-          newtext = newtext.replace(re12, '{{ic|1=$1}}');
-          newtext = newtext.replace(re13, '{{ic|<nowiki>$1</nowiki>}}');
-          newtext = newtext.replace(re14, '{{ic|$1}}');
-          newtext = newtext.replace(re15, '{{ic|1=$1}}');
-          newtext = newtext.replace(re16, '{{ic|<nowiki>$1</nowiki>}}');
-          if (newtext !== source) {
-            this.WM.Editor.writeSource(newtext);
-            this.WM.Log.logInfo("Turned HTML tags into proper templates");
-          }
-          tests = [['&lt;pre>', newtext.match(/<pre/ig)], ['&lt;code>', newtext.match(/<code/ig)], ['&lt;tt>', newtext.match(/<tt/ig)]];
-          for (i = 0, len = tests.length; i < len; i++) {
-            test = tests[i];
-            if (test[1]) {
-              this.WM.Log.logWarning(test[1].length + ' ' + test[0] + ' instances require manual intervention');
+    Plugin = _require9.Plugin;
+
+
+    module.exports.ArchWikiNewTemplates = function () {
+      var ArchWikiNewTemplates = function (_Plugin5) {
+        _inherits(ArchWikiNewTemplates, _Plugin5);
+
+        function ArchWikiNewTemplates() {
+          _classCallCheck2(this, ArchWikiNewTemplates);
+
+          return _possibleConstructorReturn(this, (ArchWikiNewTemplates.__proto__ || Object.getPrototypeOf(ArchWikiNewTemplates)).apply(this, arguments));
+        }
+
+        _createClass2(ArchWikiNewTemplates, [{
+          key: "main_editor",
+          value: function main_editor(callNext) {
+            var i, len, newtext, re10, re11, re12, re13, re14, re15, re16, re8, re9, source, test, tests;
+            source = this.WM.Editor.readSource();
+            newtext = source;
+            re8 = /<pre>(((?!<(pre|nowiki)>)[^\=\|])*?((?!<(pre|nowiki)>)[^\=\|\}]))<\/pre>/ig;
+            re9 = /<pre>(((?!<(pre|nowiki)>)[^\|])*?((?!<(pre|nowiki)>)[^\|\}]))<\/pre>/ig;
+            re10 = /<pre>(\n*((?!<(pre|nowiki)>).\n*)+?)<\/pre>/ig;
+            re11 = /<code>(((?!<(code|nowiki)>)[^\=\|\n])*?((?!<(code|nowiki)>)[^\=\|\}\n]))<\/code>/ig;
+            re12 = /<code>(((?!<(code|nowiki)>)[^\|\n])*?((?!<(code|nowiki)>)[^\|\}\n]))<\/code>/ig;
+            re13 = /<code>(((?!<(code|nowiki)>)[^\n])+?)<\/code>/ig;
+            re14 = /<tt>(((?!<(tt|nowiki)>)[^\=\|\n])*?((?!<(tt|nowiki)>)[^\=\|\}\n]))<\/tt>/ig;
+            re15 = /<tt>(((?!<(tt|nowiki)>)[^\|\n])*?((?!<(tt|nowiki)>)[^\|\}\n]))<\/tt>/ig;
+            re16 = /<tt>(((?!<(tt|nowiki)>)[^\n])+?)<\/tt>/ig;
+            newtext = newtext.replace(re8, '{{bc|$1}}');
+            newtext = newtext.replace(re9, '{{bc|1=$1}}');
+            newtext = newtext.replace(re10, '{{bc|<nowiki>$1</nowiki>}}');
+            newtext = newtext.replace(re11, '{{ic|$1}}');
+            newtext = newtext.replace(re12, '{{ic|1=$1}}');
+            newtext = newtext.replace(re13, '{{ic|<nowiki>$1</nowiki>}}');
+            newtext = newtext.replace(re14, '{{ic|$1}}');
+            newtext = newtext.replace(re15, '{{ic|1=$1}}');
+            newtext = newtext.replace(re16, '{{ic|<nowiki>$1</nowiki>}}');
+            if (newtext !== source) {
+              this.WM.Editor.writeSource(newtext);
+              this.WM.Log.logInfo("Turned HTML tags into proper templates");
+            }
+            tests = [['&lt;pre>', newtext.match(/<pre/ig)], ['&lt;code>', newtext.match(/<code/ig)], ['&lt;tt>', newtext.match(/<tt/ig)]];
+            for (i = 0, len = tests.length; i < len; i++) {
+              test = tests[i];
+              if (test[1]) {
+                this.WM.Log.logWarning(test[1].length + ' ' + test[0] + ' instances require manual intervention');
+              }
+            }
+            if (callNext) {
+              return callNext();
             }
           }
-          if (callNext) {
-            return callNext();
-          }
-        }
-      }]);
+        }]);
 
-      return exports;
+        return ArchWikiNewTemplates;
+      }(Plugin);
+
+      ;
+
+      ArchWikiNewTemplates.conf_default = {
+        editor_menu: ["Text plugins", "Use code templates"]
+      };
+
+      return ArchWikiNewTemplates;
     }();
-  }, {}], 27: [function (require, module, exports) {
-    var CSS, HTTP;
+  }, { "./_Plugin": 38 }], 25: [function (require, module, exports) {
+    var CSS,
+        HTTP,
+        Plugin,
+        ref,
+        boundMethodCheck = function boundMethodCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new Error('Bound instance method accessed before binding');
+      }
+    };
+
+    var _require10 = require('./_Plugin');
+
+    Plugin = _require10.Plugin;
+
 
     CSS = require('../../lib.js.generic/dist/CSS');
 
     HTTP = require('../../lib.js.generic/dist/HTTP');
 
-    module.exports = function () {
-      function exports(WM) {
-        _classCallCheck2(this, exports);
+    ref = module.exports.ArchWikiQuickReport = function () {
+      var ArchWikiQuickReport = function (_Plugin6) {
+        _inherits(ArchWikiQuickReport, _Plugin6);
 
-        this.mainGetEndTimestamp = this.mainGetEndTimestamp.bind(this);
-        this.mainWrite = this.mainWrite.bind(this);
-        this.mainEnd = this.mainEnd.bind(this);
-        this.WM = WM;
-      }
+        function ArchWikiQuickReport() {
+          _classCallCheck2(this, ArchWikiQuickReport);
 
-      _createClass2(exports, [{
-        key: "makeUI",
-        value: function makeUI(args) {
-          var article, i, input, len, link, option, select, span, types, value;
-          CSS.addStyleElement("#WikiMonkey-ArchWikiQuickReport > select, #WikiMonkey-ArchWikiQuickReport > input, #WikiMonkey-ArchWikiQuickReport > a {margin-left:0.33em;}");
-          article = args[0];
-          select = document.createElement('select');
-          types = ["&lt;TYPE&gt;", "content", "style"];
-          for (i = 0, len = types.length; i < len; i++) {
-            value = types[i];
-            option = document.createElement('option');
-            option.setAttribute('value', value);
-            option.innerHTML = value;
-            select.appendChild(option);
-          }
-          select.id = "WikiMonkey-ArchWikiQuickReport-select";
-          input = document.createElement('input');
-          input.setAttribute('type', 'text');
-          input.id = "WikiMonkey-ArchWikiQuickReport-input";
-          link = document.createElement('a');
-          link.href = "/index.php/" + article;
-          link.innerHTML = article;
-          span = document.createElement('span');
-          span.id = "WikiMonkey-ArchWikiQuickReport";
-          span.appendChild(select);
-          span.appendChild(input);
-          span.appendChild(link);
-          return span;
-        }
-      }, {
-        key: "main",
-        value: function main(args, callNext) {
-          var article, select, summary, type;
-          article = args[0];
-          summary = args[1];
-          this.WM.Log.logInfo('Appending diff to ' + this.WM.Log.linkToWikiPage(article, article) + " ...");
-          select = document.getElementById("WikiMonkey-ArchWikiQuickReport-select");
-          type = select.options[select.selectedIndex].value;
-          if (type !== 'content' && type !== 'style') {
-            return this.WM.Log.logError('Select a valid report type');
-          } else {
-            return this.WM.Diff.getEndTimestamp(this.mainGetEndTimestamp, [article, type, summary, callNext]);
-          }
-        }
-      }, {
-        key: "mainGetEndTimestamp",
-        value: function mainGetEndTimestamp(enddate, args) {
-          var article, callNext, summary, type;
-          article = args[0];
-          type = args[1];
-          summary = args[2];
-          callNext = args[3];
-          return this.WM.MW.callQueryEdit(article, this.mainWrite, [type, summary, enddate, callNext]);
-        }
-      }, {
-        key: "mainWrite",
-        value: function mainWrite(article, source, timestamp, edittoken, args) {
-          var callNext, enddate, expsummary, newtext, notes, pEnddate, summary, title, type;
-          type = args[0];
-          summary = args[1];
-          enddate = args[2];
-          callNext = args[3];
-          title = HTTP.getURIParameter(null, 'title');
-          pEnddate = enddate.substr(0, 10) + "&nbsp;" + enddate.substr(11, 8);
-          notes = document.getElementById("WikiMonkey-ArchWikiQuickReport-input").value;
-          newtext = this.WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", pEnddate, type, notes]);
+          var _this26 = _possibleConstructorReturn(this, (ArchWikiQuickReport.__proto__ || Object.getPrototypeOf(ArchWikiQuickReport)).apply(this, arguments));
 
-          expsummary = summary.replace(/(^|[^%])(%%)*%t/g, '$1$2[[' + title + ']]');
-          expsummary = expsummary.replace(/%(.)/g, '$1');
-          return this.WM.MW.callAPIPost({
-            action: "edit",
-            bot: "1",
-            title: article,
-            summary: expsummary,
-            text: newtext,
-            basetimestamp: timestamp,
-            token: edittoken
-          }, this.mainEnd, [article, callNext], null);
+          _this26.mainGetEndTimestamp = _this26.mainGetEndTimestamp.bind(_this26);
+          _this26.mainWrite = _this26.mainWrite.bind(_this26);
+          _this26.mainEnd = _this26.mainEnd.bind(_this26);
+          return _this26;
         }
-      }, {
-        key: "mainEnd",
-        value: function mainEnd(res, args) {
-          var article, callNext;
-          article = args[0];
-          callNext = args[1];
-          if (res.edit && res.edit.result === 'Success') {
-            this.WM.Log.logInfo('Diff correctly appended to ' + this.WM.Log.linkToWikiPage(article, article));
-            if (callNext) {
-              return callNext();
+
+        _createClass2(ArchWikiQuickReport, [{
+          key: "makeUI",
+          value: function makeUI() {
+            var article, i, input, len, link, option, select, span, types, value;
+            CSS.addStyleElement("#WikiMonkey-ArchWikiQuickReport > select, #WikiMonkey-ArchWikiQuickReport > input, #WikiMonkey-ArchWikiQuickReport > a {margin-left:0.33em;}");
+            article = this.conf.title;
+            select = document.createElement('select');
+            types = ["&lt;TYPE&gt;", "content", "style"];
+            for (i = 0, len = types.length; i < len; i++) {
+              value = types[i];
+              option = document.createElement('option');
+              option.setAttribute('value', value);
+              option.innerHTML = value;
+              select.appendChild(option);
             }
-          } else {
-            return this.WM.Log.logError('The diff has not been appended!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
+            select.id = "WikiMonkey-ArchWikiQuickReport-select";
+            input = document.createElement('input');
+            input.setAttribute('type', 'text');
+            input.id = "WikiMonkey-ArchWikiQuickReport-input";
+            link = document.createElement('a');
+            link.href = "/index.php/" + article;
+            link.innerHTML = article;
+            span = document.createElement('span');
+            span.id = "WikiMonkey-ArchWikiQuickReport";
+            span.appendChild(select);
+            span.appendChild(input);
+            span.appendChild(link);
+            return span;
           }
-        }
-      }]);
+        }, {
+          key: "main_diff",
+          value: function main_diff(callNext) {
+            var article, select, summary, type;
+            article = this.conf.title;
+            summary = this.conf.edit_summary;
+            this.WM.Log.logInfo('Appending diff to ' + this.WM.Log.linkToWikiPage(article, article) + " ...");
+            select = document.getElementById("WikiMonkey-ArchWikiQuickReport-select");
+            type = select.options[select.selectedIndex].value;
+            if (type !== 'content' && type !== 'style') {
+              return this.WM.Log.logError('Select a valid report type');
+            } else {
+              return this.WM.Diff.getEndTimestamp(this.mainGetEndTimestamp, [article, type, summary, callNext]);
+            }
+          }
+        }, {
+          key: "mainGetEndTimestamp",
+          value: function mainGetEndTimestamp(enddate, args) {
+            var article, callNext, summary, type;
+            boundMethodCheck(this, ref);
+            article = args[0];
+            type = args[1];
+            summary = args[2];
+            callNext = args[3];
+            return this.WM.MW.callQueryEdit(article, this.mainWrite, [type, summary, enddate, callNext]);
+          }
+        }, {
+          key: "mainWrite",
+          value: function mainWrite(article, source, timestamp, edittoken, args) {
+            var callNext, enddate, expsummary, newtext, notes, pEnddate, summary, title, type;
+            boundMethodCheck(this, ref);
+            type = args[0];
+            summary = args[1];
+            enddate = args[2];
+            callNext = args[3];
+            title = HTTP.getURIParameter(null, 'title');
+            pEnddate = enddate.substr(0, 10) + "&nbsp;" + enddate.substr(11, 8);
+            notes = document.getElementById("WikiMonkey-ArchWikiQuickReport-input").value;
+            newtext = this.WM.Tables.appendRow(source, null, ["[" + location.href + " " + title + "]", pEnddate, type, notes]);
 
-      return exports;
+            expsummary = summary.replace(/(^|[^%])(%%)*%t/g, '$1$2[[' + title + ']]');
+            expsummary = expsummary.replace(/%(.)/g, '$1');
+            return this.WM.MW.callAPIPost({
+              action: "edit",
+              bot: "1",
+              title: article,
+              summary: expsummary,
+              text: newtext,
+              basetimestamp: timestamp,
+              token: edittoken
+            }, this.mainEnd, [article, callNext], null);
+          }
+        }, {
+          key: "mainEnd",
+          value: function mainEnd(res, args) {
+            var article, callNext;
+            boundMethodCheck(this, ref);
+            article = args[0];
+            callNext = args[1];
+            if (res.edit && res.edit.result === 'Success') {
+              this.WM.Log.logInfo('Diff correctly appended to ' + this.WM.Log.linkToWikiPage(article, article));
+              if (callNext) {
+                return callNext();
+              }
+            } else {
+              return this.WM.Log.logError('The diff has not been appended!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
+            }
+          }
+        }]);
+
+        return ArchWikiQuickReport;
+      }(Plugin);
+
+      ;
+
+      ArchWikiQuickReport.conf_default = {
+        diff_menu: ["Quick report"],
+        title: "ArchWiki:Reports",
+        edit_summary: "add report for %t"
+      };
+
+      return ArchWikiQuickReport;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 431, "../../lib.js.generic/dist/HTTP": 433 }], 28: [function (require, module, exports) {
-    var CSS;
+  }, { "../../lib.js.generic/dist/CSS": 430, "../../lib.js.generic/dist/HTTP": 432, "./_Plugin": 38 }], 26: [function (require, module, exports) {
+    var CSS, Plugin;
+
+    var _require11 = require('./_Plugin');
+
+    Plugin = _require11.Plugin;
+
 
     CSS = require('../../lib.js.generic/dist/CSS');
 
-    module.exports = function () {
-      function exports(WM) {
-        _classCallCheck2(this, exports);
+    module.exports.ArchWikiRCFilter = function () {
+      var ArchWikiRCFilter = function (_Plugin7) {
+        _inherits(ArchWikiRCFilter, _Plugin7);
 
-        this.WM = WM;
-      }
+        function ArchWikiRCFilter() {
+          _classCallCheck2(this, ArchWikiRCFilter);
 
-      _createClass2(exports, [{
-        key: "main",
-        value: function main(params) {
-          var articleTable, groupDiv, h4, h4s, j, k, language, len, len1, link, pureTitle, ref;
-          h4s = $('#mw-content-text .mw-changeslist > h4');
-          if (h4s.eq(0).next()[0].localName.toLowerCase() !== 'div') {
-            return this.WM.Log.logError("This filter is designed to work on top of MediaWiki's filter, which you can enable in your user preferences.");
-          } else {
-            CSS.addStyleElement("#mw-content-text > div > h4 {background-color:#aaf;} #mw-content-text > div > div > h5 {background-color:#afa;}");
-            for (j = 0, len = h4s.length; j < len; j++) {
-              h4 = h4s[j];
-              groupDiv = $(h4).next();
-              ref = groupDiv.children('table');
-              for (k = 0, len1 = ref.length; k < len1; k++) {
-                articleTable = ref[k];
-                link = $(articleTable).find('a.mw-changeslist-title').first();
-                if (link[0]) {
-                  var _WM$ArchWiki$detectLa3 = this.WM.ArchWiki.detectLanguage(link[0].title);
+          return _possibleConstructorReturn(this, (ArchWikiRCFilter.__proto__ || Object.getPrototypeOf(ArchWikiRCFilter)).apply(this, arguments));
+        }
 
-                  var _WM$ArchWiki$detectLa4 = _slicedToArray(_WM$ArchWiki$detectLa3, 2);
+        _createClass2(ArchWikiRCFilter, [{
+          key: "main_recentchanges",
+          value: function main_recentchanges() {
+            var articleTable, groupDiv, h4, h4s, j, k, language, len, len1, link, pureTitle, ref;
+            h4s = $('#mw-content-text .mw-changeslist > h4');
+            if (h4s.eq(0).next()[0].localName.toLowerCase() !== 'div') {
+              return this.WM.Log.logError("This filter is designed to work on top of MediaWiki's filter, which you can enable in your user preferences.");
+            } else {
+              CSS.addStyleElement("#mw-content-text > div > h4 {background-color:#aaf;} #mw-content-text > div > div > h5 {background-color:#afa;}");
+              for (j = 0, len = h4s.length; j < len; j++) {
+                h4 = h4s[j];
+                groupDiv = $(h4).next();
+                ref = groupDiv.children('table');
+                for (k = 0, len1 = ref.length; k < len1; k++) {
+                  articleTable = ref[k];
+                  link = $(articleTable).find('a.mw-changeslist-title').first();
+                  if (link[0]) {
+                    var _WM$ArchWiki$detectLa3 = this.WM.ArchWiki.detectLanguage(link[0].title);
 
-                  pureTitle = _WM$ArchWiki$detectLa4[0];
-                  language = _WM$ArchWiki$detectLa4[1];
+                    var _WM$ArchWiki$detectLa4 = _slicedToArray(_WM$ArchWiki$detectLa3, 2);
 
-                  if (language !== params.language) {
-                    this.WM.Plugins.ArchWikiRCFilter.moveArticle(groupDiv, articleTable, language);
+                    pureTitle = _WM$ArchWiki$detectLa4[0];
+                    language = _WM$ArchWiki$detectLa4[1];
+
+                    if (language !== this.conf.default_language) {
+                      this.moveArticle(groupDiv, articleTable, language);
+                    }
                   }
                 }
               }
+              return this.WM.Log.logInfo("Grouped articles by language");
             }
-            return this.WM.Log.logInfo("Grouped articles by language");
           }
-        }
-      }, {
-        key: "moveArticle",
-        value: function moveArticle(groupDiv, articleTable, language) {
-          var HLang, i, j, langFound, langHs, len;
-          langHs = groupDiv.children('h5');
-          langFound = false;
-          for (i = j = 0, len = langHs.length; j < len; i = ++j) {
-            HLang = langHs[i];
-            if (HLang.innerHTML === language) {
-              if (i + 1 < langHs.length) {
-                langHs.eq(i + 1).before(articleTable);
-              } else {
-                groupDiv.append(articleTable);
+        }, {
+          key: "moveArticle",
+          value: function moveArticle(groupDiv, articleTable, language) {
+            var HLang, i, j, langFound, langHs, len;
+            langHs = groupDiv.children('h5');
+            langFound = false;
+            for (i = j = 0, len = langHs.length; j < len; i = ++j) {
+              HLang = langHs[i];
+              if (HLang.innerHTML === language) {
+                if (i + 1 < langHs.length) {
+                  langHs.eq(i + 1).before(articleTable);
+                } else {
+                  groupDiv.append(articleTable);
+                }
+                langFound = true;
+                break;
               }
-              langFound = true;
-              break;
+            }
+            if (!langFound) {
+              return groupDiv.append($('<h5>').text(language), articleTable);
             }
           }
-          if (!langFound) {
-            return groupDiv.append($('<h5>').text(language), articleTable);
-          }
-        }
-      }]);
+        }]);
 
-      return exports;
+        return ArchWikiRCFilter;
+      }(Plugin);
+
+      ;
+
+      ArchWikiRCFilter.conf_default = {
+        option_label: "Default filter",
+        default_language: "English"
+      };
+
+      return ArchWikiRCFilter;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 431 }], 29: [function (require, module, exports) {
-    module.exports = function () {
+  }, { "../../lib.js.generic/dist/CSS": 430, "./_Plugin": 38 }], 27: [function (require, module, exports) {
+    var Plugin,
+        ref,
+        boundMethodCheck = function boundMethodCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new Error('Bound instance method accessed before binding');
+      }
+    };
+
+    var _require12 = require('./_Plugin');
+
+    Plugin = _require12.Plugin;
+
+
+    ref = module.exports.ArchWikiSortContacts = function () {
       var endMark, regExp, startMark;
 
-      var exports = function () {
-        function exports(WM) {
-          _classCallCheck2(this, exports);
+      var ArchWikiSortContacts = function (_Plugin8) {
+        _inherits(ArchWikiSortContacts, _Plugin8);
 
-          this.parseList = this.parseList.bind(this);
-          this.iterateUsers = this.iterateUsers.bind(this);
-          this.storeUserContribs = this.storeUserContribs.bind(this);
-          this.updateList = this.updateList.bind(this);
-          this.writePage = this.writePage.bind(this);
-          this.WM = WM;
+        function ArchWikiSortContacts() {
+          _classCallCheck2(this, ArchWikiSortContacts);
+
+          var _this28 = _possibleConstructorReturn(this, (ArchWikiSortContacts.__proto__ || Object.getPrototypeOf(ArchWikiSortContacts)).apply(this, arguments));
+
+          _this28.parseList = _this28.parseList.bind(_this28);
+          _this28.iterateUsers = _this28.iterateUsers.bind(_this28);
+          _this28.storeUserContribs = _this28.storeUserContribs.bind(_this28);
+          _this28.updateList = _this28.updateList.bind(_this28);
+          _this28.writePage = _this28.writePage.bind(_this28);
+          return _this28;
         }
 
-        _createClass2(exports, [{
-          key: "main",
-          value: function main(args, callNext) {
-            var inactiveIntro, inactiveLimit, page, recentDays, summary;
-            page = args[0];
-            recentDays = args[1];
-            inactiveLimit = args[2];
-            inactiveIntro = args[3];
-            summary = args[4];
-            this.WM.Log.logInfo("Sorting " + this.WM.Log.linkToWikiPage(page, page) + " ...");
-            return this.WM.MW.callQueryEdit(page, this.parseList, [recentDays, inactiveLimit, inactiveIntro, summary, callNext]);
+        _createClass2(ArchWikiSortContacts, [{
+          key: "main_special",
+          value: function main_special(callNext) {
+            return this.iteratePages(0, callNext);
+          }
+        }, {
+          key: "iteratePages",
+          value: function iteratePages(pageid, callNext) {
+            var inactiveIntro, inactiveLimit, page, pconf, recentDays, summary;
+            pconf = this.conf.pages[pageid];
+            if (pconf) {
+              page = pconf.title;
+              recentDays = pconf.recent_days;
+              inactiveLimit = pconf.inactive_limit;
+              inactiveIntro = pconf.inactive_message;
+              summary = this.conf.edit_summary;
+              this.WM.Log.logInfo("Sorting " + this.WM.Log.linkToWikiPage(page, page) + " ...");
+              return this.WM.MW.callQueryEdit(page, this.parseList, [recentDays, inactiveLimit, inactiveIntro, summary, callNext, pageid]);
+            } else if (callNext) {
+              return callNext();
+            }
           }
         }, {
           key: "parseList",
           value: function parseList(title, source, timestamp, edittoken, args) {
-            var callNext, date, endList, inactiveIntro, inactiveLimit, recentDays, startList, summary, ucend, ucstart, users, usersArray;
+            var callNext, date, endList, inactiveIntro, inactiveLimit, pageid, recentDays, startList, summary, ucend, ucstart, users, usersArray;
+            boundMethodCheck(this, ref);
             recentDays = args[0];
             inactiveLimit = args[1];
             inactiveIntro = args[2];
             summary = args[3];
             callNext = args[4];
+            pageid = args[5];
             startList = source.indexOf(startMark);
             endList = source.indexOf(endMark);
             if (startList > -1 && endList > -1) {
@@ -4562,15 +4669,16 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
                 inactive: []
               };
               usersArray = source.substring(startList, endList).split("\n");
-              return this.iterateUsers(usersArray, -1, ucstart, ucend, users, title, source, startList, endList, timestamp, edittoken, inactiveLimit, inactiveIntro, summary, callNext);
+              return this.iterateUsers(usersArray, -1, ucstart, ucend, users, title, source, startList, endList, timestamp, edittoken, inactiveLimit, inactiveIntro, summary, callNext, pageid);
             } else {
               return this.WM.Log.logError("Cannot find the needed marks");
             }
           }
         }, {
           key: "iterateUsers",
-          value: function iterateUsers(usersArray, index, ucstart, ucend, users, title, source, startList, endList, timestamp, edittoken, inactiveLimit, inactiveIntro, summary, callNext) {
+          value: function iterateUsers(usersArray, index, ucstart, ucend, users, title, source, startList, endList, timestamp, edittoken, inactiveLimit, inactiveIntro, summary, callNext, pageid) {
             var match, ucuser, userString;
+            boundMethodCheck(this, ref);
             index++;
             if (index < usersArray.length) {
               userString = usersArray[index];
@@ -4581,20 +4689,21 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
                   ucuser += "|" + match[2].charAt(0).toUpperCase() + match[2].substr(1);
                 }
                 this.WM.Log.logInfo("Querying " + ucuser + " ...");
-                return this.WM.MW.getUserContribs(ucuser, ucstart, ucend, this.storeUserContribs, [usersArray, index, ucstart, ucend, users, title, source, startList, endList, timestamp, edittoken, inactiveLimit, inactiveIntro, summary, callNext]);
+                return this.WM.MW.getUserContribs(ucuser, ucstart, ucend, this.storeUserContribs, [usersArray, index, ucstart, ucend, users, title, source, startList, endList, timestamp, edittoken, inactiveLimit, inactiveIntro, summary, callNext, pageid]);
               } else if (userString !== "" && userString.indexOf(inactiveIntro) !== 0) {
                 return this.WM.Log.logError("An entry in the list may not be correctly " + "formatted");
               } else {
-                return this.iterateUsers(usersArray, index, ucstart, ucend, users, title, source, startList, endList, timestamp, edittoken, inactiveLimit, inactiveIntro, summary, callNext);
+                return this.iterateUsers(usersArray, index, ucstart, ucend, users, title, source, startList, endList, timestamp, edittoken, inactiveLimit, inactiveIntro, summary, callNext, pageid);
               }
             } else {
-              return this.updateList(users, title, source, startList, endList, timestamp, edittoken, inactiveIntro, summary, callNext);
+              return this.updateList(users, title, source, startList, endList, timestamp, edittoken, inactiveIntro, summary, callNext, pageid);
             }
           }
         }, {
           key: "storeUserContribs",
           value: function storeUserContribs(results, args) {
-            var callNext, edits, edittoken, endList, inactiveIntro, inactiveLimit, index, source, startList, summary, timestamp, title, ucend, ucstart, users, usersArray;
+            var edits, edittoken, endList, inactiveIntro, inactiveLimit, index, pageid, source, startList, summary, timestamp, title, ucend, ucstart, users, usersArray;
+            boundMethodCheck(this, ref);
             usersArray = args[0];
             index = args[1];
             ucstart = args[2];
@@ -4609,7 +4718,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
             inactiveLimit = args[11];
             inactiveIntro = args[12];
             summary = args[13];
-            callNext = args[14];
+            pageid = args[14];
             edits = results.length;
             if (edits < inactiveLimit) {
               users.inactive.push({
@@ -4622,12 +4731,13 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
                 "edits": edits
               });
             }
-            return this.iterateUsers(usersArray, index, ucstart, ucend, users, title, source, startList, endList, timestamp, edittoken, inactiveLimit, inactiveIntro, summary, callNext);
+            return this.iterateUsers(usersArray, index, ucstart, ucend, users, title, source, startList, endList, timestamp, edittoken, inactiveLimit, inactiveIntro, summary, callNext, pageid);
           }
         }, {
           key: "updateList",
-          value: function updateList(users, title, source, startList, endList, timestamp, edittoken, inactiveIntro, summary, callNext) {
-            var i, j, len, len1, newList, newText, ref, ref1, sorter, user;
+          value: function updateList(users, title, source, startList, endList, timestamp, edittoken, inactiveIntro, summary, callNext, pageid) {
+            var i, j, len, len1, newList, newText, ref1, ref2, sorter, user;
+            boundMethodCheck(this, ref);
             sorter = function sorter(a, b) {
               if (a.edits < b.edits) {
                 return 1;
@@ -4640,16 +4750,16 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
             users.active.sort(sorter);
             users.inactive.sort(sorter);
             newList = "\n";
-            ref = users.active;
-            for (i = 0, len = ref.length; i < len; i++) {
-              user = ref[i];
+            ref1 = users.active;
+            for (i = 0, len = ref1.length; i < len; i++) {
+              user = ref1[i];
               newList += user.text + "\n";
             }
             if (users.inactive.length > 0) {
               newList += "\n" + inactiveIntro + "\n\n";
-              ref1 = users.inactive;
-              for (j = 0, len1 = ref1.length; j < len1; j++) {
-                user = ref1[j];
+              ref2 = users.inactive;
+              for (j = 0, len1 = ref2.length; j < len1; j++) {
+                user = ref2[j];
                 newList += user.text + "\n";
               }
             }
@@ -4664,33 +4774,31 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
                 text: newText,
                 b1asetimestamp: timestamp,
                 token: edittoken
-              }, this.writePage, [title, callNext], null);
+              }, this.writePage, [title, callNext, pageid], null);
             } else {
               this.WM.Log.logInfo(this.WM.Log.linkToWikiPage(title, title) + " was already up to date");
-              if (callNext) {
-                return callNext();
-              }
+              return this.iteratePages(pageid, callNext);
             }
           }
         }, {
           key: "writePage",
           value: function writePage(res, args) {
-            var callNext, title;
+            var callNext, pageid, title;
+            boundMethodCheck(this, ref);
             title = args[0];
             callNext = args[1];
+            pageid = args[2];
             if (res.edit && res.edit.result === 'Success') {
               this.WM.Log.logInfo(this.WM.Log.linkToWikiPage(title, title) + " was correctly updated");
-              if (callNext) {
-                return callNext();
-              }
+              return this.iteratePages(pageid, callNext);
             } else {
               return this.WM.Log.logError(res['error']['info'] + " (" + res['error']['code'] + ")");
             }
           }
         }]);
 
-        return exports;
-      }();
+        return ArchWikiSortContacts;
+      }(Plugin);
 
       ;
 
@@ -4700,136 +4808,207 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       regExp = new RegExp("^\\*.*?\\[\\[User:(.+?)\\|.+?" + "(?: \\<!-- associated bot: (.+?) -->.*)?$", "");
 
-      return exports;
+      ArchWikiSortContacts.conf_default = {
+        special_menu: ["Sort staff contacts"],
+        edit_summary: "automatically sort list according to recent activity",
+        pages: [{
+          title: "ArchWiki:Administrators",
+          recent_days: 30,
+          inactive_limit: 30,
+          inactive_message: "The following Administrators are currently inactive (less than 30 edits in the last 30 days):"
+        }, {
+          title: "ArchWiki:Maintainers",
+          recent_days: 30,
+          inactive_limit: 10,
+          inactive_message: "The following Maintainers are currently inactive (less than 10 edits in the last 30 days):"
+        }]
+      };
+
+      return ArchWikiSortContacts;
     }();
-  }, {}], 30: [function (require, module, exports) {
-    module.exports = function () {
-      function exports(WM) {
-        _classCallCheck2(this, exports);
+  }, { "./_Plugin": 38 }], 28: [function (require, module, exports) {
+    var Plugin;
 
-        this.WM = WM;
-      }
+    var _require13 = require('./_Plugin');
 
-      _createClass2(exports, [{
-        key: "main",
-        value: function main(args, callNext) {
-          var asend, asends, asstart, asstarts, aswiki, aswikis, i, language, len, link, newText, source, suffix;
-          source = this.WM.Editor.readSource();
-          asstarts = this.WM.Parser.findTemplates(source, 'Article summary start');
-          asends = this.WM.Parser.findTemplates(source, 'Article summary end');
-          if (asstarts.length && asends.length && asstarts[0].index < asends[0].index) {
-            asstart = asstarts[0];
-            asend = asends[0];
-            newText = source.substring(0, asstart.index).trim();
-            aswikis = this.WM.Parser.findTemplates(source, 'Article summary wiki');
-            if (aswikis.length) {
-              language = this.WM.ArchWiki.detectLanguage(this.WM.Editor.getTitle())[1];
-              suffix = language === "English" ? "" : " (" + language + ")";
-              newText += "\n{{Related articles start" + suffix + "}}\n";
-              for (i = 0, len = aswikis.length; i < len; i++) {
-                aswiki = aswikis[i];
-                link = aswiki.arguments[0].value;
-                newText += "{{Related|" + link + "}}\n";
+    Plugin = _require13.Plugin;
+
+
+    module.exports.ArchWikiSummaryToRelated = function () {
+      var ArchWikiSummaryToRelated = function (_Plugin9) {
+        _inherits(ArchWikiSummaryToRelated, _Plugin9);
+
+        function ArchWikiSummaryToRelated() {
+          _classCallCheck2(this, ArchWikiSummaryToRelated);
+
+          return _possibleConstructorReturn(this, (ArchWikiSummaryToRelated.__proto__ || Object.getPrototypeOf(ArchWikiSummaryToRelated)).apply(this, arguments));
+        }
+
+        _createClass2(ArchWikiSummaryToRelated, [{
+          key: "main_editor",
+          value: function main_editor(callNext) {
+            var asend, asends, asstart, asstarts, aswiki, aswikis, i, language, len, link, newText, source, suffix;
+            source = this.WM.Editor.readSource();
+            asstarts = this.WM.Parser.findTemplates(source, 'Article summary start');
+            asends = this.WM.Parser.findTemplates(source, 'Article summary end');
+            if (asstarts.length && asends.length && asstarts[0].index < asends[0].index) {
+              asstart = asstarts[0];
+              asend = asends[0];
+              newText = source.substring(0, asstart.index).trim();
+              aswikis = this.WM.Parser.findTemplates(source, 'Article summary wiki');
+              if (aswikis.length) {
+                language = this.WM.ArchWiki.detectLanguage(this.WM.Editor.getTitle())[1];
+                suffix = language === "English" ? "" : " (" + language + ")";
+                newText += "\n{{Related articles start" + suffix + "}}\n";
+                for (i = 0, len = aswikis.length; i < len; i++) {
+                  aswiki = aswikis[i];
+                  link = aswiki.arguments[0].value;
+                  newText += "{{Related|" + link + "}}\n";
+                }
+                newText += "{{Related articles end}}";
               }
-              newText += "{{Related articles end}}";
+              newText += "\n\n-----------------------------------------------\n";
+              newText += source.substring(asstart.index, asend.index + asend.length).trim();
+              newText += "\n-----------------------------------------------\n\n";
+              newText += source.substr(asend.index + asend.length).trim();
+              this.WM.Editor.writeSource(newText);
+              this.WM.Log.logWarning("Started converting Article summary to " + "Related articles, but manual intervention is required.");
             }
-            newText += "\n\n-----------------------------------------------\n";
-            newText += source.substring(asstart.index, asend.index + asend.length).trim();
-            newText += "\n-----------------------------------------------\n\n";
-            newText += source.substr(asend.index + asend.length).trim();
-            this.WM.Editor.writeSource(newText);
-            this.WM.Log.logWarning("Started converting Article summary to " + "Related articles, but manual intervention is required.");
+            if (callNext) {
+              return callNext();
+            }
           }
-          if (callNext) {
-            return callNext();
-          }
-        }
-      }]);
+        }]);
 
-      return exports;
+        return ArchWikiSummaryToRelated;
+      }(Plugin);
+
+      ;
+
+      ArchWikiSummaryToRelated.conf_default = {
+        editor_menu: ["Text plugins", "Convert summary to related"]
+      };
+
+      return ArchWikiSummaryToRelated;
     }();
-  }, {}], 31: [function (require, module, exports) {
-    module.exports = function () {
-      function exports(WM) {
-        _classCallCheck2(this, exports);
+  }, { "./_Plugin": 38 }], 29: [function (require, module, exports) {
+    var Plugin;
 
-        this.WM = WM;
+    var _require14 = require('./_Plugin');
+
+    Plugin = _require14.Plugin;
+
+
+    module.exports.ExpandContractions = function () {
+      var ExpandContractions = function (_Plugin10) {
+        _inherits(ExpandContractions, _Plugin10);
+
+        function ExpandContractions() {
+          _classCallCheck2(this, ExpandContractions);
+
+          return _possibleConstructorReturn(this, (ExpandContractions.__proto__ || Object.getPrototypeOf(ExpandContractions)).apply(this, arguments));
+        }
+
+        _createClass2(ExpandContractions, [{
+          key: "replace",
+          value: function replace(source, regExp, newString, checkString, checkStrings) {
+            var newtext;
+            newtext = source.replace(regExp, newString);
+            if (checkStrings.length > 1 && newtext !== source) {
+              this.WM.Log.logWarning("Replaced some \"" + checkString + "\" with \"" + checkStrings[0] + "\": check that it didn't mean \"" + checkStrings.slice(1).join('\" or \"') + "\" instead");
+            }
+            return newtext;
+          }
+        }, {
+          key: "main_editor",
+          value: function main_editor(callNext) {
+            var newtext, source, ss;
+            source = this.WM.Editor.readSource();
+            newtext = source;
+
+            newtext = this.replace(newtext, /([a-z])'re/ig, '$1 are', "'re", ["are"]);
+            newtext = this.replace(newtext, /([a-z])'ve/ig, '$1 have', "'ve", ["have"]);
+            newtext = this.replace(newtext, /([a-z])'ll/ig, '$1 will', "'ll", ["will", "shall"]);
+            newtext = this.replace(newtext, /([a-z])'d/ig, '$1 would', "'d", ["would", "had"]);
+            newtext = this.replace(newtext, /(c)an't/ig, '$1annot', "can't", ["cannot"]);
+            newtext = this.replace(newtext, /(w)on't/ig, '$1ill not', "won't", ["will not"]);
+            newtext = this.replace(newtext, /([a-z])n't/ig, '$1 not', "n't", ["not"]);
+            newtext = this.replace(newtext, /(here|there)'s/ig, '$1 is', "here/there's", ["here/there is", "here/there has"]);
+            newtext = this.replace(newtext, /(g)onna/ig, '$1oing to', "gonna", ["going to"]);
+
+            newtext = this.replace(newtext, /([a-z])'s (been)/ig, '$1 has $2', "'s been", ["has been"]);
+            newtext = this.replace(newtext, /(let)'s/ig, '$1 us', "let's", ["let us"]);
+            newtext = this.replace(newtext, /(it)'(s own)/ig, '$1$2', "it's own", ["its own"]);
+            ss = newtext.match(/[a-z]'s/gi);
+            if (ss) {
+              this.WM.Log.logWarning("Found " + ss.length + " instances of \"'s\": " + "check if they can be replaced with \"is\", \"has\", ...");
+            }
+            if (newtext !== source) {
+              this.WM.Editor.writeSource(newtext);
+              this.WM.Log.logInfo("Expanded contractions");
+            }
+            if (callNext) {
+              return callNext();
+            }
+          }
+        }]);
+
+        return ExpandContractions;
+      }(Plugin);
+
+      ;
+
+      ExpandContractions.conf_default = {
+        editor_menu: ["Text plugins", "Expand contractions"]
+      };
+
+      return ExpandContractions;
+    }();
+  }, { "./_Plugin": 38 }], 30: [function (require, module, exports) {
+    var CSS,
+        Plugin,
+        ref,
+        boundMethodCheck = function boundMethodCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new Error('Bound instance method accessed before binding');
       }
+    };
 
-      _createClass2(exports, [{
-        key: "replace",
-        value: function replace(source, regExp, newString, checkString, checkStrings) {
-          var newtext;
-          newtext = source.replace(regExp, newString);
-          if (checkStrings.length > 1 && newtext !== source) {
-            this.WM.Log.logWarning("Replaced some \"" + checkString + "\" with \"" + checkStrings[0] + "\": check that it didn't mean \"" + checkStrings.slice(1).join('\" or \"') + "\" instead");
-          }
-          return newtext;
-        }
-      }, {
-        key: "main",
-        value: function main(args, callNext) {
-          var newtext, source, ss;
-          source = this.WM.Editor.readSource();
-          newtext = source;
+    var _require15 = require('./_Plugin');
 
-          newtext = this.replace(newtext, /([a-z])'re/ig, '$1 are', "'re", ["are"]);
-          newtext = this.replace(newtext, /([a-z])'ve/ig, '$1 have', "'ve", ["have"]);
-          newtext = this.replace(newtext, /([a-z])'ll/ig, '$1 will', "'ll", ["will", "shall"]);
-          newtext = this.replace(newtext, /([a-z])'d/ig, '$1 would', "'d", ["would", "had"]);
-          newtext = this.replace(newtext, /(c)an't/ig, '$1annot', "can't", ["cannot"]);
-          newtext = this.replace(newtext, /(w)on't/ig, '$1ill not', "won't", ["will not"]);
-          newtext = this.replace(newtext, /([a-z])n't/ig, '$1 not', "n't", ["not"]);
-          newtext = this.replace(newtext, /(here|there)'s/ig, '$1 is', "here/there's", ["here/there is", "here/there has"]);
-          newtext = this.replace(newtext, /(g)onna/ig, '$1oing to', "gonna", ["going to"]);
+    Plugin = _require15.Plugin;
 
-          newtext = this.replace(newtext, /([a-z])'s (been)/ig, '$1 has $2', "'s been", ["has been"]);
-          newtext = this.replace(newtext, /(let)'s/ig, '$1 us', "let's", ["let us"]);
-          newtext = this.replace(newtext, /(it)'(s own)/ig, '$1$2', "it's own", ["its own"]);
-          ss = newtext.match(/[a-z]'s/gi);
-          if (ss) {
-            this.WM.Log.logWarning("Found " + ss.length + " instances of \"'s\": " + "check if they can be replaced with \"is\", \"has\", ...");
-          }
-          if (newtext !== source) {
-            this.WM.Editor.writeSource(newtext);
-            this.WM.Log.logInfo("Expanded contractions");
-          }
-          if (callNext) {
-            return callNext();
-          }
-        }
-      }]);
-
-      return exports;
-    }();
-  }, {}], 32: [function (require, module, exports) {
-    var CSS;
 
     CSS = require('../../lib.js.generic/dist/CSS');
 
-    module.exports = function () {
+    ref = module.exports.FixBacklinkFragments = function () {
       var readTarget;
 
-      var exports = function () {
-        function exports(WM) {
-          _classCallCheck2(this, exports);
+      var FixBacklinkFragments = function (_Plugin11) {
+        _inherits(FixBacklinkFragments, _Plugin11);
 
-          this.makeBotUI = this.makeBotUI.bind(this);
-          this.fixLinks = this.fixLinks.bind(this);
-          this.fixArchWikiLinks = this.fixArchWikiLinks.bind(this);
-          this.fixArchWikiLink = this.fixArchWikiLink.bind(this);
-          this.fixFragment = this.fixFragment.bind(this);
-          this.mainAutoFindSections = this.mainAutoFindSections.bind(this);
-          this.mainAutoRead = this.mainAutoRead.bind(this);
-          this.mainAutoWrite = this.mainAutoWrite.bind(this);
-          this.mainAutoEnd = this.mainAutoEnd.bind(this);
-          this.WM = WM;
+        function FixBacklinkFragments() {
+          _classCallCheck2(this, FixBacklinkFragments);
+
+          var _this31 = _possibleConstructorReturn(this, (FixBacklinkFragments.__proto__ || Object.getPrototypeOf(FixBacklinkFragments)).apply(this, arguments));
+
+          _this31.makeBotUI = _this31.makeBotUI.bind(_this31);
+          _this31.fixLinks = _this31.fixLinks.bind(_this31);
+          _this31.fixArchWikiLinks = _this31.fixArchWikiLinks.bind(_this31);
+          _this31.fixArchWikiLink = _this31.fixArchWikiLink.bind(_this31);
+          _this31.fixFragment = _this31.fixFragment.bind(_this31);
+          _this31.mainAutoFindSections = _this31.mainAutoFindSections.bind(_this31);
+          _this31.mainAutoRead = _this31.mainAutoRead.bind(_this31);
+          _this31.mainAutoWrite = _this31.mainAutoWrite.bind(_this31);
+          _this31.mainAutoEnd = _this31.mainAutoEnd.bind(_this31);
+          return _this31;
         }
 
-        _createClass2(exports, [{
+        _createClass2(FixBacklinkFragments, [{
           key: "makeBotUI",
-          value: function makeBotUI(args) {
+          value: function makeBotUI() {
             var divMain, label, target;
+            boundMethodCheck(this, ref);
             CSS.addStyleElement("#WikiMonkey-FixBacklinkFragments " + "input[type='text'] {margin-left:0.33em;}");
             divMain = document.createElement('div');
             divMain.id = "WikiMonkey-FixBacklinkFragments";
@@ -4849,6 +5028,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           key: "fixLinks",
           value: function fixLinks(source, target, sections) {
             var fixedFragment, i, len, link, links, newText, newlink, oldlink, prevId, rawfragment;
+            boundMethodCheck(this, ref);
 
             links = this.WM.Parser.findInternalLinks(source, null, target);
             newText = "";
@@ -4884,6 +5064,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           key: "fixArchWikiLinks",
           value: function fixArchWikiLinks(source, target, sections) {
             var i, j, len, len1, link, link2, links, links2, newText1, newText2, prevId;
+            boundMethodCheck(this, ref);
             links = this.WM.Parser.findTemplates(source, 'Related');
             newText1 = "";
             prevId = 0;
@@ -4910,6 +5091,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           key: "fixArchWikiLink",
           value: function fixArchWikiLink(target, sections, template, expectedArgs) {
             var anchor, args, fixedFragment, fragId, link, ltitle, newlink, rawfragment;
+            boundMethodCheck(this, ref);
             args = template.arguments;
 
             if (args.length === expectedArgs) {
@@ -4942,6 +5124,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           key: "fixFragment",
           value: function fixFragment(rawfragment, sections) {
             var fragment, i, len, section;
+            boundMethodCheck(this, ref);
             if (rawfragment) {
               fragment = this.WM.Parser.squashContiguousWhitespace(rawfragment).trim();
               if (sections.indexOf(fragment) < 0) {
@@ -4961,10 +5144,10 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
             }
           }
         }, {
-          key: "mainAuto",
-          value: function mainAuto(args, title, callBot, chainArgs) {
+          key: "main_bot",
+          value: function main_bot(title, callBot, chainArgs) {
             var params, summary, target;
-            summary = args;
+            summary = this.conf.edit_summary;
             target = readTarget();
             this.WM.Log.logHidden("Target page: " + target);
             if (target) {
@@ -4988,16 +5171,17 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "mainAutoFindSections",
           value: function mainAutoFindSections(res, args) {
-            var callBot, i, len, ref, section, sections, summary, target, title;
+            var callBot, i, len, ref1, section, sections, summary, target, title;
+            boundMethodCheck(this, ref);
             title = args[0];
             target = args[1];
             summary = args[2];
             callBot = args[3];
             sections = [];
             if (res.parse) {
-              ref = res.parse.sections;
-              for (i = 0, len = ref.length; i < len; i++) {
-                section = ref[i];
+              ref1 = res.parse.sections;
+              for (i = 0, len = ref1.length; i < len; i++) {
+                section = ref1[i];
                 sections.push(this.WM.Parser.squashContiguousWhitespace(section.line).trim());
               }
               return this.mainAutoRead(target, sections, title, summary, callBot);
@@ -5013,12 +5197,14 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "mainAutoRead",
           value: function mainAutoRead(target, sections, title, summary, callBot) {
+            boundMethodCheck(this, ref);
             return this.WM.MW.callQueryEdit(title, this.mainAutoWrite, [target, summary, callBot, sections]);
           }
         }, {
           key: "mainAutoWrite",
           value: function mainAutoWrite(title, source, timestamp, edittoken, args) {
             var callBot, newtext, sections, summary, target;
+            boundMethodCheck(this, ref);
             target = args[0];
             summary = args[1];
             callBot = args[2];
@@ -5042,6 +5228,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           key: "mainAutoEnd",
           value: function mainAutoEnd(res, args) {
             var callBot, sections;
+            boundMethodCheck(this, ref);
             callBot = args[0];
             sections = args[1];
             if (res.edit && res.edit.result === 'Success') {
@@ -5055,400 +5242,474 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           }
         }]);
 
-        return exports;
-      }();
+        return FixBacklinkFragments;
+      }(Plugin);
 
       ;
+
+      FixBacklinkFragments.conf_default = {
+        option_label: "Fix links to specific sections of a target page",
+        edit_summary: "fix links to specific sections"
+      };
 
       readTarget = function readTarget() {
         return document.getElementById("WikiMonkey-FixBacklinkFragments-Target").value;
       };
 
-      return exports;
+      return FixBacklinkFragments;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 431 }], 33: [function (require, module, exports) {
-    var Str;
+  }, { "../../lib.js.generic/dist/CSS": 430, "./_Plugin": 38 }], 31: [function (require, module, exports) {
+    var Plugin,
+        Str,
+        ref,
+        boundMethodCheck = function boundMethodCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new Error('Bound instance method accessed before binding');
+      }
+    };
+
+    var _require16 = require('./_Plugin');
+
+    Plugin = _require16.Plugin;
+
 
     Str = require('../../lib.js.generic/dist/Str');
 
-    module.exports = function () {
-      function exports(WM) {
-        _classCallCheck2(this, exports);
+    ref = module.exports.FixDoubleRedirects = function () {
+      var FixDoubleRedirects = function (_Plugin12) {
+        _inherits(FixDoubleRedirects, _Plugin12);
 
-        this.reverseResults = this.reverseResults.bind(this);
-        this.iterateList = this.iterateList.bind(this);
-        this.readMiddleRedirect = this.readMiddleRedirect.bind(this);
-        this.processDoubleRedirect = this.processDoubleRedirect.bind(this);
-        this.processDoubleRedirectEnd = this.processDoubleRedirectEnd.bind(this);
-        this.WM = WM;
-        null;
-      }
+        function FixDoubleRedirects() {
+          _classCallCheck2(this, FixDoubleRedirects);
 
-      _createClass2(exports, [{
-        key: "main",
-        value: function main(args, callNext) {
-          var summary;
-          summary = args;
-          this.WM.Log.logInfo("Fixing double redirects ...");
-          return this.WM.MW.getSpecialList("DoubleRedirects", "namespaces", this.reverseResults, [summary, callNext]);
+          var _this32 = _possibleConstructorReturn(this, (FixDoubleRedirects.__proto__ || Object.getPrototypeOf(FixDoubleRedirects)).apply(this, arguments));
+
+          _this32.reverseResults = _this32.reverseResults.bind(_this32);
+          _this32.iterateList = _this32.iterateList.bind(_this32);
+          _this32.readMiddleRedirect = _this32.readMiddleRedirect.bind(_this32);
+          _this32.processDoubleRedirect = _this32.processDoubleRedirect.bind(_this32);
+          _this32.processDoubleRedirectEnd = _this32.processDoubleRedirectEnd.bind(_this32);
+          return _this32;
         }
-      }, {
-        key: "reverseResults",
-        value: function reverseResults(results, siteinfo, args) {
-          var callNext, namespaces, summary;
-          summary = args[0];
-          callNext = args[1];
-          namespaces = siteinfo.namespaces;
-          results.reverse();
-          return this.iterateList(results, namespaces, [summary, callNext]);
+
+        _createClass2(FixDoubleRedirects, [{
+          key: "main_special",
+          value: function main_special(callNext) {
+            this.WM.Log.logInfo("Fixing double redirects ...");
+            return this.WM.MW.getSpecialList("DoubleRedirects", "namespaces", this.reverseResults, callNext);
+          }
+        }, {
+          key: "reverseResults",
+          value: function reverseResults(results, siteinfo, callNext) {
+            var namespaces;
+            boundMethodCheck(this, ref);
+            namespaces = siteinfo.namespaces;
+            results.reverse();
+            return this.iterateList(results, namespaces, callNext);
+          }
+        }, {
+          key: "iterateList",
+          value: function iterateList(doubleRedirects, namespaces, callNext) {
+            var doubleRedirect;
+            boundMethodCheck(this, ref);
+            doubleRedirect = doubleRedirects.pop();
+            if (doubleRedirect) {
+              return this.WM.MW.callQueryEdit(doubleRedirect.title, this.readMiddleRedirect, [doubleRedirect, doubleRedirects, namespaces, callNext]);
+            } else {
+              this.WM.Log.logInfo("Fixed double redirects");
+              if (callNext) {
+                return callNext();
+              }
+            }
+          }
+        }, {
+          key: "readMiddleRedirect",
+          value: function readMiddleRedirect(doubleRedirectTitle, doubleRedirectSource, timestamp, edittoken, args) {
+            var callNext, doubleRedirect, doubleRedirects, middleRedirectTitle, namespaces;
+            boundMethodCheck(this, ref);
+            doubleRedirect = args[0];
+            doubleRedirects = args[1];
+            namespaces = args[2];
+            callNext = args[3];
+            middleRedirectTitle = namespaces[doubleRedirect.databaseResult.nsb]['*'] + ':' + doubleRedirect.databaseResult.tb;
+            return this.WM.MW.callQuery({
+              prop: "revisions",
+              rvprop: "content",
+              titles: middleRedirectTitle
+            }, this.processDoubleRedirect, [doubleRedirect, doubleRedirectTitle, doubleRedirectSource, timestamp, edittoken, doubleRedirects, namespaces, callNext], null);
+          }
+        }, {
+          key: "processDoubleRedirect",
+          value: function processDoubleRedirect(middleRedirect, args) {
+            var callNext, doubleRedirect, doubleRedirectSource, doubleRedirectTitle, doubleRedirects, edittoken, middleRedirectSource, middleTarget, namespaces, newTarget, newTargetAltAnchor, newTargetFragment, newTargetInterlanguage, newTargetNamespace, newTargetTitle, newText, oldTarget, rawMiddleTarget, rawOldTarget, timestamp;
+            boundMethodCheck(this, ref);
+            middleRedirectSource = middleRedirect.revisions[0]["*"];
+            doubleRedirect = args[0];
+            doubleRedirectTitle = args[1];
+            doubleRedirectSource = args[2];
+            timestamp = args[3];
+            edittoken = args[4];
+            doubleRedirects = args[5];
+            namespaces = args[6];
+            callNext = args[7];
+            this.WM.Log.logInfo("Processing " + this.WM.Log.linkToWikiPage(doubleRedirectTitle, doubleRedirectTitle) + " ...");
+            rawOldTarget = doubleRedirectSource.match(/\s*#redirect\s*[^\n]+/i);
+            oldTarget = this.WM.Parser.findInternalLinks(rawOldTarget[0], null)[0];
+            rawMiddleTarget = middleRedirectSource.match(/\s*#redirect\s*[^\n]+/i);
+            middleTarget = this.WM.Parser.findInternalLinks(rawMiddleTarget[0], null)[0];
+            if (oldTarget.fragment) {
+              newTargetFragment = "#" + oldTarget.fragment;
+            } else if (middleTarget.fragment) {
+              newTargetFragment = "#" + middleTarget.fragment;
+            } else {
+              newTargetFragment = "";
+            }
+            if (oldTarget.anchor) {
+              newTargetAltAnchor = "|" + oldTarget.anchor;
+            } else if (middleTarget.anchor) {
+              newTargetAltAnchor = "|" + middleTarget.anchor;
+            } else {
+              newTargetAltAnchor = "";
+            }
+            if (doubleRedirect.databaseResult.iwc) {
+              newTargetInterlanguage = doubleRedirect.databaseResult.iwc + ":";
+            } else {
+              newTargetInterlanguage = "";
+            }
+            if (namespaces[doubleRedirect.databaseResult.nsc]["*"]) {
+              newTargetNamespace = this.WM.Parser.squashContiguousWhitespace(namespaces[doubleRedirect.databaseResult.nsc]["*"]) + ":";
+            } else {
+              newTargetNamespace = "";
+            }
+            newTargetTitle = this.WM.Parser.squashContiguousWhitespace(doubleRedirect.databaseResult.tc);
+            newTarget = "[[" + newTargetInterlanguage + newTargetNamespace + newTargetTitle + newTargetFragment + newTargetAltAnchor + "]]";
+            newText = Str.overwriteFor(doubleRedirectSource, newTarget, oldTarget.index, oldTarget.length);
+            if (newText !== doubleRedirectSource) {
+              return this.WM.MW.callAPIPost({
+                action: "edit",
+                bot: "1",
+                title: doubleRedirectTitle,
+                summary: this.conf.edit_summary,
+                text: newText,
+                b1asetimestamp: timestamp,
+                token: edittoken
+              }, this.processDoubleRedirectEnd, [doubleRedirects, namespaces, callNext], null);
+            } else {
+              this.WM.Log.logWarning("Could not fix " + this.WM.Log.linkToWikiPage(doubleRedirectTitle, doubleRedirectTitle));
+              return this.iterateList(doubleRedirects, namespaces, callNext);
+            }
+          }
+        }, {
+          key: "processDoubleRedirectEnd",
+          value: function processDoubleRedirectEnd(res, args) {
+            var callNext, doubleRedirects, namespaces;
+            boundMethodCheck(this, ref);
+            doubleRedirects = args[0];
+            namespaces = args[1];
+            callNext = args[2];
+            if (res.edit && res.edit.result === 'Success') {
+              return this.iterateList(doubleRedirects, namespaces, callNext);
+            } else {
+              return this.WM.Log.logError(res['error']['info'] + " (" + res['error']['code'] + ")");
+            }
+          }
+        }]);
+
+        return FixDoubleRedirects;
+      }(Plugin);
+
+      ;
+
+      FixDoubleRedirects.conf_default = {
+        special_menu: ["Fix double redirects"],
+        edit_summary: "fix double redirect"
+      };
+
+      return FixDoubleRedirects;
+    }();
+  }, { "../../lib.js.generic/dist/Str": 435, "./_Plugin": 38 }], 32: [function (require, module, exports) {
+    var Plugin;
+
+    var _require17 = require('./_Plugin');
+
+    Plugin = _require17.Plugin;
+
+
+    module.exports.FixFragments = function () {
+      var FixFragments = function (_Plugin13) {
+        _inherits(FixFragments, _Plugin13);
+
+        function FixFragments() {
+          _classCallCheck2(this, FixFragments);
+
+          return _possibleConstructorReturn(this, (FixFragments.__proto__ || Object.getPrototypeOf(FixFragments)).apply(this, arguments));
         }
-      }, {
-        key: "iterateList",
-        value: function iterateList(doubleRedirects, namespaces, args) {
-          var callNext, doubleRedirect, summary;
-          summary = args[0];
-          callNext = args[1];
-          doubleRedirect = doubleRedirects.pop();
-          if (doubleRedirect) {
-            return this.WM.MW.callQueryEdit(doubleRedirect.title, this.readMiddleRedirect, [doubleRedirect, doubleRedirects, namespaces, summary, callNext]);
-          } else {
-            this.WM.Log.logInfo("Fixed double redirects");
+
+        _createClass2(FixFragments, [{
+          key: "fixLinks",
+          value: function fixLinks(source) {
+            var i, ilinks, j, len, len1, link, newtext1, newtext2, prevId, rawfragment, sections, slinks, title;
+            title = this.WM.Editor.getTitle();
+            sections = this.WM.Parser.findSectionHeadings(source).sections;
+            slinks = this.WM.Parser.findSectionLinks(source);
+            newtext1 = "";
+            prevId = 0;
+            for (i = 0, len = slinks.length; i < len; i++) {
+              link = slinks[i];
+              newtext1 += source.substring(prevId, link.index);
+              newtext1 += this.fixLink(source, sections, link.rawLink, link.fragment, link.anchor);
+              prevId = link.index + link.length;
+            }
+            newtext1 += source.substr(prevId);
+
+            ilinks = this.WM.Parser.findInternalLinks(newtext1, null, title);
+            newtext2 = "";
+            prevId = 0;
+            for (j = 0, len1 = ilinks.length; j < len1; j++) {
+              link = ilinks[j];
+              newtext2 += newtext1.substring(prevId, link.index);
+              rawfragment = link.fragment;
+              if (rawfragment) {
+                newtext2 += this.fixLink(newtext1, sections, link.rawLink, rawfragment, link.anchor);
+              } else {
+                newtext2 += link.rawLink;
+              }
+              prevId = link.index + link.length;
+            }
+            newtext2 += newtext1.substr(prevId);
+            return newtext2;
+          }
+        }, {
+          key: "fixLink",
+          value: function fixLink(source, sections, rawlink, rawfragment, lalt) {
+            var dotFragment, dotHeading, escHeading, fragment, heading, i, len, section;
+            fragment = this.WM.Parser.squashContiguousWhitespace(rawfragment).trim();
+            for (i = 0, len = sections.length; i < len; i++) {
+              section = sections[i];
+              heading = section.cleanheading;
+              dotHeading = this.WM.Parser.dotEncode(heading);
+              dotFragment = this.WM.Parser.dotEncode(fragment);
+              if (dotHeading.toLowerCase() === dotFragment.toLowerCase()) {
+                if (fragment === dotFragment) {
+                  return "[[#" + dotHeading + (lalt ? "|" + lalt : "") + "]]";
+                } else {
+                  escHeading = this.WM.Parser.dotEncodeLinkBreakingFragmentCharacters(heading);
+                  return "[[#" + escHeading + (lalt ? "|" + lalt : "") + "]]";
+                }
+              }
+            }
+
+            this.WM.Log.logWarning("Cannot fix broken section link: " + rawlink);
+            return rawlink;
+          }
+        }, {
+          key: "main_editor",
+          value: function main_editor(callNext) {
+            var newtext, source;
+            source = this.WM.Editor.readSource();
+            newtext = this.fixLinks(source);
+            if (newtext !== source) {
+              this.WM.Editor.writeSource(newtext);
+              this.WM.Log.logInfo("Fixed section links");
+            } else {
+              this.WM.Log.logInfo("No fixable section links found");
+            }
             if (callNext) {
               return callNext();
             }
           }
-        }
-      }, {
-        key: "readMiddleRedirect",
-        value: function readMiddleRedirect(doubleRedirectTitle, doubleRedirectSource, timestamp, edittoken, args) {
-          var callNext, doubleRedirect, doubleRedirects, middleRedirectTitle, namespaces, summary;
-          doubleRedirect = args[0];
-          doubleRedirects = args[1];
-          namespaces = args[2];
-          summary = args[3];
-          callNext = args[4];
-          middleRedirectTitle = namespaces[doubleRedirect.databaseResult.nsb]['*'] + ':' + doubleRedirect.databaseResult.tb;
-          return this.WM.MW.callQuery({
-            prop: "revisions",
-            rvprop: "content",
-            titles: middleRedirectTitle
-          }, this.processDoubleRedirect, [doubleRedirect, doubleRedirectTitle, doubleRedirectSource, timestamp, edittoken, doubleRedirects, namespaces, summary, callNext], null);
-        }
-      }, {
-        key: "processDoubleRedirect",
-        value: function processDoubleRedirect(middleRedirect, args) {
-          var callNext, doubleRedirect, doubleRedirectSource, doubleRedirectTitle, doubleRedirects, edittoken, middleRedirectSource, middleTarget, namespaces, newTarget, newTargetAltAnchor, newTargetFragment, newTargetInterlanguage, newTargetNamespace, newTargetTitle, newText, oldTarget, rawMiddleTarget, rawOldTarget, summary, timestamp;
-          middleRedirectSource = middleRedirect.revisions[0]["*"];
-          doubleRedirect = args[0];
-          doubleRedirectTitle = args[1];
-          doubleRedirectSource = args[2];
-          timestamp = args[3];
-          edittoken = args[4];
-          doubleRedirects = args[5];
-          namespaces = args[6];
-          summary = args[7];
-          callNext = args[8];
-          this.WM.Log.logInfo("Processing " + this.WM.Log.linkToWikiPage(doubleRedirectTitle, doubleRedirectTitle) + " ...");
-          rawOldTarget = doubleRedirectSource.match(/\s*#redirect\s*[^\n]+/i);
-          oldTarget = this.WM.Parser.findInternalLinks(rawOldTarget[0], null)[0];
-          rawMiddleTarget = middleRedirectSource.match(/\s*#redirect\s*[^\n]+/i);
-          middleTarget = this.WM.Parser.findInternalLinks(rawMiddleTarget[0], null)[0];
-          if (oldTarget.fragment) {
-            newTargetFragment = "#" + oldTarget.fragment;
-          } else if (middleTarget.fragment) {
-            newTargetFragment = "#" + middleTarget.fragment;
-          } else {
-            newTargetFragment = "";
-          }
-          if (oldTarget.anchor) {
-            newTargetAltAnchor = "|" + oldTarget.anchor;
-          } else if (middleTarget.anchor) {
-            newTargetAltAnchor = "|" + middleTarget.anchor;
-          } else {
-            newTargetAltAnchor = "";
-          }
-          if (doubleRedirect.databaseResult.iwc) {
-            newTargetInterlanguage = doubleRedirect.databaseResult.iwc + ":";
-          } else {
-            newTargetInterlanguage = "";
-          }
-          if (namespaces[doubleRedirect.databaseResult.nsc]["*"]) {
-            newTargetNamespace = this.WM.Parser.squashContiguousWhitespace(namespaces[doubleRedirect.databaseResult.nsc]["*"]) + ":";
-          } else {
-            newTargetNamespace = "";
-          }
-          newTargetTitle = this.WM.Parser.squashContiguousWhitespace(doubleRedirect.databaseResult.tc);
-          newTarget = "[[" + newTargetInterlanguage + newTargetNamespace + newTargetTitle + newTargetFragment + newTargetAltAnchor + "]]";
-          newText = Str.overwriteFor(doubleRedirectSource, newTarget, oldTarget.index, oldTarget.length);
-          if (newText !== doubleRedirectSource) {
-            return this.WM.MW.callAPIPost({
-              action: "edit",
-              bot: "1",
-              title: doubleRedirectTitle,
-              summary: summary,
-              text: newText,
-              b1asetimestamp: timestamp,
-              token: edittoken
-            }, this.processDoubleRedirectEnd, [doubleRedirects, namespaces, summary, callNext], null);
-          } else {
-            this.WM.Log.logWarning("Could not fix " + this.WM.Log.linkToWikiPage(doubleRedirectTitle, doubleRedirectTitle));
-            return this.iterateList(doubleRedirects, namespaces, [summary, callNext]);
-          }
-        }
-      }, {
-        key: "processDoubleRedirectEnd",
-        value: function processDoubleRedirectEnd(res, args) {
-          var callNext, doubleRedirects, namespaces, summary;
-          doubleRedirects = args[0];
-          namespaces = args[1];
-          summary = args[2];
-          callNext = args[3];
-          if (res.edit && res.edit.result === 'Success') {
-            return this.iterateList(doubleRedirects, namespaces, [summary, callNext]);
-          } else {
-            return this.WM.Log.logError(res['error']['info'] + " (" + res['error']['code'] + ")");
-          }
-        }
-      }]);
+        }]);
 
-      return exports;
+        return FixFragments;
+      }(Plugin);
+
+      ;
+
+      FixFragments.conf_default = {
+        editor_menu: ["Text plugins", "Fix section links"]
+      };
+
+      return FixFragments;
     }();
-  }, { "../../lib.js.generic/dist/Str": 436 }], 34: [function (require, module, exports) {
-    module.exports = function () {
-      function exports(WM) {
-        _classCallCheck2(this, exports);
-
-        this.WM = WM;
+  }, { "./_Plugin": 38 }], 33: [function (require, module, exports) {
+    var Plugin,
+        ref,
+        boundMethodCheck = function boundMethodCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new Error('Bound instance method accessed before binding');
       }
+    };
 
-      _createClass2(exports, [{
-        key: "fixLinks",
-        value: function fixLinks(source) {
-          var i, ilinks, j, len, len1, link, newtext1, newtext2, prevId, rawfragment, sections, slinks, title;
-          title = this.WM.Editor.getTitle();
-          sections = this.WM.Parser.findSectionHeadings(source).sections;
-          slinks = this.WM.Parser.findSectionLinks(source);
-          newtext1 = "";
-          prevId = 0;
-          for (i = 0, len = slinks.length; i < len; i++) {
-            link = slinks[i];
-            newtext1 += source.substring(prevId, link.index);
-            newtext1 += this.fixLink(source, sections, link.rawLink, link.fragment, link.anchor);
-            prevId = link.index + link.length;
-          }
-          newtext1 += source.substr(prevId);
+    var _require18 = require('./_Plugin');
 
-          ilinks = this.WM.Parser.findInternalLinks(newtext1, null, title);
-          newtext2 = "";
-          prevId = 0;
-          for (j = 0, len1 = ilinks.length; j < len1; j++) {
-            link = ilinks[j];
-            newtext2 += newtext1.substring(prevId, link.index);
-            rawfragment = link.fragment;
-            if (rawfragment) {
-              newtext2 += this.fixLink(newtext1, sections, link.rawLink, rawfragment, link.anchor);
-            } else {
-              newtext2 += link.rawLink;
-            }
-            prevId = link.index + link.length;
-          }
-          newtext2 += newtext1.substr(prevId);
-          return newtext2;
+    Plugin = _require18.Plugin;
+
+
+    ref = module.exports.FixLinkFragments = function () {
+      var FixLinkFragments = function (_Plugin14) {
+        _inherits(FixLinkFragments, _Plugin14);
+
+        function FixLinkFragments() {
+          _classCallCheck2(this, FixLinkFragments);
+
+          var _this34 = _possibleConstructorReturn(this, (FixLinkFragments.__proto__ || Object.getPrototypeOf(FixLinkFragments)).apply(this, arguments));
+
+          _this34.processLink = _this34.processLink.bind(_this34);
+          _this34.processLinkContinue = _this34.processLinkContinue.bind(_this34);
+          _this34.fixFragment = _this34.fixFragment.bind(_this34);
+          _this34.findArchWikiLinks = _this34.findArchWikiLinks.bind(_this34);
+          _this34.findArchWikiLinks2 = _this34.findArchWikiLinks2.bind(_this34);
+          _this34.processArchWikiLink = _this34.processArchWikiLink.bind(_this34);
+          _this34.processArchWikiLinkContinue = _this34.processArchWikiLinkContinue.bind(_this34);
+          _this34.mainContinue = _this34.mainContinue.bind(_this34);
+          _this34.mainEnd = _this34.mainEnd.bind(_this34);
+          return _this34;
         }
-      }, {
-        key: "fixLink",
-        value: function fixLink(source, sections, rawlink, rawfragment, lalt) {
-          var dotFragment, dotHeading, escHeading, fragment, heading, i, len, section;
-          fragment = this.WM.Parser.squashContiguousWhitespace(rawfragment).trim();
-          for (i = 0, len = sections.length; i < len; i++) {
-            section = sections[i];
-            heading = section.cleanheading;
-            dotHeading = this.WM.Parser.dotEncode(heading);
-            dotFragment = this.WM.Parser.dotEncode(fragment);
-            if (dotHeading.toLowerCase() === dotFragment.toLowerCase()) {
-              if (fragment === dotFragment) {
-                return "[[#" + dotHeading + (lalt ? "|" + lalt : "") + "]]";
-              } else {
-                escHeading = this.WM.Parser.dotEncodeLinkBreakingFragmentCharacters(heading);
-                return "[[#" + escHeading + (lalt ? "|" + lalt : "") + "]]";
-              }
-            }
-          }
 
-          this.WM.Log.logWarning("Cannot fix broken section link: " + rawlink);
-          return rawlink;
-        }
-      }, {
-        key: "main",
-        value: function main(args, callNext) {
-          var newtext, source;
-          source = this.WM.Editor.readSource();
-          newtext = this.fixLinks(source);
-          if (newtext !== source) {
-            this.WM.Editor.writeSource(newtext);
-            this.WM.Log.logInfo("Fixed section links");
-          } else {
-            this.WM.Log.logInfo("No fixable section links found");
-          }
-          if (callNext) {
-            return callNext();
-          }
-        }
-      }]);
+        _createClass2(FixLinkFragments, [{
+          key: "processLink",
+          value: function processLink(title, links, index, source, newText, prevId, call, callArgs) {
+            var link, params, rawfragment, target;
+            boundMethodCheck(this, ref);
+            if (links[index]) {
+              link = links[index];
+              rawfragment = link.fragment;
+              if (rawfragment) {
+                this.WM.Log.logInfo("Processing " + this.WM.Log.linkToWikiPage(link.link, link.rawLink) + " ...");
+                target = (link.namespace ? link.namespace + ":" : "") + link.title;
 
-      return exports;
-    }();
-  }, {}], 35: [function (require, module, exports) {
-    module.exports = function () {
-      function exports(WM) {
-        _classCallCheck2(this, exports);
-
-        this.processLink = this.processLink.bind(this);
-        this.processLinkContinue = this.processLinkContinue.bind(this);
-        this.fixFragment = this.fixFragment.bind(this);
-        this.findArchWikiLinks = this.findArchWikiLinks.bind(this);
-        this.findArchWikiLinks2 = this.findArchWikiLinks2.bind(this);
-        this.processArchWikiLink = this.processArchWikiLink.bind(this);
-        this.processArchWikiLinkContinue = this.processArchWikiLinkContinue.bind(this);
-        this.mainContinue = this.mainContinue.bind(this);
-        this.mainEnd = this.mainEnd.bind(this);
-        this.WM = WM;
-      }
-
-      _createClass2(exports, [{
-        key: "processLink",
-        value: function processLink(title, links, index, source, newText, prevId, call, callArgs) {
-          var link, params, rawfragment, target;
-          if (links[index]) {
-            link = links[index];
-            rawfragment = link.fragment;
-            if (rawfragment) {
-              this.WM.Log.logInfo("Processing " + this.WM.Log.linkToWikiPage(link.link, link.rawLink) + " ...");
-              target = (link.namespace ? link.namespace + ":" : "") + link.title;
-
-              if (!this.WM.Parser.compareArticleTitles(target, title)) {
-                params = {
-                  'action': 'parse',
-                  'prop': 'sections',
-                  'page': target,
-                  'redirects': 1
-                };
-                return this.WM.MW.callAPIGet(params, this.processLinkContinue, [link, target, rawfragment, links, index, source, newText, prevId, title, call, callArgs], null);
+                if (!this.WM.Parser.compareArticleTitles(target, title)) {
+                  params = {
+                    'action': 'parse',
+                    'prop': 'sections',
+                    'page': target,
+                    'redirects': 1
+                  };
+                  return this.WM.MW.callAPIGet(params, this.processLinkContinue, [link, target, rawfragment, links, index, source, newText, prevId, title, call, callArgs], null);
+                } else {
+                  index++;
+                  return this.processLink(title, links, index, source, newText, prevId, call, callArgs);
+                }
               } else {
                 index++;
                 return this.processLink(title, links, index, source, newText, prevId, call, callArgs);
               }
             } else {
-              index++;
-              return this.processLink(title, links, index, source, newText, prevId, call, callArgs);
+              newText += source.substr(prevId);
+              return call(newText, callArgs);
             }
-          } else {
-            newText += source.substr(prevId);
-            return call(newText, callArgs);
           }
-        }
-      }, {
-        key: "processLinkContinue",
-        value: function processLinkContinue(res, args) {
-          var call, callArgs, fixedFragment, i, index, len, link, links, newText, prevId, rawfragment, ref, section, sections, source, target, title;
-          link = args[0];
-          target = args[1];
-          rawfragment = args[2];
-          links = args[3];
-          index = args[4];
-          source = args[5];
-          newText = args[6];
-          prevId = args[7];
-          title = args[8];
-          call = args[9];
-          callArgs = args[10];
+        }, {
+          key: "processLinkContinue",
+          value: function processLinkContinue(res, args) {
+            var call, callArgs, fixedFragment, i, index, len, link, links, newText, prevId, rawfragment, ref1, section, sections, source, target, title;
+            boundMethodCheck(this, ref);
+            link = args[0];
+            target = args[1];
+            rawfragment = args[2];
+            links = args[3];
+            index = args[4];
+            source = args[5];
+            newText = args[6];
+            prevId = args[7];
+            title = args[8];
+            call = args[9];
+            callArgs = args[10];
 
-          if (res.parse) {
-            sections = [];
-            ref = res.parse.sections;
-            for (i = 0, len = ref.length; i < len; i++) {
-              section = ref[i];
-              sections.push(this.WM.Parser.squashContiguousWhitespace(section.line).trim());
+            if (res.parse) {
+              sections = [];
+              ref1 = res.parse.sections;
+              for (i = 0, len = ref1.length; i < len; i++) {
+                section = ref1[i];
+                sections.push(this.WM.Parser.squashContiguousWhitespace(section.line).trim());
+              }
+              fixedFragment = this.fixFragment(rawfragment, sections);
+              newText += source.substring(prevId, link.index);
+              if (fixedFragment === true) {
+                newText += link.rawLink;
+              } else if (fixedFragment) {
+                newText += "[[" + target + "#" + fixedFragment + (link.anchor ? "|" + link.anchor : "") + "]]";
+              } else {
+                this.WM.Log.logWarning("Cannot fix broken link fragment: " + this.WM.Log.linkToWikiPage(link.link, link.rawLink));
+                newText += link.rawLink;
+              }
+              prevId = link.index + link.length;
             }
-            fixedFragment = this.fixFragment(rawfragment, sections);
-            newText += source.substring(prevId, link.index);
-            if (fixedFragment === true) {
-              newText += link.rawLink;
-            } else if (fixedFragment) {
-              newText += "[[" + target + "#" + fixedFragment + (link.anchor ? "|" + link.anchor : "") + "]]";
-            } else {
-              this.WM.Log.logWarning("Cannot fix broken link fragment: " + this.WM.Log.linkToWikiPage(link.link, link.rawLink));
-              newText += link.rawLink;
-            }
-            prevId = link.index + link.length;
+            index++;
+            return this.processLink(title, links, index, source, newText, prevId, call, callArgs);
           }
-          index++;
-          return this.processLink(title, links, index, source, newText, prevId, call, callArgs);
-        }
-      }, {
-        key: "fixFragment",
-        value: function fixFragment(rawfragment, sections) {
-          var dotFragment, dotSection, fragment, i, len, section;
-          fragment = this.WM.Parser.squashContiguousWhitespace(rawfragment).trim();
-          if (sections.indexOf(fragment) < 0) {
-            for (i = 0, len = sections.length; i < len; i++) {
-              section = sections[i];
-              dotSection = this.WM.Parser.dotEncode(section);
-              dotFragment = this.WM.Parser.dotEncode(fragment);
-              if (dotSection.toLowerCase() === dotFragment.toLowerCase()) {
-                if (fragment === dotFragment) {
-                  return dotSection;
-                } else {
-                  return this.WM.Parser.dotEncodeLinkBreakingFragmentCharacters(section);
+        }, {
+          key: "fixFragment",
+          value: function fixFragment(rawfragment, sections) {
+            var dotFragment, dotSection, fragment, i, len, section;
+            boundMethodCheck(this, ref);
+            fragment = this.WM.Parser.squashContiguousWhitespace(rawfragment).trim();
+            if (sections.indexOf(fragment) < 0) {
+              for (i = 0, len = sections.length; i < len; i++) {
+                section = sections[i];
+                dotSection = this.WM.Parser.dotEncode(section);
+                dotFragment = this.WM.Parser.dotEncode(fragment);
+                if (dotSection.toLowerCase() === dotFragment.toLowerCase()) {
+                  if (fragment === dotFragment) {
+                    return dotSection;
+                  } else {
+                    return this.WM.Parser.dotEncodeLinkBreakingFragmentCharacters(section);
+                  }
                 }
               }
+              return false;
+            } else {
+              return true;
             }
-            return false;
-          } else {
-            return true;
           }
-        }
-      }, {
-        key: "findArchWikiLinks",
-        value: function findArchWikiLinks(newText, callArgs) {
-          var templates, title;
-          templates = this.WM.Parser.findTemplates(newText, 'Related');
-          title = this.WM.Editor.getTitle();
-          return this.processArchWikiLink(title, templates, 1, 0, newText, "", 0, this.findArchWikiLinks2, callArgs);
-        }
-      }, {
-        key: "findArchWikiLinks2",
-        value: function findArchWikiLinks2(newText, callArgs) {
-          var templates, title;
-          templates = this.WM.Parser.findTemplates(newText, 'Related2');
-          title = this.WM.Editor.getTitle();
-          return this.processArchWikiLink(title, templates, 2, 0, newText, "", 0, this.mainEnd, callArgs);
-        }
-      }, {
-        key: "processArchWikiLink",
-        value: function processArchWikiLink(title, templates, expectedArgs, index, source, newText, prevId, call, callArgs) {
-          var args, fragId, link, params, rawfragment, rawtarget, target, template;
-          if (templates[index]) {
-            template = templates[index];
-            args = template.arguments;
+        }, {
+          key: "findArchWikiLinks",
+          value: function findArchWikiLinks(newText, callArgs) {
+            var templates, title;
+            boundMethodCheck(this, ref);
+            templates = this.WM.Parser.findTemplates(newText, 'Related');
+            title = this.WM.Editor.getTitle();
+            return this.processArchWikiLink(title, templates, 1, 0, newText, "", 0, this.findArchWikiLinks2, callArgs);
+          }
+        }, {
+          key: "findArchWikiLinks2",
+          value: function findArchWikiLinks2(newText, callArgs) {
+            var templates, title;
+            boundMethodCheck(this, ref);
+            templates = this.WM.Parser.findTemplates(newText, 'Related2');
+            title = this.WM.Editor.getTitle();
+            return this.processArchWikiLink(title, templates, 2, 0, newText, "", 0, this.mainEnd, callArgs);
+          }
+        }, {
+          key: "processArchWikiLink",
+          value: function processArchWikiLink(title, templates, expectedArgs, index, source, newText, prevId, call, callArgs) {
+            var args, fragId, link, params, rawfragment, rawtarget, target, template;
+            boundMethodCheck(this, ref);
+            if (templates[index]) {
+              template = templates[index];
+              args = template.arguments;
 
-            if (args.length === expectedArgs) {
-              link = args[0].value;
-              fragId = link.indexOf('#');
-              if (fragId > -1) {
-                rawtarget = link.substring(0, fragId);
-                target = this.WM.Parser.squashContiguousWhitespace(rawtarget).trim();
-                rawfragment = link.substr(fragId + 1);
-                if (rawfragment) {
-                  if (!this.WM.Parser.compareArticleTitles(target, title)) {
-                    this.WM.Log.logInfo("Processing " + this.WM.Log.linkToWikiPage(link, template.rawTransclusion) + " ...");
-                    params = {
-                      'action': 'parse',
-                      'prop': 'sections',
-                      'page': target,
-                      'redirects': 1
-                    };
-                    return this.WM.MW.callAPIGet(params, this.processArchWikiLinkContinue, [template, target, rawfragment, templates, expectedArgs, index, source, newText, prevId, title, call, callArgs], null);
+              if (args.length === expectedArgs) {
+                link = args[0].value;
+                fragId = link.indexOf('#');
+                if (fragId > -1) {
+                  rawtarget = link.substring(0, fragId);
+                  target = this.WM.Parser.squashContiguousWhitespace(rawtarget).trim();
+                  rawfragment = link.substr(fragId + 1);
+                  if (rawfragment) {
+                    if (!this.WM.Parser.compareArticleTitles(target, title)) {
+                      this.WM.Log.logInfo("Processing " + this.WM.Log.linkToWikiPage(link, template.rawTransclusion) + " ...");
+                      params = {
+                        'action': 'parse',
+                        'prop': 'sections',
+                        'page': target,
+                        'redirects': 1
+                      };
+                      return this.WM.MW.callAPIGet(params, this.processArchWikiLinkContinue, [template, target, rawfragment, templates, expectedArgs, index, source, newText, prevId, title, call, callArgs], null);
+                    } else {
+                      index++;
+                      return this.processArchWikiLink(title, templates, expectedArgs, index, source, newText, prevId, call, callArgs);
+                    }
                   } else {
                     index++;
                     return this.processArchWikiLink(title, templates, expectedArgs, index, source, newText, prevId, call, callArgs);
@@ -5458,152 +5719,195 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
                   return this.processArchWikiLink(title, templates, expectedArgs, index, source, newText, prevId, call, callArgs);
                 }
               } else {
+                this.WM.Log.logWarning("Template:" + template.title + " must have " + expectedArgs + " and only " + expectedArgs + (expectedArgs > 1 ? " arguments: " : " argument: ") + template.rawTransclusion);
                 index++;
                 return this.processArchWikiLink(title, templates, expectedArgs, index, source, newText, prevId, call, callArgs);
               }
             } else {
-              this.WM.Log.logWarning("Template:" + template.title + " must have " + expectedArgs + " and only " + expectedArgs + (expectedArgs > 1 ? " arguments: " : " argument: ") + template.rawTransclusion);
-              index++;
-              return this.processArchWikiLink(title, templates, expectedArgs, index, source, newText, prevId, call, callArgs);
+              newText += source.substr(prevId);
+              return call(newText, callArgs);
             }
-          } else {
-            newText += source.substr(prevId);
-            return call(newText, callArgs);
           }
-        }
-      }, {
-        key: "processArchWikiLinkContinue",
-        value: function processArchWikiLinkContinue(res, args) {
-          var anchor, call, callArgs, expectedArgs, fixedFragment, i, index, len, newText, prevId, rawfragment, ref, section, sections, source, target, template, templates, title;
-          template = args[0];
-          target = args[1];
-          rawfragment = args[2];
-          templates = args[3];
-          expectedArgs = args[4];
-          index = args[5];
-          source = args[6];
-          newText = args[7];
-          prevId = args[8];
-          title = args[9];
-          call = args[10];
-          callArgs = args[11];
+        }, {
+          key: "processArchWikiLinkContinue",
+          value: function processArchWikiLinkContinue(res, args) {
+            var anchor, call, callArgs, expectedArgs, fixedFragment, i, index, len, newText, prevId, rawfragment, ref1, section, sections, source, target, template, templates, title;
+            boundMethodCheck(this, ref);
+            template = args[0];
+            target = args[1];
+            rawfragment = args[2];
+            templates = args[3];
+            expectedArgs = args[4];
+            index = args[5];
+            source = args[6];
+            newText = args[7];
+            prevId = args[8];
+            title = args[9];
+            call = args[10];
+            callArgs = args[11];
 
-          if (res.parse) {
-            sections = [];
-            ref = res.parse.sections;
-            for (i = 0, len = ref.length; i < len; i++) {
-              section = ref[i];
-              sections.push(this.WM.Parser.squashContiguousWhitespace(section.line).trim());
+            if (res.parse) {
+              sections = [];
+              ref1 = res.parse.sections;
+              for (i = 0, len = ref1.length; i < len; i++) {
+                section = ref1[i];
+                sections.push(this.WM.Parser.squashContiguousWhitespace(section.line).trim());
+              }
+              fixedFragment = this.fixFragment(rawfragment, sections);
+              newText += source.substring(prevId, template.index);
+              if (fixedFragment === true) {
+                newText += template.rawTransclusion;
+              } else if (fixedFragment) {
+                anchor = template.arguments[1] ? "|" + template.arguments[1].value : "";
+                newText += "{{" + template.title + "|" + target + "#" + fixedFragment + anchor + "}}";
+              } else {
+                this.WM.Log.logWarning("Cannot fix broken link fragment: " + this.WM.Log.linkToWikiPage(target, template.rawTransclusion));
+                newText += template.rawTransclusion;
+              }
+              prevId = template.index + template.length;
             }
-            fixedFragment = this.fixFragment(rawfragment, sections);
-            newText += source.substring(prevId, template.index);
-            if (fixedFragment === true) {
-              newText += template.rawTransclusion;
-            } else if (fixedFragment) {
-              anchor = template.arguments[1] ? "|" + template.arguments[1].value : "";
-              newText += "{{" + template.title + "|" + target + "#" + fixedFragment + anchor + "}}";
+            index++;
+            return this.processArchWikiLink(title, templates, expectedArgs, index, source, newText, prevId, call, callArgs);
+          }
+        }, {
+          key: "main_editor",
+          value: function main_editor(callNext) {
+            var links, source, title;
+            source = this.WM.Editor.readSource();
+            this.WM.Log.logInfo("Fixing links to sections of other articles ...");
+            links = this.WM.Parser.findInternalLinks(source, null, null);
+            title = this.WM.Editor.getTitle();
+            return this.processLink(title, links, 0, source, "", 0, this.mainContinue, callNext);
+          }
+        }, {
+          key: "mainContinue",
+          value: function mainContinue(newText, callNext) {
+            var templates;
+            boundMethodCheck(this, ref);
+
+            if (location.hostname === 'wiki.archlinux.org') {
+              return templates = this.findArchWikiLinks(newText, callNext);
             } else {
-              this.WM.Log.logWarning("Cannot fix broken link fragment: " + this.WM.Log.linkToWikiPage(target, template.rawTransclusion));
-              newText += template.rawTransclusion;
+              return this.mainEnd(newText, callNext);
             }
-            prevId = template.index + template.length;
           }
-          index++;
-          return this.processArchWikiLink(title, templates, expectedArgs, index, source, newText, prevId, call, callArgs);
-        }
-      }, {
-        key: "main",
-        value: function main(args, callNext) {
-          var links, source, title;
-          source = this.WM.Editor.readSource();
-          this.WM.Log.logInfo("Fixing links to sections of other articles ...");
-          links = this.WM.Parser.findInternalLinks(source, null, null);
-          title = this.WM.Editor.getTitle();
-          return this.processLink(title, links, 0, source, "", 0, this.mainContinue, callNext);
-        }
-      }, {
-        key: "mainContinue",
-        value: function mainContinue(newText, callNext) {
-          var templates;
+        }, {
+          key: "mainEnd",
+          value: function mainEnd(newText, callNext) {
+            var source;
+            boundMethodCheck(this, ref);
+            source = this.WM.Editor.readSource();
+            if (newText !== source) {
+              this.WM.Editor.writeSource(newText);
+              this.WM.Log.logInfo("Replaced links to sections of other articles");
+            } else {
+              this.WM.Log.logInfo("No fixable links to sections of other articles " + "found");
+            }
+            if (callNext) {
+              return callNext();
+            }
+          }
+        }]);
 
-          if (location.hostname === 'wiki.archlinux.org') {
-            return templates = this.findArchWikiLinks(newText, callNext);
-          } else {
-            return this.mainEnd(newText, callNext);
-          }
-        }
-      }, {
-        key: "mainEnd",
-        value: function mainEnd(newText, callNext) {
-          var source;
-          source = this.WM.Editor.readSource();
-          if (newText !== source) {
-            this.WM.Editor.writeSource(newText);
-            this.WM.Log.logInfo("Replaced links to sections of other articles");
-          } else {
-            this.WM.Log.logInfo("No fixable links to sections of other articles " + "found");
-          }
-          if (callNext) {
-            return callNext();
-          }
-        }
-      }]);
+        return FixLinkFragments;
+      }(Plugin);
 
-      return exports;
+      ;
+
+      FixLinkFragments.conf_default = {
+        editor_menu: ["Query plugins", "Fix external section links"]
+      };
+
+      return FixLinkFragments;
     }();
-  }, {}], 36: [function (require, module, exports) {
-    module.exports = function () {
-      function exports(WM) {
-        _classCallCheck2(this, exports);
+  }, { "./_Plugin": 38 }], 34: [function (require, module, exports) {
+    var Plugin;
 
-        this.WM = WM;
+    var _require19 = require('./_Plugin');
+
+    Plugin = _require19.Plugin;
+
+
+    module.exports.MultipleLineBreaks = function () {
+      var MultipleLineBreaks = function (_Plugin15) {
+        _inherits(MultipleLineBreaks, _Plugin15);
+
+        function MultipleLineBreaks() {
+          _classCallCheck2(this, MultipleLineBreaks);
+
+          return _possibleConstructorReturn(this, (MultipleLineBreaks.__proto__ || Object.getPrototypeOf(MultipleLineBreaks)).apply(this, arguments));
+        }
+
+        _createClass2(MultipleLineBreaks, [{
+          key: "main_editor",
+          value: function main_editor(callNext) {
+            var newtext, source;
+            source = this.WM.Editor.readSource();
+            newtext = source;
+            newtext = newtext.replace(/[\n]{3,}/g, '\n\n');
+            if (newtext !== source) {
+              this.WM.Editor.writeSource(newtext);
+              this.WM.Log.logInfo("Removed multiple line breaks");
+            }
+            if (callNext) {
+              return callNext();
+            }
+          }
+        }]);
+
+        return MultipleLineBreaks;
+      }(Plugin);
+
+      ;
+
+      MultipleLineBreaks.conf_default = {
+        editor_menu: ["Text plugins", "Squash multiple line breaks"]
+      };
+
+      return MultipleLineBreaks;
+    }();
+  }, { "./_Plugin": 38 }], 35: [function (require, module, exports) {
+    var CSS,
+        Plugin,
+        ref,
+        boundMethodCheck = function boundMethodCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new Error('Bound instance method accessed before binding');
       }
+    };
 
-      _createClass2(exports, [{
-        key: "main",
-        value: function main(args, callNext) {
-          var newtext, source;
-          source = this.WM.Editor.readSource();
-          newtext = source;
-          newtext = newtext.replace(/[\n]{3,}/g, '\n\n');
-          if (newtext !== source) {
-            this.WM.Editor.writeSource(newtext);
-            this.WM.Log.logInfo("Removed multiple line breaks");
-          }
-          if (callNext) {
-            return callNext();
-          }
-        }
-      }]);
+    var _require20 = require('./_Plugin');
 
-      return exports;
-    }();
-  }, {}], 37: [function (require, module, exports) {
-    var CSS;
+    Plugin = _require20.Plugin;
+
 
     CSS = require('../../lib.js.generic/dist/CSS');
 
-    module.exports = function () {
+    ref = module.exports.SimpleReplace = function () {
       var configuration, _makeUI2, storeRegExp;
 
-      var exports = function () {
-        function exports(WM) {
-          _classCallCheck2(this, exports);
+      var SimpleReplace = function (_Plugin16) {
+        _inherits(SimpleReplace, _Plugin16);
 
-          this.storeConfiguration = this.storeConfiguration.bind(this);
-          this.mainAutoWrite = this.mainAutoWrite.bind(this);
-          this.mainAutoEnd = this.mainAutoEnd.bind(this);
-          this.WM = WM;
+        function SimpleReplace() {
+          _classCallCheck2(this, SimpleReplace);
+
+          var _this36 = _possibleConstructorReturn(this, (SimpleReplace.__proto__ || Object.getPrototypeOf(SimpleReplace)).apply(this, arguments));
+
+          _this36.storeConfiguration = _this36.storeConfiguration.bind(_this36);
+          _this36.mainAutoWrite = _this36.mainAutoWrite.bind(_this36);
+          _this36.mainAutoEnd = _this36.mainAutoEnd.bind(_this36);
+          return _this36;
         }
 
-        _createClass2(exports, [{
+        _createClass2(SimpleReplace, [{
           key: "makeUI",
-          value: function makeUI(args) {
+          value: function makeUI() {
             return _makeUI2();
           }
         }, {
           key: "makeBotUI",
-          value: function makeBotUI(args) {
+          value: function makeBotUI() {
             var divMain, par3, summary, summaryLabel;
             divMain = _makeUI2();
             par3 = document.createElement('div');
@@ -5620,6 +5924,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "storeConfiguration",
           value: function storeConfiguration() {
+            boundMethodCheck(this, ref);
             configuration = {
               pattern: document.getElementById("WikiMonkey-SimpleReplace-RegExp").value,
               ignoreCase: document.getElementById("WikiMonkey-SimpleReplace-IgnoreCase").checked,
@@ -5630,8 +5935,8 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
             return this.WM.Log.logHidden("New string: " + configuration.newString);
           }
         }, {
-          key: "main",
-          value: function main(args, callNext) {
+          key: "main_editor",
+          value: function main_editor(callNext) {
             var exc, newtext, source;
             this.storeConfiguration();
             try {
@@ -5653,8 +5958,8 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
             }
           }
         }, {
-          key: "mainAuto",
-          value: function mainAuto(args, title, callBot, chainArgs) {
+          key: "main_bot",
+          value: function main_bot(title, callBot, chainArgs) {
             var exc, summary;
             this.storeConfiguration();
             try {
@@ -5678,6 +5983,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           key: "mainAutoWrite",
           value: function mainAutoWrite(title, source, timestamp, edittoken, args) {
             var callBot, newtext, summary;
+            boundMethodCheck(this, ref);
             summary = args[0];
             callBot = args[1];
             newtext = source.replace(configuration.regExp, configuration.newString);
@@ -5698,6 +6004,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "mainAutoEnd",
           value: function mainAutoEnd(res, callBot) {
+            boundMethodCheck(this, ref);
             if (res.edit && res.edit.result === 'Success') {
               return callBot(1, null);
             } else if (res.error) {
@@ -5709,10 +6016,15 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           }
         }]);
 
-        return exports;
-      }();
+        return SimpleReplace;
+      }(Plugin);
 
       ;
+
+      SimpleReplace.conf_default = {
+        editor_menu: ["RegExp substitution"],
+        option_label: "RegExp substitution"
+      };
 
       _makeUI2 = function _makeUI2() {
         var divMain, ignoreCase, ignoreCaseLabel, newString, newStringLabel, par1, par2, regexp, regexpLabel;
@@ -5753,445 +6065,589 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return configuration.regExp = new RegExp(configuration.pattern, "g" + (configuration.ignoreCase ? "i" : ""));
       };
 
-      return exports;
+      return SimpleReplace;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 431 }], 38: [function (require, module, exports) {
-    module.exports = function () {
-      function exports(WM) {
-        _classCallCheck2(this, exports);
-
-        this.detectLang = this.detectLang.bind(this);
-        this.computeWhiteList = this.computeWhiteList.bind(this);
-        this.computeSupportedLangs = this.computeSupportedLangs.bind(this);
-        this.mainContinue = this.mainContinue.bind(this);
-        this.mainEnd = this.mainEnd.bind(this);
-        this.mainAutoWrite = this.mainAutoWrite.bind(this);
-        this.mainAutoEnd = this.mainAutoEnd.bind(this);
-        this.WM = WM;
+  }, { "../../lib.js.generic/dist/CSS": 430, "./_Plugin": 38 }], 36: [function (require, module, exports) {
+    var Plugin,
+        ref,
+        boundMethodCheck = function boundMethodCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new Error('Bound instance method accessed before binding');
       }
+    };
 
-      _createClass2(exports, [{
-        key: "detectLang",
-        value: function detectLang(title, tag) {
-          var detect, pureTitle;
+    var _require21 = require('./_Plugin');
 
-          if (tag === "ArchWiki") {
-            detect = this.WM.ArchWiki.detectLanguage(title);
+    Plugin = _require21.Plugin;
+
+
+    ref = module.exports.SynchronizeInterlanguageLinks = function () {
+      var SynchronizeInterlanguageLinks = function (_Plugin17) {
+        _inherits(SynchronizeInterlanguageLinks, _Plugin17);
+
+        function SynchronizeInterlanguageLinks() {
+          _classCallCheck2(this, SynchronizeInterlanguageLinks);
+
+          var _this37 = _possibleConstructorReturn(this, (SynchronizeInterlanguageLinks.__proto__ || Object.getPrototypeOf(SynchronizeInterlanguageLinks)).apply(this, arguments));
+
+          _this37.detectLang = _this37.detectLang.bind(_this37);
+          _this37.computeWhiteList = _this37.computeWhiteList.bind(_this37);
+          _this37.computeSupportedLangs = _this37.computeSupportedLangs.bind(_this37);
+          _this37.mainContinue = _this37.mainContinue.bind(_this37);
+          _this37.mainEnd = _this37.mainEnd.bind(_this37);
+          _this37.mainAutoWrite = _this37.mainAutoWrite.bind(_this37);
+          _this37.mainAutoEnd = _this37.mainAutoEnd.bind(_this37);
+          return _this37;
+        }
+
+        _createClass2(SynchronizeInterlanguageLinks, [{
+          key: "detectLang",
+          value: function detectLang(title, tag) {
+            var detect, pureTitle;
+            boundMethodCheck(this, ref);
+
+            if (tag === "ArchWiki") {
+              detect = this.WM.ArchWiki.detectLanguage(title);
+              pureTitle = detect[0];
+              tag = this.WM.ArchWiki.getInterlanguageTag(detect[1]);
+            } else {
+              pureTitle = title;
+            }
+            return [pureTitle, tag];
+          }
+        }, {
+          key: "computeWhiteList",
+          value: function computeWhiteList(whitelist) {
+            boundMethodCheck(this, ref);
+
+            if (whitelist === "ArchWiki") {
+              return this.WM.ArchWiki.getInternalInterwikiLanguages();
+            } else {
+              return whitelist;
+            }
+          }
+        }, {
+          key: "computeSupportedLangs",
+          value: function computeSupportedLangs(supportedLangs) {
+            boundMethodCheck(this, ref);
+
+            if (supportedLangs === "ArchWiki") {
+              return this.WM.ArchWiki.getInterwikiLanguages();
+            } else {
+              return supportedLangs;
+            }
+          }
+        }, {
+          key: "main_editor",
+          value: function main_editor(callNext) {
+            var detect, pureTitle, supportedLangs, tag, title, whitelist;
+            title = this.WM.Editor.getTitle();
+            detect = this.detectLang(title, this.conf.language_tag);
             pureTitle = detect[0];
-            tag = this.WM.ArchWiki.getInterlanguageTag(detect[1]);
-          } else {
-            pureTitle = title;
+            tag = detect[1];
+            whitelist = this.computeWhiteList(this.conf.tag_whitelist);
+            supportedLangs = this.computeSupportedLangs(this.conf.supported_tags);
+            this.WM.Log.logInfo("Synchronizing interlanguage links ...");
+            return this.WM.MW.getInterwikiMap(title, this.mainContinue, [tag, pureTitle, supportedLangs, whitelist, title, callNext]);
           }
-          return [pureTitle, tag];
-        }
-      }, {
-        key: "computeWhiteList",
-        value: function computeWhiteList(whitelist) {
-          if (whitelist === "ArchWiki") {
-            return this.WM.ArchWiki.getInternalInterwikiLanguages();
-          } else {
-            return whitelist;
-          }
-        }
-      }, {
-        key: "computeSupportedLangs",
-        value: function computeSupportedLangs(supportedLangs) {
-          if (supportedLangs === "ArchWiki") {
-            return this.WM.ArchWiki.getInterwikiLanguages();
-          } else {
-            return supportedLangs;
-          }
-        }
-      }, {
-        key: "main",
-        value: function main(args, callNext) {
-          var detect, pureTitle, supportedLangs, tag, title, whitelist;
-          title = this.WM.Editor.getTitle();
-          detect = this.detectLang(title, args[0]);
-          pureTitle = detect[0];
-          tag = detect[1];
-          whitelist = this.computeWhiteList(args[1]);
-          supportedLangs = this.computeSupportedLangs(args[2]);
-          this.WM.Log.logInfo("Synchronizing interlanguage links ...");
-          return this.WM.MW.getInterwikiMap(title, this.mainContinue, [tag, pureTitle, supportedLangs, whitelist, title, callNext]);
-        }
-      }, {
-        key: "mainContinue",
-        value: function mainContinue(iwmap, args) {
-          var callNext, i, langlinks, len, link, newlinks, nlink, pureTitle, source, supportedLangs, tag, title, url, visitedlinks, vlink, whitelist, wikiUrls;
-          tag = args[0];
-          pureTitle = args[1];
-          supportedLangs = args[2];
-          whitelist = args[3];
-          title = args[4];
-          callNext = args[5];
-          source = this.WM.Editor.readSource();
-          langlinks = this.WM.Interlanguage.parseLinks(supportedLangs, source, iwmap);
-          wikiUrls = this.WM.MW.getWikiUrls();
-          url = wikiUrls.short + encodeURIComponent(this.WM.Parser.squashContiguousWhitespace(title));
-          visitedlinks = {};
-          visitedlinks[tag.toLowerCase()] = this.WM.Interlanguage.createVisitedLink(tag, pureTitle, url, iwmap, source, null, null, langlinks);
-          newlinks = {};
-          this.WM.Log.logInfo("Reading " + this.WM.Log.linkToPage(url, "edited article") + " ...");
-          if (langlinks) {
-            for (i = 0, len = langlinks.length; i < len; i++) {
-              link = langlinks[i];
-              nlink = newlinks[link.lang.toLowerCase()];
-              vlink = visitedlinks[link.lang.toLowerCase()];
-              if (!vlink && !nlink) {
-                newlinks[link.lang.toLowerCase()] = this.WM.Interlanguage.createNewLink(link.lang, link.title, link.url);
-              } else if (vlink && vlink.url !== link.url) {
-                this.WM.Log.logWarning("Possibly conflicting interlanguage " + "links: " + this.WM.Log.linkToPage(link.url, "[[" + link.lang + ":" + link.title + "]]") + " and " + this.WM.Log.linkToPage(vlink.url, "[[" + link.lang + ":" + visitedlinks[link.lang.toLowerCase()].title + "]]"));
-              } else if (nlink && nlink.url !== link.url) {
-                this.WM.Log.logWarning("Possibly conflicting interlanguage " + "links: " + this.WM.Log.linkToPage(link.url, "[[" + link.lang + ":" + link.title + "]]") + " and " + this.WM.Log.linkToPage(nlink.url, "[[" + link.lang + ":" + newlinks[link.lang.toLowerCase()].title + "]]"));
+        }, {
+          key: "mainContinue",
+          value: function mainContinue(iwmap, args) {
+            var callNext, i, langlinks, len, link, newlinks, nlink, pureTitle, source, supportedLangs, tag, title, url, visitedlinks, vlink, whitelist, wikiUrls;
+            boundMethodCheck(this, ref);
+            tag = args[0];
+            pureTitle = args[1];
+            supportedLangs = args[2];
+            whitelist = args[3];
+            title = args[4];
+            callNext = args[5];
+            source = this.WM.Editor.readSource();
+            langlinks = this.WM.Interlanguage.parseLinks(supportedLangs, source, iwmap);
+            wikiUrls = this.WM.MW.getWikiUrls();
+            url = wikiUrls.short + encodeURIComponent(this.WM.Parser.squashContiguousWhitespace(title));
+            visitedlinks = {};
+            visitedlinks[tag.toLowerCase()] = this.WM.Interlanguage.createVisitedLink(tag, pureTitle, url, iwmap, source, null, null, langlinks);
+            newlinks = {};
+            this.WM.Log.logInfo("Reading " + this.WM.Log.linkToPage(url, "edited article") + " ...");
+            if (langlinks) {
+              for (i = 0, len = langlinks.length; i < len; i++) {
+                link = langlinks[i];
+                nlink = newlinks[link.lang.toLowerCase()];
+                vlink = visitedlinks[link.lang.toLowerCase()];
+                if (!vlink && !nlink) {
+                  newlinks[link.lang.toLowerCase()] = this.WM.Interlanguage.createNewLink(link.lang, link.title, link.url);
+                } else if (vlink && vlink.url !== link.url) {
+                  this.WM.Log.logWarning("Possibly conflicting interlanguage " + "links: " + this.WM.Log.linkToPage(link.url, "[[" + link.lang + ":" + link.title + "]]") + " and " + this.WM.Log.linkToPage(vlink.url, "[[" + link.lang + ":" + visitedlinks[link.lang.toLowerCase()].title + "]]"));
+                } else if (nlink && nlink.url !== link.url) {
+                  this.WM.Log.logWarning("Possibly conflicting interlanguage " + "links: " + this.WM.Log.linkToPage(link.url, "[[" + link.lang + ":" + link.title + "]]") + " and " + this.WM.Log.linkToPage(nlink.url, "[[" + link.lang + ":" + newlinks[link.lang.toLowerCase()].title + "]]"));
+                }
+              }
+              return this.WM.Interlanguage.collectLinks(visitedlinks, newlinks, supportedLangs, whitelist, false, this.mainEnd, [tag, url, source, langlinks, iwmap, callNext]);
+            } else {
+              this.WM.Log.logInfo("No interlanguage links found");
+              if (callNext) {
+                return callNext();
               }
             }
-            return this.WM.Interlanguage.collectLinks(visitedlinks, newlinks, supportedLangs, whitelist, false, this.mainEnd, [tag, url, source, langlinks, iwmap, callNext]);
-          } else {
-            this.WM.Log.logInfo("No interlanguage links found");
+          }
+        }, {
+          key: "mainEnd",
+          value: function mainEnd(links, args) {
+            var callNext, iwmap, langlinks, newText, source, tag, url;
+            boundMethodCheck(this, ref);
+            tag = args[0];
+            url = args[1];
+            source = args[2];
+            langlinks = args[3];
+            iwmap = args[4];
+            callNext = args[5];
+            newText = this.WM.Interlanguage.updateLinks(tag, url, iwmap, source, langlinks, links);
+            if (newText !== source) {
+              this.WM.Editor.writeSource(newText);
+              this.WM.Log.logInfo("Synchronized interlanguage links");
+            } else {
+              this.WM.Log.logInfo("Interlanguage links were already synchronized");
+            }
             if (callNext) {
               return callNext();
             }
           }
-        }
-      }, {
-        key: "mainEnd",
-        value: function mainEnd(links, args) {
-          var callNext, iwmap, langlinks, newText, source, tag, url;
-          tag = args[0];
-          url = args[1];
-          source = args[2];
-          langlinks = args[3];
-          iwmap = args[4];
-          callNext = args[5];
-          newText = this.WM.Interlanguage.updateLinks(tag, url, iwmap, source, langlinks, links);
-          if (newText !== source) {
-            this.WM.Editor.writeSource(newText);
-            this.WM.Log.logInfo("Synchronized interlanguage links");
-          } else {
-            this.WM.Log.logInfo("Interlanguage links were already synchronized");
+        }, {
+          key: "main_bot",
+          value: function main_bot(title, callBot, chainArgs) {
+            var detect, newlinks, pureTitle, summary, supportedLangs, tag, url, visitedlinks, whitelist, wikiUrls;
+            detect = this.detectLang(title, this.conf.language_tag);
+            pureTitle = detect[0];
+            tag = detect[1];
+            whitelist = this.computeWhiteList(this.conf.tag_whitelist);
+            supportedLangs = this.computeSupportedLangs(this.conf.supported_tags);
+            summary = this.conf.edit_summary;
+            wikiUrls = this.WM.MW.getWikiUrls();
+            url = wikiUrls.short + encodeURIComponent(this.WM.Parser.squashContiguousWhitespace(title));
+            visitedlinks = {};
+            newlinks = {};
+            newlinks[tag.toLowerCase()] = this.WM.Interlanguage.createNewLink(tag, pureTitle, url);
+            return this.WM.Interlanguage.collectLinks(visitedlinks, newlinks, supportedLangs, whitelist, true, this.mainAutoWrite, [title, url, tag, summary, callBot]);
           }
-          if (callNext) {
-            return callNext();
-          }
-        }
-      }, {
-        key: "mainAuto",
-        value: function mainAuto(args, title, callBot, chainArgs) {
-          var detect, newlinks, pureTitle, summary, supportedLangs, tag, url, visitedlinks, whitelist, wikiUrls;
-          detect = this.detectLang(title, args[0]);
-          pureTitle = detect[0];
-          tag = detect[1];
-          whitelist = this.computeWhiteList(args[1]);
-          supportedLangs = this.computeSupportedLangs(args[2]);
-          summary = args[3];
-          wikiUrls = this.WM.MW.getWikiUrls();
-          url = wikiUrls.short + encodeURIComponent(this.WM.Parser.squashContiguousWhitespace(title));
-          visitedlinks = {};
-          newlinks = {};
-          newlinks[tag.toLowerCase()] = this.WM.Interlanguage.createNewLink(tag, pureTitle, url);
-          return this.WM.Interlanguage.collectLinks(visitedlinks, newlinks, supportedLangs, whitelist, true, this.mainAutoWrite, [title, url, tag, summary, callBot]);
-        }
-      }, {
-        key: "mainAutoWrite",
-        value: function mainAutoWrite(links, args) {
-          var callBot, edittoken, iwmap, langlinks, lcTag, newText, source, summary, tag, timestamp, title, url;
-          title = args[0];
-          url = args[1];
-          tag = args[2];
-          summary = args[3];
-          callBot = args[4];
-          lcTag = tag.toLowerCase();
+        }, {
+          key: "mainAutoWrite",
+          value: function mainAutoWrite(links, args) {
+            var callBot, edittoken, iwmap, langlinks, lcTag, newText, source, summary, tag, timestamp, title, url;
+            boundMethodCheck(this, ref);
+            title = args[0];
+            url = args[1];
+            tag = args[2];
+            summary = args[3];
+            callBot = args[4];
+            lcTag = tag.toLowerCase();
 
-          iwmap = links[lcTag].iwmap;
-          source = links[lcTag].source;
-          langlinks = links[lcTag].links;
-          timestamp = links[lcTag].timestamp;
-          edittoken = links[lcTag].edittoken;
-          newText = this.WM.Interlanguage.updateLinks(tag, url, iwmap, source, langlinks, links);
-          if (newText !== source) {
-            return this.WM.MW.callAPIPost({
-              action: "edit",
-              bot: "1",
-              title: title,
-              summary: summary,
-              text: newText,
-              basetimestamp: timestamp,
-              token: edittoken
-            }, this.mainAutoEnd, callBot, null);
-          } else {
-            return callBot(0, null);
+            iwmap = links[lcTag].iwmap;
+            source = links[lcTag].source;
+            langlinks = links[lcTag].links;
+            timestamp = links[lcTag].timestamp;
+            edittoken = links[lcTag].edittoken;
+            newText = this.WM.Interlanguage.updateLinks(tag, url, iwmap, source, langlinks, links);
+            if (newText !== source) {
+              return this.WM.MW.callAPIPost({
+                action: "edit",
+                bot: "1",
+                title: title,
+                summary: summary,
+                text: newText,
+                basetimestamp: timestamp,
+                token: edittoken
+              }, this.mainAutoEnd, callBot, null);
+            } else {
+              return callBot(0, null);
+            }
           }
-        }
-      }, {
-        key: "mainAutoEnd",
-        value: function mainAutoEnd(res, callBot) {
-          if (res.edit && res.edit.result === 'Success') {
-            return callBot(1, null);
-          } else if (res.error) {
-            this.WM.Log.logError(res.error.info + " (" + res.error.code + ")");
-            return callBot(res.error.code, null);
-          } else {
-            return callBot(false, null);
+        }, {
+          key: "mainAutoEnd",
+          value: function mainAutoEnd(res, callBot) {
+            boundMethodCheck(this, ref);
+            if (res.edit && res.edit.result === 'Success') {
+              return callBot(1, null);
+            } else if (res.error) {
+              this.WM.Log.logError(res.error.info + " (" + res.error.code + ")");
+              return callBot(res.error.code, null);
+            } else {
+              return callBot(false, null);
+            }
           }
-        }
-      }]);
+        }]);
 
-      return exports;
+        return SynchronizeInterlanguageLinks;
+      }(Plugin);
+
+      ;
+
+      SynchronizeInterlanguageLinks.conf_default = {
+        editor_menu: ["Query plugins", "Sync interlanguage links"],
+        option_label: "Synchronize interlanguage links",
+        language_tag: "en",
+        tag_whitelist: ["en"],
+        supported_tags: ["en"],
+        edit_summary: "synchronized interlanguage links with the other wikis"
+      };
+
+      SynchronizeInterlanguageLinks.wiki_to_conf_default = {
+        ArchWiki: {
+          language_tag: "ArchWiki",
+          tag_whitelist: "ArchWiki",
+          supported_tags: "ArchWiki"
+        },
+        Wikipedia: {}
+      };
+
+      return SynchronizeInterlanguageLinks;
     }();
-  }, {}], 39: [function (require, module, exports) {
-    var Str,
+  }, { "./_Plugin": 38 }], 37: [function (require, module, exports) {
+    var Plugin,
+        Str,
+        ref,
+        boundMethodCheck = function boundMethodCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new Error('Bound instance method accessed before binding');
+      }
+    },
         indexOf = [].indexOf;
+
+    var _require22 = require('./_Plugin');
+
+    Plugin = _require22.Plugin;
+
 
     Str = require('../../lib.js.generic/dist/Str');
 
-    module.exports = function () {
-      function exports(WM) {
-        _classCallCheck2(this, exports);
+    ref = module.exports.UpdateCategoryTree = function () {
+      var UpdateCategoryTree = function (_Plugin18) {
+        _inherits(UpdateCategoryTree, _Plugin18);
 
-        this.mainContinue = this.mainContinue.bind(this);
-        this.readToC = this.readToC.bind(this);
-        this.processToC = this.processToC.bind(this);
-        this.storeAlternativeNames = this.storeAlternativeNames.bind(this);
-        this.processCategory = this.processCategory.bind(this);
-        this.processCategoryAddSuffix = this.processCategoryAddSuffix.bind(this);
-        this.processCategoryEnd = this.processCategoryEnd.bind(this);
-        this.createCatLink = this.createCatLink.bind(this);
-        this.writeToC = this.writeToC.bind(this);
-        this.checkWrite = this.checkWrite.bind(this);
-        this.WM = WM;
-      }
+        function UpdateCategoryTree() {
+          _classCallCheck2(this, UpdateCategoryTree);
 
-      _createClass2(exports, [{
-        key: "main",
-        value: function main(args, callNext) {
-          var inparams, params, showRootAlsoIn, summary;
-          inparams = args[0];
-          summary = args[1];
+          var _this38 = _possibleConstructorReturn(this, (UpdateCategoryTree.__proto__ || Object.getPrototypeOf(UpdateCategoryTree)).apply(this, arguments));
 
-          if (args[2] != null) {
-            showRootAlsoIn = args[2];
-          } else {
-            showRootAlsoIn = false;
-            this.WM.Log.logInfo("The configuration does not specify the " + "showRootAlsoIn value, defaulting to false");
+          _this38.mainContinue = _this38.mainContinue.bind(_this38);
+          _this38.readToC = _this38.readToC.bind(_this38);
+          _this38.processToC = _this38.processToC.bind(_this38);
+          _this38.storeAlternativeNames = _this38.storeAlternativeNames.bind(_this38);
+          _this38.processCategory = _this38.processCategory.bind(_this38);
+          _this38.processCategoryAddSuffix = _this38.processCategoryAddSuffix.bind(_this38);
+          _this38.processCategoryEnd = _this38.processCategoryEnd.bind(_this38);
+          _this38.createCatLink = _this38.createCatLink.bind(_this38);
+          _this38.writeToC = _this38.writeToC.bind(_this38);
+          _this38.checkWrite = _this38.checkWrite.bind(_this38);
+          return _this38;
+        }
+
+        _createClass2(UpdateCategoryTree, [{
+          key: "main_special",
+          value: function main_special(callNext) {
+            return this.iteratePages(0, callNext);
           }
-          if (inparams.constructor === Array) {
-            if (inparams[0] === "ArchWiki") {
-              params = this.WM.ArchWiki.getTableOfContents(inparams[1]);
-            } else {
-              this.WM.Log.logError("Unrecognized parameter");
-              return false;
+        }, {
+          key: "iteratePages",
+          value: function iteratePages(pageid, callNext) {
+            var params, pconf, showRootAlsoIn, summary;
+            summary = this.conf.edit_summary;
+            showRootAlsoIn = this.conf.show_root_also_in;
+            pconf = this.conf.pages[pageid];
+            if (pconf) {
+              if ($.type(pconf) === "string") {
+                params = this.WM.ArchWiki.getTableOfContents(pconf);
+              } else {
+                params = pconf;
+              }
+              return this.WM.MW.isUserBot(this.mainContinue, [params, showRootAlsoIn, summary, callNext, pageid]);
+            } else if (callNext) {
+              return callNext();
             }
-          } else {
-            params = inparams;
           }
-          return this.WM.MW.isUserBot(this.mainContinue, [params, showRootAlsoIn, summary, callNext]);
-        }
-      }, {
-        key: "mainContinue",
-        value: function mainContinue(botTest, args) {
-          return this.readToC({
-            params: args[0],
-            minInterval: botTest ? 60000 : 21600000,
-            edittoken: "",
-            timestamp: "",
-            source: "",
-            startId: 0,
-            endId: 0,
-            treeText: "",
-            startMark: "START AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK-->",
-            endMark: "<!--END AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK",
-            altNames: {},
-            showRootAlsoIn: args[1],
-            summary: args[2],
-            callNext: args[3]
-          });
-        }
-      }, {
-        key: "readToC",
-        value: function readToC(args) {
-          this.WM.Log.logInfo('Updating ' + this.WM.Log.linkToWikiPage(args.params.page, args.params.page) + " ...");
-          return this.WM.MW.callQueryEdit(args.params.page, this.processToC, args);
-        }
-      }, {
-        key: "processToC",
-        value: function processToC(title, source, timestamp, edittoken, args) {
-          var end, msTimestamp, now, start;
-          args.source = source;
-          args.timestamp = timestamp;
-          args.edittoken = edittoken;
-          now = new Date();
-          msTimestamp = Date.parse(args.timestamp);
-          if (now.getTime() - msTimestamp >= args.minInterval) {
-            start = args.source.indexOf(args.startMark);
-            end = args.source.lastIndexOf(args.endMark);
-            if (start > -1 && end > -1) {
-              args.startId = start + args.startMark.length;
-              args.endId = end;
-              args.treeText = "";
-              args.altNames = args.params.keepAltName ? this.storeAlternativeNames(args.source) : {};
-              return this.WM.Cat.recurseTree({
-                node: args.params.root,
-                callNode: this.processCategory,
-                callEnd: this.writeToC,
-                callArgs: args
-              });
+        }, {
+          key: "mainContinue",
+          value: function mainContinue(botTest, args) {
+            boundMethodCheck(this, ref);
+            return this.readToC({
+              params: args[0],
+              minInterval: botTest ? 60000 : 21600000,
+              edittoken: "",
+              timestamp: "",
+              source: "",
+              startId: 0,
+              endId: 0,
+              treeText: "",
+              startMark: "START AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK-->",
+              endMark: "<!--END AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK",
+              altNames: {},
+              showRootAlsoIn: args[1],
+              summary: args[2],
+              callNext: args[3],
+              pageid: args[4]
+            });
+          }
+        }, {
+          key: "readToC",
+          value: function readToC(args) {
+            boundMethodCheck(this, ref);
+            this.WM.Log.logInfo('Updating ' + this.WM.Log.linkToWikiPage(args.params.page, args.params.page) + " ...");
+            return this.WM.MW.callQueryEdit(args.params.page, this.processToC, args);
+          }
+        }, {
+          key: "processToC",
+          value: function processToC(title, source, timestamp, edittoken, args) {
+            var end, msTimestamp, now, start;
+            boundMethodCheck(this, ref);
+            args.source = source;
+            args.timestamp = timestamp;
+            args.edittoken = edittoken;
+            now = new Date();
+            msTimestamp = Date.parse(args.timestamp);
+            if (now.getTime() - msTimestamp >= args.minInterval) {
+              start = args.source.indexOf(args.startMark);
+              end = args.source.lastIndexOf(args.endMark);
+              if (start > -1 && end > -1) {
+                args.startId = start + args.startMark.length;
+                args.endId = end;
+                args.treeText = "";
+                args.altNames = args.params.keepAltName ? this.storeAlternativeNames(args.source) : {};
+                return this.WM.Cat.recurseTree({
+                  node: args.params.root,
+                  callNode: this.processCategory,
+                  callEnd: this.writeToC,
+                  callArgs: args
+                });
+              } else {
+                this.WM.Log.logError("Cannot find insertion marks in " + this.WM.Log.linkToWikiPage(args.params.page, args.params.page));
+                return this.iteratePages(args.pageid, args.callNext);
+              }
             } else {
-              this.WM.Log.logError("Cannot find insertion marks in " + this.WM.Log.linkToWikiPage(args.params.page, args.params.page));
-              if (args.callNext) {
-                return args.callNext();
+              this.WM.Log.logWarning(this.WM.Log.linkToWikiPage(args.params.page, args.params.page) + ' has been updated too recently');
+              return this.iteratePages(args.pageid, args.callNext);
+            }
+          }
+        }, {
+          key: "storeAlternativeNames",
+          value: function storeAlternativeNames(source) {
+            var dict, match, regExp;
+            boundMethodCheck(this, ref);
+            dict = {};
+            regExp = /\[\[\:([Cc]ategory\:.+?)\|(.+?)\]\]/gm;
+            while (true) {
+              match = regExp.exec(source);
+              if (match) {
+                dict[match[1].toLowerCase()] = match[2];
+              } else {
+                break;
               }
             }
-          } else {
-            this.WM.Log.logWarning(this.WM.Log.linkToWikiPage(args.params.page, args.params.page) + ' has been updated too recently');
-            if (args.callNext) {
-              return args.callNext();
-            }
+            return dict;
           }
-        }
-      }, {
-        key: "storeAlternativeNames",
-        value: function storeAlternativeNames(source) {
-          var dict, match, regExp;
-          dict = {};
-          regExp = /\[\[\:([Cc]ategory\:.+?)\|(.+?)\]\]/gm;
-          while (true) {
-            match = regExp.exec(source);
-            if (match) {
-              dict[match[1].toLowerCase()] = match[2];
+        }, {
+          key: "processCategory",
+          value: function processCategory(params) {
+            var altName, args, indices, j, node, ref1, text;
+            boundMethodCheck(this, ref);
+            args = params.callArgs;
+            this.WM.Log.logInfo("Processing " + this.WM.Log.linkToWikiPage(params.node, params.node) + " ...");
+            text = "";
+            for (j = 0, ref1 = params.ancestors.length; 0 <= ref1 ? j < ref1 : j > ref1; 0 <= ref1 ? j++ : j--) {
+              text += args.params.indentType;
+            }
+            if (args.params.showIndices) {
+              indices = [];
+              node = params;
+              while (node.parentIndex !== null) {
+                indices.push(node.siblingIndex + 1);
+                node = params.nodesList[node.parentIndex];
+              }
+              if (indices.length) {
+                text += "<small>" + indices.reverse().join(".") + ".</small> ";
+              }
+            }
+            altName = args.altNames[params.node.toLowerCase()] ? args.altNames[params.node.toLowerCase()] : null;
+            text += this.createCatLink(params.node, args.params.replace, altName);
+            text += args.params.rightToLeft ? "&lrm; " : " ";
+            if (params.children === "loop") {
+              text += "'''[LOOP]'''\n";
+              this.WM.Log.logWarning("Loop in " + this.WM.Log.linkToWikiPage(params.node, params.node));
+              return this.processCategoryEnd(params, args, text);
             } else {
-              break;
+              return this.WM.Cat.getParentsAndInfo(params.node, this.processCategoryAddSuffix, [params, args, text, altName]);
             }
           }
-          return dict;
-        }
-      }, {
-        key: "processCategory",
-        value: function processCategory(params) {
-          var altName, args, indices, j, node, ref, text;
-          args = params.callArgs;
-          this.WM.Log.logInfo("Processing " + this.WM.Log.linkToWikiPage(params.node, params.node) + " ...");
-          text = "";
-          for (j = 0, ref = params.ancestors.length; 0 <= ref ? j < ref : j > ref; 0 <= ref ? j++ : j--) {
-            text += args.params.indentType;
-          }
-          if (args.params.showIndices) {
-            indices = [];
-            node = params;
-            while (node.parentIndex !== null) {
-              indices.push(node.siblingIndex + 1);
-              node = params.nodesList[node.parentIndex];
+        }, {
+          key: "processCategoryAddSuffix",
+          value: function processCategoryAddSuffix(parents, info, args_) {
+            var alsoParents, altName, args, currParent, i, j, k, len, len1, par, params, parentTitles, text;
+            boundMethodCheck(this, ref);
+            params = args_[0];
+            args = args_[1];
+            text = args_[2];
+            altName = args_[3];
+            currParent = params.ancestors[params.ancestors.length - 1];
+            alsoParents = [];
+            text += "<small>(" + (info ? info.pages : 0) + ")";
+
+            if (currParent || args.showRootAlsoIn) {
+              for (j = 0, len = parents.length; j < len; j++) {
+                par = parents[j];
+                if (currParent !== par.title && !(indexOf.call(par, "hidden") >= 0)) {
+                  alsoParents.push(par);
+                }
+              }
+              if (alsoParents.length) {
+                parentTitles = [];
+                for (k = 0, len1 = alsoParents.length; k < len1; k++) {
+                  i = alsoParents[k];
+                  altName = args.altNames[alsoParents[i].title.toLowerCase()] ? args.altNames[alsoParents[i].title.toLowerCase()] : null;
+                  parentTitles.push(this.createCatLink(alsoParents[i].title, args.params.replace, altName));
+                }
+                text += " (" + args.params.alsoIn + " " + parentTitles.join(", ") + ")";
+              }
             }
-            if (indices.length) {
-              text += "<small>" + indices.reverse().join(".") + ".</small> ";
-            }
-          }
-          altName = args.altNames[params.node.toLowerCase()] ? args.altNames[params.node.toLowerCase()] : null;
-          text += this.createCatLink(params.node, args.params.replace, altName);
-          text += args.params.rightToLeft ? "&lrm; " : " ";
-          if (params.children === "loop") {
-            text += "'''[LOOP]'''\n";
-            this.WM.Log.logWarning("Loop in " + this.WM.Log.linkToWikiPage(params.node, params.node));
+            text += "</small>\n";
             return this.processCategoryEnd(params, args, text);
-          } else {
-            return this.WM.Cat.getParentsAndInfo(params.node, this.processCategoryAddSuffix, [params, args, text, altName]);
           }
-        }
-      }, {
-        key: "processCategoryAddSuffix",
-        value: function processCategoryAddSuffix(parents, info, args_) {
-          var alsoParents, altName, args, currParent, i, j, k, len, len1, par, params, parentTitles, text;
-          params = args_[0];
-          args = args_[1];
-          text = args_[2];
-          altName = args_[3];
-          currParent = params.ancestors[params.ancestors.length - 1];
-          alsoParents = [];
-          text += "<small>(" + (info ? info.pages : 0) + ")";
+        }, {
+          key: "processCategoryEnd",
+          value: function processCategoryEnd(params, args, text) {
+            boundMethodCheck(this, ref);
+            args.treeText += text;
+            params.callArgs = args;
+            return this.WM.Cat.recurseTreeContinue(params);
+          }
+        }, {
+          key: "createCatLink",
+          value: function createCatLink(cat, replace, altName) {
+            var catName, regExp;
+            boundMethodCheck(this, ref);
+            if (altName) {
+              catName = altName;
+            } else if (replace) {
+              regExp = new RegExp(replace[0], replace[1]);
+              catName = cat.substr(9).replace(regExp, replace[2]);
+            } else {
+              catName = cat.substr(9);
+            }
+            return "[[:" + cat + "|" + catName + "]]";
+          }
+        }, {
+          key: "writeToC",
+          value: function writeToC(params) {
+            var args, newtext;
+            boundMethodCheck(this, ref);
+            args = params.callArgs;
+            args.treeText = "\n" + args.treeText;
+            newtext = Str.overwriteBetween(args.source, args.treeText, args.startId, args.endId);
+            if (newtext !== args.source) {
+              return this.WM.MW.callAPIPost({
+                action: "edit",
+                bot: "1",
+                minor: "1",
+                title: args.params.page,
+                summary: args.summary,
+                text: newtext,
+                basetimestamp: args.timestamp,
+                token: args.edittoken
+              }, this.checkWrite, args, null);
+            } else {
+              this.WM.Log.logInfo(this.WM.Log.linkToWikiPage(args.params.page, args.params.page) + ' is already up to date');
+              return this.iteratePages(args.pageid, args.callNext);
+            }
+          }
+        }, {
+          key: "checkWrite",
+          value: function checkWrite(res, args) {
+            boundMethodCheck(this, ref);
+            if (res.edit && res.edit.result === 'Success') {
+              this.WM.Log.logInfo(this.WM.Log.linkToWikiPage(args.params.page, args.params.page) + ' correctly updated');
+              return this.iteratePages(args.pageid, args.callNext);
+            } else {
+              return this.WM.Log.logError(this.WM.Log.linkToWikiPage(args.params.page, args.params.page) + ' has not been updated!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
+            }
+          }
+        }]);
 
-          if (currParent || args.showRootAlsoIn) {
-            for (j = 0, len = parents.length; j < len; j++) {
-              par = parents[j];
-              if (currParent !== par.title && !(indexOf.call(par, "hidden") >= 0)) {
-                alsoParents.push(par);
-              }
-            }
-            if (alsoParents.length) {
-              parentTitles = [];
-              for (k = 0, len1 = alsoParents.length; k < len1; k++) {
-                i = alsoParents[k];
-                altName = args.altNames[alsoParents[i].title.toLowerCase()] ? args.altNames[alsoParents[i].title.toLowerCase()] : null;
-                parentTitles.push(this.createCatLink(alsoParents[i].title, args.params.replace, altName));
-              }
-              text += " (" + args.params.alsoIn + " " + parentTitles.join(", ") + ")";
-            }
-          }
-          text += "</small>\n";
-          return this.processCategoryEnd(params, args, text);
-        }
-      }, {
-        key: "processCategoryEnd",
-        value: function processCategoryEnd(params, args, text) {
-          args.treeText += text;
-          params.callArgs = args;
-          return this.WM.Cat.recurseTreeContinue(params);
-        }
-      }, {
-        key: "createCatLink",
-        value: function createCatLink(cat, replace, altName) {
-          var catName, regExp;
-          if (altName) {
-            catName = altName;
-          } else if (replace) {
-            regExp = new RegExp(replace[0], replace[1]);
-            catName = cat.substr(9).replace(regExp, replace[2]);
-          } else {
-            catName = cat.substr(9);
-          }
-          return "[[:" + cat + "|" + catName + "]]";
-        }
-      }, {
-        key: "writeToC",
-        value: function writeToC(params) {
-          var args, newtext;
-          args = params.callArgs;
-          args.treeText = "\n" + args.treeText;
-          newtext = Str.overwriteBetween(args.source, args.treeText, args.startId, args.endId);
-          if (newtext !== args.source) {
-            return this.WM.MW.callAPIPost({
-              action: "edit",
-              bot: "1",
-              minor: "1",
-              title: args.params.page,
-              summary: args.summary,
-              text: newtext,
-              basetimestamp: args.timestamp,
-              token: args.edittoken
-            }, this.checkWrite, args, null);
-          } else {
-            this.WM.Log.logInfo(this.WM.Log.linkToWikiPage(args.params.page, args.params.page) + ' is already up to date');
-            if (args.callNext) {
-              return args.callNext();
-            }
-          }
-        }
-      }, {
-        key: "checkWrite",
-        value: function checkWrite(res, args) {
-          if (res.edit && res.edit.result === 'Success') {
-            this.WM.Log.logInfo(this.WM.Log.linkToWikiPage(args.params.page, args.params.page) + ' correctly updated');
-            if (args.callNext) {
-              return args.callNext();
-            }
-          } else {
-            return this.WM.Log.logError(this.WM.Log.linkToWikiPage(args.params.page, args.params.page) + ' has not been updated!\n' + res['error']['info'] + " (" + res['error']['code'] + ")");
-          }
-        }
-      }]);
+        return UpdateCategoryTree;
+      }(Plugin);
 
-      return exports;
+      ;
+
+      UpdateCategoryTree.conf_default = {
+        special_menu: ["Update category trees"],
+        edit_summary: "automatic update",
+        show_root_also_in: false
+      };
+
+      UpdateCategoryTree.wiki_to_conf_default = {
+        ArchWiki: {
+          pages: ["ar", "cs", "cs", "da", "el", "en", "es", "he", "hr", "hu", "id", "it", "ko", "lt", "nl", "pl", "pt", "ru", "sk", "sr", "th", "tr", "uk", "zh-hans", "zh-hant"]
+        },
+        Wikipedia: {}
+      };
+
+      return UpdateCategoryTree;
     }();
-  }, { "../../lib.js.generic/dist/Str": 436 }], 40: [function (require, module, exports) {
+  }, { "../../lib.js.generic/dist/Str": 435, "./_Plugin": 38 }], 38: [function (require, module, exports) {
+    module.exports.Plugin = function () {
+      var Plugin = function () {
+        _createClass2(Plugin, null, [{
+          key: "__configure",
+          value: function __configure(wiki_name, user_config) {
+            var option, ref, value;
+
+            this.prototype.conf = {};
+            if (this.conf_default != null) {
+              $.extend(this.prototype.conf, this.conf_default);
+            }
+            if (this.wiki_to_conf_default != null && wiki_name in this.wiki_to_conf_default) {
+              $.extend(this.prototype.conf, this.wiki_to_conf_default[wiki_name]);
+            }
+            if (this.name in user_config) {
+              ref = user_config[this.name];
+
+              for (option in ref) {
+                value = ref[option];
+                if (!(option in this.prototype.conf)) {
+                  continue;
+                }
+                this.prototype.conf[option] = value;
+                delete user_config[this.name][option];
+              }
+            }
+            if ($.isEmptyObject(user_config[this.name])) {
+              return delete user_config[this.name];
+            }
+          }
+        }]);
+
+        function Plugin(WM) {
+          _classCallCheck2(this, Plugin);
+
+          this.WM = WM;
+        }
+
+        return Plugin;
+      }();
+
+      ;
+
+      Plugin.prototype.main_bot = null;
+
+      Plugin.prototype.main_diff = null;
+
+      Plugin.prototype.main_editor = null;
+
+      Plugin.prototype.main_newpages = null;
+
+      Plugin.prototype.main_recentchanges = null;
+
+      Plugin.prototype.main_special = null;
+
+      return Plugin;
+    }();
+  }, {}], 39: [function (require, module, exports) {
     (function (global) {
       "use strict";
 
@@ -6222,7 +6678,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         [][key] && define(Array, key, Function.call.bind([][key]));
       });
     }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
-  }, { "core-js/fn/regexp/escape": 45, "core-js/shim": 367, "regenerator-runtime/runtime": 41 }], 41: [function (require, module, exports) {
+  }, { "core-js/fn/regexp/escape": 44, "core-js/shim": 366, "regenerator-runtime/runtime": 40 }], 40: [function (require, module, exports) {
     (function (global) {
 
       !function (global) {
@@ -6782,7 +7238,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         };
       }((typeof global === "undefined" ? "undefined" : _typeof2(global)) === "object" ? global : (typeof window === "undefined" ? "undefined" : _typeof2(window)) === "object" ? window : (typeof self === "undefined" ? "undefined" : _typeof2(self)) === "object" ? self : this);
     }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
-  }, {}], 42: [function (require, module, exports) {}, {}], 43: [function (require, module, exports) {
+  }, {}], 41: [function (require, module, exports) {}, {}], 42: [function (require, module, exports) {
     module.exports = function split(undef) {
 
       var nativeSplit = String.prototype.split,
@@ -6846,7 +7302,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return self;
     }();
-  }, {}], 44: [function (require, module, exports) {
+  }, {}], 43: [function (require, module, exports) {
     var indexof = require('indexof');
 
     module.exports = ClassList;
@@ -6945,40 +7401,40 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     function isTruthy(value) {
       return !!value;
     }
-  }, { "indexof": 375 }], 45: [function (require, module, exports) {
+  }, { "indexof": 374 }], 44: [function (require, module, exports) {
     require('../../modules/core.regexp.escape');
     module.exports = require('../../modules/_core').RegExp.escape;
-  }, { "../../modules/_core": 66, "../../modules/core.regexp.escape": 170 }], 46: [function (require, module, exports) {
+  }, { "../../modules/_core": 65, "../../modules/core.regexp.escape": 169 }], 45: [function (require, module, exports) {
     module.exports = function (it) {
       if (typeof it != 'function') throw TypeError(it + ' is not a function!');
       return it;
     };
-  }, {}], 47: [function (require, module, exports) {
+  }, {}], 46: [function (require, module, exports) {
     var cof = require('./_cof');
     module.exports = function (it, msg) {
       if (typeof it != 'number' && cof(it) != 'Number') throw TypeError(msg);
       return +it;
     };
-  }, { "./_cof": 61 }], 48: [function (require, module, exports) {
+  }, { "./_cof": 60 }], 47: [function (require, module, exports) {
     var UNSCOPABLES = require('./_wks')('unscopables');
     var ArrayProto = Array.prototype;
     if (ArrayProto[UNSCOPABLES] == undefined) require('./_hide')(ArrayProto, UNSCOPABLES, {});
     module.exports = function (key) {
       ArrayProto[UNSCOPABLES][key] = true;
     };
-  }, { "./_hide": 85, "./_wks": 168 }], 49: [function (require, module, exports) {
+  }, { "./_hide": 84, "./_wks": 167 }], 48: [function (require, module, exports) {
     module.exports = function (it, Constructor, name, forbiddenField) {
       if (!(it instanceof Constructor) || forbiddenField !== undefined && forbiddenField in it) {
         throw TypeError(name + ': incorrect invocation!');
       }return it;
     };
-  }, {}], 50: [function (require, module, exports) {
+  }, {}], 49: [function (require, module, exports) {
     var isObject = require('./_is-object');
     module.exports = function (it) {
       if (!isObject(it)) throw TypeError(it + ' is not an object!');
       return it;
     };
-  }, { "./_is-object": 94 }], 51: [function (require, module, exports) {
+  }, { "./_is-object": 93 }], 50: [function (require, module, exports) {
     'use strict';
 
     var toObject = require('./_to-object');
@@ -7004,7 +7460,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         from += inc;
       }return O;
     };
-  }, { "./_to-absolute-index": 154, "./_to-length": 158, "./_to-object": 159 }], 52: [function (require, module, exports) {
+  }, { "./_to-absolute-index": 153, "./_to-length": 157, "./_to-object": 158 }], 51: [function (require, module, exports) {
     'use strict';
 
     var toObject = require('./_to-object');
@@ -7021,7 +7477,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         O[index++] = value;
       }return O;
     };
-  }, { "./_to-absolute-index": 154, "./_to-length": 158, "./_to-object": 159 }], 53: [function (require, module, exports) {
+  }, { "./_to-absolute-index": 153, "./_to-length": 157, "./_to-object": 158 }], 52: [function (require, module, exports) {
     var forOf = require('./_for-of');
 
     module.exports = function (iter, ITERATOR) {
@@ -7029,7 +7485,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       forOf(iter, false, result.push, result, ITERATOR);
       return result;
     };
-  }, { "./_for-of": 82 }], 54: [function (require, module, exports) {
+  }, { "./_for-of": 81 }], 53: [function (require, module, exports) {
     var toIObject = require('./_to-iobject');
     var toLength = require('./_to-length');
     var toAbsoluteIndex = require('./_to-absolute-index');
@@ -7051,7 +7507,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }return !IS_INCLUDES && -1;
       };
     };
-  }, { "./_to-absolute-index": 154, "./_to-iobject": 157, "./_to-length": 158 }], 55: [function (require, module, exports) {
+  }, { "./_to-absolute-index": 153, "./_to-iobject": 156, "./_to-length": 157 }], 54: [function (require, module, exports) {
     var ctx = require('./_ctx');
     var IObject = require('./_iobject');
     var toObject = require('./_to-object');
@@ -7092,7 +7548,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : result;
       };
     };
-  }, { "./_array-species-create": 58, "./_ctx": 68, "./_iobject": 90, "./_to-length": 158, "./_to-object": 159 }], 56: [function (require, module, exports) {
+  }, { "./_array-species-create": 57, "./_ctx": 67, "./_iobject": 89, "./_to-length": 157, "./_to-object": 158 }], 55: [function (require, module, exports) {
     var aFunction = require('./_a-function');
     var toObject = require('./_to-object');
     var IObject = require('./_iobject');
@@ -7122,7 +7578,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }return memo;
     };
-  }, { "./_a-function": 46, "./_iobject": 90, "./_to-length": 158, "./_to-object": 159 }], 57: [function (require, module, exports) {
+  }, { "./_a-function": 45, "./_iobject": 89, "./_to-length": 157, "./_to-object": 158 }], 56: [function (require, module, exports) {
     var isObject = require('./_is-object');
     var isArray = require('./_is-array');
     var SPECIES = require('./_wks')('species');
@@ -7139,13 +7595,13 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }return C === undefined ? Array : C;
     };
-  }, { "./_is-array": 92, "./_is-object": 94, "./_wks": 168 }], 58: [function (require, module, exports) {
+  }, { "./_is-array": 91, "./_is-object": 93, "./_wks": 167 }], 57: [function (require, module, exports) {
     var speciesConstructor = require('./_array-species-constructor');
 
     module.exports = function (original, length) {
       return new (speciesConstructor(original))(length);
     };
-  }, { "./_array-species-constructor": 57 }], 59: [function (require, module, exports) {
+  }, { "./_array-species-constructor": 56 }], 58: [function (require, module, exports) {
     'use strict';
 
     var aFunction = require('./_a-function');
@@ -7173,7 +7629,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       if (isObject(fn.prototype)) bound.prototype = fn.prototype;
       return bound;
     };
-  }, { "./_a-function": 46, "./_invoke": 89, "./_is-object": 94 }], 60: [function (require, module, exports) {
+  }, { "./_a-function": 45, "./_invoke": 88, "./_is-object": 93 }], 59: [function (require, module, exports) {
     var cof = require('./_cof');
     var TAG = require('./_wks')('toStringTag');
 
@@ -7191,13 +7647,13 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       var O, T, B;
       return it === undefined ? 'Undefined' : it === null ? 'Null' : typeof (T = tryGet(O = Object(it), TAG)) == 'string' ? T : ARG ? cof(O) : (B = cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
     };
-  }, { "./_cof": 61, "./_wks": 168 }], 61: [function (require, module, exports) {
+  }, { "./_cof": 60, "./_wks": 167 }], 60: [function (require, module, exports) {
     var toString = {}.toString;
 
     module.exports = function (it) {
       return toString.call(it).slice(8, -1);
     };
-  }, {}], 62: [function (require, module, exports) {
+  }, {}], 61: [function (require, module, exports) {
     'use strict';
 
     var dP = require('./_object-dp').f;
@@ -7334,7 +7790,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         setSpecies(NAME);
       }
     };
-  }, { "./_an-instance": 49, "./_ctx": 68, "./_descriptors": 72, "./_for-of": 82, "./_iter-define": 98, "./_iter-step": 100, "./_meta": 108, "./_object-create": 113, "./_object-dp": 114, "./_redefine-all": 133, "./_set-species": 140, "./_validate-collection": 165 }], 63: [function (require, module, exports) {
+  }, { "./_an-instance": 48, "./_ctx": 67, "./_descriptors": 71, "./_for-of": 81, "./_iter-define": 97, "./_iter-step": 99, "./_meta": 107, "./_object-create": 112, "./_object-dp": 113, "./_redefine-all": 132, "./_set-species": 139, "./_validate-collection": 164 }], 62: [function (require, module, exports) {
     var classof = require('./_classof');
     var from = require('./_array-from-iterable');
     module.exports = function (NAME) {
@@ -7343,7 +7799,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return from(this);
       };
     };
-  }, { "./_array-from-iterable": 53, "./_classof": 60 }], 64: [function (require, module, exports) {
+  }, { "./_array-from-iterable": 52, "./_classof": 59 }], 63: [function (require, module, exports) {
     'use strict';
 
     var redefineAll = require('./_redefine-all');
@@ -7424,7 +7880,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       },
       ufstore: uncaughtFrozenStore
     };
-  }, { "./_an-instance": 49, "./_an-object": 50, "./_array-methods": 55, "./_for-of": 82, "./_has": 84, "./_is-object": 94, "./_meta": 108, "./_redefine-all": 133, "./_validate-collection": 165 }], 65: [function (require, module, exports) {
+  }, { "./_an-instance": 48, "./_an-object": 49, "./_array-methods": 54, "./_for-of": 81, "./_has": 83, "./_is-object": 93, "./_meta": 107, "./_redefine-all": 132, "./_validate-collection": 164 }], 64: [function (require, module, exports) {
     'use strict';
 
     var global = require('./_global');
@@ -7514,10 +7970,10 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return C;
     };
-  }, { "./_an-instance": 49, "./_export": 76, "./_fails": 78, "./_for-of": 82, "./_global": 83, "./_inherit-if-required": 88, "./_is-object": 94, "./_iter-detect": 99, "./_meta": 108, "./_redefine": 134, "./_redefine-all": 133, "./_set-to-string-tag": 141 }], 66: [function (require, module, exports) {
+  }, { "./_an-instance": 48, "./_export": 75, "./_fails": 77, "./_for-of": 81, "./_global": 82, "./_inherit-if-required": 87, "./_is-object": 93, "./_iter-detect": 98, "./_meta": 107, "./_redefine": 133, "./_redefine-all": 132, "./_set-to-string-tag": 140 }], 65: [function (require, module, exports) {
     var core = module.exports = { version: '2.5.1' };
     if (typeof __e == 'number') __e = core;
-  }, {}], 67: [function (require, module, exports) {
+  }, {}], 66: [function (require, module, exports) {
     'use strict';
 
     var $defineProperty = require('./_object-dp');
@@ -7526,7 +7982,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     module.exports = function (object, index, value) {
       if (index in object) $defineProperty.f(object, index, createDesc(0, value));else object[index] = value;
     };
-  }, { "./_object-dp": 114, "./_property-desc": 132 }], 68: [function (require, module, exports) {
+  }, { "./_object-dp": 113, "./_property-desc": 131 }], 67: [function (require, module, exports) {
     var aFunction = require('./_a-function');
     module.exports = function (fn, that, length) {
       aFunction(fn);
@@ -7549,7 +8005,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return fn.apply(that, arguments);
       };
     };
-  }, { "./_a-function": 46 }], 69: [function (require, module, exports) {
+  }, { "./_a-function": 45 }], 68: [function (require, module, exports) {
     'use strict';
 
     var fails = require('./_fails');
@@ -7572,7 +8028,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       var s = y < 0 ? '-' : y > 9999 ? '+' : '';
       return s + ('00000' + Math.abs(y)).slice(s ? -6 : -4) + '-' + lz(d.getUTCMonth() + 1) + '-' + lz(d.getUTCDate()) + 'T' + lz(d.getUTCHours()) + ':' + lz(d.getUTCMinutes()) + ':' + lz(d.getUTCSeconds()) + '.' + (m > 99 ? m : '0' + lz(m)) + 'Z';
     } : $toISOString;
-  }, { "./_fails": 78 }], 70: [function (require, module, exports) {
+  }, { "./_fails": 77 }], 69: [function (require, module, exports) {
     'use strict';
 
     var anObject = require('./_an-object');
@@ -7583,18 +8039,18 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       if (hint !== 'string' && hint !== NUMBER && hint !== 'default') throw TypeError('Incorrect hint');
       return toPrimitive(anObject(this), hint != NUMBER);
     };
-  }, { "./_an-object": 50, "./_to-primitive": 160 }], 71: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_to-primitive": 159 }], 70: [function (require, module, exports) {
     module.exports = function (it) {
       if (it == undefined) throw TypeError("Can't call method on  " + it);
       return it;
     };
-  }, {}], 72: [function (require, module, exports) {
+  }, {}], 71: [function (require, module, exports) {
     module.exports = !require('./_fails')(function () {
       return Object.defineProperty({}, 'a', { get: function get() {
           return 7;
         } }).a != 7;
     });
-  }, { "./_fails": 78 }], 73: [function (require, module, exports) {
+  }, { "./_fails": 77 }], 72: [function (require, module, exports) {
     var isObject = require('./_is-object');
     var document = require('./_global').document;
 
@@ -7602,9 +8058,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     module.exports = function (it) {
       return is ? document.createElement(it) : {};
     };
-  }, { "./_global": 83, "./_is-object": 94 }], 74: [function (require, module, exports) {
+  }, { "./_global": 82, "./_is-object": 93 }], 73: [function (require, module, exports) {
     module.exports = 'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'.split(',');
-  }, {}], 75: [function (require, module, exports) {
+  }, {}], 74: [function (require, module, exports) {
     var getKeys = require('./_object-keys');
     var gOPS = require('./_object-gops');
     var pIE = require('./_object-pie');
@@ -7621,7 +8077,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }return result;
     };
-  }, { "./_object-gops": 120, "./_object-keys": 123, "./_object-pie": 124 }], 76: [function (require, module, exports) {
+  }, { "./_object-gops": 119, "./_object-keys": 122, "./_object-pie": 123 }], 75: [function (require, module, exports) {
     var global = require('./_global');
     var core = require('./_core');
     var hide = require('./_hide');
@@ -7664,7 +8120,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     $export.U = 64;
     $export.R = 128;
     module.exports = $export;
-  }, { "./_core": 66, "./_ctx": 68, "./_global": 83, "./_hide": 85, "./_redefine": 134 }], 77: [function (require, module, exports) {
+  }, { "./_core": 65, "./_ctx": 67, "./_global": 82, "./_hide": 84, "./_redefine": 133 }], 76: [function (require, module, exports) {
     var MATCH = require('./_wks')('match');
     module.exports = function (KEY) {
       var re = /./;
@@ -7677,7 +8133,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         } catch (f) {}
       }return true;
     };
-  }, { "./_wks": 168 }], 78: [function (require, module, exports) {
+  }, { "./_wks": 167 }], 77: [function (require, module, exports) {
     module.exports = function (exec) {
       try {
         return !!exec();
@@ -7685,7 +8141,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return true;
       }
     };
-  }, {}], 79: [function (require, module, exports) {
+  }, {}], 78: [function (require, module, exports) {
     'use strict';
 
     var hide = require('./_hide');
@@ -7714,7 +8170,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         });
       }
     };
-  }, { "./_defined": 71, "./_fails": 78, "./_hide": 85, "./_redefine": 134, "./_wks": 168 }], 80: [function (require, module, exports) {
+  }, { "./_defined": 70, "./_fails": 77, "./_hide": 84, "./_redefine": 133, "./_wks": 167 }], 79: [function (require, module, exports) {
     'use strict';
 
     var anObject = require('./_an-object');
@@ -7728,7 +8184,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       if (that.sticky) result += 'y';
       return result;
     };
-  }, { "./_an-object": 50 }], 81: [function (require, module, exports) {
+  }, { "./_an-object": 49 }], 80: [function (require, module, exports) {
     'use strict';
 
     var isArray = require('./_is-array');
@@ -7768,7 +8224,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     }
 
     module.exports = flattenIntoArray;
-  }, { "./_ctx": 68, "./_is-array": 92, "./_is-object": 94, "./_to-length": 158, "./_wks": 168 }], 82: [function (require, module, exports) {
+  }, { "./_ctx": 67, "./_is-array": 91, "./_is-object": 93, "./_to-length": 157, "./_wks": 167 }], 81: [function (require, module, exports) {
     var ctx = require('./_ctx');
     var call = require('./_iter-call');
     var isArrayIter = require('./_is-array-iter');
@@ -7796,15 +8252,15 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     };
     exports.BREAK = BREAK;
     exports.RETURN = RETURN;
-  }, { "./_an-object": 50, "./_ctx": 68, "./_is-array-iter": 91, "./_iter-call": 96, "./_to-length": 158, "./core.get-iterator-method": 169 }], 83: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_ctx": 67, "./_is-array-iter": 90, "./_iter-call": 95, "./_to-length": 157, "./core.get-iterator-method": 168 }], 82: [function (require, module, exports) {
     var global = module.exports = typeof window != 'undefined' && window.Math == Math ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
     if (typeof __g == 'number') __g = global;
-  }, {}], 84: [function (require, module, exports) {
+  }, {}], 83: [function (require, module, exports) {
     var hasOwnProperty = {}.hasOwnProperty;
     module.exports = function (it, key) {
       return hasOwnProperty.call(it, key);
     };
-  }, {}], 85: [function (require, module, exports) {
+  }, {}], 84: [function (require, module, exports) {
     var dP = require('./_object-dp');
     var createDesc = require('./_property-desc');
     module.exports = require('./_descriptors') ? function (object, key, value) {
@@ -7813,16 +8269,16 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       object[key] = value;
       return object;
     };
-  }, { "./_descriptors": 72, "./_object-dp": 114, "./_property-desc": 132 }], 86: [function (require, module, exports) {
+  }, { "./_descriptors": 71, "./_object-dp": 113, "./_property-desc": 131 }], 85: [function (require, module, exports) {
     var document = require('./_global').document;
     module.exports = document && document.documentElement;
-  }, { "./_global": 83 }], 87: [function (require, module, exports) {
+  }, { "./_global": 82 }], 86: [function (require, module, exports) {
     module.exports = !require('./_descriptors') && !require('./_fails')(function () {
       return Object.defineProperty(require('./_dom-create')('div'), 'a', { get: function get() {
           return 7;
         } }).a != 7;
     });
-  }, { "./_descriptors": 72, "./_dom-create": 73, "./_fails": 78 }], 88: [function (require, module, exports) {
+  }, { "./_descriptors": 71, "./_dom-create": 72, "./_fails": 77 }], 87: [function (require, module, exports) {
     var isObject = require('./_is-object');
     var setPrototypeOf = require('./_set-proto').set;
     module.exports = function (that, target, C) {
@@ -7832,7 +8288,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         setPrototypeOf(that, P);
       }return that;
     };
-  }, { "./_is-object": 94, "./_set-proto": 139 }], 89: [function (require, module, exports) {
+  }, { "./_is-object": 93, "./_set-proto": 138 }], 88: [function (require, module, exports) {
     module.exports = function (fn, args, that) {
       var un = that === undefined;
       switch (args.length) {
@@ -7848,13 +8304,13 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           return un ? fn(args[0], args[1], args[2], args[3]) : fn.call(that, args[0], args[1], args[2], args[3]);
       }return fn.apply(that, args);
     };
-  }, {}], 90: [function (require, module, exports) {
+  }, {}], 89: [function (require, module, exports) {
     var cof = require('./_cof');
 
     module.exports = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
       return cof(it) == 'String' ? it.split('') : Object(it);
     };
-  }, { "./_cof": 61 }], 91: [function (require, module, exports) {
+  }, { "./_cof": 60 }], 90: [function (require, module, exports) {
     var Iterators = require('./_iterators');
     var ITERATOR = require('./_wks')('iterator');
     var ArrayProto = Array.prototype;
@@ -7862,22 +8318,22 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     module.exports = function (it) {
       return it !== undefined && (Iterators.Array === it || ArrayProto[ITERATOR] === it);
     };
-  }, { "./_iterators": 101, "./_wks": 168 }], 92: [function (require, module, exports) {
+  }, { "./_iterators": 100, "./_wks": 167 }], 91: [function (require, module, exports) {
     var cof = require('./_cof');
     module.exports = Array.isArray || function isArray(arg) {
       return cof(arg) == 'Array';
     };
-  }, { "./_cof": 61 }], 93: [function (require, module, exports) {
+  }, { "./_cof": 60 }], 92: [function (require, module, exports) {
     var isObject = require('./_is-object');
     var floor = Math.floor;
     module.exports = function isInteger(it) {
       return !isObject(it) && isFinite(it) && floor(it) === it;
     };
-  }, { "./_is-object": 94 }], 94: [function (require, module, exports) {
+  }, { "./_is-object": 93 }], 93: [function (require, module, exports) {
     module.exports = function (it) {
       return (typeof it === "undefined" ? "undefined" : _typeof2(it)) === 'object' ? it !== null : typeof it === 'function';
     };
-  }, {}], 95: [function (require, module, exports) {
+  }, {}], 94: [function (require, module, exports) {
     var isObject = require('./_is-object');
     var cof = require('./_cof');
     var MATCH = require('./_wks')('match');
@@ -7885,7 +8341,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       var isRegExp;
       return isObject(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : cof(it) == 'RegExp');
     };
-  }, { "./_cof": 61, "./_is-object": 94, "./_wks": 168 }], 96: [function (require, module, exports) {
+  }, { "./_cof": 60, "./_is-object": 93, "./_wks": 167 }], 95: [function (require, module, exports) {
     var anObject = require('./_an-object');
     module.exports = function (iterator, fn, value, entries) {
       try {
@@ -7896,7 +8352,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         throw e;
       }
     };
-  }, { "./_an-object": 50 }], 97: [function (require, module, exports) {
+  }, { "./_an-object": 49 }], 96: [function (require, module, exports) {
     'use strict';
 
     var create = require('./_object-create');
@@ -7912,7 +8368,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       Constructor.prototype = create(IteratorPrototype, { next: descriptor(1, next) });
       setToStringTag(Constructor, NAME + ' Iterator');
     };
-  }, { "./_hide": 85, "./_object-create": 113, "./_property-desc": 132, "./_set-to-string-tag": 141, "./_wks": 168 }], 98: [function (require, module, exports) {
+  }, { "./_hide": 84, "./_object-create": 112, "./_property-desc": 131, "./_set-to-string-tag": 140, "./_wks": 167 }], 97: [function (require, module, exports) {
     'use strict';
 
     var LIBRARY = require('./_library');
@@ -7995,7 +8451,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       }
       return methods;
     };
-  }, { "./_export": 76, "./_has": 84, "./_hide": 85, "./_iter-create": 97, "./_iterators": 101, "./_library": 102, "./_object-gpo": 121, "./_redefine": 134, "./_set-to-string-tag": 141, "./_wks": 168 }], 99: [function (require, module, exports) {
+  }, { "./_export": 75, "./_has": 83, "./_hide": 84, "./_iter-create": 96, "./_iterators": 100, "./_library": 101, "./_object-gpo": 120, "./_redefine": 133, "./_set-to-string-tag": 140, "./_wks": 167 }], 98: [function (require, module, exports) {
     var ITERATOR = require('./_wks')('iterator');
     var SAFE_CLOSING = false;
 
@@ -8026,20 +8482,20 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       } catch (e) {}
       return safe;
     };
-  }, { "./_wks": 168 }], 100: [function (require, module, exports) {
+  }, { "./_wks": 167 }], 99: [function (require, module, exports) {
     module.exports = function (done, value) {
       return { value: value, done: !!done };
     };
-  }, {}], 101: [function (require, module, exports) {
+  }, {}], 100: [function (require, module, exports) {
     module.exports = {};
-  }, {}], 102: [function (require, module, exports) {
+  }, {}], 101: [function (require, module, exports) {
     module.exports = false;
-  }, {}], 103: [function (require, module, exports) {
+  }, {}], 102: [function (require, module, exports) {
     var $expm1 = Math.expm1;
     module.exports = !$expm1 || $expm1(10) > 22025.465794806719 || $expm1(10) < 22025.4657948067165168 || $expm1(-2e-17) != -2e-17 ? function expm1(x) {
       return (x = +x) == 0 ? x : x > -1e-6 && x < 1e-6 ? x + x * x / 2 : Math.exp(x) - 1;
     } : $expm1;
-  }, {}], 104: [function (require, module, exports) {
+  }, {}], 103: [function (require, module, exports) {
     var sign = require('./_math-sign');
     var pow = Math.pow;
     var EPSILON = pow(2, -52);
@@ -8062,21 +8518,21 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       if (result > MAX32 || result != result) return $sign * Infinity;
       return $sign * result;
     };
-  }, { "./_math-sign": 107 }], 105: [function (require, module, exports) {
+  }, { "./_math-sign": 106 }], 104: [function (require, module, exports) {
     module.exports = Math.log1p || function log1p(x) {
       return (x = +x) > -1e-8 && x < 1e-8 ? x - x * x / 2 : Math.log(1 + x);
     };
-  }, {}], 106: [function (require, module, exports) {
+  }, {}], 105: [function (require, module, exports) {
     module.exports = Math.scale || function scale(x, inLow, inHigh, outLow, outHigh) {
       if (arguments.length === 0 || x != x || inLow != inLow || inHigh != inHigh || outLow != outLow || outHigh != outHigh) return NaN;
       if (x === Infinity || x === -Infinity) return x;
       return (x - inLow) * (outHigh - outLow) / (inHigh - inLow) + outLow;
     };
-  }, {}], 107: [function (require, module, exports) {
+  }, {}], 106: [function (require, module, exports) {
     module.exports = Math.sign || function sign(x) {
       return (x = +x) == 0 || x != x ? x : x < 0 ? -1 : 1;
     };
-  }, {}], 108: [function (require, module, exports) {
+  }, {}], 107: [function (require, module, exports) {
     var META = require('./_uid')('meta');
     var isObject = require('./_is-object');
     var has = require('./_has');
@@ -8124,7 +8580,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       getWeak: getWeak,
       onFreeze: onFreeze
     };
-  }, { "./_fails": 78, "./_has": 84, "./_is-object": 94, "./_object-dp": 114, "./_uid": 164 }], 109: [function (require, module, exports) {
+  }, { "./_fails": 77, "./_has": 83, "./_is-object": 93, "./_object-dp": 113, "./_uid": 163 }], 108: [function (require, module, exports) {
     var Map = require('./es6.map');
     var $export = require('./_export');
     var shared = require('./_shared')('metadata');
@@ -8178,7 +8634,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       key: toMetaKey,
       exp: exp
     };
-  }, { "./_export": 76, "./_shared": 143, "./es6.map": 200, "./es6.weak-map": 306 }], 110: [function (require, module, exports) {
+  }, { "./_export": 75, "./_shared": 142, "./es6.map": 199, "./es6.weak-map": 305 }], 109: [function (require, module, exports) {
     var global = require('./_global');
     var macrotask = require('./_task').set;
     var Observer = global.MutationObserver || global.WebKitMutationObserver;
@@ -8236,7 +8692,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }last = task;
       };
     };
-  }, { "./_cof": 61, "./_global": 83, "./_task": 153 }], 111: [function (require, module, exports) {
+  }, { "./_cof": 60, "./_global": 82, "./_task": 152 }], 110: [function (require, module, exports) {
     'use strict';
 
     var aFunction = require('./_a-function');
@@ -8255,7 +8711,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     module.exports.f = function (C) {
       return new PromiseCapability(C);
     };
-  }, { "./_a-function": 46 }], 112: [function (require, module, exports) {
+  }, { "./_a-function": 45 }], 111: [function (require, module, exports) {
     'use strict';
 
     var getKeys = require('./_object-keys');
@@ -8293,7 +8749,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }return T;
     } : $assign;
-  }, { "./_fails": 78, "./_iobject": 90, "./_object-gops": 120, "./_object-keys": 123, "./_object-pie": 124, "./_to-object": 159 }], 113: [function (require, module, exports) {
+  }, { "./_fails": 77, "./_iobject": 89, "./_object-gops": 119, "./_object-keys": 122, "./_object-pie": 123, "./_to-object": 158 }], 112: [function (require, module, exports) {
     var anObject = require('./_an-object');
     var dPs = require('./_object-dps');
     var enumBugKeys = require('./_enum-bug-keys');
@@ -8331,7 +8787,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       } else result = _createDict();
       return Properties === undefined ? result : dPs(result, Properties);
     };
-  }, { "./_an-object": 50, "./_dom-create": 73, "./_enum-bug-keys": 74, "./_html": 86, "./_object-dps": 115, "./_shared-key": 142 }], 114: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_dom-create": 72, "./_enum-bug-keys": 73, "./_html": 85, "./_object-dps": 114, "./_shared-key": 141 }], 113: [function (require, module, exports) {
     var anObject = require('./_an-object');
     var IE8_DOM_DEFINE = require('./_ie8-dom-define');
     var toPrimitive = require('./_to-primitive');
@@ -8348,7 +8804,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       if ('value' in Attributes) O[P] = Attributes.value;
       return O;
     };
-  }, { "./_an-object": 50, "./_descriptors": 72, "./_ie8-dom-define": 87, "./_to-primitive": 160 }], 115: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_descriptors": 71, "./_ie8-dom-define": 86, "./_to-primitive": 159 }], 114: [function (require, module, exports) {
     var dP = require('./_object-dp');
     var anObject = require('./_an-object');
     var getKeys = require('./_object-keys');
@@ -8363,7 +8819,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         dP.f(O, P = keys[i++], Properties[P]);
       }return O;
     };
-  }, { "./_an-object": 50, "./_descriptors": 72, "./_object-dp": 114, "./_object-keys": 123 }], 116: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_descriptors": 71, "./_object-dp": 113, "./_object-keys": 122 }], 115: [function (require, module, exports) {
     'use strict';
 
     module.exports = require('./_library') || !require('./_fails')(function () {
@@ -8372,7 +8828,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       __defineSetter__.call(null, K, function () {});
       delete require('./_global')[K];
     });
-  }, { "./_fails": 78, "./_global": 83, "./_library": 102 }], 117: [function (require, module, exports) {
+  }, { "./_fails": 77, "./_global": 82, "./_library": 101 }], 116: [function (require, module, exports) {
     var pIE = require('./_object-pie');
     var createDesc = require('./_property-desc');
     var toIObject = require('./_to-iobject');
@@ -8389,7 +8845,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       } catch (e) {}
       if (has(O, P)) return createDesc(!pIE.f.call(O, P), O[P]);
     };
-  }, { "./_descriptors": 72, "./_has": 84, "./_ie8-dom-define": 87, "./_object-pie": 124, "./_property-desc": 132, "./_to-iobject": 157, "./_to-primitive": 160 }], 118: [function (require, module, exports) {
+  }, { "./_descriptors": 71, "./_has": 83, "./_ie8-dom-define": 86, "./_object-pie": 123, "./_property-desc": 131, "./_to-iobject": 156, "./_to-primitive": 159 }], 117: [function (require, module, exports) {
     var toIObject = require('./_to-iobject');
     var gOPN = require('./_object-gopn').f;
     var toString = {}.toString;
@@ -8407,16 +8863,16 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     module.exports.f = function getOwnPropertyNames(it) {
       return windowNames && toString.call(it) == '[object Window]' ? getWindowNames(it) : gOPN(toIObject(it));
     };
-  }, { "./_object-gopn": 119, "./_to-iobject": 157 }], 119: [function (require, module, exports) {
+  }, { "./_object-gopn": 118, "./_to-iobject": 156 }], 118: [function (require, module, exports) {
     var $keys = require('./_object-keys-internal');
     var hiddenKeys = require('./_enum-bug-keys').concat('length', 'prototype');
 
     exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
       return $keys(O, hiddenKeys);
     };
-  }, { "./_enum-bug-keys": 74, "./_object-keys-internal": 122 }], 120: [function (require, module, exports) {
+  }, { "./_enum-bug-keys": 73, "./_object-keys-internal": 121 }], 119: [function (require, module, exports) {
     exports.f = Object.getOwnPropertySymbols;
-  }, {}], 121: [function (require, module, exports) {
+  }, {}], 120: [function (require, module, exports) {
     var has = require('./_has');
     var toObject = require('./_to-object');
     var IE_PROTO = require('./_shared-key')('IE_PROTO');
@@ -8429,7 +8885,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return O.constructor.prototype;
       }return O instanceof Object ? ObjectProto : null;
     };
-  }, { "./_has": 84, "./_shared-key": 142, "./_to-object": 159 }], 122: [function (require, module, exports) {
+  }, { "./_has": 83, "./_shared-key": 141, "./_to-object": 158 }], 121: [function (require, module, exports) {
     var has = require('./_has');
     var toIObject = require('./_to-iobject');
     var arrayIndexOf = require('./_array-includes')(false);
@@ -8449,16 +8905,16 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }return result;
     };
-  }, { "./_array-includes": 54, "./_has": 84, "./_shared-key": 142, "./_to-iobject": 157 }], 123: [function (require, module, exports) {
+  }, { "./_array-includes": 53, "./_has": 83, "./_shared-key": 141, "./_to-iobject": 156 }], 122: [function (require, module, exports) {
     var $keys = require('./_object-keys-internal');
     var enumBugKeys = require('./_enum-bug-keys');
 
     module.exports = Object.keys || function keys(O) {
       return $keys(O, enumBugKeys);
     };
-  }, { "./_enum-bug-keys": 74, "./_object-keys-internal": 122 }], 124: [function (require, module, exports) {
+  }, { "./_enum-bug-keys": 73, "./_object-keys-internal": 121 }], 123: [function (require, module, exports) {
     exports.f = {}.propertyIsEnumerable;
-  }, {}], 125: [function (require, module, exports) {
+  }, {}], 124: [function (require, module, exports) {
     var $export = require('./_export');
     var core = require('./_core');
     var fails = require('./_fails');
@@ -8470,7 +8926,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         fn(1);
       }), 'Object', exp);
     };
-  }, { "./_core": 66, "./_export": 76, "./_fails": 78 }], 126: [function (require, module, exports) {
+  }, { "./_core": 65, "./_export": 75, "./_fails": 77 }], 125: [function (require, module, exports) {
     var getKeys = require('./_object-keys');
     var toIObject = require('./_to-iobject');
     var isEnum = require('./_object-pie').f;
@@ -8489,7 +8945,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }return result;
       };
     };
-  }, { "./_object-keys": 123, "./_object-pie": 124, "./_to-iobject": 157 }], 127: [function (require, module, exports) {
+  }, { "./_object-keys": 122, "./_object-pie": 123, "./_to-iobject": 156 }], 126: [function (require, module, exports) {
     var gOPN = require('./_object-gopn');
     var gOPS = require('./_object-gops');
     var anObject = require('./_an-object');
@@ -8499,7 +8955,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       var getSymbols = gOPS.f;
       return getSymbols ? keys.concat(getSymbols(it)) : keys;
     };
-  }, { "./_an-object": 50, "./_global": 83, "./_object-gopn": 119, "./_object-gops": 120 }], 128: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_global": 82, "./_object-gopn": 118, "./_object-gops": 119 }], 127: [function (require, module, exports) {
     var $parseFloat = require('./_global').parseFloat;
     var $trim = require('./_string-trim').trim;
 
@@ -8508,7 +8964,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       var result = $parseFloat(string);
       return result === 0 && string.charAt(0) == '-' ? -0 : result;
     } : $parseFloat;
-  }, { "./_global": 83, "./_string-trim": 151, "./_string-ws": 152 }], 129: [function (require, module, exports) {
+  }, { "./_global": 82, "./_string-trim": 150, "./_string-ws": 151 }], 128: [function (require, module, exports) {
     var $parseInt = require('./_global').parseInt;
     var $trim = require('./_string-trim').trim;
     var ws = require('./_string-ws');
@@ -8518,7 +8974,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       var string = $trim(String(str), 3);
       return $parseInt(string, radix >>> 0 || (hex.test(string) ? 16 : 10));
     } : $parseInt;
-  }, { "./_global": 83, "./_string-trim": 151, "./_string-ws": 152 }], 130: [function (require, module, exports) {
+  }, { "./_global": 82, "./_string-trim": 150, "./_string-ws": 151 }], 129: [function (require, module, exports) {
     module.exports = function (exec) {
       try {
         return { e: false, v: exec() };
@@ -8526,7 +8982,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return { e: true, v: e };
       }
     };
-  }, {}], 131: [function (require, module, exports) {
+  }, {}], 130: [function (require, module, exports) {
     var anObject = require('./_an-object');
     var isObject = require('./_is-object');
     var newPromiseCapability = require('./_new-promise-capability');
@@ -8539,7 +8995,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       resolve(x);
       return promiseCapability.promise;
     };
-  }, { "./_an-object": 50, "./_is-object": 94, "./_new-promise-capability": 111 }], 132: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_is-object": 93, "./_new-promise-capability": 110 }], 131: [function (require, module, exports) {
     module.exports = function (bitmap, value) {
       return {
         enumerable: !(bitmap & 1),
@@ -8548,14 +9004,14 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         value: value
       };
     };
-  }, {}], 133: [function (require, module, exports) {
+  }, {}], 132: [function (require, module, exports) {
     var redefine = require('./_redefine');
     module.exports = function (target, src, safe) {
       for (var key in src) {
         redefine(target, key, src[key], safe);
       }return target;
     };
-  }, { "./_redefine": 134 }], 134: [function (require, module, exports) {
+  }, { "./_redefine": 133 }], 133: [function (require, module, exports) {
     var global = require('./_global');
     var hide = require('./_hide');
     var has = require('./_has');
@@ -8586,7 +9042,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     })(Function.prototype, TO_STRING, function toString() {
       return typeof this == 'function' && this[SRC] || $toString.call(this);
     });
-  }, { "./_core": 66, "./_global": 83, "./_has": 84, "./_hide": 85, "./_uid": 164 }], 135: [function (require, module, exports) {
+  }, { "./_core": 65, "./_global": 82, "./_has": 83, "./_hide": 84, "./_uid": 163 }], 134: [function (require, module, exports) {
     module.exports = function (regExp, replace) {
       var replacer = replace === Object(replace) ? function (part) {
         return replace[part];
@@ -8595,11 +9051,11 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return String(it).replace(regExp, replacer);
       };
     };
-  }, {}], 136: [function (require, module, exports) {
+  }, {}], 135: [function (require, module, exports) {
     module.exports = Object.is || function is(x, y) {
       return x === y ? x !== 0 || 1 / x === 1 / y : x != x && y != y;
     };
-  }, {}], 137: [function (require, module, exports) {
+  }, {}], 136: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -8628,7 +9084,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           return new this(A);
         } });
     };
-  }, { "./_a-function": 46, "./_ctx": 68, "./_export": 76, "./_for-of": 82 }], 138: [function (require, module, exports) {
+  }, { "./_a-function": 45, "./_ctx": 67, "./_export": 75, "./_for-of": 81 }], 137: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -8642,7 +9098,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           }return new this(A);
         } });
     };
-  }, { "./_export": 76 }], 139: [function (require, module, exports) {
+  }, { "./_export": 75 }], 138: [function (require, module, exports) {
     var isObject = require('./_is-object');
     var anObject = require('./_an-object');
     var check = function check(O, proto) {
@@ -8666,7 +9122,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       }({}, false) : undefined),
       check: check
     };
-  }, { "./_an-object": 50, "./_ctx": 68, "./_is-object": 94, "./_object-gopd": 117 }], 140: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_ctx": 67, "./_is-object": 93, "./_object-gopd": 116 }], 139: [function (require, module, exports) {
     'use strict';
 
     var global = require('./_global');
@@ -8683,7 +9139,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       });
     };
-  }, { "./_descriptors": 72, "./_global": 83, "./_object-dp": 114, "./_wks": 168 }], 141: [function (require, module, exports) {
+  }, { "./_descriptors": 71, "./_global": 82, "./_object-dp": 113, "./_wks": 167 }], 140: [function (require, module, exports) {
     var def = require('./_object-dp').f;
     var has = require('./_has');
     var TAG = require('./_wks')('toStringTag');
@@ -8691,20 +9147,20 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     module.exports = function (it, tag, stat) {
       if (it && !has(it = stat ? it : it.prototype, TAG)) def(it, TAG, { configurable: true, value: tag });
     };
-  }, { "./_has": 84, "./_object-dp": 114, "./_wks": 168 }], 142: [function (require, module, exports) {
+  }, { "./_has": 83, "./_object-dp": 113, "./_wks": 167 }], 141: [function (require, module, exports) {
     var shared = require('./_shared')('keys');
     var uid = require('./_uid');
     module.exports = function (key) {
       return shared[key] || (shared[key] = uid(key));
     };
-  }, { "./_shared": 143, "./_uid": 164 }], 143: [function (require, module, exports) {
+  }, { "./_shared": 142, "./_uid": 163 }], 142: [function (require, module, exports) {
     var global = require('./_global');
     var SHARED = '__core-js_shared__';
     var store = global[SHARED] || (global[SHARED] = {});
     module.exports = function (key) {
       return store[key] || (store[key] = {});
     };
-  }, { "./_global": 83 }], 144: [function (require, module, exports) {
+  }, { "./_global": 82 }], 143: [function (require, module, exports) {
     var anObject = require('./_an-object');
     var aFunction = require('./_a-function');
     var SPECIES = require('./_wks')('species');
@@ -8713,7 +9169,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       var S;
       return C === undefined || (S = anObject(C)[SPECIES]) == undefined ? D : aFunction(S);
     };
-  }, { "./_a-function": 46, "./_an-object": 50, "./_wks": 168 }], 145: [function (require, module, exports) {
+  }, { "./_a-function": 45, "./_an-object": 49, "./_wks": 167 }], 144: [function (require, module, exports) {
     'use strict';
 
     var fails = require('./_fails');
@@ -8723,7 +9179,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         arg ? method.call(null, function () {}, 1) : method.call(null);
       });
     };
-  }, { "./_fails": 78 }], 146: [function (require, module, exports) {
+  }, { "./_fails": 77 }], 145: [function (require, module, exports) {
     var toInteger = require('./_to-integer');
     var defined = require('./_defined');
 
@@ -8738,7 +9194,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return a < 0xd800 || a > 0xdbff || i + 1 === l || (b = s.charCodeAt(i + 1)) < 0xdc00 || b > 0xdfff ? TO_STRING ? s.charAt(i) : a : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
       };
     };
-  }, { "./_defined": 71, "./_to-integer": 156 }], 147: [function (require, module, exports) {
+  }, { "./_defined": 70, "./_to-integer": 155 }], 146: [function (require, module, exports) {
     var isRegExp = require('./_is-regexp');
     var defined = require('./_defined');
 
@@ -8746,7 +9202,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       if (isRegExp(searchString)) throw TypeError('String#' + NAME + " doesn't accept regex!");
       return String(defined(that));
     };
-  }, { "./_defined": 71, "./_is-regexp": 95 }], 148: [function (require, module, exports) {
+  }, { "./_defined": 70, "./_is-regexp": 94 }], 147: [function (require, module, exports) {
     var $export = require('./_export');
     var fails = require('./_fails');
     var defined = require('./_defined');
@@ -8766,7 +9222,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return test !== test.toLowerCase() || test.split('"').length > 3;
       }), 'String', O);
     };
-  }, { "./_defined": 71, "./_export": 76, "./_fails": 78 }], 149: [function (require, module, exports) {
+  }, { "./_defined": 70, "./_export": 75, "./_fails": 77 }], 148: [function (require, module, exports) {
     var toLength = require('./_to-length');
     var repeat = require('./_string-repeat');
     var defined = require('./_defined');
@@ -8782,7 +9238,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       if (stringFiller.length > fillLen) stringFiller = stringFiller.slice(0, fillLen);
       return left ? stringFiller + S : S + stringFiller;
     };
-  }, { "./_defined": 71, "./_string-repeat": 150, "./_to-length": 158 }], 150: [function (require, module, exports) {
+  }, { "./_defined": 70, "./_string-repeat": 149, "./_to-length": 157 }], 149: [function (require, module, exports) {
     'use strict';
 
     var toInteger = require('./_to-integer');
@@ -8797,7 +9253,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         if (n & 1) res += str;
       }return res;
     };
-  }, { "./_defined": 71, "./_to-integer": 156 }], 151: [function (require, module, exports) {
+  }, { "./_defined": 70, "./_to-integer": 155 }], 150: [function (require, module, exports) {
     var $export = require('./_export');
     var defined = require('./_defined');
     var fails = require('./_fails');
@@ -8825,9 +9281,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     };
 
     module.exports = exporter;
-  }, { "./_defined": 71, "./_export": 76, "./_fails": 78, "./_string-ws": 152 }], 152: [function (require, module, exports) {
+  }, { "./_defined": 70, "./_export": 75, "./_fails": 77, "./_string-ws": 151 }], 151: [function (require, module, exports) {
     module.exports = "\t\n\x0B\f\r \xA0\u1680\u180E\u2000\u2001\u2002\u2003" + "\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF";
-  }, {}], 153: [function (require, module, exports) {
+  }, {}], 152: [function (require, module, exports) {
     var ctx = require('./_ctx');
     var invoke = require('./_invoke');
     var html = require('./_html');
@@ -8906,7 +9362,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       set: setTask,
       clear: clearTask
     };
-  }, { "./_cof": 61, "./_ctx": 68, "./_dom-create": 73, "./_global": 83, "./_html": 86, "./_invoke": 89 }], 154: [function (require, module, exports) {
+  }, { "./_cof": 60, "./_ctx": 67, "./_dom-create": 72, "./_global": 82, "./_html": 85, "./_invoke": 88 }], 153: [function (require, module, exports) {
     var toInteger = require('./_to-integer');
     var max = Math.max;
     var min = Math.min;
@@ -8914,7 +9370,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       index = toInteger(index);
       return index < 0 ? max(index + length, 0) : min(index, length);
     };
-  }, { "./_to-integer": 156 }], 155: [function (require, module, exports) {
+  }, { "./_to-integer": 155 }], 154: [function (require, module, exports) {
     var toInteger = require('./_to-integer');
     var toLength = require('./_to-length');
     module.exports = function (it) {
@@ -8924,30 +9380,30 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       if (number !== length) throw RangeError('Wrong length!');
       return length;
     };
-  }, { "./_to-integer": 156, "./_to-length": 158 }], 156: [function (require, module, exports) {
+  }, { "./_to-integer": 155, "./_to-length": 157 }], 155: [function (require, module, exports) {
     var ceil = Math.ceil;
     var floor = Math.floor;
     module.exports = function (it) {
       return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
     };
-  }, {}], 157: [function (require, module, exports) {
+  }, {}], 156: [function (require, module, exports) {
     var IObject = require('./_iobject');
     var defined = require('./_defined');
     module.exports = function (it) {
       return IObject(defined(it));
     };
-  }, { "./_defined": 71, "./_iobject": 90 }], 158: [function (require, module, exports) {
+  }, { "./_defined": 70, "./_iobject": 89 }], 157: [function (require, module, exports) {
     var toInteger = require('./_to-integer');
     var min = Math.min;
     module.exports = function (it) {
       return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0;
     };
-  }, { "./_to-integer": 156 }], 159: [function (require, module, exports) {
+  }, { "./_to-integer": 155 }], 158: [function (require, module, exports) {
     var defined = require('./_defined');
     module.exports = function (it) {
       return Object(defined(it));
     };
-  }, { "./_defined": 71 }], 160: [function (require, module, exports) {
+  }, { "./_defined": 70 }], 159: [function (require, module, exports) {
     var isObject = require('./_is-object');
 
     module.exports = function (it, S) {
@@ -8958,7 +9414,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       if (!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
       throw TypeError("Can't convert object to primitive value");
     };
-  }, { "./_is-object": 94 }], 161: [function (require, module, exports) {
+  }, { "./_is-object": 93 }], 160: [function (require, module, exports) {
     'use strict';
 
     if (require('./_descriptors')) {
@@ -9429,7 +9885,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         if (!LIBRARY && !CORRECT_ITER_NAME) hide(TypedArrayPrototype, ITERATOR, $iterator);
       };
     } else module.exports = function () {};
-  }, { "./_an-instance": 49, "./_array-copy-within": 51, "./_array-fill": 52, "./_array-includes": 54, "./_array-methods": 55, "./_classof": 60, "./_ctx": 68, "./_descriptors": 72, "./_export": 76, "./_fails": 78, "./_global": 83, "./_has": 84, "./_hide": 85, "./_is-array-iter": 91, "./_is-object": 94, "./_iter-detect": 99, "./_iterators": 101, "./_library": 102, "./_object-create": 113, "./_object-dp": 114, "./_object-gopd": 117, "./_object-gopn": 119, "./_object-gpo": 121, "./_property-desc": 132, "./_redefine-all": 133, "./_set-species": 140, "./_species-constructor": 144, "./_to-absolute-index": 154, "./_to-index": 155, "./_to-integer": 156, "./_to-length": 158, "./_to-object": 159, "./_to-primitive": 160, "./_typed": 163, "./_typed-buffer": 162, "./_uid": 164, "./_wks": 168, "./core.get-iterator-method": 169, "./es6.array.iterator": 181 }], 162: [function (require, module, exports) {
+  }, { "./_an-instance": 48, "./_array-copy-within": 50, "./_array-fill": 51, "./_array-includes": 53, "./_array-methods": 54, "./_classof": 59, "./_ctx": 67, "./_descriptors": 71, "./_export": 75, "./_fails": 77, "./_global": 82, "./_has": 83, "./_hide": 84, "./_is-array-iter": 90, "./_is-object": 93, "./_iter-detect": 98, "./_iterators": 100, "./_library": 101, "./_object-create": 112, "./_object-dp": 113, "./_object-gopd": 116, "./_object-gopn": 118, "./_object-gpo": 120, "./_property-desc": 131, "./_redefine-all": 132, "./_set-species": 139, "./_species-constructor": 143, "./_to-absolute-index": 153, "./_to-index": 154, "./_to-integer": 155, "./_to-length": 157, "./_to-object": 158, "./_to-primitive": 159, "./_typed": 162, "./_typed-buffer": 161, "./_uid": 163, "./_wks": 167, "./core.get-iterator-method": 168, "./es6.array.iterator": 180 }], 161: [function (require, module, exports) {
     'use strict';
 
     var global = require('./_global');
@@ -9709,7 +10165,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     hide($DataView[PROTOTYPE], $typed.VIEW, true);
     exports[ARRAY_BUFFER] = $ArrayBuffer;
     exports[DATA_VIEW] = $DataView;
-  }, { "./_an-instance": 49, "./_array-fill": 52, "./_descriptors": 72, "./_fails": 78, "./_global": 83, "./_hide": 85, "./_library": 102, "./_object-dp": 114, "./_object-gopn": 119, "./_redefine-all": 133, "./_set-to-string-tag": 141, "./_to-index": 155, "./_to-integer": 156, "./_to-length": 158, "./_typed": 163 }], 163: [function (require, module, exports) {
+  }, { "./_an-instance": 48, "./_array-fill": 51, "./_descriptors": 71, "./_fails": 77, "./_global": 82, "./_hide": 84, "./_library": 101, "./_object-dp": 113, "./_object-gopn": 118, "./_redefine-all": 132, "./_set-to-string-tag": 140, "./_to-index": 154, "./_to-integer": 155, "./_to-length": 157, "./_typed": 162 }], 162: [function (require, module, exports) {
     var global = require('./_global');
     var hide = require('./_hide');
     var uid = require('./_uid');
@@ -9736,19 +10192,19 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       TYPED: TYPED,
       VIEW: VIEW
     };
-  }, { "./_global": 83, "./_hide": 85, "./_uid": 164 }], 164: [function (require, module, exports) {
+  }, { "./_global": 82, "./_hide": 84, "./_uid": 163 }], 163: [function (require, module, exports) {
     var id = 0;
     var px = Math.random();
     module.exports = function (key) {
       return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
     };
-  }, {}], 165: [function (require, module, exports) {
+  }, {}], 164: [function (require, module, exports) {
     var isObject = require('./_is-object');
     module.exports = function (it, TYPE) {
       if (!isObject(it) || it._t !== TYPE) throw TypeError('Incompatible receiver, ' + TYPE + ' required!');
       return it;
     };
-  }, { "./_is-object": 94 }], 166: [function (require, module, exports) {
+  }, { "./_is-object": 93 }], 165: [function (require, module, exports) {
     var global = require('./_global');
     var core = require('./_core');
     var LIBRARY = require('./_library');
@@ -9758,9 +10214,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       var $Symbol = core.Symbol || (core.Symbol = LIBRARY ? {} : global.Symbol || {});
       if (name.charAt(0) != '_' && !(name in $Symbol)) defineProperty($Symbol, name, { value: wksExt.f(name) });
     };
-  }, { "./_core": 66, "./_global": 83, "./_library": 102, "./_object-dp": 114, "./_wks-ext": 167 }], 167: [function (require, module, exports) {
+  }, { "./_core": 65, "./_global": 82, "./_library": 101, "./_object-dp": 113, "./_wks-ext": 166 }], 166: [function (require, module, exports) {
     exports.f = require('./_wks');
-  }, { "./_wks": 168 }], 168: [function (require, module, exports) {
+  }, { "./_wks": 167 }], 167: [function (require, module, exports) {
     var store = require('./_shared')('wks');
     var uid = require('./_uid');
     var _Symbol2 = require('./_global').Symbol;
@@ -9771,27 +10227,27 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     };
 
     $exports.store = store;
-  }, { "./_global": 83, "./_shared": 143, "./_uid": 164 }], 169: [function (require, module, exports) {
+  }, { "./_global": 82, "./_shared": 142, "./_uid": 163 }], 168: [function (require, module, exports) {
     var classof = require('./_classof');
     var ITERATOR = require('./_wks')('iterator');
     var Iterators = require('./_iterators');
     module.exports = require('./_core').getIteratorMethod = function (it) {
       if (it != undefined) return it[ITERATOR] || it['@@iterator'] || Iterators[classof(it)];
     };
-  }, { "./_classof": 60, "./_core": 66, "./_iterators": 101, "./_wks": 168 }], 170: [function (require, module, exports) {
+  }, { "./_classof": 59, "./_core": 65, "./_iterators": 100, "./_wks": 167 }], 169: [function (require, module, exports) {
     var $export = require('./_export');
     var $re = require('./_replacer')(/[\\^$*+?.()|[\]{}]/g, '\\$&');
 
     $export($export.S, 'RegExp', { escape: function escape(it) {
         return $re(it);
       } });
-  }, { "./_export": 76, "./_replacer": 135 }], 171: [function (require, module, exports) {
+  }, { "./_export": 75, "./_replacer": 134 }], 170: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.P, 'Array', { copyWithin: require('./_array-copy-within') });
 
     require('./_add-to-unscopables')('copyWithin');
-  }, { "./_add-to-unscopables": 48, "./_array-copy-within": 51, "./_export": 76 }], 172: [function (require, module, exports) {
+  }, { "./_add-to-unscopables": 47, "./_array-copy-within": 50, "./_export": 75 }], 171: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -9802,13 +10258,13 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $every(this, callbackfn, arguments[1]);
       }
     });
-  }, { "./_array-methods": 55, "./_export": 76, "./_strict-method": 145 }], 173: [function (require, module, exports) {
+  }, { "./_array-methods": 54, "./_export": 75, "./_strict-method": 144 }], 172: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.P, 'Array', { fill: require('./_array-fill') });
 
     require('./_add-to-unscopables')('fill');
-  }, { "./_add-to-unscopables": 48, "./_array-fill": 52, "./_export": 76 }], 174: [function (require, module, exports) {
+  }, { "./_add-to-unscopables": 47, "./_array-fill": 51, "./_export": 75 }], 173: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -9819,7 +10275,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $filter(this, callbackfn, arguments[1]);
       }
     });
-  }, { "./_array-methods": 55, "./_export": 76, "./_strict-method": 145 }], 175: [function (require, module, exports) {
+  }, { "./_array-methods": 54, "./_export": 75, "./_strict-method": 144 }], 174: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -9836,7 +10292,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       }
     });
     require('./_add-to-unscopables')(KEY);
-  }, { "./_add-to-unscopables": 48, "./_array-methods": 55, "./_export": 76 }], 176: [function (require, module, exports) {
+  }, { "./_add-to-unscopables": 47, "./_array-methods": 54, "./_export": 75 }], 175: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -9853,7 +10309,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       }
     });
     require('./_add-to-unscopables')(KEY);
-  }, { "./_add-to-unscopables": 48, "./_array-methods": 55, "./_export": 76 }], 177: [function (require, module, exports) {
+  }, { "./_add-to-unscopables": 47, "./_array-methods": 54, "./_export": 75 }], 176: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -9865,7 +10321,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $forEach(this, callbackfn, arguments[1]);
       }
     });
-  }, { "./_array-methods": 55, "./_export": 76, "./_strict-method": 145 }], 178: [function (require, module, exports) {
+  }, { "./_array-methods": 54, "./_export": 75, "./_strict-method": 144 }], 177: [function (require, module, exports) {
     'use strict';
 
     var ctx = require('./_ctx');
@@ -9905,7 +10361,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return result;
       }
     });
-  }, { "./_create-property": 67, "./_ctx": 68, "./_export": 76, "./_is-array-iter": 91, "./_iter-call": 96, "./_iter-detect": 99, "./_to-length": 158, "./_to-object": 159, "./core.get-iterator-method": 169 }], 179: [function (require, module, exports) {
+  }, { "./_create-property": 66, "./_ctx": 67, "./_export": 75, "./_is-array-iter": 90, "./_iter-call": 95, "./_iter-detect": 98, "./_to-length": 157, "./_to-object": 158, "./core.get-iterator-method": 168 }], 178: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -9918,11 +10374,11 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return NEGATIVE_ZERO ? $native.apply(this, arguments) || 0 : $indexOf(this, searchElement, arguments[1]);
       }
     });
-  }, { "./_array-includes": 54, "./_export": 76, "./_strict-method": 145 }], 180: [function (require, module, exports) {
+  }, { "./_array-includes": 53, "./_export": 75, "./_strict-method": 144 }], 179: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Array', { isArray: require('./_is-array') });
-  }, { "./_export": 76, "./_is-array": 92 }], 181: [function (require, module, exports) {
+  }, { "./_export": 75, "./_is-array": 91 }], 180: [function (require, module, exports) {
     'use strict';
 
     var addToUnscopables = require('./_add-to-unscopables');
@@ -9952,7 +10408,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     addToUnscopables('keys');
     addToUnscopables('values');
     addToUnscopables('entries');
-  }, { "./_add-to-unscopables": 48, "./_iter-define": 98, "./_iter-step": 100, "./_iterators": 101, "./_to-iobject": 157 }], 182: [function (require, module, exports) {
+  }, { "./_add-to-unscopables": 47, "./_iter-define": 97, "./_iter-step": 99, "./_iterators": 100, "./_to-iobject": 156 }], 181: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -9964,7 +10420,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return arrayJoin.call(toIObject(this), separator === undefined ? ',' : separator);
       }
     });
-  }, { "./_export": 76, "./_iobject": 90, "./_strict-method": 145, "./_to-iobject": 157 }], 183: [function (require, module, exports) {
+  }, { "./_export": 75, "./_iobject": 89, "./_strict-method": 144, "./_to-iobject": 156 }], 182: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -9987,7 +10443,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }return -1;
       }
     });
-  }, { "./_export": 76, "./_strict-method": 145, "./_to-integer": 156, "./_to-iobject": 157, "./_to-length": 158 }], 184: [function (require, module, exports) {
+  }, { "./_export": 75, "./_strict-method": 144, "./_to-integer": 155, "./_to-iobject": 156, "./_to-length": 157 }], 183: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -9998,7 +10454,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $map(this, callbackfn, arguments[1]);
       }
     });
-  }, { "./_array-methods": 55, "./_export": 76, "./_strict-method": 145 }], 185: [function (require, module, exports) {
+  }, { "./_array-methods": 54, "./_export": 75, "./_strict-method": 144 }], 184: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -10018,7 +10474,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return result;
       }
     });
-  }, { "./_create-property": 67, "./_export": 76, "./_fails": 78 }], 186: [function (require, module, exports) {
+  }, { "./_create-property": 66, "./_export": 75, "./_fails": 77 }], 185: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -10029,7 +10485,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $reduce(this, callbackfn, arguments.length, arguments[1], true);
       }
     });
-  }, { "./_array-reduce": 56, "./_export": 76, "./_strict-method": 145 }], 187: [function (require, module, exports) {
+  }, { "./_array-reduce": 55, "./_export": 75, "./_strict-method": 144 }], 186: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -10040,7 +10496,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $reduce(this, callbackfn, arguments.length, arguments[1], false);
       }
     });
-  }, { "./_array-reduce": 56, "./_export": 76, "./_strict-method": 145 }], 188: [function (require, module, exports) {
+  }, { "./_array-reduce": 55, "./_export": 75, "./_strict-method": 144 }], 187: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -10068,7 +10524,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }return cloned;
       }
     });
-  }, { "./_cof": 61, "./_export": 76, "./_fails": 78, "./_html": 86, "./_to-absolute-index": 154, "./_to-length": 158 }], 189: [function (require, module, exports) {
+  }, { "./_cof": 60, "./_export": 75, "./_fails": 77, "./_html": 85, "./_to-absolute-index": 153, "./_to-length": 157 }], 188: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -10079,7 +10535,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $some(this, callbackfn, arguments[1]);
       }
     });
-  }, { "./_array-methods": 55, "./_export": 76, "./_strict-method": 145 }], 190: [function (require, module, exports) {
+  }, { "./_array-methods": 54, "./_export": 75, "./_strict-method": 144 }], 189: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -10098,22 +10554,22 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return comparefn === undefined ? $sort.call(toObject(this)) : $sort.call(toObject(this), aFunction(comparefn));
       }
     });
-  }, { "./_a-function": 46, "./_export": 76, "./_fails": 78, "./_strict-method": 145, "./_to-object": 159 }], 191: [function (require, module, exports) {
+  }, { "./_a-function": 45, "./_export": 75, "./_fails": 77, "./_strict-method": 144, "./_to-object": 158 }], 190: [function (require, module, exports) {
     require('./_set-species')('Array');
-  }, { "./_set-species": 140 }], 192: [function (require, module, exports) {
+  }, { "./_set-species": 139 }], 191: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Date', { now: function now() {
         return new Date().getTime();
       } });
-  }, { "./_export": 76 }], 193: [function (require, module, exports) {
+  }, { "./_export": 75 }], 192: [function (require, module, exports) {
     var $export = require('./_export');
     var toISOString = require('./_date-to-iso-string');
 
     $export($export.P + $export.F * (Date.prototype.toISOString !== toISOString), 'Date', {
       toISOString: toISOString
     });
-  }, { "./_date-to-iso-string": 69, "./_export": 76 }], 194: [function (require, module, exports) {
+  }, { "./_date-to-iso-string": 68, "./_export": 75 }], 193: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -10131,12 +10587,12 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return typeof pv == 'number' && !isFinite(pv) ? null : O.toISOString();
       }
     });
-  }, { "./_export": 76, "./_fails": 78, "./_to-object": 159, "./_to-primitive": 160 }], 195: [function (require, module, exports) {
+  }, { "./_export": 75, "./_fails": 77, "./_to-object": 158, "./_to-primitive": 159 }], 194: [function (require, module, exports) {
     var TO_PRIMITIVE = require('./_wks')('toPrimitive');
     var proto = Date.prototype;
 
     if (!(TO_PRIMITIVE in proto)) require('./_hide')(proto, TO_PRIMITIVE, require('./_date-to-primitive'));
-  }, { "./_date-to-primitive": 70, "./_hide": 85, "./_wks": 168 }], 196: [function (require, module, exports) {
+  }, { "./_date-to-primitive": 69, "./_hide": 84, "./_wks": 167 }], 195: [function (require, module, exports) {
     var DateProto = Date.prototype;
     var INVALID_DATE = 'Invalid Date';
     var TO_STRING = 'toString';
@@ -10149,11 +10605,11 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return value === value ? $toString.call(this) : INVALID_DATE;
       });
     }
-  }, { "./_redefine": 134 }], 197: [function (require, module, exports) {
+  }, { "./_redefine": 133 }], 196: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.P, 'Function', { bind: require('./_bind') });
-  }, { "./_bind": 59, "./_export": 76 }], 198: [function (require, module, exports) {
+  }, { "./_bind": 58, "./_export": 75 }], 197: [function (require, module, exports) {
     'use strict';
 
     var isObject = require('./_is-object');
@@ -10169,7 +10625,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           if (this.prototype === O) return true;
         }return false;
       } });
-  }, { "./_is-object": 94, "./_object-dp": 114, "./_object-gpo": 121, "./_wks": 168 }], 199: [function (require, module, exports) {
+  }, { "./_is-object": 93, "./_object-dp": 113, "./_object-gpo": 120, "./_wks": 167 }], 198: [function (require, module, exports) {
     var dP = require('./_object-dp').f;
     var FProto = Function.prototype;
     var nameRE = /^\s*function ([^ (]*)/;
@@ -10185,7 +10641,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }
     });
-  }, { "./_descriptors": 72, "./_object-dp": 114 }], 200: [function (require, module, exports) {
+  }, { "./_descriptors": 71, "./_object-dp": 113 }], 199: [function (require, module, exports) {
     'use strict';
 
     var strong = require('./_collection-strong');
@@ -10206,7 +10662,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return strong.def(validate(this, MAP), key === 0 ? 0 : key, value);
       }
     }, strong, true);
-  }, { "./_collection": 65, "./_collection-strong": 62, "./_validate-collection": 165 }], 201: [function (require, module, exports) {
+  }, { "./_collection": 64, "./_collection-strong": 61, "./_validate-collection": 164 }], 200: [function (require, module, exports) {
     var $export = require('./_export');
     var log1p = require('./_math-log1p');
     var sqrt = Math.sqrt;
@@ -10217,7 +10673,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return (x = +x) < 1 ? NaN : x > 94906265.62425156 ? Math.log(x) + Math.LN2 : log1p(x - 1 + sqrt(x - 1) * sqrt(x + 1));
       }
     });
-  }, { "./_export": 76, "./_math-log1p": 105 }], 202: [function (require, module, exports) {
+  }, { "./_export": 75, "./_math-log1p": 104 }], 201: [function (require, module, exports) {
     var $export = require('./_export');
     var $asinh = Math.asinh;
 
@@ -10226,7 +10682,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     }
 
     $export($export.S + $export.F * !($asinh && 1 / $asinh(0) > 0), 'Math', { asinh: asinh });
-  }, { "./_export": 76 }], 203: [function (require, module, exports) {
+  }, { "./_export": 75 }], 202: [function (require, module, exports) {
     var $export = require('./_export');
     var $atanh = Math.atanh;
 
@@ -10235,7 +10691,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return (x = +x) == 0 ? x : Math.log((1 + x) / (1 - x)) / 2;
       }
     });
-  }, { "./_export": 76 }], 204: [function (require, module, exports) {
+  }, { "./_export": 75 }], 203: [function (require, module, exports) {
     var $export = require('./_export');
     var sign = require('./_math-sign');
 
@@ -10244,7 +10700,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return sign(x = +x) * Math.pow(Math.abs(x), 1 / 3);
       }
     });
-  }, { "./_export": 76, "./_math-sign": 107 }], 205: [function (require, module, exports) {
+  }, { "./_export": 75, "./_math-sign": 106 }], 204: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Math', {
@@ -10252,7 +10708,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return (x >>>= 0) ? 31 - Math.floor(Math.log(x + 0.5) * Math.LOG2E) : 32;
       }
     });
-  }, { "./_export": 76 }], 206: [function (require, module, exports) {
+  }, { "./_export": 75 }], 205: [function (require, module, exports) {
     var $export = require('./_export');
     var exp = Math.exp;
 
@@ -10261,16 +10717,16 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return (exp(x = +x) + exp(-x)) / 2;
       }
     });
-  }, { "./_export": 76 }], 207: [function (require, module, exports) {
+  }, { "./_export": 75 }], 206: [function (require, module, exports) {
     var $export = require('./_export');
     var $expm1 = require('./_math-expm1');
 
     $export($export.S + $export.F * ($expm1 != Math.expm1), 'Math', { expm1: $expm1 });
-  }, { "./_export": 76, "./_math-expm1": 103 }], 208: [function (require, module, exports) {
+  }, { "./_export": 75, "./_math-expm1": 102 }], 207: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Math', { fround: require('./_math-fround') });
-  }, { "./_export": 76, "./_math-fround": 104 }], 209: [function (require, module, exports) {
+  }, { "./_export": 75, "./_math-fround": 103 }], 208: [function (require, module, exports) {
     var $export = require('./_export');
     var abs = Math.abs;
 
@@ -10295,7 +10751,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return larg === Infinity ? Infinity : larg * Math.sqrt(sum);
       }
     });
-  }, { "./_export": 76 }], 210: [function (require, module, exports) {
+  }, { "./_export": 75 }], 209: [function (require, module, exports) {
     var $export = require('./_export');
     var $imul = Math.imul;
 
@@ -10311,7 +10767,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return 0 | xl * yl + ((UINT16 & xn >>> 16) * yl + xl * (UINT16 & yn >>> 16) << 16 >>> 0);
       }
     });
-  }, { "./_export": 76, "./_fails": 78 }], 211: [function (require, module, exports) {
+  }, { "./_export": 75, "./_fails": 77 }], 210: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Math', {
@@ -10319,11 +10775,11 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return Math.log(x) * Math.LOG10E;
       }
     });
-  }, { "./_export": 76 }], 212: [function (require, module, exports) {
+  }, { "./_export": 75 }], 211: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Math', { log1p: require('./_math-log1p') });
-  }, { "./_export": 76, "./_math-log1p": 105 }], 213: [function (require, module, exports) {
+  }, { "./_export": 75, "./_math-log1p": 104 }], 212: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Math', {
@@ -10331,11 +10787,11 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return Math.log(x) / Math.LN2;
       }
     });
-  }, { "./_export": 76 }], 214: [function (require, module, exports) {
+  }, { "./_export": 75 }], 213: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Math', { sign: require('./_math-sign') });
-  }, { "./_export": 76, "./_math-sign": 107 }], 215: [function (require, module, exports) {
+  }, { "./_export": 75, "./_math-sign": 106 }], 214: [function (require, module, exports) {
     var $export = require('./_export');
     var expm1 = require('./_math-expm1');
     var exp = Math.exp;
@@ -10347,7 +10803,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return Math.abs(x = +x) < 1 ? (expm1(x) - expm1(-x)) / 2 : (exp(x - 1) - exp(-x - 1)) * (Math.E / 2);
       }
     });
-  }, { "./_export": 76, "./_fails": 78, "./_math-expm1": 103 }], 216: [function (require, module, exports) {
+  }, { "./_export": 75, "./_fails": 77, "./_math-expm1": 102 }], 215: [function (require, module, exports) {
     var $export = require('./_export');
     var expm1 = require('./_math-expm1');
     var exp = Math.exp;
@@ -10359,7 +10815,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return a == Infinity ? 1 : b == Infinity ? -1 : (a - b) / (exp(x) + exp(-x));
       }
     });
-  }, { "./_export": 76, "./_math-expm1": 103 }], 217: [function (require, module, exports) {
+  }, { "./_export": 75, "./_math-expm1": 102 }], 216: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Math', {
@@ -10367,7 +10823,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return (it > 0 ? Math.floor : Math.ceil)(it);
       }
     });
-  }, { "./_export": 76 }], 218: [function (require, module, exports) {
+  }, { "./_export": 75 }], 217: [function (require, module, exports) {
     'use strict';
 
     var global = require('./_global');
@@ -10432,11 +10888,11 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       proto.constructor = $Number;
       require('./_redefine')(global, NUMBER, $Number);
     }
-  }, { "./_cof": 61, "./_descriptors": 72, "./_fails": 78, "./_global": 83, "./_has": 84, "./_inherit-if-required": 88, "./_object-create": 113, "./_object-dp": 114, "./_object-gopd": 117, "./_object-gopn": 119, "./_redefine": 134, "./_string-trim": 151, "./_to-primitive": 160 }], 219: [function (require, module, exports) {
+  }, { "./_cof": 60, "./_descriptors": 71, "./_fails": 77, "./_global": 82, "./_has": 83, "./_inherit-if-required": 87, "./_object-create": 112, "./_object-dp": 113, "./_object-gopd": 116, "./_object-gopn": 118, "./_redefine": 133, "./_string-trim": 150, "./_to-primitive": 159 }], 218: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Number', { EPSILON: Math.pow(2, -52) });
-  }, { "./_export": 76 }], 220: [function (require, module, exports) {
+  }, { "./_export": 75 }], 219: [function (require, module, exports) {
     var $export = require('./_export');
     var _isFinite = require('./_global').isFinite;
 
@@ -10445,11 +10901,11 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return typeof it == 'number' && _isFinite(it);
       }
     });
-  }, { "./_export": 76, "./_global": 83 }], 221: [function (require, module, exports) {
+  }, { "./_export": 75, "./_global": 82 }], 220: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Number', { isInteger: require('./_is-integer') });
-  }, { "./_export": 76, "./_is-integer": 93 }], 222: [function (require, module, exports) {
+  }, { "./_export": 75, "./_is-integer": 92 }], 221: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Number', {
@@ -10457,7 +10913,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return number != number;
       }
     });
-  }, { "./_export": 76 }], 223: [function (require, module, exports) {
+  }, { "./_export": 75 }], 222: [function (require, module, exports) {
     var $export = require('./_export');
     var isInteger = require('./_is-integer');
     var abs = Math.abs;
@@ -10467,25 +10923,25 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return isInteger(number) && abs(number) <= 0x1fffffffffffff;
       }
     });
-  }, { "./_export": 76, "./_is-integer": 93 }], 224: [function (require, module, exports) {
+  }, { "./_export": 75, "./_is-integer": 92 }], 223: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Number', { MAX_SAFE_INTEGER: 0x1fffffffffffff });
-  }, { "./_export": 76 }], 225: [function (require, module, exports) {
+  }, { "./_export": 75 }], 224: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Number', { MIN_SAFE_INTEGER: -0x1fffffffffffff });
-  }, { "./_export": 76 }], 226: [function (require, module, exports) {
+  }, { "./_export": 75 }], 225: [function (require, module, exports) {
     var $export = require('./_export');
     var $parseFloat = require('./_parse-float');
 
     $export($export.S + $export.F * (Number.parseFloat != $parseFloat), 'Number', { parseFloat: $parseFloat });
-  }, { "./_export": 76, "./_parse-float": 128 }], 227: [function (require, module, exports) {
+  }, { "./_export": 75, "./_parse-float": 127 }], 226: [function (require, module, exports) {
     var $export = require('./_export');
     var $parseInt = require('./_parse-int');
 
     $export($export.S + $export.F * (Number.parseInt != $parseInt), 'Number', { parseInt: $parseInt });
-  }, { "./_export": 76, "./_parse-int": 129 }], 228: [function (require, module, exports) {
+  }, { "./_export": 75, "./_parse-int": 128 }], 227: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -10595,7 +11051,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }return m;
       }
     });
-  }, { "./_a-number-value": 47, "./_export": 76, "./_fails": 78, "./_string-repeat": 150, "./_to-integer": 156 }], 229: [function (require, module, exports) {
+  }, { "./_a-number-value": 46, "./_export": 75, "./_fails": 77, "./_string-repeat": 149, "./_to-integer": 155 }], 228: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -10613,23 +11069,23 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return precision === undefined ? $toPrecision.call(that) : $toPrecision.call(that, precision);
       }
     });
-  }, { "./_a-number-value": 47, "./_export": 76, "./_fails": 78 }], 230: [function (require, module, exports) {
+  }, { "./_a-number-value": 46, "./_export": 75, "./_fails": 77 }], 229: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S + $export.F, 'Object', { assign: require('./_object-assign') });
-  }, { "./_export": 76, "./_object-assign": 112 }], 231: [function (require, module, exports) {
+  }, { "./_export": 75, "./_object-assign": 111 }], 230: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Object', { create: require('./_object-create') });
-  }, { "./_export": 76, "./_object-create": 113 }], 232: [function (require, module, exports) {
+  }, { "./_export": 75, "./_object-create": 112 }], 231: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S + $export.F * !require('./_descriptors'), 'Object', { defineProperties: require('./_object-dps') });
-  }, { "./_descriptors": 72, "./_export": 76, "./_object-dps": 115 }], 233: [function (require, module, exports) {
+  }, { "./_descriptors": 71, "./_export": 75, "./_object-dps": 114 }], 232: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S + $export.F * !require('./_descriptors'), 'Object', { defineProperty: require('./_object-dp').f });
-  }, { "./_descriptors": 72, "./_export": 76, "./_object-dp": 114 }], 234: [function (require, module, exports) {
+  }, { "./_descriptors": 71, "./_export": 75, "./_object-dp": 113 }], 233: [function (require, module, exports) {
     var isObject = require('./_is-object');
     var meta = require('./_meta').onFreeze;
 
@@ -10638,7 +11094,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $freeze && isObject(it) ? $freeze(meta(it)) : it;
       };
     });
-  }, { "./_is-object": 94, "./_meta": 108, "./_object-sap": 125 }], 235: [function (require, module, exports) {
+  }, { "./_is-object": 93, "./_meta": 107, "./_object-sap": 124 }], 234: [function (require, module, exports) {
     var toIObject = require('./_to-iobject');
     var $getOwnPropertyDescriptor = require('./_object-gopd').f;
 
@@ -10647,11 +11103,11 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $getOwnPropertyDescriptor(toIObject(it), key);
       };
     });
-  }, { "./_object-gopd": 117, "./_object-sap": 125, "./_to-iobject": 157 }], 236: [function (require, module, exports) {
+  }, { "./_object-gopd": 116, "./_object-sap": 124, "./_to-iobject": 156 }], 235: [function (require, module, exports) {
     require('./_object-sap')('getOwnPropertyNames', function () {
       return require('./_object-gopn-ext').f;
     });
-  }, { "./_object-gopn-ext": 118, "./_object-sap": 125 }], 237: [function (require, module, exports) {
+  }, { "./_object-gopn-ext": 117, "./_object-sap": 124 }], 236: [function (require, module, exports) {
     var toObject = require('./_to-object');
     var $getPrototypeOf = require('./_object-gpo');
 
@@ -10660,7 +11116,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $getPrototypeOf(toObject(it));
       };
     });
-  }, { "./_object-gpo": 121, "./_object-sap": 125, "./_to-object": 159 }], 238: [function (require, module, exports) {
+  }, { "./_object-gpo": 120, "./_object-sap": 124, "./_to-object": 158 }], 237: [function (require, module, exports) {
     var isObject = require('./_is-object');
 
     require('./_object-sap')('isExtensible', function ($isExtensible) {
@@ -10668,7 +11124,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return isObject(it) ? $isExtensible ? $isExtensible(it) : true : false;
       };
     });
-  }, { "./_is-object": 94, "./_object-sap": 125 }], 239: [function (require, module, exports) {
+  }, { "./_is-object": 93, "./_object-sap": 124 }], 238: [function (require, module, exports) {
     var isObject = require('./_is-object');
 
     require('./_object-sap')('isFrozen', function ($isFrozen) {
@@ -10676,7 +11132,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return isObject(it) ? $isFrozen ? $isFrozen(it) : false : true;
       };
     });
-  }, { "./_is-object": 94, "./_object-sap": 125 }], 240: [function (require, module, exports) {
+  }, { "./_is-object": 93, "./_object-sap": 124 }], 239: [function (require, module, exports) {
     var isObject = require('./_is-object');
 
     require('./_object-sap')('isSealed', function ($isSealed) {
@@ -10684,10 +11140,10 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return isObject(it) ? $isSealed ? $isSealed(it) : false : true;
       };
     });
-  }, { "./_is-object": 94, "./_object-sap": 125 }], 241: [function (require, module, exports) {
+  }, { "./_is-object": 93, "./_object-sap": 124 }], 240: [function (require, module, exports) {
     var $export = require('./_export');
     $export($export.S, 'Object', { is: require('./_same-value') });
-  }, { "./_export": 76, "./_same-value": 136 }], 242: [function (require, module, exports) {
+  }, { "./_export": 75, "./_same-value": 135 }], 241: [function (require, module, exports) {
     var toObject = require('./_to-object');
     var $keys = require('./_object-keys');
 
@@ -10696,7 +11152,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $keys(toObject(it));
       };
     });
-  }, { "./_object-keys": 123, "./_object-sap": 125, "./_to-object": 159 }], 243: [function (require, module, exports) {
+  }, { "./_object-keys": 122, "./_object-sap": 124, "./_to-object": 158 }], 242: [function (require, module, exports) {
     var isObject = require('./_is-object');
     var meta = require('./_meta').onFreeze;
 
@@ -10705,7 +11161,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $preventExtensions && isObject(it) ? $preventExtensions(meta(it)) : it;
       };
     });
-  }, { "./_is-object": 94, "./_meta": 108, "./_object-sap": 125 }], 244: [function (require, module, exports) {
+  }, { "./_is-object": 93, "./_meta": 107, "./_object-sap": 124 }], 243: [function (require, module, exports) {
     var isObject = require('./_is-object');
     var meta = require('./_meta').onFreeze;
 
@@ -10714,10 +11170,10 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $seal && isObject(it) ? $seal(meta(it)) : it;
       };
     });
-  }, { "./_is-object": 94, "./_meta": 108, "./_object-sap": 125 }], 245: [function (require, module, exports) {
+  }, { "./_is-object": 93, "./_meta": 107, "./_object-sap": 124 }], 244: [function (require, module, exports) {
     var $export = require('./_export');
     $export($export.S, 'Object', { setPrototypeOf: require('./_set-proto').set });
-  }, { "./_export": 76, "./_set-proto": 139 }], 246: [function (require, module, exports) {
+  }, { "./_export": 75, "./_set-proto": 138 }], 245: [function (require, module, exports) {
     'use strict';
 
     var classof = require('./_classof');
@@ -10728,17 +11184,17 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return '[object ' + classof(this) + ']';
       }, true);
     }
-  }, { "./_classof": 60, "./_redefine": 134, "./_wks": 168 }], 247: [function (require, module, exports) {
+  }, { "./_classof": 59, "./_redefine": 133, "./_wks": 167 }], 246: [function (require, module, exports) {
     var $export = require('./_export');
     var $parseFloat = require('./_parse-float');
 
     $export($export.G + $export.F * (parseFloat != $parseFloat), { parseFloat: $parseFloat });
-  }, { "./_export": 76, "./_parse-float": 128 }], 248: [function (require, module, exports) {
+  }, { "./_export": 75, "./_parse-float": 127 }], 247: [function (require, module, exports) {
     var $export = require('./_export');
     var $parseInt = require('./_parse-int');
 
     $export($export.G + $export.F * (parseInt != $parseInt), { parseInt: $parseInt });
-  }, { "./_export": 76, "./_parse-int": 129 }], 249: [function (require, module, exports) {
+  }, { "./_export": 75, "./_parse-int": 128 }], 248: [function (require, module, exports) {
     'use strict';
 
     var LIBRARY = require('./_library');
@@ -11010,7 +11466,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return capability.promise;
       }
     });
-  }, { "./_a-function": 46, "./_an-instance": 49, "./_classof": 60, "./_core": 66, "./_ctx": 68, "./_export": 76, "./_for-of": 82, "./_global": 83, "./_is-object": 94, "./_iter-detect": 99, "./_library": 102, "./_microtask": 110, "./_new-promise-capability": 111, "./_perform": 130, "./_promise-resolve": 131, "./_redefine-all": 133, "./_set-species": 140, "./_set-to-string-tag": 141, "./_species-constructor": 144, "./_task": 153, "./_wks": 168 }], 250: [function (require, module, exports) {
+  }, { "./_a-function": 45, "./_an-instance": 48, "./_classof": 59, "./_core": 65, "./_ctx": 67, "./_export": 75, "./_for-of": 81, "./_global": 82, "./_is-object": 93, "./_iter-detect": 98, "./_library": 101, "./_microtask": 109, "./_new-promise-capability": 110, "./_perform": 129, "./_promise-resolve": 130, "./_redefine-all": 132, "./_set-species": 139, "./_set-to-string-tag": 140, "./_species-constructor": 143, "./_task": 152, "./_wks": 167 }], 249: [function (require, module, exports) {
     var $export = require('./_export');
     var aFunction = require('./_a-function');
     var anObject = require('./_an-object');
@@ -11026,7 +11482,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return rApply ? rApply(T, thisArgument, L) : fApply.call(T, thisArgument, L);
       }
     });
-  }, { "./_a-function": 46, "./_an-object": 50, "./_export": 76, "./_fails": 78, "./_global": 83 }], 251: [function (require, module, exports) {
+  }, { "./_a-function": 45, "./_an-object": 49, "./_export": 75, "./_fails": 77, "./_global": 82 }], 250: [function (require, module, exports) {
     var $export = require('./_export');
     var create = require('./_object-create');
     var aFunction = require('./_a-function');
@@ -11075,7 +11531,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return isObject(result) ? result : instance;
       }
     });
-  }, { "./_a-function": 46, "./_an-object": 50, "./_bind": 59, "./_export": 76, "./_fails": 78, "./_global": 83, "./_is-object": 94, "./_object-create": 113 }], 252: [function (require, module, exports) {
+  }, { "./_a-function": 45, "./_an-object": 49, "./_bind": 58, "./_export": 75, "./_fails": 77, "./_global": 82, "./_is-object": 93, "./_object-create": 112 }], 251: [function (require, module, exports) {
     var dP = require('./_object-dp');
     var $export = require('./_export');
     var anObject = require('./_an-object');
@@ -11096,7 +11552,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }
     });
-  }, { "./_an-object": 50, "./_export": 76, "./_fails": 78, "./_object-dp": 114, "./_to-primitive": 160 }], 253: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_export": 75, "./_fails": 77, "./_object-dp": 113, "./_to-primitive": 159 }], 252: [function (require, module, exports) {
     var $export = require('./_export');
     var gOPD = require('./_object-gopd').f;
     var anObject = require('./_an-object');
@@ -11107,7 +11563,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return desc && !desc.configurable ? false : delete target[propertyKey];
       }
     });
-  }, { "./_an-object": 50, "./_export": 76, "./_object-gopd": 117 }], 254: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_export": 75, "./_object-gopd": 116 }], 253: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -11136,7 +11592,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return new Enumerate(target);
       }
     });
-  }, { "./_an-object": 50, "./_export": 76, "./_iter-create": 97 }], 255: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_export": 75, "./_iter-create": 96 }], 254: [function (require, module, exports) {
     var gOPD = require('./_object-gopd');
     var $export = require('./_export');
     var anObject = require('./_an-object');
@@ -11146,7 +11602,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return gOPD.f(anObject(target), propertyKey);
       }
     });
-  }, { "./_an-object": 50, "./_export": 76, "./_object-gopd": 117 }], 256: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_export": 75, "./_object-gopd": 116 }], 255: [function (require, module, exports) {
     var $export = require('./_export');
     var getProto = require('./_object-gpo');
     var anObject = require('./_an-object');
@@ -11156,7 +11612,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return getProto(anObject(target));
       }
     });
-  }, { "./_an-object": 50, "./_export": 76, "./_object-gpo": 121 }], 257: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_export": 75, "./_object-gpo": 120 }], 256: [function (require, module, exports) {
     var gOPD = require('./_object-gopd');
     var getPrototypeOf = require('./_object-gpo');
     var has = require('./_has');
@@ -11173,7 +11629,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     }
 
     $export($export.S, 'Reflect', { get: get });
-  }, { "./_an-object": 50, "./_export": 76, "./_has": 84, "./_is-object": 94, "./_object-gopd": 117, "./_object-gpo": 121 }], 258: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_export": 75, "./_has": 83, "./_is-object": 93, "./_object-gopd": 116, "./_object-gpo": 120 }], 257: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Reflect', {
@@ -11181,7 +11637,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return propertyKey in target;
       }
     });
-  }, { "./_export": 76 }], 259: [function (require, module, exports) {
+  }, { "./_export": 75 }], 258: [function (require, module, exports) {
     var $export = require('./_export');
     var anObject = require('./_an-object');
     var $isExtensible = Object.isExtensible;
@@ -11192,11 +11648,11 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $isExtensible ? $isExtensible(target) : true;
       }
     });
-  }, { "./_an-object": 50, "./_export": 76 }], 260: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_export": 75 }], 259: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Reflect', { ownKeys: require('./_own-keys') });
-  }, { "./_export": 76, "./_own-keys": 127 }], 261: [function (require, module, exports) {
+  }, { "./_export": 75, "./_own-keys": 126 }], 260: [function (require, module, exports) {
     var $export = require('./_export');
     var anObject = require('./_an-object');
     var $preventExtensions = Object.preventExtensions;
@@ -11212,7 +11668,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }
     });
-  }, { "./_an-object": 50, "./_export": 76 }], 262: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_export": 75 }], 261: [function (require, module, exports) {
     var $export = require('./_export');
     var setProto = require('./_set-proto');
 
@@ -11227,7 +11683,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }
     });
-  }, { "./_export": 76, "./_set-proto": 139 }], 263: [function (require, module, exports) {
+  }, { "./_export": 75, "./_set-proto": 138 }], 262: [function (require, module, exports) {
     var dP = require('./_object-dp');
     var gOPD = require('./_object-gopd');
     var getPrototypeOf = require('./_object-gpo');
@@ -11258,7 +11714,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     }
 
     $export($export.S, 'Reflect', { set: set });
-  }, { "./_an-object": 50, "./_export": 76, "./_has": 84, "./_is-object": 94, "./_object-dp": 114, "./_object-gopd": 117, "./_object-gpo": 121, "./_property-desc": 132 }], 264: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_export": 75, "./_has": 83, "./_is-object": 93, "./_object-dp": 113, "./_object-gopd": 116, "./_object-gpo": 120, "./_property-desc": 131 }], 263: [function (require, module, exports) {
     var global = require('./_global');
     var inheritIfRequired = require('./_inherit-if-required');
     var dP = require('./_object-dp').f;
@@ -11303,12 +11759,12 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     }
 
     require('./_set-species')('RegExp');
-  }, { "./_descriptors": 72, "./_fails": 78, "./_flags": 80, "./_global": 83, "./_inherit-if-required": 88, "./_is-regexp": 95, "./_object-dp": 114, "./_object-gopn": 119, "./_redefine": 134, "./_set-species": 140, "./_wks": 168 }], 265: [function (require, module, exports) {
+  }, { "./_descriptors": 71, "./_fails": 77, "./_flags": 79, "./_global": 82, "./_inherit-if-required": 87, "./_is-regexp": 94, "./_object-dp": 113, "./_object-gopn": 118, "./_redefine": 133, "./_set-species": 139, "./_wks": 167 }], 264: [function (require, module, exports) {
     if (require('./_descriptors') && /./g.flags != 'g') require('./_object-dp').f(RegExp.prototype, 'flags', {
       configurable: true,
       get: require('./_flags')
     });
-  }, { "./_descriptors": 72, "./_flags": 80, "./_object-dp": 114 }], 266: [function (require, module, exports) {
+  }, { "./_descriptors": 71, "./_flags": 79, "./_object-dp": 113 }], 265: [function (require, module, exports) {
     require('./_fix-re-wks')('match', 1, function (defined, MATCH, $match) {
       return [function match(regexp) {
         'use strict';
@@ -11318,7 +11774,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return fn !== undefined ? fn.call(regexp, O) : new RegExp(regexp)[MATCH](String(O));
       }, $match];
     });
-  }, { "./_fix-re-wks": 79 }], 267: [function (require, module, exports) {
+  }, { "./_fix-re-wks": 78 }], 266: [function (require, module, exports) {
     require('./_fix-re-wks')('replace', 2, function (defined, REPLACE, $replace) {
       return [function replace(searchValue, replaceValue) {
         'use strict';
@@ -11328,7 +11784,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return fn !== undefined ? fn.call(searchValue, O, replaceValue) : $replace.call(String(O), searchValue, replaceValue);
       }, $replace];
     });
-  }, { "./_fix-re-wks": 79 }], 268: [function (require, module, exports) {
+  }, { "./_fix-re-wks": 78 }], 267: [function (require, module, exports) {
     require('./_fix-re-wks')('search', 1, function (defined, SEARCH, $search) {
       return [function search(regexp) {
         'use strict';
@@ -11338,7 +11794,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return fn !== undefined ? fn.call(regexp, O) : new RegExp(regexp)[SEARCH](String(O));
       }, $search];
     });
-  }, { "./_fix-re-wks": 79 }], 269: [function (require, module, exports) {
+  }, { "./_fix-re-wks": 78 }], 268: [function (require, module, exports) {
     require('./_fix-re-wks')('split', 2, function (defined, SPLIT, $split) {
       'use strict';
 
@@ -11398,7 +11854,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return fn !== undefined ? fn.call(separator, O, limit) : $split.call(String(O), separator, limit);
       }, $split];
     });
-  }, { "./_fix-re-wks": 79, "./_is-regexp": 95 }], 270: [function (require, module, exports) {
+  }, { "./_fix-re-wks": 78, "./_is-regexp": 94 }], 269: [function (require, module, exports) {
     'use strict';
 
     require('./es6.regexp.flags');
@@ -11424,7 +11880,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $toString.call(this);
       });
     }
-  }, { "./_an-object": 50, "./_descriptors": 72, "./_fails": 78, "./_flags": 80, "./_redefine": 134, "./es6.regexp.flags": 265 }], 271: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_descriptors": 71, "./_fails": 77, "./_flags": 79, "./_redefine": 133, "./es6.regexp.flags": 264 }], 270: [function (require, module, exports) {
     'use strict';
 
     var strong = require('./_collection-strong');
@@ -11440,7 +11896,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return strong.def(validate(this, SET), value = value === 0 ? 0 : value, value);
       }
     }, strong);
-  }, { "./_collection": 65, "./_collection-strong": 62, "./_validate-collection": 165 }], 272: [function (require, module, exports) {
+  }, { "./_collection": 64, "./_collection-strong": 61, "./_validate-collection": 164 }], 271: [function (require, module, exports) {
     'use strict';
 
     require('./_string-html')('anchor', function (createHTML) {
@@ -11448,7 +11904,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return createHTML(this, 'a', 'name', name);
       };
     });
-  }, { "./_string-html": 148 }], 273: [function (require, module, exports) {
+  }, { "./_string-html": 147 }], 272: [function (require, module, exports) {
     'use strict';
 
     require('./_string-html')('big', function (createHTML) {
@@ -11456,7 +11912,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return createHTML(this, 'big', '', '');
       };
     });
-  }, { "./_string-html": 148 }], 274: [function (require, module, exports) {
+  }, { "./_string-html": 147 }], 273: [function (require, module, exports) {
     'use strict';
 
     require('./_string-html')('blink', function (createHTML) {
@@ -11464,7 +11920,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return createHTML(this, 'blink', '', '');
       };
     });
-  }, { "./_string-html": 148 }], 275: [function (require, module, exports) {
+  }, { "./_string-html": 147 }], 274: [function (require, module, exports) {
     'use strict';
 
     require('./_string-html')('bold', function (createHTML) {
@@ -11472,7 +11928,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return createHTML(this, 'b', '', '');
       };
     });
-  }, { "./_string-html": 148 }], 276: [function (require, module, exports) {
+  }, { "./_string-html": 147 }], 275: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -11482,7 +11938,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $at(this, pos);
       }
     });
-  }, { "./_export": 76, "./_string-at": 146 }], 277: [function (require, module, exports) {
+  }, { "./_export": 75, "./_string-at": 145 }], 276: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -11501,7 +11957,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $endsWith ? $endsWith.call(that, search, end) : that.slice(end - search.length, end) === search;
       }
     });
-  }, { "./_export": 76, "./_fails-is-regexp": 77, "./_string-context": 147, "./_to-length": 158 }], 278: [function (require, module, exports) {
+  }, { "./_export": 75, "./_fails-is-regexp": 76, "./_string-context": 146, "./_to-length": 157 }], 277: [function (require, module, exports) {
     'use strict';
 
     require('./_string-html')('fixed', function (createHTML) {
@@ -11509,7 +11965,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return createHTML(this, 'tt', '', '');
       };
     });
-  }, { "./_string-html": 148 }], 279: [function (require, module, exports) {
+  }, { "./_string-html": 147 }], 278: [function (require, module, exports) {
     'use strict';
 
     require('./_string-html')('fontcolor', function (createHTML) {
@@ -11517,7 +11973,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return createHTML(this, 'font', 'color', color);
       };
     });
-  }, { "./_string-html": 148 }], 280: [function (require, module, exports) {
+  }, { "./_string-html": 147 }], 279: [function (require, module, exports) {
     'use strict';
 
     require('./_string-html')('fontsize', function (createHTML) {
@@ -11525,7 +11981,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return createHTML(this, 'font', 'size', size);
       };
     });
-  }, { "./_string-html": 148 }], 281: [function (require, module, exports) {
+  }, { "./_string-html": 147 }], 280: [function (require, module, exports) {
     var $export = require('./_export');
     var toAbsoluteIndex = require('./_to-absolute-index');
     var fromCharCode = String.fromCharCode;
@@ -11544,7 +12000,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }return res.join('');
       }
     });
-  }, { "./_export": 76, "./_to-absolute-index": 154 }], 282: [function (require, module, exports) {
+  }, { "./_export": 75, "./_to-absolute-index": 153 }], 281: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -11556,7 +12012,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return !!~context(this, searchString, INCLUDES).indexOf(searchString, arguments.length > 1 ? arguments[1] : undefined);
       }
     });
-  }, { "./_export": 76, "./_fails-is-regexp": 77, "./_string-context": 147 }], 283: [function (require, module, exports) {
+  }, { "./_export": 75, "./_fails-is-regexp": 76, "./_string-context": 146 }], 282: [function (require, module, exports) {
     'use strict';
 
     require('./_string-html')('italics', function (createHTML) {
@@ -11564,7 +12020,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return createHTML(this, 'i', '', '');
       };
     });
-  }, { "./_string-html": 148 }], 284: [function (require, module, exports) {
+  }, { "./_string-html": 147 }], 283: [function (require, module, exports) {
     'use strict';
 
     var $at = require('./_string-at')(true);
@@ -11581,7 +12037,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       this._i += point.length;
       return { value: point, done: false };
     });
-  }, { "./_iter-define": 98, "./_string-at": 146 }], 285: [function (require, module, exports) {
+  }, { "./_iter-define": 97, "./_string-at": 145 }], 284: [function (require, module, exports) {
     'use strict';
 
     require('./_string-html')('link', function (createHTML) {
@@ -11589,7 +12045,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return createHTML(this, 'a', 'href', url);
       };
     });
-  }, { "./_string-html": 148 }], 286: [function (require, module, exports) {
+  }, { "./_string-html": 147 }], 285: [function (require, module, exports) {
     var $export = require('./_export');
     var toIObject = require('./_to-iobject');
     var toLength = require('./_to-length');
@@ -11607,13 +12063,13 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }return res.join('');
       }
     });
-  }, { "./_export": 76, "./_to-iobject": 157, "./_to-length": 158 }], 287: [function (require, module, exports) {
+  }, { "./_export": 75, "./_to-iobject": 156, "./_to-length": 157 }], 286: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.P, 'String', {
       repeat: require('./_string-repeat')
     });
-  }, { "./_export": 76, "./_string-repeat": 150 }], 288: [function (require, module, exports) {
+  }, { "./_export": 75, "./_string-repeat": 149 }], 287: [function (require, module, exports) {
     'use strict';
 
     require('./_string-html')('small', function (createHTML) {
@@ -11621,7 +12077,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return createHTML(this, 'small', '', '');
       };
     });
-  }, { "./_string-html": 148 }], 289: [function (require, module, exports) {
+  }, { "./_string-html": 147 }], 288: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -11638,7 +12094,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $startsWith ? $startsWith.call(that, search, index) : that.slice(index, index + search.length) === search;
       }
     });
-  }, { "./_export": 76, "./_fails-is-regexp": 77, "./_string-context": 147, "./_to-length": 158 }], 290: [function (require, module, exports) {
+  }, { "./_export": 75, "./_fails-is-regexp": 76, "./_string-context": 146, "./_to-length": 157 }], 289: [function (require, module, exports) {
     'use strict';
 
     require('./_string-html')('strike', function (createHTML) {
@@ -11646,7 +12102,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return createHTML(this, 'strike', '', '');
       };
     });
-  }, { "./_string-html": 148 }], 291: [function (require, module, exports) {
+  }, { "./_string-html": 147 }], 290: [function (require, module, exports) {
     'use strict';
 
     require('./_string-html')('sub', function (createHTML) {
@@ -11654,7 +12110,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return createHTML(this, 'sub', '', '');
       };
     });
-  }, { "./_string-html": 148 }], 292: [function (require, module, exports) {
+  }, { "./_string-html": 147 }], 291: [function (require, module, exports) {
     'use strict';
 
     require('./_string-html')('sup', function (createHTML) {
@@ -11662,7 +12118,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return createHTML(this, 'sup', '', '');
       };
     });
-  }, { "./_string-html": 148 }], 293: [function (require, module, exports) {
+  }, { "./_string-html": 147 }], 292: [function (require, module, exports) {
     'use strict';
 
     require('./_string-trim')('trim', function ($trim) {
@@ -11670,7 +12126,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $trim(this, 3);
       };
     });
-  }, { "./_string-trim": 151 }], 294: [function (require, module, exports) {
+  }, { "./_string-trim": 150 }], 293: [function (require, module, exports) {
     'use strict';
 
     var global = require('./_global');
@@ -11902,7 +12358,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     setToStringTag(Math, 'Math', true);
 
     setToStringTag(global.JSON, 'JSON', true);
-  }, { "./_an-object": 50, "./_descriptors": 72, "./_enum-keys": 75, "./_export": 76, "./_fails": 78, "./_global": 83, "./_has": 84, "./_hide": 85, "./_is-array": 92, "./_library": 102, "./_meta": 108, "./_object-create": 113, "./_object-dp": 114, "./_object-gopd": 117, "./_object-gopn": 119, "./_object-gopn-ext": 118, "./_object-gops": 120, "./_object-keys": 123, "./_object-pie": 124, "./_property-desc": 132, "./_redefine": 134, "./_set-to-string-tag": 141, "./_shared": 143, "./_to-iobject": 157, "./_to-primitive": 160, "./_uid": 164, "./_wks": 168, "./_wks-define": 166, "./_wks-ext": 167 }], 295: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_descriptors": 71, "./_enum-keys": 74, "./_export": 75, "./_fails": 77, "./_global": 82, "./_has": 83, "./_hide": 84, "./_is-array": 91, "./_library": 101, "./_meta": 107, "./_object-create": 112, "./_object-dp": 113, "./_object-gopd": 116, "./_object-gopn": 118, "./_object-gopn-ext": 117, "./_object-gops": 119, "./_object-keys": 122, "./_object-pie": 123, "./_property-desc": 131, "./_redefine": 133, "./_set-to-string-tag": 140, "./_shared": 142, "./_to-iobject": 156, "./_to-primitive": 159, "./_uid": 163, "./_wks": 167, "./_wks-define": 165, "./_wks-ext": 166 }], 294: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -11948,66 +12404,66 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     });
 
     require('./_set-species')(ARRAY_BUFFER);
-  }, { "./_an-object": 50, "./_export": 76, "./_fails": 78, "./_global": 83, "./_is-object": 94, "./_set-species": 140, "./_species-constructor": 144, "./_to-absolute-index": 154, "./_to-length": 158, "./_typed": 163, "./_typed-buffer": 162 }], 296: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_export": 75, "./_fails": 77, "./_global": 82, "./_is-object": 93, "./_set-species": 139, "./_species-constructor": 143, "./_to-absolute-index": 153, "./_to-length": 157, "./_typed": 162, "./_typed-buffer": 161 }], 295: [function (require, module, exports) {
     var $export = require('./_export');
     $export($export.G + $export.W + $export.F * !require('./_typed').ABV, {
       DataView: require('./_typed-buffer').DataView
     });
-  }, { "./_export": 76, "./_typed": 163, "./_typed-buffer": 162 }], 297: [function (require, module, exports) {
+  }, { "./_export": 75, "./_typed": 162, "./_typed-buffer": 161 }], 296: [function (require, module, exports) {
     require('./_typed-array')('Float32', 4, function (init) {
       return function Float32Array(data, byteOffset, length) {
         return init(this, data, byteOffset, length);
       };
     });
-  }, { "./_typed-array": 161 }], 298: [function (require, module, exports) {
+  }, { "./_typed-array": 160 }], 297: [function (require, module, exports) {
     require('./_typed-array')('Float64', 8, function (init) {
       return function Float64Array(data, byteOffset, length) {
         return init(this, data, byteOffset, length);
       };
     });
-  }, { "./_typed-array": 161 }], 299: [function (require, module, exports) {
+  }, { "./_typed-array": 160 }], 298: [function (require, module, exports) {
     require('./_typed-array')('Int16', 2, function (init) {
       return function Int16Array(data, byteOffset, length) {
         return init(this, data, byteOffset, length);
       };
     });
-  }, { "./_typed-array": 161 }], 300: [function (require, module, exports) {
+  }, { "./_typed-array": 160 }], 299: [function (require, module, exports) {
     require('./_typed-array')('Int32', 4, function (init) {
       return function Int32Array(data, byteOffset, length) {
         return init(this, data, byteOffset, length);
       };
     });
-  }, { "./_typed-array": 161 }], 301: [function (require, module, exports) {
+  }, { "./_typed-array": 160 }], 300: [function (require, module, exports) {
     require('./_typed-array')('Int8', 1, function (init) {
       return function Int8Array(data, byteOffset, length) {
         return init(this, data, byteOffset, length);
       };
     });
-  }, { "./_typed-array": 161 }], 302: [function (require, module, exports) {
+  }, { "./_typed-array": 160 }], 301: [function (require, module, exports) {
     require('./_typed-array')('Uint16', 2, function (init) {
       return function Uint16Array(data, byteOffset, length) {
         return init(this, data, byteOffset, length);
       };
     });
-  }, { "./_typed-array": 161 }], 303: [function (require, module, exports) {
+  }, { "./_typed-array": 160 }], 302: [function (require, module, exports) {
     require('./_typed-array')('Uint32', 4, function (init) {
       return function Uint32Array(data, byteOffset, length) {
         return init(this, data, byteOffset, length);
       };
     });
-  }, { "./_typed-array": 161 }], 304: [function (require, module, exports) {
+  }, { "./_typed-array": 160 }], 303: [function (require, module, exports) {
     require('./_typed-array')('Uint8', 1, function (init) {
       return function Uint8Array(data, byteOffset, length) {
         return init(this, data, byteOffset, length);
       };
     });
-  }, { "./_typed-array": 161 }], 305: [function (require, module, exports) {
+  }, { "./_typed-array": 160 }], 304: [function (require, module, exports) {
     require('./_typed-array')('Uint8', 1, function (init) {
       return function Uint8ClampedArray(data, byteOffset, length) {
         return init(this, data, byteOffset, length);
       };
     }, true);
-  }, { "./_typed-array": 161 }], 306: [function (require, module, exports) {
+  }, { "./_typed-array": 160 }], 305: [function (require, module, exports) {
     'use strict';
 
     var each = require('./_array-methods')(0);
@@ -12065,7 +12521,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         });
       });
     }
-  }, { "./_array-methods": 55, "./_collection": 65, "./_collection-weak": 64, "./_fails": 78, "./_is-object": 94, "./_meta": 108, "./_object-assign": 112, "./_redefine": 134, "./_validate-collection": 165 }], 307: [function (require, module, exports) {
+  }, { "./_array-methods": 54, "./_collection": 64, "./_collection-weak": 63, "./_fails": 77, "./_is-object": 93, "./_meta": 107, "./_object-assign": 111, "./_redefine": 133, "./_validate-collection": 164 }], 306: [function (require, module, exports) {
     'use strict';
 
     var weak = require('./_collection-weak');
@@ -12081,7 +12537,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return weak.def(validate(this, WEAK_SET), value, true);
       }
     }, weak, false, true);
-  }, { "./_collection": 65, "./_collection-weak": 64, "./_validate-collection": 165 }], 308: [function (require, module, exports) {
+  }, { "./_collection": 64, "./_collection-weak": 63, "./_validate-collection": 164 }], 307: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -12104,7 +12560,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     });
 
     require('./_add-to-unscopables')('flatMap');
-  }, { "./_a-function": 46, "./_add-to-unscopables": 48, "./_array-species-create": 58, "./_export": 76, "./_flatten-into-array": 81, "./_to-length": 158, "./_to-object": 159 }], 309: [function (require, module, exports) {
+  }, { "./_a-function": 45, "./_add-to-unscopables": 47, "./_array-species-create": 57, "./_export": 75, "./_flatten-into-array": 80, "./_to-length": 157, "./_to-object": 158 }], 308: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -12126,7 +12582,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     });
 
     require('./_add-to-unscopables')('flatten');
-  }, { "./_add-to-unscopables": 48, "./_array-species-create": 58, "./_export": 76, "./_flatten-into-array": 81, "./_to-integer": 156, "./_to-length": 158, "./_to-object": 159 }], 310: [function (require, module, exports) {
+  }, { "./_add-to-unscopables": 47, "./_array-species-create": 57, "./_export": 75, "./_flatten-into-array": 80, "./_to-integer": 155, "./_to-length": 157, "./_to-object": 158 }], 309: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -12139,7 +12595,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     });
 
     require('./_add-to-unscopables')('includes');
-  }, { "./_add-to-unscopables": 48, "./_array-includes": 54, "./_export": 76 }], 311: [function (require, module, exports) {
+  }, { "./_add-to-unscopables": 47, "./_array-includes": 53, "./_export": 75 }], 310: [function (require, module, exports) {
     var $export = require('./_export');
     var microtask = require('./_microtask')();
     var process = require('./_global').process;
@@ -12151,7 +12607,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         microtask(domain ? domain.bind(fn) : fn);
       }
     });
-  }, { "./_cof": 61, "./_export": 76, "./_global": 83, "./_microtask": 110 }], 312: [function (require, module, exports) {
+  }, { "./_cof": 60, "./_export": 75, "./_global": 82, "./_microtask": 109 }], 311: [function (require, module, exports) {
     var $export = require('./_export');
     var cof = require('./_cof');
 
@@ -12160,19 +12616,19 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return cof(it) === 'Error';
       }
     });
-  }, { "./_cof": 61, "./_export": 76 }], 313: [function (require, module, exports) {
+  }, { "./_cof": 60, "./_export": 75 }], 312: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.G, { global: require('./_global') });
-  }, { "./_export": 76, "./_global": 83 }], 314: [function (require, module, exports) {
+  }, { "./_export": 75, "./_global": 82 }], 313: [function (require, module, exports) {
     require('./_set-collection-from')('Map');
-  }, { "./_set-collection-from": 137 }], 315: [function (require, module, exports) {
+  }, { "./_set-collection-from": 136 }], 314: [function (require, module, exports) {
     require('./_set-collection-of')('Map');
-  }, { "./_set-collection-of": 138 }], 316: [function (require, module, exports) {
+  }, { "./_set-collection-of": 137 }], 315: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.P + $export.R, 'Map', { toJSON: require('./_collection-to-json')('Map') });
-  }, { "./_collection-to-json": 63, "./_export": 76 }], 317: [function (require, module, exports) {
+  }, { "./_collection-to-json": 62, "./_export": 75 }], 316: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Math', {
@@ -12180,11 +12636,11 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return Math.min(upper, Math.max(lower, x));
       }
     });
-  }, { "./_export": 76 }], 318: [function (require, module, exports) {
+  }, { "./_export": 75 }], 317: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Math', { DEG_PER_RAD: Math.PI / 180 });
-  }, { "./_export": 76 }], 319: [function (require, module, exports) {
+  }, { "./_export": 75 }], 318: [function (require, module, exports) {
     var $export = require('./_export');
     var RAD_PER_DEG = 180 / Math.PI;
 
@@ -12193,7 +12649,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return radians * RAD_PER_DEG;
       }
     });
-  }, { "./_export": 76 }], 320: [function (require, module, exports) {
+  }, { "./_export": 75 }], 319: [function (require, module, exports) {
     var $export = require('./_export');
     var scale = require('./_math-scale');
     var fround = require('./_math-fround');
@@ -12203,7 +12659,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return fround(scale(x, inLow, inHigh, outLow, outHigh));
       }
     });
-  }, { "./_export": 76, "./_math-fround": 104, "./_math-scale": 106 }], 321: [function (require, module, exports) {
+  }, { "./_export": 75, "./_math-fround": 103, "./_math-scale": 105 }], 320: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Math', {
@@ -12214,7 +12670,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $x1 + (y1 >>> 0) + (($x0 & $y0 | ($x0 | $y0) & ~($x0 + $y0 >>> 0)) >>> 31) | 0;
       }
     });
-  }, { "./_export": 76 }], 322: [function (require, module, exports) {
+  }, { "./_export": 75 }], 321: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Math', {
@@ -12230,7 +12686,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return u1 * v1 + (t >> 16) + ((u0 * v1 >>> 0) + (t & UINT16) >> 16);
       }
     });
-  }, { "./_export": 76 }], 323: [function (require, module, exports) {
+  }, { "./_export": 75 }], 322: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Math', {
@@ -12241,11 +12697,11 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $x1 - (y1 >>> 0) - ((~$x0 & $y0 | ~($x0 ^ $y0) & $x0 - $y0 >>> 0) >>> 31) | 0;
       }
     });
-  }, { "./_export": 76 }], 324: [function (require, module, exports) {
+  }, { "./_export": 75 }], 323: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Math', { RAD_PER_DEG: 180 / Math.PI });
-  }, { "./_export": 76 }], 325: [function (require, module, exports) {
+  }, { "./_export": 75 }], 324: [function (require, module, exports) {
     var $export = require('./_export');
     var DEG_PER_RAD = Math.PI / 180;
 
@@ -12254,17 +12710,17 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return degrees * DEG_PER_RAD;
       }
     });
-  }, { "./_export": 76 }], 326: [function (require, module, exports) {
+  }, { "./_export": 75 }], 325: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Math', { scale: require('./_math-scale') });
-  }, { "./_export": 76, "./_math-scale": 106 }], 327: [function (require, module, exports) {
+  }, { "./_export": 75, "./_math-scale": 105 }], 326: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Math', { signbit: function signbit(x) {
         return (x = +x) != x ? x : x == 0 ? 1 / x == Infinity : x > 0;
       } });
-  }, { "./_export": 76 }], 328: [function (require, module, exports) {
+  }, { "./_export": 75 }], 327: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'Math', {
@@ -12280,7 +12736,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return u1 * v1 + (t >>> 16) + ((u0 * v1 >>> 0) + (t & UINT16) >>> 16);
       }
     });
-  }, { "./_export": 76 }], 329: [function (require, module, exports) {
+  }, { "./_export": 75 }], 328: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -12293,7 +12749,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         $defineProperty.f(toObject(this), P, { get: aFunction(getter), enumerable: true, configurable: true });
       }
     });
-  }, { "./_a-function": 46, "./_descriptors": 72, "./_export": 76, "./_object-dp": 114, "./_object-forced-pam": 116, "./_to-object": 159 }], 330: [function (require, module, exports) {
+  }, { "./_a-function": 45, "./_descriptors": 71, "./_export": 75, "./_object-dp": 113, "./_object-forced-pam": 115, "./_to-object": 158 }], 329: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -12306,7 +12762,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         $defineProperty.f(toObject(this), P, { set: aFunction(setter), enumerable: true, configurable: true });
       }
     });
-  }, { "./_a-function": 46, "./_descriptors": 72, "./_export": 76, "./_object-dp": 114, "./_object-forced-pam": 116, "./_to-object": 159 }], 331: [function (require, module, exports) {
+  }, { "./_a-function": 45, "./_descriptors": 71, "./_export": 75, "./_object-dp": 113, "./_object-forced-pam": 115, "./_to-object": 158 }], 330: [function (require, module, exports) {
     var $export = require('./_export');
     var $entries = require('./_object-to-array')(true);
 
@@ -12315,7 +12771,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $entries(it);
       }
     });
-  }, { "./_export": 76, "./_object-to-array": 126 }], 332: [function (require, module, exports) {
+  }, { "./_export": 75, "./_object-to-array": 125 }], 331: [function (require, module, exports) {
     var $export = require('./_export');
     var ownKeys = require('./_own-keys');
     var toIObject = require('./_to-iobject');
@@ -12337,7 +12793,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return result;
       }
     });
-  }, { "./_create-property": 67, "./_export": 76, "./_object-gopd": 117, "./_own-keys": 127, "./_to-iobject": 157 }], 333: [function (require, module, exports) {
+  }, { "./_create-property": 66, "./_export": 75, "./_object-gopd": 116, "./_own-keys": 126, "./_to-iobject": 156 }], 332: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -12356,7 +12812,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         } while (O = getPrototypeOf(O));
       }
     });
-  }, { "./_descriptors": 72, "./_export": 76, "./_object-forced-pam": 116, "./_object-gopd": 117, "./_object-gpo": 121, "./_to-object": 159, "./_to-primitive": 160 }], 334: [function (require, module, exports) {
+  }, { "./_descriptors": 71, "./_export": 75, "./_object-forced-pam": 115, "./_object-gopd": 116, "./_object-gpo": 120, "./_to-object": 158, "./_to-primitive": 159 }], 333: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -12375,7 +12831,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         } while (O = getPrototypeOf(O));
       }
     });
-  }, { "./_descriptors": 72, "./_export": 76, "./_object-forced-pam": 116, "./_object-gopd": 117, "./_object-gpo": 121, "./_to-object": 159, "./_to-primitive": 160 }], 335: [function (require, module, exports) {
+  }, { "./_descriptors": 71, "./_export": 75, "./_object-forced-pam": 115, "./_object-gopd": 116, "./_object-gpo": 120, "./_to-object": 158, "./_to-primitive": 159 }], 334: [function (require, module, exports) {
     var $export = require('./_export');
     var $values = require('./_object-to-array')(false);
 
@@ -12384,7 +12840,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $values(it);
       }
     });
-  }, { "./_export": 76, "./_object-to-array": 126 }], 336: [function (require, module, exports) {
+  }, { "./_export": 75, "./_object-to-array": 125 }], 335: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -12594,7 +13050,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     $export($export.G, { Observable: $Observable });
 
     require('./_set-species')('Observable');
-  }, { "./_a-function": 46, "./_an-instance": 49, "./_an-object": 50, "./_core": 66, "./_export": 76, "./_for-of": 82, "./_global": 83, "./_hide": 85, "./_microtask": 110, "./_redefine-all": 133, "./_set-species": 140, "./_wks": 168 }], 337: [function (require, module, exports) {
+  }, { "./_a-function": 45, "./_an-instance": 48, "./_an-object": 49, "./_core": 65, "./_export": 75, "./_for-of": 81, "./_global": 82, "./_hide": 84, "./_microtask": 109, "./_redefine-all": 132, "./_set-species": 139, "./_wks": 167 }], 336: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -12616,7 +13072,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           });
         } : onFinally);
       } });
-  }, { "./_core": 66, "./_export": 76, "./_global": 83, "./_promise-resolve": 131, "./_species-constructor": 144 }], 338: [function (require, module, exports) {
+  }, { "./_core": 65, "./_export": 75, "./_global": 82, "./_promise-resolve": 130, "./_species-constructor": 143 }], 337: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -12629,7 +13085,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         (result.e ? promiseCapability.reject : promiseCapability.resolve)(result.v);
         return promiseCapability.promise;
       } });
-  }, { "./_export": 76, "./_new-promise-capability": 111, "./_perform": 130 }], 339: [function (require, module, exports) {
+  }, { "./_export": 75, "./_new-promise-capability": 110, "./_perform": 129 }], 338: [function (require, module, exports) {
     var metadata = require('./_metadata');
     var anObject = require('./_an-object');
     var toMetaKey = metadata.key;
@@ -12638,7 +13094,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     metadata.exp({ defineMetadata: function defineMetadata(metadataKey, metadataValue, target, targetKey) {
         ordinaryDefineOwnMetadata(metadataKey, metadataValue, anObject(target), toMetaKey(targetKey));
       } });
-  }, { "./_an-object": 50, "./_metadata": 109 }], 340: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_metadata": 108 }], 339: [function (require, module, exports) {
     var metadata = require('./_metadata');
     var anObject = require('./_an-object');
     var toMetaKey = metadata.key;
@@ -12654,7 +13110,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         targetMetadata['delete'](targetKey);
         return !!targetMetadata.size || store['delete'](target);
       } });
-  }, { "./_an-object": 50, "./_metadata": 109 }], 341: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_metadata": 108 }], 340: [function (require, module, exports) {
     var Set = require('./es6.set');
     var from = require('./_array-from-iterable');
     var metadata = require('./_metadata');
@@ -12674,7 +13130,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     metadata.exp({ getMetadataKeys: function getMetadataKeys(target) {
         return ordinaryMetadataKeys(anObject(target), arguments.length < 2 ? undefined : toMetaKey(arguments[1]));
       } });
-  }, { "./_an-object": 50, "./_array-from-iterable": 53, "./_metadata": 109, "./_object-gpo": 121, "./es6.set": 271 }], 342: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_array-from-iterable": 52, "./_metadata": 108, "./_object-gpo": 120, "./es6.set": 270 }], 341: [function (require, module, exports) {
     var metadata = require('./_metadata');
     var anObject = require('./_an-object');
     var getPrototypeOf = require('./_object-gpo');
@@ -12692,7 +13148,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     metadata.exp({ getMetadata: function getMetadata(metadataKey, target) {
         return ordinaryGetMetadata(metadataKey, anObject(target), arguments.length < 3 ? undefined : toMetaKey(arguments[2]));
       } });
-  }, { "./_an-object": 50, "./_metadata": 109, "./_object-gpo": 121 }], 343: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_metadata": 108, "./_object-gpo": 120 }], 342: [function (require, module, exports) {
     var metadata = require('./_metadata');
     var anObject = require('./_an-object');
     var ordinaryOwnMetadataKeys = metadata.keys;
@@ -12701,7 +13157,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     metadata.exp({ getOwnMetadataKeys: function getOwnMetadataKeys(target) {
         return ordinaryOwnMetadataKeys(anObject(target), arguments.length < 2 ? undefined : toMetaKey(arguments[1]));
       } });
-  }, { "./_an-object": 50, "./_metadata": 109 }], 344: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_metadata": 108 }], 343: [function (require, module, exports) {
     var metadata = require('./_metadata');
     var anObject = require('./_an-object');
     var ordinaryGetOwnMetadata = metadata.get;
@@ -12710,7 +13166,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     metadata.exp({ getOwnMetadata: function getOwnMetadata(metadataKey, target) {
         return ordinaryGetOwnMetadata(metadataKey, anObject(target), arguments.length < 3 ? undefined : toMetaKey(arguments[2]));
       } });
-  }, { "./_an-object": 50, "./_metadata": 109 }], 345: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_metadata": 108 }], 344: [function (require, module, exports) {
     var metadata = require('./_metadata');
     var anObject = require('./_an-object');
     var getPrototypeOf = require('./_object-gpo');
@@ -12727,7 +13183,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     metadata.exp({ hasMetadata: function hasMetadata(metadataKey, target) {
         return ordinaryHasMetadata(metadataKey, anObject(target), arguments.length < 3 ? undefined : toMetaKey(arguments[2]));
       } });
-  }, { "./_an-object": 50, "./_metadata": 109, "./_object-gpo": 121 }], 346: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_metadata": 108, "./_object-gpo": 120 }], 345: [function (require, module, exports) {
     var metadata = require('./_metadata');
     var anObject = require('./_an-object');
     var ordinaryHasOwnMetadata = metadata.has;
@@ -12736,7 +13192,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     metadata.exp({ hasOwnMetadata: function hasOwnMetadata(metadataKey, target) {
         return ordinaryHasOwnMetadata(metadataKey, anObject(target), arguments.length < 3 ? undefined : toMetaKey(arguments[2]));
       } });
-  }, { "./_an-object": 50, "./_metadata": 109 }], 347: [function (require, module, exports) {
+  }, { "./_an-object": 49, "./_metadata": 108 }], 346: [function (require, module, exports) {
     var $metadata = require('./_metadata');
     var anObject = require('./_an-object');
     var aFunction = require('./_a-function');
@@ -12748,15 +13204,15 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           ordinaryDefineOwnMetadata(metadataKey, metadataValue, (targetKey !== undefined ? anObject : aFunction)(target), toMetaKey(targetKey));
         };
       } });
-  }, { "./_a-function": 46, "./_an-object": 50, "./_metadata": 109 }], 348: [function (require, module, exports) {
+  }, { "./_a-function": 45, "./_an-object": 49, "./_metadata": 108 }], 347: [function (require, module, exports) {
     require('./_set-collection-from')('Set');
-  }, { "./_set-collection-from": 137 }], 349: [function (require, module, exports) {
+  }, { "./_set-collection-from": 136 }], 348: [function (require, module, exports) {
     require('./_set-collection-of')('Set');
-  }, { "./_set-collection-of": 138 }], 350: [function (require, module, exports) {
+  }, { "./_set-collection-of": 137 }], 349: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.P + $export.R, 'Set', { toJSON: require('./_collection-to-json')('Set') });
-  }, { "./_collection-to-json": 63, "./_export": 76 }], 351: [function (require, module, exports) {
+  }, { "./_collection-to-json": 62, "./_export": 75 }], 350: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -12767,7 +13223,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $at(this, pos);
       }
     });
-  }, { "./_export": 76, "./_string-at": 146 }], 352: [function (require, module, exports) {
+  }, { "./_export": 75, "./_string-at": 145 }], 351: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -12798,7 +13254,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return new $RegExpStringIterator(rx, S);
       }
     });
-  }, { "./_defined": 71, "./_export": 76, "./_flags": 80, "./_is-regexp": 95, "./_iter-create": 97, "./_to-length": 158 }], 353: [function (require, module, exports) {
+  }, { "./_defined": 70, "./_export": 75, "./_flags": 79, "./_is-regexp": 94, "./_iter-create": 96, "./_to-length": 157 }], 352: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -12809,7 +13265,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $pad(this, maxLength, arguments.length > 1 ? arguments[1] : undefined, false);
       }
     });
-  }, { "./_export": 76, "./_string-pad": 149 }], 354: [function (require, module, exports) {
+  }, { "./_export": 75, "./_string-pad": 148 }], 353: [function (require, module, exports) {
     'use strict';
 
     var $export = require('./_export');
@@ -12820,7 +13276,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $pad(this, maxLength, arguments.length > 1 ? arguments[1] : undefined, true);
       }
     });
-  }, { "./_export": 76, "./_string-pad": 149 }], 355: [function (require, module, exports) {
+  }, { "./_export": 75, "./_string-pad": 148 }], 354: [function (require, module, exports) {
     'use strict';
 
     require('./_string-trim')('trimLeft', function ($trim) {
@@ -12828,7 +13284,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $trim(this, 1);
       };
     }, 'trimStart');
-  }, { "./_string-trim": 151 }], 356: [function (require, module, exports) {
+  }, { "./_string-trim": 150 }], 355: [function (require, module, exports) {
     'use strict';
 
     require('./_string-trim')('trimRight', function ($trim) {
@@ -12836,23 +13292,23 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return $trim(this, 2);
       };
     }, 'trimEnd');
-  }, { "./_string-trim": 151 }], 357: [function (require, module, exports) {
+  }, { "./_string-trim": 150 }], 356: [function (require, module, exports) {
     require('./_wks-define')('asyncIterator');
-  }, { "./_wks-define": 166 }], 358: [function (require, module, exports) {
+  }, { "./_wks-define": 165 }], 357: [function (require, module, exports) {
     require('./_wks-define')('observable');
-  }, { "./_wks-define": 166 }], 359: [function (require, module, exports) {
+  }, { "./_wks-define": 165 }], 358: [function (require, module, exports) {
     var $export = require('./_export');
 
     $export($export.S, 'System', { global: require('./_global') });
-  }, { "./_export": 76, "./_global": 83 }], 360: [function (require, module, exports) {
+  }, { "./_export": 75, "./_global": 82 }], 359: [function (require, module, exports) {
     require('./_set-collection-from')('WeakMap');
-  }, { "./_set-collection-from": 137 }], 361: [function (require, module, exports) {
+  }, { "./_set-collection-from": 136 }], 360: [function (require, module, exports) {
     require('./_set-collection-of')('WeakMap');
-  }, { "./_set-collection-of": 138 }], 362: [function (require, module, exports) {
+  }, { "./_set-collection-of": 137 }], 361: [function (require, module, exports) {
     require('./_set-collection-from')('WeakSet');
-  }, { "./_set-collection-from": 137 }], 363: [function (require, module, exports) {
+  }, { "./_set-collection-from": 136 }], 362: [function (require, module, exports) {
     require('./_set-collection-of')('WeakSet');
-  }, { "./_set-collection-of": 138 }], 364: [function (require, module, exports) {
+  }, { "./_set-collection-of": 137 }], 363: [function (require, module, exports) {
     var $iterators = require('./es6.array.iterator');
     var getKeys = require('./_object-keys');
     var redefine = require('./_redefine');
@@ -12913,14 +13369,14 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }
     }
-  }, { "./_global": 83, "./_hide": 85, "./_iterators": 101, "./_object-keys": 123, "./_redefine": 134, "./_wks": 168, "./es6.array.iterator": 181 }], 365: [function (require, module, exports) {
+  }, { "./_global": 82, "./_hide": 84, "./_iterators": 100, "./_object-keys": 122, "./_redefine": 133, "./_wks": 167, "./es6.array.iterator": 180 }], 364: [function (require, module, exports) {
     var $export = require('./_export');
     var $task = require('./_task');
     $export($export.G + $export.B, {
       setImmediate: $task.set,
       clearImmediate: $task.clear
     });
-  }, { "./_export": 76, "./_task": 153 }], 366: [function (require, module, exports) {
+  }, { "./_export": 75, "./_task": 152 }], 365: [function (require, module, exports) {
     var global = require('./_global');
     var $export = require('./_export');
     var navigator = global.navigator;
@@ -12939,7 +13395,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       setTimeout: wrap(global.setTimeout),
       setInterval: wrap(global.setInterval)
     });
-  }, { "./_export": 76, "./_global": 83 }], 367: [function (require, module, exports) {
+  }, { "./_export": 75, "./_global": 82 }], 366: [function (require, module, exports) {
     require('./modules/es6.symbol');
     require('./modules/es6.object.create');
     require('./modules/es6.object.define-property');
@@ -13137,7 +13593,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     require('./modules/web.immediate');
     require('./modules/web.dom.iterable');
     module.exports = require('./modules/_core');
-  }, { "./modules/_core": 66, "./modules/es6.array.copy-within": 171, "./modules/es6.array.every": 172, "./modules/es6.array.fill": 173, "./modules/es6.array.filter": 174, "./modules/es6.array.find": 176, "./modules/es6.array.find-index": 175, "./modules/es6.array.for-each": 177, "./modules/es6.array.from": 178, "./modules/es6.array.index-of": 179, "./modules/es6.array.is-array": 180, "./modules/es6.array.iterator": 181, "./modules/es6.array.join": 182, "./modules/es6.array.last-index-of": 183, "./modules/es6.array.map": 184, "./modules/es6.array.of": 185, "./modules/es6.array.reduce": 187, "./modules/es6.array.reduce-right": 186, "./modules/es6.array.slice": 188, "./modules/es6.array.some": 189, "./modules/es6.array.sort": 190, "./modules/es6.array.species": 191, "./modules/es6.date.now": 192, "./modules/es6.date.to-iso-string": 193, "./modules/es6.date.to-json": 194, "./modules/es6.date.to-primitive": 195, "./modules/es6.date.to-string": 196, "./modules/es6.function.bind": 197, "./modules/es6.function.has-instance": 198, "./modules/es6.function.name": 199, "./modules/es6.map": 200, "./modules/es6.math.acosh": 201, "./modules/es6.math.asinh": 202, "./modules/es6.math.atanh": 203, "./modules/es6.math.cbrt": 204, "./modules/es6.math.clz32": 205, "./modules/es6.math.cosh": 206, "./modules/es6.math.expm1": 207, "./modules/es6.math.fround": 208, "./modules/es6.math.hypot": 209, "./modules/es6.math.imul": 210, "./modules/es6.math.log10": 211, "./modules/es6.math.log1p": 212, "./modules/es6.math.log2": 213, "./modules/es6.math.sign": 214, "./modules/es6.math.sinh": 215, "./modules/es6.math.tanh": 216, "./modules/es6.math.trunc": 217, "./modules/es6.number.constructor": 218, "./modules/es6.number.epsilon": 219, "./modules/es6.number.is-finite": 220, "./modules/es6.number.is-integer": 221, "./modules/es6.number.is-nan": 222, "./modules/es6.number.is-safe-integer": 223, "./modules/es6.number.max-safe-integer": 224, "./modules/es6.number.min-safe-integer": 225, "./modules/es6.number.parse-float": 226, "./modules/es6.number.parse-int": 227, "./modules/es6.number.to-fixed": 228, "./modules/es6.number.to-precision": 229, "./modules/es6.object.assign": 230, "./modules/es6.object.create": 231, "./modules/es6.object.define-properties": 232, "./modules/es6.object.define-property": 233, "./modules/es6.object.freeze": 234, "./modules/es6.object.get-own-property-descriptor": 235, "./modules/es6.object.get-own-property-names": 236, "./modules/es6.object.get-prototype-of": 237, "./modules/es6.object.is": 241, "./modules/es6.object.is-extensible": 238, "./modules/es6.object.is-frozen": 239, "./modules/es6.object.is-sealed": 240, "./modules/es6.object.keys": 242, "./modules/es6.object.prevent-extensions": 243, "./modules/es6.object.seal": 244, "./modules/es6.object.set-prototype-of": 245, "./modules/es6.object.to-string": 246, "./modules/es6.parse-float": 247, "./modules/es6.parse-int": 248, "./modules/es6.promise": 249, "./modules/es6.reflect.apply": 250, "./modules/es6.reflect.construct": 251, "./modules/es6.reflect.define-property": 252, "./modules/es6.reflect.delete-property": 253, "./modules/es6.reflect.enumerate": 254, "./modules/es6.reflect.get": 257, "./modules/es6.reflect.get-own-property-descriptor": 255, "./modules/es6.reflect.get-prototype-of": 256, "./modules/es6.reflect.has": 258, "./modules/es6.reflect.is-extensible": 259, "./modules/es6.reflect.own-keys": 260, "./modules/es6.reflect.prevent-extensions": 261, "./modules/es6.reflect.set": 263, "./modules/es6.reflect.set-prototype-of": 262, "./modules/es6.regexp.constructor": 264, "./modules/es6.regexp.flags": 265, "./modules/es6.regexp.match": 266, "./modules/es6.regexp.replace": 267, "./modules/es6.regexp.search": 268, "./modules/es6.regexp.split": 269, "./modules/es6.regexp.to-string": 270, "./modules/es6.set": 271, "./modules/es6.string.anchor": 272, "./modules/es6.string.big": 273, "./modules/es6.string.blink": 274, "./modules/es6.string.bold": 275, "./modules/es6.string.code-point-at": 276, "./modules/es6.string.ends-with": 277, "./modules/es6.string.fixed": 278, "./modules/es6.string.fontcolor": 279, "./modules/es6.string.fontsize": 280, "./modules/es6.string.from-code-point": 281, "./modules/es6.string.includes": 282, "./modules/es6.string.italics": 283, "./modules/es6.string.iterator": 284, "./modules/es6.string.link": 285, "./modules/es6.string.raw": 286, "./modules/es6.string.repeat": 287, "./modules/es6.string.small": 288, "./modules/es6.string.starts-with": 289, "./modules/es6.string.strike": 290, "./modules/es6.string.sub": 291, "./modules/es6.string.sup": 292, "./modules/es6.string.trim": 293, "./modules/es6.symbol": 294, "./modules/es6.typed.array-buffer": 295, "./modules/es6.typed.data-view": 296, "./modules/es6.typed.float32-array": 297, "./modules/es6.typed.float64-array": 298, "./modules/es6.typed.int16-array": 299, "./modules/es6.typed.int32-array": 300, "./modules/es6.typed.int8-array": 301, "./modules/es6.typed.uint16-array": 302, "./modules/es6.typed.uint32-array": 303, "./modules/es6.typed.uint8-array": 304, "./modules/es6.typed.uint8-clamped-array": 305, "./modules/es6.weak-map": 306, "./modules/es6.weak-set": 307, "./modules/es7.array.flat-map": 308, "./modules/es7.array.flatten": 309, "./modules/es7.array.includes": 310, "./modules/es7.asap": 311, "./modules/es7.error.is-error": 312, "./modules/es7.global": 313, "./modules/es7.map.from": 314, "./modules/es7.map.of": 315, "./modules/es7.map.to-json": 316, "./modules/es7.math.clamp": 317, "./modules/es7.math.deg-per-rad": 318, "./modules/es7.math.degrees": 319, "./modules/es7.math.fscale": 320, "./modules/es7.math.iaddh": 321, "./modules/es7.math.imulh": 322, "./modules/es7.math.isubh": 323, "./modules/es7.math.rad-per-deg": 324, "./modules/es7.math.radians": 325, "./modules/es7.math.scale": 326, "./modules/es7.math.signbit": 327, "./modules/es7.math.umulh": 328, "./modules/es7.object.define-getter": 329, "./modules/es7.object.define-setter": 330, "./modules/es7.object.entries": 331, "./modules/es7.object.get-own-property-descriptors": 332, "./modules/es7.object.lookup-getter": 333, "./modules/es7.object.lookup-setter": 334, "./modules/es7.object.values": 335, "./modules/es7.observable": 336, "./modules/es7.promise.finally": 337, "./modules/es7.promise.try": 338, "./modules/es7.reflect.define-metadata": 339, "./modules/es7.reflect.delete-metadata": 340, "./modules/es7.reflect.get-metadata": 342, "./modules/es7.reflect.get-metadata-keys": 341, "./modules/es7.reflect.get-own-metadata": 344, "./modules/es7.reflect.get-own-metadata-keys": 343, "./modules/es7.reflect.has-metadata": 345, "./modules/es7.reflect.has-own-metadata": 346, "./modules/es7.reflect.metadata": 347, "./modules/es7.set.from": 348, "./modules/es7.set.of": 349, "./modules/es7.set.to-json": 350, "./modules/es7.string.at": 351, "./modules/es7.string.match-all": 352, "./modules/es7.string.pad-end": 353, "./modules/es7.string.pad-start": 354, "./modules/es7.string.trim-left": 355, "./modules/es7.string.trim-right": 356, "./modules/es7.symbol.async-iterator": 357, "./modules/es7.symbol.observable": 358, "./modules/es7.system.global": 359, "./modules/es7.weak-map.from": 360, "./modules/es7.weak-map.of": 361, "./modules/es7.weak-set.from": 362, "./modules/es7.weak-set.of": 363, "./modules/web.dom.iterable": 364, "./modules/web.immediate": 365, "./modules/web.timers": 366 }], 368: [function (require, module, exports) {
+  }, { "./modules/_core": 65, "./modules/es6.array.copy-within": 170, "./modules/es6.array.every": 171, "./modules/es6.array.fill": 172, "./modules/es6.array.filter": 173, "./modules/es6.array.find": 175, "./modules/es6.array.find-index": 174, "./modules/es6.array.for-each": 176, "./modules/es6.array.from": 177, "./modules/es6.array.index-of": 178, "./modules/es6.array.is-array": 179, "./modules/es6.array.iterator": 180, "./modules/es6.array.join": 181, "./modules/es6.array.last-index-of": 182, "./modules/es6.array.map": 183, "./modules/es6.array.of": 184, "./modules/es6.array.reduce": 186, "./modules/es6.array.reduce-right": 185, "./modules/es6.array.slice": 187, "./modules/es6.array.some": 188, "./modules/es6.array.sort": 189, "./modules/es6.array.species": 190, "./modules/es6.date.now": 191, "./modules/es6.date.to-iso-string": 192, "./modules/es6.date.to-json": 193, "./modules/es6.date.to-primitive": 194, "./modules/es6.date.to-string": 195, "./modules/es6.function.bind": 196, "./modules/es6.function.has-instance": 197, "./modules/es6.function.name": 198, "./modules/es6.map": 199, "./modules/es6.math.acosh": 200, "./modules/es6.math.asinh": 201, "./modules/es6.math.atanh": 202, "./modules/es6.math.cbrt": 203, "./modules/es6.math.clz32": 204, "./modules/es6.math.cosh": 205, "./modules/es6.math.expm1": 206, "./modules/es6.math.fround": 207, "./modules/es6.math.hypot": 208, "./modules/es6.math.imul": 209, "./modules/es6.math.log10": 210, "./modules/es6.math.log1p": 211, "./modules/es6.math.log2": 212, "./modules/es6.math.sign": 213, "./modules/es6.math.sinh": 214, "./modules/es6.math.tanh": 215, "./modules/es6.math.trunc": 216, "./modules/es6.number.constructor": 217, "./modules/es6.number.epsilon": 218, "./modules/es6.number.is-finite": 219, "./modules/es6.number.is-integer": 220, "./modules/es6.number.is-nan": 221, "./modules/es6.number.is-safe-integer": 222, "./modules/es6.number.max-safe-integer": 223, "./modules/es6.number.min-safe-integer": 224, "./modules/es6.number.parse-float": 225, "./modules/es6.number.parse-int": 226, "./modules/es6.number.to-fixed": 227, "./modules/es6.number.to-precision": 228, "./modules/es6.object.assign": 229, "./modules/es6.object.create": 230, "./modules/es6.object.define-properties": 231, "./modules/es6.object.define-property": 232, "./modules/es6.object.freeze": 233, "./modules/es6.object.get-own-property-descriptor": 234, "./modules/es6.object.get-own-property-names": 235, "./modules/es6.object.get-prototype-of": 236, "./modules/es6.object.is": 240, "./modules/es6.object.is-extensible": 237, "./modules/es6.object.is-frozen": 238, "./modules/es6.object.is-sealed": 239, "./modules/es6.object.keys": 241, "./modules/es6.object.prevent-extensions": 242, "./modules/es6.object.seal": 243, "./modules/es6.object.set-prototype-of": 244, "./modules/es6.object.to-string": 245, "./modules/es6.parse-float": 246, "./modules/es6.parse-int": 247, "./modules/es6.promise": 248, "./modules/es6.reflect.apply": 249, "./modules/es6.reflect.construct": 250, "./modules/es6.reflect.define-property": 251, "./modules/es6.reflect.delete-property": 252, "./modules/es6.reflect.enumerate": 253, "./modules/es6.reflect.get": 256, "./modules/es6.reflect.get-own-property-descriptor": 254, "./modules/es6.reflect.get-prototype-of": 255, "./modules/es6.reflect.has": 257, "./modules/es6.reflect.is-extensible": 258, "./modules/es6.reflect.own-keys": 259, "./modules/es6.reflect.prevent-extensions": 260, "./modules/es6.reflect.set": 262, "./modules/es6.reflect.set-prototype-of": 261, "./modules/es6.regexp.constructor": 263, "./modules/es6.regexp.flags": 264, "./modules/es6.regexp.match": 265, "./modules/es6.regexp.replace": 266, "./modules/es6.regexp.search": 267, "./modules/es6.regexp.split": 268, "./modules/es6.regexp.to-string": 269, "./modules/es6.set": 270, "./modules/es6.string.anchor": 271, "./modules/es6.string.big": 272, "./modules/es6.string.blink": 273, "./modules/es6.string.bold": 274, "./modules/es6.string.code-point-at": 275, "./modules/es6.string.ends-with": 276, "./modules/es6.string.fixed": 277, "./modules/es6.string.fontcolor": 278, "./modules/es6.string.fontsize": 279, "./modules/es6.string.from-code-point": 280, "./modules/es6.string.includes": 281, "./modules/es6.string.italics": 282, "./modules/es6.string.iterator": 283, "./modules/es6.string.link": 284, "./modules/es6.string.raw": 285, "./modules/es6.string.repeat": 286, "./modules/es6.string.small": 287, "./modules/es6.string.starts-with": 288, "./modules/es6.string.strike": 289, "./modules/es6.string.sub": 290, "./modules/es6.string.sup": 291, "./modules/es6.string.trim": 292, "./modules/es6.symbol": 293, "./modules/es6.typed.array-buffer": 294, "./modules/es6.typed.data-view": 295, "./modules/es6.typed.float32-array": 296, "./modules/es6.typed.float64-array": 297, "./modules/es6.typed.int16-array": 298, "./modules/es6.typed.int32-array": 299, "./modules/es6.typed.int8-array": 300, "./modules/es6.typed.uint16-array": 301, "./modules/es6.typed.uint32-array": 302, "./modules/es6.typed.uint8-array": 303, "./modules/es6.typed.uint8-clamped-array": 304, "./modules/es6.weak-map": 305, "./modules/es6.weak-set": 306, "./modules/es7.array.flat-map": 307, "./modules/es7.array.flatten": 308, "./modules/es7.array.includes": 309, "./modules/es7.asap": 310, "./modules/es7.error.is-error": 311, "./modules/es7.global": 312, "./modules/es7.map.from": 313, "./modules/es7.map.of": 314, "./modules/es7.map.to-json": 315, "./modules/es7.math.clamp": 316, "./modules/es7.math.deg-per-rad": 317, "./modules/es7.math.degrees": 318, "./modules/es7.math.fscale": 319, "./modules/es7.math.iaddh": 320, "./modules/es7.math.imulh": 321, "./modules/es7.math.isubh": 322, "./modules/es7.math.rad-per-deg": 323, "./modules/es7.math.radians": 324, "./modules/es7.math.scale": 325, "./modules/es7.math.signbit": 326, "./modules/es7.math.umulh": 327, "./modules/es7.object.define-getter": 328, "./modules/es7.object.define-setter": 329, "./modules/es7.object.entries": 330, "./modules/es7.object.get-own-property-descriptors": 331, "./modules/es7.object.lookup-getter": 332, "./modules/es7.object.lookup-setter": 333, "./modules/es7.object.values": 334, "./modules/es7.observable": 335, "./modules/es7.promise.finally": 336, "./modules/es7.promise.try": 337, "./modules/es7.reflect.define-metadata": 338, "./modules/es7.reflect.delete-metadata": 339, "./modules/es7.reflect.get-metadata": 341, "./modules/es7.reflect.get-metadata-keys": 340, "./modules/es7.reflect.get-own-metadata": 343, "./modules/es7.reflect.get-own-metadata-keys": 342, "./modules/es7.reflect.has-metadata": 344, "./modules/es7.reflect.has-own-metadata": 345, "./modules/es7.reflect.metadata": 346, "./modules/es7.set.from": 347, "./modules/es7.set.of": 348, "./modules/es7.set.to-json": 349, "./modules/es7.string.at": 350, "./modules/es7.string.match-all": 351, "./modules/es7.string.pad-end": 352, "./modules/es7.string.pad-start": 353, "./modules/es7.string.trim-left": 354, "./modules/es7.string.trim-right": 355, "./modules/es7.symbol.async-iterator": 356, "./modules/es7.symbol.observable": 357, "./modules/es7.system.global": 358, "./modules/es7.weak-map.from": 359, "./modules/es7.weak-map.of": 360, "./modules/es7.weak-set.from": 361, "./modules/es7.weak-set.of": 362, "./modules/web.dom.iterable": 363, "./modules/web.immediate": 364, "./modules/web.timers": 365 }], 367: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -13153,7 +13609,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     function toUpper(match, c) {
       return c ? c.toUpperCase() : '';
     }
-  }, {}], 369: [function (require, module, exports) {
+  }, {}], 368: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -13192,7 +13648,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     exports.prefix = _prefix2['default'];
     exports.supportedProperty = _supportedProperty2['default'];
     exports.supportedValue = _supportedValue2['default'];
-  }, { "./prefix": 370, "./supported-property": 371, "./supported-value": 372 }], 370: [function (require, module, exports) {
+  }, { "./prefix": 369, "./supported-property": 370, "./supported-value": 371 }], 369: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -13232,7 +13688,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     }
 
     exports['default'] = { js: js, css: css };
-  }, { "is-in-browser": 376 }], 371: [function (require, module, exports) {
+  }, { "is-in-browser": 375 }], 370: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -13283,7 +13739,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return cache[prop];
     }
-  }, { "./camelize": 368, "./prefix": 370, "is-in-browser": 376 }], 372: [function (require, module, exports) {
+  }, { "./camelize": 367, "./prefix": 369, "is-in-browser": 375 }], 371: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -13342,7 +13798,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return cache[cacheKey];
     }
-  }, { "./prefix": 370, "is-in-browser": 376 }], 373: [function (require, module, exports) {
+  }, { "./prefix": 369, "is-in-browser": 375 }], 372: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, '__esModule', {
@@ -13390,7 +13846,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     };
 
     module.exports = exports['default'];
-  }, {}], 374: [function (require, module, exports) {
+  }, {}], 373: [function (require, module, exports) {
     var split = require('browser-split');
     var ClassList = require('class-list');
 
@@ -13518,7 +13974,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     function isArray(arr) {
       return Object.prototype.toString.call(arr) == '[object Array]';
     }
-  }, { "browser-split": 43, "class-list": 44, "html-element": 42 }], 375: [function (require, module, exports) {
+  }, { "browser-split": 42, "class-list": 43, "html-element": 41 }], 374: [function (require, module, exports) {
 
     var indexOf = [].indexOf;
 
@@ -13529,7 +13985,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       }
       return -1;
     };
-  }, {}], 376: [function (require, module, exports) {
+  }, {}], 375: [function (require, module, exports) {
     "use strict";
 
     Object.defineProperty(exports, "__esModule", {
@@ -13545,7 +14001,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     var isBrowser = exports.isBrowser = (typeof window === "undefined" ? "undefined" : _typeof(window)) === "object" && (typeof document === "undefined" ? "undefined" : _typeof(document)) === 'object' && document.nodeType === 9;
 
     exports.default = isBrowser;
-  }, {}], 377: [function (require, module, exports) {
+  }, {}], 376: [function (require, module, exports) {
     'use strict';
 
     var symbolObservable = require('symbol-observable');
@@ -13553,13 +14009,13 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     module.exports = function (fn) {
       return Boolean(fn && fn[symbolObservable]);
     };
-  }, { "symbol-observable": 378 }], 378: [function (require, module, exports) {
+  }, { "symbol-observable": 377 }], 377: [function (require, module, exports) {
     (function (global) {
       'use strict';
 
       module.exports = require('./ponyfill')(global || window || this);
     }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
-  }, { "./ponyfill": 379 }], 379: [function (require, module, exports) {
+  }, { "./ponyfill": 378 }], 378: [function (require, module, exports) {
     'use strict';
 
     module.exports = function symbolObservablePonyfill(root) {
@@ -13579,7 +14035,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return result;
     };
-  }, {}], 380: [function (require, module, exports) {
+  }, {}], 379: [function (require, module, exports) {
     "use strict";
 
     Object.defineProperty(exports, "__esModule", {
@@ -13620,7 +14076,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return { onProcessStyle: onProcessStyle };
     }
-  }, {}], 381: [function (require, module, exports) {
+  }, {}], 380: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -13687,7 +14143,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       }
       return { onProcessStyle: onProcessStyle };
     }
-  }, { "warning": 429 }], 382: [function (require, module, exports) {
+  }, { "warning": 428 }], 381: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -13800,7 +14256,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       'text-shadow-y': 'px',
       'text-shadow-blur': 'px'
     };
-  }, {}], 383: [function (require, module, exports) {
+  }, {}], 382: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -13903,7 +14359,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return { onProcessStyle: onProcessStyle, onChangeValue: onChangeValue };
     }
-  }, { "./defaultUnits": 382, "is-observable": 377 }], 384: [function (require, module, exports) {
+  }, { "./defaultUnits": 381, "is-observable": 376 }], 383: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -14043,7 +14499,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return { onProcessStyle: onProcessStyle };
     }
-  }, { "./props": 385, "is-observable": 377 }], 385: [function (require, module, exports) {
+  }, { "./props": 384, "is-observable": 376 }], 384: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -14196,7 +14652,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         content: 'align-content'
       }
     };
-  }, {}], 386: [function (require, module, exports) {
+  }, {}], 385: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -14278,7 +14734,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return { onProcessStyle: onProcessStyle };
     }
-  }, { "is-observable": 377, "warning": 429 }], 387: [function (require, module, exports) {
+  }, { "is-observable": 376, "warning": 428 }], 386: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -14466,7 +14922,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return { onCreateRule: onCreateRule, onProcessRule: onProcessRule };
     }
-  }, { "jss": 400 }], 388: [function (require, module, exports) {
+  }, { "jss": 399 }], 387: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -14573,7 +15029,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return { onProcessStyle: onProcessStyle };
     }
-  }, { "warning": 429 }], 389: [function (require, module, exports) {
+  }, { "warning": 428 }], 388: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -14630,7 +15086,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         plugins: [(0, _jssTemplate2.default)(options.template), (0, _jssGlobal2.default)(options.global), (0, _jssExtend2.default)(options.extend), (0, _jssNested2.default)(options.nested), (0, _jssCompose2.default)(options.compose), (0, _jssCamelCase2.default)(options.camelCase), (0, _jssDefaultUnit2.default)(options.defaultUnit), (0, _jssExpand2.default)(options.expand), (0, _jssVendorPrefixer2.default)(options.vendorPrefixer), (0, _jssPropsSort2.default)(options.propsSort)]
       };
     };
-  }, { "jss-camel-case": 380, "jss-compose": 381, "jss-default-unit": 383, "jss-expand": 384, "jss-extend": 386, "jss-global": 387, "jss-nested": 388, "jss-props-sort": 390, "jss-template": 391, "jss-vendor-prefixer": 393 }], 390: [function (require, module, exports) {
+  }, { "jss-camel-case": 379, "jss-compose": 380, "jss-default-unit": 382, "jss-expand": 383, "jss-extend": 385, "jss-global": 386, "jss-nested": 387, "jss-props-sort": 389, "jss-template": 390, "jss-vendor-prefixer": 392 }], 389: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -14656,7 +15112,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return { onProcessStyle: onProcessStyle };
     }
-  }, {}], 391: [function (require, module, exports) {
+  }, {}], 390: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -14680,7 +15136,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     exports['default'] = function () {
       return { onProcessRule: onProcessRule };
     };
-  }, { "./parse": 392 }], 392: [function (require, module, exports) {
+  }, { "./parse": 391 }], 391: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -14715,7 +15171,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       }
       return style;
     };
-  }, { "warning": 429 }], 393: [function (require, module, exports) {
+  }, { "warning": 428 }], 392: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -14775,7 +15231,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return { onProcessRule: onProcessRule, onProcessStyle: onProcessStyle, onChangeValue: onChangeValue };
     }
-  }, { "css-vendor": 369 }], 394: [function (require, module, exports) {
+  }, { "css-vendor": 368 }], 393: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -14988,7 +15444,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     }();
 
     exports['default'] = Jss;
-  }, { "./PluginsRegistry": 395, "./StyleSheet": 399, "./plugins/functions": 401, "./plugins/observables": 402, "./plugins/rules": 403, "./renderers/DomRenderer": 404, "./renderers/VirtualRenderer": 405, "./rules/StyleRule": 410, "./sheets": 412, "./utils/createGenerateClassName": 414, "./utils/createRule": 415, "is-in-browser": 376 }], 395: [function (require, module, exports) {
+  }, { "./PluginsRegistry": 394, "./StyleSheet": 398, "./plugins/functions": 400, "./plugins/observables": 401, "./plugins/rules": 402, "./renderers/DomRenderer": 403, "./renderers/VirtualRenderer": 404, "./rules/StyleRule": 409, "./sheets": 411, "./utils/createGenerateClassName": 413, "./utils/createRule": 414, "is-in-browser": 375 }], 394: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -15110,7 +15566,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     }();
 
     exports['default'] = PluginsRegistry;
-  }, { "warning": 429 }], 396: [function (require, module, exports) {
+  }, { "warning": 428 }], 395: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -15322,7 +15778,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     }();
 
     exports['default'] = RuleList;
-  }, { "./rules/StyleRule": 410, "./utils/createRule": 415, "./utils/escape": 416, "./utils/linkRule": 421 }], 397: [function (require, module, exports) {
+  }, { "./rules/StyleRule": 409, "./utils/createRule": 414, "./utils/escape": 415, "./utils/linkRule": 420 }], 396: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -15419,7 +15875,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     }();
 
     exports['default'] = SheetsManager;
-  }, { "warning": 429 }], 398: [function (require, module, exports) {
+  }, { "warning": 428 }], 397: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -15505,7 +15961,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     }();
 
     exports['default'] = SheetsRegistry;
-  }, {}], 399: [function (require, module, exports) {
+  }, {}], 398: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -15702,7 +16158,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     }();
 
     exports['default'] = StyleSheet;
-  }, { "./RuleList": 396, "./utils/linkRule": 421 }], 400: [function (require, module, exports) {
+  }, { "./RuleList": 395, "./utils/linkRule": 420 }], 399: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -15777,7 +16233,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     };
 
     exports['default'] = create();
-  }, { "./Jss": 394, "./RuleList": 396, "./SheetsManager": 397, "./SheetsRegistry": 398, "./sheets": 412, "./utils/createGenerateClassName": 414, "./utils/getDynamicStyles": 417 }], 401: [function (require, module, exports) {
+  }, { "./Jss": 393, "./RuleList": 395, "./SheetsManager": 396, "./SheetsRegistry": 397, "./sheets": 411, "./utils/createGenerateClassName": 413, "./utils/getDynamicStyles": 416 }], 400: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -15854,7 +16310,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }
     };
-  }, { "../RuleList": 396, "../rules/StyleRule": 410, "../utils/createRule": 415, "../utils/kebabCase": 420 }], 402: [function (require, module, exports) {
+  }, { "../RuleList": 395, "../rules/StyleRule": 409, "../utils/createRule": 414, "../utils/kebabCase": 419 }], 401: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -15916,7 +16372,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }
       }
     };
-  }, { "../rules/StyleRule": 410, "../utils/createRule": 415, "../utils/isObservable": 419 }], 403: [function (require, module, exports) {
+  }, { "../rules/StyleRule": 409, "../utils/createRule": 414, "../utils/isObservable": 418 }], 402: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -15966,7 +16422,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       };
       return { onCreateRule: onCreateRule };
     });
-  }, { "../rules/ConditionalRule": 406, "../rules/FontFaceRule": 407, "../rules/KeyframesRule": 408, "../rules/SimpleRule": 409, "../rules/ViewportRule": 411 }], 404: [function (require, module, exports) {
+  }, { "../rules/ConditionalRule": 405, "../rules/FontFaceRule": 406, "../rules/KeyframesRule": 407, "../rules/SimpleRule": 408, "../rules/ViewportRule": 410 }], 403: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -16301,7 +16757,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     }();
 
     exports['default'] = DomRenderer;
-  }, { "../rules/StyleRule": 410, "../sheets": 412, "../utils/global": 418, "warning": 429 }], 405: [function (require, module, exports) {
+  }, { "../rules/StyleRule": 409, "../sheets": 411, "../utils/global": 417, "warning": 428 }], 404: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -16387,7 +16843,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     }();
 
     exports['default'] = VirtualRenderer;
-  }, {}], 406: [function (require, module, exports) {
+  }, {}], 405: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -16480,7 +16936,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     }();
 
     exports['default'] = ConditionalRule;
-  }, { "../RuleList": 396 }], 407: [function (require, module, exports) {
+  }, { "../RuleList": 395 }], 406: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -16543,7 +16999,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     }();
 
     exports['default'] = FontFaceRule;
-  }, { "../utils/toCss": 422 }], 408: [function (require, module, exports) {
+  }, { "../utils/toCss": 421 }], 407: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -16620,7 +17076,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     }();
 
     exports['default'] = KeyframesRule;
-  }, { "../RuleList": 396 }], 409: [function (require, module, exports) {
+  }, { "../RuleList": 395 }], 408: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -16675,7 +17131,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     }();
 
     exports['default'] = SimpleRule;
-  }, {}], 410: [function (require, module, exports) {
+  }, {}], 409: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -16825,7 +17281,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     }();
 
     exports['default'] = StyleRule;
-  }, { "../utils/toCss": 422, "../utils/toCssValue": 423, "warning": 429 }], 411: [function (require, module, exports) {
+  }, { "../utils/toCss": 421, "../utils/toCssValue": 422, "warning": 428 }], 410: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -16879,7 +17335,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     }();
 
     exports['default'] = ViewportRule;
-  }, { "../utils/toCss": 422 }], 412: [function (require, module, exports) {
+  }, { "../utils/toCss": 421 }], 411: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -16895,7 +17351,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     }
 
     exports['default'] = new _SheetsRegistry2['default']();
-  }, { "./SheetsRegistry": 398 }], 413: [function (require, module, exports) {
+  }, { "./SheetsRegistry": 397 }], 412: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -16944,7 +17400,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return newStyle;
     }
-  }, { "./isObservable": 419 }], 414: [function (require, module, exports) {
+  }, { "./isObservable": 418 }], 413: [function (require, module, exports) {
     (function (process) {
       'use strict';
 
@@ -16997,7 +17453,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         };
       };
     }).call(this, require('_process'));
-  }, { "../StyleSheet": 399, "./global": 418, "_process": 425, "warning": 429 }], 415: [function (require, module, exports) {
+  }, { "../StyleSheet": 398, "./global": 417, "_process": 424, "warning": 428 }], 414: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -17038,7 +17494,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return new _StyleRule2['default'](name, declCopy, options);
     }
-  }, { "../rules/StyleRule": 410, "../utils/cloneStyle": 413, "warning": 429 }], 416: [function (require, module, exports) {
+  }, { "../rules/StyleRule": 409, "../utils/cloneStyle": 412, "warning": 428 }], 415: [function (require, module, exports) {
     (function (process) {
       'use strict';
 
@@ -17070,7 +17526,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return CSS.escape(str);
       };
     }).call(this, require('_process'));
-  }, { "./global": 418, "_process": 425 }], 417: [function (require, module, exports) {
+  }, { "./global": 417, "_process": 424 }], 416: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -17108,7 +17564,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return extract(styles);
     };
-  }, {}], 418: [function (require, module, exports) {
+  }, {}], 417: [function (require, module, exports) {
     (function (global) {
       'use strict';
 
@@ -17117,7 +17573,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       });
       exports['default'] = typeof window === 'undefined' ? global : window;
     }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
-  }, {}], 419: [function (require, module, exports) {
+  }, {}], 418: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -17135,7 +17591,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     exports['default'] = function (value) {
       return value && value[_symbolObservable2['default']] && value === value[_symbolObservable2['default']]();
     };
-  }, { "symbol-observable": 426 }], 420: [function (require, module, exports) {
+  }, { "symbol-observable": 425 }], 419: [function (require, module, exports) {
     "use strict";
 
     Object.defineProperty(exports, "__esModule", {
@@ -17149,7 +17605,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     exports["default"] = function (str) {
       return str.replace(regExp, replace);
     };
-  }, {}], 421: [function (require, module, exports) {
+  }, {}], 420: [function (require, module, exports) {
     "use strict";
 
     Object.defineProperty(exports, "__esModule", {
@@ -17161,7 +17617,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       rule.renderable = cssRule;
       if (rule.rules && cssRule.cssRules) rule.rules.link(cssRule.cssRules);
     }
-  }, {}], 422: [function (require, module, exports) {
+  }, {}], 421: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -17232,7 +17688,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return result;
     }
-  }, { "./toCssValue": 423 }], 423: [function (require, module, exports) {
+  }, { "./toCssValue": 422 }], 422: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -17252,7 +17708,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return value.join(', ');
     }
-  }, {}], 424: [function (require, module, exports) {
+  }, {}], 423: [function (require, module, exports) {
 
     ;(function (global, factory) {
       (typeof exports === "undefined" ? "undefined" : _typeof2(exports)) === 'object' && typeof module !== 'undefined' ? module.exports = factory() : typeof define === 'function' && define.amd ? define(factory) : global.moment = factory();
@@ -21241,7 +21697,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return hooks;
     });
-  }, {}], 425: [function (require, module, exports) {
+  }, {}], 424: [function (require, module, exports) {
     var process = module.exports = {};
 
     var cachedSetTimeout;
@@ -21411,9 +21867,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     process.umask = function () {
       return 0;
     };
-  }, {}], 426: [function (require, module, exports) {
+  }, {}], 425: [function (require, module, exports) {
     module.exports = require('./lib/index');
-  }, { "./lib/index": 427 }], 427: [function (require, module, exports) {
+  }, { "./lib/index": 426 }], 426: [function (require, module, exports) {
     (function (global) {
       'use strict';
 
@@ -21446,7 +21902,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       var result = (0, _ponyfill2['default'])(root);
       exports['default'] = result;
     }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
-  }, { "./ponyfill.js": 428 }], 428: [function (require, module, exports) {
+  }, { "./ponyfill.js": 427 }], 427: [function (require, module, exports) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -21470,7 +21926,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return result;
     };
-  }, {}], 429: [function (require, module, exports) {
+  }, {}], 428: [function (require, module, exports) {
     (function (process) {
 
       'use strict';
@@ -21509,7 +21965,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       module.exports = warning;
     }).call(this, require('_process'));
-  }, { "_process": 425 }], 430: [function (require, module, exports) {
+  }, { "_process": 424 }], 429: [function (require, module, exports) {
     module.exports.executeAsync = function (functions, id) {
       var callContinue, fid;
       id++;
@@ -21588,7 +22044,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         ;
       }
     };
-  }, {}], 431: [function (require, module, exports) {
+  }, {}], 430: [function (require, module, exports) {
     module.exports.addStyleElement = function (css) {
       var style;
       style = document.createElement('style');
@@ -21596,11 +22052,11 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       style.innerHTML = css;
       return document.head.appendChild(style);
     };
-  }, {}], 432: [function (require, module, exports) {
+  }, {}], 431: [function (require, module, exports) {
     module.exports.normalizeCarriageReturns = function (source) {
       return source.replace(/\r\n/g, '\n');
     };
-  }, {}], 433: [function (require, module, exports) {
+  }, {}], 432: [function (require, module, exports) {
     module.exports.getUrlLocation = function (url) {
       var link;
       link = document.createElement('a');
@@ -21675,7 +22131,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       req.send(query);
       return req;
     };
-  }, {}], 434: [function (require, module, exports) {
+  }, {}], 433: [function (require, module, exports) {
     module.exports.getKeys = function (object) {
       var i, keys;
       keys = [];
@@ -21700,7 +22156,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         return object[i];
       }
     };
-  }, {}], 435: [function (require, module, exports) {
+  }, {}], 434: [function (require, module, exports) {
     module.exports.escapePattern = function (string) {
       return string.replace(/[-[\]{}()^$*+?.|\\]/g, "\\$&");
     };
@@ -21742,7 +22198,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       }
       return result;
     };
-  }, {}], 436: [function (require, module, exports) {
+  }, {}], 435: [function (require, module, exports) {
     module.exports.insert = function (string, newString, id) {
       if (id == null) {
         id = 0;

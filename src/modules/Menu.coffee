@@ -23,35 +23,26 @@ Async = require('../../lib.js.generic/dist/Async')
 class module.exports
     constructor: (@WM) ->
 
-    _makeUI: (plugins) ->
+    _makeUI: (@page_type, plugins) ->
         CSS.addStyleElement(
                 "#WikiMonkeyMenu input.margin {margin:0 0.33em 0.33em 0;}")
 
         mainDiv = $('<div/>').attr('id', 'WikiMonkeyMenu')
         groupActions = {}
 
-        for pid of plugins
-            pluginConf = plugins[pid]
-            pluginName = pluginConf[0]
-            pluginInst = pluginConf[1]
+        for Plugin in plugins
+            plugin = new Plugin(@WM)
+            pluginInst = plugin.conf["#{@page_type}_menu"]
 
-            # This protects from configurations that define plugins
-            # that are actually not installed
-            # A try-catch doesn't work...
-            if @WM.Plugins[pluginName]
-                plugin = @WM.Plugins[pluginName]
-            else
-                continue
-
-            # This allows to disable an entry by giving it any second
+            # This allows to disable an entry by giving it a menu_entry
             # parameter that evaluates to false
             if not pluginInst or not pluginInst.length
                 continue
 
             if plugin.makeUI
-                groupAction = [@warnInputNeeded, pluginConf[0]]
+                groupAction = [@warnInputNeeded, plugin]
             else
-                groupAction = [@executeEntryAction, [plugin, pluginConf]]
+                groupAction = [@executeEntryAction, plugin]
 
             pluginInst.unshift("WikiMonkeyMenuRoot")
             currId = false
@@ -109,9 +100,9 @@ class module.exports
                 .appendTo(currMenu)
 
             if plugin.makeUI
-                entry.click(@makeEntryUI(currMenu, plugin, pluginConf))
+                entry.click(@makeEntryUI(currMenu, plugin))
             else
-                entry.click(@makeEntryAction(plugin, pluginConf))
+                entry.click(@makeEntryAction(plugin))
 
         menus = mainDiv.children()
 
@@ -139,9 +130,8 @@ class module.exports
             currentMenu.hide()
             changeMenu.show()
 
-    makeEntryUI: (currMenu, plugin, pluginConf) ->
-        self = this
-        return (event) ->
+    makeEntryUI: (currMenu, plugin) ->
+        return (event) =>
             currMenu.hide()
             UIdiv = $('<div/>')
 
@@ -158,25 +148,22 @@ class module.exports
             $('<input/>')
                 .attr('type', 'button')
                 .val('Execute')
-                .click(self.makeEntryAction(plugin, pluginConf))
+                .click(@makeEntryAction(plugin))
                 .appendTo(UIdiv)
 
-            UI = plugin.makeUI(pluginConf[2])
+            UI = plugin.makeUI()
             UIdiv.append(UI).insertAfter(currMenu)
 
-    makeEntryAction: (plugin, pluginConf) ->
-        self = this
-        return (event) ->
-            self.executeEntryAction([plugin, pluginConf], null)
+    makeEntryAction: (plugin) ->
+        return (event) =>
+            @executeEntryAction(plugin, null)
 
-    executeEntryAction: (args, callNext) =>
-        plugin = args[0]
-        pluginConf = args[1]
-        @WM.Log.logHidden("Plugin: " + pluginConf[0])
-        plugin.main(pluginConf[2], callNext)
+    executeEntryAction: (plugin, callNext) =>
+        @WM.Log.logHidden("Plugin: " + plugin.constructor.name)
+        plugin["main_#{@page_type}"](callNext)
 
-    warnInputNeeded: (pluginName, callNext) =>
-        @WM.Log.logWarning("Plugin " + pluginName +
+    warnInputNeeded: (plugin, callNext) =>
+        @WM.Log.logWarning("Plugin " + plugin.constructor.name +
             " was not executed because it requires input from its interface.")
 
         if callNext

@@ -22,7 +22,7 @@ CSS = require('../../lib.js.generic/dist/CSS')
 class module.exports
     constructor: (@WM) ->
 
-    _makeUI: (plugins) ->
+    _makeUI: (@page_type, plugins) ->
         CSS.addStyleElement("#WikiMonkeyFilters-Commands {display:flex;
                         align-items:center; justify-content:space-between;}
                     #WikiMonkeyFilters-Commands > select {flex:auto;}
@@ -35,25 +35,22 @@ class module.exports
         filters = []
         selectFilter = $('<select/>').change(@updateFilterUI(filters))
 
-        for pid of plugins
-            pluginConf = plugins[pid]
-            pluginName = pluginConf[0]
-            pluginInst = pluginConf[1]
-
-            # This protects from configurations that define plugins
-            # that are actually not installed
-            # A try-catch doesn't work...
-            if not @WM.Plugins[pluginName]
-                continue
+        for Plugin in plugins
+            plugin = new Plugin(@WM)
+            pluginInst = plugin.conf.option_label
 
             # This allows to disable an entry by giving it any second
             # parameter that evaluates to false
-            if not pluginInst or not pluginInst.length
+            if not pluginInst
                 continue
 
-            filters.push(pluginConf)
-            $('<option/>').text(pluginInst[pluginInst.length - 1])
-                                                .appendTo(selectFilter)
+            filters.push(plugin)
+            option = $('<option/>').text(pluginInst)
+
+            if plugin.constructor.name is @WM.conf["default_#{@page_type}_plugin"]
+                option[0].selected = true
+
+            option.appendTo(selectFilter)
 
         if filters.length
             commandsFilterDiv = $('<div/>')
@@ -81,7 +78,7 @@ class module.exports
 
             # This allows updateFilterUI replace it the first time
             $('<div/>').appendTo(divFilter)
-            @doUpdateFilterUI(divFilter, filters, 0)
+            @doUpdateFilterUI(divFilter, filters, selectFilter[0].selectedIndex)
 
             div = $('<div/>')
                 .attr('id', 'WikiMonkeyFilters')
@@ -92,37 +89,35 @@ class module.exports
             return false
 
     updateFilterUI: (filters) =>
-        self = this
-        return (event) ->
+        return (event) =>
             UI = $('#WikiMonkeyFilters-Options')
             select = $('#WikiMonkeyFilters-Commands')
                 .find('select')
                 .first()
             id = select[0].selectedIndex
 
-            self.doUpdateFilterUI(UI, filters, id)
+            @doUpdateFilterUI(UI, filters, id)
 
     doUpdateFilterUI: (UI, filters, id) ->
-        makeUI = @WM.Plugins[filters[id][0]].makeUI
+        makeUI = filters[id].makeUI
 
         if makeUI instanceof Function
-            UI.children().first().replaceWith(makeUI(filters[id][2]))
+            UI.children().first().replaceWith(makeUI())
         else
             # Don't remove, otherwise if another plugin with interface is
             # selected, replaceWith won't work
             UI.children().first().replaceWith($('<div/>'))
 
     executePlugin: (filters) =>
-        self = this
-        return (event) ->
+        return (event) =>
             select = $('#WikiMonkeyFilters-Commands')
                 .find('select')
                 .first()
             id = select[0].selectedIndex
 
-            self.WM.Plugins[filters[id][0]].main(filters[id][2])
+            filters[id]["main_#{@page_type}"]()
 
-            this.disabled = true
+            event.target.disabled = true
 
     toggleLog: (event) ->
         if @checked

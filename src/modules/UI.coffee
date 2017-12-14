@@ -32,21 +32,21 @@ class module.exports
         if document.getElementById('editform')
             nextNode = document.getElementById('wpSummaryLabel')
                                                         .parentNode.nextSibling
-            conf = @WM.Cfg.Plugins.Editor
-            UI = if conf then @WM.Menu._makeUI(conf) else null
+            conf = @WM.Plugins.editor
+            UI = if conf.length then @WM.Menu._makeUI('editor', conf) else null
             @WM.Mods.applyEditorMods()
 
         else if document.getElementById('mw-diff-otitle1')
             nextNode = document.getElementById('bodyContent')
                                                 .getElementsByTagName('h2')[0]
-            conf = @WM.Cfg.Plugins.Diff
-            UI = if conf then @WM.Menu._makeUI(conf) else null
+            conf = @WM.Plugins.diff
+            UI = if conf.length then @WM.Menu._makeUI('diff', conf) else null
 
         else if document.getElementById('mw-subcategories') or
                                         document.getElementById('mw-pages')
             nextNode = document.getElementById('bodyContent')
-            conf = @WM.Cfg.Plugins.Bot
-            UI = if conf then @WM.Bot._makeUI(conf,
+            conf = @WM.Plugins.bot
+            UI = if conf.length then @WM.Bot._makeUI(conf,
                             [[document.getElementById('mw-pages'), 0, "Pages"],
                             [document.getElementById('mw-subcategories'), 0,
                             "Subcategories"]]) else null
@@ -55,8 +55,8 @@ class module.exports
         else if document.getElementById('mw-whatlinkshere-list')
             nextNode = document.getElementById('bodyContent')
                                 .getElementsByTagName('form')[0].nextSibling
-            conf = @WM.Cfg.Plugins.Bot
-            UI = if conf then @WM.Bot._makeUI(conf,
+            conf = @WM.Plugins.bot
+            UI = if conf.length then @WM.Bot._makeUI(conf,
                             [[document.getElementById('mw-whatlinkshere-list'),
                             0, "Pages"]]) else null
             display = false
@@ -65,24 +65,19 @@ class module.exports
                                         document.getElementById('bodyContent'
                                         ).getElementsByTagName('ol')[0]
             nextNode = document.getElementsByClassName('mw-spcontent')[0]
-            conf = @WM.Cfg.Plugins.Bot
-            UI = if conf then @WM.Bot._makeUI(conf,
+            conf = @WM.Plugins.bot
+            UI = if conf.length then @WM.Bot._makeUI(conf,
                         [[document.getElementById('bodyContent'
                         ).getElementsByTagName('ol')[0], 1, "Pages"]]) else null
             display = false
 
         else if document.getElementById('mw-prefixindex-list-table')
             nextNode = document.getElementById('mw-prefixindex-list-table')
-            conf = @WM.Cfg.Plugins.Bot
-            UI = if conf then @WM.Bot._makeUI(conf,
+            conf = @WM.Plugins.bot
+            UI = if conf.length then @WM.Bot._makeUI(conf,
                                 [[nextNode.getElementsByTagName('tbody')[0],
                                 0, "Pages"]]) else null
             display = false
-
-        # Making the interface shouldn't rely on saved configuration, in order
-        # to always make it possible to fix a misconfiguration
-        else if document.getElementById('mw-prefs-form')
-            @WM.Cfg._makeUI()
 
         else
             wikiUrls = @WM.MW.getWikiUrls()
@@ -110,15 +105,16 @@ class module.exports
             if location.href.search(patt1A) > -1 or
                                         location.href.search(patt1B) > -1
                 nextNode = document.getElementById('bodyContent')
-                conf = @WM.Cfg.Plugins.Special
-                UI = if conf then @WM.Menu._makeUI(conf) else null
+                conf = @WM.Plugins.special
+                UI = if conf.length then @WM.Menu._makeUI('special', conf) \
+                    else null
 
             else if location.href.search(patt2A) > -1 or
                                         location.href.search(patt2B) > -1
                 nextNode = document.getElementById('mw-content-text')
                                             .getElementsByTagName('h4')[0]
-                conf = @WM.Cfg.Plugins.RecentChanges
-                UI = if conf then @WM.Filters._makeUI(conf) else null
+                conf = @WM.Plugins.recentchanges
+                UI = if conf.length then @WM.Filters._makeUI('recentchanges', conf) else null
                 displayLog = false
                 @WM.Mods.applyRecentChangesMods()
 
@@ -126,16 +122,16 @@ class module.exports
                                         location.href.search(patt3B) > -1
                 nextNode = document.getElementById('mw-content-text')
                                             .getElementsByTagName('ul')[0]
-                conf = @WM.Cfg.Plugins.NewPages
-                UI = if conf then @WM.Filters._makeUI(conf) else null
+                conf = @WM.Plugins.newpages
+                UI = if conf.length then @WM.Filters._makeUI('newpages', conf) else null
                 displayLog = false
 
             else if location.href.search(patt4A) > -1 or
                                         location.href.search(patt4B) > -1
                 nextNode = document.getElementById('mw-content-text')
                                             .getElementsByTagName('ul')[0]
-                conf = @WM.Cfg.Plugins.Bot
-                UI = if conf then @WM.Bot._makeUI(conf,
+                conf = @WM.Plugins.bot
+                UI = if conf.length then @WM.Bot._makeUI(conf,
                                 [[document.getElementById('mw-content-text')
                                         .getElementsByTagName('ul')[0],
                                 0, "Pages"]]) else null
@@ -148,8 +144,8 @@ class module.exports
             else if document.getElementsByClassName('mw-spcontent')
                                                                 .length > 0
                 nextNode = document.getElementsByClassName('mw-spcontent')[0]
-                conf = @WM.Cfg.Plugins.Bot
-                UI = if conf then @WM.Bot._makeUI(conf,
+                conf = @WM.Plugins.bot
+                UI = if conf.length then @WM.Bot._makeUI(conf,
                                     [[nextNode.getElementsByTagName('ol')[0],
                                     0, "Pages"]]) else null
                 display = false
@@ -158,8 +154,8 @@ class module.exports
                                                                 .length > 0
                 nextNode = document.getElementsByClassName(
                                                 'mw-allpages-table-chunk')[0]
-                conf = @WM.Cfg.Plugins.Bot
-                UI = if conf then @WM.Bot._makeUI(conf,
+                conf = @WM.Plugins.bot
+                UI = if conf.length then @WM.Bot._makeUI(conf,
                                 [[nextNode.getElementsByTagName('tbody')[0],
                                 0, "Pages"]]) else null
                 display = false
@@ -210,7 +206,7 @@ class module.exports
 
             nextNode.parentNode.insertBefore(main, nextNode)
 
-            @WM.Log.logHidden('Wiki Monkey version: ' + @WM.version)
+            @WM.Log.logHidden('Wiki Monkey version: ' + @WM.VERSION)
             date = new Date()
             @WM.Log.logHidden('Date: ' + date.toString())
             @WM.Log.logHidden('URL: ' + location.href)

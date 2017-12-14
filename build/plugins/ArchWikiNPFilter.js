@@ -16,47 +16,55 @@
 
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
-var CSS;
+var CSS, Plugin;
+
+({Plugin} = require('./_Plugin'));
 
 CSS = require('../../lib.js.generic/dist/CSS');
 
-module.exports = class exports {
-  constructor(WM) {
-    this.WM = WM;
-  }
+module.exports.ArchWikiNPFilter = (function() {
+  class ArchWikiNPFilter extends Plugin {
+    main_newpages() {
+      var contentDiv, i, language, len, li, liList, link, pureTitle, ul;
+      CSS.addStyleElement("#mw-content-text > h5 {background-color:#afa;}");
+      contentDiv = $('#mw-content-text');
+      ul = contentDiv.find('ul').first();
+      liList = ul.children('li');
+      for (i = 0, len = liList.length; i < len; i++) {
+        li = liList[i];
+        link = $(li).find('a.mw-newpages-pagename').first();
+        [pureTitle, language] = this.WM.ArchWiki.detectLanguage(link[0].title);
+        if (language !== this.conf.default_language) {
+          this.moveArticle(contentDiv, li, language);
+        }
+      }
+      return this.WM.Log.logInfo("Grouped articles by language");
+    }
 
-  main(params) {
-    var contentDiv, i, language, len, li, liList, link, pureTitle, ul;
-    CSS.addStyleElement("#mw-content-text > h5 {background-color:#afa;}");
-    contentDiv = $('#mw-content-text');
-    ul = contentDiv.find('ul').first();
-    liList = ul.children('li');
-    for (i = 0, len = liList.length; i < len; i++) {
-      li = liList[i];
-      link = $(li).find('a.mw-newpages-pagename').first();
-      [pureTitle, language] = this.WM.ArchWiki.detectLanguage(link[0].title);
-      if (language !== params.language) {
-        this.WM.Plugins.ArchWikiNPFilter.moveArticle(contentDiv, li, language);
+    moveArticle(contentDiv, li, language) {
+      var HLang, i, langFound, langHs, len, ul;
+      langHs = contentDiv.children('h5');
+      langFound = false;
+      for (i = 0, len = langHs.length; i < len; i++) {
+        HLang = langHs[i];
+        if (HLang.innerHTML === language) {
+          ul = $(HLang).next().append(li);
+          langFound = true;
+          break;
+        }
+      }
+      if (!langFound) {
+        return contentDiv.append($('<h5>').text(language), $('<ul>').append(li));
       }
     }
-    return this.WM.Log.logInfo("Grouped articles by language");
-  }
 
-  moveArticle(contentDiv, li, language) {
-    var HLang, i, langFound, langHs, len, ul;
-    langHs = contentDiv.children('h5');
-    langFound = false;
-    for (i = 0, len = langHs.length; i < len; i++) {
-      HLang = langHs[i];
-      if (HLang.innerHTML === language) {
-        ul = $(HLang).next().append(li);
-        langFound = true;
-        break;
-      }
-    }
-    if (!langFound) {
-      return contentDiv.append($('<h5>').text(language), $('<ul>').append(li));
-    }
-  }
+  };
 
-};
+  ArchWikiNPFilter.conf_default = {
+    option_label: "Default filter",
+    default_language: "English"
+  };
+
+  return ArchWikiNPFilter;
+
+})();

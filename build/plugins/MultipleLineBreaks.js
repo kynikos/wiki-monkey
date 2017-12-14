@@ -16,23 +16,32 @@
 
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
-module.exports = class exports {
-  constructor(WM) {
-    this.WM = WM;
-  }
+var Plugin;
 
-  main(args, callNext) {
-    var newtext, source;
-    source = this.WM.Editor.readSource();
-    newtext = source;
-    newtext = newtext.replace(/[\n]{3,}/g, '\n\n');
-    if (newtext !== source) {
-      this.WM.Editor.writeSource(newtext);
-      this.WM.Log.logInfo("Removed multiple line breaks");
-    }
-    if (callNext) {
-      return callNext();
-    }
-  }
+({Plugin} = require('./_Plugin'));
 
-};
+module.exports.MultipleLineBreaks = (function() {
+  class MultipleLineBreaks extends Plugin {
+    main_editor(callNext) {
+      var newtext, source;
+      source = this.WM.Editor.readSource();
+      newtext = source;
+      newtext = newtext.replace(/[\n]{3,}/g, '\n\n');
+      if (newtext !== source) {
+        this.WM.Editor.writeSource(newtext);
+        this.WM.Log.logInfo("Removed multiple line breaks");
+      }
+      if (callNext) {
+        return callNext();
+      }
+    }
+
+  };
+
+  MultipleLineBreaks.conf_default = {
+    editor_menu: ["Text plugins", "Squash multiple line breaks"]
+  };
+
+  return MultipleLineBreaks;
+
+})();

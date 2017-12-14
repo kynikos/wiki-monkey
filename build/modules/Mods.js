@@ -29,36 +29,28 @@ module.exports = (function() {
     }
 
     applyGeneralMods() {
-      var conf;
-      conf = this.WM.Cfg.Mods.General;
-      if (conf['heading_number_style']) {
+      if (this.WM.conf.heading_number_style) {
         return changeHeadingNumberStyle(conf['heading_number_style']);
       }
     }
 
     applyEditorMods() {
-      var conf;
-      conf = this.WM.Cfg.Mods.Editor;
-      if (conf['disable_edit_summary_submit_on_enter']) {
+      if (this.WM.conf.disable_edit_summary_submit_on_enter) {
         disableEditSummarySubmitOnEnter();
       }
-      if (conf['scroll_to_first_heading']) {
+      if (this.WM.conf.scroll_to_first_heading) {
         return scrollToFirstHeading();
       }
     }
 
     applyRecentChangesMods() {
-      var conf;
-      conf = this.WM.Cfg.Mods.RecentChanges;
-      if (conf['hide_rollback_links']) {
+      if (this.WM.conf.hide_rollback_links) {
         return hideRollbackLinks();
       }
     }
 
     applyContributionsMods() {
-      var conf;
-      conf = this.WM.Cfg.Mods.Contributions;
-      if (conf['hide_rollback_links']) {
+      if (this.WM.conf.hide_rollback_links) {
         return hideRollbackLinks();
       }
     }

@@ -16,14 +16,19 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+{Plugin} = require('./_Plugin')
+
 RegEx = require('../../lib.js.generic/dist/RegEx')
 
 
-class module.exports
+class module.exports.ArchWikiOldAURLinks extends Plugin
     # TODO: Plugin disabled because the ArchPackages module is currently
     #       unusable
-
-    constructor: (@WM) ->
+    @conf_default:
+        editor_menu: ["Query plugins", "Fix old AUR links"]
+        option_label: "Replace old-style direct AUR package links with
+                      Template:AUR"
+        edit_summary: "replace old-style direct package links with Pkg/AUR templates"
 
     doReplace: (source, call, callArgs) =>
         regExp = /\[(https?\:\/\/aur\.archlinux\.org\/packages\.php\?ID\=([0-9]+)) ([^\]]+?)\]/g
@@ -110,7 +115,7 @@ class module.exports
         else
             call(source, newText, callArgs)
 
-    main: (args, callNext) ->
+    main_editor: (callNext) ->
         source = @WM.Editor.readSource()
         @WM.Log.logInfo("Replacing old-style direct AUR package links ...")
         @doReplace(source, @mainEnd, callNext)
@@ -128,8 +133,8 @@ class module.exports
         if callNext
             callNext()
 
-    mainAuto: (args, title, callBot, chainArgs) ->
-        summary = args
+    main_bot: (title, callBot, chainArgs) ->
+        summary = @conf.edit_summary
 
         @WM.MW.callQueryEdit(title,
                             @mainAutoReplace,
