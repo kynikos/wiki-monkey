@@ -71,7 +71,7 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
 
         @WM.Log.logInfo("Synchronizing interlanguage links ...")
 
-        @WM.MW.getInterwikiMap(
+        @WM.MW.getLocalInterwikiMap(
             title,
             @mainContinue,
             [tag, pureTitle, supportedLangs, whitelist, title, callNext]

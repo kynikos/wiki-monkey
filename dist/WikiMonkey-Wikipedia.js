@@ -2177,7 +2177,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
             params.format = "json";
             return this.api.get(params).done(function (data, textStatus, jqXHR) {
-              return call(data, callArgs);
+              if (call) {
+                return call(data, callArgs);
+              }
             }).fail(function (jqXHR, textStatus, errorThrown) {
               console.error(jqXHR, textStatus, errorThrown);
               _this7.WM.Log.logError(_this7.failedQueryError());
@@ -2196,7 +2198,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
             params.format = "json";
             return this.api.post(params).done(function (data, textStatus, jqXHR) {
-              return call(data, callArgs);
+              if (call) {
+                return call(data, callArgs);
+              }
             }).fail(function (jqXHR, textStatus, errorThrown) {
               console.error(jqXHR, textStatus, errorThrown);
               _this8.WM.Log.logError(_this8.failedQueryError());
@@ -2368,7 +2372,16 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           }
         }, {
           key: "getInterwikiMap",
-          value: function getInterwikiMap(title, call, callArgs) {
+          value: function getInterwikiMap(title) {
+            return this.callAPIGet({
+              action: "query",
+              meta: "siteinfo",
+              siprop: "interwikimap"
+            });
+          }
+        }, {
+          key: "getLocalInterwikiMap",
+          value: function getLocalInterwikiMap(title, call, callArgs) {
             return this.callAPIGet({
               action: "query",
               meta: "siteinfo",
@@ -5055,7 +5068,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
             whitelist = this.computeWhiteList(this.conf.tag_whitelist);
             supportedLangs = this.computeSupportedLangs(this.conf.supported_tags);
             this.WM.Log.logInfo("Synchronizing interlanguage links ...");
-            return this.WM.MW.getInterwikiMap(title, this.mainContinue, [tag, pureTitle, supportedLangs, whitelist, title, callNext]);
+            return this.WM.MW.getLocalInterwikiMap(title, this.mainContinue, [tag, pureTitle, supportedLangs, whitelist, title, callNext]);
           }
         }, {
           key: "mainContinue",

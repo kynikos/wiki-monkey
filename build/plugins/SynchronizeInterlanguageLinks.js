@@ -77,7 +77,7 @@ ref = module.exports.SynchronizeInterlanguageLinks = (function() {
       whitelist = this.computeWhiteList(this.conf.tag_whitelist);
       supportedLangs = this.computeSupportedLangs(this.conf.supported_tags);
       this.WM.Log.logInfo("Synchronizing interlanguage links ...");
-      return this.WM.MW.getInterwikiMap(title, this.mainContinue, [tag, pureTitle, supportedLangs, whitelist, title, callNext]);
+      return this.WM.MW.getLocalInterwikiMap(title, this.mainContinue, [tag, pureTitle, supportedLangs, whitelist, title, callNext]);
     }
 
     mainContinue(iwmap, args) {

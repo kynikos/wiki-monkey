@@ -166,8 +166,10 @@ class module.exports
     callAPIGet: (params, call, callArgs, callError) ->
         params.format = "json"
 
-        @api.get(params).done((data, textStatus, jqXHR) =>
-            call(data, callArgs)
+        return @api.get(params)
+        .done((data, textStatus, jqXHR) =>
+            if call
+                call(data, callArgs)
         ).fail((jqXHR, textStatus, errorThrown) =>
             console.error(jqXHR, textStatus, errorThrown)
             @WM.Log.logError(@failedQueryError())
@@ -182,8 +184,10 @@ class module.exports
     callAPIPost: (params, call, callArgs, callError) ->
         params.format = "json"
 
-        @api.post(params).done((data, textStatus, jqXHR) =>
-            call(data, callArgs)
+        return @api.post(params)
+        .done((data, textStatus, jqXHR) =>
+            if call
+                call(data, callArgs)
         ).fail((jqXHR, textStatus, errorThrown) =>
             console.error(jqXHR, textStatus, errorThrown)
             @WM.Log.logError(@failedQueryError())
@@ -311,12 +315,24 @@ class module.exports
         ,
         callArgs, null)
 
-    getInterwikiMap: (title, call, callArgs) ->
-        @callAPIGet({action: "query", meta: "siteinfo", siprop: "interwikimap", sifilteriw: "local"},
+    getInterwikiMap: (title) ->
+        return @callAPIGet({
+            action: "query"
+            meta: "siteinfo"
+            siprop: "interwikimap"
+        })
+
+    getLocalInterwikiMap: (title, call, callArgs) ->
+        @callAPIGet(
+            {
+                action: "query"
+                meta: "siteinfo"
+                siprop: "interwikimap"
+                sifilteriw: "local"
+            }
             (res, args) =>
                 call(res.query.interwikimap, args)
-            ,
-            callArgs,
+            callArgs
             null
         )
 

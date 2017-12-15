@@ -138,7 +138,9 @@ module.exports = (function() {
     callAPIGet(params, call, callArgs, callError) {
       params.format = "json";
       return this.api.get(params).done((data, textStatus, jqXHR) => {
-        return call(data, callArgs);
+        if (call) {
+          return call(data, callArgs);
+        }
       }).fail((jqXHR, textStatus, errorThrown) => {
         console.error(jqXHR, textStatus, errorThrown);
         this.WM.Log.logError(this.failedQueryError());
@@ -154,7 +156,9 @@ module.exports = (function() {
     callAPIPost(params, call, callArgs, callError) {
       params.format = "json";
       return this.api.post(params).done((data, textStatus, jqXHR) => {
-        return call(data, callArgs);
+        if (call) {
+          return call(data, callArgs);
+        }
       }).fail((jqXHR, textStatus, errorThrown) => {
         console.error(jqXHR, textStatus, errorThrown);
         this.WM.Log.logError(this.failedQueryError());
@@ -303,7 +307,15 @@ module.exports = (function() {
       }, callArgs, null);
     }
 
-    getInterwikiMap(title, call, callArgs) {
+    getInterwikiMap(title) {
+      return this.callAPIGet({
+        action: "query",
+        meta: "siteinfo",
+        siprop: "interwikimap"
+      });
+    }
+
+    getLocalInterwikiMap(title, call, callArgs) {
       return this.callAPIGet({
         action: "query",
         meta: "siteinfo",
