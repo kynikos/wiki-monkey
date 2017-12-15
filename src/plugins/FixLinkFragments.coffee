@@ -23,13 +23,13 @@ class module.exports.FixLinkFragments extends Plugin
     @conf_default:
         editor_menu: ["Query plugins", "Fix external section links"]
 
-    processLink: (title, links, index, source, newText, prevId,
+    processLink: (title, iwprefixes, links, index, source, newText, prevId,
                                                             call, callArgs) =>
         if links[index]
             link = links[index]
             rawfragment = link.fragment
 
-            if rawfragment
+            if not (link.namespace? and link.namespace.toLowerCase() in iwprefixes) and rawfragment
                 @WM.Log.logInfo("Processing " +
                     @WM.Log.linkToWikiPage(link.link, link.rawLink) + " ...")
 
@@ -51,33 +51,34 @@ class module.exports.FixLinkFragments extends Plugin
 
                     @WM.MW.callAPIGet(params,
                              @processLinkContinue,
-                             [link, target, rawfragment, links, index, source,
+                             [link, target, rawfragment, iwprefixes, links, index, source,
                                     newText, prevId, title, call, callArgs],
                              null)
                 else
                     index++
-                    @processLink(title, links,
+                    @processLink(title, iwprefixes, links,
                             index, source, newText, prevId, call, callArgs)
             else
                 index++
-                @processLink(title, links, index,
+                @processLink(title, iwprefixes, links, index,
                                     source, newText, prevId, call, callArgs)
         else
             newText += source.substr(prevId)
-            call(newText, callArgs)
+            call(newText, iwprefixes, callArgs)
 
     processLinkContinue: (res, args) =>
         link = args[0]
         target = args[1]
         rawfragment = args[2]
-        links = args[3]
-        index = args[4]
-        source = args[5]
-        newText = args[6]
-        prevId = args[7]
-        title = args[8]
-        call = args[9]
-        callArgs = args[10]
+        iwprefixes = args[3]
+        links = args[4]
+        index = args[5]
+        source = args[6]
+        newText = args[7]
+        prevId = args[8]
+        title = args[9]
+        call = args[10]
+        callArgs = args[11]
 
         # Check that the page is in the wiki (e.g. it's not an interwiki link)
         if res.parse
@@ -104,7 +105,7 @@ class module.exports.FixLinkFragments extends Plugin
             prevId = link.index + link.length
 
         index++
-        @processLink(title, links, index, source,
+        @processLink(title, iwprefixes, links, index, source,
                                             newText, prevId, call, callArgs)
 
     fixFragment: (rawfragment, sections) =>
@@ -143,20 +144,20 @@ class module.exports.FixLinkFragments extends Plugin
         else
             return true
 
-    findArchWikiLinks: (newText, callArgs) =>
+    findArchWikiLinks: (newText, iwprefixes, callArgs) =>
         templates = @WM.Parser.findTemplates(newText, 'Related')
         title = @WM.Editor.getTitle()
-        @processArchWikiLink(title, templates, 1, 0,
+        @processArchWikiLink(title, iwprefixes, templates, 1, 0,
                     newText, "", 0,
-                    @findArchWikiLinks2, callArgs)
+                    @findArchWikiLinks2, iwprefixes, callArgs)
 
-    findArchWikiLinks2: (newText, callArgs) =>
+    findArchWikiLinks2: (newText, iwprefixes, callArgs) =>
         templates = @WM.Parser.findTemplates(newText, 'Related2')
         title = @WM.Editor.getTitle()
-        @processArchWikiLink(title, templates, 2, 0,
+        @processArchWikiLink(title, iwprefixes, templates, 2, 0,
                 newText, "", 0, @mainEnd, callArgs)
 
-    processArchWikiLink: (title, templates, expectedArgs, index,
+    processArchWikiLink: (title, iwprefixes, templates, expectedArgs, index,
                                     source, newText, prevId, call, callArgs) =>
         if templates[index]
             template = templates[index]
@@ -194,23 +195,23 @@ class module.exports.FixLinkFragments extends Plugin
 
                             @WM.MW.callAPIGet(params,
                                  @processArchWikiLinkContinue,
-                                 [template, target, rawfragment, templates,
+                                 [template, target, rawfragment, iwprefixes, templates,
                                  expectedArgs, index, source, newText,
                                  prevId, title, call, callArgs],
                                  null)
                         else
                             index++
                             @processArchWikiLink(
-                                    title, templates, expectedArgs, index,
+                                    title, iwprefixes, templates, expectedArgs, index,
                                     source, newText, prevId, call, callArgs)
                     else
                         index++
-                        @processArchWikiLink(title,
+                        @processArchWikiLink(title, iwprefixes,
                                         templates, expectedArgs, index, source,
                                         newText, prevId, call, callArgs)
                 else
                     index++
-                    @processArchWikiLink(title,
+                    @processArchWikiLink(title, iwprefixes,
                                         templates, expectedArgs, index, source,
                                         newText, prevId, call, callArgs)
             else
@@ -220,7 +221,7 @@ class module.exports.FixLinkFragments extends Plugin
                         (if expectedArgs > 1 then " arguments: " else " argument: ") +
                         template.rawTransclusion)
                 index++
-                @processArchWikiLink(title,
+                @processArchWikiLink(title, iwprefixes,
                                         templates, expectedArgs, index, source,
                                         newText, prevId, call, callArgs)
 
@@ -232,15 +233,16 @@ class module.exports.FixLinkFragments extends Plugin
         template = args[0]
         target = args[1]
         rawfragment = args[2]
-        templates = args[3]
-        expectedArgs = args[4]
-        index = args[5]
-        source = args[6]
-        newText = args[7]
-        prevId = args[8]
-        title = args[9]
-        call = args[10]
-        callArgs = args[11]
+        iwprefixes = args[3]
+        templates = args[4]
+        expectedArgs = args[5]
+        index = args[6]
+        source = args[7]
+        newText = args[8]
+        prevId = args[9]
+        title = args[10]
+        call = args[11]
+        callArgs = args[12]
 
         # Check that the page is in the wiki (e.g. it's not an interwiki link)
         if res.parse
@@ -267,21 +269,23 @@ class module.exports.FixLinkFragments extends Plugin
             prevId = template.index + template.length
 
         index++
-        @processArchWikiLink(title, templates,
+        @processArchWikiLink(title, iwprefixes, templates,
                 expectedArgs, index, source, newText, prevId, call, callArgs)
 
     main_editor: (callNext) ->
         source = @WM.Editor.readSource()
         @WM.Log.logInfo("Fixing links to sections of other articles ...")
-        links = @WM.Parser.findInternalLinks(source, null, null)
         title = @WM.Editor.getTitle()
-        @processLink(title, links, 0, source, "", 0,
-                        @mainContinue, callNext)
+        res = await @WM.MW.getInterwikiMap(title)
+        iwprefixes = (iw.prefix for iw in res.query.interwikimap)
+        links = @WM.Parser.findInternalLinks(source, null, null)
+        @processLink(title, iwprefixes, links, 0, source, "", 0,
+                     @mainContinue, callNext)
 
-    mainContinue: (newText, callNext) =>
+    mainContinue: (newText, iwprefixes, callNext) =>
         # Without this check this plugin would be specific to ArchWiki
         if location.hostname == 'wiki.archlinux.org'
-            templates = @findArchWikiLinks(newText, callNext)
+            templates = @findArchWikiLinks(newText, iwprefixes, callNext)
         else
             @mainEnd(newText, callNext)
 

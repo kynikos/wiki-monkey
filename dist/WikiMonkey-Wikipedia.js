@@ -4458,7 +4458,8 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       if (!(instance instanceof Constructor)) {
         throw new Error('Bound instance method accessed before binding');
       }
-    };
+    },
+        indexOf = [].indexOf;
 
     var _require9 = require('./_Plugin');
 
@@ -4488,13 +4489,13 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
         _createClass2(FixLinkFragments, [{
           key: "processLink",
-          value: function processLink(title, links, index, source, newText, prevId, call, callArgs) {
-            var link, params, rawfragment, target;
+          value: function processLink(title, iwprefixes, links, index, source, newText, prevId, call, callArgs) {
+            var link, params, rawfragment, ref1, target;
             boundMethodCheck(this, ref);
             if (links[index]) {
               link = links[index];
               rawfragment = link.fragment;
-              if (rawfragment) {
+              if (!(link.namespace != null && (ref1 = link.namespace.toLowerCase(), indexOf.call(iwprefixes, ref1) >= 0)) && rawfragment) {
                 this.WM.Log.logInfo("Processing " + this.WM.Log.linkToWikiPage(link.link, link.rawLink) + " ...");
                 target = (link.namespace ? link.namespace + ":" : "") + link.title;
 
@@ -4505,36 +4506,37 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
                     'page': target,
                     'redirects': 1
                   };
-                  return this.WM.MW.callAPIGet(params, this.processLinkContinue, [link, target, rawfragment, links, index, source, newText, prevId, title, call, callArgs], null);
+                  return this.WM.MW.callAPIGet(params, this.processLinkContinue, [link, target, rawfragment, iwprefixes, links, index, source, newText, prevId, title, call, callArgs], null);
                 } else {
                   index++;
-                  return this.processLink(title, links, index, source, newText, prevId, call, callArgs);
+                  return this.processLink(title, iwprefixes, links, index, source, newText, prevId, call, callArgs);
                 }
               } else {
                 index++;
-                return this.processLink(title, links, index, source, newText, prevId, call, callArgs);
+                return this.processLink(title, iwprefixes, links, index, source, newText, prevId, call, callArgs);
               }
             } else {
               newText += source.substr(prevId);
-              return call(newText, callArgs);
+              return call(newText, iwprefixes, callArgs);
             }
           }
         }, {
           key: "processLinkContinue",
           value: function processLinkContinue(res, args) {
-            var call, callArgs, fixedFragment, i, index, len, link, links, newText, prevId, rawfragment, ref1, section, sections, source, target, title;
+            var call, callArgs, fixedFragment, i, index, iwprefixes, len, link, links, newText, prevId, rawfragment, ref1, section, sections, source, target, title;
             boundMethodCheck(this, ref);
             link = args[0];
             target = args[1];
             rawfragment = args[2];
-            links = args[3];
-            index = args[4];
-            source = args[5];
-            newText = args[6];
-            prevId = args[7];
-            title = args[8];
-            call = args[9];
-            callArgs = args[10];
+            iwprefixes = args[3];
+            links = args[4];
+            index = args[5];
+            source = args[6];
+            newText = args[7];
+            prevId = args[8];
+            title = args[9];
+            call = args[10];
+            callArgs = args[11];
 
             if (res.parse) {
               sections = [];
@@ -4556,7 +4558,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
               prevId = link.index + link.length;
             }
             index++;
-            return this.processLink(title, links, index, source, newText, prevId, call, callArgs);
+            return this.processLink(title, iwprefixes, links, index, source, newText, prevId, call, callArgs);
           }
         }, {
           key: "fixFragment",
@@ -4584,25 +4586,25 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           }
         }, {
           key: "findArchWikiLinks",
-          value: function findArchWikiLinks(newText, callArgs) {
+          value: function findArchWikiLinks(newText, iwprefixes, callArgs) {
             var templates, title;
             boundMethodCheck(this, ref);
             templates = this.WM.Parser.findTemplates(newText, 'Related');
             title = this.WM.Editor.getTitle();
-            return this.processArchWikiLink(title, templates, 1, 0, newText, "", 0, this.findArchWikiLinks2, callArgs);
+            return this.processArchWikiLink(title, iwprefixes, templates, 1, 0, newText, "", 0, this.findArchWikiLinks2, iwprefixes, callArgs);
           }
         }, {
           key: "findArchWikiLinks2",
-          value: function findArchWikiLinks2(newText, callArgs) {
+          value: function findArchWikiLinks2(newText, iwprefixes, callArgs) {
             var templates, title;
             boundMethodCheck(this, ref);
             templates = this.WM.Parser.findTemplates(newText, 'Related2');
             title = this.WM.Editor.getTitle();
-            return this.processArchWikiLink(title, templates, 2, 0, newText, "", 0, this.mainEnd, callArgs);
+            return this.processArchWikiLink(title, iwprefixes, templates, 2, 0, newText, "", 0, this.mainEnd, callArgs);
           }
         }, {
           key: "processArchWikiLink",
-          value: function processArchWikiLink(title, templates, expectedArgs, index, source, newText, prevId, call, callArgs) {
+          value: function processArchWikiLink(title, iwprefixes, templates, expectedArgs, index, source, newText, prevId, call, callArgs) {
             var args, fragId, link, params, rawfragment, rawtarget, target, template;
             boundMethodCheck(this, ref);
             if (templates[index]) {
@@ -4625,23 +4627,23 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
                         'page': target,
                         'redirects': 1
                       };
-                      return this.WM.MW.callAPIGet(params, this.processArchWikiLinkContinue, [template, target, rawfragment, templates, expectedArgs, index, source, newText, prevId, title, call, callArgs], null);
+                      return this.WM.MW.callAPIGet(params, this.processArchWikiLinkContinue, [template, target, rawfragment, iwprefixes, templates, expectedArgs, index, source, newText, prevId, title, call, callArgs], null);
                     } else {
                       index++;
-                      return this.processArchWikiLink(title, templates, expectedArgs, index, source, newText, prevId, call, callArgs);
+                      return this.processArchWikiLink(title, iwprefixes, templates, expectedArgs, index, source, newText, prevId, call, callArgs);
                     }
                   } else {
                     index++;
-                    return this.processArchWikiLink(title, templates, expectedArgs, index, source, newText, prevId, call, callArgs);
+                    return this.processArchWikiLink(title, iwprefixes, templates, expectedArgs, index, source, newText, prevId, call, callArgs);
                   }
                 } else {
                   index++;
-                  return this.processArchWikiLink(title, templates, expectedArgs, index, source, newText, prevId, call, callArgs);
+                  return this.processArchWikiLink(title, iwprefixes, templates, expectedArgs, index, source, newText, prevId, call, callArgs);
                 }
               } else {
                 this.WM.Log.logWarning("Template:" + template.title + " must have " + expectedArgs + " and only " + expectedArgs + (expectedArgs > 1 ? " arguments: " : " argument: ") + template.rawTransclusion);
                 index++;
-                return this.processArchWikiLink(title, templates, expectedArgs, index, source, newText, prevId, call, callArgs);
+                return this.processArchWikiLink(title, iwprefixes, templates, expectedArgs, index, source, newText, prevId, call, callArgs);
               }
             } else {
               newText += source.substr(prevId);
@@ -4651,20 +4653,21 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "processArchWikiLinkContinue",
           value: function processArchWikiLinkContinue(res, args) {
-            var anchor, call, callArgs, expectedArgs, fixedFragment, i, index, len, newText, prevId, rawfragment, ref1, section, sections, source, target, template, templates, title;
+            var anchor, call, callArgs, expectedArgs, fixedFragment, i, index, iwprefixes, len, newText, prevId, rawfragment, ref1, section, sections, source, target, template, templates, title;
             boundMethodCheck(this, ref);
             template = args[0];
             target = args[1];
             rawfragment = args[2];
-            templates = args[3];
-            expectedArgs = args[4];
-            index = args[5];
-            source = args[6];
-            newText = args[7];
-            prevId = args[8];
-            title = args[9];
-            call = args[10];
-            callArgs = args[11];
+            iwprefixes = args[3];
+            templates = args[4];
+            expectedArgs = args[5];
+            index = args[6];
+            source = args[7];
+            newText = args[8];
+            prevId = args[9];
+            title = args[10];
+            call = args[11];
+            callArgs = args[12];
 
             if (res.parse) {
               sections = [];
@@ -4687,26 +4690,61 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
               prevId = template.index + template.length;
             }
             index++;
-            return this.processArchWikiLink(title, templates, expectedArgs, index, source, newText, prevId, call, callArgs);
+            return this.processArchWikiLink(title, iwprefixes, templates, expectedArgs, index, source, newText, prevId, call, callArgs);
           }
         }, {
           key: "main_editor",
-          value: function main_editor(callNext) {
-            var links, source, title;
-            source = this.WM.Editor.readSource();
-            this.WM.Log.logInfo("Fixing links to sections of other articles ...");
-            links = this.WM.Parser.findInternalLinks(source, null, null);
-            title = this.WM.Editor.getTitle();
-            return this.processLink(title, links, 0, source, "", 0, this.mainContinue, callNext);
-          }
+          value: function () {
+            var _ref4 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(callNext) {
+              var iw, iwprefixes, links, res, source, title;
+              return regeneratorRuntime.wrap(function _callee3$(_context3) {
+                while (1) {
+                  switch (_context3.prev = _context3.next) {
+                    case 0:
+                      source = this.WM.Editor.readSource();
+                      this.WM.Log.logInfo("Fixing links to sections of other articles ...");
+                      title = this.WM.Editor.getTitle();
+                      _context3.next = 5;
+                      return this.WM.MW.getInterwikiMap(title);
+
+                    case 5:
+                      res = _context3.sent;
+
+                      iwprefixes = function () {
+                        var i, len, ref1, results;
+                        ref1 = res.query.interwikimap;
+                        results = [];
+                        for (i = 0, len = ref1.length; i < len; i++) {
+                          iw = ref1[i];
+                          results.push(iw.prefix);
+                        }
+                        return results;
+                      }();
+                      links = this.WM.Parser.findInternalLinks(source, null, null);
+                      return _context3.abrupt("return", this.processLink(title, iwprefixes, links, 0, source, "", 0, this.mainContinue, callNext));
+
+                    case 9:
+                    case "end":
+                      return _context3.stop();
+                  }
+                }
+              }, _callee3, this);
+            }));
+
+            function main_editor(_x3) {
+              return _ref4.apply(this, arguments);
+            }
+
+            return main_editor;
+          }()
         }, {
           key: "mainContinue",
-          value: function mainContinue(newText, callNext) {
+          value: function mainContinue(newText, iwprefixes, callNext) {
             var templates;
             boundMethodCheck(this, ref);
 
             if (location.hostname === 'wiki.archlinux.org') {
-              return templates = this.findArchWikiLinks(newText, callNext);
+              return templates = this.findArchWikiLinks(newText, iwprefixes, callNext);
             } else {
               return this.mainEnd(newText, callNext);
             }
