@@ -21,6 +21,7 @@
 
 class module.exports.ArchWikiFixLinks extends Plugin
     @conf_default:
+        enabled: true
         editor_menu: ["Text plugins", "Fix external links"]
 
     doReplace: (txt) ->

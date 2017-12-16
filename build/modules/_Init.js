@@ -72,7 +72,7 @@ WM = (function() {
     }
 
     async init(user_config = {}) {
-      var PluginSub, i, interface_, len, option, pmod, pname, ref, value;
+      var PluginSub, error, i, interface_, len, option, pmod, pname, ref, value;
       for (option in user_config) {
         value = user_config[option];
         if (!(option in this.conf)) {
@@ -97,7 +97,17 @@ WM = (function() {
           if (!(PluginSub.prototype instanceof Plugin)) {
             continue;
           }
-          PluginSub.__configure(this.wiki_name, user_config);
+          try {
+            PluginSub.__configure(this.wiki_name, user_config);
+          } catch (error1) {
+            error = error1;
+            // TODO: Properly extend Error, but beware that Babelo
+            //       doesn't like it without specific plugins
+            if (error.message === "Plugin disabled") {
+              continue;
+            }
+            throw error;
+          }
           for (interface_ in this.Plugins) {
             if (PluginSub.prototype[`main_${interface_}`]) {
               this.Plugins[interface_].push(PluginSub);

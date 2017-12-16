@@ -41,6 +41,12 @@ class module.exports.Plugin
                 @::conf[option] = value
                 delete user_config[@name][option]
 
+        if not @::conf.enabled
+            delete user_config[@name]
+            # TODO: Properly extend Error, but beware that Babel doesn't like
+            #       it without specific plugins
+            throw new Error("Plugin disabled")
+
         if $.isEmptyObject(user_config[@name])
             delete user_config[@name]
 

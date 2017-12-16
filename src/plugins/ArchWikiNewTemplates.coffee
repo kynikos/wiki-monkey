@@ -21,6 +21,7 @@
 
 class module.exports.ArchWikiNewTemplates extends Plugin
     @conf_default:
+        enabled: true
         editor_menu: ["Text plugins", "Use code templates"]
 
     main_editor: (callNext) ->

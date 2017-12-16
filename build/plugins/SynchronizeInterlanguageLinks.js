@@ -210,6 +210,7 @@ ref = module.exports.SynchronizeInterlanguageLinks = (function() {
   };
 
   SynchronizeInterlanguageLinks.conf_default = {
+    enabled: true,
     editor_menu: ["Query plugins", "Sync interlanguage links"],
     option_label: "Synchronize interlanguage links",
     language_tag: "en",
@@ -224,7 +225,9 @@ ref = module.exports.SynchronizeInterlanguageLinks = (function() {
       tag_whitelist: "ArchWiki",
       supported_tags: "ArchWiki"
     },
-    Wikipedia: {}
+    Wikipedia: {
+      enabled: false
+    }
   };
 
   return SynchronizeInterlanguageLinks;

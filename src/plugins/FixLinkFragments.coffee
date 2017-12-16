@@ -21,6 +21,7 @@
 
 class module.exports.FixLinkFragments extends Plugin
     @conf_default:
+        enabled: true
         editor_menu: ["Query plugins", "Fix external section links"]
 
     processLink: (title, iwprefixes, links, index, source, newText, prevId,

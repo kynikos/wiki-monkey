@@ -21,6 +21,7 @@
 
 class module.exports.ArchWikiFixHeadings extends Plugin
     @conf_default:
+        enabled: true
         editor_menu: ["Text plugins", "Fix headings"]
 
     main_editor: (callNext) ->

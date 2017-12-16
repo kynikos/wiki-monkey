@@ -60,6 +60,7 @@ module.exports.ArchWikiFixHeadings = (function() {
   };
 
   ArchWikiFixHeadings.conf_default = {
+    enabled: true,
     editor_menu: ["Text plugins", "Fix headings"]
   };
 

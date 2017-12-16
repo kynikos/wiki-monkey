@@ -21,6 +21,7 @@
 
 class module.exports.ExpandContractions extends Plugin
     @conf_default:
+        enabled: true
         editor_menu: ["Text plugins", "Expand contractions"]
 
     replace: (source, regExp, newString, checkString, checkStrings) ->

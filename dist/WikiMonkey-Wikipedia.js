@@ -3637,7 +3637,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           value: function () {
             var _ref3 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2() {
               var user_config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-              var PluginSub, i, interface_, len, option, pmod, pname, ref, value;
+              var PluginSub, error, i, interface_, len, option, pmod, pname, ref, value;
               return regeneratorRuntime.wrap(function _callee2$(_context2) {
                 while (1) {
                   switch (_context2.prev = _context2.next) {
@@ -3681,7 +3681,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
                     case 13:
                       if (!(i < len)) {
-                        _context2.next = 28;
+                        _context2.next = 37;
                         break;
                       }
 
@@ -3690,7 +3690,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
                     case 16:
                       if ((_context2.t3 = _context2.t2()).done) {
-                        _context2.next = 25;
+                        _context2.next = 34;
                         break;
                       }
 
@@ -3706,7 +3706,29 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
                       return _context2.abrupt("continue", 16);
 
                     case 21:
+                      _context2.prev = 21;
+
                       PluginSub.__configure(this.wiki_name, user_config);
+                      _context2.next = 31;
+                      break;
+
+                    case 25:
+                      _context2.prev = 25;
+                      _context2.t4 = _context2["catch"](21);
+
+                      error = _context2.t4;
+
+                      if (!(error.message === "Plugin disabled")) {
+                        _context2.next = 30;
+                        break;
+                      }
+
+                      return _context2.abrupt("continue", 16);
+
+                    case 30:
+                      throw error;
+
+                    case 31:
                       for (interface_ in this.Plugins) {
                         if (PluginSub.prototype["main_" + interface_]) {
                           this.Plugins[interface_].push(PluginSub);
@@ -3715,20 +3737,20 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
                       _context2.next = 16;
                       break;
 
-                    case 25:
+                    case 34:
                       i++;
                       _context2.next = 13;
                       break;
 
-                    case 28:
+                    case 37:
                       if (!$.isEmptyObject(user_config)) {
                         console.warn("Unkown configuration options", user_config);
                       }
                       delete this.installed_plugins_temp;
-                      _context2.next = 32;
+                      _context2.next = 41;
                       return $.when(mwmodpromise, $.ready);
 
-                    case 32:
+                    case 41:
                       this.ArchWiki = new ArchWiki(this);
                       this.Bot = new Bot(this);
                       this.Cat = new Cat(this);
@@ -3750,12 +3772,12 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
                       }
                       return _context2.abrupt("return", this.UI._makeUI());
 
-                    case 50:
+                    case 59:
                     case "end":
                       return _context2.stop();
                   }
                 }
-              }, _callee2, this);
+              }, _callee2, this, [[21, 25]]);
             }));
 
             function init() {
@@ -3880,6 +3902,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       ;
 
       ExpandContractions.conf_default = {
+        enabled: true,
         editor_menu: ["Text plugins", "Expand contractions"]
       };
 
@@ -4169,6 +4192,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       ;
 
       FixBacklinkFragments.conf_default = {
+        enabled: true,
         option_label: "Fix links to specific sections of a target page",
         edit_summary: "fix links to specific sections"
       };
@@ -4342,6 +4366,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       ;
 
       FixDoubleRedirects.conf_default = {
+        enabled: true,
         special_menu: ["Fix double redirects"],
         edit_summary: "fix double redirect"
       };
@@ -4447,6 +4472,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       ;
 
       FixFragments.conf_default = {
+        enabled: true,
         editor_menu: ["Text plugins", "Fix section links"]
       };
 
@@ -4774,6 +4800,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       ;
 
       FixLinkFragments.conf_default = {
+        enabled: true,
         editor_menu: ["Query plugins", "Fix external section links"]
       };
 
@@ -4820,6 +4847,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       ;
 
       MultipleLineBreaks.conf_default = {
+        enabled: true,
         editor_menu: ["Text plugins", "Squash multiple line breaks"]
       };
 
@@ -4981,6 +5009,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       ;
 
       SimpleReplace.conf_default = {
+        enabled: true,
         editor_menu: ["RegExp substitution"],
         option_label: "RegExp substitution"
       };
@@ -5241,6 +5270,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       ;
 
       SynchronizeInterlanguageLinks.conf_default = {
+        enabled: true,
         editor_menu: ["Query plugins", "Sync interlanguage links"],
         option_label: "Synchronize interlanguage links",
         language_tag: "en",
@@ -5255,7 +5285,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           tag_whitelist: "ArchWiki",
           supported_tags: "ArchWiki"
         },
-        Wikipedia: {}
+        Wikipedia: {
+          enabled: false
+        }
       };
 
       return SynchronizeInterlanguageLinks;
@@ -5534,6 +5566,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       ;
 
       UpdateCategoryTree.conf_default = {
+        enabled: false,
         special_menu: ["Update category trees"],
         edit_summary: "automatic update",
         show_root_also_in: false
@@ -5574,6 +5607,11 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
                 this.prototype.conf[option] = value;
                 delete user_config[this.name][option];
               }
+            }
+            if (!this.prototype.conf.enabled) {
+              delete user_config[this.name];
+
+              throw new Error("Plugin disabled");
             }
             if ($.isEmptyObject(user_config[this.name])) {
               return delete user_config[this.name];

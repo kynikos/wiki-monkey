@@ -46,6 +46,12 @@ module.exports.Plugin = (function() {
           delete user_config[this.name][option];
         }
       }
+      if (!this.prototype.conf.enabled) {
+        delete user_config[this.name];
+        // TODO: Properly extend Error, but beware that Babel doesn't like
+        //       it without specific plugins
+        throw new Error("Plugin disabled");
+      }
       if ($.isEmptyObject(user_config[this.name])) {
         return delete user_config[this.name];
       }

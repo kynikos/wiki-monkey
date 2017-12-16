@@ -61,6 +61,7 @@ module.exports.ArchWikiNPFilter = (function() {
   };
 
   ArchWikiNPFilter.conf_default = {
+    enabled: true,
     option_label: "Default filter",
     default_language: "English"
   };

@@ -23,6 +23,7 @@ Str = require('../../lib.js.generic/dist/Str')
 
 class module.exports.FixDoubleRedirects extends Plugin
     @conf_default:
+        enabled: true
         special_menu: ["Fix double redirects"]
         edit_summary: "fix double redirect"
 

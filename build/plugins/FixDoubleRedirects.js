@@ -152,6 +152,7 @@ ref = module.exports.FixDoubleRedirects = (function() {
   };
 
   FixDoubleRedirects.conf_default = {
+    enabled: true,
     special_menu: ["Fix double redirects"],
     edit_summary: "fix double redirect"
   };

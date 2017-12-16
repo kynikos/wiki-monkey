@@ -24,6 +24,7 @@ HTTP = require('../../lib.js.generic/dist/HTTP')
 
 class module.exports.ArchWikiSaveTalk extends Plugin
     @conf_default:
+        enabled: false
         diff_menu: ["Save discussion"]
         page: null
         edit_summary: "add discussion"

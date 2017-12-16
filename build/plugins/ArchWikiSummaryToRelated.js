@@ -58,6 +58,7 @@ module.exports.ArchWikiSummaryToRelated = (function() {
   };
 
   ArchWikiSummaryToRelated.conf_default = {
+    enabled: false,
     editor_menu: ["Text plugins", "Convert summary to related"]
   };
 

@@ -21,6 +21,7 @@
 
 class module.exports.ArchWikiSummaryToRelated extends Plugin
     @conf_default:
+        enabled: false
         editor_menu: ["Text plugins", "Convert summary to related"]
 
     main_editor: (callNext) ->

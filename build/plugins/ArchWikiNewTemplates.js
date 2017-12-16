@@ -63,6 +63,7 @@ module.exports.ArchWikiNewTemplates = (function() {
   };
 
   ArchWikiNewTemplates.conf_default = {
+    enabled: true,
     editor_menu: ["Text plugins", "Use code templates"]
   };
 

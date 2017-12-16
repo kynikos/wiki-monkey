@@ -21,6 +21,7 @@
 
 class module.exports.MultipleLineBreaks extends Plugin
     @conf_default:
+        enabled: true
         editor_menu: ["Text plugins", "Squash multiple line breaks"]
 
     main_editor: (callNext) ->

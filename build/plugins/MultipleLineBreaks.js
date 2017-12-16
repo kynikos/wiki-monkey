@@ -39,6 +39,7 @@ module.exports.MultipleLineBreaks = (function() {
   };
 
   MultipleLineBreaks.conf_default = {
+    enabled: true,
     editor_menu: ["Text plugins", "Squash multiple line breaks"]
   };
 

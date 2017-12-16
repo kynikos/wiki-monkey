@@ -157,6 +157,7 @@ module.exports.ArchWikiFixLinks = (function() {
   };
 
   ArchWikiFixLinks.conf_default = {
+    enabled: true,
     editor_menu: ["Text plugins", "Fix external links"]
   };
 

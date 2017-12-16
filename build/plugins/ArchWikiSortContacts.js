@@ -214,6 +214,7 @@ ref = module.exports.ArchWikiSortContacts = (function() {
   regExp = new RegExp("^\\*.*?\\[\\[User:(.+?)\\|.+?" + "(?: \\<!-- associated bot: (.+?) -->.*)?$", "");
 
   ArchWikiSortContacts.conf_default = {
+    enabled: false,
     special_menu: ["Sort staff contacts"],
     edit_summary: "automatically sort list according to recent activity",
     pages: [

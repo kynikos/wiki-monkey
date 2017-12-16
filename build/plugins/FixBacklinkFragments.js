@@ -282,6 +282,7 @@ ref = module.exports.FixBacklinkFragments = (function() {
   };
 
   FixBacklinkFragments.conf_default = {
+    enabled: true,
     option_label: "Fix links to specific sections of a target page",
     edit_summary: "fix links to specific sections"
   };

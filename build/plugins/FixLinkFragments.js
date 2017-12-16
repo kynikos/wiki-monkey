@@ -315,6 +315,7 @@ ref = module.exports.FixLinkFragments = (function() {
   };
 
   FixLinkFragments.conf_default = {
+    enabled: true,
     editor_menu: ["Query plugins", "Fix external section links"]
   };
 

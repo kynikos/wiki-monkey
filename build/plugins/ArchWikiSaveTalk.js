@@ -100,6 +100,7 @@ ref = module.exports.ArchWikiSaveTalk = (function() {
   };
 
   ArchWikiSaveTalk.conf_default = {
+    enabled: false,
     diff_menu: ["Save discussion"],
     page: null,
     edit_summary: "add discussion"

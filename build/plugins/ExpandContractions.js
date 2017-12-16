@@ -68,6 +68,7 @@ module.exports.ExpandContractions = (function() {
   };
 
   ExpandContractions.conf_default = {
+    enabled: true,
     editor_menu: ["Text plugins", "Expand contractions"]
   };
 

@@ -66,6 +66,7 @@ module.exports.DeletePages = (function() {
   };
 
   DeletePages.conf_default = {
+    enabled: false,
     option_label: "Delete pages",
     edit_summary: "delete page"
   };

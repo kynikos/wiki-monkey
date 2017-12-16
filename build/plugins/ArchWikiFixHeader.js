@@ -182,6 +182,7 @@ module.exports.ArchWikiFixHeader = (function() {
   };
 
   ArchWikiFixHeader.conf_default = {
+    enabled: true,
     editor_menu: ["Text plugins", "Fix header"]
   };
 

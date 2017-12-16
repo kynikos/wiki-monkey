@@ -117,6 +117,7 @@ module.exports.FixFragments = (function() {
   };
 
   FixFragments.conf_default = {
+    enabled: true,
     editor_menu: ["Text plugins", "Fix section links"]
   };
 

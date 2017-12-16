@@ -23,6 +23,7 @@ Str = require('../../lib.js.generic/dist/Str')
 
 class module.exports.UpdateCategoryTree extends Plugin
     @conf_default:
+        enabled: false
         special_menu: ["Update category trees"]
         edit_summary: "automatic update"
         show_root_also_in: false

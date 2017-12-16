@@ -32,8 +32,8 @@ class module.exports.ArchWikiSortContacts extends Plugin
     regExp = new RegExp("^\\*.*?\\[\\[User:(.+?)\\|.+?" +
                     "(?: \\<!-- associated bot: (.+?) -->.*)?$", "")
 
-
     @conf_default:
+        enabled: false
         special_menu: ["Sort staff contacts"]
         edit_summary: "automatically sort list according to recent activity"
         pages: [{

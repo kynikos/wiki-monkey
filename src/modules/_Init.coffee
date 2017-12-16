@@ -77,7 +77,14 @@ class WM
         for pmod in @installed_plugins_temp
             for pname, PluginSub of pmod \
                                     when PluginSub.prototype instanceof Plugin
-                PluginSub.__configure(@wiki_name, user_config)
+                try
+                    PluginSub.__configure(@wiki_name, user_config)
+                catch error
+                    # TODO: Properly extend Error, but beware that Babelo
+                    #       doesn't like it without specific plugins
+                    if error.message is "Plugin disabled"
+                        continue
+                    throw error
 
                 for interface_ of @Plugins \
                                         when PluginSub::["main_#{interface_}"]

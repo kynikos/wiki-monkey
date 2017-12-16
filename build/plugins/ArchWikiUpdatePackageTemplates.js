@@ -468,9 +468,9 @@ ref = module.exports.ArchWikiUpdatePackageTemplates = (function() {
 
   };
 
-  // TODO: Plugin disabled because the ArchPackages module is currently
-  //       unusable
   ArchWikiUpdatePackageTemplates.conf_default = {
+    // TODO: Disabled because the ArchPackages module is currently unusable
+    enabled: false,
     editor_menu: ["Query plugins", "Update package templates"],
     option_label: "Check packages linked with Pkg/AUR templates and possibly update them",
     edit_summary: "update Pkg/AUR templates to reflect new package status"

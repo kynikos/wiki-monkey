@@ -23,6 +23,7 @@ CSS = require('../../lib.js.generic/dist/CSS')
 
 class module.exports.SimpleReplace extends Plugin
     @conf_default:
+        enabled: true
         editor_menu: ["RegExp substitution"]
         option_label: "RegExp substitution"
 
