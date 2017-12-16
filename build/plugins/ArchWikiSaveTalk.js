@@ -37,7 +37,7 @@ ref = module.exports.ArchWikiSaveTalk = (function() {
     makeUI() {
       var article, link;
       CSS.addStyleElement("#WikiMonkey-ArchWikiSaveTalk {margin-left:0.33em;}");
-      article = this.conf.title;
+      article = this.conf.page;
       link = document.createElement('a');
       link.id = "WikiMonkey-ArchWikiSaveTalk";
       link.href = "/index.php/" + article;
@@ -47,7 +47,7 @@ ref = module.exports.ArchWikiSaveTalk = (function() {
 
     main_diff(callNext) {
       var article, summary;
-      article = this.conf.title;
+      article = this.conf.page;
       summary = this.conf.edit_summary;
       this.WM.Log.logInfo('Appending diff to ' + this.WM.Log.linkToWikiPage(article, article) + " ...");
       return this.WM.Diff.getEndTimestamp(this.mainGetEndTimestamp, [article, summary, callNext]);
@@ -101,7 +101,7 @@ ref = module.exports.ArchWikiSaveTalk = (function() {
 
   ArchWikiSaveTalk.conf_default = {
     diff_menu: ["Save discussion"],
-    title: "User:Kynikos/Tasks",
+    page: null,
     edit_summary: "add discussion"
   };
 

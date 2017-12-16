@@ -25,14 +25,14 @@ HTTP = require('../../lib.js.generic/dist/HTTP')
 class module.exports.ArchWikiSaveTalk extends Plugin
     @conf_default:
         diff_menu: ["Save discussion"]
-        title: "User:Kynikos/Tasks"
+        page: null
         edit_summary: "add discussion"
 
     makeUI: ->
         CSS.addStyleElement("#WikiMonkey-ArchWikiSaveTalk
                                                     {margin-left:0.33em;}")
 
-        article = @conf.title
+        article = @conf.page
 
         link = document.createElement('a')
         link.id = "WikiMonkey-ArchWikiSaveTalk"
@@ -42,7 +42,7 @@ class module.exports.ArchWikiSaveTalk extends Plugin
         return link
 
     main_diff: (callNext) ->
-        article = @conf.title
+        article = @conf.page
         summary = @conf.edit_summary
 
         @WM.Log.logInfo('Appending diff to ' +
