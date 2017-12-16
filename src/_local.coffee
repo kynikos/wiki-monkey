@@ -10,9 +10,6 @@ wmsetup(
     require("./plugins/ArchWikiFixLinks"),
     require("./plugins/ArchWikiNewTemplates"),
     require("./plugins/ArchWikiNPFilter"),
-    # The ArchPackages module is currently unusable
-    #require("./plugins/ArchWikiOldAURLinks"),
-    require("./plugins/ArchWikiQuickReport"),
     require("./plugins/ArchWikiSaveTalk"),
     require("./plugins/ArchWikiSortContacts"),
     require("./plugins/ArchWikiSummaryToRelated"),

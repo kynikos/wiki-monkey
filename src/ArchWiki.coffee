@@ -10,7 +10,6 @@ wmsetup(
     require("./plugins/ArchWikiFixLinks"),
     require("./plugins/ArchWikiNewTemplates"),
     require("./plugins/ArchWikiNPFilter"),
-    require("./plugins/ArchWikiQuickReport"),
     require("./plugins/ArchWikiSortContacts"),
     require("./plugins/ArchWikiSummaryToRelated"),
     require("./plugins/ArchWikiRCFilter"),
