@@ -18,9 +18,9 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 var Async, Obj;
 
-Async = require('../../lib.js.generic/dist/Async');
+Async = require('../../auxiliary/lib.js.generic/dist/Async');
 
-Obj = require('../../lib.js.generic/dist/Obj');
+Obj = require('../../auxiliary/lib.js.generic/dist/Obj');
 
 module.exports = class exports {
   constructor(WM) {

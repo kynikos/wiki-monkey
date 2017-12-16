@@ -21,7 +21,7 @@ var Plugin, Str, ref,
 
 ({Plugin} = require('./_Plugin'));
 
-Str = require('../../lib.js.generic/dist/Str');
+Str = require('../../auxiliary/lib.js.generic/dist/Str');
 
 ref = module.exports.FixDoubleRedirects = (function() {
   class FixDoubleRedirects extends Plugin {

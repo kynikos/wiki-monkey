@@ -16,8 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-CSS = require('../../lib.js.generic/dist/CSS')
-RegEx = require('../../lib.js.generic/dist/RegEx')
+CSS = require('../../auxiliary/lib.js.generic/dist/CSS')
+RegEx = require('../../auxiliary/lib.js.generic/dist/RegEx')
 
 
 class module.exports

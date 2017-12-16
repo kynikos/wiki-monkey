@@ -18,9 +18,9 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 var RegEx, Str;
 
-RegEx = require('../../lib.js.generic/dist/RegEx');
+RegEx = require('../../auxiliary/lib.js.generic/dist/RegEx');
 
-Str = require('../../lib.js.generic/dist/Str');
+Str = require('../../auxiliary/lib.js.generic/dist/Str');
 
 module.exports = (function() {
   var prepareRegexpWhitespace, prepareTitleCasing;

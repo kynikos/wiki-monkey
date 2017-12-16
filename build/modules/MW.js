@@ -18,9 +18,9 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 var A, HTTP, Obj;
 
-HTTP = require('../../lib.js.generic/dist/HTTP');
+HTTP = require('../../auxiliary/lib.js.generic/dist/HTTP');
 
-Obj = require('../../lib.js.generic/dist/Obj');
+Obj = require('../../auxiliary/lib.js.generic/dist/Obj');
 
 ({A} = require('./libs'));
 

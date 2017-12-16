@@ -17,7 +17,7 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 {jss} = require('./libs')
-Str = require('../../lib.js.generic/dist/Str')
+Str = require('../../auxiliary/lib.js.generic/dist/Str')
 
 
 class module.exports

@@ -20,7 +20,7 @@ var Str, jss;
 
 ({jss} = require('./libs'));
 
-Str = require('../../lib.js.generic/dist/Str');
+Str = require('../../auxiliary/lib.js.generic/dist/Str');
 
 module.exports = (function() {
   var classesToLevels;

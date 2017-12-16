@@ -18,8 +18,8 @@
 
 {Plugin} = require('./_Plugin')
 
-CSS = require('../../lib.js.generic/dist/CSS')
-HTTP = require('../../lib.js.generic/dist/HTTP')
+CSS = require('../../auxiliary/lib.js.generic/dist/CSS')
+HTTP = require('../../auxiliary/lib.js.generic/dist/HTTP')
 
 
 class module.exports.ArchWikiSaveTalk extends Plugin

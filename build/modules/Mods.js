@@ -18,7 +18,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 var CSS;
 
-CSS = require('../../lib.js.generic/dist/CSS');
+CSS = require('../../auxiliary/lib.js.generic/dist/CSS');
 
 module.exports = (function() {
   var changeHeadingNumberStyle, disableEditSummarySubmitOnEnter, hideRollbackLinks, scrollToFirstHeading;

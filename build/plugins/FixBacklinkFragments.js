@@ -21,7 +21,7 @@ var CSS, Plugin, ref,
 
 ({Plugin} = require('./_Plugin'));
 
-CSS = require('../../lib.js.generic/dist/CSS');
+CSS = require('../../auxiliary/lib.js.generic/dist/CSS');
 
 ref = module.exports.FixBacklinkFragments = (function() {
   var readTarget;

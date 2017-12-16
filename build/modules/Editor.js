@@ -18,9 +18,9 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 var Compatibility, HTTP;
 
-Compatibility = require('../../lib.js.generic/dist/Compatibility');
+Compatibility = require('../../auxiliary/lib.js.generic/dist/Compatibility');
 
-HTTP = require('../../lib.js.generic/dist/HTTP');
+HTTP = require('../../auxiliary/lib.js.generic/dist/HTTP');
 
 module.exports = class exports {
   constructor(WM) {

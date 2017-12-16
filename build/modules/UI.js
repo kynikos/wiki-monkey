@@ -18,9 +18,9 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 var CSS, RegEx;
 
-CSS = require('../../lib.js.generic/dist/CSS');
+CSS = require('../../auxiliary/lib.js.generic/dist/CSS');
 
-RegEx = require('../../lib.js.generic/dist/RegEx');
+RegEx = require('../../auxiliary/lib.js.generic/dist/RegEx');
 
 module.exports = class exports {
   constructor(WM) {

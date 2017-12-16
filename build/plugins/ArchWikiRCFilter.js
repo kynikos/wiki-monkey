@@ -20,7 +20,7 @@ var CSS, Plugin;
 
 ({Plugin} = require('./_Plugin'));
 
-CSS = require('../../lib.js.generic/dist/CSS');
+CSS = require('../../auxiliary/lib.js.generic/dist/CSS');
 
 module.exports.ArchWikiRCFilter = (function() {
   class ArchWikiRCFilter extends Plugin {

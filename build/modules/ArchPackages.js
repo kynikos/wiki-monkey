@@ -22,9 +22,9 @@
 // - https://wiki.archlinux.org/index.php/AurJson
 var Obj, RegEx;
 
-Obj = require('../../lib.js.generic/dist/Obj');
+Obj = require('../../auxiliary/lib.js.generic/dist/Obj');
 
-RegEx = require('../../lib.js.generic/dist/RegEx');
+RegEx = require('../../auxiliary/lib.js.generic/dist/RegEx');
 
 module.exports = (function() {
   var isPackageGroup;

@@ -18,7 +18,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 var Obj;
 
-Obj = require('../../lib.js.generic/dist/Obj');
+Obj = require('../../auxiliary/lib.js.generic/dist/Obj');
 
 module.exports = class exports {
   constructor(WM) {

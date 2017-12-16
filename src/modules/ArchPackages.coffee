@@ -20,8 +20,8 @@
 # - https://wiki.archlinux.org/index.php/Official_Repositories_Web_Interface
 # - https://wiki.archlinux.org/index.php/AurJson
 
-Obj = require('../../lib.js.generic/dist/Obj')
-RegEx = require('../../lib.js.generic/dist/RegEx')
+Obj = require('../../auxiliary/lib.js.generic/dist/Obj')
+RegEx = require('../../auxiliary/lib.js.generic/dist/RegEx')
 
 class module.exports
     # TODO: Module disabled because it's no longer possible to get around the

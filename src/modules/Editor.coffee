@@ -16,8 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-Compatibility = require('../../lib.js.generic/dist/Compatibility')
-HTTP = require('../../lib.js.generic/dist/HTTP')
+Compatibility = require('../../auxiliary/lib.js.generic/dist/Compatibility')
+HTTP = require('../../auxiliary/lib.js.generic/dist/HTTP')
 
 
 class module.exports

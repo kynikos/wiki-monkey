@@ -557,7 +557,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
   }, {}], 3: [function (require, module, exports) {
     var CSS;
 
-    CSS = require('../../lib.js.generic/dist/CSS');
+    CSS = require('../../auxiliary/lib.js.generic/dist/CSS');
 
     module.exports = function () {
       function exports(WM) {
@@ -1167,12 +1167,12 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 432 }], 4: [function (require, module, exports) {
+  }, { "../../auxiliary/lib.js.generic/dist/CSS": 432 }], 4: [function (require, module, exports) {
     var Async, Obj;
 
-    Async = require('../../lib.js.generic/dist/Async');
+    Async = require('../../auxiliary/lib.js.generic/dist/Async');
 
-    Obj = require('../../lib.js.generic/dist/Obj');
+    Obj = require('../../auxiliary/lib.js.generic/dist/Obj');
 
     module.exports = function () {
       function exports(WM) {
@@ -1283,10 +1283,10 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/Async": 431, "../../lib.js.generic/dist/Obj": 435 }], 5: [function (require, module, exports) {
+  }, { "../../auxiliary/lib.js.generic/dist/Async": 431, "../../auxiliary/lib.js.generic/dist/Obj": 435 }], 5: [function (require, module, exports) {
     var HTTP;
 
-    HTTP = require('../../lib.js.generic/dist/HTTP');
+    HTTP = require('../../auxiliary/lib.js.generic/dist/HTTP');
 
     module.exports = function () {
       function exports(WM) {
@@ -1336,12 +1336,12 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/HTTP": 434 }], 6: [function (require, module, exports) {
+  }, { "../../auxiliary/lib.js.generic/dist/HTTP": 434 }], 6: [function (require, module, exports) {
     var Compatibility, HTTP;
 
-    Compatibility = require('../../lib.js.generic/dist/Compatibility');
+    Compatibility = require('../../auxiliary/lib.js.generic/dist/Compatibility');
 
-    HTTP = require('../../lib.js.generic/dist/HTTP');
+    HTTP = require('../../auxiliary/lib.js.generic/dist/HTTP');
 
     module.exports = function () {
       function exports(WM) {
@@ -1396,10 +1396,10 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/Compatibility": 433, "../../lib.js.generic/dist/HTTP": 434 }], 7: [function (require, module, exports) {
+  }, { "../../auxiliary/lib.js.generic/dist/Compatibility": 433, "../../auxiliary/lib.js.generic/dist/HTTP": 434 }], 7: [function (require, module, exports) {
     var CSS;
 
-    CSS = require('../../lib.js.generic/dist/CSS');
+    CSS = require('../../auxiliary/lib.js.generic/dist/CSS');
 
     module.exports = function () {
       function exports(WM) {
@@ -1499,10 +1499,10 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 432 }], 8: [function (require, module, exports) {
+  }, { "../../auxiliary/lib.js.generic/dist/CSS": 432 }], 8: [function (require, module, exports) {
     var Obj;
 
-    Obj = require('../../lib.js.generic/dist/Obj');
+    Obj = require('../../auxiliary/lib.js.generic/dist/Obj');
 
     module.exports = function () {
       function exports(WM) {
@@ -1772,7 +1772,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/Obj": 435 }], 9: [function (require, module, exports) {
+  }, { "../../auxiliary/lib.js.generic/dist/Obj": 435 }], 9: [function (require, module, exports) {
     var Str, jss;
 
     var _require = require('./libs');
@@ -1780,7 +1780,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     jss = _require.jss;
 
 
-    Str = require('../../lib.js.generic/dist/Str');
+    Str = require('../../auxiliary/lib.js.generic/dist/Str');
 
     module.exports = function () {
       var classesToLevels;
@@ -2043,12 +2043,12 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/Str": 437, "./libs": 19 }], 10: [function (require, module, exports) {
+  }, { "../../auxiliary/lib.js.generic/dist/Str": 437, "./libs": 19 }], 10: [function (require, module, exports) {
     var A, HTTP, Obj;
 
-    HTTP = require('../../lib.js.generic/dist/HTTP');
+    HTTP = require('../../auxiliary/lib.js.generic/dist/HTTP');
 
-    Obj = require('../../lib.js.generic/dist/Obj');
+    Obj = require('../../auxiliary/lib.js.generic/dist/Obj');
 
     var _require2 = require('./libs');
 
@@ -2537,12 +2537,12 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/HTTP": 434, "../../lib.js.generic/dist/Obj": 435, "./libs": 19 }], 11: [function (require, module, exports) {
+  }, { "../../auxiliary/lib.js.generic/dist/HTTP": 434, "../../auxiliary/lib.js.generic/dist/Obj": 435, "./libs": 19 }], 11: [function (require, module, exports) {
     var Async, CSS;
 
-    CSS = require('../../lib.js.generic/dist/CSS');
+    CSS = require('../../auxiliary/lib.js.generic/dist/CSS');
 
-    Async = require('../../lib.js.generic/dist/Async');
+    Async = require('../../auxiliary/lib.js.generic/dist/Async');
 
     module.exports = function () {
       var makeChangeMenu, makeGroupAction;
@@ -2679,10 +2679,10 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/Async": 431, "../../lib.js.generic/dist/CSS": 432 }], 12: [function (require, module, exports) {
+  }, { "../../auxiliary/lib.js.generic/dist/Async": 431, "../../auxiliary/lib.js.generic/dist/CSS": 432 }], 12: [function (require, module, exports) {
     var CSS;
 
-    CSS = require('../../lib.js.generic/dist/CSS');
+    CSS = require('../../auxiliary/lib.js.generic/dist/CSS');
 
     module.exports = function () {
       var changeHeadingNumberStyle, disableEditSummarySubmitOnEnter, hideRollbackLinks, scrollToFirstHeading;
@@ -2755,12 +2755,12 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 432 }], 13: [function (require, module, exports) {
+  }, { "../../auxiliary/lib.js.generic/dist/CSS": 432 }], 13: [function (require, module, exports) {
     var RegEx, Str;
 
-    RegEx = require('../../lib.js.generic/dist/RegEx');
+    RegEx = require('../../auxiliary/lib.js.generic/dist/RegEx');
 
-    Str = require('../../lib.js.generic/dist/Str');
+    Str = require('../../auxiliary/lib.js.generic/dist/Str');
 
     module.exports = function () {
       var prepareRegexpWhitespace, prepareTitleCasing;
@@ -3228,10 +3228,10 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/RegEx": 436, "../../lib.js.generic/dist/Str": 437 }], 14: [function (require, module, exports) {
+  }, { "../../auxiliary/lib.js.generic/dist/RegEx": 436, "../../auxiliary/lib.js.generic/dist/Str": 437 }], 14: [function (require, module, exports) {
     var Str;
 
-    Str = require('../../lib.js.generic/dist/Str');
+    Str = require('../../auxiliary/lib.js.generic/dist/Str');
 
     module.exports = function () {
       function exports(WM) {
@@ -3254,12 +3254,12 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/Str": 437 }], 15: [function (require, module, exports) {
+  }, { "../../auxiliary/lib.js.generic/dist/Str": 437 }], 15: [function (require, module, exports) {
     var CSS, RegEx;
 
-    CSS = require('../../lib.js.generic/dist/CSS');
+    CSS = require('../../auxiliary/lib.js.generic/dist/CSS');
 
-    RegEx = require('../../lib.js.generic/dist/RegEx');
+    RegEx = require('../../auxiliary/lib.js.generic/dist/RegEx');
 
     module.exports = function () {
       function exports(WM) {
@@ -3397,7 +3397,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return exports;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 432, "../../lib.js.generic/dist/RegEx": 436 }], 16: [function (require, module, exports) {
+  }, { "../../auxiliary/lib.js.generic/dist/CSS": 432, "../../auxiliary/lib.js.generic/dist/RegEx": 436 }], 16: [function (require, module, exports) {
     var A,
         Br,
         Div,
@@ -4255,7 +4255,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     Plugin = _require8.Plugin;
 
 
-    CSS = require('../../lib.js.generic/dist/CSS');
+    CSS = require('../../auxiliary/lib.js.generic/dist/CSS');
 
     module.exports.ArchWikiNPFilter = function () {
       var ArchWikiNPFilter = function (_Plugin4) {
@@ -4325,7 +4325,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return ArchWikiNPFilter;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 432, "./_Plugin": 40 }], 24: [function (require, module, exports) {
+  }, { "../../auxiliary/lib.js.generic/dist/CSS": 432, "./_Plugin": 40 }], 24: [function (require, module, exports) {
     var Plugin;
 
     var _require9 = require('./_Plugin');
@@ -4404,7 +4404,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     Plugin = _require10.Plugin;
 
 
-    CSS = require('../../lib.js.generic/dist/CSS');
+    CSS = require('../../auxiliary/lib.js.generic/dist/CSS');
 
     module.exports.ArchWikiRCFilter = function () {
       var ArchWikiRCFilter = function (_Plugin6) {
@@ -4486,7 +4486,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return ArchWikiRCFilter;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 432, "./_Plugin": 40 }], 26: [function (require, module, exports) {
+  }, { "../../auxiliary/lib.js.generic/dist/CSS": 432, "./_Plugin": 40 }], 26: [function (require, module, exports) {
     var CSS,
         HTTP,
         Plugin,
@@ -4502,9 +4502,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     Plugin = _require11.Plugin;
 
 
-    CSS = require('../../lib.js.generic/dist/CSS');
+    CSS = require('../../auxiliary/lib.js.generic/dist/CSS');
 
-    HTTP = require('../../lib.js.generic/dist/HTTP');
+    HTTP = require('../../auxiliary/lib.js.generic/dist/HTTP');
 
     ref = module.exports.ArchWikiSaveTalk = function () {
       var ArchWikiSaveTalk = function (_Plugin7) {
@@ -4605,7 +4605,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return ArchWikiSaveTalk;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 432, "../../lib.js.generic/dist/HTTP": 434, "./_Plugin": 40 }], 27: [function (require, module, exports) {
+  }, { "../../auxiliary/lib.js.generic/dist/CSS": 432, "../../auxiliary/lib.js.generic/dist/HTTP": 434, "./_Plugin": 40 }], 27: [function (require, module, exports) {
     var Plugin,
         ref,
         boundMethodCheck = function boundMethodCheck(instance, Constructor) {
@@ -5151,7 +5151,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     Plugin = _require17.Plugin;
 
 
-    CSS = require('../../lib.js.generic/dist/CSS');
+    CSS = require('../../auxiliary/lib.js.generic/dist/CSS');
 
     ref = module.exports.FixBacklinkFragments = function () {
       var readTarget;
@@ -5431,7 +5431,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return FixBacklinkFragments;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 432, "./_Plugin": 40 }], 33: [function (require, module, exports) {
+  }, { "../../auxiliary/lib.js.generic/dist/CSS": 432, "./_Plugin": 40 }], 33: [function (require, module, exports) {
     var Plugin,
         Str,
         ref,
@@ -5446,7 +5446,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     Plugin = _require18.Plugin;
 
 
-    Str = require('../../lib.js.generic/dist/Str');
+    Str = require('../../auxiliary/lib.js.generic/dist/Str');
 
     ref = module.exports.FixDoubleRedirects = function () {
       var FixDoubleRedirects = function (_Plugin14) {
@@ -5601,7 +5601,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return FixDoubleRedirects;
     }();
-  }, { "../../lib.js.generic/dist/Str": 437, "./_Plugin": 40 }], 34: [function (require, module, exports) {
+  }, { "../../auxiliary/lib.js.generic/dist/Str": 437, "./_Plugin": 40 }], 34: [function (require, module, exports) {
     var Plugin;
 
     var _require19 = require('./_Plugin');
@@ -6096,7 +6096,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     Plugin = _require22.Plugin;
 
 
-    CSS = require('../../lib.js.generic/dist/CSS');
+    CSS = require('../../auxiliary/lib.js.generic/dist/CSS');
 
     ref = module.exports.SimpleReplace = function () {
       var configuration, _makeUI2, storeRegExp;
@@ -6283,7 +6283,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return SimpleReplace;
     }();
-  }, { "../../lib.js.generic/dist/CSS": 432, "./_Plugin": 40 }], 38: [function (require, module, exports) {
+  }, { "../../auxiliary/lib.js.generic/dist/CSS": 432, "./_Plugin": 40 }], 38: [function (require, module, exports) {
     var Plugin,
         ref,
         boundMethodCheck = function boundMethodCheck(instance, Constructor) {
@@ -6536,7 +6536,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     Plugin = _require24.Plugin;
 
 
-    Str = require('../../lib.js.generic/dist/Str');
+    Str = require('../../auxiliary/lib.js.generic/dist/Str');
 
     ref = module.exports.UpdateCategoryTree = function () {
       var UpdateCategoryTree = function (_Plugin20) {
@@ -6809,7 +6809,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return UpdateCategoryTree;
     }();
-  }, { "../../lib.js.generic/dist/Str": 437, "./_Plugin": 40 }], 40: [function (require, module, exports) {
+  }, { "../../auxiliary/lib.js.generic/dist/Str": 437, "./_Plugin": 40 }], 40: [function (require, module, exports) {
     module.exports.Plugin = function () {
       var Plugin = function () {
         _createClass2(Plugin, null, [{

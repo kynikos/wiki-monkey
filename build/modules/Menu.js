@@ -18,9 +18,9 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 var Async, CSS;
 
-CSS = require('../../lib.js.generic/dist/CSS');
+CSS = require('../../auxiliary/lib.js.generic/dist/CSS');
 
-Async = require('../../lib.js.generic/dist/Async');
+Async = require('../../auxiliary/lib.js.generic/dist/Async');
 
 module.exports = (function() {
   var makeChangeMenu, makeGroupAction;

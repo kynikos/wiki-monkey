@@ -21,9 +21,9 @@ var CSS, HTTP, Plugin, ref,
 
 ({Plugin} = require('./_Plugin'));
 
-CSS = require('../../lib.js.generic/dist/CSS');
+CSS = require('../../auxiliary/lib.js.generic/dist/CSS');
 
-HTTP = require('../../lib.js.generic/dist/HTTP');
+HTTP = require('../../auxiliary/lib.js.generic/dist/HTTP');
 
 ref = module.exports.ArchWikiSaveTalk = (function() {
   class ArchWikiSaveTalk extends Plugin {
