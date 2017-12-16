@@ -10,10 +10,10 @@ wmsetup(
     require("./plugins/ArchWikiFixLinks"),
     require("./plugins/ArchWikiNewTemplates"),
     require("./plugins/ArchWikiNPFilter"),
+    require("./plugins/ArchWikiRCFilter"),
     require("./plugins/ArchWikiSaveTalk"),
     require("./plugins/ArchWikiSortContacts"),
     require("./plugins/ArchWikiSummaryToRelated"),
-    require("./plugins/ArchWikiRCFilter"),
     # The ArchPackages module is currently unusable
     #require("./plugins/ArchWikiUpdatePackageTemplates"),
     require("./plugins/ArchWikiWantedCategories"),
