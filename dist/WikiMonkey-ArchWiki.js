@@ -3413,7 +3413,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
 
     module.exports = function () {
-      var CHECK_WDAYS, VERSION_URL;
+      var VERSION_URL;
 
       var exports = function () {
         function exports(WM) {
@@ -3482,7 +3482,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
             }
             diff = moment().diff(moment(lastupdcheck), 'days');
 
-            if (diff >= 1 && (ref = moment().day(), indexOf.call(CHECK_WDAYS, ref) >= 0) || diff >= 7) {
+            if (diff >= 1 && (ref = moment().day(), indexOf.call(this.WM.conf.update_check_wdays, ref) >= 0) || diff >= 7) {
               return true;
             }
             return false;
@@ -3541,8 +3541,6 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       ;
 
       VERSION_URL = 'https://raw.githubusercontent.com/kynikos/wiki-monkey/master/VERSION';
-
-      CHECK_WDAYS = [6];
 
       return exports;
     }();
@@ -3749,7 +3747,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
                       this.UI = new UI(this);
                       this.Upgrade = new Upgrade(this);
                       this.WhatLinksHere = new WhatLinksHere(this);
-                      this.Upgrade.check_and_notify();
+                      if (this.conf.update_check_wdays) {
+                        this.Upgrade.check_and_notify();
+                      }
                       return _context2.abrupt("return", this.UI._makeUI());
 
                     case 50:
@@ -3779,6 +3779,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         default_bot_plugin: "SimpleReplace",
         default_recentchanges_plugin: null,
         default_newpages_plugin: null,
+        update_check_wdays: [6],
         hide_rollback_links: true,
         disable_edit_summary_submit_on_enter: true,
         scroll_to_first_heading: false,

@@ -128,7 +128,9 @@ WM = (function() {
       this.UI = new UI(this);
       this.Upgrade = new Upgrade(this);
       this.WhatLinksHere = new WhatLinksHere(this);
-      this.Upgrade.check_and_notify();
+      if (this.conf.update_check_wdays) {
+        this.Upgrade.check_and_notify();
+      }
       return this.UI._makeUI();
     }
 
@@ -141,6 +143,7 @@ WM = (function() {
     default_bot_plugin: "SimpleReplace",
     default_recentchanges_plugin: null,
     default_newpages_plugin: null,
+    update_check_wdays: [6],
     hide_rollback_links: true,
     disable_edit_summary_submit_on_enter: true,
     scroll_to_first_heading: false,

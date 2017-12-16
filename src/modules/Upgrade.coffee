@@ -21,7 +21,6 @@
 
 class module.exports
     VERSION_URL = 'https://raw.githubusercontent.com/kynikos/wiki-monkey/master/VERSION'
-    CHECK_WDAYS = [6]
 
     constructor: (@WM) ->
 
@@ -49,7 +48,8 @@ class module.exports
         diff = moment().diff(moment(lastupdcheck), 'days')
         # Preferably check on the configured day of the week, but don't let
         # more than 7 days pass without checking in any case
-        if (diff >= 1 and moment().day() in CHECK_WDAYS) or diff >= 7
+        if (diff >= 1 and moment().day() in
+                @WM.conf.update_check_wdays) or diff >= 7
             return true
         return false
 

@@ -22,7 +22,7 @@ var A, Br, Div, moment,
 ({moment, A, Br, Div} = require('./libs'));
 
 module.exports = (function() {
-  var CHECK_WDAYS, VERSION_URL;
+  var VERSION_URL;
 
   class exports {
     constructor(WM) {
@@ -61,7 +61,7 @@ module.exports = (function() {
       diff = moment().diff(moment(lastupdcheck), 'days');
       // Preferably check on the configured day of the week, but don't let
       // more than 7 days pass without checking in any case
-      if ((diff >= 1 && (ref = moment().day(), indexOf.call(CHECK_WDAYS, ref) >= 0)) || diff >= 7) {
+      if ((diff >= 1 && (ref = moment().day(), indexOf.call(this.WM.conf.update_check_wdays, ref) >= 0)) || diff >= 7) {
         return true;
       }
       return false;
@@ -120,8 +120,6 @@ module.exports = (function() {
   };
 
   VERSION_URL = 'https://raw.githubusercontent.com/kynikos/wiki-monkey/master/VERSION';
-
-  CHECK_WDAYS = [6];
 
   return exports;
 

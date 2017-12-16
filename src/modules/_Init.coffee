@@ -51,6 +51,7 @@ class WM
         default_bot_plugin: "SimpleReplace"
         default_recentchanges_plugin: null
         default_newpages_plugin: null
+        update_check_wdays: [6]
         hide_rollback_links: true
         disable_edit_summary_submit_on_enter: true
         scroll_to_first_heading: false
@@ -108,7 +109,9 @@ class WM
         @Upgrade = new Upgrade(this)
         @WhatLinksHere = new WhatLinksHere(this)
 
-        @Upgrade.check_and_notify()
+        if @conf.update_check_wdays
+            @Upgrade.check_and_notify()
+
         @UI._makeUI()
 
 
