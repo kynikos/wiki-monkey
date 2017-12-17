@@ -30,12 +30,16 @@ class module.exports
             # Well, ok, this is assuming that if the versions are
             # different, upstream has the latest
             if @WM.VERSION != upstream_version
-                @display_notification(
-                    ["Version #{upstream_version} is available.", Br(),
-                     A('Run upgrade', {onclick: =>
-                         @upgrade(upstream_version)
-                     })]
-                )
+                @display_notification([
+                    "Version #{upstream_version} is available."
+                    Br()
+                    A({href: "https://github.com/kynikos/wiki-monkey/wiki/Changelog"}
+                      "Changelog")
+                    Br()
+                    A('Run upgrade', {onclick: =>
+                      @upgrade(upstream_version)
+                    })
+                ])
             else
                 mw.storage.set('WikiMonkey-last-update-check',
                                moment().format('YYYY-MM-DD'))
@@ -92,8 +96,13 @@ class module.exports
             }
         ).done((result) =>
             console.log(result)
-            @display_notification("Upgrade successful: you need to refresh
-                the open wiki page(s) in order to use the new version.")
+            @display_notification([
+                "Upgrade successful: you need to refresh the open wiki page(s)
+                in order to use the new version."
+                Br()
+                A({href: "https://github.com/kynikos/wiki-monkey/wiki/Changelog"}
+                  "Changelog")
+            ])
         ).fail((code, error) =>
             console.error(code, error)
             @display_notification([

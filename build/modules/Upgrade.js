@@ -39,6 +39,11 @@ module.exports = (function() {
           return this.display_notification([
             `Version ${upstream_version} is available.`,
             Br(),
+            A({
+              href: "https://github.com/kynikos/wiki-monkey/wiki/Changelog"
+            },
+            "Changelog"),
+            Br(),
             A('Run upgrade',
             {
               onclick: () => {
@@ -102,7 +107,14 @@ module.exports = (function() {
         };
       }).done((result) => {
         console.log(result);
-        return this.display_notification("Upgrade successful: you need to refresh the open wiki page(s) in order to use the new version.");
+        return this.display_notification([
+          "Upgrade successful: you need to refresh the open wiki page(s) in order to use the new version.",
+          Br(),
+          A({
+            href: "https://github.com/kynikos/wiki-monkey/wiki/Changelog"
+          },
+          "Changelog")
+        ]);
       }).fail((code, error) => {
         console.error(code, error);
         return this.display_notification([

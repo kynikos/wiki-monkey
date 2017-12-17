@@ -3449,7 +3449,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
                         break;
                       }
 
-                      return _context.abrupt("return", this.display_notification(["Version " + upstream_version + " is available.", Br(), A('Run upgrade', {
+                      return _context.abrupt("return", this.display_notification(["Version " + upstream_version + " is available.", Br(), A({
+                        href: "https://github.com/kynikos/wiki-monkey/wiki/Changelog"
+                      }, "Changelog"), Br(), A('Run upgrade', {
                         onclick: function onclick() {
                           return _this19.upgrade(upstream_version);
                         }
@@ -3524,7 +3526,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
               };
             }).done(function (result) {
               console.log(result);
-              return _this20.display_notification("Upgrade successful: you need to refresh the open wiki page(s) in order to use the new version.");
+              return _this20.display_notification(["Upgrade successful: you need to refresh the open wiki page(s) in order to use the new version.", Br(), A({
+                href: "https://github.com/kynikos/wiki-monkey/wiki/Changelog"
+              }, "Changelog")]);
             }).fail(function (code, error) {
               console.error(code, error);
               return _this20.display_notification(["Could not complete the upgrade to version " + upstream_version + ": ", A({
