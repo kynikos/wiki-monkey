@@ -1,6 +1,6 @@
-wmsetup = require('./modules/_Init')
+{WM} = require('./modules/_Init')
 
-wmsetup(
+new WM(
     "Wikipedia",
 
     # The require paths can't be constructed dynamically, or browserify won't

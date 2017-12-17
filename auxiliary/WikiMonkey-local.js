@@ -47,11 +47,13 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     s(r[o]);
   }return s;
 })({ 1: [function (require, module, exports) {
-    var wmsetup;
+    var WM;
 
-    wmsetup = require('./modules/_Init');
+    var _require = require('./modules/_Init');
 
-    wmsetup("ArchWiki", require("./plugins/ArchWikiFixHeader"), require("./plugins/ArchWikiFixHeadings"), require("./plugins/ArchWikiFixLinks"), require("./plugins/ArchWikiNewTemplates"), require("./plugins/ArchWikiNPFilter"), require("./plugins/ArchWikiRCFilter"), require("./plugins/ArchWikiSaveTalk"), require("./plugins/ArchWikiSortContacts"), require("./plugins/ArchWikiSummaryToRelated"), require("./plugins/ArchWikiWantedCategories"), require("./plugins/DeletePages"), require("./plugins/ExpandContractions"), require("./plugins/FixBacklinkFragments"), require("./plugins/FixDoubleRedirects"), require("./plugins/FixFragments"), require("./plugins/FixLinkFragments"), require("./plugins/MultipleLineBreaks"), require("./plugins/SimpleReplace"), require("./plugins/SynchronizeInterlanguageLinks"), require("./plugins/UpdateCategoryTree"));
+    WM = _require.WM;
+
+    new WM("ArchWiki", require("./plugins/ArchWikiFixHeader"), require("./plugins/ArchWikiFixHeadings"), require("./plugins/ArchWikiFixLinks"), require("./plugins/ArchWikiNewTemplates"), require("./plugins/ArchWikiNPFilter"), require("./plugins/ArchWikiRCFilter"), require("./plugins/ArchWikiSaveTalk"), require("./plugins/ArchWikiSortContacts"), require("./plugins/ArchWikiSummaryToRelated"), require("./plugins/ArchWikiWantedCategories"), require("./plugins/DeletePages"), require("./plugins/ExpandContractions"), require("./plugins/FixBacklinkFragments"), require("./plugins/FixDoubleRedirects"), require("./plugins/FixFragments"), require("./plugins/FixLinkFragments"), require("./plugins/MultipleLineBreaks"), require("./plugins/SimpleReplace"), require("./plugins/SynchronizeInterlanguageLinks"), require("./plugins/UpdateCategoryTree"));
   }, { "./modules/_Init": 18, "./plugins/ArchWikiFixHeader": 20, "./plugins/ArchWikiFixHeadings": 21, "./plugins/ArchWikiFixLinks": 22, "./plugins/ArchWikiNPFilter": 23, "./plugins/ArchWikiNewTemplates": 24, "./plugins/ArchWikiRCFilter": 25, "./plugins/ArchWikiSaveTalk": 26, "./plugins/ArchWikiSortContacts": 27, "./plugins/ArchWikiSummaryToRelated": 28, "./plugins/ArchWikiWantedCategories": 29, "./plugins/DeletePages": 30, "./plugins/ExpandContractions": 31, "./plugins/FixBacklinkFragments": 32, "./plugins/FixDoubleRedirects": 33, "./plugins/FixFragments": 34, "./plugins/FixLinkFragments": 35, "./plugins/MultipleLineBreaks": 36, "./plugins/SimpleReplace": 37, "./plugins/SynchronizeInterlanguageLinks": 38, "./plugins/UpdateCategoryTree": 39 }], 2: [function (require, module, exports) {
     module.exports = function () {
       var languages, tablesOfContents;
@@ -1775,9 +1777,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
   }, { "../../auxiliary/lib.js.generic/dist/Obj": 435 }], 9: [function (require, module, exports) {
     var Str, jss;
 
-    var _require = require('./libs');
+    var _require2 = require('./libs');
 
-    jss = _require.jss;
+    jss = _require2.jss;
 
 
     Str = require('../../auxiliary/lib.js.generic/dist/Str');
@@ -2050,9 +2052,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
     Obj = require('../../auxiliary/lib.js.generic/dist/Obj');
 
-    var _require2 = require('./libs');
+    var _require3 = require('./libs');
 
-    A = _require2.A;
+    A = _require3.A;
 
 
     module.exports = function () {
@@ -3404,12 +3406,12 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         moment,
         indexOf = [].indexOf;
 
-    var _require3 = require('./libs');
+    var _require4 = require('./libs');
 
-    moment = _require3.moment;
-    A = _require3.A;
-    Br = _require3.Br;
-    Div = _require3.Div;
+    moment = _require4.moment;
+    A = _require4.A;
+    Br = _require4.Br;
+    Div = _require4.Div;
 
 
     module.exports = function () {
@@ -3571,7 +3573,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       return exports;
     }();
   }, {}], 18: [function (require, module, exports) {
-    var ArchWiki, Bot, Cat, Diff, Editor, Filters, Interlanguage, Log, MW, Menu, Mods, Parser, Plugin, Tables, UI, Upgrade, WM, WhatLinksHere, mwmodpromise, wm;
+    var ArchWiki, Bot, Cat, Diff, Editor, Filters, Interlanguage, Log, MW, Menu, Mods, Parser, Plugin, Tables, UI, Upgrade, WhatLinksHere, mwmodpromise;
 
     mwmodpromise = mw.loader.using(['mediawiki.api.edit', 'mediawiki.notification']);
 
@@ -3609,185 +3611,104 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
     WhatLinksHere = require('./WhatLinksHere');
 
-    var _require4 = require('../plugins/_Plugin');
+    var _require5 = require('../plugins/_Plugin');
 
-    Plugin = _require4.Plugin;
+    Plugin = _require5.Plugin;
 
 
-    WM = function () {
+    module.exports.WM = function () {
       var WM = function () {
-        function WM() {
+        function WM(wiki_name) {
           _classCallCheck2(this, WM);
 
-          this.setup = this.setup.bind(this);
           this.init = this.init.bind(this);
+          this.wiki_name = wiki_name;
+
+          for (var _len2 = arguments.length, installed_plugins_temp = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+            installed_plugins_temp[_key2 - 1] = arguments[_key2];
+          }
+
+          this.installed_plugins_temp = installed_plugins_temp;
+          this.setup();
+          $.when(mwmodpromise, $.ready).done(this.init);
         }
 
         _createClass2(WM, [{
           key: "setup",
-          value: function setup(wiki_name) {
-            this.wiki_name = wiki_name;
+          value: function setup() {
+            var PluginSub, error, i, interface_, len, option, pmod, pname, ref, user_config, value;
 
-            for (var _len2 = arguments.length, installed_plugins_temp = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-              installed_plugins_temp[_key2 - 1] = arguments[_key2];
+            user_config = window.wikiMonkeyConfig || window.wikimonkey_config || {};
+            for (option in user_config) {
+              value = user_config[option];
+              if (!(option in this.conf)) {
+                continue;
+              }
+              this.conf[option] = value;
+              delete user_config[option];
             }
+            this.Plugins = {
+              bot: [],
+              diff: [],
+              editor: [],
+              newpages: [],
+              recentchanges: [],
+              special: []
+            };
+            ref = this.installed_plugins_temp;
+            for (i = 0, len = ref.length; i < len; i++) {
+              pmod = ref[i];
+              for (pname in pmod) {
+                PluginSub = pmod[pname];
+                if (!(PluginSub.prototype instanceof Plugin)) {
+                  continue;
+                }
+                try {
+                  PluginSub.__configure(this.wiki_name, user_config);
+                } catch (error1) {
+                  error = error1;
 
-            this.installed_plugins_temp = installed_plugins_temp;
+                  if (error.message === "Plugin disabled") {
+                    continue;
+                  }
+                  throw error;
+                }
+                for (interface_ in this.Plugins) {
+                  if (PluginSub.prototype["main_" + interface_]) {
+                    this.Plugins[interface_].push(PluginSub);
+                  }
+                }
+              }
+            }
+            if (!$.isEmptyObject(user_config)) {
+              console.warn("Unkown configuration options", user_config);
+            }
+            return delete this.installed_plugins_temp;
           }
         }, {
           key: "init",
-          value: function () {
-            var _ref3 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2() {
-              var user_config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-              var PluginSub, error, i, interface_, len, option, pmod, pname, ref, value;
-              return regeneratorRuntime.wrap(function _callee2$(_context2) {
-                while (1) {
-                  switch (_context2.prev = _context2.next) {
-                    case 0:
-                      _context2.t0 = regeneratorRuntime.keys(user_config);
-
-                    case 1:
-                      if ((_context2.t1 = _context2.t0()).done) {
-                        _context2.next = 10;
-                        break;
-                      }
-
-                      option = _context2.t1.value;
-
-                      value = user_config[option];
-
-                      if (option in this.conf) {
-                        _context2.next = 6;
-                        break;
-                      }
-
-                      return _context2.abrupt("continue", 1);
-
-                    case 6:
-                      this.conf[option] = value;
-                      delete user_config[option];
-                      _context2.next = 1;
-                      break;
-
-                    case 10:
-                      this.Plugins = {
-                        bot: [],
-                        diff: [],
-                        editor: [],
-                        newpages: [],
-                        recentchanges: [],
-                        special: []
-                      };
-                      ref = this.installed_plugins_temp;
-                      i = 0, len = ref.length;
-
-                    case 13:
-                      if (!(i < len)) {
-                        _context2.next = 37;
-                        break;
-                      }
-
-                      pmod = ref[i];
-                      _context2.t2 = regeneratorRuntime.keys(pmod);
-
-                    case 16:
-                      if ((_context2.t3 = _context2.t2()).done) {
-                        _context2.next = 34;
-                        break;
-                      }
-
-                      pname = _context2.t3.value;
-
-                      PluginSub = pmod[pname];
-
-                      if (PluginSub.prototype instanceof Plugin) {
-                        _context2.next = 21;
-                        break;
-                      }
-
-                      return _context2.abrupt("continue", 16);
-
-                    case 21:
-                      _context2.prev = 21;
-
-                      PluginSub.__configure(this.wiki_name, user_config);
-                      _context2.next = 31;
-                      break;
-
-                    case 25:
-                      _context2.prev = 25;
-                      _context2.t4 = _context2["catch"](21);
-
-                      error = _context2.t4;
-
-                      if (!(error.message === "Plugin disabled")) {
-                        _context2.next = 30;
-                        break;
-                      }
-
-                      return _context2.abrupt("continue", 16);
-
-                    case 30:
-                      throw error;
-
-                    case 31:
-                      for (interface_ in this.Plugins) {
-                        if (PluginSub.prototype["main_" + interface_]) {
-                          this.Plugins[interface_].push(PluginSub);
-                        }
-                      }
-                      _context2.next = 16;
-                      break;
-
-                    case 34:
-                      i++;
-                      _context2.next = 13;
-                      break;
-
-                    case 37:
-                      if (!$.isEmptyObject(user_config)) {
-                        console.warn("Unkown configuration options", user_config);
-                      }
-                      delete this.installed_plugins_temp;
-                      _context2.next = 41;
-                      return $.when(mwmodpromise, $.ready);
-
-                    case 41:
-                      this.ArchWiki = new ArchWiki(this);
-                      this.Bot = new Bot(this);
-                      this.Cat = new Cat(this);
-                      this.Diff = new Diff(this);
-                      this.Editor = new Editor(this);
-                      this.Filters = new Filters(this);
-                      this.Interlanguage = new Interlanguage(this);
-                      this.Log = new Log(this);
-                      this.Menu = new Menu(this);
-                      this.Mods = new Mods(this);
-                      this.MW = new MW(this);
-                      this.Parser = new Parser(this);
-                      this.Tables = new Tables(this);
-                      this.UI = new UI(this);
-                      this.Upgrade = new Upgrade(this);
-                      this.WhatLinksHere = new WhatLinksHere(this);
-                      if (this.conf.update_check_wdays) {
-                        this.Upgrade.check_and_notify();
-                      }
-                      return _context2.abrupt("return", this.UI._makeUI());
-
-                    case 59:
-                    case "end":
-                      return _context2.stop();
-                  }
-                }
-              }, _callee2, this, [[21, 25]]);
-            }));
-
-            function init() {
-              return _ref3.apply(this, arguments);
+          value: function init() {
+            this.ArchWiki = new ArchWiki(this);
+            this.Bot = new Bot(this);
+            this.Cat = new Cat(this);
+            this.Diff = new Diff(this);
+            this.Editor = new Editor(this);
+            this.Filters = new Filters(this);
+            this.Interlanguage = new Interlanguage(this);
+            this.Log = new Log(this);
+            this.Menu = new Menu(this);
+            this.Mods = new Mods(this);
+            this.MW = new MW(this);
+            this.Parser = new Parser(this);
+            this.Tables = new Tables(this);
+            this.UI = new UI(this);
+            this.Upgrade = new Upgrade(this);
+            this.WhatLinksHere = new WhatLinksHere(this);
+            if (this.conf.update_check_wdays) {
+              this.Upgrade.check_and_notify();
             }
-
-            return init;
-          }()
+            return this.UI._makeUI();
+          }
         }]);
 
         return WM;
@@ -3810,12 +3731,6 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       return WM;
     }();
-
-    wm = new WM();
-
-    module.exports = wm.setup;
-
-    window.wikimonkey = wm.init;
   }, { "../plugins/_Plugin": 40, "./ArchWiki": 2, "./Bot": 3, "./Cat": 4, "./Diff": 5, "./Editor": 6, "./Filters": 7, "./Interlanguage": 8, "./Log": 9, "./MW": 10, "./Menu": 11, "./Mods": 12, "./Parser": 13, "./Tables": 14, "./UI": 15, "./Upgrade": 16, "./WhatLinksHere": 17, "./libs": 19 }], 19: [function (require, module, exports) {
     var helper, hh, jss, tag;
 
@@ -3840,9 +3755,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     var Plugin,
         indexOf = [].indexOf;
 
-    var _require5 = require('./_Plugin');
+    var _require6 = require('./_Plugin');
 
-    Plugin = _require5.Plugin;
+    Plugin = _require6.Plugin;
 
 
     module.exports.ArchWikiFixHeader = function () {
@@ -4019,9 +3934,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
   }, { "./_Plugin": 40 }], 21: [function (require, module, exports) {
     var Plugin;
 
-    var _require6 = require('./_Plugin');
+    var _require7 = require('./_Plugin');
 
-    Plugin = _require6.Plugin;
+    Plugin = _require7.Plugin;
 
 
     module.exports.ArchWikiFixHeadings = function () {
@@ -4087,9 +4002,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
   }, { "./_Plugin": 40 }], 22: [function (require, module, exports) {
     var Plugin;
 
-    var _require7 = require('./_Plugin');
+    var _require8 = require('./_Plugin');
 
-    Plugin = _require7.Plugin;
+    Plugin = _require8.Plugin;
 
 
     module.exports.ArchWikiFixLinks = function () {
@@ -4250,9 +4165,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
   }, { "./_Plugin": 40 }], 23: [function (require, module, exports) {
     var CSS, Plugin;
 
-    var _require8 = require('./_Plugin');
+    var _require9 = require('./_Plugin');
 
-    Plugin = _require8.Plugin;
+    Plugin = _require9.Plugin;
 
 
     CSS = require('../../auxiliary/lib.js.generic/dist/CSS');
@@ -4328,9 +4243,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
   }, { "../../auxiliary/lib.js.generic/dist/CSS": 432, "./_Plugin": 40 }], 24: [function (require, module, exports) {
     var Plugin;
 
-    var _require9 = require('./_Plugin');
+    var _require10 = require('./_Plugin');
 
-    Plugin = _require9.Plugin;
+    Plugin = _require10.Plugin;
 
 
     module.exports.ArchWikiNewTemplates = function () {
@@ -4399,9 +4314,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
   }, { "./_Plugin": 40 }], 25: [function (require, module, exports) {
     var CSS, Plugin;
 
-    var _require10 = require('./_Plugin');
+    var _require11 = require('./_Plugin');
 
-    Plugin = _require10.Plugin;
+    Plugin = _require11.Plugin;
 
 
     CSS = require('../../auxiliary/lib.js.generic/dist/CSS');
@@ -4497,9 +4412,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       }
     };
 
-    var _require11 = require('./_Plugin');
+    var _require12 = require('./_Plugin');
 
-    Plugin = _require11.Plugin;
+    Plugin = _require12.Plugin;
 
 
     CSS = require('../../auxiliary/lib.js.generic/dist/CSS');
@@ -4614,9 +4529,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       }
     };
 
-    var _require12 = require('./_Plugin');
+    var _require13 = require('./_Plugin');
 
-    Plugin = _require12.Plugin;
+    Plugin = _require13.Plugin;
 
 
     ref = module.exports.ArchWikiSortContacts = function () {
@@ -4846,9 +4761,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
   }, { "./_Plugin": 40 }], 28: [function (require, module, exports) {
     var Plugin;
 
-    var _require13 = require('./_Plugin');
+    var _require14 = require('./_Plugin');
 
-    Plugin = _require13.Plugin;
+    Plugin = _require14.Plugin;
 
 
     module.exports.ArchWikiSummaryToRelated = function () {
@@ -4912,9 +4827,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
   }, { "./_Plugin": 40 }], 29: [function (require, module, exports) {
     var Plugin;
 
-    var _require14 = require('./_Plugin');
+    var _require15 = require('./_Plugin');
 
-    Plugin = _require14.Plugin;
+    Plugin = _require15.Plugin;
 
 
     module.exports.ArchWikiWantedCategories = function () {
@@ -4990,9 +4905,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
   }, { "./_Plugin": 40 }], 30: [function (require, module, exports) {
     var Plugin;
 
-    var _require15 = require('./_Plugin');
+    var _require16 = require('./_Plugin');
 
-    Plugin = _require15.Plugin;
+    Plugin = _require16.Plugin;
 
 
     module.exports.DeletePages = function () {
@@ -5067,9 +4982,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
   }, { "./_Plugin": 40 }], 31: [function (require, module, exports) {
     var Plugin;
 
-    var _require16 = require('./_Plugin');
+    var _require17 = require('./_Plugin');
 
-    Plugin = _require16.Plugin;
+    Plugin = _require17.Plugin;
 
 
     module.exports.ExpandContractions = function () {
@@ -5148,9 +5063,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       }
     };
 
-    var _require17 = require('./_Plugin');
+    var _require18 = require('./_Plugin');
 
-    Plugin = _require17.Plugin;
+    Plugin = _require18.Plugin;
 
 
     CSS = require('../../auxiliary/lib.js.generic/dist/CSS');
@@ -5443,9 +5358,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       }
     };
 
-    var _require18 = require('./_Plugin');
+    var _require19 = require('./_Plugin');
 
-    Plugin = _require18.Plugin;
+    Plugin = _require19.Plugin;
 
 
     Str = require('../../auxiliary/lib.js.generic/dist/Str');
@@ -5606,9 +5521,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
   }, { "../../auxiliary/lib.js.generic/dist/Str": 437, "./_Plugin": 40 }], 34: [function (require, module, exports) {
     var Plugin;
 
-    var _require19 = require('./_Plugin');
+    var _require20 = require('./_Plugin');
 
-    Plugin = _require19.Plugin;
+    Plugin = _require20.Plugin;
 
 
     module.exports.FixFragments = function () {
@@ -5718,9 +5633,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     },
         indexOf = [].indexOf;
 
-    var _require20 = require('./_Plugin');
+    var _require21 = require('./_Plugin');
 
-    Plugin = _require20.Plugin;
+    Plugin = _require21.Plugin;
 
 
     ref = module.exports.FixLinkFragments = function () {
@@ -5952,20 +5867,20 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "main_editor",
           value: function () {
-            var _ref4 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(callNext) {
+            var _ref3 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(callNext) {
               var iw, iwprefixes, links, res, source, title;
-              return regeneratorRuntime.wrap(function _callee3$(_context3) {
+              return regeneratorRuntime.wrap(function _callee2$(_context2) {
                 while (1) {
-                  switch (_context3.prev = _context3.next) {
+                  switch (_context2.prev = _context2.next) {
                     case 0:
                       source = this.WM.Editor.readSource();
                       this.WM.Log.logInfo("Fixing links to sections of other articles ...");
                       title = this.WM.Editor.getTitle();
-                      _context3.next = 5;
+                      _context2.next = 5;
                       return this.WM.MW.getInterwikiMap(title);
 
                     case 5:
-                      res = _context3.sent;
+                      res = _context2.sent;
 
                       iwprefixes = function () {
                         var i, len, ref1, results;
@@ -5978,18 +5893,18 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
                         return results;
                       }();
                       links = this.WM.Parser.findInternalLinks(source, null, null);
-                      return _context3.abrupt("return", this.processLink(title, iwprefixes, links, 0, source, "", 0, this.mainContinue, callNext));
+                      return _context2.abrupt("return", this.processLink(title, iwprefixes, links, 0, source, "", 0, this.mainContinue, callNext));
 
                     case 9:
                     case "end":
-                      return _context3.stop();
+                      return _context2.stop();
                   }
                 }
-              }, _callee3, this);
+              }, _callee2, this);
             }));
 
-            function main_editor(_x3) {
-              return _ref4.apply(this, arguments);
+            function main_editor(_x2) {
+              return _ref3.apply(this, arguments);
             }
 
             return main_editor;
@@ -6039,9 +5954,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
   }, { "./_Plugin": 40 }], 36: [function (require, module, exports) {
     var Plugin;
 
-    var _require21 = require('./_Plugin');
+    var _require22 = require('./_Plugin');
 
-    Plugin = _require21.Plugin;
+    Plugin = _require22.Plugin;
 
 
     module.exports.MultipleLineBreaks = function () {
@@ -6093,9 +6008,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       }
     };
 
-    var _require22 = require('./_Plugin');
+    var _require23 = require('./_Plugin');
 
-    Plugin = _require22.Plugin;
+    Plugin = _require23.Plugin;
 
 
     CSS = require('../../auxiliary/lib.js.generic/dist/CSS');
@@ -6294,9 +6209,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       }
     };
 
-    var _require23 = require('./_Plugin');
+    var _require24 = require('./_Plugin');
 
-    Plugin = _require23.Plugin;
+    Plugin = _require24.Plugin;
 
 
     ref = module.exports.SynchronizeInterlanguageLinks = function () {
@@ -6533,9 +6448,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
     },
         indexOf = [].indexOf;
 
-    var _require24 = require('./_Plugin');
+    var _require25 = require('./_Plugin');
 
-    Plugin = _require24.Plugin;
+    Plugin = _require25.Plugin;
 
 
     Str = require('../../auxiliary/lib.js.generic/dist/Str');

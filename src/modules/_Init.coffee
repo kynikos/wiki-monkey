@@ -44,7 +44,7 @@ WhatLinksHere = require('./WhatLinksHere')
 {Plugin} = require('../plugins/_Plugin')
 
 
-class WM
+class module.exports.WM
     # The build script updates the version number
     VERSION: '4.0.0'
     conf:
@@ -57,11 +57,19 @@ class WM
         scroll_to_first_heading: false
         heading_number_style: false
 
-    constructor: ->
+    constructor: (@wiki_name, @installed_plugins_temp...) ->
+        @setup()
+        $.when(mwmodpromise, $.ready).done(@init)
 
-    setup: (@wiki_name, @installed_plugins_temp...) =>
+    setup: ->
+        # mw.loader.load() doesn't return a promise nor support callbacks
+        # mw.loader.using() only supports MW modules
+        # $.getScript() ignores the cache by default
+        # In the end using $.ajax() with setup parameters would be the only
+        # option to configure WM in a callback, therefore use a global
+        # configuration object for simplicity
+        user_config = window.wikiMonkeyConfig or window.wikimonkey_config or {}
 
-    init: (user_config = {}) =>
         for option, value of user_config when option of @conf
             @conf[option] = value
             delete user_config[option]
@@ -95,8 +103,7 @@ class WM
 
         delete @installed_plugins_temp
 
-        await $.when(mwmodpromise, $.ready)
-
+    init: =>
         # The ArchPackages module is currently unusable
         # @ArchPackages = new ArchPackages(this)
         @ArchWiki = new ArchWiki(this)
@@ -120,8 +127,3 @@ class WM
             @Upgrade.check_and_notify()
 
         @UI._makeUI()
-
-
-wm = new WM()
-module.exports = wm.setup
-window.wikimonkey = wm.init

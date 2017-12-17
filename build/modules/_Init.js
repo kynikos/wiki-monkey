@@ -16,7 +16,7 @@
 
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
-var ArchWiki, Bot, Cat, Diff, Editor, Filters, Interlanguage, Log, MW, Menu, Mods, Parser, Plugin, Tables, UI, Upgrade, WM, WhatLinksHere, mwmodpromise, wm;
+var ArchWiki, Bot, Cat, Diff, Editor, Filters, Interlanguage, Log, MW, Menu, Mods, Parser, Plugin, Tables, UI, Upgrade, WhatLinksHere, mwmodpromise;
 
 mwmodpromise = mw.loader.using(['mediawiki.api.edit', 'mediawiki.notification']);
 
@@ -59,20 +59,25 @@ WhatLinksHere = require('./WhatLinksHere');
 
 ({Plugin} = require('../plugins/_Plugin'));
 
-WM = (function() {
+module.exports.WM = (function() {
   class WM {
-    constructor() {
-      this.setup = this.setup.bind(this);
+    constructor(wiki_name, ...installed_plugins_temp) {
       this.init = this.init.bind(this);
-    }
-
-    setup(wiki_name, ...installed_plugins_temp) {
       this.wiki_name = wiki_name;
       this.installed_plugins_temp = installed_plugins_temp;
+      this.setup();
+      $.when(mwmodpromise, $.ready).done(this.init);
     }
 
-    async init(user_config = {}) {
-      var PluginSub, error, i, interface_, len, option, pmod, pname, ref, value;
+    setup() {
+      var PluginSub, error, i, interface_, len, option, pmod, pname, ref, user_config, value;
+      // mw.loader.load() doesn't return a promise nor support callbacks
+      // mw.loader.using() only supports MW modules
+      // $.getScript() ignores the cache by default
+      // In the end using $.ajax() with setup parameters would be the only
+      // option to configure WM in a callback, therefore use a global
+      // configuration object for simplicity
+      user_config = window.wikiMonkeyConfig || window.wikimonkey_config || {};
       for (option in user_config) {
         value = user_config[option];
         if (!(option in this.conf)) {
@@ -118,8 +123,10 @@ WM = (function() {
       if (!$.isEmptyObject(user_config)) {
         console.warn("Unkown configuration options", user_config);
       }
-      delete this.installed_plugins_temp;
-      await $.when(mwmodpromise, $.ready);
+      return delete this.installed_plugins_temp;
+    }
+
+    init() {
       // The ArchPackages module is currently unusable
       // @ArchPackages = new ArchPackages(this)
       this.ArchWiki = new ArchWiki(this);
@@ -163,9 +170,3 @@ WM = (function() {
   return WM;
 
 })();
-
-wm = new WM();
-
-module.exports = wm.setup;
-
-window.wikimonkey = wm.init;
