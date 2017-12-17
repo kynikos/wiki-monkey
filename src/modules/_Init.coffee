@@ -123,6 +123,7 @@ class module.exports.WM
         @Upgrade = new Upgrade(this)
         @WhatLinksHere = new WhatLinksHere(this)
 
+        @Upgrade.check_obsolete_config()
         if @conf.update_check_wdays
             @Upgrade.check_and_notify()
 

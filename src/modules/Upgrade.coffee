@@ -110,3 +110,34 @@ class module.exports
                 to verify."
             ], {type: 'error'})
         )
+
+    check_obsolete_config: ->
+        # TODO: Remove in a later version
+        oldconf = localStorage.getItem("WikiMonkey")
+        if oldconf isnt null
+            blob = new Blob([oldconf], {type:'application/json'})
+            confhref = window.URL.createObjectURL(blob)
+            @display_notification([
+                "Wiki Monkey 4.0.0 uses a completely rewritten configuration
+                system. After updating, your old configuration was not
+                automatically imported, but it is still saved in your browser's
+                localStorage. You can decide to export it and then merge it
+                manually, or simply remove it and use the default configuration
+                options."
+                Br()
+                A({href: "https://github.com/kynikos/wiki-monkey/wiki/Configuration"}
+                  "New configuration instructions")
+                Br()
+                A({href: confhref}, "View old configuration")
+                Br()
+                A({href: confhref, download: "wikimonkey_oldconf.json"}
+                  "Export old configuration")
+                Br()
+                A({onclick: =>
+                    localStorage.removeItem("WikiMonkey")
+                    @display_notification(
+                        "The old configuration was successfully removed."
+                        {autoHide: true}
+                    )
+                }, "Delete old configuration")
+            ])

@@ -3538,6 +3538,36 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
               });
             });
           }
+        }, {
+          key: "check_obsolete_config",
+          value: function check_obsolete_config() {
+            var _this21 = this;
+
+            var blob, confhref, oldconf;
+
+            oldconf = localStorage.getItem("WikiMonkey");
+            if (oldconf !== null) {
+              blob = new Blob([oldconf], {
+                type: 'application/json'
+              });
+              confhref = window.URL.createObjectURL(blob);
+              return this.display_notification(["Wiki Monkey 4.0.0 uses a completely rewritten configuration system. After updating, your old configuration was not automatically imported, but it is still saved in your browser's localStorage. You can decide to export it and then merge it manually, or simply remove it and use the default configuration options.", Br(), A({
+                href: "https://github.com/kynikos/wiki-monkey/wiki/Configuration"
+              }, "New configuration instructions"), Br(), A({
+                href: confhref
+              }, "View old configuration"), Br(), A({
+                href: confhref,
+                download: "wikimonkey_oldconf.json"
+              }, "Export old configuration"), Br(), A({
+                onclick: function onclick() {
+                  localStorage.removeItem("WikiMonkey");
+                  return _this21.display_notification("The old configuration was successfully removed.", {
+                    autoHide: true
+                  });
+                }
+              }, "Delete old configuration")]);
+            }
+          }
         }]);
 
         return exports;
@@ -3707,6 +3737,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
             this.UI = new UI(this);
             this.Upgrade = new Upgrade(this);
             this.WhatLinksHere = new WhatLinksHere(this);
+            this.Upgrade.check_obsolete_config();
             if (this.conf.update_check_wdays) {
               this.Upgrade.check_and_notify();
             }
@@ -4431,12 +4462,12 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         function ArchWikiSaveTalk() {
           _classCallCheck2(this, ArchWikiSaveTalk);
 
-          var _this27 = _possibleConstructorReturn(this, (ArchWikiSaveTalk.__proto__ || Object.getPrototypeOf(ArchWikiSaveTalk)).apply(this, arguments));
+          var _this28 = _possibleConstructorReturn(this, (ArchWikiSaveTalk.__proto__ || Object.getPrototypeOf(ArchWikiSaveTalk)).apply(this, arguments));
 
-          _this27.mainGetEndTimestamp = _this27.mainGetEndTimestamp.bind(_this27);
-          _this27.mainWrite = _this27.mainWrite.bind(_this27);
-          _this27.mainEnd = _this27.mainEnd.bind(_this27);
-          return _this27;
+          _this28.mainGetEndTimestamp = _this28.mainGetEndTimestamp.bind(_this28);
+          _this28.mainWrite = _this28.mainWrite.bind(_this28);
+          _this28.mainEnd = _this28.mainEnd.bind(_this28);
+          return _this28;
         }
 
         _createClass2(ArchWikiSaveTalk, [{
@@ -4546,14 +4577,14 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         function ArchWikiSortContacts() {
           _classCallCheck2(this, ArchWikiSortContacts);
 
-          var _this28 = _possibleConstructorReturn(this, (ArchWikiSortContacts.__proto__ || Object.getPrototypeOf(ArchWikiSortContacts)).apply(this, arguments));
+          var _this29 = _possibleConstructorReturn(this, (ArchWikiSortContacts.__proto__ || Object.getPrototypeOf(ArchWikiSortContacts)).apply(this, arguments));
 
-          _this28.parseList = _this28.parseList.bind(_this28);
-          _this28.iterateUsers = _this28.iterateUsers.bind(_this28);
-          _this28.storeUserContribs = _this28.storeUserContribs.bind(_this28);
-          _this28.updateList = _this28.updateList.bind(_this28);
-          _this28.writePage = _this28.writePage.bind(_this28);
-          return _this28;
+          _this29.parseList = _this29.parseList.bind(_this29);
+          _this29.iterateUsers = _this29.iterateUsers.bind(_this29);
+          _this29.storeUserContribs = _this29.storeUserContribs.bind(_this29);
+          _this29.updateList = _this29.updateList.bind(_this29);
+          _this29.writePage = _this29.writePage.bind(_this29);
+          return _this29;
         }
 
         _createClass2(ArchWikiSortContacts, [{
@@ -5005,18 +5036,18 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         function FixBacklinkFragments() {
           _classCallCheck2(this, FixBacklinkFragments);
 
-          var _this32 = _possibleConstructorReturn(this, (FixBacklinkFragments.__proto__ || Object.getPrototypeOf(FixBacklinkFragments)).apply(this, arguments));
+          var _this33 = _possibleConstructorReturn(this, (FixBacklinkFragments.__proto__ || Object.getPrototypeOf(FixBacklinkFragments)).apply(this, arguments));
 
-          _this32.makeBotUI = _this32.makeBotUI.bind(_this32);
-          _this32.fixLinks = _this32.fixLinks.bind(_this32);
-          _this32.fixArchWikiLinks = _this32.fixArchWikiLinks.bind(_this32);
-          _this32.fixArchWikiLink = _this32.fixArchWikiLink.bind(_this32);
-          _this32.fixFragment = _this32.fixFragment.bind(_this32);
-          _this32.mainAutoFindSections = _this32.mainAutoFindSections.bind(_this32);
-          _this32.mainAutoRead = _this32.mainAutoRead.bind(_this32);
-          _this32.mainAutoWrite = _this32.mainAutoWrite.bind(_this32);
-          _this32.mainAutoEnd = _this32.mainAutoEnd.bind(_this32);
-          return _this32;
+          _this33.makeBotUI = _this33.makeBotUI.bind(_this33);
+          _this33.fixLinks = _this33.fixLinks.bind(_this33);
+          _this33.fixArchWikiLinks = _this33.fixArchWikiLinks.bind(_this33);
+          _this33.fixArchWikiLink = _this33.fixArchWikiLink.bind(_this33);
+          _this33.fixFragment = _this33.fixFragment.bind(_this33);
+          _this33.mainAutoFindSections = _this33.mainAutoFindSections.bind(_this33);
+          _this33.mainAutoRead = _this33.mainAutoRead.bind(_this33);
+          _this33.mainAutoWrite = _this33.mainAutoWrite.bind(_this33);
+          _this33.mainAutoEnd = _this33.mainAutoEnd.bind(_this33);
+          return _this33;
         }
 
         _createClass2(FixBacklinkFragments, [{
@@ -5298,14 +5329,14 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         function FixDoubleRedirects() {
           _classCallCheck2(this, FixDoubleRedirects);
 
-          var _this33 = _possibleConstructorReturn(this, (FixDoubleRedirects.__proto__ || Object.getPrototypeOf(FixDoubleRedirects)).apply(this, arguments));
+          var _this34 = _possibleConstructorReturn(this, (FixDoubleRedirects.__proto__ || Object.getPrototypeOf(FixDoubleRedirects)).apply(this, arguments));
 
-          _this33.reverseResults = _this33.reverseResults.bind(_this33);
-          _this33.iterateList = _this33.iterateList.bind(_this33);
-          _this33.readMiddleRedirect = _this33.readMiddleRedirect.bind(_this33);
-          _this33.processDoubleRedirect = _this33.processDoubleRedirect.bind(_this33);
-          _this33.processDoubleRedirectEnd = _this33.processDoubleRedirectEnd.bind(_this33);
-          return _this33;
+          _this34.reverseResults = _this34.reverseResults.bind(_this34);
+          _this34.iterateList = _this34.iterateList.bind(_this34);
+          _this34.readMiddleRedirect = _this34.readMiddleRedirect.bind(_this34);
+          _this34.processDoubleRedirect = _this34.processDoubleRedirect.bind(_this34);
+          _this34.processDoubleRedirectEnd = _this34.processDoubleRedirectEnd.bind(_this34);
+          return _this34;
         }
 
         _createClass2(FixDoubleRedirects, [{
@@ -5571,18 +5602,18 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         function FixLinkFragments() {
           _classCallCheck2(this, FixLinkFragments);
 
-          var _this35 = _possibleConstructorReturn(this, (FixLinkFragments.__proto__ || Object.getPrototypeOf(FixLinkFragments)).apply(this, arguments));
+          var _this36 = _possibleConstructorReturn(this, (FixLinkFragments.__proto__ || Object.getPrototypeOf(FixLinkFragments)).apply(this, arguments));
 
-          _this35.processLink = _this35.processLink.bind(_this35);
-          _this35.processLinkContinue = _this35.processLinkContinue.bind(_this35);
-          _this35.fixFragment = _this35.fixFragment.bind(_this35);
-          _this35.findArchWikiLinks = _this35.findArchWikiLinks.bind(_this35);
-          _this35.findArchWikiLinks2 = _this35.findArchWikiLinks2.bind(_this35);
-          _this35.processArchWikiLink = _this35.processArchWikiLink.bind(_this35);
-          _this35.processArchWikiLinkContinue = _this35.processArchWikiLinkContinue.bind(_this35);
-          _this35.mainContinue = _this35.mainContinue.bind(_this35);
-          _this35.mainEnd = _this35.mainEnd.bind(_this35);
-          return _this35;
+          _this36.processLink = _this36.processLink.bind(_this36);
+          _this36.processLinkContinue = _this36.processLinkContinue.bind(_this36);
+          _this36.fixFragment = _this36.fixFragment.bind(_this36);
+          _this36.findArchWikiLinks = _this36.findArchWikiLinks.bind(_this36);
+          _this36.findArchWikiLinks2 = _this36.findArchWikiLinks2.bind(_this36);
+          _this36.processArchWikiLink = _this36.processArchWikiLink.bind(_this36);
+          _this36.processArchWikiLinkContinue = _this36.processArchWikiLinkContinue.bind(_this36);
+          _this36.mainContinue = _this36.mainContinue.bind(_this36);
+          _this36.mainEnd = _this36.mainEnd.bind(_this36);
+          return _this36;
         }
 
         _createClass2(FixLinkFragments, [{
@@ -5950,12 +5981,12 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         function SimpleReplace() {
           _classCallCheck2(this, SimpleReplace);
 
-          var _this37 = _possibleConstructorReturn(this, (SimpleReplace.__proto__ || Object.getPrototypeOf(SimpleReplace)).apply(this, arguments));
+          var _this38 = _possibleConstructorReturn(this, (SimpleReplace.__proto__ || Object.getPrototypeOf(SimpleReplace)).apply(this, arguments));
 
-          _this37.storeConfiguration = _this37.storeConfiguration.bind(_this37);
-          _this37.mainAutoWrite = _this37.mainAutoWrite.bind(_this37);
-          _this37.mainAutoEnd = _this37.mainAutoEnd.bind(_this37);
-          return _this37;
+          _this38.storeConfiguration = _this38.storeConfiguration.bind(_this38);
+          _this38.mainAutoWrite = _this38.mainAutoWrite.bind(_this38);
+          _this38.mainAutoEnd = _this38.mainAutoEnd.bind(_this38);
+          return _this38;
         }
 
         _createClass2(SimpleReplace, [{
@@ -6147,16 +6178,16 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         function SynchronizeInterlanguageLinks() {
           _classCallCheck2(this, SynchronizeInterlanguageLinks);
 
-          var _this38 = _possibleConstructorReturn(this, (SynchronizeInterlanguageLinks.__proto__ || Object.getPrototypeOf(SynchronizeInterlanguageLinks)).apply(this, arguments));
+          var _this39 = _possibleConstructorReturn(this, (SynchronizeInterlanguageLinks.__proto__ || Object.getPrototypeOf(SynchronizeInterlanguageLinks)).apply(this, arguments));
 
-          _this38.detectLang = _this38.detectLang.bind(_this38);
-          _this38.computeWhiteList = _this38.computeWhiteList.bind(_this38);
-          _this38.computeSupportedLangs = _this38.computeSupportedLangs.bind(_this38);
-          _this38.mainContinue = _this38.mainContinue.bind(_this38);
-          _this38.mainEnd = _this38.mainEnd.bind(_this38);
-          _this38.mainAutoWrite = _this38.mainAutoWrite.bind(_this38);
-          _this38.mainAutoEnd = _this38.mainAutoEnd.bind(_this38);
-          return _this38;
+          _this39.detectLang = _this39.detectLang.bind(_this39);
+          _this39.computeWhiteList = _this39.computeWhiteList.bind(_this39);
+          _this39.computeSupportedLangs = _this39.computeSupportedLangs.bind(_this39);
+          _this39.mainContinue = _this39.mainContinue.bind(_this39);
+          _this39.mainEnd = _this39.mainEnd.bind(_this39);
+          _this39.mainAutoWrite = _this39.mainAutoWrite.bind(_this39);
+          _this39.mainAutoEnd = _this39.mainAutoEnd.bind(_this39);
+          return _this39;
         }
 
         _createClass2(SynchronizeInterlanguageLinks, [{
@@ -6388,19 +6419,19 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         function UpdateCategoryTree() {
           _classCallCheck2(this, UpdateCategoryTree);
 
-          var _this39 = _possibleConstructorReturn(this, (UpdateCategoryTree.__proto__ || Object.getPrototypeOf(UpdateCategoryTree)).apply(this, arguments));
+          var _this40 = _possibleConstructorReturn(this, (UpdateCategoryTree.__proto__ || Object.getPrototypeOf(UpdateCategoryTree)).apply(this, arguments));
 
-          _this39.mainContinue = _this39.mainContinue.bind(_this39);
-          _this39.readToC = _this39.readToC.bind(_this39);
-          _this39.processToC = _this39.processToC.bind(_this39);
-          _this39.storeAlternativeNames = _this39.storeAlternativeNames.bind(_this39);
-          _this39.processCategory = _this39.processCategory.bind(_this39);
-          _this39.processCategoryAddSuffix = _this39.processCategoryAddSuffix.bind(_this39);
-          _this39.processCategoryEnd = _this39.processCategoryEnd.bind(_this39);
-          _this39.createCatLink = _this39.createCatLink.bind(_this39);
-          _this39.writeToC = _this39.writeToC.bind(_this39);
-          _this39.checkWrite = _this39.checkWrite.bind(_this39);
-          return _this39;
+          _this40.mainContinue = _this40.mainContinue.bind(_this40);
+          _this40.readToC = _this40.readToC.bind(_this40);
+          _this40.processToC = _this40.processToC.bind(_this40);
+          _this40.storeAlternativeNames = _this40.storeAlternativeNames.bind(_this40);
+          _this40.processCategory = _this40.processCategory.bind(_this40);
+          _this40.processCategoryAddSuffix = _this40.processCategoryAddSuffix.bind(_this40);
+          _this40.processCategoryEnd = _this40.processCategoryEnd.bind(_this40);
+          _this40.createCatLink = _this40.createCatLink.bind(_this40);
+          _this40.writeToC = _this40.writeToC.bind(_this40);
+          _this40.checkWrite = _this40.checkWrite.bind(_this40);
+          return _this40;
         }
 
         _createClass2(UpdateCategoryTree, [{

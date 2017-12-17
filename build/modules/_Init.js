@@ -145,6 +145,7 @@ module.exports.WM = (function() {
       this.UI = new UI(this);
       this.Upgrade = new Upgrade(this);
       this.WhatLinksHere = new WhatLinksHere(this);
+      this.Upgrade.check_obsolete_config();
       if (this.conf.update_check_wdays) {
         this.Upgrade.check_and_notify();
       }

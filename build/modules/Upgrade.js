@@ -122,6 +122,48 @@ module.exports = (function() {
       });
     }
 
+    check_obsolete_config() {
+      var blob, confhref, oldconf;
+      // TODO: Remove in a later version
+      oldconf = localStorage.getItem("WikiMonkey");
+      if (oldconf !== null) {
+        blob = new Blob([oldconf], {
+          type: 'application/json'
+        });
+        confhref = window.URL.createObjectURL(blob);
+        return this.display_notification([
+          "Wiki Monkey 4.0.0 uses a completely rewritten configuration system. After updating, your old configuration was not automatically imported, but it is still saved in your browser's localStorage. You can decide to export it and then merge it manually, or simply remove it and use the default configuration options.",
+          Br(),
+          A({
+            href: "https://github.com/kynikos/wiki-monkey/wiki/Configuration"
+          },
+          "New configuration instructions"),
+          Br(),
+          A({
+            href: confhref
+          },
+          "View old configuration"),
+          Br(),
+          A({
+            href: confhref,
+            download: "wikimonkey_oldconf.json"
+          },
+          "Export old configuration"),
+          Br(),
+          A({
+            onclick: () => {
+              localStorage.removeItem("WikiMonkey");
+              return this.display_notification("The old configuration was successfully removed.",
+          {
+                autoHide: true
+              });
+            }
+          },
+          "Delete old configuration")
+        ]);
+      }
+    }
+
   };
 
   VERSION_URL = 'https://raw.githubusercontent.com/kynikos/wiki-monkey/master/VERSION';
