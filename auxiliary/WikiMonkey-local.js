@@ -4641,12 +4641,13 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         _createClass2(ArchWikiSortContacts, [{
           key: "main_special",
           value: function main_special(callNext) {
-            return this.iteratePages(0, callNext);
+            return this.iteratePages(-1, callNext);
           }
         }, {
           key: "iteratePages",
           value: function iteratePages(pageid, callNext) {
             var inactiveIntro, inactiveLimit, page, pconf, recentDays, summary;
+            pageid++;
             pconf = this.conf.pages[pageid];
             if (pconf) {
               page = pconf.title;
@@ -4716,7 +4717,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         }, {
           key: "storeUserContribs",
           value: function storeUserContribs(results, args) {
-            var edits, edittoken, endList, inactiveIntro, inactiveLimit, index, pageid, source, startList, summary, timestamp, title, ucend, ucstart, users, usersArray;
+            var callNext, edits, edittoken, endList, inactiveIntro, inactiveLimit, index, pageid, source, startList, summary, timestamp, title, ucend, ucstart, users, usersArray;
             boundMethodCheck(this, ref);
             usersArray = args[0];
             index = args[1];
@@ -4732,7 +4733,8 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
             inactiveLimit = args[11];
             inactiveIntro = args[12];
             summary = args[13];
-            pageid = args[14];
+            callNext = args[14];
+            pageid = args[15];
             edits = results.length;
             if (edits < inactiveLimit) {
               users.inactive.push({
@@ -6563,12 +6565,13 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         _createClass2(UpdateCategoryTree, [{
           key: "main_special",
           value: function main_special(callNext) {
-            return this.iteratePages(0, callNext);
+            return this.iteratePages(-1, callNext);
           }
         }, {
           key: "iteratePages",
           value: function iteratePages(pageid, callNext) {
             var params, pconf, showRootAlsoIn, summary;
+            pageid++;
             summary = this.conf.edit_summary;
             showRootAlsoIn = this.conf.show_root_also_in;
             pconf = this.conf.pages[pageid];

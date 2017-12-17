@@ -35,11 +35,12 @@ ref = module.exports.ArchWikiSortContacts = (function() {
     }
 
     main_special(callNext) {
-      return this.iteratePages(0, callNext);
+      return this.iteratePages(-1, callNext);
     }
 
     iteratePages(pageid, callNext) {
       var inactiveIntro, inactiveLimit, page, pconf, recentDays, summary;
+      pageid++;
       pconf = this.conf.pages[pageid];
       if (pconf) {
         page = pconf.title;
@@ -106,7 +107,7 @@ ref = module.exports.ArchWikiSortContacts = (function() {
     }
 
     storeUserContribs(results, args) {
-      var edits, edittoken, endList, inactiveIntro, inactiveLimit, index, pageid, source, startList, summary, timestamp, title, ucend, ucstart, users, usersArray;
+      var callNext, edits, edittoken, endList, inactiveIntro, inactiveLimit, index, pageid, source, startList, summary, timestamp, title, ucend, ucstart, users, usersArray;
       boundMethodCheck(this, ref);
       usersArray = args[0];
       index = args[1];
@@ -122,7 +123,8 @@ ref = module.exports.ArchWikiSortContacts = (function() {
       inactiveLimit = args[11];
       inactiveIntro = args[12];
       summary = args[13];
-      pageid = args[14];
+      callNext = args[14];
+      pageid = args[15];
       edits = results.length;
       if (edits < inactiveLimit) {
         users.inactive.push({

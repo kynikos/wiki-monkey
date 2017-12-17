@@ -52,9 +52,10 @@ class module.exports.ArchWikiSortContacts extends Plugin
         }]
 
     main_special: (callNext) ->
-        @iteratePages(0, callNext)
+        @iteratePages(-1, callNext)
 
     iteratePages: (pageid, callNext) ->
+        pageid++
         pconf = @conf.pages[pageid]
         if pconf
             page = pconf.title
@@ -151,7 +152,8 @@ class module.exports.ArchWikiSortContacts extends Plugin
         inactiveLimit = args[11]
         inactiveIntro = args[12]
         summary = args[13]
-        pageid = args[14]
+        callNext = args[14]
+        pageid = args[15]
 
         edits = results.length
 

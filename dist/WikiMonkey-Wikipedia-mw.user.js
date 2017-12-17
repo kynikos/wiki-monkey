@@ -5335,12 +5335,13 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         _createClass2(UpdateCategoryTree, [{
           key: "main_special",
           value: function main_special(callNext) {
-            return this.iteratePages(0, callNext);
+            return this.iteratePages(-1, callNext);
           }
         }, {
           key: "iteratePages",
           value: function iteratePages(pageid, callNext) {
             var params, pconf, showRootAlsoIn, summary;
+            pageid++;
             summary = this.conf.edit_summary;
             showRootAlsoIn = this.conf.show_root_also_in;
             pconf = this.conf.pages[pageid];

@@ -35,9 +35,10 @@ class module.exports.UpdateCategoryTree extends Plugin
         Wikipedia: {}
 
     main_special: (callNext) ->
-        @iteratePages(0, callNext)
+        @iteratePages(-1, callNext)
 
     iteratePages: (pageid, callNext) ->
+        pageid++
         summary = @conf.edit_summary
         showRootAlsoIn = @conf.show_root_also_in
         pconf = @conf.pages[pageid]
