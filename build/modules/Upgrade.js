@@ -67,13 +67,16 @@ module.exports = (function() {
       return false;
     }
 
-    display_notification(content, type = 'info') {
-      return mw.notification.notify(content, {
+    display_notification(content, optionsoverride) {
+      var options;
+      options = {
         autoHide: false,
         tag: 'WikiMonkey-upgrade',
         title: 'Wiki Monkey',
-        type: type
-      });
+        type: 'info'
+      };
+      $.extend(options, optionsoverride);
+      return mw.notification.notify(content, options);
     }
 
     upgrade(upstream_version) {
@@ -113,7 +116,9 @@ module.exports = (function() {
           " in case it was a temporary problem; it is also possible that Wiki Monkey is installed in a non-standard way in ",
           pagelink,
           " and the upgrade should be executed manually; finally, it is possible that the upgrade was already launched and completed from another page: in this case refresh the page to verify."
-        ], 'error');
+        ], {
+          type: 'error'
+        });
       });
     }
 

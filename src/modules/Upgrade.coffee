@@ -53,13 +53,15 @@ class module.exports
             return true
         return false
 
-    display_notification: (content, type = 'info') ->
-        mw.notification.notify(content, {
+    display_notification: (content, optionsoverride) ->
+        options = {
             autoHide: false
             tag: 'WikiMonkey-upgrade'
             title: 'Wiki Monkey'
-            type: type
-        })
+            type: 'info'
+        }
+        $.extend(options, optionsoverride)
+        mw.notification.notify(content, options)
 
     upgrade: (upstream_version) ->
         page = "User:#{mw.user.getName()}/common.js"
@@ -106,5 +108,5 @@ class module.exports
                 finally, it is possible that the upgrade was already launched
                 and completed from another page: in this case refresh the page
                 to verify."
-            ], 'error')
+            ], {type: 'error'})
         )

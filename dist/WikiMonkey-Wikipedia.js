@@ -3489,15 +3489,16 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           }
         }, {
           key: "display_notification",
-          value: function display_notification(content) {
-            var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'info';
-
-            return mw.notification.notify(content, {
+          value: function display_notification(content, optionsoverride) {
+            var options;
+            options = {
               autoHide: false,
               tag: 'WikiMonkey-upgrade',
               title: 'Wiki Monkey',
-              type: type
-            });
+              type: 'info'
+            };
+            $.extend(options, optionsoverride);
+            return mw.notification.notify(content, options);
           }
         }, {
           key: "upgrade",
@@ -3530,7 +3531,9 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
                 onclick: function onclick() {
                   return _this20.upgrade(upstream_version);
                 }
-              }, "retry"), " in case it was a temporary problem; it is also possible that Wiki Monkey is installed in a non-standard way in ", pagelink, " and the upgrade should be executed manually; finally, it is possible that the upgrade was already launched and completed from another page: in this case refresh the page to verify."], 'error');
+              }, "retry"), " in case it was a temporary problem; it is also possible that Wiki Monkey is installed in a non-standard way in ", pagelink, " and the upgrade should be executed manually; finally, it is possible that the upgrade was already launched and completed from another page: in this case refresh the page to verify."], {
+                type: 'error'
+              });
             });
           }
         }]);
@@ -4673,7 +4676,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
               }, _callee2, this);
             }));
 
-            function main_editor(_x2) {
+            function main_editor(_x) {
               return _ref3.apply(this, arguments);
             }
 
