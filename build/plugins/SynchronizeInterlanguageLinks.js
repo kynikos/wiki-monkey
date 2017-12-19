@@ -212,7 +212,7 @@ ref = module.exports.SynchronizeInterlanguageLinks = (function() {
   SynchronizeInterlanguageLinks.conf_default = {
     enabled: true,
     editor_menu: ["Query plugins", "Sync interlanguage links"],
-    option_label: "Synchronize interlanguage links",
+    bot_label: "Synchronize interlanguage links",
     language_tag: "en",
     tag_whitelist: ["en"],
     supported_tags: ["en"],

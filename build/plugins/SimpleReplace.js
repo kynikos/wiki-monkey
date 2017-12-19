@@ -146,7 +146,7 @@ ref = module.exports.SimpleReplace = (function() {
   SimpleReplace.conf_default = {
     enabled: true,
     editor_menu: ["RegExp substitution"],
-    option_label: "RegExp substitution"
+    bot_label: "RegExp substitution"
   };
 
   makeUI = function() {

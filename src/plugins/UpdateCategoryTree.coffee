@@ -27,6 +27,7 @@ class module.exports.UpdateCategoryTree extends Plugin
         special_menu: ["Update category trees"]
         edit_summary: "automatic update"
         show_root_also_in: false
+        pages: []
     @wiki_to_conf_default:
         ArchWiki:
             pages: ["ar", "cs", "cs", "da", "el", "en", "es", "he", "hr", "hu",

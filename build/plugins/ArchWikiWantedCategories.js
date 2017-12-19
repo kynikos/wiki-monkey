@@ -69,7 +69,7 @@ module.exports.ArchWikiWantedCategories = (function() {
 
   ArchWikiWantedCategories.conf_default = {
     enabled: false,
-    option_label: "Create wanted categories"
+    bot_label: "Create wanted categories"
   };
 
   return ArchWikiWantedCategories;

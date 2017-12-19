@@ -613,7 +613,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           for (i = 0, len = functions.length; i < len; i++) {
             Plugin = functions[i];
             plugin = new Plugin(this.WM);
-            pluginInst = plugin.conf.option_label;
+            pluginInst = plugin.conf.bot_label;
 
             if (!pluginInst || !pluginInst.length) {
               continue;
@@ -1423,7 +1423,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
           for (i = 0, len = plugins.length; i < len; i++) {
             Plugin = plugins[i];
             plugin = new Plugin(this.WM);
-            pluginInst = plugin.conf.option_label;
+            pluginInst = plugin.conf.filter_label;
 
             if (!pluginInst) {
               continue;
@@ -4272,7 +4272,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       ArchWikiNPFilter.conf_default = {
         enabled: true,
-        option_label: "Default filter",
+        filter_label: "Default filter",
         default_language: "English"
       };
 
@@ -4433,7 +4433,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       ArchWikiRCFilter.conf_default = {
         enabled: true,
-        option_label: "Default filter",
+        filter_label: "Default filter",
         default_language: "English"
       };
 
@@ -4935,7 +4935,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       ArchWikiWantedCategories.conf_default = {
         enabled: false,
-        option_label: "Create wanted categories"
+        bot_label: "Create wanted categories"
       };
 
       return ArchWikiWantedCategories;
@@ -5011,7 +5011,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       DeletePages.conf_default = {
         enabled: false,
-        option_label: "Delete pages",
+        bot_label: "Delete pages",
         edit_summary: "delete page"
       };
 
@@ -5376,7 +5376,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       FixBacklinkFragments.conf_default = {
         enabled: true,
-        option_label: "Fix links to specific sections of a target page",
+        bot_label: "Fix links to specific sections of a target page",
         edit_summary: "fix links to specific sections"
       };
 
@@ -6194,7 +6194,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       SimpleReplace.conf_default = {
         enabled: true,
         editor_menu: ["RegExp substitution"],
-        option_label: "RegExp substitution"
+        bot_label: "RegExp substitution"
       };
 
       _makeUI2 = function _makeUI2() {
@@ -6455,7 +6455,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       SynchronizeInterlanguageLinks.conf_default = {
         enabled: true,
         editor_menu: ["Query plugins", "Sync interlanguage links"],
-        option_label: "Synchronize interlanguage links",
+        bot_label: "Synchronize interlanguage links",
         language_tag: "en",
         tag_whitelist: ["en"],
         supported_tags: ["en"],
@@ -6753,7 +6753,8 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
         enabled: false,
         special_menu: ["Update category trees"],
         edit_summary: "automatic update",
-        show_root_also_in: false
+        show_root_also_in: false,
+        pages: []
       };
 
       UpdateCategoryTree.wiki_to_conf_default = {

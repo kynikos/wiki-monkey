@@ -37,7 +37,7 @@ class module.exports
 
         for Plugin in plugins
             plugin = new Plugin(@WM)
-            pluginInst = plugin.conf.option_label
+            pluginInst = plugin.conf.filter_label
 
             # This allows to disable an entry by giving it any second
             # parameter that evaluates to false

@@ -36,7 +36,7 @@ module.exports = class exports {
     for (i = 0, len = plugins.length; i < len; i++) {
       Plugin = plugins[i];
       plugin = new Plugin(this.WM);
-      pluginInst = plugin.conf.option_label;
+      pluginInst = plugin.conf.filter_label;
       // This allows to disable an entry by giving it any second
       // parameter that evaluates to false
       if (!pluginInst) {

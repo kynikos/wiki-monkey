@@ -75,7 +75,7 @@ module.exports.ArchWikiRCFilter = (function() {
 
   ArchWikiRCFilter.conf_default = {
     enabled: true,
-    option_label: "Default filter",
+    filter_label: "Default filter",
     default_language: "English"
   };
 

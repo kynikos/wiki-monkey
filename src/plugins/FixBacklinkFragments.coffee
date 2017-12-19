@@ -24,7 +24,7 @@ CSS = require('../../auxiliary/lib.js.generic/dist/CSS')
 class module.exports.FixBacklinkFragments extends Plugin
     @conf_default:
         enabled: true
-        option_label: "Fix links to specific sections of a target page"
+        bot_label: "Fix links to specific sections of a target page"
         edit_summary: "fix links to specific sections"
 
     makeBotUI: =>

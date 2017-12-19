@@ -25,7 +25,7 @@ class module.exports.SimpleReplace extends Plugin
     @conf_default:
         enabled: true
         editor_menu: ["RegExp substitution"]
-        option_label: "RegExp substitution"
+        bot_label: "RegExp substitution"
 
     makeUI = ->
         CSS.addStyleElement("#WikiMonkey-SimpleReplace div " +

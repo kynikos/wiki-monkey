@@ -22,7 +22,7 @@
 class module.exports.DeletePages extends Plugin
     @conf_default:
         enabled: false
-        option_label: "Delete pages"
+        bot_label: "Delete pages"
         edit_summary: "delete page"
 
     main_bot: (title, callBot, chainArgs) ->

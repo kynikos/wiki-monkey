@@ -264,7 +264,8 @@ ref = module.exports.UpdateCategoryTree = (function() {
     enabled: false,
     special_menu: ["Update category trees"],
     edit_summary: "automatic update",
-    show_root_also_in: false
+    show_root_also_in: false,
+    pages: []
   };
 
   UpdateCategoryTree.wiki_to_conf_default = {

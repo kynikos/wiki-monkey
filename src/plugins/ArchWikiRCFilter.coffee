@@ -24,7 +24,7 @@ CSS = require('../../auxiliary/lib.js.generic/dist/CSS')
 class module.exports.ArchWikiRCFilter extends Plugin
     @conf_default:
         enabled: true
-        option_label: "Default filter"
+        filter_label: "Default filter"
         default_language: "English"
 
     main_recentchanges: ->

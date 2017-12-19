@@ -22,7 +22,7 @@
 class module.exports.ArchWikiWantedCategories extends Plugin
     @conf_default:
         enabled: false
-        option_label: "Create wanted categories"
+        bot_label: "Create wanted categories"
 
     main_bot: (title, callBot, chainArgs) ->
         title = title.replace(" (page does not exist)", "")
