@@ -14,7 +14,6 @@ new WM(
     require("./plugins/ArchWikiSaveTalk"),
     require("./plugins/ArchWikiSortContacts"),
     require("./plugins/ArchWikiSummaryToRelated"),
-    require("./plugins/ArchWikiWantedCategories"),
     require("./plugins/ExpandContractions"),
     require("./plugins/FixBacklinkFragments"),
     require("./plugins/FixDoubleRedirects"),
