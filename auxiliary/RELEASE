@@ -1,15 +1,17 @@
 * Ensure that no backward-incompatible configuration changes have been made
 * Verify that the correct branch in lib.js.generic is checked out
-* Check that configurations.py and userscripts.py are correctly configured and
-  up to date
+* Check that build.py is correctly configured and up to date
 * Make sure to be on the develop branch
 
-* Create and check out a 'v4.x.x' branch
-* Run `npm run build 4.x.x`
+* Create and check out a 'v4.x.x-rc' branch
+  Do not omit the "-rc" suffix (or similar) in order to prevent CDN services
+  from caching the wrong version of the files in case further changes are
+  needed
+* Run `npm run build 4.x.x-rc`
   Do *not* prepend the 'v' here
 * Commit
 * Push the new branch to the remote repository
-* Test the in-wiki user scripts at least in Firefox and Chromium
+* Test at least in Firefox and Chromium
   Also make sure to check the effects of any changes to the configuration
   object
 
@@ -18,7 +20,7 @@
   - GitHub wiki
   - ArchWiki article: https://wiki.archlinux.org/index.php/Wiki_Monkey
 
-* Merge the v4.x.x branch into the master and develop branches (should be
+* Merge the v4.x.x-rc branch into the master and develop branches (should be
   fast-forwards)
   To force merge "theirs" branch: `git merge -X theirs branch`
 * Tag the release commit the v4.x.x version number
