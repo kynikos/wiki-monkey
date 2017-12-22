@@ -151,7 +151,7 @@ class module.exports.SimpleReplace extends Plugin
 
         if summary != ""
             @WM.MW.callQueryEdit(title,
-                                @WM.Plugins.SimpleReplace.mainAutoWrite,
+                                @mainAutoWrite,
                                 [summary, callBot])
         else
             @WM.Log.logError("The edit summary cannot be empty")
@@ -166,7 +166,7 @@ class module.exports.SimpleReplace extends Plugin
 
         if newtext != source
             @WM.MW.callAPIPost({action: "edit", bot: "1", title: title, summary: summary, text: newtext, basetimestamp: timestamp, token: edittoken},
-                               @WM.Plugins.SimpleReplace.mainAutoEnd,
+                               @mainAutoEnd,
                                callBot,
                                null)
         else

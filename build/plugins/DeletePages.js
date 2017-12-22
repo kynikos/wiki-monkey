@@ -29,7 +29,7 @@ module.exports.DeletePages = (function() {
         prop: 'info',
         intoken: 'delete',
         titles: title
-      }, this.WM.Plugins.DeletePages.mainAutoWrite, [title, summary, callBot], null);
+      }, this.mainAutoWrite, [title, summary, callBot], null);
     }
 
     mainAutoWrite(page, args) {
@@ -44,7 +44,7 @@ module.exports.DeletePages = (function() {
         title: title,
         token: deletetoken,
         reason: summary
-      }, this.WM.Plugins.DeletePages.mainAutoEnd, [title, callBot], null);
+      }, this.mainAutoEnd, [title, callBot], null);
     }
 
     mainAutoEnd(res, args) {

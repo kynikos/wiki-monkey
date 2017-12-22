@@ -33,7 +33,7 @@ class module.exports.DeletePages extends Plugin
                             intoken: 'delete'
                             titles: title
                         },
-                        @WM.Plugins.DeletePages.mainAutoWrite,
+                        @mainAutoWrite,
                         [title, summary, callBot],
                         null)
 
@@ -51,7 +51,7 @@ class module.exports.DeletePages extends Plugin
                             token: deletetoken
                             reason: summary
                         },
-                        @WM.Plugins.DeletePages.mainAutoEnd,
+                        @mainAutoEnd,
                         [title, callBot],
                         null)
 

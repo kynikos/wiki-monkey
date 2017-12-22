@@ -4913,7 +4913,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
             }
             summary = document.getElementById("WikiMonkey-SimpleReplace-Summary").value;
             if (summary !== "") {
-              return this.WM.MW.callQueryEdit(title, this.WM.Plugins.SimpleReplace.mainAutoWrite, [summary, callBot]);
+              return this.WM.MW.callQueryEdit(title, this.mainAutoWrite, [summary, callBot]);
             } else {
               this.WM.Log.logError("The edit summary cannot be empty");
               return callBot(false, null);
@@ -4936,7 +4936,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
                 text: newtext,
                 basetimestamp: timestamp,
                 token: edittoken
-              }, this.WM.Plugins.SimpleReplace.mainAutoEnd, callBot, null);
+              }, this.mainAutoEnd, callBot, null);
             } else {
               return callBot(0, null);
             }
