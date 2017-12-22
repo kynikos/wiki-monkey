@@ -159,7 +159,7 @@ ref = module.exports.FixLinkFragments = (function() {
       boundMethodCheck(this, ref);
       templates = this.WM.Parser.findTemplates(newText, 'Related');
       title = this.WM.Editor.getTitle();
-      return this.processArchWikiLink(title, iwprefixes, templates, 1, 0, newText, "", 0, this.findArchWikiLinks2, iwprefixes, callArgs);
+      return this.processArchWikiLink(title, iwprefixes, templates, 1, 0, newText, "", 0, this.findArchWikiLinks2, callArgs);
     }
 
     findArchWikiLinks2(newText, iwprefixes, callArgs) {
@@ -221,7 +221,7 @@ ref = module.exports.FixLinkFragments = (function() {
         }
       } else {
         newText += source.substr(prevId);
-        return call(newText, callArgs);
+        return call(newText, iwprefixes, callArgs);
       }
     }
 
@@ -293,11 +293,11 @@ ref = module.exports.FixLinkFragments = (function() {
       if (location.hostname === 'wiki.archlinux.org') {
         return templates = this.findArchWikiLinks(newText, iwprefixes, callNext);
       } else {
-        return this.mainEnd(newText, callNext);
+        return this.mainEnd(newText, iwprefixes, callNext);
       }
     }
 
-    mainEnd(newText, callNext) {
+    mainEnd(newText, iwprefixes, callNext) {
       var source;
       boundMethodCheck(this, ref);
       source = this.WM.Editor.readSource();

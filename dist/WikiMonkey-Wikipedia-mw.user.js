@@ -4581,7 +4581,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
             boundMethodCheck(this, ref);
             templates = this.WM.Parser.findTemplates(newText, 'Related');
             title = this.WM.Editor.getTitle();
-            return this.processArchWikiLink(title, iwprefixes, templates, 1, 0, newText, "", 0, this.findArchWikiLinks2, iwprefixes, callArgs);
+            return this.processArchWikiLink(title, iwprefixes, templates, 1, 0, newText, "", 0, this.findArchWikiLinks2, callArgs);
           }
         }, {
           key: "findArchWikiLinks2",
@@ -4637,7 +4637,7 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
               }
             } else {
               newText += source.substr(prevId);
-              return call(newText, callArgs);
+              return call(newText, iwprefixes, callArgs);
             }
           }
         }, {
@@ -4736,12 +4736,12 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
             if (location.hostname === 'wiki.archlinux.org') {
               return templates = this.findArchWikiLinks(newText, iwprefixes, callNext);
             } else {
-              return this.mainEnd(newText, callNext);
+              return this.mainEnd(newText, iwprefixes, callNext);
             }
           }
         }, {
           key: "mainEnd",
-          value: function mainEnd(newText, callNext) {
+          value: function mainEnd(newText, iwprefixes, callNext) {
             var source;
             boundMethodCheck(this, ref);
             source = this.WM.Editor.readSource();

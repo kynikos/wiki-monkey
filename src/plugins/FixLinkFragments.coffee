@@ -150,7 +150,7 @@ class module.exports.FixLinkFragments extends Plugin
         title = @WM.Editor.getTitle()
         @processArchWikiLink(title, iwprefixes, templates, 1, 0,
                     newText, "", 0,
-                    @findArchWikiLinks2, iwprefixes, callArgs)
+                    @findArchWikiLinks2, callArgs)
 
     findArchWikiLinks2: (newText, iwprefixes, callArgs) =>
         templates = @WM.Parser.findTemplates(newText, 'Related2')
@@ -228,7 +228,7 @@ class module.exports.FixLinkFragments extends Plugin
 
         else
             newText += source.substr(prevId)
-            call(newText, callArgs)
+            call(newText, iwprefixes, callArgs)
 
     processArchWikiLinkContinue: (res, args) =>
         template = args[0]
@@ -288,9 +288,9 @@ class module.exports.FixLinkFragments extends Plugin
         if location.hostname == 'wiki.archlinux.org'
             templates = @findArchWikiLinks(newText, iwprefixes, callNext)
         else
-            @mainEnd(newText, callNext)
+            @mainEnd(newText, iwprefixes, callNext)
 
-    mainEnd: (newText, callNext) =>
+    mainEnd: (newText, iwprefixes, callNext) =>
         source = @WM.Editor.readSource()
 
         if newText != source
