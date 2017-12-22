@@ -17,7 +17,6 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 CSS = require('../../auxiliary/lib.js.generic/dist/CSS')
-Async = require('../../auxiliary/lib.js.generic/dist/Async')
 
 
 class module.exports
@@ -171,4 +170,12 @@ class module.exports
 
     makeGroupAction = (subGroupActions) ->
         return (event) ->
-            Async.executeAsync(subGroupActions, -1)
+            executeGroupAction(subGroupActions, -1)
+
+    executeGroupAction = (subGroupActions, id) ->
+        id++
+        if subGroupActions[id]
+            fid = subGroupActions[id]
+            callContinue = =>
+                executeGroupAction(subGroupActions, id)
+            fid[0](fid[1], callContinue)

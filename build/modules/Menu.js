@@ -16,14 +16,12 @@
 
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
-var Async, CSS;
+var CSS;
 
 CSS = require('../../auxiliary/lib.js.generic/dist/CSS');
 
-Async = require('../../auxiliary/lib.js.generic/dist/Async');
-
 module.exports = (function() {
-  var makeChangeMenu, makeGroupAction;
+  var executeGroupAction, makeChangeMenu, makeGroupAction;
 
   class exports {
     constructor(WM) {
@@ -140,8 +138,20 @@ module.exports = (function() {
 
   makeGroupAction = function(subGroupActions) {
     return function(event) {
-      return Async.executeAsync(subGroupActions, -1);
+      return executeGroupAction(subGroupActions, -1);
     };
+  };
+
+  executeGroupAction = function(subGroupActions, id) {
+    var callContinue, fid;
+    id++;
+    if (subGroupActions[id]) {
+      fid = subGroupActions[id];
+      callContinue = () => {
+        return executeGroupAction(subGroupActions, id);
+      };
+      return fid[0](fid[1], callContinue);
+    }
   };
 
   return exports;

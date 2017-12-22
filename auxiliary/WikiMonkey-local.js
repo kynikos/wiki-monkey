@@ -2540,14 +2540,12 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
       return exports;
     }();
   }, { "../../auxiliary/lib.js.generic/dist/HTTP": 434, "../../auxiliary/lib.js.generic/dist/Obj": 435, "./libs": 19 }], 11: [function (require, module, exports) {
-    var Async, CSS;
+    var CSS;
 
     CSS = require('../../auxiliary/lib.js.generic/dist/CSS');
 
-    Async = require('../../auxiliary/lib.js.generic/dist/Async');
-
     module.exports = function () {
-      var makeChangeMenu, makeGroupAction;
+      var _executeGroupAction, makeChangeMenu, makeGroupAction;
 
       var exports = function () {
         function exports(WM) {
@@ -2675,13 +2673,25 @@ function _classCallCheck2(instance, Constructor) { if (!(instance instanceof Con
 
       makeGroupAction = function makeGroupAction(subGroupActions) {
         return function (event) {
-          return Async.executeAsync(subGroupActions, -1);
+          return _executeGroupAction(subGroupActions, -1);
         };
+      };
+
+      _executeGroupAction = function executeGroupAction(subGroupActions, id) {
+        var callContinue, fid;
+        id++;
+        if (subGroupActions[id]) {
+          fid = subGroupActions[id];
+          callContinue = function callContinue() {
+            return _executeGroupAction(subGroupActions, id);
+          };
+          return fid[0](fid[1], callContinue);
+        }
       };
 
       return exports;
     }();
-  }, { "../../auxiliary/lib.js.generic/dist/Async": 431, "../../auxiliary/lib.js.generic/dist/CSS": 432 }], 12: [function (require, module, exports) {
+  }, { "../../auxiliary/lib.js.generic/dist/CSS": 432 }], 12: [function (require, module, exports) {
     var CSS;
 
     CSS = require('../../auxiliary/lib.js.generic/dist/CSS');
