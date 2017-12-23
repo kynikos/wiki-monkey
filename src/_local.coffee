@@ -13,7 +13,6 @@ new WM(
     require("./plugins/ArchWikiRCFilter"),
     require("./plugins/ArchWikiSaveTalk"),
     require("./plugins/ArchWikiSortContacts"),
-    require("./plugins/ArchWikiSummaryToRelated"),
     # The ArchPackages module is currently unusable
     #require("./plugins/ArchWikiUpdatePackageTemplates"),
     require("./plugins/ArchWikiWantedCategories"),

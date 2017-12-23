@@ -13,7 +13,6 @@ new WM(
     require("./plugins/ArchWikiRCFilter"),
     require("./plugins/ArchWikiSaveTalk"),
     require("./plugins/ArchWikiSortContacts"),
-    require("./plugins/ArchWikiSummaryToRelated"),
     require("./plugins/ExpandContractions"),
     require("./plugins/FixBacklinkFragments"),
     require("./plugins/FixDoubleRedirects"),
