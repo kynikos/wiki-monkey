@@ -22,9 +22,6 @@ CSS = require('../../auxiliary/lib.js.generic/dist/CSS')
 class module.exports
     constructor: (@WM) ->
 
-    changeHeadingNumberStyle = (style) ->
-        CSS.addStyleElement("span.mw-headline-number {" + style + "}")
-
     disableEditSummarySubmitOnEnter = ->
         $('#wpSummary').keydown( (event) ->
             # 'keyCode' is deprecated, but not all browsers support 'key' yet
@@ -39,10 +36,6 @@ class module.exports
 
     scrollToFirstHeading = ->
         window.scrollTo(0, $('#firstHeading').offset().top)
-
-    applyGeneralMods: ->
-        if @WM.conf.heading_number_style
-            changeHeadingNumberStyle(conf['heading_number_style'])
 
     applyEditorMods: ->
         if @WM.conf.disable_edit_summary_submit_on_enter

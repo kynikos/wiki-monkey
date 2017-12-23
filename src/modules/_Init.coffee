@@ -55,7 +55,6 @@ class module.exports.WM
         hide_rollback_links: true
         disable_edit_summary_submit_on_enter: true
         scroll_to_first_heading: false
-        heading_number_style: false
 
     constructor: (@wiki_name, @installed_plugins_temp...) ->
         @setup()

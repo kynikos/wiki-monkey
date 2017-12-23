@@ -27,8 +27,6 @@ class module.exports
         display = true
         displayLog = true
 
-        @WM.Mods.applyGeneralMods()
-
         if document.getElementById('editform')
             nextNode = document.getElementById('wpSummaryLabel')
                                                         .parentNode.nextSibling
