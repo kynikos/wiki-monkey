@@ -1,32 +1,38 @@
+Prechecks
 * Ensure that no backward-incompatible configuration changes have been made
-* Verify that the correct branch in lib.js.generic is checked out
-* Check that build.py is correctly configured and up to date
-* Make sure to be on the develop branch
+* Make sure to be on the 'develop' branch, which in turn is on the correct
+  commit to be released
+  The following steps assume that the update_check_branch option is set to
+  'develop' and the test User in the wiki is loading the latest script from the
+  remote repository
 
-* Create and check out a 'v4.x.x-rc' branch
-  Do not omit the "-rc" suffix (or similar) in order to prevent CDN services
+Repeat the following block increasing # until everything works
+* Create and checkout a 'v4.x.x-rc#' branch
+  Do not omit the "-rc#" suffix (or similar) in order to prevent CDN services
   from caching the wrong version of the files in case further changes are
   needed
-* Run `npm run build 4.x.x-rc`
-  Do *not* prepend the 'v' here
+* Run `cake -v 4.x.x-rc# build`
+  Do *not* prepend the 'v' here to the version number
 * Commit
-* Push the new branch to the remote repository
-* Test at least in Firefox and Chromium
+* Reset the develop branch to the new rc# branch
+* Push the develop and rc# branches to the remote repository
+* Test that the automated upgrade works
+  (possibly delete the 'WikiMonkey-last-update-check' key in the localStorage)
+* Test the application at least in Firefox and Chromium
   Also make sure to check the effects of any changes to the configuration
   object
 
-* Check milestone is closed on GitHub
-* Update documentation:
-  - GitHub wiki
-  - ArchWiki article: https://wiki.archlinux.org/index.php/Wiki_Monkey
-
-* Merge the v4.x.x-rc branch into the master and develop branches (should be
-  fast-forwards)
-  To force merge "theirs" branch: `git merge -X theirs branch`
-* Tag the release commit the v4.x.x version number
-* Remove the v4.x.x branch, also remotely
+If everything works
+* Reset 'develop' to the commit before the working rc# branch was built
+* Checkout 'develop'
+* Run `cake -v 4.x.x build`
+* Commit and tag with the v4.x.x version number
+* Remove the rc# branches, also remotely
   To delete a remote branch: `git push origin :tmpbranch`
    or `git push origin :refs/heads/tmpbranch`
-* Checkout the develop branch
-* Commit
-* Push everything to origin, including the tags
+* Merge 'develop' into 'master'
+
+* Update the GitHub wiki (also update version numbers in examples)
+* Check that the milestone is closed on GitHub
+* Push 'master', 'develop' and the new tag to origin
+* Publish on npm
