@@ -45,7 +45,7 @@ class module.exports
             UI = if conf.length then @WM.Menu._makeUI('diff', conf) else null
 
         else if mw.config.get('wgCanonicalNamespace') is 'Category'
-            nextNode = $('#bodyContent')[0]
+            nextNode = $('#contentSub')[0]
             conf = @WM.Plugins.bot
             UI = if conf.length \
                 then @WM.Bot._makeUI(conf, [
@@ -59,30 +59,32 @@ class module.exports
             conf = @WM.Plugins.bot
             UI = if conf.length \
                 then @WM.Bot._makeUI(conf, [
-                    [$('#mw-whatlinkshere-list'), 0, "Pages"]
+                    [$('#mw-whatlinkshere-list')[0], 0, "Pages"]
                 ]) else null
             display = false
 
-        else if specialPage is "linksearch" and $('#bodyContent ol').first()[0]
-            nextNode = $('mw-spcontent').first()[0]
+        else if specialPage is "linksearch" and
+                $('#mw-content-text div.mw-spcontent').length
+            nextNode = $('#mw-content-text div.mw-spcontent').first()[0]
             conf = @WM.Plugins.bot
             UI = if conf.length \
                 then @WM.Bot._makeUI(conf, [
-                    [$('#bodyContent ol').first()[0], 1, "Pages"]
+                    [$(nextNode).first('ol.special').first()[0], 1, "Pages"]
                 ]) else null
             display = false
 
         else if specialPage is "prefixindex"
-            nextNode = $('#mw-prefixindex-list-table')[0]
+            nextNode = $('#mw-content-text div.mw-prefixindex-body').first()[0]
             conf = @WM.Plugins.bot
             UI = if conf.length \
                 then @WM.Bot._makeUI(conf, [
-                    [$(nextNode).find('tbody').first()[0], 0, "Pages"]
+                    [$(nextNode).find('ul.mw-prefixindex-list').first()[0]
+                     0, "Pages"]
                 ]) else null
             display = false
 
         else if specialPage is "specialpages"
-            nextNode = $('#bodyContent')[0]
+            nextNode = $('#contentSub')[0]
             conf = @WM.Plugins.special
             UI = if conf.length \
                 then @WM.Menu._makeUI('special', conf) else null
@@ -104,23 +106,31 @@ class module.exports
             displayLog = false
 
         else if specialPage is "protectedpages"
-            nextNode = $('#mw-content-text ul').first()[0]
+            nextNode = $('#mw-content-text table.mw-protectedpages').first()[0]
             conf = @WM.Plugins.bot
             UI = if conf.length \
-                then @WM.Bot._makeUI(conf, [[nextNode, 0, "Pages"]]) \
-                else null
+                then @WM.Bot._makeUI(conf, [
+                    [$(nextNode).find('tbody').first()[0], 0, "Pages"]
+                ]) else null
             display = false
 
         else if specialPage is "contributions"
             @WM.Mods.applyContributionsMods()
 
         else if specialPage in [
-            "longpages"
-            "shortpages"
             "ancientpages"
+            "brokenredirects"
+            "deadendpages"
+            "doubleredirects"
+            "fewestrevisions"
             "lonelypages"
+            "uncategorizedcategories"
+            "uncategorizedpages"
+            "uncategorizedtemplates"
+            "unusedcategories"
+            "unwatchedpages"
         ]
-            nextNode = $('mw-spcontent').first()[0]
+            nextNode = $('#mw-content-text div.mw-spcontent').first()[0]
             conf = @WM.Plugins.bot
             UI = if conf.length \
                 then @WM.Bot._makeUI(conf, [
@@ -128,12 +138,35 @@ class module.exports
                 ]) else null
             display = false
 
-        else if specialPage is "allpages"
-            nextNode = $('mw-allpages-table-chunk').first()[0]
+        else if specialPage in [
+            "longpages"
+            "shortpages"
+        ]
+            nextNode = $('#mw-content-text div.mw-spcontent').first()[0]
             conf = @WM.Plugins.bot
             UI = if conf.length \
                 then @WM.Bot._makeUI(conf, [
-                    [$(nextNode).find('tbody').first()[0], 0, "Pages"]
+                    [$(nextNode).find('ol').first()[0], 1, "Pages"]
+                ]) else null
+            display = false
+
+        else if specialPage is "withoutinterwiki"
+            nextNode = $('#mw-content-text div.mw-spcontent > p').first()[0]
+            conf = @WM.Plugins.bot
+            UI = if conf.length \
+                then @WM.Bot._makeUI(conf, [
+                    [$(nextNode).nextAll('ol').first()[0], 0, "Pages"]
+                ]) else null
+            display = false
+
+        else if specialPage is "allpages"
+            nextNode = $('#mw-content-text div.mw-allpages-nav').first()[0]
+            conf = @WM.Plugins.bot
+            UI = if conf.length \
+                then @WM.Bot._makeUI(conf, [
+                    [$(nextNode).nextAll('div.mw-allpages-body').first()
+                        .find('ul').first()[0]
+                     0, "Pages"]
                 ]) else null
             display = false
 
