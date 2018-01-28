@@ -18,7 +18,7 @@
 
 {Plugin} = require('./_Plugin')
 
-Str = require('../../auxiliary/lib.js.generic/dist/Str')
+Str = require('@kynikos/misc/dist/Str')
 
 
 class module.exports.UpdateCategoryTree extends Plugin

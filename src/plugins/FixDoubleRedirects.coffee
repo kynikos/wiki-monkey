@@ -18,7 +18,7 @@
 
 {Plugin} = require('./_Plugin')
 
-Str = require('../../auxiliary/lib.js.generic/dist/Str')
+Str = require('@kynikos/misc/dist/Str')
 
 
 class module.exports.FixDoubleRedirects extends Plugin
@@ -56,7 +56,7 @@ class module.exports.FixDoubleRedirects extends Plugin
                 callNext()
 
     readMiddleRedirect: (doubleRedirectTitle,
-                            doubleRedirectSource, timestamp, edittoken, args) =>
+                         doubleRedirectSource, timestamp, edittoken, args) =>
         doubleRedirect = args[0]
         doubleRedirects = args[1]
         namespaces = args[2]

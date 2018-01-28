@@ -18,7 +18,7 @@
 
 {Plugin} = require('./_Plugin')
 
-CSS = require('../../auxiliary/lib.js.generic/dist/CSS')
+CSS = require('@kynikos/misc/dist/CSS')
 
 
 class module.exports.SimpleReplace extends Plugin

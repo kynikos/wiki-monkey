@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-HTTP = require('../../auxiliary/lib.js.generic/dist/HTTP')
+HTTP = require('@kynikos/misc/dist/HTTP')
 
 
 class module.exports

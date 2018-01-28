@@ -16,8 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-RegEx = require('../../auxiliary/lib.js.generic/dist/RegEx')
-Str = require('../../auxiliary/lib.js.generic/dist/Str')
+RegEx = require('@kynikos/misc/dist/RegEx')
+Str = require('@kynikos/misc/dist/Str')
 
 
 class module.exports

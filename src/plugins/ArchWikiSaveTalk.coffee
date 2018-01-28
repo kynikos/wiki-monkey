@@ -18,8 +18,8 @@
 
 {Plugin} = require('./_Plugin')
 
-CSS = require('../../auxiliary/lib.js.generic/dist/CSS')
-HTTP = require('../../auxiliary/lib.js.generic/dist/HTTP')
+CSS = require('@kynikos/misc/dist/CSS')
+HTTP = require('@kynikos/misc/dist/HTTP')
 
 
 class module.exports.ArchWikiSaveTalk extends Plugin

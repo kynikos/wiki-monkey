@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-Obj = require('../../auxiliary/lib.js.generic/dist/Obj')
+Obj = require('@kynikos/misc/dist/Obj')
 
 
 class module.exports
