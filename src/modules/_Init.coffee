@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-mwmodpromise = mw.loader.using(['mediawiki.api.edit',
+mwmodpromise = mw.loader.using(['mediawiki.api.edit'
                                 'mediawiki.notification'])
 
 # Initialize the libraries immediately (especially babel-polyfill)
@@ -36,6 +36,7 @@ Menu = require('./Menu')
 Mods = require('./Mods')
 MW = require('./MW')
 Parser = require('./Parser')
+Router = require('./Router')
 Tables = require('./Tables')
 UI = require('./UI')
 Upgrade = require('./Upgrade')
@@ -115,6 +116,7 @@ class module.exports.WM
         @Mods = new Mods(this)
         @MW = new MW(this)
         @Parser = new Parser(this)
+        @Router = new Router(this)
         @Tables = new Tables(this)
         @UI = new UI(this)
         @Upgrade = new Upgrade(this)
@@ -124,4 +126,4 @@ class module.exports.WM
         if @conf.update_check_wdays
             @Upgrade.check_and_notify()
 
-        @UI._makeUI()
+        @Router.route()
