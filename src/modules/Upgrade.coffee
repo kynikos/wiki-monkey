@@ -17,27 +17,28 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 {moment, A, Br, Div} = require('./libs')
+{version} = require('../../package.json')
 
 
 class module.exports
-    VERSION_URL = 'https://raw.githubusercontent.com/kynikos/wiki-monkey/master/VERSION'
+    PACKAGE_URL = 'https://raw.githubusercontent.com/kynikos/wiki-monkey/master/package.json'  # noqa
 
     constructor: (@WM) ->
 
     check_and_notify: ->
         if @should_check()
-            upstream_version = await $.get(VERSION_URL)
+            upstream_package = await $.getJSON(PACKAGE_URL)
             # Well, ok, this is assuming that if the versions are
             # different, upstream has the latest
-            if @WM.VERSION != upstream_version
+            if version != upstream_package.version
                 @display_notification([
-                    "Version #{upstream_version} is available."
+                    "Version #{upstream_package.version} is available."
                     Br()
-                    A({href: "https://github.com/kynikos/wiki-monkey/wiki/Changelog"}
+                    A({href: "https://github.com/kynikos/wiki-monkey/wiki/Changelog"}  # noqa
                       "Changelog")
                     Br()
                     A('Run upgrade', {onclick: =>
-                      @upgrade(upstream_version)
+                      @upgrade(upstream_package.version)
                     })
                 ])
             else
@@ -76,7 +77,7 @@ class module.exports
         # TODO: Allow preventing upgrades per-line with //noupgrade comments?
         #       Don't upgrade commented lines?
         regex = new RegExp("([\"']https?://[^/]+/kynikos/wiki-monkey/" +
-            "v)#{mw.RegExp.escape(@WM.VERSION)}(/dist/" +
+            "v)#{mw.RegExp.escape(version)}(/dist/" +
             "WikiMonkey-[^/]+\\.js[\"'])", 'g')
 
         @WM.MW.api.edit(page, (revision) =>
@@ -124,7 +125,7 @@ class module.exports
         # TODO: Remove in a later version
         oldconf = localStorage.getItem("WikiMonkey")
         if oldconf isnt null
-            blob = new Blob([oldconf], {type:'application/json'})
+            blob = new Blob([oldconf], {type: 'application/json'})
             confhref = window.URL.createObjectURL(blob)
             @display_notification([
                 "Wiki Monkey 4.0.0 uses a completely rewritten configuration
@@ -134,7 +135,7 @@ class module.exports
                 manually, or simply remove it and use the default configuration
                 options."
                 Br()
-                A({href: "https://github.com/kynikos/wiki-monkey/wiki/Configuration"}
+                A({href: "https://github.com/kynikos/wiki-monkey/wiki/Configuration"}  # noqa
                   "New configuration instructions")
                 Br()
                 A({href: confhref}, "View old configuration")

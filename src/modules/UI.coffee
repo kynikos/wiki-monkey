@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+{version} = require('../../package.json')
 CSS = require('@kynikos/misc/dist/CSS')
 RegEx = require('@kynikos/misc/dist/RegEx')
 
@@ -204,7 +205,7 @@ class module.exports
 
             nextNode.parentNode.insertBefore(main, nextNode)
 
-            @WM.Log.logHidden('Wiki Monkey version: ' + @WM.VERSION)
+            @WM.Log.logHidden("Wiki Monkey version: #{version}")
             date = new Date()
-            @WM.Log.logHidden('Date: ' + date.toString())
-            @WM.Log.logHidden('URL: ' + location.href)
+            @WM.Log.logHidden("Date: #{date.toString()}")
+            @WM.Log.logHidden("URL: #{location.href}")

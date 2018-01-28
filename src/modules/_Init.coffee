@@ -45,8 +45,6 @@ WhatLinksHere = require('./WhatLinksHere')
 
 
 class module.exports.WM
-    # The build script updates the version number
-    VERSION: '4.0.0'
     conf:
         default_bot_plugin: "SimpleReplace"
         default_recentchanges_plugin: null

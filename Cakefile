@@ -6,8 +6,8 @@ fs = require('fs')
 SRCDIR = "./src/"
 DISTDIR = './dist/'
 AUXDIR = './auxiliary/'
+# TODO: ./VERSION isn't used anymore, remove in a future version
 VERSIONFILE = './VERSION'
-INITFILE = path.join(SRCDIR, 'modules/_Init.coffee')
 
 option('-v', '--version [STRING]', "assign a version string to the build;
                                     if not given, only the testing script
@@ -27,11 +27,7 @@ task('build', "recompile all user scripts", ({version}) ->
                           '--no-git-tag-version'
                           'version', version])
 
-        initfile = fs.readFileSync(INITFILE, {encoding: 'utf8'})
-        initfile = initfile.replace(/VERSION *: *[\'"][0-9.]+[\'"]/,
-                                    "VERSION: '#{version}'")
-
-        fs.writeFileSync(INITFILE, initfile)
+        # TODO: ./VERSION isn't used anymore, remove in a future version
         fs.writeFileSync(VERSIONFILE, version)
 
     for fname in fs.readdirSync(SRCDIR)
