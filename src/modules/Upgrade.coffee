@@ -74,13 +74,21 @@ class module.exports
 
         @display_notification("Upgrading to version #{upstream_version}...")
 
+        # This regular expression must support all versions, including the
+        # .min.js
         # TODO: Allow preventing upgrades per-line with //noupgrade comments?
         #       Don't upgrade commented lines?
-        regex = new RegExp("([\"']https?://[^/]+/kynikos/wiki-monkey/" +
-            "v)#{mw.RegExp.escape(version)}(/dist/" +
-            "WikiMonkey-[^/]+\\.js[\"'])", 'g')
+        regex = ///
+            (
+                ["']https?://.+?/kynikos/wiki-monkey/v
+            )
+            #{mw.RegExp.escape(version)}
+            (
+                /dist/WikiMonkey-[^/]+\.js["']
+            )
+        ///g
 
-        @WM.MW.api.edit(page, (revision) =>
+        @WM.MW.api.edit(page, (revision) ->
             newtext = revision.content.replace(regex,
                                                "$1#{upstream_version}$2")
 
