@@ -37,25 +37,48 @@ task('build', "recompile all user scripts", ({version}) ->
             {name, ext} = path.parse(fname)
 
             if name.startsWith('_')
-                await buildScript(srcfile, name[1..], AUXDIR)
+                await buildScript({
+                    srcfile
+                    wikiname: name[1..]
+                    distdir: AUXDIR
+                    minified: false
+                })
 
             else if version
-                distfile = await buildScript(srcfile, name, DISTDIR)
-
-                # Previous versions were using this file name
-                # TODO: Deprecate in a future version
-                distfile_bwcompat = path.join(DISTDIR,
-                                              "WikiMonkey-#{name}-mw.user.js")
-                fs.copyFileSync(distfile, distfile_bwcompat)
+                await buildScript({
+                    srcfile
+                    wikiname: name
+                    distdir: DISTDIR
+                    legacy: true
+                })
 )
 
 
-buildScript = (srcfile, wikiname, distdir) ->
+buildScript = ({
+    srcfile
+    wikiname
+    distdir
+    minified = true
+    # TODO: Deprecate legacy versions in a future version
+    legacy = false
+}) ->
     distfile = path.join(distdir, "WikiMonkey-#{wikiname}.js")
+
     console.log("Compiling #{distfile} ...")
-    dest = fs.createWriteStream(distfile)
-    await jspack(srcfile, distfile, {debug: true})
-    return distfile
+    await jspack(srcfile, distfile, {debug: true, licensify: true})
+
+    if minified
+        distfile_min = path.join(distdir, "WikiMonkey-#{wikiname}.min.js")
+        console.log("Compiling #{distfile_min} ...")
+        await jspack(srcfile, distfile_min, {licensify: true})
+
+    if legacy
+        # Previous versions were using this file name
+        # TODO: Deprecate in a future version
+        distfile_bwcompat =
+            path.join(distdir, "WikiMonkey-#{wikiname}-mw.user.js")
+        console.log("Creating #{distfile_bwcompat} ...")
+        fs.copyFileSync(distfile, distfile_bwcompat)
 
 
 task('serve-gencert', "generate the certificate to serve the scripts on
