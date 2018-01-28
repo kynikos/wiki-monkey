@@ -51,6 +51,7 @@ class module.exports.WM
         default_recentchanges_plugin: null
         default_newpages_plugin: null
         update_check_wdays: [6]
+        update_check_branch: 'master'
         hide_rollback_links: true
         disable_edit_summary_submit_on_enter: true
         scroll_to_first_heading: false

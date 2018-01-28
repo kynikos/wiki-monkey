@@ -21,13 +21,14 @@
 
 
 class module.exports
-    PACKAGE_URL = 'https://raw.githubusercontent.com/kynikos/wiki-monkey/master/package.json'  # noqa
+    REPO_RAW_URL = "https://raw.githubusercontent.com/kynikos/wiki-monkey"
 
     constructor: (@WM) ->
 
     check_and_notify: ->
         if @should_check()
-            upstream_package = await $.getJSON(PACKAGE_URL)
+            upstream_package = await $.getJSON(
+                "#{REPO_RAW_URL}/#{@WM.conf.update_check_branch}/package.json")
             # Well, ok, this is assuming that if the versions are
             # different, upstream has the latest
             if version != upstream_package.version
