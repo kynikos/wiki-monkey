@@ -202,25 +202,35 @@ class module.exports
 
     callQuery: (params, call, callArgs, callError) ->
         params.action = "query"
-        callBack = (res, args) =>
-            page = Obj.getFirstItem(res.query.pages)
-            call(page, args)
 
-        this.callAPIGet(params, callBack, callArgs, callError)
+        try
+            res = await @callAPIGet(params)
+        catch error
+            if callError
+                return callError(callArgs)
+            throw error
+
+        page = Obj.getFirstItem(res.query.pages)
+
+        if call
+            return call(page, callArgs)
+        return page
 
     callQueryEdit: (title, call, callArgs) ->
-        callBack = (page, args) =>
-            source = page.revisions[0]["*"]
-            timestamp = page.revisions[0].timestamp
-            edittoken = page.edittoken
-            call(title, source, timestamp, edittoken, args)
-
-        pars =
+        page = await @callQuery(
             prop: "info|revisions"
             rvprop: "content|timestamp"
             intoken: "edit"
             titles: title
-        this.callQuery(pars, callBack, callArgs, null)
+        )
+
+        source = page.revisions[0]["*"]
+        timestamp = page.revisions[0].timestamp
+        edittoken = page.edittoken
+
+        if call
+            return call(title, source, timestamp, edittoken, callArgs)
+        return {source, timestamp, edittoken}
 
     getUserInfo: (call) ->
         storeInfo = (res, call) =>
@@ -232,7 +242,7 @@ class module.exports
                 action: "query"
                 meta: "userinfo"
                 uiprop: "groups"
-            @callAPIGet(pars, storeInfo, call, null);
+            @callAPIGet(pars, storeInfo, call, null)
         else
             call()
 
@@ -264,7 +274,7 @@ class module.exports
         if blnamespace
             query.blnamespace = blnamespace
 
-        this._getBacklinksContinue(query, call, callArgs, [])
+        @_getBacklinksContinue(query, call, callArgs, [])
 
     _getBacklinksContinue: (query, call, callArgs, backlinks) ->
         @callAPIGet(query, (res, args) =>
@@ -291,7 +301,7 @@ class module.exports
             query.siprop = "interwikimap"
             query.sifilteriw = "local"
 
-        this._getLanglinksContinue(query, call, callArgs, [], null)
+        @_getLanglinksContinue(query, call, callArgs, [], null)
 
     _getLanglinksContinue: (query, call, callArgs, langlinks, iwmap) ->
         @callAPIGet(query, (res, args) =>
@@ -346,7 +356,7 @@ class module.exports
         # Return the unmodified url if no replacement has been done
         return url
 
-    getSpecialList: (qppage, siprop, call, callArgs) ->
+    getSpecialList: (qppage, siprop) ->
         query =
             action: "query"
             list: "querypage"
@@ -357,28 +367,24 @@ class module.exports
             query.meta = "siteinfo"
             query.siprop = siprop
 
-        this._getSpecialListContinue(query, call, callArgs, [], {})
+        results = []
+        siteinfo = {}
 
-    _getSpecialListContinue: (query, call, callArgs, results, siteinfo) ->
-        @callAPIGet(query, (res, args) =>
+        loop
+            res = await @callAPIGet(query)
             results = results.concat(res.query.querypage.results)
 
-            for key of res.query
-                if key != "querypage"
-                    siteinfo[key] = res.query[key]
+            for key, info of res.query when key != "querypage"
+                siteinfo[key] = info
 
-            if query.meta
-                delete query.meta
-                delete query.siprop
+            delete query.meta
+            delete query.siprop
 
             if res["query-continue"]
                 query.qpoffset = res["query-continue"].querypage.qpoffset
-                @_getSpecialListContinue(query, call, args, results,
-                                                                    siteinfo)
-            else
-                call(results, siteinfo, args)
-        ,
-        callArgs, null)
+                continue
+
+            return {results, siteinfo}
 
     getUserContribs: (ucuser, ucstart, ucend, call, callArgs) ->
         query =
@@ -390,7 +396,7 @@ class module.exports
             ucend: ucend
             uclimit: 500
 
-        this._getUserContribsContinue(query, call, callArgs, [])
+        @_getUserContribsContinue(query, call, callArgs, [])
 
     _getUserContribsContinue: (query, call, callArgs, results) ->
         @callAPIGet(query, (res, args) =>
