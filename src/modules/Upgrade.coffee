@@ -24,6 +24,9 @@ class module.exports
     REPO_RAW_URL = "https://raw.githubusercontent.com/kynikos/wiki-monkey"
 
     constructor: (@WM) ->
+        @check_obsolete_config()
+        if @WM.conf.update_check_wdays
+            @check_and_notify()
 
     check_and_notify: ->
         if @should_check()
@@ -36,10 +39,10 @@ class module.exports
                     "Version #{upstream_package.version} is available."
                     Br()
                     A({href: "https://github.com/kynikos/wiki-monkey/wiki/Changelog"}  # noqa
-                      "Changelog")
+                        "Changelog")
                     Br()
                     A('Run upgrade', {onclick: =>
-                      @upgrade(upstream_package.version)
+                        @upgrade(upstream_package.version)
                     })
                 ])
             else

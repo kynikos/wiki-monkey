@@ -22,6 +22,8 @@ mwmodpromise = mw.loader.using(['mediawiki.api.edit'
 # Initialize the libraries immediately (especially babel-polyfill)
 require('./libs').init()
 
+Upgrade = require('./Upgrade')
+
 # The ArchPackages module is currently unusable
 # ArchPackages = require('./ArchPackages')
 ArchWiki = require('./ArchWiki')
@@ -39,7 +41,6 @@ Parser = require('./Parser')
 Router = require('./Router')
 Tables = require('./Tables')
 UI = require('./UI')
-Upgrade = require('./Upgrade')
 WhatLinksHere = require('./WhatLinksHere')
 
 {Plugin} = require('../plugins/_Plugin')
@@ -120,11 +121,7 @@ class module.exports.WM
         @Router = new Router(this)
         @Tables = new Tables(this)
         @UI = new UI(this)
-        @Upgrade = new Upgrade(this)
         @WhatLinksHere = new WhatLinksHere(this)
 
-        @Upgrade.check_obsolete_config()
-        if @conf.update_check_wdays
-            @Upgrade.check_and_notify()
-
+        new Upgrade(this)
         @Router.route()
