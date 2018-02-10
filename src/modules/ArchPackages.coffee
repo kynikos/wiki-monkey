@@ -21,7 +21,7 @@
 # - https://wiki.archlinux.org/index.php/AurJson
 
 Obj = require('@kynikos/misc/dist/Obj')
-RegEx = require('@kynikos/misc/dist/RegEx')
+
 
 class module.exports
     # TODO: Module disabled because it's no longer possible to get around the
@@ -100,8 +100,8 @@ class module.exports
             # support XrayWrapper well
             # See http://www.oreillynet.com/pub/a/network/2005/11/01/avoid-common-greasemonkey-pitfalls.html?page=3
             # and https://developer.mozilla.org/en/docs/XPConnect_wrappers#XPCNativeWrapper_%28XrayWrapper%29
-            escgrp = RegEx.escapePattern(grp)
-            escarch = RegEx.escapePattern(arch)
+            escgrp = mw.RegExp.escape(grp)
+            escarch = mw.RegExp.escape(arch)
 
             regExp = new RegExp("<h2>\\s*Group Details -\\s*" +
                         escgrp + "\\s*\\(" + escarch + "\\)\\s*</h2>", "")
