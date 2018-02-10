@@ -64,7 +64,7 @@ class module.exports
                     color: 'gold'
 
                 '& div.merror p.message':
-                     color: 'red'
+                    color: 'red'
 
                 '& a':
                     color: 'inherit'
