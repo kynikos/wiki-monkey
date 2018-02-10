@@ -20,14 +20,16 @@ require('babel-polyfill')
 
 # jQuery is provided globally by MediaWiki
 
-hh = require('hyperscript-helpers')(require('hyperscript'))
-for tag, helper of hh
-    # TODO: This can be simplified after
-    #       https://github.com/ohanhi/hyperscript-helpers/pull/46 is released
-    module.exports[tag.charAt(0).toUpperCase() + tag.slice(1)] = helper
+module.exports.init = ->
+    hh = require('hyperscript-helpers')(require('hyperscript'))
+    for tag, helper of hh
+        # TODO: This can be simplified after
+        #       https://github.com/ohanhi/hyperscript-helpers/pull/46
+        #       is released
+        module.exports[tag.charAt(0).toUpperCase() + tag.slice(1)] = helper
 
-module.exports.moment = require('moment')
+    module.exports.moment = require('moment')
 
-jss = require('jss').default
-jss.setup(require('jss-preset-default').default())
-module.exports.jss = jss
+    jss = require('jss').default
+    jss.setup(require('jss-preset-default').default())
+    module.exports.jss = jss

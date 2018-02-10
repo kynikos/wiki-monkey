@@ -20,7 +20,7 @@ mwmodpromise = mw.loader.using(['mediawiki.api.edit'
                                 'mediawiki.notification'])
 
 # Initialize the libraries immediately (especially babel-polyfill)
-require('./libs')
+require('./libs').init()
 
 # The ArchPackages module is currently unusable
 # ArchPackages = require('./ArchPackages')
