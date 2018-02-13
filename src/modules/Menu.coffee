@@ -16,15 +16,22 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-CSS = require('@kynikos/misc/dist/CSS')
+{jss} = require('./libs')
 
 
 class module.exports
     constructor: (@WM, @page_type, plugins) ->
-        CSS.addStyleElement(
-                "#WikiMonkeyMenu input.margin {margin:0 0.33em 0.33em 0;}")
+        styles =
+            menu:
+                '& input.margin':
+                    margin: "0 0.33em 0.33em 0"
 
-        mainDiv = $('<div/>').attr('id', 'WikiMonkeyMenu')
+        {classes} = jss.createStyleSheet(
+            styles, {classNamePrefix: "WikiMonkey-"}).attach()
+
+        mainDiv = $('<div/>')
+            .attr('id', 'WikiMonkeyMenu')
+            .addClass(classes.menu)
         groupActions = {}
 
         for Plugin in plugins

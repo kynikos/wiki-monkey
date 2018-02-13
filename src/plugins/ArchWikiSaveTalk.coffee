@@ -16,9 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+{jss} = require('../modules/libs')
 {Plugin} = require('./_Plugin')
 
-CSS = require('@kynikos/misc/dist/CSS')
 HTTP = require('@kynikos/misc/dist/HTTP')
 
 
@@ -30,13 +30,18 @@ class module.exports.ArchWikiSaveTalk extends Plugin
         edit_summary: "add discussion"
 
     makeUI: ->
-        CSS.addStyleElement("#WikiMonkey-ArchWikiSaveTalk
-                                                    {margin-left:0.33em;}")
+        styles =
+            saveTalk:
+                marginLeft: '0.33em'
+
+        {classes} = jss.createStyleSheet(
+            styles, {classNamePrefix: "WikiMonkey-"}).attach()
 
         article = @conf.page
 
         link = document.createElement('a')
         link.id = "WikiMonkey-ArchWikiSaveTalk"
+        link.className = classes.saveTalk
         link.href = "/index.php/" + article
         link.innerHTML = article
 

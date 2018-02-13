@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-CSS = require('@kynikos/misc/dist/CSS')
+{jss} = require('./libs')
 
 
 class module.exports
@@ -32,7 +32,9 @@ class module.exports
         )
 
     hideRollbackLinks = ->
-        CSS.addStyleElement("span.mw-rollback-link {display:none;}")
+        jss.createStyleSheet({
+            '@global span.mw-rollback-link': {display: 'none'}}
+        ).attach()
 
     scrollToFirstHeading = ->
         window.scrollTo(0, $('#firstHeading').offset().top)

@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-CSS = require('@kynikos/misc/dist/CSS')
+{jss} = require('./libs')
 
 
 class module.exports
@@ -36,26 +36,51 @@ class module.exports
         divContainer = document.createElement('div')
         divContainer.id = 'WikiMonkeyBot'
 
-        CSS.addStyleElement("#WikiMonkeyBot-PluginSelect {width:100%;
-                                                    margin-bottom:1em;}
-                    #WikiMonkeyBot-ListSelect {margin-bottom:1em;}
-                    #WikiMonkeyBotFilter {height:6em; margin-bottom:1em;
-                                                        resize:vertical;}
-                    #WikiMonkeyBotStart, #WikiMonkeyBotStop
-                                {margin-right:0.33em; margin-bottom:1em;
-                                font-weight:bold;}
-                    a.WikiMonkeyBotSelected {background-color:#faa;
-                                                    padding:0.2em 0.4em;}
-                    a.WikiMonkeyBotProcessing {background-color:#ff8;
-                                                    padding:0.2em 0.4em;}
-                    a.WikiMonkeyBotChanged {background-color:#afa;
-                                                    padding:0.2em 0.4em;}
-                    a.WikiMonkeyBotUnchanged {background-color:#aaf;
-                                                    padding:0.2em 0.4em;}
-                    a.WikiMonkeyBotBypassed {background-color:orangered;
-                                                    padding:0.2em 0.4em;}
-                    a.WikiMonkeyBotFailed {background-color:red;
-                                                    padding:0.2em 0.4em;}")
+        styles =
+            pluginSelect:
+                width: '100%'
+                marginBottom: '1em'
+
+            listSelect:
+                marginBottom: '1em'
+
+            botFilter:
+                height: '6em'
+                marginBottom: '1em'
+                resize: 'vertical'
+
+            botStartStop:
+                marginRight: '0.33em'
+                marginBottom: '1em'
+                fontWeight: 'bold'
+
+            botSelected:
+                backgroundColor: '#faa'
+                padding: '0.2em 0.4em'
+
+            botProcessing:
+                backgroundColor: '#ff8'
+                padding: '0.2em 0.4em'
+
+            botChanged:
+                backgroundColor: '#afa'
+                padding: '0.2em 0.4em'
+
+            botUnchanged:
+                backgroundColor: '#aaf'
+                padding: '0.2em 0.4em'
+
+            botBypassed:
+                backgroundColor: 'orangered'
+                padding: '0.2em 0.4em'
+
+            botFailed:
+                backgroundColor: 'red'
+                padding: '0.2em 0.4em'
+
+        {classes} = jss.createStyleSheet(
+            styles, {classNamePrefix: "WikiMonkey-"}).attach()
+        @classes = classes
 
         fdiv = @makeFunctionUI(functions)
 
@@ -75,6 +100,7 @@ class module.exports
 
         selectFunctions = document.createElement('select')
         selectFunctions.id = 'WikiMonkeyBot-PluginSelect'
+        selectFunctions.className = @classes.pluginSelect
 
         ffunctions = []
 
@@ -147,6 +173,7 @@ class module.exports
         self = this
         selectLists = document.createElement('select')
         selectLists.id = 'WikiMonkeyBot-ListSelect'
+        selectLists.className = @classes.listSelect
 
         for list in lists
             if list[0]
@@ -160,8 +187,7 @@ class module.exports
 
         selectLists.addEventListener("change", ( (lss) ->
             return ->
-                select = document.getElementById(
-                                                'WikiMonkeyBot-ListSelect')
+                select = document.getElementById('WikiMonkeyBot-ListSelect')
                 id = select.selectedIndex
                 self.configuration.list.previous =
                                             self.configuration.list.current
@@ -185,6 +211,7 @@ class module.exports
 
         filter = document.createElement('textarea')
         filter.id = 'WikiMonkeyBotFilter'
+        filter.className = @classes.botFilter
 
         preview = document.createElement('input')
         preview.id = 'WikiMonkeyBotPreview'
@@ -229,6 +256,7 @@ class module.exports
         start.type = 'button'
         start.value = 'Start bot'
         start.id = 'WikiMonkeyBotStart'
+        start.className = @classes.botStartStop
 
         start.addEventListener("click", @_startAutomatic, false)
 
@@ -274,6 +302,7 @@ class module.exports
         stop.type = 'button'
         stop.value = 'Stop bot'
         stop.id = 'WikiMonkeyBotStop'
+        stop.className = @classes.botStartStop
 
         stop.addEventListener("click", ( (id) ->
             return ->
@@ -455,7 +484,7 @@ class module.exports
                 if link
                     if @canProcessPage(link)
                         link.className = @changeWikiMonkeyLinkClassName(
-                                    link.className, 'WikiMonkeyBotSelected')
+                                    link.className, @classes.botSelected)
                         enable = true
                         N++
                     else
@@ -545,7 +574,7 @@ class module.exports
                 # The article hasn't been saved
                 when 0
                     ln.className = self.changeWikiMonkeyLinkClassName(ln.className,
-                                                    'WikiMonkeyBotUnchanged')
+                                                    @classes.botUnchanged)
                     self.WM.Log.logInfo(self.WM.Log.linkToWikiPage(article, article) +
                                                     " processed (unchanged)")
                     id++
@@ -554,7 +583,7 @@ class module.exports
                 # The article has been saved
                 when 1
                     ln.className = self.changeWikiMonkeyLinkClassName(ln.className,
-                                                    'WikiMonkeyBotChanged')
+                                                    @classes.botChanged)
                     self.WM.Log.logInfo(self.WM.Log.linkToWikiPage(article, article) +
                                                     " processed (changed)")
                     id++
@@ -563,7 +592,7 @@ class module.exports
                 # The plugin has encountered a protectedpage error
                 when 'protectedpage'
                     ln.className = self.changeWikiMonkeyLinkClassName(ln.className,
-                                                    'WikiMonkeyBotBypassed')
+                                                    @classes.botBypassed)
                     self.WM.Log.logWarning("This user doesn't have the rights to " +
                                     "edit " + self.WM.Log.linkToWikiPage(article,
                                     article) + ", bypassing it ...")
@@ -574,7 +603,7 @@ class module.exports
                 # The plugin has encountered a critical error
                 else
                     ln.className = self.changeWikiMonkeyLinkClassName(ln.className,
-                                                        'WikiMonkeyBotFailed')
+                                                        @classes.botFailed)
                     self.WM.Log.logError("Error processing " +
                                     self.WM.Log.linkToWikiPage(article, article) +
                                     ", stopping the bot")
@@ -609,7 +638,7 @@ class module.exports
                         # _not_ before setTimeout!
                         if not self._checkOtherBotsRunning()
                             ln.className = self.changeWikiMonkeyLinkClassName(
-                                    ln.className, 'WikiMonkeyBotProcessing')
+                                    ln.className, @classes.botProcessing)
                             self.WM.Log.logInfo("Processing " +
                                     self.WM.Log.linkToWikiPage(article, article) +
                                     " ...")

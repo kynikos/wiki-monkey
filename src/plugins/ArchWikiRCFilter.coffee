@@ -16,9 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+{jss} = require('../modules/libs')
 {Plugin} = require('./_Plugin')
-
-CSS = require('@kynikos/misc/dist/CSS')
 
 
 class module.exports.ArchWikiRCFilter extends Plugin
@@ -35,9 +34,14 @@ class module.exports.ArchWikiRCFilter extends Plugin
                               MediaWiki's filter, which you can
                               enable in your user preferences.")
         else
-            CSS.addStyleElement("#mw-content-text > div > h4
-                                                {background-color:#aaf;}
-                    #mw-content-text > div > div > h5 {background-color:#afa;}")
+            jss.createStyleSheet({
+                '@global':
+                    '#mw-content-text':
+                        '& > div > h4':
+                            backgroundColor: '#aaf'
+                        '& > div > div > h5':
+                            backgroundColor: '#afa'
+            }).attach()
 
             for h4 in h4s
                 groupDiv = $(h4).next()

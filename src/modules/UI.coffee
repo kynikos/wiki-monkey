@@ -16,17 +16,25 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+{jss} = require('./libs')
 {version} = require('../../package.json')
-CSS = require('@kynikos/misc/dist/CSS')
 
 
 class module.exports
     constructor: (@WM, {display, displayLog, nextNode, UI}) ->
-        CSS.addStyleElement("#WikiMonkey {position:relative;}
-                    #WikiMonkey fieldset {margin:0 0 1em 0;}")
+        styles =
+            root:
+                position: 'relative'
+                
+                '& fieldset':
+                    margin: '0 0 1em 0'
+
+        {classes} = jss.createStyleSheet(
+            styles, {classNamePrefix: "WikiMonkey-"}).attach()
 
         main = document.createElement('fieldset')
         main.id = 'WikiMonkey'
+        main.className = classes.root
 
         legend = document.createElement('legend')
         legend.appendChild(document.createTextNode('Wiki Monkey '))

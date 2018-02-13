@@ -16,19 +16,29 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-CSS = require('@kynikos/misc/dist/CSS')
+{jss} = require('./libs')
 
 
 class module.exports
     constructor: (@WM, @page_type, plugins) ->
-        CSS.addStyleElement("#WikiMonkeyFilters-Commands {display:flex;
-                        align-items:center; justify-content:space-between;}
-                    #WikiMonkeyFilters-Commands > select {flex:auto;}
-                    #WikiMonkeyFilters-Commands > select,
-                    #WikiMonkeyFilters-Commands > input[type='button']
-                        {margin-right:1em;}
-                    #WikiMonkeyFilters-Commands > input[type='checkbox']
-                        {margin-right:0.4em;}")
+        styles =
+            commands:
+                display: 'flex'
+                alignItems: 'center'
+                justifyContent: 'space-between'
+
+                '& > select':
+                    flex: 'auto'
+                    marginRight: '1em'
+
+                "& > input[type='button']":
+                    marginRight: '1em'
+
+                "& input[type='checkbox']":
+                    marginRight: '0.4em'
+
+        {classes} = jss.createStyleSheet(
+            styles, {classNamePrefix: "WikiMonkey-"}).attach()
 
         filters = []
         selectFilter = $('<select/>').change(@updateFilterUI(filters))
@@ -53,6 +63,7 @@ class module.exports
         if filters.length
             commandsFilterDiv = $('<div/>')
                 .attr('id', 'WikiMonkeyFilters-Commands')
+                .addClass(classes.commands)
 
             commandsFilterDiv.append(selectFilter)
 

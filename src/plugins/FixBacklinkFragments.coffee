@@ -16,9 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+{jss} = require('../modules/libs')
 {Plugin} = require('./_Plugin')
-
-CSS = require('@kynikos/misc/dist/CSS')
 
 
 class module.exports.FixBacklinkFragments extends Plugin
@@ -28,11 +27,17 @@ class module.exports.FixBacklinkFragments extends Plugin
         edit_summary: "fix links to specific sections"
 
     makeBotUI: =>
-        CSS.addStyleElement("#WikiMonkey-FixBacklinkFragments " +
-                                "input[type='text'] {margin-left:0.33em;}")
+        styles =
+            fixBacklinkFragments:
+                "& input[type='text']":
+                    marginLeft: '0.33em'
+
+        {classes} = jss.createStyleSheet(
+            styles, {classNamePrefix: "WikiMonkey-"}).attach()
 
         divMain = document.createElement('div')
         divMain.id = "WikiMonkey-FixBacklinkFragments"
+        divMain.className = classes.fixBacklinkFragments
 
         label = document.createElement('span')
         label.innerHTML = 'Target page:'
