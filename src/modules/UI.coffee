@@ -21,9 +21,7 @@ CSS = require('@kynikos/misc/dist/CSS')
 
 
 class module.exports
-    constructor: (@WM) ->
-
-    _makeUI: ({display, displayLog, nextNode, UI}) ->
+    constructor: (@WM, {display, displayLog, nextNode, UI}) ->
         CSS.addStyleElement("#WikiMonkey {position:relative;}
                     #WikiMonkey fieldset {margin:0 0 1em 0;}")
 

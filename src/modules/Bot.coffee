@@ -20,7 +20,7 @@ CSS = require('@kynikos/misc/dist/CSS')
 
 
 class module.exports
-    constructor: (@WM) ->
+    constructor: (@WM, functions, lists) ->
         @configuration =
             plugin_name: null
             function_: ->
@@ -33,7 +33,6 @@ class module.exports
         # localStorage can only store strings
         @botToken = "0"
 
-    _makeUI: (functions, lists) ->
         divContainer = document.createElement('div')
         divContainer.id = 'WikiMonkeyBot'
 

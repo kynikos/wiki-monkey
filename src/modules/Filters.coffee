@@ -20,9 +20,7 @@ CSS = require('@kynikos/misc/dist/CSS')
 
 
 class module.exports
-    constructor: (@WM) ->
-
-    _makeUI: (@page_type, plugins) ->
+    constructor: (@WM, @page_type, plugins) ->
         CSS.addStyleElement("#WikiMonkeyFilters-Commands {display:flex;
                         align-items:center; justify-content:space-between;}
                     #WikiMonkeyFilters-Commands > select {flex:auto;}

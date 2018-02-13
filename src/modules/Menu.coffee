@@ -20,9 +20,7 @@ CSS = require('@kynikos/misc/dist/CSS')
 
 
 class module.exports
-    constructor: (@WM) ->
-
-    _makeUI: (@page_type, plugins) ->
+    constructor: (@WM, @page_type, plugins) ->
         CSS.addStyleElement(
                 "#WikiMonkeyMenu input.margin {margin:0 0.33em 0.33em 0;}")
 
