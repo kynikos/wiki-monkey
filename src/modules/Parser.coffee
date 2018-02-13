@@ -109,8 +109,7 @@ class module.exports
         regExp
         if word
             # Behavior switches aren't case-sensitive
-            regExp = new RegExp("__" + RegEx.escapePattern(word) + "__",
-                                                                        "gi")
+            regExp = new RegExp("__" + mw.RegExp.escape(word) + "__", "gi")
         else
             # Behavior switches aren't case-sensitive
             regExp = new RegExp("__(TOC|NOTOC|FORCETOC|NOEDITSECTION|" +
@@ -199,12 +198,10 @@ class module.exports
         fragmentChars = "[^\\n\\{\\}\\[\\]\\|]*?"
 
         if namespace
-            rens = prepareRegexpWhitespace(RegEx.escapePattern(
-                                                                namespace))
+            rens = prepareRegexpWhitespace(mw.RegExp.escape(namespace))
 
             if title
-                retitle = prepareRegexpWhitespace(RegEx.escapePattern(
-                                                                    title))
+                retitle = prepareRegexpWhitespace(mw.RegExp.escape(title))
                 titlePattern = "((" + rens + ")[ _]*:[ _]*" +
                                         "(" + retitle + "))" +
                                         "(?:[ _]*#(" + fragmentChars + "))?"
@@ -220,8 +217,7 @@ class module.exports
                 # Namespaces aren't case-sensitive
                 caseSensitive = false
         else if title
-            retitle = prepareRegexpWhitespace(RegEx.escapePattern(
-                                                                    title))
+            retitle = prepareRegexpWhitespace(mw.RegExp.escape(title))
 
             # Keep the capturing groups as required by @findLinksEngine
             titlePattern = "(()(" + retitle + "))" +
@@ -258,12 +254,12 @@ class module.exports
 
     findInterlanguageLinks: (source, language) ->
         # See also @WM.ArchWiki.findAllInterlanguageLinks
-        return this.findSpecialLinks(source, RegEx.escapePattern(language))
+        return this.findSpecialLinks(source, mw.RegExp.escape(language))
 
     findVariables: (source, variable) ->
         # There don't seem to exist variable names with whitespace, applying
         #   prepareRegexpWhitespace could be dangerous in this case
-        pattern = RegEx.escapePattern(variable)
+        pattern = mw.RegExp.escape(variable)
         return this.findVariablesPattern(source, pattern)
 
     findVariablesPattern: (source, pattern) ->
@@ -426,7 +422,7 @@ class module.exports
 
     findTemplates: (source, template) ->
         if template
-            pattern = RegEx.escapePattern(template)
+            pattern = mw.RegExp.escape(template)
             pattern = prepareRegexpWhitespace(pattern)
             pattern = prepareTitleCasing(pattern)
         else
@@ -456,12 +452,12 @@ class module.exports
         titleChars = "[^\\n\\{\\}\\[\\]\\||\\#]+?"
 
         if namespace
-            namespacePattern = RegEx.escapePattern(namespace)
+            namespacePattern = mw.RegExp.escape(namespace)
             namespacePattern = prepareRegexpWhitespace(namespacePattern)
             namespacePattern = prepareTitleCasing(namespacePattern)
 
         if title
-            titlePattern = RegEx.escapePattern(title)
+            titlePattern = mw.RegExp.escape(title)
             titlePattern = prepareRegexpWhitespace(titlePattern)
             titlePattern = prepareTitleCasing(titlePattern)
 
