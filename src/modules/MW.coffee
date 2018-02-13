@@ -16,8 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-HTTP = require('@kynikos/misc/dist/HTTP')
-Obj = require('@kynikos/misc/dist/Obj')
 {A} = require('./libs')
 
 
@@ -96,7 +94,8 @@ class module.exports
                 break
 
         if not paths
-            hostname = HTTP.getUrlLocation(href).hostname
+            uri = new mw.Uri(href)
+            hostname = uri.host
             paths = {}
 
             for p of wikiPaths.default_
@@ -130,12 +129,13 @@ class module.exports
             return localWikiUrls
 
     getTitleFromWikiUrl: (url) ->
-        title = HTTP.getURIParameters(url).title
+        uri = new mw.Uri(url)
+        title = uri.query.title
 
         # Test this *before* the short paths, in fact a short path may just be
         # the full one with the "title" parameter pre-added
         if not title
-            pathname = HTTP.getUrlLocation(url).pathname
+            pathname = uri.path
 
             for r of wikiPaths.known
                 re = new RegExp(r, "i")
@@ -210,7 +210,7 @@ class module.exports
                 return callError(callArgs)
             throw error
 
-        page = Obj.getFirstItem(res.query.pages)
+        page = Object.values(res.query.pages)[0]
 
         if call
             return call(page, callArgs)
@@ -305,7 +305,7 @@ class module.exports
 
     _getLanglinksContinue: (query, call, callArgs, langlinks, iwmap) ->
         @callAPIGet(query, (res, args) =>
-            page = Obj.getFirstItem(res.query.pages)
+            page = Object.values(res.query.pages)[0]
             langlinks = langlinks.concat(page.langlinks)
 
             if res.query.interwikimap

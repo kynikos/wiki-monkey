@@ -19,8 +19,6 @@
 {jss} = require('../modules/libs')
 {Plugin} = require('./_Plugin')
 
-HTTP = require('@kynikos/misc/dist/HTTP')
-
 
 class module.exports.ArchWikiSaveTalk extends Plugin
     @conf_default:
@@ -72,7 +70,7 @@ class module.exports.ArchWikiSaveTalk extends Plugin
         enddate = args[1]
         callNext = args[2]
 
-        title = HTTP.getURIParameter(null, 'title')
+        title = mw.config.get('wgPageName')
         pEnddate = enddate.substr(0, 10) + "&nbsp;" + enddate.substr(11, 8)
 
         newtext = @WM.Tables.appendRow(source, "<!-- REPLY TABLE -->",

@@ -20,8 +20,6 @@
 # - https://wiki.archlinux.org/index.php/Official_Repositories_Web_Interface
 # - https://wiki.archlinux.org/index.php/AurJson
 
-Obj = require('@kynikos/misc/dist/Obj')
-
 
 class module.exports
     # TODO: Module disabled because it's no longer possible to get around the

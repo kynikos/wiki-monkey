@@ -17,7 +17,6 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 Async = require('@kynikos/misc/dist/Async')
-Obj = require('@kynikos/misc/dist/Obj')
 
 
 class module.exports
@@ -81,7 +80,7 @@ class module.exports
 
     _getParentsAndInfoContinue: (query, call, callArgs, parents, info) ->
         @WM.MW.callAPIGet(query, (res, args) ->
-            page = Obj.getFirstItem(res.query.pages)
+            page = Object.values(res.query.pages)[0]
 
             if page.categories
                 parents = parents.concat(page.categories)

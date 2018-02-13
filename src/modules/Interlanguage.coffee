@@ -16,8 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-Obj = require('@kynikos/misc/dist/Obj')
-
 
 class module.exports
     constructor: (@WM) ->
@@ -67,7 +65,7 @@ class module.exports
             query,
             (res, args) =>
                 if res.query.pages
-                    page = Obj.getFirstItem(res.query.pages)
+                    page = Object.values(res.query.pages)[0]
                     if page.revisions
                         error = null
                         source = page.revisions[0]["*"]

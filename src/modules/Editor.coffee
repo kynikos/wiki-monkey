@@ -16,35 +16,30 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-Compatibility = require('@kynikos/misc/dist/Compatibility')
-HTTP = require('@kynikos/misc/dist/HTTP')
-
 
 class module.exports
     constructor: (@WM) ->
 
     getTitle: ->
-        return @WM.Parser.squashContiguousWhitespace(decodeURIComponent(
-                                    HTTP.getURIParameter(null, 'title')))
+        return @WM.Parser.squashContiguousWhitespace(
+            mw.config.get('wgPageName'))
 
     isSection: ->
-        return if document.getElementsByName('wpSection')[0].value then true else
-                                                                        false
+        if $('[name=wpSection]').eq(0).val()
+            return true
+        return false
 
     readSource: ->
-        value = document.getElementById('wpTextbox1').value
-        # For compatibility with Opera and IE
-        return Compatibility.normalizeCarriageReturns(value)
+        return $('#wpTextbox1').val()
 
     writeSource: (text) ->
-        document.getElementById('wpTextbox1').value = text
+        $('#wpTextbox1').val(text)
 
     readSummary: ->
-        return document.getElementById('wpSummary').getAttribute("value")
+        return $('#wpSummary').val()
 
     writeSummary: (text) ->
-        document.getElementById('wpSummary').setAttribute("value", text)
+        $('#wpSummary').val(text)
 
     appendToSummary: (text) ->
-        document.getElementById('wpSummary').setAttribute("value",
-                                                    this.readSummary() + text)
+        $('#wpSummary').val(@readSummary() + text)

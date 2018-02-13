@@ -16,16 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-HTTP = require('@kynikos/misc/dist/HTTP')
-
 
 class module.exports
     constructor: (@WM) ->
 
     getEndTimestamp: (call, callArgs) ->
-        title = decodeURIComponent(HTTP.getURIParameter(null, 'title'))
-        diff = HTTP.getURIParameter(null, 'diff')
-        oldid = HTTP.getURIParameter(null, 'oldid')
+        title = mw.config.get('wgPageName')
+        diff = mw.config.get('wgDiffNewId')
+        oldid = mw.config.get('wgDiffOldId')
 
         giveEndTimestamp = (page, id) ->
             call(page.revisions[id].timestamp, callArgs)

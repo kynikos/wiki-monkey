@@ -17,7 +17,8 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 mwmodpromise = mw.loader.using(['mediawiki.api.edit'
-                                'mediawiki.notification'])
+                                'mediawiki.notification'
+                                'mediawiki.Uri'])
 
 # Initialize the libraries immediately (especially babel-polyfill)
 require('./libs').init()
