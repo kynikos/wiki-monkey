@@ -18,7 +18,8 @@
     "hyperscript-helpers": "^3.0.3",
     "jss": "^9.5.1",
     "jss-preset-default": "^4.1.0",
-    "moment": "^2.20.1"
+    "moment": "^2.20.1",
+    "vue": "^2.5.13"
   },
   "devDependencies": {
     "@kynikos/browserify-helpers": "^1.0.8",

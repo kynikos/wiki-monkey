@@ -174,4 +174,4 @@ module.exports.route = (WM) ->
         display = false
 
     if ui
-        new UI(WM, {display, displayLog, nextNode, ui})
+        UI({WM, display, displayLog, nextNode, ui})

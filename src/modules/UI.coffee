@@ -16,66 +16,72 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{jss} = require('./libs')
+Vue = require('vue')
+{jss, A, Div, Fieldset, Legend} = require('./libs')
 {version} = require('../../package.json')
 
 
-class module.exports
-    constructor: (@WM, {display, displayLog, nextNode, UI}) ->
-        styles =
-            root:
-                position: 'relative'
-                
-                '& fieldset':
-                    margin: '0 0 1em 0'
+module.exports = ({WM, display, displayLog, nextNode, ui}) ->
+    styles =
+        root:
+            position: 'relative'
 
-        {classes} = jss.createStyleSheet(
-            styles, {classNamePrefix: "WikiMonkey-"}).attach()
+            '& fieldset':
+                margin: '0 0 1em 0'
 
-        main = document.createElement('fieldset')
-        main.id = 'WikiMonkey'
-        main.className = classes.root
+    {classes} = jss.createStyleSheet(
+        styles, {classNamePrefix: "WikiMonkey-"}).attach()
 
-        legend = document.createElement('legend')
-        legend.appendChild(document.createTextNode('Wiki Monkey '))
+    logArea = WM.Log._makeLogArea()
 
-        hide = document.createElement('a')
-        hide.href = '#WikiMonkey'
-        hide.innerHTML = '[hide]'
-        hide.addEventListener("click", (event) ->
-            event.preventDefault()
-            wmmain = document.getElementById('WikiMonkeyMain')
-            if wmmain.style.display == 'none'
-                wmmain.style.display = 'block'
-                this.innerHTML = '[hide]'
-            else
-                wmmain.style.display = 'none'
-                this.innerHTML = '[show]'
-        , false)
-        legend.appendChild(hide)
+    root = Div()
+    $(nextNode).before(root)
 
-        main.appendChild(legend)
+    new Vue(
+        el: root
 
-        main2 = document.createElement('div')
-        main2.id = 'WikiMonkeyMain'
+        data:
+            display: display
 
-        main2.appendChild(UI)
+        render: (e) ->
+            self = this
 
-        logArea = @WM.Log._makeLogArea()
-        if not displayLog
-            logArea.style.display = 'none'
+            wmmain = e('div', {attrs: {id: 'WikiMonkeyMain'}})
 
-        main2.appendChild(logArea)
+            legend = e('legend', [
+                'Wiki Monkey '
+                e('a'
+                    {
+                        attrs: {href: '#WikiMonkey'}
+                        on:
+                            click: (event) ->
+                                event.preventDefault()
+                                self.display = not self.display
+                    }
+                    @display and '[hide]' or '[show]'
+                )
+            ])
 
-        if not display
-            main2.style.display = 'none'
-            hide.innerHTML = '[show]'
+            return e('fieldset', {
+                attrs: {id: 'WikiMonkey', class: classes.root}
+            }, [
+                legend
+                wmmain if @display
+            ])
 
-        main.appendChild(main2)
+        mounted: ->
+            if not displayLog
+                $(logArea).hide()
 
-        nextNode.parentNode.insertBefore(main, nextNode)
+            $('#WikiMonkeyMain').append(ui, logArea)
 
-        @WM.Log.logHidden("Wiki Monkey version: #{version}")
-        date = new Date()
-        @WM.Log.logHidden("Date: #{date.toString()}")
-        @WM.Log.logHidden("URL: #{location.href}")
+            WM.Log.logHidden("Wiki Monkey version: #{version}")
+            date = new Date()
+            WM.Log.logHidden("Date: #{date.toString()}")
+            WM.Log.logHidden("URL: #{location.href}")
+
+        updated: ->
+            $wmmain = $('#WikiMonkeyMain')
+            if not $wmmain.children().length
+                $wmmain.append(ui, logArea)
+    )
