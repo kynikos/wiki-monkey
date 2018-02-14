@@ -33,17 +33,17 @@ class module.exports
                 padding: '0.5em'
                 overflow: 'auto'
                 resize: 'vertical'
-                'background-color': '#111'
+                backgroundColor: '#111'
 
                 '& p.timestamp, & p.message':
                     border: 'none'
                     padding: 0
-                    'font-family': 'monospace'
+                    fontFamily: 'monospace'
                     color: '#eee'
 
                 '& p.timestamp':
                     margin: '0 1em 0 0'
-                    'white-space': 'nowrap'
+                    whiteSpace: 'nowrap'
 
                 '& p.message':
                     margin: 0
@@ -68,7 +68,7 @@ class module.exports
 
                 '& a':
                     color: 'inherit'
-                    'text-decoration': 'underline'
+                    textDecoration: 'underline'
 
         {classes} = jss.createStyleSheet(
             styles, {classNamePrefix: "WikiMonkey-"}).attach()
