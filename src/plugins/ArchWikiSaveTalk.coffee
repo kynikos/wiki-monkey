@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{jss} = require('../modules/libs')
+{jssc} = require('../modules/libs')
 {Plugin} = require('./_Plugin')
 
 
@@ -28,12 +28,10 @@ class module.exports.ArchWikiSaveTalk extends Plugin
         edit_summary: "add discussion"
 
     makeUI: ->
-        styles =
+        {classes} = jssc(
             saveTalk:
                 marginLeft: '0.33em'
-
-        {classes} = jss.createStyleSheet(
-            styles, {classNamePrefix: "WikiMonkey-"}).attach()
+        )
 
         article = @conf.page
 

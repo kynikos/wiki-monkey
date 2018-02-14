@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{jss} = require('../modules/libs')
+{jssc} = require('../modules/libs')
 {Plugin} = require('./_Plugin')
 
 
@@ -27,13 +27,11 @@ class module.exports.FixBacklinkFragments extends Plugin
         edit_summary: "fix links to specific sections"
 
     makeBotUI: =>
-        styles =
+        {classes} = jssc(
             fixBacklinkFragments:
                 "& input[type='text']":
                     marginLeft: '0.33em'
-
-        {classes} = jss.createStyleSheet(
-            styles, {classNamePrefix: "WikiMonkey-"}).attach()
+        )
 
         divMain = document.createElement('div')
         divMain.id = "WikiMonkey-FixBacklinkFragments"

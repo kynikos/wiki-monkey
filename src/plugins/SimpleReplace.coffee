@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{jss} = require('../modules/libs')
+{jssc} = require('../modules/libs')
 {Plugin} = require('./_Plugin')
 
 
@@ -27,7 +27,7 @@ class module.exports.SimpleReplace extends Plugin
         bot_label: "RegExp substitution"
 
     makeUI = ->
-        styles =
+        {classes} = jssc(
             simpleReplace:
                 '& div':
                     marginBottom: '0.33em'
@@ -35,9 +35,7 @@ class module.exports.SimpleReplace extends Plugin
                 "& input[type='text']":
                     marginLeft: '0.33em'
                     width: '60%'
-
-        {classes} = jss.createStyleSheet(
-            styles, {classNamePrefix: "WikiMonkey-"}).attach()
+        )
 
         divMain = document.createElement('div')
         divMain.id = "WikiMonkey-SimpleReplace"

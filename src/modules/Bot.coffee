@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{jss} = require('./libs')
+{jssc} = require('./libs')
 
 
 class module.exports
@@ -36,7 +36,7 @@ class module.exports
         divContainer = document.createElement('div')
         divContainer.id = 'WikiMonkeyBot'
 
-        styles =
+        {classes} = jssc(
             pluginSelect:
                 width: '100%'
                 marginBottom: '1em'
@@ -77,9 +77,7 @@ class module.exports
             botFailed:
                 backgroundColor: 'red'
                 padding: '0.2em 0.4em'
-
-        {classes} = jss.createStyleSheet(
-            styles, {classNamePrefix: "WikiMonkey-"}).attach()
+        )
         @classes = classes
 
         fdiv = @makeFunctionUI(functions)

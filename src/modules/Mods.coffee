@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{jss} = require('./libs')
+{jssc} = require('./libs')
 
 
 class module.exports
@@ -32,9 +32,10 @@ class module.exports
         )
 
     hideRollbackLinks = ->
-        jss.createStyleSheet({
-            '@global span.mw-rollback-link': {display: 'none'}}
-        ).attach()
+        jssc(
+            '@global span.mw-rollback-link':
+                display: 'none'
+        )
 
     scrollToFirstHeading = ->
         window.scrollTo(0, $('#firstHeading').offset().top)

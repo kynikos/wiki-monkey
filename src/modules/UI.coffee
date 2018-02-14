@@ -17,20 +17,18 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 Vue = require('vue')
-{jss, A, Div, Fieldset, Legend} = require('./libs')
+{jssc, A, Div, Fieldset, Legend} = require('./libs')
 {version} = require('../../package.json')
 
 
 module.exports = ({WM, display, displayLog, nextNode, ui}) ->
-    styles =
+    {classes} = jssc(
         root:
             position: 'relative'
 
             '& fieldset':
                 margin: '0 0 1em 0'
-
-    {classes} = jss.createStyleSheet(
-        styles, {classNamePrefix: "WikiMonkey-"}).attach()
+    )
 
     logArea = WM.Log._makeLogArea()
 

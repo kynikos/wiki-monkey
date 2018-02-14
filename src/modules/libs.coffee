@@ -32,4 +32,11 @@ module.exports.init = ->
 
     jss = require('jss').default
     jss.setup(require('jss-preset-default').default())
-    module.exports.jss = jss
+    module.exports.jssc = (styles, options) ->
+        jss.createStyleSheet(
+            styles
+            {
+                classNamePrefix: "WikiMonkey-"
+                options...
+            }
+        ).attach()

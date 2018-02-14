@@ -16,12 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{jss} = require('./libs')
+{jssc} = require('./libs')
 
 
 class module.exports
     constructor: (@WM, @page_type, plugins) ->
-        styles =
+        {classes} = jssc(
             commands:
                 display: 'flex'
                 alignItems: 'center'
@@ -36,9 +36,7 @@ class module.exports
 
                 "& input[type='checkbox']":
                     marginRight: '0.4em'
-
-        {classes} = jss.createStyleSheet(
-            styles, {classNamePrefix: "WikiMonkey-"}).attach()
+        )
 
         filters = []
         selectFilter = $('<select/>').change(@updateFilterUI(filters))

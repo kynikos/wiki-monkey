@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{jss} = require('../modules/libs')
+{jssc} = require('../modules/libs')
 {Plugin} = require('./_Plugin')
 
 
@@ -27,9 +27,10 @@ class module.exports.ArchWikiNPFilter extends Plugin
         default_language: "English"
 
     main_newpages: ->
-        jss.createStyleSheet(
-            {'@global #mw-content-text > h5': {backgroundColor: '#afa'}}
-        ).attach()
+        jssc(
+            '@global #mw-content-text > h5':
+                backgroundColor: '#afa'
+        )
 
         contentDiv = $('#mw-content-text')
         ul = contentDiv.find('ul').first()

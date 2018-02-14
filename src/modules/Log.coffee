@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{jss} = require('./libs')
+{jssc} = require('./libs')
 Str = require('@kynikos/misc/dist/Str')
 
 
@@ -26,7 +26,7 @@ class module.exports
 
         # The .warning and .error classes are already used by
         # MediaWiki, without associating them with an id and a tag
-        styles =
+        {classes} = jssc(
             log:
                 height: '10em'
                 border: '2px solid #07b'
@@ -69,9 +69,7 @@ class module.exports
                 '& a':
                     color: 'inherit'
                     textDecoration: 'underline'
-
-        {classes} = jss.createStyleSheet(
-            styles, {classNamePrefix: "WikiMonkey-"}).attach()
+        )
         @classes = classes
 
     _makeLogArea: ->
