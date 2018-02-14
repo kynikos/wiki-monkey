@@ -24,7 +24,7 @@ mwmodpromise = mw.loader.using(['mediawiki.api.edit'
 require('./libs').init()
 
 Upgrade = require('./Upgrade')
-{route} = require('./Router')
+route = require('./router')
 
 # The ArchPackages module is currently unusable
 # ArchPackages = require('./ArchPackages')

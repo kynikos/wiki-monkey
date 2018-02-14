@@ -20,10 +20,10 @@ Bot = require('../app/Bot')
 Filters = require('../app/Filters')
 Menu = require('../app/Menu')
 Mods = require('./Mods')
-App = require('../app')
+app = require('../app')
 
 
-module.exports.route = (WM) ->
+module.exports = (WM) ->
     # MW seems a bit unreliable with capitalization, e.g. it's
     # "SpecialPages" but "Recentchanges"
     specialPage = do ->
@@ -174,4 +174,4 @@ module.exports.route = (WM) ->
         display = false
 
     if ui
-        App({WM, display, displayLog, nextNode, ui})
+        app({WM, display, displayLog, nextNode, ui})
