@@ -20,7 +20,8 @@
 {version} = require('../../package.json')
 
 
-module.exports = ({WM, display, displayLog, nextNode, ui}) ->
+module.exports = ({WMtemp, display, displayLog, nextNode, ui}) ->
+    WM = WMtemp
     logArea = WM.Log._makeLogArea()
 
     root = Div()

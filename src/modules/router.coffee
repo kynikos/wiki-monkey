@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+{WM} = require('./index')
 Bot = require('../app/Bot')
 Filters = require('../app/Filters')
 Menu = require('../app/Menu')
@@ -23,7 +24,7 @@ Mods = require('./Mods')
 app = require('../app')
 
 
-module.exports = (WM) ->
+module.exports = (WMtemp) ->
     # MW seems a bit unreliable with capitalization, e.g. it's
     # "SpecialPages" but "Recentchanges"
     specialPage = do ->
@@ -39,19 +40,19 @@ module.exports = (WM) ->
     if $('#editform').length
         nextNode = $('#wpSummaryLabel').parent().next()[0]
         conf = WM.Plugins.editor
-        ui = if conf.length then new Menu(WM, 'editor', conf) else null
-        new Mods(WM).applyEditorMods()
+        ui = if conf.length then new Menu(WMtemp, 'editor', conf) else null
+        new Mods(WMtemp).applyEditorMods()
 
     else if mw.config.get('wgDiffNewId')
         nextNode = $('#bodyContent h2').first()[0]
         conf = WM.Plugins.diff
-        ui = if conf.length then new Menu(WM, 'diff', conf) else null
+        ui = if conf.length then new Menu(WMtemp, 'diff', conf) else null
 
     else if mw.config.get('wgCanonicalNamespace') is 'Category'
         nextNode = $('#contentSub')[0]
         conf = WM.Plugins.bot
         ui = if conf.length \
-            then new Bot(WM, conf, [
+            then new Bot(WMtemp, conf, [
                 [$('#mw-pages')[0], 0, "Pages"]
                 [$('#mw-subcategories')[0], 0, "Subcategories"]
             ]) else null
@@ -61,7 +62,7 @@ module.exports = (WM) ->
         nextNode = $('#bodyContent form').first().next()[0]
         conf = WM.Plugins.bot
         ui = if conf.length \
-            then new Bot(WM, conf, [
+            then new Bot(WMtemp, conf, [
                 [$('#mw-whatlinkshere-list')[0], 0, "Pages"]
             ]) else null
         display = false
@@ -71,7 +72,7 @@ module.exports = (WM) ->
         nextNode = $('#mw-content-text div.mw-spcontent').first()[0]
         conf = WM.Plugins.bot
         ui = if conf.length \
-            then new Bot(WM, conf, [
+            then new Bot(WMtemp, conf, [
                 [$(nextNode).first('ol.special').first()[0], 1, "Pages"]
             ]) else null
         display = false
@@ -80,7 +81,7 @@ module.exports = (WM) ->
         nextNode = $('#mw-content-text div.mw-prefixindex-body').first()[0]
         conf = WM.Plugins.bot
         ui = if conf.length \
-            then new Bot(WM, conf, [
+            then new Bot(WMtemp, conf, [
                 [$(nextNode).find('ul.mw-prefixindex-list').first()[0]
                  0, "Pages"]
             ]) else null
@@ -90,35 +91,35 @@ module.exports = (WM) ->
         nextNode = $('#contentSub')[0]
         conf = WM.Plugins.special
         ui = if conf.length \
-            then new Menu(WM, 'special', conf) else null
+            then new Menu(WMtemp, 'special', conf) else null
 
     else if specialPage is "recentchanges"
         nextNode = $('#mw-content-text h4').first()[0]
         conf = WM.Plugins.recentchanges
         ui = if conf.length \
-            then new Filters(WM, 'recentchanges', conf) \
+            then new Filters(WMtemp, 'recentchanges', conf) \
             else null
         displayLog = false
-        new Mods(WM).applyRecentChangesMods()
+        new Mods(WMtemp).applyRecentChangesMods()
 
     else if specialPage is "newpages"
         nextNode = $('#mw-content-text ul').first()[0]
         conf = WM.Plugins.newpages
         ui = if conf.length \
-            then new Filters(WM, 'newpages', conf) else null
+            then new Filters(WMtemp, 'newpages', conf) else null
         displayLog = false
 
     else if specialPage is "protectedpages"
         nextNode = $('#mw-content-text table.mw-protectedpages').first()[0]
         conf = WM.Plugins.bot
         ui = if conf.length \
-            then new Bot(WM, conf, [
+            then new Bot(WMtemp, conf, [
                 [$(nextNode).find('tbody').first()[0], 0, "Pages"]
             ]) else null
         display = false
 
     else if specialPage is "contributions"
-        new Mods(WM).applyContributionsMods()
+        new Mods(WMtemp).applyContributionsMods()
 
     else if specialPage in [
         "ancientpages"
@@ -136,7 +137,7 @@ module.exports = (WM) ->
         nextNode = $('#mw-content-text div.mw-spcontent').first()[0]
         conf = WM.Plugins.bot
         ui = if conf.length \
-            then new Bot(WM, conf, [
+            then new Bot(WMtemp, conf, [
                 [$(nextNode).find('ol').first()[0], 0, "Pages"]
             ]) else null
         display = false
@@ -148,7 +149,7 @@ module.exports = (WM) ->
         nextNode = $('#mw-content-text div.mw-spcontent').first()[0]
         conf = WM.Plugins.bot
         ui = if conf.length \
-            then new Bot(WM, conf, [
+            then new Bot(WMtemp, conf, [
                 [$(nextNode).find('ol').first()[0], 1, "Pages"]
             ]) else null
         display = false
@@ -157,7 +158,7 @@ module.exports = (WM) ->
         nextNode = $('#mw-content-text div.mw-spcontent > p').first()[0]
         conf = WM.Plugins.bot
         ui = if conf.length \
-            then new Bot(WM, conf, [
+            then new Bot(WMtemp, conf, [
                 [$(nextNode).nextAll('ol').first()[0], 0, "Pages"]
             ]) else null
         display = false
@@ -166,7 +167,7 @@ module.exports = (WM) ->
         nextNode = $('#mw-content-text div.mw-allpages-nav').first()[0]
         conf = WM.Plugins.bot
         ui = if conf.length \
-            then new Bot(WM, conf, [
+            then new Bot(WMtemp, conf, [
                 [$(nextNode).nextAll('div.mw-allpages-body').first()
                     .find('ul').first()[0]
                  0, "Pages"]
@@ -174,4 +175,4 @@ module.exports = (WM) ->
         display = false
 
     if ui
-        app({WM, display, displayLog, nextNode, ui})
+        app({WMtemp, display, displayLog, nextNode, ui})

@@ -17,6 +17,7 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 {jssc} = require('../modules/libs')
+{WM} = require('../modules')
 
 
 class module.exports
@@ -115,7 +116,7 @@ class module.exports
             option = document.createElement('option')
             option.innerHTML = pluginInst
 
-            if plugin.constructor.name is @WM.conf.default_bot_plugin
+            if plugin.constructor.name is WM.conf.default_bot_plugin
                 option.selected = true
 
             selectFunctions.appendChild(option)

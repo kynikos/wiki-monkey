@@ -17,6 +17,7 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 {jssc} = require('../modules/libs')
+{WM} = require('../modules')
 
 
 class module.exports
@@ -53,7 +54,7 @@ class module.exports
             filters.push(plugin)
             option = $('<option/>').text(pluginInst)
 
-            if plugin.constructor.name is @WM.conf["default_#{@page_type}_plugin"]
+            if plugin.constructor.name is WM.conf["default_#{@page_type}_plugin"]
                 option[0].selected = true
 
             option.appendTo(selectFilter)

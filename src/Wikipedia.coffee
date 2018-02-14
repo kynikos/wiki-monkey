@@ -16,9 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{WM} = require('./modules')
+{WikiMonkey} = require('./modules')
 
-new WM(
+new WikiMonkey(
     "Wikipedia",
 
     # The require paths can't be constructed dynamically, or browserify won't

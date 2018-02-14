@@ -23,6 +23,9 @@ mwmodpromise = mw.loader.using(['mediawiki.api.edit'
 # Initialize the libraries immediately (especially babel-polyfill)
 require('./libs').init()
 
+# The other modules require a WM object to be already exported here
+module.exports.WM = {}
+
 Upgrade = require('./Upgrade')
 route = require('./router')
 
@@ -43,7 +46,7 @@ Log = require('../app/Log')
 {Plugin} = require('../plugins/_Plugin')
 
 
-class module.exports.WM
+class module.exports.WikiMonkey
     conf:
         default_bot_plugin: "SimpleReplace"
         default_recentchanges_plugin: null
@@ -101,6 +104,11 @@ class module.exports.WM
         delete @installed_plugins_temp
 
     init: =>
+        Object.assign(module.exports.WM, {
+            conf: @conf
+            Plugins: @Plugins
+        })
+
         # The ArchPackages module is currently unusable
         # @ArchPackages = new ArchPackages(this)
         @ArchWiki = new ArchWiki(this)

@@ -18,6 +18,7 @@
 
 {moment, A, Br, Div} = require('./libs')
 {version} = require('../../package.json')
+{WM} = require('./index')
 
 
 class module.exports
@@ -25,13 +26,13 @@ class module.exports
 
     constructor: (@WM) ->
         @check_obsolete_config()
-        if @WM.conf.update_check_wdays
+        if WM.conf.update_check_wdays
             @check_and_notify()
 
     check_and_notify: ->
         if @should_check()
             upstream_package = await $.getJSON(
-                "#{REPO_RAW_URL}/#{@WM.conf.update_check_branch}/package.json")
+                "#{REPO_RAW_URL}/#{WM.conf.update_check_branch}/package.json")
             # Well, ok, this is assuming that if the versions are
             # different, upstream has the latest
             if version != upstream_package.version
@@ -58,7 +59,7 @@ class module.exports
         # Preferably check on the configured day of the week, but don't let
         # more than 7 days pass without checking in any case
         if (diff >= 1 and moment().day() in
-                @WM.conf.update_check_wdays) or diff >= 7
+                WM.conf.update_check_wdays) or diff >= 7
             return true
         return false
 

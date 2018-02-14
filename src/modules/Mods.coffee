@@ -17,6 +17,7 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 {jssc} = require('./libs')
+{WM} = require('./index')
 
 
 class module.exports
@@ -41,15 +42,15 @@ class module.exports
         window.scrollTo(0, $('#firstHeading').offset().top)
 
     applyEditorMods: ->
-        if @WM.conf.disable_edit_summary_submit_on_enter
+        if WM.conf.disable_edit_summary_submit_on_enter
             disableEditSummarySubmitOnEnter()
-        if @WM.conf.scroll_to_first_heading
+        if WM.conf.scroll_to_first_heading
             scrollToFirstHeading()
 
     applyRecentChangesMods: ->
-        if @WM.conf.hide_rollback_links
+        if WM.conf.hide_rollback_links
             hideRollbackLinks()
 
     applyContributionsMods: ->
-        if @WM.conf.hide_rollback_links
+        if WM.conf.hide_rollback_links
             hideRollbackLinks()
