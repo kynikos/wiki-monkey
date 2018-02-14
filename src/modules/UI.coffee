@@ -17,19 +17,11 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 Vue = require('vue')
-{jssc, A, Div, Fieldset, Legend} = require('./libs')
+{A, Div, Fieldset, Legend} = require('./libs')
 {version} = require('../../package.json')
 
 
 module.exports = ({WM, display, displayLog, nextNode, ui}) ->
-    {classes} = jssc(
-        root:
-            position: 'relative'
-
-            '& fieldset':
-                margin: '0 0 1em 0'
-    )
-
     logArea = WM.Log._makeLogArea()
 
     root = Div()
@@ -50,7 +42,7 @@ module.exports = ({WM, display, displayLog, nextNode, ui}) ->
                 'Wiki Monkey '
                 e('a'
                     {
-                        attrs: {href: '#WikiMonkey'}
+                        attrs: {href: '#'}
                         on:
                             click: (event) ->
                                 event.preventDefault()
@@ -61,7 +53,7 @@ module.exports = ({WM, display, displayLog, nextNode, ui}) ->
             ])
 
             return e('fieldset', {
-                attrs: {id: 'WikiMonkey', class: classes.root}
+                attrs: {id: 'WikiMonkey'}
             }, [
                 legend
                 wmmain if @display
