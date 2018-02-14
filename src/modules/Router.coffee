@@ -16,11 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-Bot = require('./Bot')
-Filters = require('./Filters')
-Menu = require('./Menu')
+Bot = require('../app/Bot')
+Filters = require('../app/Filters')
+Menu = require('../app/Menu')
 Mods = require('./Mods')
-UI = require('./UI')
+App = require('../app')
 
 
 module.exports.route = (WM) ->
@@ -174,4 +174,4 @@ module.exports.route = (WM) ->
         display = false
 
     if ui
-        UI({WM, display, displayLog, nextNode, ui})
+        App({WM, display, displayLog, nextNode, ui})

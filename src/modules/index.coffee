@@ -33,11 +33,12 @@ Cat = require('./Cat')
 Diff = require('./Diff')
 Editor = require('./Editor')
 Interlanguage = require('./Interlanguage')
-Log = require('./Log')
 MW = require('./MW')
 Parser = require('./Parser')
 Tables = require('./Tables')
 WhatLinksHere = require('./WhatLinksHere')
+
+Log = require('../app/Log')
 
 {Plugin} = require('../plugins/_Plugin')
 
