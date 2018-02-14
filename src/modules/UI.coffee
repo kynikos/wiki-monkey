@@ -16,8 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-Vue = require('vue')
-{A, Div, Fieldset, Legend} = require('./libs')
+{Vue, A, Div, Fieldset, Legend} = require('./libs')
 {version} = require('../../package.json')
 
 
