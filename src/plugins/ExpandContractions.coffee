@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+WM = require('../modules')
 App = require('../app')
 {Plugin} = require('./_Plugin')
 
@@ -35,7 +36,7 @@ class module.exports.ExpandContractions extends Plugin
         return newtext
 
     main_editor: (callNext) ->
-        source = @WM.Editor.readSource()
+        source = WM.Editor.readSource()
         newtext = source
 
         # Ignoring "I" since writing in 1st person isn't formal anyway
@@ -72,7 +73,7 @@ class module.exports.ExpandContractions extends Plugin
                     "check if they can be replaced with \"is\", \"has\", ...")
 
         if newtext != source
-            @WM.Editor.writeSource(newtext)
+            WM.Editor.writeSource(newtext)
             App.log.logInfo("Expanded contractions")
 
         if callNext

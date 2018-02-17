@@ -27,9 +27,9 @@ class module.exports.ArchWikiFixHeader extends Plugin
         editor_menu: ["Text plugins", "Fix header"]
 
     main_editor: (callNext) ->
-        source = @WM.Editor.readSource()
+        source = WM.Editor.readSource()
 
-        language = WM.ArchWiki.detectLanguage(@WM.Editor.getTitle())[1]
+        language = WM.ArchWiki.detectLanguage(WM.Editor.getTitle())[1]
 
         header = ""
         content = source
@@ -184,7 +184,7 @@ class module.exports.ArchWikiFixHeader extends Plugin
         newText = header + content
 
         if newText != source
-            @WM.Editor.writeSource(newText)
+            WM.Editor.writeSource(newText)
             App.log.logInfo("Fixed header")
 
         if callNext

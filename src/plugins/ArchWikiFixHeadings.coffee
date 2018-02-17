@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+WM = require('../modules')
 App = require('../app')
 {Plugin} = require('./_Plugin')
 
@@ -26,11 +27,11 @@ class module.exports.ArchWikiFixHeadings extends Plugin
         editor_menu: ["Text plugins", "Fix headings"]
 
     main_editor: (callNext) ->
-        source = @WM.Editor.readSource()
+        source = WM.Editor.readSource()
 
         info = @WM.Parser.findSectionHeadings(source)
 
-        if @WM.Editor.isSection()
+        if WM.Editor.isSection()
             increaseLevel = info.minLevel - 1
         else
             if info.maxTocLevel < 6
@@ -56,7 +57,7 @@ class module.exports.ArchWikiFixHeadings extends Plugin
         newtext += source.substr(prevId)
 
         if newtext != source
-            @WM.Editor.writeSource(newtext)
+            WM.Editor.writeSource(newtext)
             App.log.logInfo("Fixed section headings")
 
         if callNext

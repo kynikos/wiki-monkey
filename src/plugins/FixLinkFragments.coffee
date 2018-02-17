@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+WM = require('../modules')
 App = require('../app')
 {Plugin} = require('./_Plugin')
 
@@ -148,14 +149,14 @@ class module.exports.FixLinkFragments extends Plugin
 
     findArchWikiLinks: (newText, iwprefixes, callArgs) =>
         templates = @WM.Parser.findTemplates(newText, 'Related')
-        title = @WM.Editor.getTitle()
+        title = WM.Editor.getTitle()
         @processArchWikiLink(title, iwprefixes, templates, 1, 0,
                     newText, "", 0,
                     @findArchWikiLinks2, callArgs)
 
     findArchWikiLinks2: (newText, iwprefixes, callArgs) =>
         templates = @WM.Parser.findTemplates(newText, 'Related2')
-        title = @WM.Editor.getTitle()
+        title = WM.Editor.getTitle()
         @processArchWikiLink(title, iwprefixes, templates, 2, 0,
                 newText, "", 0, @mainEnd, callArgs)
 
@@ -275,9 +276,9 @@ class module.exports.FixLinkFragments extends Plugin
                 expectedArgs, index, source, newText, prevId, call, callArgs)
 
     main_editor: (callNext) ->
-        source = @WM.Editor.readSource()
+        source = WM.Editor.readSource()
         App.log.logInfo("Fixing links to sections of other articles ...")
-        title = @WM.Editor.getTitle()
+        title = WM.Editor.getTitle()
         res = await @WM.MW.getInterwikiMap(title)
         iwprefixes = (iw.prefix for iw in res.query.interwikimap)
         links = @WM.Parser.findInternalLinks(source, null, null)
@@ -292,10 +293,10 @@ class module.exports.FixLinkFragments extends Plugin
             @mainEnd(newText, iwprefixes, callNext)
 
     mainEnd: (newText, iwprefixes, callNext) =>
-        source = @WM.Editor.readSource()
+        source = WM.Editor.readSource()
 
         if newText != source
-            @WM.Editor.writeSource(newText)
+            WM.Editor.writeSource(newText)
             App.log.logInfo("Replaced links to sections of other articles")
         else
             App.log.logInfo("No fixable links to sections of other articles " +

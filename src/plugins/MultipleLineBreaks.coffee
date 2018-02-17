@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+WM = require('../modules')
 App = require('../app')
 {Plugin} = require('./_Plugin')
 
@@ -26,13 +27,13 @@ class module.exports.MultipleLineBreaks extends Plugin
         editor_menu: ["Text plugins", "Squash multiple line breaks"]
 
     main_editor: (callNext) ->
-        source = @WM.Editor.readSource()
+        source = WM.Editor.readSource()
         newtext = source
 
         newtext = newtext.replace(/[\n]{3,}/g, '\n\n')
 
         if newtext != source
-            @WM.Editor.writeSource(newtext)
+            WM.Editor.writeSource(newtext)
             App.log.logInfo("Removed multiple line breaks")
 
         if callNext

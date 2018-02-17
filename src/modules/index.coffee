@@ -104,12 +104,15 @@ class module.exports.WikiMonkey
         })
 
     init: =>
-        # The ArchPackages module is currently unusable
-        # module.exports.ArchPackages = new ArchPackages(this)
-        module.exports.ArchWiki = new ArchWiki(this)
-        module.exports.Cat = new Cat(this)
-        module.exports.Diff = new Diff(this)
-        @Editor = new Editor(this)
+        Object.assign(module.exports, {
+            # The ArchPackages module is currently unusable
+            # ArchPackages: new ArchPackages(this)
+            ArchWiki: new ArchWiki(this)
+            Cat: new Cat(this)
+            Diff: new Diff(this)
+            Editor: new Editor(this)
+        })
+
         @Interlanguage = new Interlanguage(this)
         module.exports.MW = @MW = new MW(this)
         @Parser = new Parser(this)

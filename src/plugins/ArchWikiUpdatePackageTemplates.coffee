@@ -431,8 +431,8 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
             call(source, newText, callArgs)
 
     main_editor: (callNext) ->
-        title = @WM.Editor.getTitle()
-        source = @WM.Editor.readSource()
+        title = WM.Editor.getTitle()
+        source = WM.Editor.readSource()
         App.log.logInfo("Updating package templates ...")
         @doUpdate(source, @mainEnd, [title, callNext])
 
@@ -440,7 +440,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
         callNext = args[1]
 
         if newtext != source
-            @WM.Editor.writeSource(newtext)
+            WM.Editor.writeSource(newtext)
             App.log.logInfo("Updated package templates")
         else
             App.log.logInfo("No automatically updatable package templates " +

@@ -17,6 +17,7 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 {jssc} = require('../modules/libs')
+WM = require('../modules')
 App = require('../app')
 {Plugin} = require('./_Plugin')
 
@@ -130,12 +131,12 @@ class module.exports.SimpleReplace extends Plugin
             # Block the execution of this function
             return false
 
-        source = @WM.Editor.readSource()
+        source = WM.Editor.readSource()
         newtext = source.replace(configuration.regExp,
                                                     configuration.newString)
 
         if newtext != source
-            @WM.Editor.writeSource(newtext)
+            WM.Editor.writeSource(newtext)
             App.log.logInfo("Text substituted")
 
         if callNext

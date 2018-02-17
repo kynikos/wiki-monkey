@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+WM = require('../modules')
 App = require('../app')
 {Plugin} = require('./_Plugin')
 
@@ -26,7 +27,7 @@ class module.exports.ArchWikiNewTemplates extends Plugin
         editor_menu: ["Text plugins", "Use code templates"]
 
     main_editor: (callNext) ->
-        source = @WM.Editor.readSource()
+        source = WM.Editor.readSource()
         newtext = source
 
         re8 = /<pre>(((?!<(pre|nowiki)>)[^\=\|])*?((?!<(pre|nowiki)>)[^\=\|\}]))<\/pre>/ig
@@ -57,7 +58,7 @@ class module.exports.ArchWikiNewTemplates extends Plugin
                         '{{ic|<nowiki>$1</nowiki>}}')  # Must come after re15
 
         if newtext != source
-            @WM.Editor.writeSource(newtext)
+            WM.Editor.writeSource(newtext)
             App.log.logInfo("Turned HTML tags into proper templates")
 
         tests = [

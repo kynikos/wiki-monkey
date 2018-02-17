@@ -64,7 +64,7 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
             return supportedLangs
 
     main_editor: (callNext) ->
-        title = @WM.Editor.getTitle()
+        title = WM.Editor.getTitle()
 
         detect = @detectLang(title, @conf.language_tag)
         pureTitle = detect[0]
@@ -89,7 +89,7 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
         title = args[4]
         callNext = args[5]
 
-        source = @WM.Editor.readSource()
+        source = WM.Editor.readSource()
 
         langlinks = @WM.Interlanguage.parseLinks(supportedLangs, source, iwmap)
 
@@ -161,7 +161,7 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
                                                             langlinks, links)
 
         if newText != source
-            @WM.Editor.writeSource(newText)
+            WM.Editor.writeSource(newText)
             App.log.logInfo("Synchronized interlanguage links")
         else
             App.log.logInfo("Interlanguage links were already synchronized")
