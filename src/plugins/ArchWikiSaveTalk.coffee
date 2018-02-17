@@ -17,6 +17,7 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 {jssc} = require('../modules/libs')
+WM = require('../modules')
 App = require('../app')
 {Plugin} = require('./_Plugin')
 
@@ -51,7 +52,7 @@ class module.exports.ArchWikiSaveTalk extends Plugin
         App.log.logInfo('Appending diff to ' +
                             App.log.linkToWikiPage(article, article) + " ...")
 
-        @WM.Diff.getEndTimestamp(
+        WM.Diff.getEndTimestamp(
                             @mainGetEndTimestamp,
                             [article, summary, callNext])
 
