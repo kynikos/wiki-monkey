@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{WM} = require('./index')
+WM = require('./index')
 Bot = require('../app/Bot')
 Filters = require('../app/Filters')
 Menu = require('../app/Menu')

@@ -18,7 +18,7 @@
 
 {moment, A, Br, Div} = require('./libs')
 {version} = require('../../package.json')
-{WM} = require('./index')
+WM = require('./index')
 
 
 class module.exports

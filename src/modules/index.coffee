@@ -23,9 +23,6 @@ mwmodpromise = mw.loader.using(['mediawiki.api.edit'
 # Initialize the libraries immediately (especially babel-polyfill)
 require('./libs').init()
 
-# The other modules require a WM object to be already exported here
-module.exports.WM = {}
-
 Upgrade = require('./Upgrade')
 route = require('./router')
 
@@ -57,6 +54,14 @@ class module.exports.WikiMonkey
         disable_edit_summary_submit_on_enter: true
         scroll_to_first_heading: false
 
+    Plugins:
+        bot: []
+        diff: []
+        editor: []
+        newpages: []
+        recentchanges: []
+        special: []
+
     constructor: (@wiki_name, @installed_plugins_temp...) ->
         @setup()
         $.when(mwmodpromise, $.ready).done(@init)
@@ -73,14 +78,6 @@ class module.exports.WikiMonkey
         for option, value of user_config when option of @conf
             @conf[option] = value
             delete user_config[option]
-
-        @Plugins =
-            bot: []
-            diff: []
-            editor: []
-            newpages: []
-            recentchanges: []
-            special: []
 
         for pmod in @installed_plugins_temp
             for pname, PluginSub of pmod \
@@ -103,12 +100,12 @@ class module.exports.WikiMonkey
 
         delete @installed_plugins_temp
 
-    init: =>
-        Object.assign(module.exports.WM, {
+        Object.assign(module.exports, {
             conf: @conf
             Plugins: @Plugins
         })
 
+    init: =>
         # The ArchPackages module is currently unusable
         # @ArchPackages = new ArchPackages(this)
         @ArchWiki = new ArchWiki(this)

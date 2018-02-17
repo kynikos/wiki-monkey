@@ -17,7 +17,7 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 {jssc} = require('../modules/libs')
-{WM} = require('../modules')
+WM = require('../modules')
 
 
 class module.exports
