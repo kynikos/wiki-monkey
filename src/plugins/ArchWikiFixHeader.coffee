@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+WM = require('../modules')
 App = require('../app')
 {Plugin} = require('./_Plugin')
 
@@ -28,7 +29,7 @@ class module.exports.ArchWikiFixHeader extends Plugin
     main_editor: (callNext) ->
         source = @WM.Editor.readSource()
 
-        language = @WM.ArchWiki.detectLanguage(@WM.Editor.getTitle())[1]
+        language = WM.ArchWiki.detectLanguage(@WM.Editor.getTitle())[1]
 
         header = ""
         content = source
@@ -111,7 +112,7 @@ class module.exports.ArchWikiFixHeader extends Plugin
             cattext = "Category:" + cleantitle
             # Don't just pass cleantitle here, otherwise the language of
             #   root language categories won't be properly detected
-            catlang = @WM.ArchWiki.detectLanguage(cattext)[1]
+            catlang = WM.ArchWiki.detectLanguage(cattext)[1]
             catlink = "[[" + cattext + (if cat.anchor then "|" + cat.anchor else "") + "]]"
             if language != catlang
                 App.log.logWarning(App.log.linkToWikiPage(cat.link, cattext) +
@@ -136,7 +137,7 @@ class module.exports.ArchWikiFixHeader extends Plugin
         content = tempcontent
 
         # Interlanguage links
-        interlanguage = @WM.ArchWiki.findAllInterlanguageLinks(content)
+        interlanguage = WM.ArchWiki.findAllInterlanguageLinks(content)
         iwlist = []
         iwlinks = []
         tempcontent = ""

@@ -241,7 +241,7 @@ class module.exports
         # Make sure to prepare whitespace in pattern like in
         #   prepareRegexpWhitespace
         # Keep the capturing groups as required by @findLinksEngine
-        # See also @WM.ArchWiki.findAllInterlanguageLinks
+        # See also WM.ArchWiki.findAllInterlanguageLinks
         titleChars = "[^\\n\\{\\}\\[\\]\\|\\#]+?"
         fragmentChars = "[^\\n\\{\\}\\[\\]\\|]*?"
         titlePattern = "((" + pattern + ")[ _]*:[ _]*" +
@@ -254,7 +254,7 @@ class module.exports
         return this.findSpecialLinks(source, "Category")
 
     findInterlanguageLinks: (source, language) ->
-        # See also @WM.ArchWiki.findAllInterlanguageLinks
+        # See also WM.ArchWiki.findAllInterlanguageLinks
         return this.findSpecialLinks(source, mw.RegExp.escape(language))
 
     findVariables: (source, variable) ->

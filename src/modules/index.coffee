@@ -106,7 +106,7 @@ class module.exports.WikiMonkey
     init: =>
         # The ArchPackages module is currently unusable
         # module.exports.ArchPackages = new ArchPackages(this)
-        @ArchWiki = new ArchWiki(this)
+        module.exports.ArchWiki = new ArchWiki(this)
         @Cat = new Cat(this)
         @Diff = new Diff(this)
         @Editor = new Editor(this)

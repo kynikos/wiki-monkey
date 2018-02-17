@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+WM = require('../modules')
 App = require('../app')
 {Plugin} = require('./_Plugin')
 
@@ -43,9 +44,9 @@ class module.exports.ArchWikiWantedCategories extends Plugin
 
         edittoken = page.edittoken
 
-        language = @WM.ArchWiki.detectLanguage(title)[1]
+        language = WM.ArchWiki.detectLanguage(title)[1]
 
-        if language != @WM.ArchWiki.getLocalLanguage()
+        if language != WM.ArchWiki.getLocalLanguage()
             text = "[[Category:" + language + "]]"
             summary = "wanted category"
 

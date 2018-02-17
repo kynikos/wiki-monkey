@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+WM = require('../modules')
 App = require('../app')
 {Plugin} = require('./_Plugin')
 Str = require('@kynikos/misc/dist/Str')
@@ -45,7 +46,7 @@ class module.exports.UpdateCategoryTree extends Plugin
         pconf = @conf.pages[pageid]
         if pconf
             if $.type(pconf) is "string"
-                params = @WM.ArchWiki.getTableOfContents(pconf)
+                params = WM.ArchWiki.getTableOfContents(pconf)
             else
                 # This should be a custom configuration object
                 params = pconf

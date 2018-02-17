@@ -17,6 +17,7 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 {jssc} = require('../modules/libs')
+WM = require('../modules')
 App = require('../app')
 {Plugin} = require('./_Plugin')
 
@@ -39,7 +40,7 @@ class module.exports.ArchWikiNPFilter extends Plugin
 
         for li in liList
             link = $(li).find('a.mw-newpages-pagename').first()
-            [pureTitle, language] = @WM.ArchWiki.detectLanguage(link[0].title)
+            [pureTitle, language] = WM.ArchWiki.detectLanguage(link[0].title)
             if language != @conf.default_language
                 @moveArticle(contentDiv, li, language)
 

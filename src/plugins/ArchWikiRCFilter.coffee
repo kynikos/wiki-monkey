@@ -17,6 +17,7 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 {jssc} = require('../modules/libs')
+WM = require('../modules')
 App = require('../app')
 {Plugin} = require('./_Plugin')
 
@@ -50,7 +51,7 @@ class module.exports.ArchWikiRCFilter extends Plugin
                     link = $(articleTable).find('a.mw-changeslist-title')
                                                                     .first()
                     if link[0]
-                        [pureTitle, language] = @WM.ArchWiki.detectLanguage(
+                        [pureTitle, language] = WM.ArchWiki.detectLanguage(
                                                                 link[0].title)
                         if language != @conf.default_language
                             @moveArticle(groupDiv, articleTable, language)

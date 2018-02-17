@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+WM = require('../modules')
 App = require('../app')
 {Plugin} = require('./_Plugin')
 
@@ -40,9 +41,9 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
     detectLang: (title, tag) =>
         # Without this check this plugin would be specific to ArchWiki
         if tag == "ArchWiki"
-            detect = @WM.ArchWiki.detectLanguage(title)
+            detect = WM.ArchWiki.detectLanguage(title)
             pureTitle = detect[0]
-            tag = @WM.ArchWiki.getInterlanguageTag(detect[1])
+            tag = WM.ArchWiki.getInterlanguageTag(detect[1])
         else
             pureTitle = title
 
@@ -51,14 +52,14 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
     computeWhiteList: (whitelist) =>
         # Without this check this plugin would be specific to ArchWiki
         if whitelist == "ArchWiki"
-            return @WM.ArchWiki.getInternalInterwikiLanguages()
+            return WM.ArchWiki.getInternalInterwikiLanguages()
         else
             return whitelist
 
     computeSupportedLangs: (supportedLangs) =>
         # Without this check this plugin would be specific to ArchWiki
         if supportedLangs == "ArchWiki"
-            return @WM.ArchWiki.getInterwikiLanguages()
+            return WM.ArchWiki.getInterwikiLanguages()
         else
             return supportedLangs
 

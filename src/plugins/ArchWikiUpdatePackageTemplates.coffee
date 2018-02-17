@@ -108,7 +108,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
                     {
                         "error": "notfound"
                         "page": callArgs[0]
-                        "pagelanguage": @WM.ArchWiki.detectLanguage(callArgs[0])[1]
+                        "pagelanguage": WM.ArchWiki.detectLanguage(callArgs[0])[1]
                         "package": pkg
                     })
 
@@ -381,7 +381,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
                     {
                         "error": "group64",
                         "page": callArgs[0],
-                        "pagelanguage": @WM.ArchWiki.detectLanguage(callArgs[0])[1],
+                        "pagelanguage": WM.ArchWiki.detectLanguage(callArgs[0])[1],
                         "package": grpname
                     })
             @doUpdateContinue3(source,
@@ -410,7 +410,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
                     {
                         "error": "group64",
                         "page": callArgs[0],
-                        "pagelanguage": @WM.ArchWiki.detectLanguage(callArgs[0])[1],
+                        "pagelanguage": WM.ArchWiki.detectLanguage(callArgs[0])[1],
                         "package": grpname
                     })
             @doUpdateContinue3(source,
