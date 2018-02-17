@@ -107,7 +107,7 @@ class module.exports.WikiMonkey
         # The ArchPackages module is currently unusable
         # module.exports.ArchPackages = new ArchPackages(this)
         module.exports.ArchWiki = new ArchWiki(this)
-        @Cat = new Cat(this)
+        module.exports.Cat = new Cat(this)
         @Diff = new Diff(this)
         @Editor = new Editor(this)
         @Interlanguage = new Interlanguage(this)

@@ -99,7 +99,7 @@ class module.exports.UpdateCategoryTree extends Plugin
                 args.endId = end
                 args.treeText = ""
                 args.altNames = if args.params.keepAltName then @storeAlternativeNames(args.source) else {}
-                @WM.Cat.recurseTree({
+                WM.Cat.recurseTree({
                     node: args.params.root,
                     callNode: @processCategory,
                     callEnd: @writeToC,
@@ -156,7 +156,7 @@ class module.exports.UpdateCategoryTree extends Plugin
                                                                 params.node))
             @processCategoryEnd(params, args, text)
         else
-            @WM.Cat.getParentsAndInfo(
+            WM.Cat.getParentsAndInfo(
                 params.node,
                 @processCategoryAddSuffix,
                 [params, args, text, altName]
@@ -199,7 +199,7 @@ class module.exports.UpdateCategoryTree extends Plugin
 
         params.callArgs = args
 
-        @WM.Cat.recurseTreeContinue(params)
+        WM.Cat.recurseTreeContinue(params)
 
     createCatLink: (cat, replace, altName) =>
         if altName

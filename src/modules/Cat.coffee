@@ -23,15 +23,15 @@ class module.exports
     constructor: (@WM) ->
 
     recurseTree: (params) ->
-        params.callChildren = @WM.Cat._recurseTreeCallChildren
+        params.callChildren = @_recurseTreeCallChildren
         Async.recurseTreeAsync(params)
 
     recurseTreeContinue: (params) ->
         Async.recurseTreeAsync(params)
 
     _recurseTreeCallChildren: (params) ->
-        @WM.Cat.getSubCategories(params.node,
-                            @WM.Cat._recurseTreeCallChildrenContinue, params)
+        @getSubCategories(params.node,
+                            @_recurseTreeCallChildrenContinue, params)
 
     _recurseTreeCallChildrenContinue: (subCats, params) ->
         for subCat in subCats
@@ -39,10 +39,10 @@ class module.exports
         Async.recurseTreeAsync(params)
 
     getSubCategories: (parent, call, callArgs) ->
-        @WM.Cat._getMembers(parent, "subcat", call, callArgs)
+        @_getMembers(parent, "subcat", call, callArgs)
 
     getAllMembers: (parent, call, callArgs) ->
-        @WM.Cat._getMembers(parent, null, call, callArgs)
+        @_getMembers(parent, null, call, callArgs)
 
     _getMembers: (name, cmtype, call, callArgs) ->
         query =
