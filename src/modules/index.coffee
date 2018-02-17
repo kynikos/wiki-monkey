@@ -114,9 +114,9 @@ class module.exports.WikiMonkey
             Interlanguage: new Interlanguage(this)
             MW: new MW(this)
             Parser: new Parser(this)
+            Tables: new Tables(this)
         })
 
-        @Tables = new Tables(this)
         @WhatLinksHere = new WhatLinksHere(this)
 
         new Upgrade(this)

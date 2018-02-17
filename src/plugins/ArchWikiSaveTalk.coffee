@@ -73,7 +73,7 @@ class module.exports.ArchWikiSaveTalk extends Plugin
         title = mw.config.get('wgPageName')
         pEnddate = enddate.substr(0, 10) + "&nbsp;" + enddate.substr(11, 8)
 
-        newtext = @WM.Tables.appendRow(source, "<!-- REPLY TABLE -->",
+        newtext = WM.Tables.appendRow(source, "<!-- REPLY TABLE -->",
                         ["[" + location.href + " " + title + "]", pEnddate])
 
         WM.MW.callAPIPost(
