@@ -47,8 +47,8 @@ class module.exports.FixBacklinkFragments extends Plugin
         target.setAttribute('type', 'text')
         target.id = "WikiMonkey-FixBacklinkFragments-Target"
 
-        if @WM.WhatLinksHere.isWhatLinksHerePage()
-            target.value = @WM.WhatLinksHere.getTitle()
+        if WM.WhatLinksHere.isWhatLinksHerePage()
+            target.value = WM.WhatLinksHere.getTitle()
 
         divMain.appendChild(target)
 

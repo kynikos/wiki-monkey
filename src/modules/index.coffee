@@ -115,9 +115,8 @@ class module.exports.WikiMonkey
             MW: new MW(this)
             Parser: new Parser(this)
             Tables: new Tables(this)
+            WhatLinksHere: new WhatLinksHere(this)
         })
-
-        @WhatLinksHere = new WhatLinksHere(this)
 
         new Upgrade(this)
         App(this)
