@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+App = require('../app')
 {Plugin} = require('./_Plugin')
 
 
@@ -57,7 +58,7 @@ class module.exports.ArchWikiNewTemplates extends Plugin
 
         if newtext != source
             @WM.Editor.writeSource(newtext)
-            @WM.Log.logInfo("Turned HTML tags into proper templates")
+            App.log.logInfo("Turned HTML tags into proper templates")
 
         tests = [
             ['&lt;pre>', newtext.match(/<pre/ig)],
@@ -67,7 +68,7 @@ class module.exports.ArchWikiNewTemplates extends Plugin
 
         for test in tests
             if test[1]
-                @WM.Log.logWarning(test[1].length + ' ' +
+                App.log.logWarning(test[1].length + ' ' +
                     test[0] + ' instances require manual intervention')
 
         if callNext

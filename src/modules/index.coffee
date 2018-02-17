@@ -38,8 +38,6 @@ Parser = require('./Parser')
 Tables = require('./Tables')
 WhatLinksHere = require('./WhatLinksHere')
 
-Log = require('../app/Log')
-
 {Plugin} = require('../plugins/_Plugin')
 
 
@@ -113,8 +111,7 @@ class module.exports.WikiMonkey
         @Diff = new Diff(this)
         @Editor = new Editor(this)
         @Interlanguage = new Interlanguage(this)
-        @Log = new Log(this)
-        @MW = new MW(this)
+        module.exports.MW = @MW = new MW(this)
         @Parser = new Parser(this)
         @Tables = new Tables(this)
         @WhatLinksHere = new WhatLinksHere(this)

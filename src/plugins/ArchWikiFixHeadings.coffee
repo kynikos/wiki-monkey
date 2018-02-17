@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+App = require('../app')
 {Plugin} = require('./_Plugin')
 
 
@@ -36,7 +37,7 @@ class module.exports.ArchWikiFixHeadings extends Plugin
                 increaseLevel = 1
             else
                 increaseLevel = 0
-                @WM.Log.logWarning("There are 6 levels of headings, it has
+                App.log.logWarning("There are 6 levels of headings, it has
                     been necessary to start creating them from level 1
                     although usually it is suggested to start from level 2")
 
@@ -56,7 +57,7 @@ class module.exports.ArchWikiFixHeadings extends Plugin
 
         if newtext != source
             @WM.Editor.writeSource(newtext)
-            @WM.Log.logInfo("Fixed section headings")
+            App.log.logInfo("Fixed section headings")
 
         if callNext
             callNext()

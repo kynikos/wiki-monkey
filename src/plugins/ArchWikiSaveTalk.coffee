@@ -17,6 +17,7 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 {jssc} = require('../modules/libs')
+App = require('../app')
 {Plugin} = require('./_Plugin')
 
 
@@ -47,8 +48,8 @@ class module.exports.ArchWikiSaveTalk extends Plugin
         article = @conf.page
         summary = @conf.edit_summary
 
-        @WM.Log.logInfo('Appending diff to ' +
-                            @WM.Log.linkToWikiPage(article, article) + " ...")
+        App.log.logInfo('Appending diff to ' +
+                            App.log.linkToWikiPage(article, article) + " ...")
 
         @WM.Diff.getEndTimestamp(
                             @mainGetEndTimestamp,
@@ -94,10 +95,10 @@ class module.exports.ArchWikiSaveTalk extends Plugin
         callNext = args[1]
 
         if res.edit and res.edit.result == 'Success'
-            @WM.Log.logInfo('Diff correctly appended to ' +
-                                    @WM.Log.linkToWikiPage(article, article))
+            App.log.logInfo('Diff correctly appended to ' +
+                                    App.log.linkToWikiPage(article, article))
             if callNext
                 callNext()
         else
-            @WM.Log.logError('The diff has not been appended!\n' +
+            App.log.logError('The diff has not been appended!\n' +
                     res['error']['info'] + " (" + res['error']['code'] + ")")

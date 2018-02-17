@@ -18,11 +18,11 @@
 
 {Vue, A, Div, Fieldset, Legend} = require('../modules/libs')
 {version} = require('../../package.json')
+Log = require('./Log')
 
 
-module.exports = ({WMtemp, display, displayLog, nextNode, ui}) ->
-    WM = WMtemp
-    logArea = WM.Log._makeLogArea()
+module.exports.App = ({display, displayLog, nextNode, ui}) ->
+    module.exports.log = log = new Log()
 
     root = Div()
     $(nextNode).before(root)
@@ -61,17 +61,17 @@ module.exports = ({WMtemp, display, displayLog, nextNode, ui}) ->
 
         mounted: ->
             if not displayLog
-                $(logArea).hide()
+                $(log.area).hide()
 
-            $('#WikiMonkeyMain').append(ui, logArea)
+            $('#WikiMonkeyMain').append(ui, log.area)
 
-            WM.Log.logHidden("Wiki Monkey version: #{version}")
+            log.logHidden("Wiki Monkey version: #{version}")
             date = new Date()
-            WM.Log.logHidden("Date: #{date.toString()}")
-            WM.Log.logHidden("URL: #{location.href}")
+            log.logHidden("Date: #{date.toString()}")
+            log.logHidden("URL: #{location.href}")
 
         updated: ->
             $wmmain = $('#WikiMonkeyMain')
             if not $wmmain.children().length
-                $wmmain.append(ui, logArea)
+                $wmmain.append(ui, log.area)
     )

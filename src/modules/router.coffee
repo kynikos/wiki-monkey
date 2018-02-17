@@ -21,7 +21,7 @@ Bot = require('../app/Bot')
 Filters = require('../app/Filters')
 Menu = require('../app/Menu')
 Mods = require('./Mods')
-app = require('../app')
+{App} = require('../app')
 
 
 module.exports = (WMtemp) ->
@@ -175,4 +175,4 @@ module.exports = (WMtemp) ->
         display = false
 
     if ui
-        app({WMtemp, display, displayLog, nextNode, ui})
+        App({display, displayLog, nextNode, ui})

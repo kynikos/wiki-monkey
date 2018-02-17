@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+App = require('../app')
+
 # References:
 # - https://wiki.archlinux.org/index.php/Official_Repositories_Web_Interface
 # - https://wiki.archlinux.org/index.php/AurJson
@@ -37,13 +39,13 @@ class module.exports
                 name: name
         ).done((data, textStatus, jqXHR) ->
             if not data instanceof Object
-                @WM.Log.logError("The Official Repositories web
+                App.log.logError("The Official Repositories web
                                  interface returned an unexpected object")
 
             if data
                 call(data, callArgs)
         ).fail((jqXHR, textStatus, errorThrown) ->
-            @WM.Log.logError(@WM.MW.failedQueryError(url))
+            App.log.logError(@WM.MW.failedQueryError(url))
         )
 
     isOfficialPackage: (pkg, call, callArgs) ->
@@ -66,19 +68,19 @@ class module.exports
                 arg: arg
         ).done((data, textStatus, jqXHR) =>
             if not data instanceof Object
-                @WM.Log.logError("The AUR's RPC interface returned an
+                App.log.logError("The AUR's RPC interface returned an
                                                     unexpected object")
 
             if data
                 call(data, callArgs)
         ).fail((jqXHR, textStatus, errorThrown) =>
-            @WM.Log.logError(@WM.MW.failedQueryError(url))
+            App.log.logError(@WM.MW.failedQueryError(url))
         )
 
     isAURPackage: (pkg, call, callArgs) ->
         call2 = (res, args) ->
             if res.type == "error"
-                @WM.Log.logError("The AUR's RPC interface returned an error: " +
+                App.log.logError("The AUR's RPC interface returned an error: " +
                                                                 res.results)
             else
                 if res.resultcount > 0
@@ -112,7 +114,7 @@ class module.exports
             if jqXHR.status is 404
                 call(false, callArgs)
             else
-                @WM.Log.logError(@WM.MW.failedQueryError(url))
+                App.log.logError(@WM.MW.failedQueryError(url))
         )
 
     isPackageGroup64: (grp, call, callArgs) ->

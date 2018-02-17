@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+App = require('../app')
 {Plugin} = require('./_Plugin')
 
 
@@ -64,7 +65,7 @@ class module.exports.ArchWikiSortContacts extends Plugin
             inactiveIntro = pconf.inactive_message
             summary = @conf.edit_summary
 
-            @WM.Log.logInfo("Sorting " + @WM.Log.linkToWikiPage(page, page) +
+            App.log.logInfo("Sorting " + App.log.linkToWikiPage(page, page) +
                                                                         " ...")
 
             @WM.MW.callQueryEdit(page,
@@ -99,7 +100,7 @@ class module.exports.ArchWikiSortContacts extends Plugin
                             startList, endList, timestamp, edittoken,
                             inactiveLimit, inactiveIntro, summary, callNext, pageid)
         else
-            @WM.Log.logError("Cannot find the needed marks")
+            App.log.logError("Cannot find the needed marks")
 
     iterateUsers: (usersArray, index, ucstart, ucend, users,
                     title, source, startList, endList, timestamp, edittoken,
@@ -117,7 +118,7 @@ class module.exports.ArchWikiSortContacts extends Plugin
                     ucuser += "|" + match[2].charAt(0).toUpperCase() +
                                                             match[2].substr(1)
 
-                @WM.Log.logInfo("Querying " + ucuser + " ...")
+                App.log.logInfo("Querying " + ucuser + " ...")
 
                 @WM.MW.getUserContribs(ucuser, ucstart, ucend,
                     @storeUserContribs,
@@ -127,7 +128,7 @@ class module.exports.ArchWikiSortContacts extends Plugin
 
             else if userString != "" and
                                     userString.indexOf(inactiveIntro) != 0
-                @WM.Log.logError("An entry in the list may not be correctly " +
+                App.log.logError("An entry in the list may not be correctly " +
                                                                 "formatted")
             else
                 @iterateUsers(usersArray, index, ucstart, ucend, users, title,
@@ -215,7 +216,7 @@ class module.exports.ArchWikiSortContacts extends Plugin
                             [title, callNext, pageid],
                             null)
         else
-            @WM.Log.logInfo(@WM.Log.linkToWikiPage(title, title) +
+            App.log.logInfo(App.log.linkToWikiPage(title, title) +
                                             " was already up to date")
             @iteratePages(pageid, callNext)
 
@@ -225,9 +226,9 @@ class module.exports.ArchWikiSortContacts extends Plugin
         pageid = args[2]
 
         if res.edit and res.edit.result == 'Success'
-            @WM.Log.logInfo(@WM.Log.linkToWikiPage(title, title) +
+            App.log.logInfo(App.log.linkToWikiPage(title, title) +
                                                     " was correctly updated")
             @iteratePages(pageid, callNext)
         else
-            @WM.Log.logError(res['error']['info'] +
+            App.log.logError(res['error']['info'] +
                                             " (" + res['error']['code'] + ")")

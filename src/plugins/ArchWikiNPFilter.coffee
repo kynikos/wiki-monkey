@@ -17,6 +17,7 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 {jssc} = require('../modules/libs')
+App = require('../app')
 {Plugin} = require('./_Plugin')
 
 
@@ -42,7 +43,7 @@ class module.exports.ArchWikiNPFilter extends Plugin
             if language != @conf.default_language
                 @moveArticle(contentDiv, li, language)
 
-        @WM.Log.logInfo("Grouped articles by language")
+        App.log.logInfo("Grouped articles by language")
 
     moveArticle: (contentDiv, li, language) ->
         langHs = contentDiv.children('h5')

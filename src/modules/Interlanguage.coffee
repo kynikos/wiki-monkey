@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+App = require('../app')
+
 
 class module.exports
     constructor: (@WM) ->
@@ -179,8 +181,8 @@ class module.exports
                 #   language whose language tag is not in the white list
                 # tag is already lower-cased
                 if firstPage or whitelist.indexOf(tag) > -1
-                    @WM.Log.logInfo("Reading " +
-                                @WM.Log.linkToPage(url, "[[" + origTag + ":" +
+                    App.log.logInfo("Reading " +
+                                App.log.linkToPage(url, "[[" + origTag + ":" +
                                 title + "]]") + " ...")
 
                     this.queryLinks(
@@ -210,8 +212,8 @@ class module.exports
                     )
 
             else
-                @WM.Log.logWarning("Cannot extract the page title from " +
-                            @WM.Log.linkToPage(url, decodeURI(url)) +
+                App.log.logWarning("Cannot extract the page title from " +
+                            App.log.linkToPage(url, decodeURI(url)) +
                             ", removing it if it
                             was linked from the processed article")
                 @WM.Interlanguage.collectLinks(
@@ -238,24 +240,24 @@ class module.exports
         callArgs = args[6]
 
         if error == 'nonexisting'
-            @WM.Log.logWarning(@WM.Log.linkToPage(url,
+            App.log.logWarning(App.log.linkToPage(url,
                                 "[[" + origTag + ":" + title + "]]") +
                                 " seems to point
                                 to a non-existing article: removing it if
                                 it was linked from the processed article")
         else
             if error == 'unsolvedredirect'
-                @WM.Log.logWarning(@WM.Log.linkToPage(url,
+                App.log.logWarning(App.log.linkToPage(url,
                                 "[[" + origTag + ":" + title + "]]") +
                                 " will not be checked because it points to
                                 an external redirect")
             else if error == 'unknown'
-                @WM.Log.logWarning(@WM.Log.linkToPage(url,
+                App.log.logWarning(App.log.linkToPage(url,
                                 "[[" + origTag + ":" + title + "]]") +
                                 " will not be checked because of an
                                 unspecified problem")
             else if error == 'notinwhitelist'
-                @WM.Log.logWarning(@WM.Log.linkToPage(url,
+                App.log.logWarning(App.log.linkToPage(url,
                                 "[[" + origTag + ":" + title + "]]") +
                                 " will not be checked because " + tag +
                                 " is not included in the whitelist defined
@@ -277,20 +279,20 @@ class module.exports
                     # Just ignore any conflicting links and warn the user:
                     # if it's a real conflict, the user will investigate it,
                     # otherwise the user will ignore it
-                    @WM.Log.logWarning("Possibly conflicting interlanguage
-                        links: " + @WM.Log.linkToPage(link.url, "[[" +
+                    App.log.logWarning("Possibly conflicting interlanguage
+                        links: " + App.log.linkToPage(link.url, "[[" +
                         link.lang + ":" + link.title + "]]") + " and " +
-                        @WM.Log.linkToPage(vlink.url, "[[" + link.lang + ":" +
+                        App.log.linkToPage(vlink.url, "[[" + link.lang + ":" +
                         visitedlinks[link.lang.toLowerCase()].title + "]]"))
 
                 else if nlink and nlink.url != link.url
                     # Just ignore any conflicting links and warn the user:
                     # if it's a real conflict, the user will investigate it,
                     # otherwise the user will ignore it
-                    @WM.Log.logWarning("Possibly conflicting interlanguage
-                        links: " + @WM.Log.linkToPage(link.url, "[[" +
+                    App.log.logWarning("Possibly conflicting interlanguage
+                        links: " + App.log.linkToPage(link.url, "[[" +
                         link.lang + ":" + link.title + "]]") + " and " +
-                        @WM.Log.linkToPage(nlink.url, "[[" + link.lang + ":" +
+                        App.log.linkToPage(nlink.url, "[[" + link.lang + ":" +
                         newlinks[link.lang.toLowerCase()].title + "]]"))
 
         @WM.Interlanguage.collectLinks(
@@ -324,8 +326,8 @@ class module.exports
                         break
 
                 if not tagFound
-                    @WM.Log.logWarning(tag + " interlanguage links are not
-                        supported in " + @WM.Log.linkToPage(url, "[[" +
+                    App.log.logWarning(tag + " interlanguage links are not
+                        supported in " + App.log.linkToPage(url, "[[" +
                         link.origTag + ":" + link.title + "]]") +
                         " , ignoring them")
 

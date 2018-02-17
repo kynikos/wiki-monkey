@@ -17,11 +17,12 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 {jssc} = require('../modules/libs')
+WM = require('../modules')
 Str = require('@kynikos/misc/dist/Str')
 
 
 class module.exports
-    constructor: (@WM) ->
+    constructor: ->
         @_currentInfoDisplayState = true
 
         # The .warning and .error classes are already used by
@@ -70,23 +71,19 @@ class module.exports
                     color: 'inherit'
                     textDecoration: 'underline'
         )
-        @classes = classes
 
-    _makeLogArea: ->
-        log = document.createElement('div')
-        log.id = 'WikiMonkeyLog'
+        @area = document.createElement('div')
+        @area.id = 'WikiMonkeyLog'
 
         par = document.createElement('p')
         par.appendChild(@makeFilterLink())
         par.appendChild(document.createTextNode(' '))
         par.appendChild(@makeSaveLink())
-        log.appendChild(par)
+        @area.appendChild(par)
 
         @logarea = document.createElement('div')
-        @logarea.className = @classes.log
-        log.appendChild(@logarea)
-
-        return log
+        @logarea.className = classes.log
+        @area.appendChild(@logarea)
 
     makeFilterLink: ->
         link = document.createElement('a')
@@ -225,5 +222,5 @@ class module.exports
         # Do *not* use encodeURIComponent(title) because the passed title may
         #   have a fragment or a query string that would then be encoded
         #   MediaWiki should be able to correctly resolve the title anyway
-        wikiUrls = @WM.MW.getWikiUrls()
+        wikiUrls = WM.MW.getWikiUrls()
         return "<a href=\"" + wikiUrls.short + title + "\">" + anchor + "</a>"

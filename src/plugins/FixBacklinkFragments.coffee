@@ -17,6 +17,7 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 {jssc} = require('../modules/libs')
+App = require('../app')
 {Plugin} = require('./_Plugin')
 
 
@@ -83,11 +84,11 @@ class module.exports.FixBacklinkFragments extends Plugin
                     oldlink = newlink
                     newlink = "[[" + target + "#" + fixedFragment +
                         (if link.anchor then "|" + link.anchor else "") + "]]"
-                    @WM.Log.logInfo("Fixed broken link fragment: " + oldlink +
-                        " -> " + @WM.Log.linkToWikiPage(link.link, newlink))
+                    App.log.logInfo("Fixed broken link fragment: " + oldlink +
+                        " -> " + App.log.linkToWikiPage(link.link, newlink))
                 else
-                    @WM.Log.logWarning("Cannot fix broken link fragment: " +
-                                    @WM.Log.linkToWikiPage(link.link, newlink))
+                    App.log.logWarning("Cannot fix broken link fragment: " +
+                                    App.log.linkToWikiPage(link.link, newlink))
 
             newText += newlink
             prevId = link.index + link.length
@@ -154,18 +155,18 @@ class module.exports.FixBacklinkFragments extends Plugin
                         anchor = if args[1] then ("|" + args[1].value) else ""
                         newlink = "{{" + template.title + "|" + target +
                                         "#" + fixedFragment  + anchor + "}}"
-                        @WM.Log.logInfo("Fixed broken link fragment: " +
+                        App.log.logInfo("Fixed broken link fragment: " +
                                         template.rawTransclusion + " -> " +
-                                        @WM.Log.linkToWikiPage(link, newlink))
+                                        App.log.linkToWikiPage(link, newlink))
                         return newlink
 
                     else
-                        @WM.Log.logWarning("Cannot fix broken link fragment: " +
-                                                    @WM.Log.linkToWikiPage(link,
+                        App.log.logWarning("Cannot fix broken link fragment: " +
+                                                    App.log.linkToWikiPage(link,
                                                     template.rawTransclusion))
 
         else
-            @WM.Log.logWarning("Template:" + template.title + " must have " +
+            App.log.logWarning("Template:" + template.title + " must have " +
                         expectedArgs + " and only " + expectedArgs +
                         (if expectedArgs > 1 then " arguments: " else " argument: ") +
                         template.rawTransclusion)
@@ -196,7 +197,7 @@ class module.exports.FixBacklinkFragments extends Plugin
         summary = @conf.edit_summary
 
         target = readTarget()
-        @WM.Log.logHidden("Target page: " + target)
+        App.log.logHidden("Target page: " + target)
 
         if target
             if chainArgs is null
@@ -206,7 +207,7 @@ class module.exports.FixBacklinkFragments extends Plugin
                     'page': target
                     'redirects': 1
 
-                @WM.Log.logWarning("If some articles in the list are
+                App.log.logWarning("If some articles in the list are
                     linking to the target article
                     through a redirect, you should process the backlinks
                     of that redirect page separately through its
@@ -223,7 +224,7 @@ class module.exports.FixBacklinkFragments extends Plugin
             else
                 @mainAutoRead(target, chainArgs, title, summary, callBot)
         else
-            @WM.Log.logError('The target page cannot be empty')
+            App.log.logError('The target page cannot be empty')
             callBot(false, null)
 
     mainAutoFindSections: (res, args) =>
@@ -241,7 +242,7 @@ class module.exports.FixBacklinkFragments extends Plugin
             @mainAutoRead(target, sections, title, summary, callBot)
 
         else
-            @WM.Log.logError("The set target page, " + target +
+            App.log.logError("The set target page, " + target +
                                                     ", seems not to exist")
 
             if res.error
@@ -285,7 +286,7 @@ class module.exports.FixBacklinkFragments extends Plugin
         if res.edit and res.edit.result == 'Success'
             callBot(1, sections)
         else if res.error
-            @WM.Log.logError(res.error.info + " (" + res.error.code + ")")
+            App.log.logError(res.error.info + " (" + res.error.code + ")")
             callBot(res.error.code, sections)
         else
             callBot(false, sections)

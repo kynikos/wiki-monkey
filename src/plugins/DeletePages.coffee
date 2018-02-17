@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+App = require('../app')
 {Plugin} = require('./_Plugin')
 
 
@@ -61,7 +62,7 @@ class module.exports.DeletePages extends Plugin
 
         if not res.delete
             if res.error
-                @WM.Log.logError("#{@WM.Log.linkToWikiPage(title, title)}
+                App.log.logError("#{App.log.linkToWikiPage(title, title)}
                                 has not been deleted!\n#{res.error.info}
                                 (#{res.error.code})")
                 callBot(res.error.code, null)

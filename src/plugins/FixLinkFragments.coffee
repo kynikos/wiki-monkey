@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+App = require('../app')
 {Plugin} = require('./_Plugin')
 
 
@@ -31,8 +32,8 @@ class module.exports.FixLinkFragments extends Plugin
             rawfragment = link.fragment
 
             if not (link.namespace? and link.namespace.toLowerCase() in iwprefixes) and rawfragment
-                @WM.Log.logInfo("Processing " +
-                    @WM.Log.linkToWikiPage(link.link, link.rawLink) + " ...")
+                App.log.logInfo("Processing " +
+                    App.log.linkToWikiPage(link.link, link.rawLink) + " ...")
 
                 target = (if link.namespace then link.namespace + ":" else "") +
                                                                     link.title
@@ -99,8 +100,8 @@ class module.exports.FixLinkFragments extends Plugin
                 newText += "[[" + target + "#" + fixedFragment  +
                             (if link.anchor then "|" + link.anchor else "") + "]]"
             else
-                @WM.Log.logWarning("Cannot fix broken link fragment: " +
-                            @WM.Log.linkToWikiPage(link.link, link.rawLink))
+                App.log.logWarning("Cannot fix broken link fragment: " +
+                            App.log.linkToWikiPage(link.link, link.rawLink))
                 newText += link.rawLink
 
             prevId = link.index + link.length
@@ -184,8 +185,8 @@ class module.exports.FixLinkFragments extends Plugin
                         #   liberal link syntaxes (e.g. spaces around the
                         #   colon)
                         if not @WM.Parser.compareArticleTitles(target, title)
-                            @WM.Log.logInfo("Processing " +
-                                        @WM.Log.linkToWikiPage(link,
+                            App.log.logInfo("Processing " +
+                                        App.log.linkToWikiPage(link,
                                         template.rawTransclusion) + " ...")
 
                             params =
@@ -216,7 +217,7 @@ class module.exports.FixLinkFragments extends Plugin
                                         templates, expectedArgs, index, source,
                                         newText, prevId, call, callArgs)
             else
-                @WM.Log.logWarning("Template:" + template.title +
+                App.log.logWarning("Template:" + template.title +
                         " must have " + expectedArgs + " and only " +
                         expectedArgs +
                         (if expectedArgs > 1 then " arguments: " else " argument: ") +
@@ -263,8 +264,8 @@ class module.exports.FixLinkFragments extends Plugin
                 anchor = if template.arguments[1] then ("|" + template.arguments[1].value) else ""
                 newText += "{{" + template.title + "|" + target + "#" + fixedFragment  + anchor + "}}"
             else
-                @WM.Log.logWarning("Cannot fix broken link fragment: " +
-                    @WM.Log.linkToWikiPage(target, template.rawTransclusion))
+                App.log.logWarning("Cannot fix broken link fragment: " +
+                    App.log.linkToWikiPage(target, template.rawTransclusion))
                 newText += template.rawTransclusion
 
             prevId = template.index + template.length
@@ -275,7 +276,7 @@ class module.exports.FixLinkFragments extends Plugin
 
     main_editor: (callNext) ->
         source = @WM.Editor.readSource()
-        @WM.Log.logInfo("Fixing links to sections of other articles ...")
+        App.log.logInfo("Fixing links to sections of other articles ...")
         title = @WM.Editor.getTitle()
         res = await @WM.MW.getInterwikiMap(title)
         iwprefixes = (iw.prefix for iw in res.query.interwikimap)
@@ -295,9 +296,9 @@ class module.exports.FixLinkFragments extends Plugin
 
         if newText != source
             @WM.Editor.writeSource(newText)
-            @WM.Log.logInfo("Replaced links to sections of other articles")
+            App.log.logInfo("Replaced links to sections of other articles")
         else
-            @WM.Log.logInfo("No fixable links to sections of other articles " +
+            App.log.logInfo("No fixable links to sections of other articles " +
                                                                     "found")
 
         if callNext

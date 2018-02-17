@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+App = require('../app')
 {Plugin} = require('./_Plugin')
 Str = require('@kynikos/misc/dist/Str')
 
@@ -27,7 +28,7 @@ class module.exports.FixDoubleRedirects extends Plugin
         edit_summary: "fix double redirect"
 
     main_special: (callNext) ->
-        @WM.Log.logInfo("Fixing double redirects ...")
+        App.log.logInfo("Fixing double redirects ...")
 
         {results, siteinfo} =
             await @WM.MW.getSpecialList("DoubleRedirects", "namespaces")
@@ -39,10 +40,10 @@ class module.exports.FixDoubleRedirects extends Plugin
             for doubleRedirect in results
                 await @process_redirect(doubleRedirect, namespaces)
         catch error
-            @WM.Log.logError(error.message)
+            App.log.logError(error.message)
             return false
 
-        @WM.Log.logInfo("Fixed double redirects")
+        App.log.logInfo("Fixed double redirects")
         if callNext
             callNext()
 
@@ -63,7 +64,7 @@ class module.exports.FixDoubleRedirects extends Plugin
 
         middleRedirectSource = middleRedirect.revisions[0]["*"]
 
-        @WM.Log.logInfo("Processing #{@WM.Log.linkToWikiPage(
+        App.log.logInfo("Processing #{App.log.linkToWikiPage(
             doubleRedirect.title, doubleRedirect.title)} ...")
 
         rawOldTarget = doubleRedirectSource.match(/\s*#redirect\s*[^\n]+/i)
@@ -119,5 +120,5 @@ class module.exports.FixDoubleRedirects extends Plugin
                 throw new Error("#{res.error.info} (#{res.error.code})")
 
         else
-            @WM.Log.logWarning("Could not fix #{@WM.Log.linkToWikiPage(
+            App.log.logWarning("Could not fix #{App.log.linkToWikiPage(
                 doubleRedirect.title, doubleRedirect.title)}")

@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+App = require('../app')
 {Plugin} = require('./_Plugin')
 
 
@@ -71,7 +72,7 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
         whitelist = @computeWhiteList(@conf.tag_whitelist)
         supportedLangs = @computeSupportedLangs(@conf.supported_tags)
 
-        @WM.Log.logInfo("Synchronizing interlanguage links ...")
+        App.log.logInfo("Synchronizing interlanguage links ...")
 
         @WM.MW.getLocalInterwikiMap(
             title,
@@ -102,7 +103,7 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
 
         newlinks = {}
 
-        @WM.Log.logInfo("Reading " + @WM.Log.linkToPage(url, "edited article") +
+        App.log.logInfo("Reading " + App.log.linkToPage(url, "edited article") +
                                                                     " ...")
 
         if langlinks
@@ -117,19 +118,19 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
                     # Just ignore any conflicting links and warn the user:
                     # if it's a real conflict, the user will investigate it,
                     # otherwise the user will ignore it
-                    @WM.Log.logWarning("Possibly conflicting interlanguage " +
-                        "links: " + @WM.Log.linkToPage(link.url, "[[" +
+                    App.log.logWarning("Possibly conflicting interlanguage " +
+                        "links: " + App.log.linkToPage(link.url, "[[" +
                         link.lang + ":" + link.title + "]]") + " and " +
-                        @WM.Log.linkToPage(vlink.url, "[[" + link.lang + ":" +
+                        App.log.linkToPage(vlink.url, "[[" + link.lang + ":" +
                         visitedlinks[link.lang.toLowerCase()].title + "]]"))
                 else if nlink and nlink.url != link.url
                     # Just ignore any conflicting links and warn the user:
                     # if it's a real conflict, the user will investigate it,
                     # otherwise the user will ignore it
-                    @WM.Log.logWarning("Possibly conflicting interlanguage " +
-                        "links: " + @WM.Log.linkToPage(link.url, "[[" +
+                    App.log.logWarning("Possibly conflicting interlanguage " +
+                        "links: " + App.log.linkToPage(link.url, "[[" +
                         link.lang + ":" + link.title + "]]") + " and " +
-                        @WM.Log.linkToPage(nlink.url, "[[" + link.lang + ":" +
+                        App.log.linkToPage(nlink.url, "[[" + link.lang + ":" +
                         newlinks[link.lang.toLowerCase()].title + "]]"))
 
             @WM.Interlanguage.collectLinks(
@@ -142,7 +143,7 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
                 [tag, url, source, langlinks, iwmap, callNext]
             )
         else
-            @WM.Log.logInfo("No interlanguage links found")
+            App.log.logInfo("No interlanguage links found")
 
             if callNext
                 callNext()
@@ -160,9 +161,9 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
 
         if newText != source
             @WM.Editor.writeSource(newText)
-            @WM.Log.logInfo("Synchronized interlanguage links")
+            App.log.logInfo("Synchronized interlanguage links")
         else
-            @WM.Log.logInfo("Interlanguage links were already synchronized")
+            App.log.logInfo("Interlanguage links were already synchronized")
 
         if callNext
             callNext()
@@ -238,7 +239,7 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
         if res.edit and res.edit.result == 'Success'
             callBot(1, null)
         else if res.error
-            @WM.Log.logError(res.error.info + " (" + res.error.code + ")")
+            App.log.logError(res.error.info + " (" + res.error.code + ")")
             callBot(res.error.code, null)
         else
             callBot(false, null)

@@ -16,8 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+App = require('../app')
 {Plugin} = require('./_Plugin')
-
 Str = require('@kynikos/misc/dist/Str')
 
 
@@ -76,7 +76,7 @@ class module.exports.UpdateCategoryTree extends Plugin
         })
 
     readToC: (args) =>
-        @WM.Log.logInfo('Updating ' + @WM.Log.linkToWikiPage(args.params.page,
+        App.log.logInfo('Updating ' + App.log.linkToWikiPage(args.params.page,
                                                 args.params.page) + " ...")
         @WM.MW.callQueryEdit(args.params.page,
                             @processToC,
@@ -105,11 +105,11 @@ class module.exports.UpdateCategoryTree extends Plugin
                     callArgs: args
                 })
             else
-                @WM.Log.logError("Cannot find insertion marks in " +
-                    @WM.Log.linkToWikiPage(args.params.page, args.params.page))
+                App.log.logError("Cannot find insertion marks in " +
+                    App.log.linkToWikiPage(args.params.page, args.params.page))
                 @iteratePages(args.pageid, args.callNext)
         else
-            @WM.Log.logWarning(@WM.Log.linkToWikiPage(args.params.page,
+            App.log.logWarning(App.log.linkToWikiPage(args.params.page,
                         args.params.page) + ' has been updated too recently')
             @iteratePages(args.pageid, args.callNext)
 
@@ -127,7 +127,7 @@ class module.exports.UpdateCategoryTree extends Plugin
     processCategory: (params) =>
         args = params.callArgs
 
-        @WM.Log.logInfo("Processing " + @WM.Log.linkToWikiPage(params.node,
+        App.log.logInfo("Processing " + App.log.linkToWikiPage(params.node,
                                                         params.node) + " ...")
 
         text = ""
@@ -151,7 +151,7 @@ class module.exports.UpdateCategoryTree extends Plugin
 
         if params.children == "loop"
             text += "'''[LOOP]'''\n"
-            @WM.Log.logWarning("Loop in " + @WM.Log.linkToWikiPage(params.node,
+            App.log.logWarning("Loop in " + App.log.linkToWikiPage(params.node,
                                                                 params.node))
             @processCategoryEnd(params, args, text)
         else
@@ -232,19 +232,19 @@ class module.exports.UpdateCategoryTree extends Plugin
                 args,
                 null)
         else
-            @WM.Log.logInfo(@WM.Log.linkToWikiPage(args.params.page,
+            App.log.logInfo(App.log.linkToWikiPage(args.params.page,
                                 args.params.page) + ' is already up to date')
 
             @iteratePages(args.pageid, args.callNext)
 
     checkWrite: (res, args) =>
         if res.edit and res.edit.result == 'Success'
-            @WM.Log.logInfo(@WM.Log.linkToWikiPage(args.params.page,
+            App.log.logInfo(App.log.linkToWikiPage(args.params.page,
                                     args.params.page) + ' correctly updated')
 
             @iteratePages(args.pageid, args.callNext)
 
         else
-            @WM.Log.logError(@WM.Log.linkToWikiPage(args.params.page,
+            App.log.logError(App.log.linkToWikiPage(args.params.page,
                     args.params.page) + ' has not been updated!\n' +
                     res['error']['info'] + " (" + res['error']['code'] + ")")

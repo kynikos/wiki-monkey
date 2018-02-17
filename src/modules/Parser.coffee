@@ -18,6 +18,7 @@
 
 RegEx = require('@kynikos/misc/dist/RegEx')
 Str = require('@kynikos/misc/dist/Str')
+App = require('../app')
 
 
 class module.exports
@@ -164,7 +165,7 @@ class module.exports
                                                                 "}}", "x")[1]
 
                     if maskedText.search(/(\{\{|\}\})/) > -1
-                        @WM.Log.logWarning("[[" + match[0] + "]] seems to
+                        App.log.logWarning("[[" + match[0] + "]] seems to
                             contain part of a template, and the resulting
                             behaviour cannot be predicted by this
                             function, so the link will be ignored
@@ -377,7 +378,7 @@ class module.exports
             #   Note that the title already doesn't allow "{", "}", "[" nor
             #     "]"
             if maskedArgs.search(/(\{\{|\}\}|\[\[|\]\])/) > -1
-                @WM.Log.logWarning("{{" + match[0] + "}} seems to
+                App.log.logWarning("{{" + match[0] + "}} seems to
                     contain part of a link or template, and the resulting
                     behaviour cannot be predicted by this function, so
                     the whole template will be ignored altogether")

@@ -17,6 +17,7 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 {jssc} = require('../modules/libs')
+App = require('../app')
 {Plugin} = require('./_Plugin')
 
 
@@ -111,9 +112,9 @@ class module.exports.SimpleReplace extends Plugin
             newString: document.getElementById(
                                 "WikiMonkey-SimpleReplace-NewString").value
 
-        @WM.Log.logHidden("Pattern: " + configuration.pattern)
-        @WM.Log.logHidden("Ignore case: " + configuration.ignoreCase)
-        @WM.Log.logHidden("New string: " + configuration.newString)
+        App.log.logHidden("Pattern: " + configuration.pattern)
+        App.log.logHidden("Ignore case: " + configuration.ignoreCase)
+        App.log.logHidden("New string: " + configuration.newString)
 
     storeRegExp = ->
         configuration.regExp = new RegExp(configuration.pattern,
@@ -125,7 +126,7 @@ class module.exports.SimpleReplace extends Plugin
         try
             storeRegExp()
         catch exc
-            @WM.Log.logError("Invalid pattern: " + exc)
+            App.log.logError("Invalid pattern: " + exc)
             # Block the execution of this function
             return false
 
@@ -135,7 +136,7 @@ class module.exports.SimpleReplace extends Plugin
 
         if newtext != source
             @WM.Editor.writeSource(newtext)
-            @WM.Log.logInfo("Text substituted")
+            App.log.logInfo("Text substituted")
 
         if callNext
             callNext()
@@ -146,7 +147,7 @@ class module.exports.SimpleReplace extends Plugin
         try
             storeRegExp()
         catch exc
-            @WM.Log.logError("Invalid pattern: " + exc)
+            App.log.logError("Invalid pattern: " + exc)
             callBot(false, null)
             # Block the execution of this function
             return false
@@ -159,7 +160,7 @@ class module.exports.SimpleReplace extends Plugin
                                 @mainAutoWrite,
                                 [summary, callBot])
         else
-            @WM.Log.logError("The edit summary cannot be empty")
+            App.log.logError("The edit summary cannot be empty")
             callBot(false, null)
 
     mainAutoWrite: (title, source, timestamp, edittoken, args) =>
@@ -181,7 +182,7 @@ class module.exports.SimpleReplace extends Plugin
         if res.edit and res.edit.result == 'Success'
             callBot(1, null)
         else if res.error
-            @WM.Log.logError(res.error.info + " (" + res.error.code + ")")
+            App.log.logError(res.error.info + " (" + res.error.code + ")")
             callBot(res.error.code, null)
         else
             callBot(false, null)

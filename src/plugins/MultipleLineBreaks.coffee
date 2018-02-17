@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+App = require('../app')
 {Plugin} = require('./_Plugin')
 
 
@@ -32,7 +33,7 @@ class module.exports.MultipleLineBreaks extends Plugin
 
         if newtext != source
             @WM.Editor.writeSource(newtext)
-            @WM.Log.logInfo("Removed multiple line breaks")
+            App.log.logInfo("Removed multiple line breaks")
 
         if callNext
             callNext()

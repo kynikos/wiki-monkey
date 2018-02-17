@@ -17,6 +17,7 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 {jssc} = require('../modules/libs')
+App = require('./index')
 
 
 class module.exports
@@ -161,11 +162,11 @@ class module.exports
             @executeEntryAction(plugin, null)
 
     executeEntryAction: (plugin, callNext) =>
-        @WM.Log.logHidden("Plugin: " + plugin.constructor.name)
+        App.log.logHidden("Plugin: " + plugin.constructor.name)
         plugin["main_#{@page_type}"](callNext)
 
     warnInputNeeded: (plugin, callNext) =>
-        @WM.Log.logWarning("Plugin " + plugin.constructor.name +
+        App.log.logWarning("Plugin " + plugin.constructor.name +
             " was not executed because it requires input from its interface.")
 
         if callNext

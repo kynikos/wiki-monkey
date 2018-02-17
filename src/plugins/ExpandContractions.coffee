@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+App = require('../app')
 {Plugin} = require('./_Plugin')
 
 
@@ -27,7 +28,7 @@ class module.exports.ExpandContractions extends Plugin
     replace: (source, regExp, newString, checkString, checkStrings) ->
         newtext = source.replace(regExp, newString)
         if checkStrings.length > 1 and newtext != source
-            @WM.Log.logWarning("Replaced some \"#{checkString}\" with
+            App.log.logWarning("Replaced some \"#{checkString}\" with
                                \"#{checkStrings[0]}\": check that it didn't
                                mean \"#{checkStrings.slice(1).join('\" or \"')}\"
                                instead")
@@ -67,12 +68,12 @@ class module.exports.ExpandContractions extends Plugin
 
         ss = newtext.match(/[a-z]'s/gi)
         if ss
-            @WM.Log.logWarning("Found " + ss.length + " instances of \"'s\": " +
+            App.log.logWarning("Found " + ss.length + " instances of \"'s\": " +
                     "check if they can be replaced with \"is\", \"has\", ...")
 
         if newtext != source
             @WM.Editor.writeSource(newtext)
-            @WM.Log.logInfo("Expanded contractions")
+            App.log.logInfo("Expanded contractions")
 
         if callNext
             callNext()

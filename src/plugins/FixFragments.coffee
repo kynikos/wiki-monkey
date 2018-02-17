@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+App = require('../app')
 {Plugin} = require('./_Plugin')
 
 
@@ -97,9 +98,9 @@ class module.exports.FixFragments extends Plugin
                     escHeading = @WM.Parser.dotEncodeLinkBreakingFragmentCharacters(heading)
                     return "[[#" + escHeading + (if lalt then "|" + lalt else "") + "]]"
 
-        # It's not easy to use @WM.Log.linkToWikiPage because pure fragments
+        # It's not easy to use App.log.linkToWikiPage because pure fragments
         #   are not supported yet
-        @WM.Log.logWarning("Cannot fix broken section link: " + rawlink)
+        App.log.logWarning("Cannot fix broken section link: " + rawlink)
         return rawlink
 
     main_editor: (callNext) ->
@@ -108,9 +109,9 @@ class module.exports.FixFragments extends Plugin
 
         if newtext != source
             @WM.Editor.writeSource(newtext)
-            @WM.Log.logInfo("Fixed section links")
+            App.log.logInfo("Fixed section links")
         else
-            @WM.Log.logInfo("No fixable section links found")
+            App.log.logInfo("No fixable section links found")
 
         if callNext
             callNext()

@@ -18,6 +18,7 @@
 
 {jssc} = require('../modules/libs')
 WM = require('../modules')
+App = require('./index')
 
 
 class module.exports
@@ -309,7 +310,7 @@ class module.exports
                 # run _disableStopBot() here, not in _endAutomatic()
                 self._disableStopBot()
                 self._endAutomatic(true)
-                self.WM.Log.logInfo('Bot stopped manually')
+                App.log.logInfo('Bot stopped manually')
         )(stopId), false)
 
         start = document.getElementById('WikiMonkeyBotStart')
@@ -366,7 +367,7 @@ class module.exports
                 try
                     regexp = new RegExp(pattern, modifiers)
                 catch exc
-                    @WM.Log.logError('Invalid regexp: ' + exc)
+                    App.log.logError('Invalid regexp: ' + exc)
                     return false
 
                 @configuration.filters.push([regexp, negative])
@@ -435,7 +436,7 @@ class module.exports
         return origClasses.join(" ")
 
     _previewFilter: =>
-        @WM.Log.logInfo('Updating filter preview, please wait ...')
+        App.log.logInfo('Updating filter preview, please wait ...')
         @_disableStartBot('Updating filter preview ...')
 
         if @configuration.list.previous
@@ -490,7 +491,7 @@ class module.exports
                         link.className = @restoreOriginalLinkClassName(
                                                             link.className)
 
-        @WM.Log.logInfo('Preview updated (' + N + ' pages selected)')
+        App.log.logInfo('Preview updated (' + N + ' pages selected)')
 
         if enable
             @_enableStartBot()
@@ -520,7 +521,7 @@ class module.exports
 
     _startAutomatic: =>
         if @_checkOtherBotsRunning() and not @_canForceStart()
-            @WM.Log.logError("It's not possible to start the bot (without
+            App.log.logError("It's not possible to start the bot (without
                         forcing it) for one of the following reasons:<br>
                         * another bot instance is currently running<br>
                         * a previously running bot has stopped due to a
@@ -549,9 +550,9 @@ class module.exports
 
             @_disableForceStart()
             @_setBotToken()
-            @WM.Log.logInfo('Starting bot ...')
-            @WM.Log.logHidden("Plugin: " + @configuration.plugin_name)
-            @WM.Log.logHidden("Filter: " + document.getElementById(
+            App.log.logInfo('Starting bot ...')
+            App.log.logHidden("Plugin: " + @configuration.plugin_name)
+            App.log.logHidden("Filter: " + document.getElementById(
                                                 'WikiMonkeyBotFilter').value)
             @_disableStartBot('Bot is running ...')
             @_disableControls()
@@ -574,7 +575,7 @@ class module.exports
                 when 0
                     ln.className = self.changeWikiMonkeyLinkClassName(ln.className,
                                                     @classes.botUnchanged)
-                    self.WM.Log.logInfo(self.WM.Log.linkToWikiPage(article, article) +
+                    App.log.logInfo(App.log.linkToWikiPage(article, article) +
                                                     " processed (unchanged)")
                     id++
                     self._processItem(status, lis, id, linkId, resArgs)
@@ -583,7 +584,7 @@ class module.exports
                 when 1
                     ln.className = self.changeWikiMonkeyLinkClassName(ln.className,
                                                     @classes.botChanged)
-                    self.WM.Log.logInfo(self.WM.Log.linkToWikiPage(article, article) +
+                    App.log.logInfo(App.log.linkToWikiPage(article, article) +
                                                     " processed (changed)")
                     id++
                     self._processItem(status, lis, id, linkId, resArgs)
@@ -592,8 +593,8 @@ class module.exports
                 when 'protectedpage'
                     ln.className = self.changeWikiMonkeyLinkClassName(ln.className,
                                                     @classes.botBypassed)
-                    self.WM.Log.logWarning("This user doesn't have the rights to " +
-                                    "edit " + self.WM.Log.linkToWikiPage(article,
+                    App.log.logWarning("This user doesn't have the rights to " +
+                                    "edit " + App.log.linkToWikiPage(article,
                                     article) + ", bypassing it ...")
                     id++
                     # Change status to 0 (page not changed)
@@ -603,8 +604,8 @@ class module.exports
                 else
                     ln.className = self.changeWikiMonkeyLinkClassName(ln.className,
                                                         @classes.botFailed)
-                    self.WM.Log.logError("Error processing " +
-                                    self.WM.Log.linkToWikiPage(article, article) +
+                    App.log.logError("Error processing " +
+                                    App.log.linkToWikiPage(article, article) +
                                     ", stopping the bot")
                     self._endAutomatic(true)
 
@@ -625,7 +626,7 @@ class module.exports
                 else
                     interval = @configuration.interval
 
-                @WM.Log.logInfo('Waiting ' + (interval / 1000) +
+                App.log.logInfo('Waiting ' + (interval / 1000) +
                                                             ' seconds ...')
 
                 stopId = setTimeout(( (lis, id, ln, article, chainArgs) ->
@@ -638,15 +639,15 @@ class module.exports
                         if not self._checkOtherBotsRunning()
                             ln.className = self.changeWikiMonkeyLinkClassName(
                                     ln.className, @classes.botProcessing)
-                            self.WM.Log.logInfo("Processing " +
-                                    self.WM.Log.linkToWikiPage(article, article) +
+                            App.log.logInfo("Processing " +
+                                    App.log.linkToWikiPage(article, article) +
                                     " ...")
 
                             self.configuration.function_(article,
                                 self.makeCallContinue(lis, id, linkId, ln, article),
                                 chainArgs)
                         else
-                            self.WM.Log.logError('Another bot has been ' +
+                            App.log.logError('Another bot has been ' +
                                                 'force-started, stopping ...')
                             self._endAutomatic(false)
                 )(items, index, link, title, chainArgs), interval)
@@ -660,7 +661,7 @@ class module.exports
 
     _endAutomatic: (reset) ->
         @_resetBotToken(reset)
-        @WM.Log.logInfo('Bot operations completed (check the log for ' +
+        App.log.logInfo('Bot operations completed (check the log for ' +
                                                         'warnings or errors)')
         @_disableStartBot('Bot operations completed, reset and preview ' +
                                                                 'the filter')

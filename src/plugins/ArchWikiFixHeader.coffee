@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+App = require('../app')
 {Plugin} = require('./_Plugin')
 
 
@@ -62,7 +63,7 @@ class module.exports.ArchWikiFixHeader extends Plugin
         else if dt and lct
             dlct = if dt.index < lct.index then "{{Lowercase title}}" else "{{DISPLAYTITLE:#{dt.value}}}"
         if displaytitle.length or lowercasetitle.length
-            @WM.Log.logWarning("Found multiple instances of
+            App.log.logWarning("Found multiple instances of
                 {{DISPLAYTITLE:...}} or {{Lowercase title}}: only the last
                 one has been used, the others have been deleted")
 
@@ -78,7 +79,7 @@ class module.exports.ArchWikiFixHeader extends Plugin
                 if bswitch.match[0] not in bslist
                     bslist.push(bswitch.match[0])
                 else
-                    @WM.Log.logWarning("Removed duplicate of
+                    App.log.logWarning("Removed duplicate of
                                         #{bswitch.match[0]}")
                 tempcontent += content.substring(contentId, bswitch.index)
                 contentId = bswitch.index + bswitch.length
@@ -101,7 +102,7 @@ class module.exports.ArchWikiFixHeader extends Plugin
         contentId = 0
         for cat in categories
             if cat.fragment
-                @WM.Log.logWarning(@WM.Log.linkToWikiPage(cat.link,
+                App.log.logWarning(App.log.linkToWikiPage(cat.link,
                                     cat.rawLink) + " contains a fragment
                                     reference, but it doesn't make sense
                                     in categories and will be removed")
@@ -113,7 +114,7 @@ class module.exports.ArchWikiFixHeader extends Plugin
             catlang = @WM.ArchWiki.detectLanguage(cattext)[1]
             catlink = "[[" + cattext + (if cat.anchor then "|" + cat.anchor else "") + "]]"
             if language != catlang
-                @WM.Log.logWarning(@WM.Log.linkToWikiPage(cat.link, cattext) +
+                App.log.logWarning(App.log.linkToWikiPage(cat.link, cattext) +
                     " belongs to a different
                     language than the one of the title (" + language + ")")
 
@@ -121,8 +122,8 @@ class module.exports.ArchWikiFixHeader extends Plugin
                 catlist.push(cattext)
                 catlinks.push(catlink)
             else
-                @WM.Log.logWarning("Removed duplicate of " +
-                                    @WM.Log.linkToWikiPage(cat.link, cattext))
+                App.log.logWarning("Removed duplicate of " +
+                                    App.log.linkToWikiPage(cat.link, cattext))
 
             tempcontent += content.substring(contentId, cat.index)
             contentId = cat.index + cat.length
@@ -130,7 +131,7 @@ class module.exports.ArchWikiFixHeader extends Plugin
         if catlist.length
             header += catlinks.join("\n") + "\n"
         else
-            @WM.Log.logWarning("The article is not categorized")
+            App.log.logWarning("The article is not categorized")
         tempcontent += content.substring(contentId)
         content = tempcontent
 
@@ -142,11 +143,11 @@ class module.exports.ArchWikiFixHeader extends Plugin
         contentId = 0
         for link in interlanguage
             if link.anchor
-                # Cannot use @WM.Log.linkToWikiPage because local interlanguage
+                # Cannot use App.log.linkToWikiPage because local interlanguage
                 #   links would not resolved correctly; linkToPage would need
                 #   to find the URL instead, which seems too complicated for
                 #   the purpose of this plugin
-                @WM.Log.logWarning(link.rawLink + " contains an alternative
+                App.log.logWarning(link.rawLink + " contains an alternative
                                     text, but it doesn't make sense in
                                     interlanguage links and will be removed")
 
@@ -160,11 +161,11 @@ class module.exports.ArchWikiFixHeader extends Plugin
                 iwlist.push(linktext)
                 iwlinks.push(fulllink)
             else
-                # Cannot use @WM.Log.linkToWikiPage because local interlanguage
+                # Cannot use App.log.linkToWikiPage because local interlanguage
                 #   links would not resolved correctly; linkToPage would need
                 #   to find the URL instead, which seems too complicated for
                 #   the purpose of this plugin
-                @WM.Log.logWarning("Removed duplicate of " + linktext)
+                App.log.logWarning("Removed duplicate of " + linktext)
 
             tempcontent += content.substring(contentId, link.index)
             contentId = link.index + link.length
@@ -183,7 +184,7 @@ class module.exports.ArchWikiFixHeader extends Plugin
 
         if newText != source
             @WM.Editor.writeSource(newText)
-            @WM.Log.logInfo("Fixed header")
+            App.log.logInfo("Fixed header")
 
         if callNext
             callNext()

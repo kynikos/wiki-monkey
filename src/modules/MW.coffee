@@ -17,6 +17,7 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 {A} = require('./libs')
+App = require('../app')
 
 
 class module.exports
@@ -160,7 +161,7 @@ class module.exports
 
     failedQueryError: (url) ->
         if url
-            return "Failed query: #{@WM.Log.linkToPage(url, url)}"
+            return "Failed query: #{App.log.linkToPage(url, url)}"
         return "Failed query"
 
     callAPIGet: (params, call, callArgs, callError) ->
@@ -172,10 +173,10 @@ class module.exports
                 call(data, callArgs)
         ).fail((jqXHR, textStatus, errorThrown) =>
             console.error(jqXHR, textStatus, errorThrown)
-            @WM.Log.logError(@failedQueryError())
+            App.log.logError(@failedQueryError())
             if confirm("Wiki Monkey error: Failed query\n\nDo you want " +
                                                             "to retry?")
-                @WM.Log.logInfo("Retrying ...")
+                App.log.logInfo("Retrying ...")
                 @callAPIGet(params, call, callArgs, callError)
             else if callError
                 callError(callArgs)
@@ -190,10 +191,10 @@ class module.exports
                 call(data, callArgs)
         ).fail((jqXHR, textStatus, errorThrown) =>
             console.error(jqXHR, textStatus, errorThrown)
-            @WM.Log.logError(@failedQueryError())
+            App.log.logError(@failedQueryError())
             if confirm("Wiki Monkey error: Failed query\n\nDo you want " +
                                                             "to retry?")
-                @WM.Log.logInfo("Retrying ...")
+                App.log.logInfo("Retrying ...")
                 @callAPIPost(params, call, callArgs, callError)
 
             else if callError

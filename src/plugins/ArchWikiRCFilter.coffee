@@ -17,6 +17,7 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 {jssc} = require('../modules/libs')
+App = require('../app')
 {Plugin} = require('./_Plugin')
 
 
@@ -30,7 +31,7 @@ class module.exports.ArchWikiRCFilter extends Plugin
         h4s = $('#mw-content-text .mw-changeslist > h4')
 
         if h4s.eq(0).next()[0].localName.toLowerCase() != 'div'
-            @WM.Log.logError("This filter is designed to work on top of
+            App.log.logError("This filter is designed to work on top of
                               MediaWiki's filter, which you can
                               enable in your user preferences.")
         else
@@ -54,7 +55,7 @@ class module.exports.ArchWikiRCFilter extends Plugin
                         if language != @conf.default_language
                             @moveArticle(groupDiv, articleTable, language)
 
-            @WM.Log.logInfo("Grouped articles by language")
+            App.log.logInfo("Grouped articles by language")
 
     moveArticle: (groupDiv, articleTable, language) ->
         langHs = groupDiv.children('h5')
