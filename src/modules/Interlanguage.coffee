@@ -74,8 +74,7 @@ class module.exports
                         timestamp = page.revisions[0].timestamp
                         edittoken = page.edittoken
                         iwmap = res.query.interwikimap
-                        langlinks = @WM.Interlanguage.parseLinks(
-                                                supportedLangs, source, iwmap)
+                        langlinks = @parseLinks(supportedLangs, source, iwmap)
                     else
                         # The requested article doesn't exist
                         error = 'nonexisting'
@@ -191,12 +190,12 @@ class module.exports
                         supportedLangs,
                         whitelist,
                         firstPage,
-                        @WM.Interlanguage._collectLinksContinue,
+                        @_collectLinksContinue,
                         [url, tag, origTag, visitedlinks, newlinks, callEnd,
                                                                     callArgs]
                     )
                 else
-                    @WM.Interlanguage._collectLinksContinue(
+                    @_collectLinksContinue(
                         title,
                         supportedLangs,
                         whitelist,
@@ -216,7 +215,7 @@ class module.exports
                             App.log.linkToPage(url, decodeURI(url)) +
                             ", removing it if it
                             was linked from the processed article")
-                @WM.Interlanguage.collectLinks(
+                @collectLinks(
                     visitedlinks,
                     newlinks,
                     supportedLangs,
@@ -263,7 +262,7 @@ class module.exports
                                 " is not included in the whitelist defined
                                 in the configuration")
 
-            visitedlinks[tag] = @WM.Interlanguage.createVisitedLink(origTag,
+            visitedlinks[tag] = @createVisitedLink(origTag,
                                             title, url, iwmap, source,
                                             timestamp, edittoken, langlinks)
 
@@ -273,7 +272,7 @@ class module.exports
 
                 if not vlink and not nlink
                     newlinks[link.lang.toLowerCase()] =
-                                    @WM.Interlanguage.createNewLink(link.lang,
+                                    @createNewLink(link.lang,
                                                         link.title, link.url)
                 else if vlink and vlink.url != link.url
                     # Just ignore any conflicting links and warn the user:
@@ -295,7 +294,7 @@ class module.exports
                         App.log.linkToPage(nlink.url, "[[" + link.lang + ":" +
                         newlinks[link.lang.toLowerCase()].title + "]]"))
 
-        @WM.Interlanguage.collectLinks(
+        @collectLinks(
             visitedlinks,
             newlinks,
             supportedLangs,

@@ -111,9 +111,9 @@ class module.exports.WikiMonkey
             Cat: new Cat(this)
             Diff: new Diff(this)
             Editor: new Editor(this)
+            Interlanguage: new Interlanguage(this)
         })
 
-        @Interlanguage = new Interlanguage(this)
         module.exports.MW = @MW = new MW(this)
         @Parser = new Parser(this)
         @Tables = new Tables(this)

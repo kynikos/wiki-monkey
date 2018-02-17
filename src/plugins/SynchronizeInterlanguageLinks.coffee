@@ -91,14 +91,14 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
 
         source = WM.Editor.readSource()
 
-        langlinks = @WM.Interlanguage.parseLinks(supportedLangs, source, iwmap)
+        langlinks = WM.Interlanguage.parseLinks(supportedLangs, source, iwmap)
 
         wikiUrls = @WM.MW.getWikiUrls()
         url = wikiUrls.short + encodeURIComponent(
                                 @WM.Parser.squashContiguousWhitespace(title))
 
         visitedlinks = {}
-        visitedlinks[tag.toLowerCase()] = @WM.Interlanguage.createVisitedLink(
+        visitedlinks[tag.toLowerCase()] = WM.Interlanguage.createVisitedLink(
                                             tag, pureTitle, url, iwmap,
                                             source, null, null, langlinks)
 
@@ -113,7 +113,7 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
                 vlink = visitedlinks[link.lang.toLowerCase()]
 
                 if not vlink and not nlink
-                    newlinks[link.lang.toLowerCase()] = @WM.Interlanguage.createNewLink(
+                    newlinks[link.lang.toLowerCase()] = WM.Interlanguage.createNewLink(
                                             link.lang, link.title, link.url)
                 else if vlink and vlink.url != link.url
                     # Just ignore any conflicting links and warn the user:
@@ -134,7 +134,7 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
                         App.log.linkToPage(nlink.url, "[[" + link.lang + ":" +
                         newlinks[link.lang.toLowerCase()].title + "]]"))
 
-            @WM.Interlanguage.collectLinks(
+            WM.Interlanguage.collectLinks(
                 visitedlinks,
                 newlinks,
                 supportedLangs,
@@ -157,7 +157,7 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
         iwmap = args[4]
         callNext = args[5]
 
-        newText = @WM.Interlanguage.updateLinks(tag, url, iwmap, source,
+        newText = WM.Interlanguage.updateLinks(tag, url, iwmap, source,
                                                             langlinks, links)
 
         if newText != source
@@ -186,10 +186,10 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
         visitedlinks = {}
 
         newlinks = {}
-        newlinks[tag.toLowerCase()] = @WM.Interlanguage.createNewLink(tag,
+        newlinks[tag.toLowerCase()] = WM.Interlanguage.createNewLink(tag,
                                                             pureTitle, url)
 
-        @WM.Interlanguage.collectLinks(
+        WM.Interlanguage.collectLinks(
             visitedlinks,
             newlinks,
             supportedLangs,
@@ -216,7 +216,7 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
         timestamp = links[lcTag].timestamp
         edittoken = links[lcTag].edittoken
 
-        newText = @WM.Interlanguage.updateLinks(tag, url, iwmap, source,
+        newText = WM.Interlanguage.updateLinks(tag, url, iwmap, source,
                                                             langlinks, links)
 
         if newText != source
