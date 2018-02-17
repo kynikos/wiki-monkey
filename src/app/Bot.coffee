@@ -22,7 +22,7 @@ App = require('./index')
 
 
 class module.exports
-    constructor: (@WM, functions, lists) ->
+    constructor: (functions, lists) ->
         @configuration =
             plugin_name: null
             function_: ->
@@ -105,7 +105,7 @@ class module.exports
         ffunctions = []
 
         for Plugin in functions
-            plugin = new Plugin(@WM)
+            plugin = new Plugin()
             pluginInst = plugin.conf.bot_label
 
             # This allows to disable an entry by giving it any second

@@ -21,7 +21,7 @@ WM = require('../modules')
 
 
 class module.exports
-    constructor: (@WM, @page_type, plugins) ->
+    constructor: (@page_type, plugins) ->
         {classes} = jssc(
             commands:
                 display: 'flex'
@@ -43,7 +43,7 @@ class module.exports
         selectFilter = $('<select/>').change(@updateFilterUI(filters))
 
         for Plugin in plugins
-            plugin = new Plugin(@WM)
+            plugin = new Plugin()
             pluginInst = plugin.conf.filter_label
 
             # This allows to disable an entry by giving it any second

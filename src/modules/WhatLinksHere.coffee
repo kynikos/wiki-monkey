@@ -18,7 +18,7 @@
 
 
 class module.exports
-    constructor: (@WM) ->
+    constructor: ->
 
     isWhatLinksHerePage: ->
         return if document.getElementById('mw-whatlinkshere-list') then true else

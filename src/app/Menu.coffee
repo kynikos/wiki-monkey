@@ -21,7 +21,7 @@ App = require('./index')
 
 
 class module.exports
-    constructor: (@WM, @page_type, plugins) ->
+    constructor: (@page_type, plugins) ->
         {classes} = jssc(
             menu:
                 '& input.margin':
@@ -34,7 +34,7 @@ class module.exports
         groupActions = {}
 
         for Plugin in plugins
-            plugin = new Plugin(@WM)
+            plugin = new Plugin()
             pluginInst = plugin.conf["#{@page_type}_menu"]
 
             # This allows to disable an entry by giving it a menu_entry

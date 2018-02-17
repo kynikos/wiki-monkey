@@ -20,7 +20,7 @@ Str = require('@kynikos/misc/dist/Str')
 
 
 class module.exports
-    constructor: (@WM) ->
+    constructor: ->
 
     appendRow: (source, mark, values) ->
         lastId = source.lastIndexOf('|}' + mark)

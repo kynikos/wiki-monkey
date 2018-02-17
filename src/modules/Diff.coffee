@@ -20,7 +20,7 @@ WM = require('./index')
 
 
 class module.exports
-    constructor: (@WM) ->
+    constructor: ->
 
     getEndTimestamp: (call, callArgs) ->
         title = mw.config.get('wgPageName')

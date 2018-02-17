@@ -50,7 +50,7 @@ class module.exports.Plugin
         if $.isEmptyObject(user_config[@name])
             delete user_config[@name]
 
-    constructor: (@WM) ->
+    constructor: ->
 
     main_bot: null
     main_diff: null

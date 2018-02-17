@@ -21,7 +21,7 @@ App = require('../app')
 
 
 class module.exports
-    constructor: (@WM) ->
+    constructor: ->
 
     parseLinks: (supportedLangs, source, iwmap) =>
         parsedLinks = WM.Parser.findSpecialLinks(

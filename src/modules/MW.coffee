@@ -24,7 +24,7 @@ class module.exports
     localWikiPaths = null
     localWikiUrls = null
 
-    constructor: (@WM) ->
+    constructor: ->
         @api = new mw.Api()
 
         wpaths = @_getWikiPaths(location.href)

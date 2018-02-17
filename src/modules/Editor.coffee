@@ -20,7 +20,7 @@ WM = require('./index')
 
 
 class module.exports
-    constructor: (@WM) ->
+    constructor: ->
 
     getTitle: ->
         return WM.Parser.squashContiguousWhitespace(

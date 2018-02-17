@@ -22,8 +22,8 @@ route = require('./router')
 Log = require('./Log')
 
 
-module.exports.App = (WMtemp) ->
-    {ui, display, displayLog, nextNode} = route(WMtemp)
+module.exports.App = ->
+    {ui, display, displayLog, nextNode} = route()
 
     if not ui
         return false

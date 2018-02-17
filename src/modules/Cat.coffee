@@ -21,7 +21,7 @@ WM = require('./index')
 
 
 class module.exports
-    constructor: (@WM) ->
+    constructor: ->
 
     recurseTree: (params) ->
         params.callChildren = @_recurseTreeCallChildren

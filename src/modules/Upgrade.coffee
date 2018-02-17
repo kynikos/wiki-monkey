@@ -24,7 +24,7 @@ WM = require('./index')
 class module.exports
     REPO_RAW_URL = "https://raw.githubusercontent.com/kynikos/wiki-monkey"
 
-    constructor: (@WM) ->
+    constructor: ->
         @check_obsolete_config()
         if WM.conf.update_check_wdays
             @check_and_notify()

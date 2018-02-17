@@ -22,7 +22,7 @@ App = require('../app')
 
 
 class module.exports
-    constructor: (@WM) ->
+    constructor: ->
 
     squashContiguousWhitespace: (title) ->
         # MediaWiki treats consecutive whitespace characters in titles and

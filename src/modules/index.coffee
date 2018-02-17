@@ -103,20 +103,20 @@ class module.exports.WikiMonkey
             Plugins: @Plugins
         })
 
-    init: =>
+    init: ->
         Object.assign(module.exports, {
             # The ArchPackages module is currently unusable
-            # ArchPackages: new ArchPackages(this)
-            ArchWiki: new ArchWiki(this)
-            Cat: new Cat(this)
-            Diff: new Diff(this)
-            Editor: new Editor(this)
-            Interlanguage: new Interlanguage(this)
-            MW: new MW(this)
-            Parser: new Parser(this)
-            Tables: new Tables(this)
-            WhatLinksHere: new WhatLinksHere(this)
+            # ArchPackages: new ArchPackages()
+            ArchWiki: new ArchWiki()
+            Cat: new Cat()
+            Diff: new Diff()
+            Editor: new Editor()
+            Interlanguage: new Interlanguage()
+            MW: new MW()
+            Parser: new Parser()
+            Tables: new Tables()
+            WhatLinksHere: new WhatLinksHere()
         })
 
-        new Upgrade(this)
-        App(this)
+        new Upgrade()
+        App()

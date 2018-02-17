@@ -30,7 +30,7 @@ class module.exports
     #       Perhaps ask the Arch devs if it's possible to enable CORS requests
     #       on the archlinux.org websites
 
-    constructor: (@WM) ->
+    constructor: ->
 
     searchOfficialPackagesByExactName: (name, call, callArgs) ->
         url = "https://www.archlinux.org/packages/search/json/"
