@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+WM = require('./index')
+
 
 class module.exports
     constructor: (@WM) ->
@@ -402,13 +404,13 @@ class module.exports
         return [pureTitle, detectedLanguage]
 
     findAllInterlanguageLinks: (source) ->
-        # See also @WM.Parser.findInterlanguageLinks!!!
-        return @WM.Parser.findSpecialLinks(source,
+        # See also WM.Parser.findInterlanguageLinks!!!
+        return WM.Parser.findSpecialLinks(source,
                                     this.getInterwikiLanguages().join("|"))
 
     findInternalInterlanguageLinks: (source) ->
-        # See also @WM.Parser.findInterlanguageLinks!!!
-        return @WM.Parser.findSpecialLinks(source,
+        # See also WM.Parser.findInterlanguageLinks!!!
+        return WM.Parser.findSpecialLinks(source,
                             this.getInternalInterwikiLanguages().join("|"))
 
     getTableOfContents: (tag) ->

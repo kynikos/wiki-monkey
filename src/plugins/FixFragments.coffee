@@ -28,9 +28,9 @@ class module.exports.FixFragments extends Plugin
 
     fixLinks: (source) ->
         title = WM.Editor.getTitle()
-        sections = @WM.Parser.findSectionHeadings(source).sections
+        sections = WM.Parser.findSectionHeadings(source).sections
 
-        slinks = @WM.Parser.findSectionLinks(source)
+        slinks = WM.Parser.findSectionLinks(source)
         newtext1 = ""
         prevId = 0
 
@@ -48,7 +48,7 @@ class module.exports.FixFragments extends Plugin
         #   for each wiki
         # Recognizing namespaces would let recognize more liberal link
         #   syntaxes (e.g. spaces around the colon)
-        ilinks = @WM.Parser.findInternalLinks(newtext1, null, title)
+        ilinks = WM.Parser.findInternalLinks(newtext1, null, title)
         newtext2 = ""
         prevId = 0
 
@@ -69,12 +69,12 @@ class module.exports.FixFragments extends Plugin
         return newtext2
 
     fixLink: (source, sections, rawlink, rawfragment, lalt) ->
-        fragment = @WM.Parser.squashContiguousWhitespace(rawfragment).trim()
+        fragment = WM.Parser.squashContiguousWhitespace(rawfragment).trim()
 
         for section in sections
             heading = section.cleanheading
-            dotHeading = @WM.Parser.dotEncode(heading)
-            dotFragment = @WM.Parser.dotEncode(fragment)
+            dotHeading = WM.Parser.dotEncode(heading)
+            dotFragment = WM.Parser.dotEncode(fragment)
 
             if dotHeading.toLowerCase() == dotFragment.toLowerCase()
                 if fragment == dotFragment
@@ -96,7 +96,7 @@ class module.exports.FixFragments extends Plugin
                     # If the fragment was *partially* encoded instead, a
                     # link-breaking character may have been encoded, so all
                     # link-breaking characters must be re-encoded here!
-                    escHeading = @WM.Parser.dotEncodeLinkBreakingFragmentCharacters(heading)
+                    escHeading = WM.Parser.dotEncodeLinkBreakingFragmentCharacters(heading)
                     return "[[#" + escHeading + (if lalt then "|" + lalt else "") + "]]"
 
         # It's not easy to use App.log.linkToWikiPage because pure fragments

@@ -24,7 +24,7 @@ class module.exports
     constructor: (@WM) ->
 
     parseLinks: (supportedLangs, source, iwmap) =>
-        parsedLinks = @WM.Parser.findSpecialLinks(
+        parsedLinks = WM.Parser.findSpecialLinks(
             source,
             supportedLangs.join("|")
         )
@@ -40,7 +40,7 @@ class module.exports
                     # Fix the url _before_ replacing $1
                     lurl = WM.MW.fixInterwikiUrl(iw.url)
                     lurl = lurl.replace("$1", encodeURIComponent(
-                                @WM.Parser.squashContiguousWhitespace(ltitle)))
+                                WM.Parser.squashContiguousWhitespace(ltitle)))
                     break
 
             langlinks.push({lang: ltag, title: ltitle, url: lurl, index: link.index, length: link.length})

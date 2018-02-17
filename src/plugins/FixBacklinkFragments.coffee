@@ -65,7 +65,7 @@ class module.exports.FixBacklinkFragments extends Plugin
         #   for each wiki
         # Recognizing namespaces would let recognize more liberal link
         #   syntaxes (e.g. spaces around the colon)
-        links = @WM.Parser.findInternalLinks(source, null, target)
+        links = WM.Parser.findInternalLinks(source, null, target)
 
         newText = ""
         prevId = 0
@@ -103,7 +103,7 @@ class module.exports.FixBacklinkFragments extends Plugin
         return newText
 
     fixArchWikiLinks: (source, target, sections) =>
-        links = @WM.Parser.findTemplates(source, 'Related')
+        links = WM.Parser.findTemplates(source, 'Related')
 
         newText1 = ""
         prevId = 0
@@ -115,7 +115,7 @@ class module.exports.FixBacklinkFragments extends Plugin
 
         newText1 += source.substr(prevId)
 
-        links2 = @WM.Parser.findTemplates(newText1, 'Related2')
+        links2 = WM.Parser.findTemplates(newText1, 'Related2')
 
         newText2 = ""
         prevId = 0
@@ -146,7 +146,7 @@ class module.exports.FixBacklinkFragments extends Plugin
                 #   maintained for each wiki
                 # Recognizing namespaces would let recognize more liberal link
                 #   syntaxes (e.g. spaces around the colon)
-                if @WM.Parser.compareArticleTitles(ltitle, target)
+                if WM.Parser.compareArticleTitles(ltitle, target)
                     rawfragment = link.substr(fragId + 1)
                     fixedFragment = @fixFragment(rawfragment, sections)
 
@@ -176,7 +176,7 @@ class module.exports.FixBacklinkFragments extends Plugin
 
     fixFragment: (rawfragment, sections) =>
         if rawfragment
-            fragment = @WM.Parser.squashContiguousWhitespace(rawfragment)
+            fragment = WM.Parser.squashContiguousWhitespace(rawfragment)
                                                                     .trim()
 
             if sections.indexOf(fragment) < 0
@@ -237,7 +237,7 @@ class module.exports.FixBacklinkFragments extends Plugin
 
         if res.parse
             for section in res.parse.sections
-                sections.push(@WM.Parser.squashContiguousWhitespace(
+                sections.push(WM.Parser.squashContiguousWhitespace(
                                         section.line).trim())
 
             @mainAutoRead(target, sections, title, summary, callBot)

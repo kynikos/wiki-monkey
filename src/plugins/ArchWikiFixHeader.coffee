@@ -40,8 +40,8 @@ class module.exports.ArchWikiFixHeader extends Plugin
             header += "<noinclude>\n"
 
         # DISPLAYTITLE and Template:Lowercase_title
-        displaytitle = @WM.Parser.findVariables(content, "DISPLAYTITLE")
-        lowercasetitle = @WM.Parser.findTemplates(content, "Lowercase title")
+        displaytitle = WM.Parser.findVariables(content, "DISPLAYTITLE")
+        lowercasetitle = WM.Parser.findTemplates(content, "Lowercase title")
         titlemods = displaytitle.concat(lowercasetitle)
         titlemods.sort( (a, b) ->
             return a.index - b.index
@@ -69,7 +69,7 @@ class module.exports.ArchWikiFixHeader extends Plugin
                 one has been used, the others have been deleted")
 
         # Behavior switches
-        behaviorswitches = @WM.Parser.findBehaviorSwitches(content)
+        behaviorswitches = WM.Parser.findBehaviorSwitches(content)
         bslist = []
         tempcontent = ""
         contentId = 0
@@ -96,7 +96,7 @@ class module.exports.ArchWikiFixHeader extends Plugin
             header += dlct + " " + bslist.join(" ") + "\n"
 
         # Categories
-        categories = @WM.Parser.findCategories(content)
+        categories = WM.Parser.findCategories(content)
         catlist = []
         catlinks = []
         tempcontent = ""
@@ -108,7 +108,7 @@ class module.exports.ArchWikiFixHeader extends Plugin
                                     reference, but it doesn't make sense
                                     in categories and will be removed")
 
-            cleantitle = @WM.Parser.squashContiguousWhitespace(cat.title)
+            cleantitle = WM.Parser.squashContiguousWhitespace(cat.title)
             cattext = "Category:" + cleantitle
             # Don't just pass cleantitle here, otherwise the language of
             #   root language categories won't be properly detected
@@ -152,7 +152,7 @@ class module.exports.ArchWikiFixHeader extends Plugin
                                     text, but it doesn't make sense in
                                     interlanguage links and will be removed")
 
-            # Applying @WM.Parser.squashContiguousWhitespace is dangerous here
+            # Applying WM.Parser.squashContiguousWhitespace is dangerous here
             #   because we don't know how the target server handles whitespace
             linktitle = link.title
             linklang = link.namespace

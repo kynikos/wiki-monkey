@@ -16,12 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+WM = require('./index')
+
 
 class module.exports
     constructor: (@WM) ->
 
     getTitle: ->
-        return @WM.Parser.squashContiguousWhitespace(
+        return WM.Parser.squashContiguousWhitespace(
             mw.config.get('wgPageName'))
 
     isSection: ->

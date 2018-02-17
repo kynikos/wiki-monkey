@@ -33,7 +33,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
     doUpdate: (source, call, callArgs) =>
         # Note that findTemplatesPattern puts the pattern in a capturing group
         #   (parentheses) by itself
-        templates = @WM.Parser.findTemplatesPattern(source,
+        templates = WM.Parser.findTemplatesPattern(source,
                                                 "[Pp]kg|[Aa]ur|AUR|[Gg]rp")
         newText = ""
 

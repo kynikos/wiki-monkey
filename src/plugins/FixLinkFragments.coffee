@@ -45,7 +45,7 @@ class module.exports.FixLinkFragments extends Plugin
                 #   maintained for each wiki
                 # Recognizing namespaces would let recognize more liberal link
                 #   syntaxes (e.g. spaces around the colon)
-                if not @WM.Parser.compareArticleTitles(target, title)
+                if not WM.Parser.compareArticleTitles(target, title)
                     params =
                         'action': 'parse'
                         'prop': 'sections'
@@ -88,7 +88,7 @@ class module.exports.FixLinkFragments extends Plugin
             sections = []
 
             for section in res.parse.sections
-                sections.push(@WM.Parser.squashContiguousWhitespace(
+                sections.push(WM.Parser.squashContiguousWhitespace(
                                         section.line).trim())
 
             fixedFragment = @fixFragment(rawfragment, sections)
@@ -112,12 +112,12 @@ class module.exports.FixLinkFragments extends Plugin
                                             newText, prevId, call, callArgs)
 
     fixFragment: (rawfragment, sections) =>
-        fragment = @WM.Parser.squashContiguousWhitespace(rawfragment).trim()
+        fragment = WM.Parser.squashContiguousWhitespace(rawfragment).trim()
 
         if sections.indexOf(fragment) < 0
             for section in sections
-                dotSection = @WM.Parser.dotEncode(section)
-                dotFragment = @WM.Parser.dotEncode(fragment)
+                dotSection = WM.Parser.dotEncode(section)
+                dotFragment = WM.Parser.dotEncode(fragment)
 
                 if dotSection.toLowerCase() == dotFragment.toLowerCase()
                     if fragment == dotFragment
@@ -141,21 +141,21 @@ class module.exports.FixLinkFragments extends Plugin
                         # link-breaking character may have been encoded, so
                         # all link-breaking characters must be re-encoded
                         # here!
-                        return @WM.Parser.dotEncodeLinkBreakingFragmentCharacters(
+                        return WM.Parser.dotEncodeLinkBreakingFragmentCharacters(
                                                                     section)
             return false
         else
             return true
 
     findArchWikiLinks: (newText, iwprefixes, callArgs) =>
-        templates = @WM.Parser.findTemplates(newText, 'Related')
+        templates = WM.Parser.findTemplates(newText, 'Related')
         title = WM.Editor.getTitle()
         @processArchWikiLink(title, iwprefixes, templates, 1, 0,
                     newText, "", 0,
                     @findArchWikiLinks2, callArgs)
 
     findArchWikiLinks2: (newText, iwprefixes, callArgs) =>
-        templates = @WM.Parser.findTemplates(newText, 'Related2')
+        templates = WM.Parser.findTemplates(newText, 'Related2')
         title = WM.Editor.getTitle()
         @processArchWikiLink(title, iwprefixes, templates, 2, 0,
                 newText, "", 0, @mainEnd, callArgs)
@@ -173,7 +173,7 @@ class module.exports.FixLinkFragments extends Plugin
 
                 if fragId > -1
                     rawtarget = link.substring(0, fragId)
-                    target = @WM.Parser.squashContiguousWhitespace(rawtarget).trim()
+                    target = WM.Parser.squashContiguousWhitespace(rawtarget).trim()
                     rawfragment = link.substr(fragId + 1)
 
                     if rawfragment
@@ -185,7 +185,7 @@ class module.exports.FixLinkFragments extends Plugin
                         # Recognizing namespaces would let recognize more
                         #   liberal link syntaxes (e.g. spaces around the
                         #   colon)
-                        if not @WM.Parser.compareArticleTitles(target, title)
+                        if not WM.Parser.compareArticleTitles(target, title)
                             App.log.logInfo("Processing " +
                                         App.log.linkToWikiPage(link,
                                         template.rawTransclusion) + " ...")
@@ -252,7 +252,7 @@ class module.exports.FixLinkFragments extends Plugin
             sections = []
 
             for section in res.parse.sections
-                sections.push(@WM.Parser.squashContiguousWhitespace(
+                sections.push(WM.Parser.squashContiguousWhitespace(
                                         section.line).trim())
 
             fixedFragment = @fixFragment(rawfragment, sections)
@@ -281,7 +281,7 @@ class module.exports.FixLinkFragments extends Plugin
         title = WM.Editor.getTitle()
         res = await WM.MW.getInterwikiMap(title)
         iwprefixes = (iw.prefix for iw in res.query.interwikimap)
-        links = @WM.Parser.findInternalLinks(source, null, null)
+        links = WM.Parser.findInternalLinks(source, null, null)
         @processLink(title, iwprefixes, links, 0, source, "", 0,
                      @mainContinue, callNext)
 

@@ -29,7 +29,7 @@ class module.exports.ArchWikiFixHeadings extends Plugin
     main_editor: (callNext) ->
         source = WM.Editor.readSource()
 
-        info = @WM.Parser.findSectionHeadings(source)
+        info = WM.Parser.findSectionHeadings(source)
 
         if WM.Editor.isSection()
             increaseLevel = info.minLevel - 1

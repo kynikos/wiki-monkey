@@ -69,11 +69,11 @@ class module.exports.FixDoubleRedirects extends Plugin
             doubleRedirect.title, doubleRedirect.title)} ...")
 
         rawOldTarget = doubleRedirectSource.match(/\s*#redirect\s*[^\n]+/i)
-        oldTarget = @WM.Parser.findInternalLinks(rawOldTarget[0], null)[0]
+        oldTarget = WM.Parser.findInternalLinks(rawOldTarget[0], null)[0]
 
         rawMiddleTarget = middleRedirectSource.match(/\s*#redirect\s*[^\n]+/i)
         middleTarget =
-            @WM.Parser.findInternalLinks(rawMiddleTarget[0], null)[0]
+            WM.Parser.findInternalLinks(rawMiddleTarget[0], null)[0]
 
         newTargetFragment = do ->
             if oldTarget.fragment
@@ -95,10 +95,10 @@ class module.exports.FixDoubleRedirects extends Plugin
         newTargetNamespace = do ->
             cns = namespaces[doubleRedirect.databaseResult.c_namespace]["*"]
             if cns
-                return @WM.Parser.squashContiguousWhitespace(cns) + ":"
+                return WM.Parser.squashContiguousWhitespace(cns) + ":"
             return ""
 
-        newTargetTitle = @WM.Parser.squashContiguousWhitespace(
+        newTargetTitle = WM.Parser.squashContiguousWhitespace(
             doubleRedirect.databaseResult.c_title)
 
         newTarget = "[[#{newTargetInterlanguage}#{newTargetNamespace}" +

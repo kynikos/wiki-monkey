@@ -95,7 +95,7 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
 
         wikiUrls = WM.MW.getWikiUrls()
         url = wikiUrls.short + encodeURIComponent(
-                                @WM.Parser.squashContiguousWhitespace(title))
+                                WM.Parser.squashContiguousWhitespace(title))
 
         visitedlinks = {}
         visitedlinks[tag.toLowerCase()] = WM.Interlanguage.createVisitedLink(
@@ -181,7 +181,7 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
 
         wikiUrls = WM.MW.getWikiUrls()
         url = wikiUrls.short + encodeURIComponent(
-                                @WM.Parser.squashContiguousWhitespace(title))
+                                WM.Parser.squashContiguousWhitespace(title))
 
         visitedlinks = {}
 
