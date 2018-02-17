@@ -18,10 +18,16 @@
 
 {Vue, A, Div, Fieldset, Legend} = require('../modules/libs')
 {version} = require('../../package.json')
+route = require('./router')
 Log = require('./Log')
 
 
-module.exports.App = ({display, displayLog, nextNode, ui}) ->
+module.exports.App = (WMtemp) ->
+    {ui, display, displayLog, nextNode} = route(WMtemp)
+
+    if not ui
+        return false
+
     module.exports.log = log = new Log()
 
     root = Div()

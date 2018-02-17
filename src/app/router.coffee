@@ -16,12 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-WM = require('./index')
-Bot = require('../app/Bot')
-Filters = require('../app/Filters')
-Menu = require('../app/Menu')
+WM = require('../modules/index')
+Bot = require('./Bot')
+Filters = require('./Filters')
+Menu = require('./Menu')
 Mods = require('./Mods')
-{App} = require('../app')
 
 
 module.exports = (WMtemp) ->
@@ -41,7 +40,7 @@ module.exports = (WMtemp) ->
         nextNode = $('#wpSummaryLabel').parent().next()[0]
         conf = WM.Plugins.editor
         ui = if conf.length then new Menu(WMtemp, 'editor', conf) else null
-        new Mods(WMtemp).applyEditorMods()
+        new Mods().applyEditorMods()
 
     else if mw.config.get('wgDiffNewId')
         nextNode = $('#bodyContent h2').first()[0]
@@ -100,7 +99,7 @@ module.exports = (WMtemp) ->
             then new Filters(WMtemp, 'recentchanges', conf) \
             else null
         displayLog = false
-        new Mods(WMtemp).applyRecentChangesMods()
+        new Mods().applyRecentChangesMods()
 
     else if specialPage is "newpages"
         nextNode = $('#mw-content-text ul').first()[0]
@@ -119,7 +118,7 @@ module.exports = (WMtemp) ->
         display = false
 
     else if specialPage is "contributions"
-        new Mods(WMtemp).applyContributionsMods()
+        new Mods().applyContributionsMods()
 
     else if specialPage in [
         "ancientpages"
@@ -174,5 +173,4 @@ module.exports = (WMtemp) ->
             ]) else null
         display = false
 
-    if ui
-        App({display, displayLog, nextNode, ui})
+    return {ui, display, displayLog, nextNode}

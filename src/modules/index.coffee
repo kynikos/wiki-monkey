@@ -24,7 +24,7 @@ mwmodpromise = mw.loader.using(['mediawiki.api.edit'
 require('./libs').init()
 
 Upgrade = require('./Upgrade')
-route = require('./router')
+{App} = require('../app')
 
 # The ArchPackages module is currently unusable
 # ArchPackages = require('./ArchPackages')
@@ -117,4 +117,4 @@ class module.exports.WikiMonkey
         @WhatLinksHere = new WhatLinksHere(this)
 
         new Upgrade(this)
-        route(this)
+        App(this)

@@ -16,12 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{jssc} = require('./libs')
-WM = require('./index')
+{jssc} = require('../modules/libs')
+WM = require('../modules')
 
 
 class module.exports
-    constructor: (@WM) ->
+    constructor: ->
 
     disableEditSummarySubmitOnEnter = ->
         $('#wpSummary').keydown( (event) ->
