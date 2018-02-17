@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+WM = require('../modules')
 App = require('../app')
 {Plugin} = require('./_Plugin')
 
@@ -122,7 +123,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
         App.log.logInfo("Looking for " + pkgname +
                                         " in the official repositories ...")
 
-        @WM.ArchPackages.isOfficialPackage(pkgname,
+        WM.ArchPackages.isOfficialPackage(pkgname,
                   @checkOfficial2,
                   [checks, source, newText, templates, index, call, callArgs])
 
@@ -134,7 +135,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
             App.log.logInfo("Looking for " + pkgname.toLowerCase() +
                             " (lowercase) in the official repositories ...")
 
-            @WM.ArchPackages.isOfficialPackage(pkgname.toLowerCase(),
+            WM.ArchPackages.isOfficialPackage(pkgname.toLowerCase(),
                   @checkOfficiallc2,
                   [checks, source, newText, templates, index, call, callArgs])
         else
@@ -145,7 +146,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
         pkgname = templates[index].arguments[0].value.trim()
         App.log.logInfo("Looking for " + pkgname + " in the AUR ...")
 
-        @WM.ArchPackages.isAURPackage(pkgname,
+        WM.ArchPackages.isAURPackage(pkgname,
                  @checkAUR2,
                  [checks, source, newText, templates, index, call, callArgs])
 
@@ -156,7 +157,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
             App.log.logInfo("Looking for " + pkgname.toLowerCase() +
                                                 " (lowercase) in the AUR ...")
 
-            @WM.ArchPackages.isAURPackage(pkgname.toLowerCase(),
+            WM.ArchPackages.isAURPackage(pkgname.toLowerCase(),
                  @checkAURlc2,
                  [checks, source, newText, templates, index, call, callArgs])
         else
@@ -169,7 +170,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
         App.log.logInfo("Looking for " + grpname +
                                             " as an x86_64 package group ...")
 
-        @WM.ArchPackages.isPackageGroup64(grpname,
+        WM.ArchPackages.isPackageGroup64(grpname,
                   @checkGroup64_2,
                   [checks, source, newText, templates, index, call, callArgs])
 
@@ -181,7 +182,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
             App.log.logInfo("Looking for " + grpname.toLowerCase() +
                                 " (lowercase) as an x86_64 package group ...")
 
-            @WM.ArchPackages.isPackageGroup64(grpname.toLowerCase(),
+            WM.ArchPackages.isPackageGroup64(grpname.toLowerCase(),
                   @checkGroup64lc2,
                   [checks, source, newText, templates, index, call, callArgs])
         else
@@ -194,7 +195,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
         App.log.logInfo("Looking for " + grpname +
                                             " as an i686 package group ...")
 
-        @WM.ArchPackages.isPackageGroup32(grpname,
+        WM.ArchPackages.isPackageGroup32(grpname,
                   @checkGroup32_2,
                   [checks, source, newText, templates, index, call, callArgs])
 
@@ -206,7 +207,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
             App.log.logInfo("Looking for " + grpname.toLowerCase() +
                                 " (lowercase) as an i686 package group ...")
 
-            @WM.ArchPackages.isPackageGroup32(grpname.toLowerCase(),
+            WM.ArchPackages.isPackageGroup32(grpname.toLowerCase(),
                   @checkGroup32lc2,
                   [checks, source, newText, templates, index, call, callArgs])
         else

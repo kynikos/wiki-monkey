@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+WM = require('./index')
 App = require('../app')
 
 # References:
@@ -55,7 +56,7 @@ class module.exports
             else
                 call(false, args)
 
-        @WM.ArchPackages.searchOfficialPackagesByExactName(pkg, call2,
+        WM.ArchPackages.searchOfficialPackagesByExactName(pkg, call2,
                                                                     callArgs)
 
     getAURInfo: (arg, call, callArgs) ->
@@ -88,7 +89,7 @@ class module.exports
                 else
                     call(false, args)
 
-        @WM.ArchPackages.getAURInfo(pkg, call2, callArgs)
+        WM.ArchPackages.getAURInfo(pkg, call2, callArgs)
 
     isPackageGroup = (arch, grp, call, callArgs) ->
         url = "https://www.archlinux.org/groups/" +
