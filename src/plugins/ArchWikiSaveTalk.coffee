@@ -61,7 +61,7 @@ class module.exports.ArchWikiSaveTalk extends Plugin
         summary = args[1]
         callNext = args[2]
 
-        @WM.MW.callQueryEdit(article,
+        WM.MW.callQueryEdit(article,
                             @mainWrite,
                             [summary, enddate, callNext])
 
@@ -76,7 +76,7 @@ class module.exports.ArchWikiSaveTalk extends Plugin
         newtext = @WM.Tables.appendRow(source, "<!-- REPLY TABLE -->",
                         ["[" + location.href + " " + title + "]", pEnddate])
 
-        @WM.MW.callAPIPost(
+        WM.MW.callAPIPost(
             {
                 action: "edit",
                 bot: "1",

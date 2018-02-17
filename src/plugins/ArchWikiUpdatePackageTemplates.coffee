@@ -452,7 +452,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
     main_bot: (title, callBot, chainArgs) ->
         summary = @conf.edit_summary
 
-        @WM.MW.callQueryEdit(title,
+        WM.MW.callQueryEdit(title,
                     @mainAutoReplace,
                     [summary, callBot])
 
@@ -472,7 +472,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
         callBot = args[4]
 
         if newtext != source
-            @WM.MW.callAPIPost({
+            WM.MW.callAPIPost({
                                     action: "edit",
                                     bot: "1",
                                     title: title,

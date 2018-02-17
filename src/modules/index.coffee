@@ -112,9 +112,9 @@ class module.exports.WikiMonkey
             Diff: new Diff(this)
             Editor: new Editor(this)
             Interlanguage: new Interlanguage(this)
+            MW: new MW(this)
         })
 
-        module.exports.MW = @MW = new MW(this)
         @Parser = new Parser(this)
         @Tables = new Tables(this)
         @WhatLinksHere = new WhatLinksHere(this)

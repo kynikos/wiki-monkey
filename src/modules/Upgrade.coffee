@@ -75,7 +75,7 @@ class module.exports
 
     upgrade: (upstream_version) ->
         page = "User:#{mw.user.getName()}/common.js"
-        pagelink = @WM.MW.linkArticle(page)
+        pagelink = WM.MW.linkArticle(page)
 
         @display_notification("Upgrading to version #{upstream_version}...")
 
@@ -93,7 +93,7 @@ class module.exports
             )
         ///g
 
-        @WM.MW.api.edit(page, (revision) ->
+        WM.MW.api.edit(page, (revision) ->
             newtext = revision.content.replace(regex,
                                                "$1#{upstream_version}$2")
 

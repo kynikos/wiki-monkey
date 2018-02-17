@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+WM = require('./index')
 App = require('../app')
 
 
@@ -37,7 +38,7 @@ class module.exports
             for iw in iwmap
                 if iw.prefix.toLowerCase() == ltag.toLowerCase()
                     # Fix the url _before_ replacing $1
-                    lurl = @WM.MW.fixInterwikiUrl(iw.url)
+                    lurl = WM.MW.fixInterwikiUrl(iw.url)
                     lurl = lurl.replace("$1", encodeURIComponent(
                                 @WM.Parser.squashContiguousWhitespace(ltitle)))
                     break
@@ -63,7 +64,7 @@ class module.exports
         if not firstPage
             query.redirects = "1"
 
-        @WM.MW.callAPIGet(
+        WM.MW.callAPIGet(
             query,
             (res, args) =>
                 if res.query.pages
@@ -165,10 +166,10 @@ class module.exports
 
             url = link.url
 
-            # Don't use @WM.MW.getTitleFromWikiUrl(decodeURI(url)) because
+            # Don't use WM.MW.getTitleFromWikiUrl(decodeURI(url)) because
             # it wouldn't decode some characters like colons, which are
             # required to be decoded instead when making an API call
-            queryTitle = decodeURIComponent(@WM.MW.getTitleFromWikiUrl(url))
+            queryTitle = decodeURIComponent(WM.MW.getTitleFromWikiUrl(url))
 
             if queryTitle
                 origTag = link.origTag

@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+WM = require('../modules')
 App = require('../app')
 {Plugin} = require('./_Plugin')
 
@@ -29,7 +30,7 @@ class module.exports.DeletePages extends Plugin
     main_bot: (title, callBot, chainArgs) ->
         summary = @conf.edit_summary
 
-        @WM.MW.callQuery({
+        WM.MW.callQuery({
                             prop: 'info'
                             intoken: 'delete'
                             titles: title
@@ -45,7 +46,7 @@ class module.exports.DeletePages extends Plugin
 
         deletetoken = page.deletetoken
 
-        @WM.MW.callAPIPost({
+        WM.MW.callAPIPost({
                             action: 'delete'
                             bot: '1'
                             title: title

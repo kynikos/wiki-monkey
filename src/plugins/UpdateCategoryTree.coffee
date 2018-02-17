@@ -51,7 +51,7 @@ class module.exports.UpdateCategoryTree extends Plugin
                 # This should be a custom configuration object
                 params = pconf
 
-            @WM.MW.isUserBot(this.mainContinue, [params, showRootAlsoIn, summary,
+            WM.MW.isUserBot(this.mainContinue, [params, showRootAlsoIn, summary,
                                                  callNext, pageid])
 
         else if callNext
@@ -79,7 +79,7 @@ class module.exports.UpdateCategoryTree extends Plugin
     readToC: (args) =>
         App.log.logInfo('Updating ' + App.log.linkToWikiPage(args.params.page,
                                                 args.params.page) + " ...")
-        @WM.MW.callQueryEdit(args.params.page,
+        WM.MW.callQueryEdit(args.params.page,
                             @processToC,
                             args)
 
@@ -219,7 +219,7 @@ class module.exports.UpdateCategoryTree extends Plugin
                                                     args.startId, args.endId)
 
         if newtext != args.source
-            @WM.MW.callAPIPost({
+            WM.MW.callAPIPost({
                     action: "edit"
                     bot: "1"
                     minor: "1"

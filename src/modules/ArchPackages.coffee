@@ -46,7 +46,7 @@ class module.exports
             if data
                 call(data, callArgs)
         ).fail((jqXHR, textStatus, errorThrown) ->
-            App.log.logError(@WM.MW.failedQueryError(url))
+            App.log.logError(WM.MW.failedQueryError(url))
         )
 
     isOfficialPackage: (pkg, call, callArgs) ->
@@ -75,7 +75,7 @@ class module.exports
             if data
                 call(data, callArgs)
         ).fail((jqXHR, textStatus, errorThrown) =>
-            App.log.logError(@WM.MW.failedQueryError(url))
+            App.log.logError(WM.MW.failedQueryError(url))
         )
 
     isAURPackage: (pkg, call, callArgs) ->
@@ -115,7 +115,7 @@ class module.exports
             if jqXHR.status is 404
                 call(false, callArgs)
             else
-                App.log.logError(@WM.MW.failedQueryError(url))
+                App.log.logError(WM.MW.failedQueryError(url))
         )
 
     isPackageGroup64: (grp, call, callArgs) ->

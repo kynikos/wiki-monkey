@@ -75,7 +75,7 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
 
         App.log.logInfo("Synchronizing interlanguage links ...")
 
-        @WM.MW.getLocalInterwikiMap(
+        WM.MW.getLocalInterwikiMap(
             title,
             @mainContinue,
             [tag, pureTitle, supportedLangs, whitelist, title, callNext]
@@ -93,7 +93,7 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
 
         langlinks = WM.Interlanguage.parseLinks(supportedLangs, source, iwmap)
 
-        wikiUrls = @WM.MW.getWikiUrls()
+        wikiUrls = WM.MW.getWikiUrls()
         url = wikiUrls.short + encodeURIComponent(
                                 @WM.Parser.squashContiguousWhitespace(title))
 
@@ -179,7 +179,7 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
 
         summary = @conf.edit_summary
 
-        wikiUrls = @WM.MW.getWikiUrls()
+        wikiUrls = WM.MW.getWikiUrls()
         url = wikiUrls.short + encodeURIComponent(
                                 @WM.Parser.squashContiguousWhitespace(title))
 
@@ -220,7 +220,7 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
                                                             langlinks, links)
 
         if newText != source
-            @WM.MW.callAPIPost({
+            WM.MW.callAPIPost({
                  action: "edit"
                  bot: "1"
                  title: title

@@ -17,6 +17,7 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 {jssc} = require('../modules/libs')
+WM = require('../modules')
 App = require('../app')
 {Plugin} = require('./_Plugin')
 
@@ -217,7 +218,7 @@ class module.exports.FixBacklinkFragments extends Plugin
                     hide the redirects in the page lists that allow to do
                     so.")
 
-                @WM.MW.callAPIGet(params,
+                WM.MW.callAPIGet(params,
                          @mainAutoFindSections,
                          [title, target, summary, callBot],
                          null)
@@ -251,7 +252,7 @@ class module.exports.FixBacklinkFragments extends Plugin
                 callBot(false, sections)
 
     mainAutoRead: (target, sections, title, summary, callBot) =>
-        @WM.MW.callQueryEdit(title,
+        WM.MW.callQueryEdit(title,
                             @mainAutoWrite,
                             [target, summary, callBot, sections])
 
@@ -264,7 +265,7 @@ class module.exports.FixBacklinkFragments extends Plugin
         newtext = @fixLinks(source, target, sections)
 
         if newtext != source
-            @WM.MW.callAPIPost({
+            WM.MW.callAPIPost({
                                     action: "edit",
                                     bot: "1",
                                     title: title,

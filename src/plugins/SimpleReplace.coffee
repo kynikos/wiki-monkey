@@ -157,7 +157,7 @@ class module.exports.SimpleReplace extends Plugin
                                     "WikiMonkey-SimpleReplace-Summary").value
 
         if summary != ""
-            @WM.MW.callQueryEdit(title,
+            WM.MW.callQueryEdit(title,
                                 @mainAutoWrite,
                                 [summary, callBot])
         else
@@ -172,7 +172,7 @@ class module.exports.SimpleReplace extends Plugin
                                                     configuration.newString)
 
         if newtext != source
-            @WM.MW.callAPIPost({action: "edit", bot: "1", title: title, summary: summary, text: newtext, basetimestamp: timestamp, token: edittoken},
+            WM.MW.callAPIPost({action: "edit", bot: "1", title: title, summary: summary, text: newtext, basetimestamp: timestamp, token: edittoken},
                                @mainAutoEnd,
                                callBot,
                                null)

@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+WM = require('./index')
+
 
 class module.exports
     constructor: (@WM) ->
@@ -37,7 +39,7 @@ class module.exports
                     rvprop: "timestamp"
                     rvdir: "newer"
                     rvstartid: oldid
-                @WM.MW.callQuery(pars,
+                WM.MW.callQuery(pars,
                                  giveEndTimestamp,
                                  1,
                                  null)
@@ -46,7 +48,7 @@ class module.exports
                     prop: "revisions"
                     revids: oldid
                     rvprop: "timestamp"
-                @WM.MW.callQuery(pars,
+                WM.MW.callQuery(pars,
                                  giveEndTimestamp,
                                  0,
                                  null)
@@ -55,7 +57,7 @@ class module.exports
                     prop: "revisions"
                     revids: diff
                     rvprop: "timestamp"
-                @WM.MW.callQuery(pars,
+                WM.MW.callQuery(pars,
                                  giveEndTimestamp,
                                  0,
                                  null)

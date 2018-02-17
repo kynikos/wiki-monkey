@@ -558,7 +558,7 @@ class module.exports
             @_disableControls()
             @configuration.visited = []
 
-            @WM.MW.isUserBot(@_startAutomaticContinue, [items, linkId])
+            WM.MW.isUserBot(@_startAutomaticContinue, [items, linkId])
 
     _startAutomaticContinue: (botTest, args) =>
         items = args[0]

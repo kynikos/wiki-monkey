@@ -29,7 +29,7 @@ class module.exports.ArchWikiWantedCategories extends Plugin
     main_bot: (title, callBot, chainArgs) ->
         title = title.replace(" (page does not exist)", "")
 
-        @WM.MW.callQuery({
+        WM.MW.callQuery({
                             prop: "info",
                             intoken: "edit",
                             titles: title
@@ -50,7 +50,7 @@ class module.exports.ArchWikiWantedCategories extends Plugin
             text = "[[Category:" + language + "]]"
             summary = "wanted category"
 
-            @WM.MW.callAPIPost({
+            WM.MW.callAPIPost({
                                 action: "edit",
                                 bot: "1",
                                 title: title,

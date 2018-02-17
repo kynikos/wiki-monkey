@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+WM = require('../modules')
 App = require('../app')
 {Plugin} = require('./_Plugin')
 Str = require('@kynikos/misc/dist/Str')
@@ -31,7 +32,7 @@ class module.exports.FixDoubleRedirects extends Plugin
         App.log.logInfo("Fixing double redirects ...")
 
         {results, siteinfo} =
-            await @WM.MW.getSpecialList("DoubleRedirects", "namespaces")
+            await WM.MW.getSpecialList("DoubleRedirects", "namespaces")
 
         {namespaces} = siteinfo
         results.reverse()
@@ -49,14 +50,14 @@ class module.exports.FixDoubleRedirects extends Plugin
 
     process_redirect: (doubleRedirect, namespaces) =>
         {source, timestamp, edittoken} =
-            await @WM.MW.callQueryEdit(doubleRedirect.title)
+            await WM.MW.callQueryEdit(doubleRedirect.title)
         doubleRedirectSource = source
 
         middleRedirectTitle =
             [namespaces[doubleRedirect.databaseResult.b_namespace]['*']
              doubleRedirect.databaseResult.b_title].join(':')
 
-        middleRedirect = await @WM.MW.callQuery(
+        middleRedirect = await WM.MW.callQuery(
             prop: "revisions"
             rvprop: "content"
             titles: middleRedirectTitle
@@ -106,7 +107,7 @@ class module.exports.FixDoubleRedirects extends Plugin
             oldTarget.index, oldTarget.length)
 
         if newText isnt doubleRedirectSource
-            res = await @WM.MW.callAPIPost(
+            res = await WM.MW.callAPIPost(
                 action: "edit"
                 bot: "1"
                 title: doubleRedirect.title

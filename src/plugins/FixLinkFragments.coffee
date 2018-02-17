@@ -52,7 +52,7 @@ class module.exports.FixLinkFragments extends Plugin
                         'page': target
                         'redirects': 1
 
-                    @WM.MW.callAPIGet(params,
+                    WM.MW.callAPIGet(params,
                              @processLinkContinue,
                              [link, target, rawfragment, iwprefixes, links, index, source,
                                     newText, prevId, title, call, callArgs],
@@ -196,7 +196,7 @@ class module.exports.FixLinkFragments extends Plugin
                                 'page': target
                                 'redirects': 1
 
-                            @WM.MW.callAPIGet(params,
+                            WM.MW.callAPIGet(params,
                                  @processArchWikiLinkContinue,
                                  [template, target, rawfragment, iwprefixes, templates,
                                  expectedArgs, index, source, newText,
@@ -279,7 +279,7 @@ class module.exports.FixLinkFragments extends Plugin
         source = WM.Editor.readSource()
         App.log.logInfo("Fixing links to sections of other articles ...")
         title = WM.Editor.getTitle()
-        res = await @WM.MW.getInterwikiMap(title)
+        res = await WM.MW.getInterwikiMap(title)
         iwprefixes = (iw.prefix for iw in res.query.interwikimap)
         links = @WM.Parser.findInternalLinks(source, null, null)
         @processLink(title, iwprefixes, links, 0, source, "", 0,

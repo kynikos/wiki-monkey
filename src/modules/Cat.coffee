@@ -17,6 +17,7 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 Async = require('@kynikos/misc/dist/Async')
+WM = require('./index')
 
 
 class module.exports
@@ -57,7 +58,7 @@ class module.exports
         @_getMembersContinue(query, call, callArgs, [])
 
     _getMembersContinue: (query, call, callArgs, members) ->
-        @WM.MW.callAPIGet(query, (res, args) ->
+        WM.MW.callAPIGet(query, (res, args) ->
             members = members.concat(res.query.categorymembers)
             if res["query-continue"]
                 query.cmcontinue = res["query-continue"]
@@ -79,7 +80,7 @@ class module.exports
         @_getParentsAndInfoContinue(query, call, callArgs, [], null)
 
     _getParentsAndInfoContinue: (query, call, callArgs, parents, info) ->
-        @WM.MW.callAPIGet(query, (res, args) ->
+        WM.MW.callAPIGet(query, (res, args) ->
             page = Object.values(res.query.pages)[0]
 
             if page.categories

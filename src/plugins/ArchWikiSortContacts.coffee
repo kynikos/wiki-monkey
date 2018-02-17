@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+WM = require('../modules')
 App = require('../app')
 {Plugin} = require('./_Plugin')
 
@@ -68,7 +69,7 @@ class module.exports.ArchWikiSortContacts extends Plugin
             App.log.logInfo("Sorting " + App.log.linkToWikiPage(page, page) +
                                                                         " ...")
 
-            @WM.MW.callQueryEdit(page,
+            WM.MW.callQueryEdit(page,
                                 @parseList,
                                 [recentDays, inactiveLimit, inactiveIntro,
                                  summary, callNext, pageid])
@@ -120,7 +121,7 @@ class module.exports.ArchWikiSortContacts extends Plugin
 
                 App.log.logInfo("Querying " + ucuser + " ...")
 
-                @WM.MW.getUserContribs(ucuser, ucstart, ucend,
+                WM.MW.getUserContribs(ucuser, ucstart, ucend,
                     @storeUserContribs,
                     [usersArray, index, ucstart, ucend, users, title, source,
                      startList, endList, timestamp, edittoken, inactiveLimit,
@@ -202,7 +203,7 @@ class module.exports.ArchWikiSortContacts extends Plugin
                                                     source.substring(endList)
 
         if newText != source
-            @WM.MW.callAPIPost({
+            WM.MW.callAPIPost({
                                     action: "edit"
                                     bot: "1"
                                     minor: "1"
