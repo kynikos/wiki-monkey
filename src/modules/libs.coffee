@@ -21,7 +21,10 @@ require('babel-polyfill')
 # jQuery is provided globally by MediaWiki
 
 module.exports.init = ->
-    module.exports.Vue = require('vue')
+    Vue = require('vue')
+    Vuex = require('vuex')
+    Vue.use(Vuex)
+    module.exports = {Vue, Vuex}
 
     hh = require('hyperscript-helpers')(require('hyperscript'))
     for tag, helper of hh

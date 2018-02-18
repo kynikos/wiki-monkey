@@ -16,7 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{Vue, A, Div, Fieldset, Legend} = require('../modules/libs')
+{Vue, Vuex, Div} = require('../modules/libs')
+store = require('./store')
 {version} = require('../../package.json')
 route = require('./router')
 Log = require('./Log')
@@ -28,6 +29,8 @@ module.exports.App = ->
     if not ui
         return false
 
+    store.commit('show', display)
+
     module.exports.log = log = new Log()
 
     root = Div()
@@ -36,29 +39,34 @@ module.exports.App = ->
     new Vue(
         el: root
 
-        data:
-            display: display
+        store: store
 
-        render: (e) ->
-            self = this
+        computed: Vuex.mapState([
+            'display'
+        ])
 
-            wmmain = e('div', {attrs: {id: 'WikiMonkeyMain'}})
+        methods: Vuex.mapMutations([
+            'toggle'
+        ])
 
-            legend = e('legend', [
+        render: (h) ->
+            wmmain = h('div', {attrs: {id: 'WikiMonkeyMain'}})
+
+            legend = h('legend', [
                 'Wiki Monkey '
-                e('a'
+                h('a'
                     {
                         attrs: {href: '#'}
                         on:
-                            click: (event) ->
+                            click: (event) =>
                                 event.preventDefault()
-                                self.display = not self.display
+                                @toggle()
                     }
                     @display and '[hide]' or '[show]'
                 )
             ])
 
-            return e('fieldset', {
+            return h('fieldset', {
                 attrs: {id: 'WikiMonkey'}
             }, [
                 legend
