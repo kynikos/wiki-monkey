@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{Vue, Vuex, Div} = require('../modules/libs')
+{Vue, Vuex} = require('../modules/libs')
 store = require('./store')
 {version} = require('../../package.json')
 route = require('./router')
@@ -61,7 +61,7 @@ module.exports.App = ->
     store.commit('show', display)
     store.commit('log/show', displayLog)
 
-    root = Div()
+    root = document.createElement('div')
     $(nextNode).before(root)
 
     new Vue(
