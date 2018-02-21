@@ -26,12 +26,13 @@ module.exports.init = ->
     Vue.use(Vuex)
     module.exports = {Vue, Vuex}
 
-    hh = require('hyperscript-helpers')(require('hyperscript'))
+    module.exports.hh = hh = require('hyperscript-helpers')(
+        require('hyperscript'))
     for tag, helper of hh
         # TODO: This can be simplified after
         #       https://github.com/ohanhi/hyperscript-helpers/pull/46
         #       is released
-        module.exports[tag.charAt(0).toUpperCase() + tag.slice(1)] = helper
+        hh[tag.charAt(0).toUpperCase() + tag.slice(1)] = helper
 
     module.exports.moment = require('moment')
 

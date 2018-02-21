@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{A} = require('./libs')
+{A} = require('./libs').hh
 App = require('../app')
 
 
