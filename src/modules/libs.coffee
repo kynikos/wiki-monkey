@@ -38,11 +38,9 @@ module.exports.init = ->
 
     jss = require('jss').default
     jss.setup(require('jss-preset-default').default())
-    module.exports.jssc = (styles, options) ->
-        jss.createStyleSheet(
-            styles
-            {
-                classNamePrefix: "WikiMonkey-"
-                options...
-            }
-        ).attach()
+    jssopts = {classNamePrefix: "WikiMonkey-"}
+
+    module.exports.jssc = (style) ->
+        jss.createStyleSheet(style, jssopts).attach()
+
+    module.exports.styled = require('@kynikos/vue-styled-jss')(jss, jssopts)

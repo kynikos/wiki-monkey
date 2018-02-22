@@ -13,6 +13,7 @@
   ],
   "dependencies": {
     "@kynikos/misc": "^0.1.3",
+    "@kynikos/vue-styled-jss": "^1.0.0",
     "babel-polyfill": "^6.26.0",
     "hyperscript": "^2.0.2",
     "hyperscript-helpers": "^3.0.3",

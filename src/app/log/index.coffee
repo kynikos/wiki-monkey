@@ -16,22 +16,19 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{Vuex, jssc} = require('../../modules/libs')
+{Vuex, styled} = require('../../modules/libs')
 
 LogFilter = require('./LogFilter')
 Export = require('./Export')
 Message = require('./Message')
 
-# The .warning and .error classes are already used by
-# MediaWiki, without associating them with an id and a tag
-{classes} = jssc(
-    log:
-        height: '10em'
-        border: '2px solid #07b'
-        padding: '0.5em'
-        overflow: 'auto'
-        resize: 'vertical'
-        backgroundColor: '#111'
+MessageContainer = styled.div(
+    height: '10em'
+    border: '2px solid #07b'
+    padding: '0.5em'
+    overflow: 'auto'
+    resize: 'vertical'
+    backgroundColor: '#111'
 )
 
 module.exports =
@@ -53,13 +50,12 @@ module.exports =
                 " "
                 h(Export)
             ])
-            h('div', {
-                class: classes.log
-            }, @messages.map( ({text, level, tstamp}, index) =>
-                if level >= @minLevel
-                    return h(Message, {props: {text, level, tstamp, index}})
-                return null
-            ))
+            h(MessageContainer
+                (h(Message, {props: {text, level, tstamp, index}}) \
+                 for {text, level, tstamp}, index in @messages \
+                 when level >= @minLevel)
+
+            )
         ])
 
     appendMessage: (text, type) ->

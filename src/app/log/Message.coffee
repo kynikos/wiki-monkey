@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{jssc} = require('../../modules/libs')
+{jssc, styled} = require('../../modules/libs')
 
 LEVEL_TO_CLASS =
     5: 'hidden'
@@ -26,33 +26,29 @@ LEVEL_TO_CLASS =
     30: 'warning'
     40: 'error'
 
-pmixin =
-    border: 'none'
-    padding: 0
+Line = styled.div(
+    display: 'flex'
+)
+
+divmixin =
     fontFamily: 'monospace'
     color: '#eee'
 
-# The .warning and .error classes are already used by
-# MediaWiki, without associating them with an id and a tag
+Timestamp = styled.div({
+    divmixin...
+    marginRight: '1em'
+    whiteSpace: 'nowrap'
+})
+
+Text = styled.div({
+    divmixin...
+
+    '& a':
+        color: 'inherit'
+        textDecoration: 'underline'
+})
+
 {classes} = jssc({
-    line:
-        display: 'flex'
-
-    timestamp: {
-        pmixin...
-        margin: '0 1em 0 0 !important'
-        whiteSpace: 'nowrap'
-    }
-
-    message: {
-        pmixin...
-        margin: '0 !important'
-
-        '& a':
-            color: 'inherit'
-            textDecoration: 'underline'
-    }
-
     hidden: {}
 
     json: {}
@@ -92,14 +88,12 @@ module.exports =
             required: true
 
     render: (h) ->
-        h('div', {
+        h(Line, {
             key: @index
-            class: classes.line
         }, [
-            h('p', {
-                class: classes.timestamp
-            }, @tstamp.toLocaleTimeString())
-            h('p', {
-                class: [classes.message, classes[LEVEL_TO_CLASS[@level]]]
+            h(Timestamp
+                @tstamp.toLocaleTimeString())
+            h(Text, {
+                class: classes[LEVEL_TO_CLASS[@level]]
             }, @text or "")
         ])
