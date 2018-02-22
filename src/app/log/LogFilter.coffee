@@ -16,24 +16,26 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{Vuex} = require('../modules/libs')
-log = require('./log/store')
+{Vuex} = require('../../modules/libs')
 
-module.exports = new Vuex.Store(
-    state:
-        display: true
+module.exports =
+    name: 'LogFilter'
 
-    mutations:
-        show: (state, show = true) ->
-            state.display = show
+    computed: Vuex.mapState('log', [
+        'minLevel'
+    ])
 
-        hide: (state) ->
-            state.display = false
+    methods: Vuex.mapMutations('log', [
+        'toggleMinLevel'
+    ])
 
-        toggle: (state) ->
-            state.display = not state.display
+    render: (h) ->
+        h('a', {
+            attrs: {href: '#'}
+            on:
+                click: (event) =>
+                    event.preventDefault()
+                    @toggleMinLevel()
 
-    modules: {
-        log
-    }
-)
+        }, @minLevel > 10 and '[show info messages]' or \
+        '[hide info messages]')

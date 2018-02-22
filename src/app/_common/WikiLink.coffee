@@ -1,3 +1,4 @@
+
 # Wiki Monkey - MediaWiki bot and editor-assistant user script
 # Copyright (C) 2011 Dario Giovannetti <dev@dariogiovannetti.net>
 #
@@ -16,24 +17,15 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{Vuex} = require('../modules/libs')
-log = require('./log/store')
+WM = require('../../modules')
 
-module.exports = new Vuex.Store(
-    state:
-        display: true
 
-    mutations:
-        show: (state, show = true) ->
-            state.display = show
-
-        hide: (state) ->
-            state.display = false
-
-        toggle: (state) ->
-            state.display = not state.display
-
-    modules: {
-        log
-    }
-)
+module.exports.linkToWikiPage = (title, anchor) ->
+    # Must return a string, not a DOM element
+    # Use an absolute (full) URL so it will be usable in the downloadable
+    #   version of the log
+    # Do *not* use encodeURIComponent(title) because the passed title may
+    #   have a fragment or a query string that would then be encoded
+    #   MediaWiki should be able to correctly resolve the title anyway
+    wikiUrls = WM.MW.getWikiUrls()
+    return "<a href=\"" + wikiUrls.short + title + "\">" + anchor + "</a>"
