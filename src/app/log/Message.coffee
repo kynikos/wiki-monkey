@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{jssc, styled} = require('../../modules/libs')
+{jssc, styled, moment} = require('../../modules/libs')
 
 LEVEL_TO_CLASS =
     5: 'hidden'
@@ -92,7 +92,7 @@ module.exports =
             key: @index
         }, [
             h(Timestamp
-                @tstamp.toLocaleTimeString())
+                moment(@tstamp).format('HH:mm:ss'))
             h(Text, {
                 class: classes[LEVEL_TO_CLASS[@level]]
             }, @text or "")
