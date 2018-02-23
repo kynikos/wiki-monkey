@@ -18,6 +18,7 @@
 
 {jssc} = require('../modules/libs')
 WM = require('../modules')
+store = require('./store')
 
 
 class module.exports
@@ -128,7 +129,4 @@ class module.exports
             event.target.disabled = true
 
     toggleLog: (event) ->
-        if @checked
-            $('#WikiMonkeyLog').show()
-        else
-            $('#WikiMonkeyLog').hide()
+        store.commit(@checked and 'log/show' or 'log/hide')
