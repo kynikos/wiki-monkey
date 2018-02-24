@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{Vue, Vuex} = require('../modules/libs')
+{Vue, Vuex, moment} = require('../modules/libs')
 store = require('./store')
 {version} = require('../../package.json')
 route = require('./router')
@@ -25,35 +25,34 @@ Log = require('./log')
 {linkToWikiPage} = require('./_common/WikiLink')
 {linkToPage} = require('./_common/PageLink')
 
+module.exports.log =
+    logHidden: (text) ->
+        store.commit('log/hidden', text)
+
+    logJson: (component, data) ->
+        store.commit('log/json', [component, data])
+
+    logDebug: (text) ->
+        store.commit('log/debug', text)
+
+    logInfo: (text) ->
+        store.commit('log/info', text)
+
+    logWarning: (text) ->
+        store.commit('log/warning', text)
+
+    logError: (text) ->
+        store.commit('log/error', text)
+
+    linkToWikiPage: (args...) ->
+        linkToWikiPage(args...)
+
+    linkToPage: (args...) ->
+        linkToPage(args...)
+
 
 module.exports.App = ->
     {ui, display, displayLog, nextNode} = route()
-
-    module.exports.log = {
-        logHidden: (text) ->
-            store.commit('log/hidden', text)
-
-        logJson: (component, data) ->
-            store.commit('log/json', [component, data])
-
-        logDebug: (text) ->
-            store.commit('log/debug', text)
-
-        logInfo: (text) ->
-            store.commit('log/info', text)
-
-        logWarning: (text) ->
-            store.commit('log/warning', text)
-
-        logError: (text) ->
-            store.commit('log/error', text)
-
-        linkToWikiPage: (args...) ->
-            linkToWikiPage(args...)
-
-        linkToPage: (args...) ->
-            linkToPage(args...)
-    }
 
     if not ui
         return false
@@ -73,9 +72,14 @@ module.exports.App = ->
             'display'
         ])
 
-        methods: Vuex.mapMutations([
-            'toggle'
-        ])
+        methods: {
+            Vuex.mapMutations([
+                'toggle'
+            ])...
+            Vuex.mapMutations('log', {
+                logHidden: 'hidden'
+            })...
+        }
 
         render: (h) ->
             wmmain = h('div', {attrs: {id: 'WikiMonkeyMain'}}, [h(Log)])
@@ -104,10 +108,9 @@ module.exports.App = ->
         mounted: ->
             $('#WikiMonkeyMain').prepend(ui)
 
-            module.exports.log.logHidden("Wiki Monkey version: #{version}")
-            date = new Date()
-            module.exports.log.logHidden("Date: #{date.toString()}")
-            module.exports.log.logHidden("URL: #{location.href}")
+            @logHidden("Wiki Monkey version: #{version}")
+            @logHidden("Date: #{moment().format('YYYY-MM-DD Z')}")
+            @logHidden("URL: #{location.href}")
 
         updated: ->
             $wmmain = $('#WikiMonkeyMain')
