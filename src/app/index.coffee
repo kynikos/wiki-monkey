@@ -111,6 +111,6 @@ module.exports.App = ->
 
         updated: ->
             $wmmain = $('#WikiMonkeyMain')
-            if not $wmmain.children().length
+            if $wmmain.children().length < 2
                 $wmmain.prepend(ui)
     )
