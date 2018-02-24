@@ -58,10 +58,12 @@ module.exports =
             )
         ])
 
-    appendMessage: (text, type) ->
-        # This test must be done *before* appending the new line
-        test = @logarea.scrollTop + @logarea.clientHeight == \
-                                                        @logarea.scrollHeight
+    beforeUpdate: ->
+        logarea = @$el.lastElementChild
+        @isScrolledToBottom =
+            logarea.scrollTop + logarea.clientHeight is logarea.scrollHeight
 
-        if test
-            @logarea.scrollTop = @logarea.scrollHeight - @logarea.clientHeight
+    updated: ->
+        if @isScrolledToBottom
+            logarea = @$el.lastElementChild
+            logarea.scrollTop = logarea.scrollHeight - logarea.clientHeight
