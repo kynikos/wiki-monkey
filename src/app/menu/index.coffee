@@ -16,21 +16,29 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{jssc} = require('../../modules/libs')
+{styled} = require('../../modules/libs')
 App = require('../index')
 
+Container = styled.div(
+    '& input.margin':
+        margin: "0 0.33em 0.33em 0"
+)
 
-class module.exports
-    constructor: (@page_type, plugins) ->
-        {classes} = jssc(
-            menu:
-                '& input.margin':
-                    margin: "0 0.33em 0.33em 0"
-        )
 
-        mainDiv = $('<div/>')
-            .attr('id', 'WikiMonkeyMenu')
-            .addClass(classes.menu)
+module.exports = (page_type, plugins) -> {
+    name: 'Menu'
+
+    render: (h) ->
+        h(Container)
+
+    mounted: ->
+        new Menu(page_type, plugins, @$el)
+}
+
+
+class Menu
+    constructor: (@page_type, plugins, _mainDiv) ->
+        mainDiv = $(_mainDiv)
         groupActions = {}
 
         for Plugin in plugins
@@ -124,9 +132,6 @@ class module.exports
                 .prepend(execAll)
 
             menus.first().show()
-            return mainDiv[0]
-        else
-            return false
 
     makeChangeMenu = (currentMenu, changeMenu) ->
         return (event) ->

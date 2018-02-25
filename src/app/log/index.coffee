@@ -60,10 +60,14 @@ module.exports =
 
     beforeUpdate: ->
         logarea = @$el.lastElementChild
-        @isScrolledToBottom =
-            logarea.scrollTop + logarea.clientHeight is logarea.scrollHeight
+        # logarea may not exist when the log is hidden
+        if logarea
+            @isScrolledToBottom = logarea.scrollTop + logarea.clientHeight is
+                logarea.scrollHeight
 
     updated: ->
         if @isScrolledToBottom
             logarea = @$el.lastElementChild
-            logarea.scrollTop = logarea.scrollHeight - logarea.clientHeight
+            # logarea may not exist when the log is hidden
+            if logarea
+                logarea.scrollTop = logarea.scrollHeight - logarea.clientHeight

@@ -16,32 +16,73 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{jssc} = require('../../modules/libs')
+{Vuex, jssc} = require('../../modules/libs')
 WM = require('../../modules')
-store = require('../store')
+
+{classes} = jssc(
+    commands:
+        display: 'flex'
+        alignItems: 'center'
+        justifyContent: 'space-between'
+        '& > select':
+            flex: 'auto'
+            marginRight: '1em'
+        "& > input[type='button']":
+            marginRight: '1em'
+        "& input[type='checkbox']":
+            marginRight: '0.4em'
+)
 
 
-class module.exports
-    constructor: (@page_type, plugins) ->
-        {classes} = jssc(
-            commands:
-                display: 'flex'
-                alignItems: 'center'
-                justifyContent: 'space-between'
+updateFilterUI = (filters) ->
+    return (event) ->
+        UI = $('#WikiMonkeyFilters-Options')
+        select = $('#WikiMonkeyFilters-Commands')
+            .find('select')
+            .first()
+        id = select[0].selectedIndex
 
-                '& > select':
-                    flex: 'auto'
-                    marginRight: '1em'
+        doUpdateFilterUI(UI, filters, id)
 
-                "& > input[type='button']":
-                    marginRight: '1em'
 
-                "& input[type='checkbox']":
-                    marginRight: '0.4em'
-        )
+doUpdateFilterUI = (UI, filters, id) ->
+    makeUI = filters[id].makeUI
 
+    if makeUI instanceof Function
+        UI.children().first().replaceWith(makeUI())
+    else
+        # Don't remove, otherwise if another plugin with interface is
+        # selected, replaceWith won't work
+        UI.children().first().replaceWith($('<div/>'))
+
+
+executePlugin = (filters, page_type) ->
+    return (event) ->
+        select = $('#WikiMonkeyFilters-Commands')
+            .find('select')
+            .first()
+        id = select[0].selectedIndex
+
+        filters[id]["main_#{page_type}"]()
+
+        event.target.disabled = true
+
+
+module.exports = (page_type, plugins) -> {
+    # "Filter" is a standard HTML tag name
+    name: 'Filters'
+
+    methods: Vuex.mapMutations('log',
+        showLog: 'show'
+        hideLog: 'hide'
+    )
+
+    render: (h) ->
+        h('div')
+
+    mounted: ->
         filters = []
-        selectFilter = $('<select/>').change(@updateFilterUI(filters))
+        selectFilter = $('<select/>').change(updateFilterUI(filters))
 
         for Plugin in plugins
             plugin = new Plugin()
@@ -55,7 +96,7 @@ class module.exports
             filters.push(plugin)
             option = $('<option/>').text(pluginInst)
 
-            if plugin.constructor.name is WM.conf["default_#{@page_type}_plugin"]
+            if plugin.constructor.name is WM.conf["default_#{page_type}_plugin"]
                 option[0].selected = true
 
             option.appendTo(selectFilter)
@@ -70,12 +111,14 @@ class module.exports
             $('<input/>')
                 .attr('type', 'button')
                 .val('Apply filter')
-                .click(@executePlugin(filters))
+                .click(executePlugin(filters, page_type))
                 .appendTo(commandsFilterDiv)
 
             $('<input/>')
                 .attr('type', 'checkbox')
-                .change(@toggleLog)
+                .change((event) =>
+                    if event.target.checked then @showLog() else @hideLog()
+                )
                 .appendTo(commandsFilterDiv)
 
             $('<span/>')
@@ -87,46 +130,7 @@ class module.exports
 
             # This allows updateFilterUI replace it the first time
             $('<div/>').appendTo(divFilter)
-            @doUpdateFilterUI(divFilter, filters, selectFilter[0].selectedIndex)
+            doUpdateFilterUI(divFilter, filters, selectFilter[0].selectedIndex)
 
-            div = $('<div/>')
-                .attr('id', 'WikiMonkeyFilters')
-                .append(commandsFilterDiv)
-                .append(divFilter)
-            return div[0]
-        else
-            return false
-
-    updateFilterUI: (filters) =>
-        return (event) =>
-            UI = $('#WikiMonkeyFilters-Options')
-            select = $('#WikiMonkeyFilters-Commands')
-                .find('select')
-                .first()
-            id = select[0].selectedIndex
-
-            @doUpdateFilterUI(UI, filters, id)
-
-    doUpdateFilterUI: (UI, filters, id) ->
-        makeUI = filters[id].makeUI
-
-        if makeUI instanceof Function
-            UI.children().first().replaceWith(makeUI())
-        else
-            # Don't remove, otherwise if another plugin with interface is
-            # selected, replaceWith won't work
-            UI.children().first().replaceWith($('<div/>'))
-
-    executePlugin: (filters) =>
-        return (event) =>
-            select = $('#WikiMonkeyFilters-Commands')
-                .find('select')
-                .first()
-            id = select[0].selectedIndex
-
-            filters[id]["main_#{@page_type}"]()
-
-            event.target.disabled = true
-
-    toggleLog: (event) ->
-        store.commit(@checked and 'log/show' or 'log/hide')
+            $(@$el).append(commandsFilterDiv, divFilter)
+}

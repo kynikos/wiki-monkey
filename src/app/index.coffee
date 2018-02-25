@@ -82,7 +82,7 @@ module.exports.App = ->
         }
 
         render: (h) ->
-            wmmain = h('div', {attrs: {id: 'WikiMonkeyMain'}}, [h(Log)])
+            wmmain = h('div', [h(ui), h(Log)])
 
             legend = h('legend', [
                 'Wiki Monkey '
@@ -106,14 +106,7 @@ module.exports.App = ->
             ])
 
         mounted: ->
-            $('#WikiMonkeyMain').prepend(ui)
-
             @logHidden("Wiki Monkey version: #{version}")
             @logHidden("Date: #{moment().format('YYYY-MM-DD Z')}")
             @logHidden("URL: #{location.href}")
-
-        updated: ->
-            $wmmain = $('#WikiMonkeyMain')
-            if $wmmain.children().length < 2
-                $wmmain.prepend(ui)
     )

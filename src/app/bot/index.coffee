@@ -20,9 +20,63 @@
 WM = require('../../modules')
 App = require('../index')
 
+{classes} = jssc(
+    pluginSelect:
+        width: '100%'
+        marginBottom: '1em'
 
-class module.exports
-    constructor: (functions, lists) ->
+    listSelect:
+        marginBottom: '1em'
+
+    botFilter:
+        height: '6em'
+        marginBottom: '1em'
+        resize: 'vertical'
+
+    botStartStop:
+        marginRight: '0.33em'
+        marginBottom: '1em'
+        fontWeight: 'bold'
+
+    botSelected:
+        backgroundColor: '#faa'
+        padding: '0.2em 0.4em'
+
+    botProcessing:
+        backgroundColor: '#ff8'
+        padding: '0.2em 0.4em'
+
+    botChanged:
+        backgroundColor: '#afa'
+        padding: '0.2em 0.4em'
+
+    botUnchanged:
+        backgroundColor: '#aaf'
+        padding: '0.2em 0.4em'
+
+    botBypassed:
+        backgroundColor: 'orangered'
+        padding: '0.2em 0.4em'
+
+    botFailed:
+        backgroundColor: 'red'
+        padding: '0.2em 0.4em'
+)
+
+
+module.exports = (functions, lists) -> {
+    name: 'Bot'
+
+    render: (h) ->
+        h('div', {attrs: {id: 'WikiMonkeyBot'}})
+
+    mounted: ->
+        new Bot(functions, lists, @$el)
+}
+
+
+class Bot
+    constructor: (functions, lists, mainDiv) ->
         @configuration =
             plugin_name: null
             function_: ->
@@ -35,61 +89,10 @@ class module.exports
         # localStorage can only store strings
         @botToken = "0"
 
-        divContainer = document.createElement('div')
-        divContainer.id = 'WikiMonkeyBot'
-
-        {classes} = jssc(
-            pluginSelect:
-                width: '100%'
-                marginBottom: '1em'
-
-            listSelect:
-                marginBottom: '1em'
-
-            botFilter:
-                height: '6em'
-                marginBottom: '1em'
-                resize: 'vertical'
-
-            botStartStop:
-                marginRight: '0.33em'
-                marginBottom: '1em'
-                fontWeight: 'bold'
-
-            botSelected:
-                backgroundColor: '#faa'
-                padding: '0.2em 0.4em'
-
-            botProcessing:
-                backgroundColor: '#ff8'
-                padding: '0.2em 0.4em'
-
-            botChanged:
-                backgroundColor: '#afa'
-                padding: '0.2em 0.4em'
-
-            botUnchanged:
-                backgroundColor: '#aaf'
-                padding: '0.2em 0.4em'
-
-            botBypassed:
-                backgroundColor: 'orangered'
-                padding: '0.2em 0.4em'
-
-            botFailed:
-                backgroundColor: 'red'
-                padding: '0.2em 0.4em'
-        )
-        @classes = classes
-
         fdiv = @makeFunctionUI(functions)
 
         if fdiv
-            divContainer.appendChild(fdiv)
-            divContainer.appendChild(@makeConfUI(lists))
-            return divContainer
-        else
-            return false
+            $(mainDiv).append(fdiv, @makeConfUI(lists))
 
     makeFunctionUI: (functions) ->
         self = this
@@ -100,7 +103,7 @@ class module.exports
 
         selectFunctions = document.createElement('select')
         selectFunctions.id = 'WikiMonkeyBot-PluginSelect'
-        selectFunctions.className = @classes.pluginSelect
+        selectFunctions.className = classes.pluginSelect
 
         ffunctions = []
 
@@ -173,7 +176,7 @@ class module.exports
         self = this
         selectLists = document.createElement('select')
         selectLists.id = 'WikiMonkeyBot-ListSelect'
-        selectLists.className = @classes.listSelect
+        selectLists.className = classes.listSelect
 
         for list in lists
             if list[0]
@@ -211,7 +214,7 @@ class module.exports
 
         filter = document.createElement('textarea')
         filter.id = 'WikiMonkeyBotFilter'
-        filter.className = @classes.botFilter
+        filter.className = classes.botFilter
 
         preview = document.createElement('input')
         preview.id = 'WikiMonkeyBotPreview'
@@ -256,7 +259,7 @@ class module.exports
         start.type = 'button'
         start.value = 'Start bot'
         start.id = 'WikiMonkeyBotStart'
-        start.className = @classes.botStartStop
+        start.className = classes.botStartStop
 
         start.addEventListener("click", @_startAutomatic, false)
 
@@ -302,7 +305,7 @@ class module.exports
         stop.type = 'button'
         stop.value = 'Stop bot'
         stop.id = 'WikiMonkeyBotStop'
-        stop.className = @classes.botStartStop
+        stop.className = classes.botStartStop
 
         stop.addEventListener("click", ( (id) ->
             return ->
@@ -412,10 +415,10 @@ class module.exports
             return false
 
     changeWikiMonkeyLinkClassName: (className, newClass) ->
-        classes = className.split(" ")
+        elclasses = className.split(" ")
         newClasses = []
 
-        for cls in classes
+        for cls in elclasses
             if cls.indexOf("WikiMonkey") < 0
                 newClasses.push(cls)
 
@@ -426,10 +429,10 @@ class module.exports
         return newClasses.join(" ")
 
     restoreOriginalLinkClassName: (className) ->
-        classes = className.split(" ")
+        elclasses = className.split(" ")
         origClasses = []
 
-        for cls in classes
+        for cls in elclasses
             if cls.indexOf("WikiMonkey") < 0
                 origClasses.push(cls)
 
@@ -484,7 +487,7 @@ class module.exports
                 if link
                     if @canProcessPage(link)
                         link.className = @changeWikiMonkeyLinkClassName(
-                                    link.className, @classes.botSelected)
+                                    link.className, classes.botSelected)
                         enable = true
                         N++
                     else
@@ -574,7 +577,7 @@ class module.exports
                 # The article hasn't been saved
                 when 0
                     ln.className = self.changeWikiMonkeyLinkClassName(ln.className,
-                                                    @classes.botUnchanged)
+                                                    classes.botUnchanged)
                     App.log.logInfo(App.log.linkToWikiPage(article, article) +
                                                     " processed (unchanged)")
                     id++
@@ -583,7 +586,7 @@ class module.exports
                 # The article has been saved
                 when 1
                     ln.className = self.changeWikiMonkeyLinkClassName(ln.className,
-                                                    @classes.botChanged)
+                                                    classes.botChanged)
                     App.log.logInfo(App.log.linkToWikiPage(article, article) +
                                                     " processed (changed)")
                     id++
@@ -592,7 +595,7 @@ class module.exports
                 # The plugin has encountered a protectedpage error
                 when 'protectedpage'
                     ln.className = self.changeWikiMonkeyLinkClassName(ln.className,
-                                                    @classes.botBypassed)
+                                                    classes.botBypassed)
                     App.log.logWarning("This user doesn't have the rights to " +
                                     "edit " + App.log.linkToWikiPage(article,
                                     article) + ", bypassing it ...")
@@ -603,7 +606,7 @@ class module.exports
                 # The plugin has encountered a critical error
                 else
                     ln.className = self.changeWikiMonkeyLinkClassName(ln.className,
-                                                        @classes.botFailed)
+                                                        classes.botFailed)
                     App.log.logError("Error processing " +
                                     App.log.linkToWikiPage(article, article) +
                                     ", stopping the bot")
@@ -638,7 +641,7 @@ class module.exports
                         # _not_ before setTimeout!
                         if not self._checkOtherBotsRunning()
                             ln.className = self.changeWikiMonkeyLinkClassName(
-                                    ln.className, @classes.botProcessing)
+                                    ln.className, classes.botProcessing)
                             App.log.logInfo("Processing " +
                                     App.log.linkToWikiPage(article, article) +
                                     " ...")
