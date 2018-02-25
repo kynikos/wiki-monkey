@@ -16,8 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{jssc} = require('../modules/libs')
-App = require('./index')
+{jssc} = require('../../modules/libs')
+App = require('../index')
 
 
 class module.exports

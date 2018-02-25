@@ -17,9 +17,9 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 WM = require('../modules/index')
-Bot = require('./Bot')
-Filters = require('./Filters')
-Menu = require('./Menu')
+Bot = require('./bot')
+Filter = require('./filter')
+Menu = require('./menu')
 mods = require('./mods')
 
 
@@ -96,7 +96,7 @@ module.exports = ->
         nextNode = $('#mw-content-text h4').first()[0]
         conf = WM.Plugins.recentchanges
         ui = if conf.length \
-            then new Filters('recentchanges', conf) \
+            then new Filter('recentchanges', conf) \
             else null
         displayLog = false
         mods.modRecentChanges()
@@ -105,7 +105,7 @@ module.exports = ->
         nextNode = $('#mw-content-text ul').first()[0]
         conf = WM.Plugins.newpages
         ui = if conf.length \
-            then new Filters('newpages', conf) else null
+            then new Filter('newpages', conf) else null
         displayLog = false
 
     else if specialPage is "protectedpages"
