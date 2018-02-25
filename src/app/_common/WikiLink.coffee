@@ -28,4 +28,4 @@ module.exports.linkToWikiPage = (title, anchor) ->
     #   have a fragment or a query string that would then be encoded
     #   MediaWiki should be able to correctly resolve the title anyway
     wikiUrls = WM.MW.getWikiUrls()
-    return "<a href=\"" + wikiUrls.short + title + "\">" + anchor + "</a>"
+    return "<a href=\"#{wikiUrls.short}#{title}\">#{anchor}</a>"

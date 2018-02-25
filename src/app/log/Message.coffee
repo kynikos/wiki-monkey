@@ -95,5 +95,7 @@ module.exports =
                 moment(@tstamp).format('HH:mm:ss'))
             h(Text, {
                 class: classes[LEVEL_TO_CLASS[@level]]
-            }, @text or "")
+                # The message could contain links or other HTML
+                domProps: {innerHTML: @text or ""}
+            })
         ])

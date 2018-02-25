@@ -19,4 +19,4 @@
 
 module.exports.linkToPage = (url, anchor) ->
     # Must return a string, not a DOM element
-    return "<a href=\"" + url + "\">" + anchor + "</a>"
+    return "<a href=\"#{url}\">#{anchor}</a>"
