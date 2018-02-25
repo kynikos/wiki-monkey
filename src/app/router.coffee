@@ -20,7 +20,7 @@ WM = require('../modules/index')
 Bot = require('./Bot')
 Filters = require('./Filters')
 Menu = require('./Menu')
-Mods = require('./Mods')
+mods = require('./mods')
 
 
 module.exports = ->
@@ -40,7 +40,7 @@ module.exports = ->
         nextNode = $('#wpSummaryLabel').parent().next()[0]
         conf = WM.Plugins.editor
         ui = if conf.length then new Menu('editor', conf) else null
-        new Mods().applyEditorMods()
+        mods.modEditor()
 
     else if mw.config.get('wgDiffNewId')
         nextNode = $('#bodyContent h2').first()[0]
@@ -99,7 +99,7 @@ module.exports = ->
             then new Filters('recentchanges', conf) \
             else null
         displayLog = false
-        new Mods().applyRecentChangesMods()
+        mods.modRecentChanges()
 
     else if specialPage is "newpages"
         nextNode = $('#mw-content-text ul').first()[0]
@@ -118,7 +118,7 @@ module.exports = ->
         display = false
 
     else if specialPage is "contributions"
-        new Mods().applyContributionsMods()
+        mods.modContributions()
 
     else if specialPage in [
         "ancientpages"

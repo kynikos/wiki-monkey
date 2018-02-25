@@ -20,37 +20,38 @@
 WM = require('../modules')
 
 
-class module.exports
-    constructor: ->
+disableEditSummarySubmitOnEnter = ->
+    $('#wpSummary').keydown( (event) ->
+        # 'keyCode' is deprecated, but not all browsers support 'key' yet
+        if event.key == 'Enter' or (typeof event.key == 'undefined' and
+                                                    event.keyCode == 13)
+            event.preventDefault()
+            return false
+    )
 
-    disableEditSummarySubmitOnEnter = ->
-        $('#wpSummary').keydown( (event) ->
-            # 'keyCode' is deprecated, but not all browsers support 'key' yet
-            if event.key == 'Enter' or (typeof event.key == 'undefined' and
-                                                        event.keyCode == 13)
-                event.preventDefault()
-                return false
-        )
 
-    hideRollbackLinks = ->
-        jssc(
-            '@global span.mw-rollback-link':
-                display: 'none'
-        )
+hideRollbackLinks = ->
+    jssc(
+        '@global span.mw-rollback-link':
+            display: 'none'
+    )
 
-    scrollToFirstHeading = ->
-        window.scrollTo(0, $('#firstHeading').offset().top)
 
-    applyEditorMods: ->
+scrollToFirstHeading = ->
+    window.scrollTo(0, $('#firstHeading').offset().top)
+
+
+module.exports =
+    modEditor: ->
         if WM.conf.disable_edit_summary_submit_on_enter
             disableEditSummarySubmitOnEnter()
         if WM.conf.scroll_to_first_heading
             scrollToFirstHeading()
 
-    applyRecentChangesMods: ->
+    modRecentChanges: ->
         if WM.conf.hide_rollback_links
             hideRollbackLinks()
 
-    applyContributionsMods: ->
+    modContributions: ->
         if WM.conf.hide_rollback_links
             hideRollbackLinks()
