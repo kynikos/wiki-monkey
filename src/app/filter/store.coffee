@@ -16,26 +16,18 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{Vuex} = require('../modules/libs')
-log = require('./log/store')
-filter = require('./filter/store')
+module.exports =
+    namespaced: true
 
-module.exports = new Vuex.Store(
     state:
-        display: true
+        selectedPluginIndex: 0
+        selectedPluginInstance: null
+        enabled: true
 
     mutations:
-        show: (state, show = true) ->
-            state.display = show
+        selectPlugin: (state, [index, instance]) ->
+            state.selectedPluginIndex = index
+            state.selectedPluginInstance = instance
 
-        hide: (state) ->
-            state.display = false
-
-        toggle: (state) ->
-            state.display = not state.display
-
-    modules: {
-        log
-        filter
-    }
-)
+        disable: (state) ->
+            state.enabled = false

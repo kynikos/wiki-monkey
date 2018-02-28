@@ -16,121 +16,110 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{Vuex, jssc} = require('../../modules/libs')
+{Vuex, styled} = require('../../modules/libs')
+store = require('../store')
 WM = require('../../modules')
 
-{classes} = jssc(
-    commands:
-        display: 'flex'
-        alignItems: 'center'
-        justifyContent: 'space-between'
-        '& > select':
-            flex: 'auto'
-            marginRight: '1em'
-        "& > input[type='button']":
-            marginRight: '1em'
-        "& input[type='checkbox']":
-            marginRight: '0.4em'
+Commands = styled.div(
+    display: 'flex'
+    alignItems: 'center'
+    justifyContent: 'space-between'
+)
+
+Select = styled.select(
+    flex: 'auto'
+    marginRight: '1em'
+)
+
+Button = styled.button(
+    marginRight: '1em'
+)
+
+Checkbox = styled.input(
+    marginRight: '0.4em'
 )
 
 
-updateFilterUI = (filters) ->
-    return (event) ->
-        UI = $('#WikiMonkeyFilters-Options')
-        select = $('#WikiMonkeyFilters-Commands')
-            .find('select')
-            .first()
-        id = select[0].selectedIndex
-
-        doUpdateFilterUI(UI, filters, id)
-
-
-doUpdateFilterUI = (UI, filters, id) ->
-    makeUI = filters[id].makeUI
-
-    if makeUI instanceof Function
-        UI.children().first().replaceWith(makeUI())
-    else
-        # Don't remove, otherwise if another plugin with interface is
-        # selected, replaceWith won't work
-        UI.children().first().replaceWith($('<div/>'))
-
-
-executePlugin = (filters, page_type) ->
-    return (event) ->
-        select = $('#WikiMonkeyFilters-Commands')
-            .find('select')
-            .first()
-        id = select[0].selectedIndex
-
-        filters[id]["main_#{page_type}"]()
-
-        event.target.disabled = true
-
-
-module.exports = (page_type, plugins) -> {
+module.exports = (page_type, Plugins) -> {
     # "Filter" is a standard HTML tag name
     name: 'Filters'
 
-    methods: Vuex.mapMutations('log',
-        showLog: 'show'
-        hideLog: 'hide'
-    )
+    computed: {
+        Vuex.mapState('log', {
+            logShown: 'display'
+        })...
+        Vuex.mapState('filter', [
+            'selectedPluginIndex'
+            'selectedPluginInstance'
+            'enabled'
+        ])...
+    }
+
+    methods: {
+        Vuex.mapMutations('log',
+            showLog: 'show'
+            hideLog: 'hide'
+        )...
+        Vuex.mapMutations('filter', [
+            'selectPlugin'
+            'disable'
+        ])...
+        executePlugin: ->
+            @disable()
+            @selectedPluginInstance["main_#{page_type}"]()
+    }
+
+    created: ->
+        for Plugin, index in Plugins
+            if Plugin.constructor.name is
+                    WM.conf["default_#{page_type}_plugin"]
+                @selectPlugin([index, new Plugin()])
+                break
+        if not @selectedPluginInstance
+            @selectPlugin([0, new Plugins[0]()])
 
     render: (h) ->
-        h('div')
+        selectFilter = h(Select
+            {
+                attrs:
+                    disabled: not @enabled
+                on:
+                    change: (event) =>
+                        index = event.target.selectedIndex
+                        @selectPlugin([index, new Plugins[index]()])
+            }
+            for Plugin, index in Plugins
+                h('option', {
+                    attrs:
+                        selected: index is @selectedPluginIndex
+                }, [Plugin::conf.filter_label])
+        )
 
-    mounted: ->
-        filters = []
-        selectFilter = $('<select/>').change(updateFilterUI(filters))
+        applyFilter = h(Button, {
+            attrs:
+                disabled: not @enabled
+            on:
+                click: @executePlugin
+        }, ['Apply filter'])
 
-        for Plugin in plugins
-            plugin = new Plugin()
-            pluginInst = plugin.conf.filter_label
+        toggleLog = h(Checkbox, {
+            attrs:
+                type: 'checkbox'
+                checked: @logShown
+            on:
+                change: =>
+                    if @logShown then @hideLog() else @showLog()
+        })
 
-            # This allows to disable an entry by giving it any second
-            # parameter that evaluates to false
-            if not pluginInst
-                continue
+        commandsFilterDiv = h(Commands, [
+            selectFilter
+            applyFilter
+            toggleLog
+            h('span', ["Show log"])
+        ])
 
-            filters.push(plugin)
-            option = $('<option/>').text(pluginInst)
+        makeUI = @selectedPluginInstance.makeUI
+        pluginUI = makeUI instanceof Function and makeUI() or 'div'
 
-            if plugin.constructor.name is WM.conf["default_#{page_type}_plugin"]
-                option[0].selected = true
-
-            option.appendTo(selectFilter)
-
-        if filters.length
-            commandsFilterDiv = $('<div/>')
-                .attr('id', 'WikiMonkeyFilters-Commands')
-                .addClass(classes.commands)
-
-            commandsFilterDiv.append(selectFilter)
-
-            $('<input/>')
-                .attr('type', 'button')
-                .val('Apply filter')
-                .click(executePlugin(filters, page_type))
-                .appendTo(commandsFilterDiv)
-
-            $('<input/>')
-                .attr('type', 'checkbox')
-                .change((event) =>
-                    if event.target.checked then @showLog() else @hideLog()
-                )
-                .appendTo(commandsFilterDiv)
-
-            $('<span/>')
-                .text('Show Log')
-                .appendTo(commandsFilterDiv)
-
-            divFilter = $('<div/>')
-                .attr('id', "WikiMonkeyFilters-Options")
-
-            # This allows updateFilterUI replace it the first time
-            $('<div/>').appendTo(divFilter)
-            doUpdateFilterUI(divFilter, filters, selectFilter[0].selectedIndex)
-
-            $(@$el).append(commandsFilterDiv, divFilter)
+        return h('div', [commandsFilterDiv, h('div', [h(pluginUI)])])
 }
