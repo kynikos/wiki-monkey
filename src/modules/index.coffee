@@ -44,8 +44,10 @@ WhatLinksHere = require('./WhatLinksHere')
 class module.exports.WikiMonkey
     conf:
         default_bot_plugin: "SimpleReplace"
-        default_recentchanges_plugin: null
-        default_newpages_plugin: null
+        default_recentchanges_plugin: "ArchWikiRCFilter"
+        default_recentchanges_plugin_autoexecute: true
+        default_newpages_plugin: "ArchWikiNPFilter"
+        default_newpages_plugin_autoexecute: true
         update_check_wdays: [6]
         update_check_branch: 'master'
         hide_rollback_links: true

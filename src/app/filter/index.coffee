@@ -56,6 +56,9 @@ module.exports = (page_type, Plugins) -> {
     }
 
     methods: {
+        Vuex.mapMutations(
+            hideUI: 'hide'
+        )...
         Vuex.mapMutations('log',
             showLog: 'show'
             hideLog: 'hide'
@@ -119,7 +122,18 @@ module.exports = (page_type, Plugins) -> {
         ])
 
         makeUI = @selectedPluginInstance.makeUI
-        pluginUI = makeUI instanceof Function and makeUI() or 'div'
+        if makeUI instanceof Function
+            pluginUI = h('div', {ref: 'pluginUI'}, [h(makeUI())])
 
-        return h('div', [commandsFilterDiv, h('div', [h(pluginUI)])])
+        return h('div', [commandsFilterDiv, pluginUI])
+
+    mounted: ->
+        # The component is remounted if the interface is hidden and then
+        # shown again, but the plugin shouldn't be executed again if it's
+        # disabled
+        if @enabled and WM.conf["default_#{page_type}_plugin_autoexecute"]
+            @executePlugin()
+
+            if not @$refs.pluginUI
+                @hideUI()
 }
