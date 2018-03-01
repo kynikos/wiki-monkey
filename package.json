@@ -24,11 +24,13 @@
     "vuex": "^3.0.1"
   },
   "devDependencies": {
-    "@kynikos/browserify-helpers": "^1.0.8",
+    "@kynikos/browserify-helpers": "^1.0.10",
     "babel-core": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "coffeelint": "^2.0.7",
     "coffeescript": "^2.1.1",
-    "http-server": "^0.11.1"
+    "envify": "^4.1.0",
+    "http-server": "^0.11.1",
+    "licensify": "^3.1.3"
   }
 }

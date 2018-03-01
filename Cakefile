@@ -42,6 +42,7 @@ task('build', "recompile all user scripts", ({version}) ->
                     wikiname: name[1..]
                     distdir: AUXDIR
                     minified: false
+                    production: false
                 })
 
             else if version
@@ -61,16 +62,19 @@ buildScript = ({
     minified = true
     # TODO: Deprecate legacy versions in a future version
     legacy = false
+    production = true
 }) ->
     distfile = path.join(distdir, "WikiMonkey-#{wikiname}.js")
 
+    envify = if production then {NODE_ENV: 'production'} else false
+
     console.log("Compiling #{distfile} ...")
-    await jspack(srcfile, distfile, {debug: true, licensify: true})
+    await jspack(srcfile, distfile, {envify, debug: true, licensify: true})
 
     if minified
         distfile_min = path.join(distdir, "WikiMonkey-#{wikiname}.min.js")
         console.log("Compiling #{distfile_min} ...")
-        await jspack(srcfile, distfile_min, {licensify: true})
+        await jspack(srcfile, distfile_min, {envify, licensify: true})
 
     if legacy
         # Previous versions were using this file name
