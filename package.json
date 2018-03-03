@@ -24,7 +24,7 @@
     "vuex": "^3.0.1"
   },
   "devDependencies": {
-    "@kynikos/browserify-helpers": "^1.0.10",
+    "@kynikos/browserify-helpers": "^1.0.11",
     "babel-core": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "coffeelint": "^2.0.7",

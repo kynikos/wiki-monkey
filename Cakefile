@@ -69,12 +69,25 @@ buildScript = ({
     envify = if production then {NODE_ENV: 'production'} else false
 
     console.log("Compiling #{distfile} ...")
-    await jspack(srcfile, distfile, {envify, debug: true, licensify: true})
+    await jspack(srcfile, distfile, {
+        envify
+        debug: true
+        licensify: true
+    })
 
     if minified
         distfile_min = path.join(distdir, "WikiMonkey-#{wikiname}.min.js")
         console.log("Compiling #{distfile_min} ...")
-        await jspack(srcfile, distfile_min, {envify, licensify: true})
+        await jspack(srcfile, distfile_min, {
+            envify
+            # This application relies on the plugin constructor names, so use
+            # UglifyJS' keep_fnames option (a bug from not using this option
+            # would be that the default plugin in the bot's select widget is
+            # not correctly selected because its name isn't recognized in the
+            # minified version)
+            uglify_keep_fnames: true
+            licensify: true
+        })
 
     if legacy
         # Previous versions were using this file name

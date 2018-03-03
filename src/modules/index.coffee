@@ -85,7 +85,7 @@ class module.exports.WikiMonkey
                 try
                     PluginSub.__configure(@wiki_name, user_config)
                 catch error
-                    # TODO: Properly extend Error, but beware that Babelo
+                    # TODO: Properly extend Error, but beware that Babel
                     #       doesn't like it without specific plugins
                     if error.message is "Plugin disabled"
                         continue
