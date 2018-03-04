@@ -43,7 +43,7 @@ class Menu
 
         for Plugin in plugins
             plugin = new Plugin()
-            pluginInst = plugin.conf["#{@page_type}_menu"]
+            pluginInst = plugin.conf["#{@page_type}_menu"].slice()
 
             # This allows to disable an entry by giving it a menu_entry
             # parameter that evaluates to false
