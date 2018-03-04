@@ -34,6 +34,6 @@ module.exports =
                 click: (event) =>
                     event.target.href = @composeSaveLogText()
                     event.target.download = "WikiMonkey-#{
-                        moment().format('YYYY-MM-DDTHH_mm_ss_Z')}.log"
+                        moment().format('YYYYMMDDTHHmmssZZ')}.log"
 
         }, '[save log]')
