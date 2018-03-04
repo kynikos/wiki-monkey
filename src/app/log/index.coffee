@@ -51,6 +51,7 @@ module.exports =
                 h(Export)
             ])
             h(MessageContainer
+                {ref: 'logArea'}
                 (h(Message, {props: {text, level, tstamp, index}}) \
                  for {text, level, tstamp}, index in @messages \
                  when level >= @minLevel)
@@ -59,15 +60,15 @@ module.exports =
         ])
 
     beforeUpdate: ->
-        logarea = @$el.lastElementChild
-        # logarea may not exist when the log is hidden
-        if logarea
-            @isScrolledToBottom = logarea.scrollTop + logarea.clientHeight is
-                logarea.scrollHeight
+        {logArea} = @$refs
+        # logArea may not exist when the log is hidden
+        if logArea
+            @isScrolledToBottom = logArea.scrollTop + logArea.clientHeight is
+                logArea.scrollHeight
 
     updated: ->
         if @isScrolledToBottom
-            logarea = @$el.lastElementChild
-            # logarea may not exist when the log is hidden
-            if logarea
-                logarea.scrollTop = logarea.scrollHeight - logarea.clientHeight
+            {logArea} = @$refs
+            # logArea may not exist when the log is hidden
+            if logArea
+                logArea.scrollTop = logArea.scrollHeight - logArea.clientHeight
