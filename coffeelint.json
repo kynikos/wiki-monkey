@@ -33,6 +33,9 @@
     "level": "error",
     "value": 2
   },
+  "no_implicit_braces": {
+    "level": "warn"
+  },
   "no_implicit_parens": {
     "level": "error"
   },
