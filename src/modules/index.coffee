@@ -30,6 +30,7 @@ Upgrade = require('./Upgrade')
 # ArchPackages = require('./ArchPackages')
 ArchWiki = require('./ArchWiki')
 Cat = require('./Cat')
+DB = require('./DB')
 Diff = require('./Diff')
 Editor = require('./Editor')
 Interlanguage = require('./Interlanguage')
@@ -53,6 +54,7 @@ class module.exports.WikiMonkey
         hide_rollback_links: true
         disable_edit_summary_submit_on_enter: true
         scroll_to_first_heading: false
+        database_server: "https://localhost:13502/"
     }
 
     Plugins: {
@@ -107,12 +109,13 @@ class module.exports.WikiMonkey
             Plugins: @Plugins
         })
 
-    init: ->
+    init: =>
         Object.assign(module.exports, {
             # The ArchPackages module is currently unusable
             # ArchPackages: new ArchPackages()
             ArchWiki: new ArchWiki()
             Cat: new Cat()
+            DB: @conf.database_server and new DB() or null
             Diff: new Diff()
             Editor: new Editor()
             Interlanguage: new Interlanguage()
