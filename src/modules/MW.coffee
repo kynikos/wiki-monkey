@@ -30,8 +30,6 @@ class module.exports
         wpaths = @_getWikiPaths(location.href)
         hostname = wpaths[0]
 
-        @userInfo = null
-
         localWikiPaths = wpaths[1]
         localWikiUrls = {}
 
@@ -233,37 +231,8 @@ class module.exports
             return call(title, source, timestamp, edittoken, callArgs)
         return {source, timestamp, edittoken}
 
-    getUserInfo: (call) ->
-        storeInfo = (res, call) =>
-            @userInfo = res
-            call()
-
-        if not @userInfo
-            pars =
-                action: "query"
-                meta: "userinfo"
-                uiprop: "groups"
-            @callAPIGet(pars, storeInfo, call, null)
-        else
-            call()
-
-    isLoggedIn: (call, args) ->
-        @getUserInfo( =>
-            test = @userInfo.query.userinfo.id != 0
-            call(test, args)
-        )
-
-    getUserName: (call, args) ->
-        @getUserInfo( =>
-            call(@userInfo.query.userinfo.name, args)
-        )
-
-    isUserBot: (call, args) ->
-        @getUserInfo( =>
-            groups = @userInfo.query.userinfo.groups
-            res = groups.indexOf("bot") > -1
-            call(res, args)
-        )
+    isUserBot: ->
+        return 'bot' in mw.config.get('wgUserGroups')
 
     getBacklinks: (bltitle, blnamespace, call, callArgs) ->
         query =

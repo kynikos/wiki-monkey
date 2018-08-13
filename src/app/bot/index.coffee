@@ -561,14 +561,8 @@ class Bot
             @_disableControls()
             @configuration.visited = []
 
-            WM.MW.isUserBot(@_startAutomaticContinue, [items, linkId])
-
-    _startAutomaticContinue: (botTest, args) =>
-        items = args[0]
-        linkId = args[1]
-
-        @configuration.interval = if botTest then 3000 else 30000
-        @_processItem(0, items, 0, linkId, null)
+            @configuration.interval = if WM.MW.isUserBot() then 3000 else 30000
+            @_processItem(0, items, 0, linkId, null)
 
     makeCallContinue: (lis, id, linkId, ln, article) ->
         self = this

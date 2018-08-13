@@ -51,30 +51,26 @@ class module.exports.UpdateCategoryTree extends Plugin
                 # This should be a custom configuration object
                 params = pconf
 
-            WM.MW.isUserBot(this.mainContinue, [params, showRootAlsoIn, summary,
-                                                 callNext, pageid])
+            @readToC({
+                params
+                minInterval: if WM.MW.isUserBot() then 60000 else 21600000
+                edittoken: ""
+                timestamp: ""
+                source: ""
+                startId: 0
+                endId: 0
+                treeText: ""
+                startMark: "START AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK-->"
+                endMark: "<!--END AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK"
+                altNames: {}
+                showRootAlsoIn
+                summary
+                callNext
+                pageid
+            })
 
         else if callNext
             callNext()
-
-    mainContinue: (botTest, args) =>
-        @readToC({
-            params: args[0]
-            minInterval: if botTest then 60000 else 21600000
-            edittoken: ""
-            timestamp: ""
-            source: ""
-            startId: 0
-            endId: 0
-            treeText: ""
-            startMark: "START AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK-->"
-            endMark: "<!--END AUTO TOC - DO NOT REMOVE OR MODIFY THIS MARK"
-            altNames: {}
-            showRootAlsoIn: args[1]
-            summary: args[2]
-            callNext: args[3]
-            pageid: args[4]
-        })
 
     readToC: (args) =>
         App.log.logInfo('Updating ' + App.log.linkToWikiPage(args.params.page,
