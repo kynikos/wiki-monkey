@@ -25,7 +25,7 @@ Log = require('./log')
 {linkToWikiPage} = require('./_common/WikiLink')
 {linkToPage} = require('./_common/PageLink')
 
-module.exports.log =
+module.exports.log = {
     logHidden: (text) ->
         store.commit('log/hidden', text)
 
@@ -49,6 +49,7 @@ module.exports.log =
 
     linkToPage: (args...) ->
         linkToPage(args...)
+}
 
 
 module.exports.App = ->
@@ -63,7 +64,7 @@ module.exports.App = ->
     root = document.createElement('div')
     $(nextNode).before(root)
 
-    new Vue(
+    new Vue({
         el: root
 
         store: store
@@ -89,10 +90,11 @@ module.exports.App = ->
                 h('a'
                     {
                         attrs: {href: '#'}
-                        on:
+                        on: {
                             click: (event) =>
                                 event.preventDefault()
                                 @toggle()
+                        }
                     }
                     @display and '[hide]' or '[show]'
                 )
@@ -109,4 +111,4 @@ module.exports.App = ->
             @logHidden("Wiki Monkey version: #{version}")
             @logHidden("Date: #{moment().format('YYYY-MM-DD Z')}")
             @logHidden("URL: #{location.href}")
-    )
+    })

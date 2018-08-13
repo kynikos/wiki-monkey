@@ -42,7 +42,7 @@ WhatLinksHere = require('./WhatLinksHere')
 
 
 class module.exports.WikiMonkey
-    conf:
+    conf: {
         default_bot_plugin: "SimpleReplace"
         default_recentchanges_plugin: "ArchWikiRCFilter"
         default_recentchanges_plugin_autoexecute: true
@@ -53,14 +53,16 @@ class module.exports.WikiMonkey
         hide_rollback_links: true
         disable_edit_summary_submit_on_enter: true
         scroll_to_first_heading: false
+    }
 
-    Plugins:
+    Plugins: {
         bot: []
         diff: []
         editor: []
         newpages: []
         recentchanges: []
         special: []
+    }
 
     constructor: (@wiki_name, @installed_plugins_temp...) ->
         @setup()
