@@ -25,6 +25,9 @@ store = require('./store')
 {WikiLink} = require('./_components/log/WikiLink')
 {PageLink} = require('./_components/log/PageLink')
 mods = require('./mods')
+
+{PageCommands} = require('./pageCommands')
+{SectionCommands} = require('./sectionCommands')
 Main = require('./main')
 Bot = require('./bot')
 Filter = require('./filter')
@@ -57,6 +60,13 @@ module.exports.log = log = {
 module.exports.App = ->
     if bodyContent = $('#bodyContent')
         Main(bodyContent)
+
+    if indicators = $('.mw-indicators:first')
+        PageCommands(indicators)
+
+    editSections = $('.mw-editsection')
+    if editSections.length
+        SectionCommands(editSections)
 
     # MW seems a bit unreliable with capitalization, e.g. it's
     # "SpecialPages" but "Recentchanges"
