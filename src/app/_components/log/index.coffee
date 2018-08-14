@@ -34,7 +34,7 @@ MessageContainer = styled.div({
 module.exports = {
     name: 'Log'
 
-    computed: Vuex.mapState('main/log', [
+    computed: Vuex.mapState('log', [
         'display'
         'minLevel'
         'messages'
@@ -46,9 +46,11 @@ module.exports = {
 
         h('div', [
             h('p', [
+                '[ '
                 h(LogFilter)
-                " "
+                ' | '
                 h(Export)
+                ' ]'
             ])
             h(MessageContainer
                 {ref: 'logArea'}

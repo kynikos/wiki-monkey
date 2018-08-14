@@ -21,11 +21,11 @@
 module.exports = {
     name: 'LogFilter'
 
-    computed: Vuex.mapState('main/log', [
+    computed: Vuex.mapState('log', [
         'minLevel'
     ])
 
-    methods: Vuex.mapMutations('main/log', [
+    methods: Vuex.mapMutations('log', [
         'toggleMinLevel'
     ])
 
@@ -38,6 +38,6 @@ module.exports = {
                     @toggleMinLevel()
             }
 
-        }, @minLevel > 10 and '[show info messages]' or \
-        '[hide info messages]')
+        }, @minLevel > 10 and 'show info messages' or \
+        'hide info messages')
 }

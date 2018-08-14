@@ -16,9 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{jssc} = require('../../../modules/libs')
-WM = require('../../../modules')
-App = require('../../index')
+WM = require('../../modules')
+{Vue, Vuex, jssc} = require('../../modules/libs')
+store = require('../store')
+Fieldset = require('../_components/fieldset')
+App = require('../index')
 
 {classes} = jssc({
     pluginSelect: {
@@ -65,15 +67,43 @@ App = require('../../index')
 })
 
 
-module.exports = (functions, lists) -> {
-    name: 'Bot'
+module.exports = ({functions, lists, display, displayLog, nextNode}) ->
+    store.commit('fieldset/show', display)
+    store.commit('log/show', displayLog)
 
-    render: (h) ->
-        h('div', {attrs: {id: 'WikiMonkeyBot'}})
+    root = document.createElement('div')
+    $(nextNode).before(root)
 
-    mounted: ->
-        new Bot(functions, lists, @$el)
-}
+    ui = new Bot(functions, lists)
+
+    new Vue({
+        el: root
+
+        store: store
+
+        computed: Vuex.mapState('fieldset', {
+            fieldsetDisplayed: 'display'
+        })
+
+        render: (h) ->
+            # Referencing @fieldsetDisplayed seems to be the only way to make
+            # this component react to its changes
+            @fieldsetDisplayed
+
+            h(Fieldset, [
+                h('div', {
+                    attrs: {id: 'WikiMonkeyBot'}
+                    ref: 'container'
+                })
+            ])
+
+        mounted: ->
+            $(@$refs.container).append(ui.elems)
+
+        updated: ->
+            # Needed when showing/hiding the main fieldset
+            $(@$refs.container).append(ui.elems)
+    })
 
 
 class Bot
@@ -93,8 +123,7 @@ class Bot
 
         fdiv = @makeFunctionUI(functions)
 
-        if fdiv
-            $(mainDiv).append(fdiv, @makeConfUI(lists))
+        @elems = if fdiv then [fdiv, @makeConfUI(lists)] else []
 
     makeFunctionUI: (functions) ->
         self = this

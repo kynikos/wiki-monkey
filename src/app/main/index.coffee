@@ -16,58 +16,38 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+WM = require('../../modules')
 {Vue, Vuex} = require('../../modules/libs')
 store = require('../store')
-Log = require('./log')
 
 
-module.exports.Main = ({ui, display, displayLog, nextNode}) ->
-    store.commit('main/show', display)
-    store.commit('main/log/show', displayLog)
-
+module.exports = (bodyContent) ->
     root = document.createElement('div')
-    $(nextNode).before(root)
+    bodyContent.before(root)
 
     new Vue({
         el: root
 
         store: store
 
-        computed: Vuex.mapState('main', [
-            'display'
-        ])
+        computed: {
+            Vuex.mapState('main', [
+                'shown'
+            ])...
+        }
 
         methods: {
-            Vuex.mapMutations('main', [
-                'toggle'
-            ])...
-            Vuex.mapMutations('main/log', {
-                hidden: 'hidden'
+            Vuex.mapActions('main', {
+                closeMain: 'closeAlone'
             })...
         }
 
         render: (h) ->
-            wmmain = h('div', [h(ui), h(Log)])
+            return h('div') if not @shown
 
-            legend = h('legend', [
-                'Wiki Monkey '
-                h('a'
-                    {
-                        attrs: {href: '#'}
-                        on: {
-                            click: (event) =>
-                                event.preventDefault()
-                                @toggle()
-                        }
-                    }
-                    @display and '[hide]' or '[show]'
-                )
-            ])
-
-            return h('fieldset', {
-                attrs: {id: 'WikiMonkey'}
-            }, [
-                legend
-                wmmain if @display
-            ])
+            return h('div', {
+                class: {
+                    'mw-body-content': true
+                }
+            }, [])
     })

@@ -17,10 +17,28 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 {Vuex} = require('../modules/libs')
+fieldset = require('./_components/fieldset/store')
+log = require('./_components/log/store')
 main = require('./main/store')
+bot = require('./bot/store')
+filter = require('./filter/store')
+menu = require('./menu/store')
 
 module.exports = new Vuex.Store({
+    actions: {
+        hideContent: ->
+            $('#bodyContent').hide()
+
+        showContent: ->
+            $('#bodyContent').show()
+    }
+
     modules: {
+        fieldset
+        log
         main
+        bot
+        filter
+        menu
     }
 })

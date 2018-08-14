@@ -25,27 +25,25 @@ class module.exports
         if not @dburl.endsWith('/')
             @dburl += '/'
 
-    sendRequest = (deferred, method, resource, data) ->
-        deferred.fail((error) ->
-            console.error("ERROR!!!", method, resource, data, error)
-        )
+    logError = (error) ->
+        console.error("ERROR!!!", error)
 
-    _sendString: (method, resource, data) ->
-        sendRequest($.ajax({
+    _sendString: (method, resource, data = {}) ->
+        $.ajax({
             method
             url: @dburl + resource
             data: data
             dataType: "json"
-        }), method, resource, data)
+        }).fail(logError)
 
-    _sendJson: (method, resource, data) ->
-        sendRequest($.ajax({
+    _sendJson: (method, resource, data = {}) ->
+        $.ajax({
             method
             url: @dburl + resource
             data: JSON.stringify(data)
             contentType: "application/json"
             dataType: "json"
-        }), method, resource, data)
+        }).fail(logError)
 
     delete: (resource, data) ->
         @_sendString('DELETE', resource, data)

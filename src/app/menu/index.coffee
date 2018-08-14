@@ -16,8 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{styled} = require('../../../modules/libs')
-App = require('../../index')
+{Vue, Vuex, styled} = require('../../modules/libs')
+store = require('../store')
+Fieldset = require('../_components/fieldset')
+App = require('../index')
 
 Container = styled.div({
     '& input.margin': {
@@ -26,25 +28,50 @@ Container = styled.div({
 })
 
 
-module.exports = (page_type, plugins) -> {
-    name: 'Menu'
+module.exports = ({pageType, plugins, display, displayLog, nextNode}) ->
+    store.commit('fieldset/show', display)
+    store.commit('log/show', displayLog)
 
-    render: (h) ->
-        h(Container)
+    root = document.createElement('div')
+    $(nextNode).before(root)
 
-    mounted: ->
-        new Menu(page_type, plugins, @$el)
-}
+    ui = new Menu(pageType, plugins)
+
+    new Vue({
+        el: root
+
+        store: store
+
+        computed: Vuex.mapState('fieldset', {
+            fieldsetDisplayed: 'display'
+        })
+
+        render: (h) ->
+            # Referencing @fieldsetDisplayed seems to be the only way to make
+            # this component react to its changes
+            @fieldsetDisplayed
+
+            h(Fieldset, [
+                h(Container, {ref: 'container'})
+            ])
+
+        mounted: ->
+            $(@$refs.container).append(ui.mainDiv)
+
+        updated: ->
+            # Needed when showing/hiding the main fieldset
+            $(@$refs.container).append(ui.mainDiv)
+    })
 
 
 class Menu
-    constructor: (@page_type, plugins, _mainDiv) ->
-        mainDiv = $(_mainDiv)
+    constructor: (@pageType, plugins) ->
+        @mainDiv = $('<div>')
         groupActions = {}
 
         for Plugin in plugins
             plugin = new Plugin()
-            pluginInst = plugin.conf["#{@page_type}_menu"].slice()
+            pluginInst = plugin.conf["#{@pageType}_menu"].slice()
 
             # This allows to disable an entry by giving it a menu_entry
             # parameter that evaluates to false
@@ -64,22 +91,22 @@ class Menu
                 currId = pluginInst.slice(0, m + 1).join("-")
                                                     .replace(/ /g, "_")
 
-                # I can't simply do $("#" + currId) because mainDiv
+                # I can't simply do $("#" + currId) because @mainDiv
                 # hasn't been added to the DOM tree yet
-                menuSel = mainDiv.children("div[id='#{currId}']")
+                menuSel = @mainDiv.children("div[id='#{currId}']")
 
                 if not menuSel.length
                     currMenu = $("<div/>")
                         .attr("id", currId)
                         .hide()
-                        .appendTo(mainDiv)
+                        .appendTo(@mainDiv)
 
                     groupActions[currId] = []
 
                     if m > 0
-                        # I can't simply do $("#" + currId) because mainDiv
+                        # I can't simply do $("#" + currId) because @mainDiv
                         # hasn't been added to the DOM tree yet
-                        parentMenu = mainDiv.children("div[id='#{parentId}']")
+                        parentMenu = @mainDiv.children("div[id='#{parentId}']")
 
                         $('<input/>')
                             .attr('type', 'button')
@@ -116,7 +143,7 @@ class Menu
             else
                 entry.click(@makeEntryAction(plugin))
 
-        menus = mainDiv.children()
+        menus = @mainDiv.children()
 
         if menus.length
             execAll = $('<input/>')
@@ -125,9 +152,9 @@ class Menu
                 .addClass('margin')
                 .click(makeGroupAction(groupActions["WikiMonkeyMenuRoot"]))
 
-            # I can't simply do $("#" + currId) because mainDiv
+            # I can't simply do $("#" + currId) because @mainDiv
             # hasn't been added to the DOM tree yet
-            mainDiv
+            @mainDiv
                 .children("div[id='WikiMonkeyMenuRoot']")
                 .first()
                 .prepend(execAll)
@@ -169,7 +196,7 @@ class Menu
 
     executeEntryAction: (plugin, callNext) =>
         App.log.hidden("Plugin: " + plugin.constructor.name)
-        plugin["main_#{@page_type}"](callNext)
+        plugin["main_#{@pageType}"](callNext)
 
     warnInputNeeded: (plugin, callNext) =>
         App.log.warning("Plugin " + plugin.constructor.name +

@@ -21,7 +21,7 @@ run = (command, args..., options) ->
     })
 
 
-task('build', "recompile all user scripts", ({version}) ->
+task('build', "recompile user scripts", ({version}) ->
     if version
         spawnSync('npm', ['--allow-same-version'
                           '--no-git-tag-version'
@@ -100,14 +100,16 @@ buildScript = ({
         fs.copyFileSync(distfile, distfile_bwcompat)
 
 
-task('serve-gencert', "generate the certificate to serve the scripts on
-     localhost", (options) ->
-    run('openssl', 'genrsa', '-out', 'dev-key.pem', '2048', {cwd: AUXDIR})
-    run('openssl', 'req', '-new', '-key', 'dev-key.pem', '-out', 'dev.csr',
-        {cwd: AUXDIR})
-    run('openssl', 'x509', '-req', '-in', 'dev.csr', '-signkey', 'dev-key.pem',
-        '-out', 'dev-cert.pem', {cwd: AUXDIR})
-    fs.unlinkSync(path.join(AUXDIR, 'dev.csr'))
+task(
+    'gencert'
+    "generate the certificate to serve the user scripts from localhost"
+    (options) ->
+        run('openssl', 'genrsa', '-out', 'dev-key.pem', '2048', {cwd: AUXDIR})
+        run('openssl', 'req', '-new', '-key', 'dev-key.pem', '-out', 'dev.csr',
+            {cwd: AUXDIR})
+        run('openssl', 'x509', '-req', '-in', 'dev.csr', '-signkey',
+        'dev-key.pem', '-out', 'dev-cert.pem', {cwd: AUXDIR})
+        fs.unlinkSync(path.join(AUXDIR, 'dev.csr'))
 )
 
 

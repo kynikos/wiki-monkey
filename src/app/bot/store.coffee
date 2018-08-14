@@ -18,29 +18,4 @@
 
 module.exports = {
     namespaced: true
-
-    state: {
-        shown: false
-    }
-
-    mutations: {
-        show: (state) ->
-            state.shown = true
-
-        hide: (state) ->
-            state.shown = false
-    }
-
-    actions: {
-        openAlone: ({commit, dispatch}) ->
-            dispatch('hideContent', null, {root: true})
-            commit('show')
-
-        closeAlone: ({commit, dispatch}) ->
-            commit('hide')
-            dispatch('showContent', null, {root: true})
-
-        toggleAlone: ({state, dispatch}) ->
-            dispatch(state.shown and 'closeAlone' or 'openAlone')
-    }
 }

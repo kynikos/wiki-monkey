@@ -16,26 +16,21 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{Vuex, moment} = require('../../../modules/libs')
-
 module.exports = {
-    name: 'Export'
+    namespaced: true
 
-    methods: Vuex.mapGetters('main/log', [
-        'composeSaveLogText'
-    ])
+    state: {
+        display: true
+    }
 
-    render: (h) ->
-        h('a', {
-            domProps: {
-                href: '#'
-                download: 'WikiMonkey.log'
-            }
-            on: {
-                click: (event) =>
-                    event.target.href = @composeSaveLogText()
-                    event.target.download = "WikiMonkey-#{
-                        moment().format('YYYYMMDDTHHmmssZZ')}.log"
-            }
-        }, '[save log]')
+    mutations: {
+        show: (state, show = true) ->
+            state.display = show
+
+        hide: (state) ->
+            state.display = false
+
+        toggle: (state) ->
+            state.display = not state.display
+    }
 }
