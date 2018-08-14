@@ -27,6 +27,9 @@ module.exports.PageCommands = (container) ->
 
     root = document.createElement('div')
     $(container).prepend(root)
+    articleLink = WM.Parser.squashContiguousWhitespace(
+        "[[#{mw.config.get('wgPageName')}]]"
+    )
 
     new Vue({
         el: root
@@ -62,6 +65,22 @@ module.exports.PageCommands = (container) ->
                             @toggleMain()
                     }
                 }, ['WM'])
+                ' | '
+                h('a', {
+                    attrs: {
+                        href: "#copy-article-wiki-link"
+                        title: "Copy \"#{articleLink}\" to the clipboard"
+                        'data-clipboard-text': articleLink
+                    }
+                    on: {
+                        click: (event) ->
+                            event.preventDefault()
+                    }
+                    ref: 'copyArticleWikiLink'
+                }, ['c'])
                 ' ]'
             ])
+
+        mounted: ->
+            WM.Clipboard.enable(@$refs.copyArticleWikiLink)
     })

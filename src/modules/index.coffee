@@ -30,6 +30,7 @@ Upgrade = require('./Upgrade')
 # ArchPackages = require('./ArchPackages')
 ArchWiki = require('./ArchWiki')
 Cat = require('./Cat')
+Clipboard = require('./Clipboard')
 DB = require('./DB')
 Diff = require('./Diff')
 Editor = require('./Editor')
@@ -115,6 +116,7 @@ class module.exports.WikiMonkey
             # ArchPackages: new ArchPackages()
             ArchWiki: new ArchWiki()
             Cat: new Cat()
+            Clipboard
             DB: @conf.database_server and new DB() or null
             Diff: new Diff()
             Editor: new Editor()

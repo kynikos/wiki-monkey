@@ -32,6 +32,12 @@ SectionCommands_ = (editsection) ->
     $(editsection).children().last().before(' ')
     section = $(editsection).closest(':header')
     headline = section.find('.mw-headline')
+    sectionLink = WM.Parser.squashContiguousWhitespace(
+        "[[##{headline[0].id}]]"
+    )
+    articleLink = WM.Parser.squashContiguousWhitespace(
+        "[[#{mw.config.get('wgPageName')}##{headline[0].id}]]"
+    )
 
     new Vue({
         el: root
@@ -58,5 +64,35 @@ SectionCommands_ = (editsection) ->
                         title: 'Link to this section'
                     }
                 }, ['§'])
+                ' | '
+                h('a', {
+                    attrs: {
+                        href: "#copy-article-wiki-link"
+                        title: "Copy \"#{articleLink}\" to the clipboard"
+                        'data-clipboard-text': articleLink
+                    }
+                    on: {
+                        click: (event) ->
+                            event.preventDefault()
+                    }
+                    ref: 'copyArticleWikiLink'
+                }, ['c'])
+                ' | '
+                h('a', {
+                    attrs: {
+                        href: "#copy-section-wiki-link"
+                        title: "Copy \"#{sectionLink}\" to the clipboard"
+                        'data-clipboard-text': sectionLink
+                    }
+                    on: {
+                        click: (event) ->
+                            event.preventDefault()
+                    }
+                    ref: 'copySectionWikiLink'
+                }, ['c#'])
             ])
+
+        mounted: ->
+            WM.Clipboard.enable(@$refs.copyArticleWikiLink)
+            WM.Clipboard.enable(@$refs.copySectionWikiLink)
     })

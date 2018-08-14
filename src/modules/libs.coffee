@@ -44,3 +44,5 @@ module.exports.init = ->
         jss.createStyleSheet(style, jssopts).attach()
 
     module.exports.styled = require('@kynikos/vue-styled-jss')(jss, jssopts)
+
+    module.exports.ClipboardJS = require('clipboard')
