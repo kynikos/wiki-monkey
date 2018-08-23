@@ -69,7 +69,7 @@ class module.exports.ArchWikiWantedCategories extends Plugin
         if res.edit and res.edit.result == 'Success'
             callBot(1, null)
         else if res.error
-            App.log.logError(res.error.info + " (" + res.error.code + ")")
+            App.log.error(res.error.info + " (" + res.error.code + ")")
             callBot(res.error.code, null)
         else
             callBot(false, null)

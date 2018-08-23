@@ -1,3 +1,4 @@
+
 # Wiki Monkey - MediaWiki bot and editor-assistant user script
 # Copyright (C) 2011 Dario Giovannetti <dev@dariogiovannetti.net>
 #
@@ -16,24 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{Vuex, moment} = require('../../modules/libs')
-
-module.exports =
-    name: 'Export'
-
-    methods: Vuex.mapGetters('log', [
-        'composeSaveLogText'
-    ])
-
-    render: (h) ->
-        h('a', {
-            domProps:
-                href: '#'
-                download: 'WikiMonkey.log'
-            on:
-                click: (event) =>
-                    event.target.href = @composeSaveLogText()
-                    event.target.download = "WikiMonkey-#{
-                        moment().format('YYYYMMDDTHHmmssZZ')}.log"
-
-        }, '[save log]')
+module.exports.PageLink = (url, anchor) ->
+    # Must return a string, not a DOM element
+    return "<a href=\"#{url}\">#{anchor}</a>"

@@ -16,52 +16,53 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{jssc} = require('../../modules/libs')
-WM = require('../../modules')
-App = require('../index')
+{jssc} = require('../../../modules/libs')
+WM = require('../../../modules')
+App = require('../../index')
 
-{classes} = jssc(
-    pluginSelect:
+{classes} = jssc({
+    pluginSelect: {
         width: '100%'
         marginBottom: '1em'
-
-    listSelect:
+    }
+    listSelect: {
         marginBottom: '1em'
-
-    botFilter:
+    }
+    botFilter: {
         height: '6em'
         marginBottom: '1em'
         resize: 'vertical'
-
-    botStartStop:
+    }
+    botStartStop: {
         marginRight: '0.33em'
         marginBottom: '1em'
         fontWeight: 'bold'
-
-    botSelected:
+    }
+    botSelected: {
         backgroundColor: '#faa'
         padding: '0.2em 0.4em'
-
-    botProcessing:
+    }
+    botProcessing: {
         backgroundColor: '#ff8'
         padding: '0.2em 0.4em'
-
-    botChanged:
+    }
+    botChanged: {
         backgroundColor: '#afa'
         padding: '0.2em 0.4em'
-
-    botUnchanged:
+    }
+    botUnchanged: {
         backgroundColor: '#aaf'
         padding: '0.2em 0.4em'
-
-    botBypassed:
+    }
+    botBypassed: {
         backgroundColor: 'orangered'
         padding: '0.2em 0.4em'
-
-    botFailed:
+    }
+    botFailed: {
         backgroundColor: 'red'
         padding: '0.2em 0.4em'
-)
+    }
+})
 
 
 module.exports = (functions, lists) -> {
@@ -77,15 +78,16 @@ module.exports = (functions, lists) -> {
 
 class Bot
     constructor: (functions, lists, mainDiv) ->
-        @configuration =
+        @configuration = {
             plugin_name: null
             function_: ->
             filters: []
-            list:
+            list: {
                 current: null
                 previous: null
+            }
             visited: []
-
+        }
         # localStorage can only store strings
         @botToken = "0"
 
@@ -129,7 +131,7 @@ class Bot
             selectFunctions.addEventListener("change", ( (ffunctions) ->
                 return ->
                     select = document.getElementById(
-                                                'WikiMonkeyBot-PluginSelect')
+                        'WikiMonkeyBot-PluginSelect')
                     id = select.selectedIndex
                     UI = document.getElementById('WikiMonkeyBotFunction')
                     plugin = ffunctions[id]
@@ -144,8 +146,10 @@ class Bot
                         UI.replaceChild(document.createElement('div'),
                                                                 UI.firstChild)
                     self.configuration.plugin_name = plugin.constructor.name
-                    self.configuration.function_ = (title,
-                                                    callContinue, chainArgs) ->
+                    self.configuration.function_ = (
+                        title
+                        callContinue, chainArgs
+                    ) ->
                         plugin.main_bot(title, callContinue, chainArgs)
             )(ffunctions), false)
 
@@ -234,7 +238,7 @@ class Bot
         for elem in elems
             elem.addEventListener("change", ->
                 self._disableStartBot(
-                                'Filters have changed, preview the selection')
+                    'Filters have changed, preview the selection')
             , false)
 
         duplicatestag = document.createElement('span')
@@ -313,7 +317,7 @@ class Bot
                 # run _disableStopBot() here, not in _endAutomatic()
                 self._disableStopBot()
                 self._endAutomatic(true)
-                App.log.logInfo('Bot stopped manually')
+                App.log.info('Bot stopped manually')
         )(stopId), false)
 
         start = document.getElementById('WikiMonkeyBotStart')
@@ -370,7 +374,7 @@ class Bot
                 try
                     regexp = new RegExp(pattern, modifiers)
                 catch exc
-                    App.log.logError('Invalid regexp: ' + exc)
+                    App.log.error('Invalid regexp: ' + exc)
                     return false
 
                 @configuration.filters.push([regexp, negative])
@@ -389,8 +393,7 @@ class Bot
             duplicates = document.getElementById('WikiMonkeyBotDuplicates')
                                                                     .checked
 
-            if duplicates or @configuration.visited.indexOf(
-                                                                title) < 0
+            if duplicates or @configuration.visited.indexOf(title) < 0
                 @configuration.visited.push(title)
                 filters = @configuration.filters
                 inverse = document.getElementById('WikiMonkeyBotInverse')
@@ -439,7 +442,7 @@ class Bot
         return origClasses.join(" ")
 
     _previewFilter: =>
-        App.log.logInfo('Updating filter preview, please wait ...')
+        App.log.info('Updating filter preview, please wait ...')
         @_disableStartBot('Updating filter preview ...')
 
         if @configuration.list.previous
@@ -494,13 +497,13 @@ class Bot
                         link.className = @restoreOriginalLinkClassName(
                                                             link.className)
 
-        App.log.logInfo('Preview updated (' + N + ' pages selected)')
+        App.log.info('Preview updated (' + N + ' pages selected)')
 
         if enable
             @_enableStartBot()
         else
             @_disableStartBot(
-                            'No pages selected, reset and preview the filter')
+                'No pages selected, reset and preview the filter')
 
     _setBotToken: ->
         date = new Date()
@@ -524,7 +527,7 @@ class Bot
 
     _startAutomatic: =>
         if @_checkOtherBotsRunning() and not @_canForceStart()
-            App.log.logError("It's not possible to start the bot (without
+            App.log.error("It's not possible to start the bot (without
                         forcing it) for one of the following reasons:<br>
                         * another bot instance is currently running<br>
                         * a previously running bot has stopped due to a
@@ -553,10 +556,10 @@ class Bot
 
             @_disableForceStart()
             @_setBotToken()
-            App.log.logInfo('Starting bot ...')
-            App.log.logHidden("Plugin: " + @configuration.plugin_name)
-            App.log.logHidden("Filter: " + document.getElementById(
-                                                'WikiMonkeyBotFilter').value)
+            App.log.info('Starting bot ...')
+            App.log.hidden("Plugin: " + @configuration.plugin_name)
+            App.log.hidden("Filter: " + document.getElementById(
+                'WikiMonkeyBotFilter').value)
             @_disableStartBot('Bot is running ...')
             @_disableControls()
             @configuration.visited = []
@@ -570,28 +573,28 @@ class Bot
             switch status
                 # The article hasn't been saved
                 when 0
-                    ln.className = self.changeWikiMonkeyLinkClassName(ln.className,
-                                                    classes.botUnchanged)
-                    App.log.logInfo(App.log.linkToWikiPage(article, article) +
+                    ln.className = self.changeWikiMonkeyLinkClassName(
+                        ln.className, classes.botUnchanged)
+                    App.log.info(App.log.WikiLink(article, article) +
                                                     " processed (unchanged)")
                     id++
                     self._processItem(status, lis, id, linkId, resArgs)
                     break
                 # The article has been saved
                 when 1
-                    ln.className = self.changeWikiMonkeyLinkClassName(ln.className,
-                                                    classes.botChanged)
-                    App.log.logInfo(App.log.linkToWikiPage(article, article) +
+                    ln.className = self.changeWikiMonkeyLinkClassName(
+                        ln.className, classes.botChanged)
+                    App.log.info(App.log.WikiLink(article, article) +
                                                     " processed (changed)")
                     id++
                     self._processItem(status, lis, id, linkId, resArgs)
                     break
                 # The plugin has encountered a protectedpage error
                 when 'protectedpage'
-                    ln.className = self.changeWikiMonkeyLinkClassName(ln.className,
-                                                    classes.botBypassed)
-                    App.log.logWarning("This user doesn't have the rights to " +
-                                    "edit " + App.log.linkToWikiPage(article,
+                    ln.className = self.changeWikiMonkeyLinkClassName(
+                        ln.className, classes.botBypassed)
+                    App.log.warning("This user doesn't have the rights to " +
+                                    "edit " + App.log.WikiLink(article,
                                     article) + ", bypassing it ...")
                     id++
                     # Change status to 0 (page not changed)
@@ -599,10 +602,10 @@ class Bot
                     break
                 # The plugin has encountered a critical error
                 else
-                    ln.className = self.changeWikiMonkeyLinkClassName(ln.className,
-                                                        classes.botFailed)
-                    App.log.logError("Error processing " +
-                                    App.log.linkToWikiPage(article, article) +
+                    ln.className = self.changeWikiMonkeyLinkClassName(
+                        ln.className, classes.botFailed)
+                    App.log.error("Error processing " +
+                                    App.log.WikiLink(article, article) +
                                     ", stopping the bot")
                     self._endAutomatic(true)
 
@@ -623,7 +626,7 @@ class Bot
                 else
                     interval = @configuration.interval
 
-                App.log.logInfo('Waiting ' + (interval / 1000) +
+                App.log.info('Waiting ' + (interval / 1000) +
                                                             ' seconds ...')
 
                 stopId = setTimeout(( (lis, id, ln, article, chainArgs) ->
@@ -635,16 +638,17 @@ class Bot
                         # _not_ before setTimeout!
                         if not self._checkOtherBotsRunning()
                             ln.className = self.changeWikiMonkeyLinkClassName(
-                                    ln.className, classes.botProcessing)
-                            App.log.logInfo("Processing " +
-                                    App.log.linkToWikiPage(article, article) +
+                                ln.className, classes.botProcessing)
+                            App.log.info("Processing " +
+                                    App.log.WikiLink(article, article) +
                                     " ...")
 
                             self.configuration.function_(article,
-                                self.makeCallContinue(lis, id, linkId, ln, article),
+                                self.makeCallContinue(
+                                    lis, id, linkId, ln, article),
                                 chainArgs)
                         else
-                            App.log.logError('Another bot has been ' +
+                            App.log.error('Another bot has been ' +
                                                 'force-started, stopping ...')
                             self._endAutomatic(false)
                 )(items, index, link, title, chainArgs), interval)
@@ -658,7 +662,7 @@ class Bot
 
     _endAutomatic: (reset) ->
         @_resetBotToken(reset)
-        App.log.logInfo('Bot operations completed (check the log for ' +
+        App.log.info('Bot operations completed (check the log for ' +
                                                         'warnings or errors)')
         @_disableStartBot('Bot operations completed, reset and preview ' +
                                                                 'the filter')

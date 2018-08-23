@@ -17,25 +17,10 @@
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 {Vuex} = require('../modules/libs')
-log = require('./log/store')
-filter = require('./filter/store')
+main = require('./main/store')
 
-module.exports = new Vuex.Store(
-    state:
-        display: true
-
-    mutations:
-        show: (state, show = true) ->
-            state.display = show
-
-        hide: (state) ->
-            state.display = false
-
-        toggle: (state) ->
-            state.display = not state.display
-
+module.exports = new Vuex.Store({
     modules: {
-        log
-        filter
+        main
     }
-)
+})

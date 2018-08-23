@@ -63,7 +63,7 @@ class module.exports.DeletePages extends Plugin
 
         if not res.delete
             if res.error
-                App.log.logError("#{App.log.linkToWikiPage(title, title)}
+                App.log.error("#{App.log.WikiLink(title, title)}
                                 has not been deleted!\n#{res.error.info}
                                 (#{res.error.code})")
                 callBot(res.error.code, null)

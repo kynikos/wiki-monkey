@@ -29,7 +29,7 @@ class module.exports.FixDoubleRedirects extends Plugin
         edit_summary: "fix double redirect"
 
     main_special: (callNext) ->
-        App.log.logInfo("Fixing double redirects ...")
+        App.log.info("Fixing double redirects ...")
 
         {results, siteinfo} =
             await WM.MW.getSpecialList("DoubleRedirects", "namespaces")
@@ -41,10 +41,10 @@ class module.exports.FixDoubleRedirects extends Plugin
             for doubleRedirect in results
                 await @process_redirect(doubleRedirect, namespaces)
         catch error
-            App.log.logError(error.message)
+            App.log.error(error.message)
             return false
 
-        App.log.logInfo("Fixed double redirects")
+        App.log.info("Fixed double redirects")
         if callNext
             callNext()
 
@@ -65,7 +65,7 @@ class module.exports.FixDoubleRedirects extends Plugin
 
         middleRedirectSource = middleRedirect.revisions[0]["*"]
 
-        App.log.logInfo("Processing #{App.log.linkToWikiPage(
+        App.log.info("Processing #{App.log.WikiLink(
             doubleRedirect.title, doubleRedirect.title)} ...")
 
         rawOldTarget = doubleRedirectSource.match(/\s*#redirect\s*[^\n]+/i)
@@ -121,5 +121,5 @@ class module.exports.FixDoubleRedirects extends Plugin
                 throw new Error("#{res.error.info} (#{res.error.code})")
 
         else
-            App.log.logWarning("Could not fix #{App.log.linkToWikiPage(
+            App.log.warning("Could not fix #{App.log.WikiLink(
                 doubleRedirect.title, doubleRedirect.title)}")

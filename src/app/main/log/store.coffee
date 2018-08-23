@@ -16,32 +16,35 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{moment} = require('../../modules/libs')
+{moment} = require('../../../modules/libs')
 
-LEVEL_TO_TAG =
+LEVEL_TO_TAG = {
     5: 'HDN'
     8: 'JSN'
     10: 'DBG'
     20: 'INF'
     30: 'WRN'
     40: 'ERR'
+}
 
-module.exports =
+module.exports = {
     namespaced: true
 
-    state:
+    state: {
         display: true
         minLevel: 10
         messages: []
+    }
 
-    getters:
+    getters: {
         composeSaveLogText: (state) ->
             text = ("#{moment(message.tstamp).format('HH:mm:ss')}\t#{
                 LEVEL_TO_TAG[message.level]}\t#{message.text}" \
                 for message in state.messages).join("\n")
             return "data:text/plain;charset=utf-8,#{encodeURIComponent(text)}"
+    }
 
-    mutations:
+    mutations: {
         show: (state, show = true) ->
             state.display = show
 
@@ -96,3 +99,5 @@ module.exports =
                 level: 40
                 tstamp: new Date()
             })
+    }
+}

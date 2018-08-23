@@ -16,24 +16,24 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{jssc, styled, moment} = require('../../modules/libs')
+{jssc, styled, moment} = require('../../../modules/libs')
 
-LEVEL_TO_CLASS =
+LEVEL_TO_CLASS = {
     5: 'hidden'
     8: 'json'
     10: 'debug'
     20: 'info'
     30: 'warning'
     40: 'error'
-
-Line = styled.div(
+}
+Line = styled.div({
     display: 'flex'
-)
+})
 
-divmixin =
+divmixin = {
     fontFamily: 'monospace'
     color: '#eee'
-
+}
 Timestamp = styled.div({
     divmixin...
     marginRight: '1em'
@@ -43,9 +43,10 @@ Timestamp = styled.div({
 Text = styled.div({
     divmixin...
 
-    '& a':
+    '& a': {
         color: 'inherit'
         textDecoration: 'underline'
+    }
 })
 
 {classes} = jssc({
@@ -53,39 +54,44 @@ Text = styled.div({
 
     json: {}
 
-    debug:
+    debug: {
         color: 'cyan'
+    }
 
     info: {}
 
-    warning:
+    warning: {
         color: 'gold'
+    }
 
-    error:
+    error: {
         color: 'red'
+    }
 })
 
-module.exports =
+module.exports = {
     name: 'Message'
 
-    props:
-        index:
+    props: {
+        index: {
             type: Number
             required: true
-
-        text:
+        }
+        text: {
             type: String
             required: true
-
-        level:
+        }
+        level: {
             type: Number
             required: true
             validator: (level) ->
                 return level of LEVEL_TO_CLASS
-
-        tstamp:
+        }
+        tstamp: {
             type: Date
             required: true
+        }
+    }
 
     render: (h) ->
         h(Line, {
@@ -99,3 +105,4 @@ module.exports =
                 domProps: {innerHTML: @text or ""}
             })
         ])
+}

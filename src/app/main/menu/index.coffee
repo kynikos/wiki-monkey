@@ -16,13 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{styled} = require('../../modules/libs')
-App = require('../index')
+{styled} = require('../../../modules/libs')
+App = require('../../index')
 
-Container = styled.div(
-    '& input.margin':
+Container = styled.div({
+    '& input.margin': {
         margin: "0 0.33em 0.33em 0"
-)
+    }
+})
 
 
 module.exports = (page_type, plugins) -> {
@@ -167,11 +168,11 @@ class Menu
             @executeEntryAction(plugin, null)
 
     executeEntryAction: (plugin, callNext) =>
-        App.log.logHidden("Plugin: " + plugin.constructor.name)
+        App.log.hidden("Plugin: " + plugin.constructor.name)
         plugin["main_#{@page_type}"](callNext)
 
     warnInputNeeded: (plugin, callNext) =>
-        App.log.logWarning("Plugin " + plugin.constructor.name +
+        App.log.warning("Plugin " + plugin.constructor.name +
             " was not executed because it requires input from its interface.")
 
         if callNext

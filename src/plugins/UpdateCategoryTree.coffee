@@ -73,7 +73,7 @@ class module.exports.UpdateCategoryTree extends Plugin
             callNext()
 
     readToC: (args) =>
-        App.log.logInfo('Updating ' + App.log.linkToWikiPage(args.params.page,
+        App.log.info('Updating ' + App.log.WikiLink(args.params.page,
                                                 args.params.page) + " ...")
         WM.MW.callQueryEdit(args.params.page,
                             @processToC,
@@ -102,11 +102,11 @@ class module.exports.UpdateCategoryTree extends Plugin
                     callArgs: args
                 })
             else
-                App.log.logError("Cannot find insertion marks in " +
-                    App.log.linkToWikiPage(args.params.page, args.params.page))
+                App.log.error("Cannot find insertion marks in " +
+                    App.log.WikiLink(args.params.page, args.params.page))
                 @iteratePages(args.pageid, args.callNext)
         else
-            App.log.logWarning(App.log.linkToWikiPage(args.params.page,
+            App.log.warning(App.log.WikiLink(args.params.page,
                         args.params.page) + ' has been updated too recently')
             @iteratePages(args.pageid, args.callNext)
 
@@ -124,7 +124,7 @@ class module.exports.UpdateCategoryTree extends Plugin
     processCategory: (params) =>
         args = params.callArgs
 
-        App.log.logInfo("Processing " + App.log.linkToWikiPage(params.node,
+        App.log.info("Processing " + App.log.WikiLink(params.node,
                                                         params.node) + " ...")
 
         text = ""
@@ -148,7 +148,7 @@ class module.exports.UpdateCategoryTree extends Plugin
 
         if params.children == "loop"
             text += "'''[LOOP]'''\n"
-            App.log.logWarning("Loop in " + App.log.linkToWikiPage(params.node,
+            App.log.warning("Loop in " + App.log.WikiLink(params.node,
                                                                 params.node))
             @processCategoryEnd(params, args, text)
         else
@@ -229,19 +229,19 @@ class module.exports.UpdateCategoryTree extends Plugin
                 args,
                 null)
         else
-            App.log.logInfo(App.log.linkToWikiPage(args.params.page,
+            App.log.info(App.log.WikiLink(args.params.page,
                                 args.params.page) + ' is already up to date')
 
             @iteratePages(args.pageid, args.callNext)
 
     checkWrite: (res, args) =>
         if res.edit and res.edit.result == 'Success'
-            App.log.logInfo(App.log.linkToWikiPage(args.params.page,
+            App.log.info(App.log.WikiLink(args.params.page,
                                     args.params.page) + ' correctly updated')
 
             @iteratePages(args.pageid, args.callNext)
 
         else
-            App.log.logError(App.log.linkToWikiPage(args.params.page,
+            App.log.error(App.log.WikiLink(args.params.page,
                     args.params.page) + ' has not been updated!\n' +
                     res['error']['info'] + " (" + res['error']['code'] + ")")

@@ -40,13 +40,13 @@ class module.exports
                 name: name
         ).done((data, textStatus, jqXHR) ->
             if not data instanceof Object
-                App.log.logError("The Official Repositories web
+                App.log.error("The Official Repositories web
                                  interface returned an unexpected object")
 
             if data
                 call(data, callArgs)
         ).fail((jqXHR, textStatus, errorThrown) ->
-            App.log.logError(WM.MW.failedQueryError(url))
+            App.log.error(WM.MW.failedQueryError(url))
         )
 
     isOfficialPackage: (pkg, call, callArgs) ->
@@ -69,19 +69,19 @@ class module.exports
                 arg: arg
         ).done((data, textStatus, jqXHR) =>
             if not data instanceof Object
-                App.log.logError("The AUR's RPC interface returned an
+                App.log.error("The AUR's RPC interface returned an
                                                     unexpected object")
 
             if data
                 call(data, callArgs)
         ).fail((jqXHR, textStatus, errorThrown) =>
-            App.log.logError(WM.MW.failedQueryError(url))
+            App.log.error(WM.MW.failedQueryError(url))
         )
 
     isAURPackage: (pkg, call, callArgs) ->
         call2 = (res, args) ->
             if res.type == "error"
-                App.log.logError("The AUR's RPC interface returned an error: " +
+                App.log.error("The AUR's RPC interface returned an error: " +
                                                                 res.results)
             else
                 if res.resultcount > 0
@@ -115,7 +115,7 @@ class module.exports
             if jqXHR.status is 404
                 call(false, callArgs)
             else
-                App.log.logError(WM.MW.failedQueryError(url))
+                App.log.error(WM.MW.failedQueryError(url))
         )
 
     isPackageGroup64: (grp, call, callArgs) ->

@@ -31,17 +31,18 @@ disableEditSummarySubmitOnEnter = ->
 
 
 hideRollbackLinks = ->
-    jssc(
-        '@global span.mw-rollback-link':
+    jssc({
+        '@global span.mw-rollback-link': {
             display: 'none'
-    )
+        }
+    })
 
 
 scrollToFirstHeading = ->
     window.scrollTo(0, $('#firstHeading').offset().top)
 
 
-module.exports =
+module.exports = {
     modEditor: ->
         if WM.conf.disable_edit_summary_submit_on_enter
             disableEditSummarySubmitOnEnter()
@@ -55,3 +56,4 @@ module.exports =
     modContributions: ->
         if WM.conf.hide_rollback_links
             hideRollbackLinks()
+}

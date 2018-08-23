@@ -1,4 +1,3 @@
-
 # Wiki Monkey - MediaWiki bot and editor-assistant user script
 # Copyright (C) 2011 Dario Giovannetti <dev@dariogiovannetti.net>
 #
@@ -17,6 +16,28 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-module.exports.linkToPage = (url, anchor) ->
-    # Must return a string, not a DOM element
-    return "<a href=\"#{url}\">#{anchor}</a>"
+{Vuex} = require('../../../modules/libs')
+
+module.exports = {
+    name: 'LogFilter'
+
+    computed: Vuex.mapState('main/log', [
+        'minLevel'
+    ])
+
+    methods: Vuex.mapMutations('main/log', [
+        'toggleMinLevel'
+    ])
+
+    render: (h) ->
+        h('a', {
+            attrs: {href: '#'}
+            on: {
+                click: (event) =>
+                    event.preventDefault()
+                    @toggleMinLevel()
+            }
+
+        }, @minLevel > 10 and '[show info messages]' or \
+        '[hide info messages]')
+}

@@ -16,25 +16,25 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{Vuex, styled} = require('../../modules/libs')
+{Vuex, styled} = require('../../../modules/libs')
 
 LogFilter = require('./LogFilter')
 Export = require('./Export')
 Message = require('./Message')
 
-MessageContainer = styled.div(
+MessageContainer = styled.div({
     height: '10em'
     border: '2px solid #07b'
     padding: '0.5em'
     overflow: 'auto'
     resize: 'vertical'
     backgroundColor: '#111'
-)
+})
 
-module.exports =
+module.exports = {
     name: 'Log'
 
-    computed: Vuex.mapState('log', [
+    computed: Vuex.mapState('main/log', [
         'display'
         'minLevel'
         'messages'
@@ -72,3 +72,4 @@ module.exports =
             # logArea may not exist when the log is hidden
             if logArea
                 logArea.scrollTop = logArea.scrollHeight - logArea.clientHeight
+}

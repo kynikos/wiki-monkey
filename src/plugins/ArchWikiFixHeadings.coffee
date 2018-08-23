@@ -38,7 +38,7 @@ class module.exports.ArchWikiFixHeadings extends Plugin
                 increaseLevel = 1
             else
                 increaseLevel = 0
-                App.log.logWarning("There are 6 levels of headings, it has
+                App.log.warning("There are 6 levels of headings, it has
                     been necessary to start creating them from level 1
                     although usually it is suggested to start from level 2")
 
@@ -58,7 +58,7 @@ class module.exports.ArchWikiFixHeadings extends Plugin
 
         if newtext != source
             WM.Editor.writeSource(newtext)
-            App.log.logInfo("Fixed section headings")
+            App.log.info("Fixed section headings")
 
         if callNext
             callNext()

@@ -73,7 +73,7 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
         whitelist = @computeWhiteList(@conf.tag_whitelist)
         supportedLangs = @computeSupportedLangs(@conf.supported_tags)
 
-        App.log.logInfo("Synchronizing interlanguage links ...")
+        App.log.info("Synchronizing interlanguage links ...")
 
         WM.MW.getLocalInterwikiMap(
             title,
@@ -104,7 +104,7 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
 
         newlinks = {}
 
-        App.log.logInfo("Reading " + App.log.linkToPage(url, "edited article") +
+        App.log.info("Reading " + App.log.PageLink(url, "edited article") +
                                                                     " ...")
 
         if langlinks
@@ -119,19 +119,19 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
                     # Just ignore any conflicting links and warn the user:
                     # if it's a real conflict, the user will investigate it,
                     # otherwise the user will ignore it
-                    App.log.logWarning("Possibly conflicting interlanguage " +
-                        "links: " + App.log.linkToPage(link.url, "[[" +
+                    App.log.warning("Possibly conflicting interlanguage " +
+                        "links: " + App.log.PageLink(link.url, "[[" +
                         link.lang + ":" + link.title + "]]") + " and " +
-                        App.log.linkToPage(vlink.url, "[[" + link.lang + ":" +
+                        App.log.PageLink(vlink.url, "[[" + link.lang + ":" +
                         visitedlinks[link.lang.toLowerCase()].title + "]]"))
                 else if nlink and nlink.url != link.url
                     # Just ignore any conflicting links and warn the user:
                     # if it's a real conflict, the user will investigate it,
                     # otherwise the user will ignore it
-                    App.log.logWarning("Possibly conflicting interlanguage " +
-                        "links: " + App.log.linkToPage(link.url, "[[" +
+                    App.log.warning("Possibly conflicting interlanguage " +
+                        "links: " + App.log.PageLink(link.url, "[[" +
                         link.lang + ":" + link.title + "]]") + " and " +
-                        App.log.linkToPage(nlink.url, "[[" + link.lang + ":" +
+                        App.log.PageLink(nlink.url, "[[" + link.lang + ":" +
                         newlinks[link.lang.toLowerCase()].title + "]]"))
 
             WM.Interlanguage.collectLinks(
@@ -144,7 +144,7 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
                 [tag, url, source, langlinks, iwmap, callNext]
             )
         else
-            App.log.logInfo("No interlanguage links found")
+            App.log.info("No interlanguage links found")
 
             if callNext
                 callNext()
@@ -162,9 +162,9 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
 
         if newText != source
             WM.Editor.writeSource(newText)
-            App.log.logInfo("Synchronized interlanguage links")
+            App.log.info("Synchronized interlanguage links")
         else
-            App.log.logInfo("Interlanguage links were already synchronized")
+            App.log.info("Interlanguage links were already synchronized")
 
         if callNext
             callNext()
@@ -240,7 +240,7 @@ class module.exports.SynchronizeInterlanguageLinks extends Plugin
         if res.edit and res.edit.result == 'Success'
             callBot(1, null)
         else if res.error
-            App.log.logError(res.error.info + " (" + res.error.code + ")")
+            App.log.error(res.error.info + " (" + res.error.code + ")")
             callBot(res.error.code, null)
         else
             callBot(false, null)

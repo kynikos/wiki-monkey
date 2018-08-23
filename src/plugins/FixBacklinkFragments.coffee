@@ -85,11 +85,11 @@ class module.exports.FixBacklinkFragments extends Plugin
                     oldlink = newlink
                     newlink = "[[" + target + "#" + fixedFragment +
                         (if link.anchor then "|" + link.anchor else "") + "]]"
-                    App.log.logInfo("Fixed broken link fragment: " + oldlink +
-                        " -> " + App.log.linkToWikiPage(link.link, newlink))
+                    App.log.info("Fixed broken link fragment: " + oldlink +
+                        " -> " + App.log.WikiLink(link.link, newlink))
                 else
-                    App.log.logWarning("Cannot fix broken link fragment: " +
-                                    App.log.linkToWikiPage(link.link, newlink))
+                    App.log.warning("Cannot fix broken link fragment: " +
+                                    App.log.WikiLink(link.link, newlink))
 
             newText += newlink
             prevId = link.index + link.length
@@ -156,18 +156,18 @@ class module.exports.FixBacklinkFragments extends Plugin
                         anchor = if args[1] then ("|" + args[1].value) else ""
                         newlink = "{{" + template.title + "|" + target +
                                         "#" + fixedFragment  + anchor + "}}"
-                        App.log.logInfo("Fixed broken link fragment: " +
+                        App.log.info("Fixed broken link fragment: " +
                                         template.rawTransclusion + " -> " +
-                                        App.log.linkToWikiPage(link, newlink))
+                                        App.log.WikiLink(link, newlink))
                         return newlink
 
                     else
-                        App.log.logWarning("Cannot fix broken link fragment: " +
-                                                    App.log.linkToWikiPage(link,
+                        App.log.warning("Cannot fix broken link fragment: " +
+                                                    App.log.WikiLink(link,
                                                     template.rawTransclusion))
 
         else
-            App.log.logWarning("Template:" + template.title + " must have " +
+            App.log.warning("Template:" + template.title + " must have " +
                         expectedArgs + " and only " + expectedArgs +
                         (if expectedArgs > 1 then " arguments: " else " argument: ") +
                         template.rawTransclusion)
@@ -198,7 +198,7 @@ class module.exports.FixBacklinkFragments extends Plugin
         summary = @conf.edit_summary
 
         target = readTarget()
-        App.log.logHidden("Target page: " + target)
+        App.log.hidden("Target page: " + target)
 
         if target
             if chainArgs is null
@@ -208,7 +208,7 @@ class module.exports.FixBacklinkFragments extends Plugin
                     'page': target
                     'redirects': 1
 
-                App.log.logWarning("If some articles in the list are
+                App.log.warning("If some articles in the list are
                     linking to the target article
                     through a redirect, you should process the backlinks
                     of that redirect page separately through its
@@ -225,7 +225,7 @@ class module.exports.FixBacklinkFragments extends Plugin
             else
                 @mainAutoRead(target, chainArgs, title, summary, callBot)
         else
-            App.log.logError('The target page cannot be empty')
+            App.log.error('The target page cannot be empty')
             callBot(false, null)
 
     mainAutoFindSections: (res, args) =>
@@ -243,7 +243,7 @@ class module.exports.FixBacklinkFragments extends Plugin
             @mainAutoRead(target, sections, title, summary, callBot)
 
         else
-            App.log.logError("The set target page, " + target +
+            App.log.error("The set target page, " + target +
                                                     ", seems not to exist")
 
             if res.error
@@ -287,7 +287,7 @@ class module.exports.FixBacklinkFragments extends Plugin
         if res.edit and res.edit.result == 'Success'
             callBot(1, sections)
         else if res.error
-            App.log.logError(res.error.info + " (" + res.error.code + ")")
+            App.log.error(res.error.info + " (" + res.error.code + ")")
             callBot(res.error.code, sections)
         else
             callBot(false, sections)

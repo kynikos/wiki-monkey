@@ -43,7 +43,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
             call(source, source, callArgs)
 
     doUpdateContinue: (source, newText, templates, index, call, callArgs) =>
-        App.log.logInfo("Processing " + templates[index].rawTransclusion +
+        App.log.info("Processing " + templates[index].rawTransclusion +
                                                                     " ...")
 
         newText += source.substring((
@@ -101,10 +101,10 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
             check(checks, source, newText, templates, index, call, callArgs)
         else
             pkg = templates[index].arguments[0].value.trim()
-            App.log.logWarning(pkg +
+            App.log.warning(pkg +
                         " hasn't been found neither in the official " +
                         "repositories nor in the AUR nor as a package group")
-            App.log.logJson("Plugins.ArchWikiUpdatePackageTemplates",
+            App.log.json("Plugins.ArchWikiUpdatePackageTemplates",
                     {
                         "error": "notfound"
                         "page": callArgs[0]
@@ -120,7 +120,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
     checkOfficial: (checks, source, newText, templates, index,
                                                             call, callArgs) =>
         pkgname = templates[index].arguments[0].value.trim()
-        App.log.logInfo("Looking for " + pkgname +
+        App.log.info("Looking for " + pkgname +
                                         " in the official repositories ...")
 
         WM.ArchPackages.isOfficialPackage(pkgname,
@@ -132,7 +132,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
         pkgname = templates[index].arguments[0].value.trim()
 
         if pkgname.toLowerCase() != pkgname
-            App.log.logInfo("Looking for " + pkgname.toLowerCase() +
+            App.log.info("Looking for " + pkgname.toLowerCase() +
                             " (lowercase) in the official repositories ...")
 
             WM.ArchPackages.isOfficialPackage(pkgname.toLowerCase(),
@@ -144,7 +144,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
 
     checkAUR: (checks, source, newText, templates, index, call, callArgs) =>
         pkgname = templates[index].arguments[0].value.trim()
-        App.log.logInfo("Looking for " + pkgname + " in the AUR ...")
+        App.log.info("Looking for " + pkgname + " in the AUR ...")
 
         WM.ArchPackages.isAURPackage(pkgname,
                  @checkAUR2,
@@ -154,7 +154,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
         pkgname = templates[index].arguments[0].value.trim()
 
         if pkgname.toLowerCase() != pkgname
-            App.log.logInfo("Looking for " + pkgname.toLowerCase() +
+            App.log.info("Looking for " + pkgname.toLowerCase() +
                                                 " (lowercase) in the AUR ...")
 
             WM.ArchPackages.isAURPackage(pkgname.toLowerCase(),
@@ -167,7 +167,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
     checkGroup64: (checks, source, newText, templates, index,
                                                             call, callArgs) =>
         grpname = templates[index].arguments[0].value.trim()
-        App.log.logInfo("Looking for " + grpname +
+        App.log.info("Looking for " + grpname +
                                             " as an x86_64 package group ...")
 
         WM.ArchPackages.isPackageGroup64(grpname,
@@ -179,7 +179,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
         grpname = templates[index].arguments[0].value.trim()
 
         if grpname.toLowerCase() != grpname
-            App.log.logInfo("Looking for " + grpname.toLowerCase() +
+            App.log.info("Looking for " + grpname.toLowerCase() +
                                 " (lowercase) as an x86_64 package group ...")
 
             WM.ArchPackages.isPackageGroup64(grpname.toLowerCase(),
@@ -192,7 +192,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
     checkGroup32: (checks, source, newText, templates, index,
                                                             call, callArgs) =>
         grpname = templates[index].arguments[0].value.trim()
-        App.log.logInfo("Looking for " + grpname +
+        App.log.info("Looking for " + grpname +
                                             " as an i686 package group ...")
 
         WM.ArchPackages.isPackageGroup32(grpname,
@@ -204,7 +204,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
         grpname = templates[index].arguments[0].value.trim()
 
         if grpname.toLowerCase() != grpname
-            App.log.logInfo("Looking for " + grpname.toLowerCase() +
+            App.log.info("Looking for " + grpname.toLowerCase() +
                                 " (lowercase) as an i686 package group ...")
 
             WM.ArchPackages.isPackageGroup32(grpname.toLowerCase(),
@@ -230,7 +230,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
             if template.title.toLowerCase() != 'pkg'
                 newtemplate = "{{Pkg|" + pkgname + "}}"
                 newText += newtemplate
-                App.log.logInfo("Replacing template with " + newtemplate)
+                App.log.info("Replacing template with " + newtemplate)
             else
                 newText += template.rawTransclusion
 
@@ -255,7 +255,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
         if res
             newtemplate = "{{Pkg|" + pkgname.toLowerCase() + "}}"
             newText += newtemplate
-            App.log.logInfo("Replacing template with " + newtemplate)
+            App.log.info("Replacing template with " + newtemplate)
 
             @doUpdateContinue3(source,
                                     newText, templates, index, call, callArgs)
@@ -279,7 +279,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
             if template.title.toLowerCase() != 'aur'
                 newtemplate = "{{AUR|" + pkgname + "}}"
                 newText += newtemplate
-                App.log.logInfo("Replacing template with " + newtemplate)
+                App.log.info("Replacing template with " + newtemplate)
             else
                 newText += template.rawTransclusion
 
@@ -304,7 +304,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
         if res
             newtemplate = "{{AUR|" + pkgname.toLowerCase() + "}}"
             newText += newtemplate
-            App.log.logInfo("Replacing template with " + newtemplate)
+            App.log.info("Replacing template with " + newtemplate)
 
             @doUpdateContinue3(source,
                                     newText, templates, index, call, callArgs)
@@ -328,7 +328,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
             if template.title.toLowerCase() != 'grp'
                 newtemplate = "{{Grp|" + grpname + "}}"
                 newText += newtemplate
-                App.log.logInfo("Replacing template with " + newtemplate)
+                App.log.info("Replacing template with " + newtemplate)
             else
                 newText += template.rawTransclusion
 
@@ -353,7 +353,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
         if res
             newtemplate = "{{Grp|" + grpname.toLowerCase() + "}}"
             newText += newtemplate
-            App.log.logInfo("Replacing template with " + newtemplate)
+            App.log.info("Replacing template with " + newtemplate)
 
             @doUpdateContinue3(source,
                                     newText, templates, index, call, callArgs)
@@ -375,9 +375,9 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
 
         if res
             newText += template.rawTransclusion
-            App.log.logWarning(grpname + " is a package group for i686 only, " +
+            App.log.warning(grpname + " is a package group for i686 only, " +
                                     "and Template:Grp only supports x86_64")
-            App.log.logJson("Plugins.ArchWikiUpdatePackageTemplates",
+            App.log.json("Plugins.ArchWikiUpdatePackageTemplates",
                     {
                         "error": "group64",
                         "page": callArgs[0],
@@ -404,9 +404,9 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
 
         if res
             newText += template.rawTransclusion
-            App.log.logWarning(grpname + " is a package group for i686 only, " +
+            App.log.warning(grpname + " is a package group for i686 only, " +
                                     "and Template:Grp only supports x86_64")
-            App.log.logJson("Plugins.ArchWikiUpdatePackageTemplates",
+            App.log.json("Plugins.ArchWikiUpdatePackageTemplates",
                     {
                         "error": "group64",
                         "page": callArgs[0],
@@ -433,7 +433,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
     main_editor: (callNext) ->
         title = WM.Editor.getTitle()
         source = WM.Editor.readSource()
-        App.log.logInfo("Updating package templates ...")
+        App.log.info("Updating package templates ...")
         @doUpdate(source, @mainEnd, [title, callNext])
 
     mainEnd: (source, newtext, args) =>
@@ -441,9 +441,9 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
 
         if newtext != source
             WM.Editor.writeSource(newtext)
-            App.log.logInfo("Updated package templates")
+            App.log.info("Updated package templates")
         else
-            App.log.logInfo("No automatically updatable package templates " +
+            App.log.info("No automatically updatable package templates " +
                                                                     "found")
 
         if callNext
@@ -491,7 +491,7 @@ class module.exports.ArchWikiUpdatePackageTemplates extends Plugin
         if res.edit and res.edit.result == 'Success'
             callBot(1, null)
         else if res.error
-            App.log.logError(res.error.info + " (" + res.error.code + ")")
+            App.log.error(res.error.info + " (" + res.error.code + ")")
             callBot(res.error.code, null)
         else
             callBot(false, null)

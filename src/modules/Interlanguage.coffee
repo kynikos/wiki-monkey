@@ -181,8 +181,8 @@ class module.exports
                 #   language whose language tag is not in the white list
                 # tag is already lower-cased
                 if firstPage or whitelist.indexOf(tag) > -1
-                    App.log.logInfo("Reading " +
-                                App.log.linkToPage(url, "[[" + origTag + ":" +
+                    App.log.info("Reading " +
+                                App.log.PageLink(url, "[[" + origTag + ":" +
                                 title + "]]") + " ...")
 
                     this.queryLinks(
@@ -212,8 +212,8 @@ class module.exports
                     )
 
             else
-                App.log.logWarning("Cannot extract the page title from " +
-                            App.log.linkToPage(url, decodeURI(url)) +
+                App.log.warning("Cannot extract the page title from " +
+                            App.log.PageLink(url, decodeURI(url)) +
                             ", removing it if it
                             was linked from the processed article")
                 @collectLinks(
@@ -240,24 +240,24 @@ class module.exports
         callArgs = args[6]
 
         if error == 'nonexisting'
-            App.log.logWarning(App.log.linkToPage(url,
+            App.log.warning(App.log.PageLink(url,
                                 "[[" + origTag + ":" + title + "]]") +
                                 " seems to point
                                 to a non-existing article: removing it if
                                 it was linked from the processed article")
         else
             if error == 'unsolvedredirect'
-                App.log.logWarning(App.log.linkToPage(url,
+                App.log.warning(App.log.PageLink(url,
                                 "[[" + origTag + ":" + title + "]]") +
                                 " will not be checked because it points to
                                 an external redirect")
             else if error == 'unknown'
-                App.log.logWarning(App.log.linkToPage(url,
+                App.log.warning(App.log.PageLink(url,
                                 "[[" + origTag + ":" + title + "]]") +
                                 " will not be checked because of an
                                 unspecified problem")
             else if error == 'notinwhitelist'
-                App.log.logWarning(App.log.linkToPage(url,
+                App.log.warning(App.log.PageLink(url,
                                 "[[" + origTag + ":" + title + "]]") +
                                 " will not be checked because " + tag +
                                 " is not included in the whitelist defined
@@ -279,20 +279,20 @@ class module.exports
                     # Just ignore any conflicting links and warn the user:
                     # if it's a real conflict, the user will investigate it,
                     # otherwise the user will ignore it
-                    App.log.logWarning("Possibly conflicting interlanguage
-                        links: " + App.log.linkToPage(link.url, "[[" +
+                    App.log.warning("Possibly conflicting interlanguage
+                        links: " + App.log.PageLink(link.url, "[[" +
                         link.lang + ":" + link.title + "]]") + " and " +
-                        App.log.linkToPage(vlink.url, "[[" + link.lang + ":" +
+                        App.log.PageLink(vlink.url, "[[" + link.lang + ":" +
                         visitedlinks[link.lang.toLowerCase()].title + "]]"))
 
                 else if nlink and nlink.url != link.url
                     # Just ignore any conflicting links and warn the user:
                     # if it's a real conflict, the user will investigate it,
                     # otherwise the user will ignore it
-                    App.log.logWarning("Possibly conflicting interlanguage
-                        links: " + App.log.linkToPage(link.url, "[[" +
+                    App.log.warning("Possibly conflicting interlanguage
+                        links: " + App.log.PageLink(link.url, "[[" +
                         link.lang + ":" + link.title + "]]") + " and " +
-                        App.log.linkToPage(nlink.url, "[[" + link.lang + ":" +
+                        App.log.PageLink(nlink.url, "[[" + link.lang + ":" +
                         newlinks[link.lang.toLowerCase()].title + "]]"))
 
         @collectLinks(
@@ -326,8 +326,8 @@ class module.exports
                         break
 
                 if not tagFound
-                    App.log.logWarning(tag + " interlanguage links are not
-                        supported in " + App.log.linkToPage(url, "[[" +
+                    App.log.warning(tag + " interlanguage links are not
+                        supported in " + App.log.PageLink(url, "[[" +
                         link.origTag + ":" + link.title + "]]") +
                         " , ignoring them")
 

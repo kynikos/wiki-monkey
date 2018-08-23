@@ -32,7 +32,7 @@ class module.exports.ArchWikiRCFilter extends Plugin
         h4s = $('#mw-content-text .mw-changeslist > h4')
 
         if h4s.eq(0).next()[0].localName.toLowerCase() != 'div'
-            App.log.logError("This filter is designed to work on top of
+            App.log.error("This filter is designed to work on top of
                               MediaWiki's filter, which you can
                               enable in your user preferences.")
         else
@@ -56,7 +56,7 @@ class module.exports.ArchWikiRCFilter extends Plugin
                         if language != @conf.default_language
                             @moveArticle(groupDiv, articleTable, language)
 
-            App.log.logInfo("Grouped articles by language")
+            App.log.info("Grouped articles by language")
 
     moveArticle: (groupDiv, articleTable, language) ->
         langHs = groupDiv.children('h5')

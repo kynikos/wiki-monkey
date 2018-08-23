@@ -159,7 +159,7 @@ class module.exports
 
     failedQueryError: (url) ->
         if url
-            return "Failed query: #{App.log.linkToPage(url, url)}"
+            return "Failed query: #{App.log.PageLink(url, url)}"
         return "Failed query"
 
     callAPIGet: (params, call, callArgs, callError) ->
@@ -171,10 +171,10 @@ class module.exports
                 call(data, callArgs)
         ).fail((jqXHR, textStatus, errorThrown) =>
             console.error(jqXHR, textStatus, errorThrown)
-            App.log.logError(@failedQueryError())
+            App.log.error(@failedQueryError())
             if confirm("Wiki Monkey error: Failed query\n\nDo you want " +
                                                             "to retry?")
-                App.log.logInfo("Retrying ...")
+                App.log.info("Retrying ...")
                 @callAPIGet(params, call, callArgs, callError)
             else if callError
                 callError(callArgs)
@@ -189,10 +189,10 @@ class module.exports
                 call(data, callArgs)
         ).fail((jqXHR, textStatus, errorThrown) =>
             console.error(jqXHR, textStatus, errorThrown)
-            App.log.logError(@failedQueryError())
+            App.log.error(@failedQueryError())
             if confirm("Wiki Monkey error: Failed query\n\nDo you want " +
                                                             "to retry?")
-                App.log.logInfo("Retrying ...")
+                App.log.info("Retrying ...")
                 @callAPIPost(params, call, callArgs, callError)
 
             else if callError

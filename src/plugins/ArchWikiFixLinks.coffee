@@ -55,7 +55,7 @@ class module.exports.ArchWikiFixLinks extends Plugin
         re = /https?:\/\/wiki\.archlinux\.org(?!\.)/ig
 
         if re.test(txt)
-            App.log.logWarning("It hasn't been possible to convert some " +
+            App.log.warning("It hasn't been possible to convert some " +
                                                 "links to wiki.archlinux.org")
 
         # Wikipedia -> wikipedia: interlink
@@ -72,7 +72,7 @@ class module.exports.ArchWikiFixLinks extends Plugin
         re = /https?:\/\/([a-z]+?)\.wikipedia\.org(?!\.)/ig
 
         if re.test(txt)
-            App.log.logWarning("It hasn't been possible to convert some " +
+            App.log.warning("It hasn't been possible to convert some " +
                                                         "links to Wikipedia")
 
         # Official package links -> Pkg template
@@ -107,7 +107,7 @@ class module.exports.ArchWikiFixLinks extends Plugin
         re = /https?:\/\/(?:www\.)?archlinux\.org\/packages(?!\/?\s)/ig
 
         if re.test(txt)
-            App.log.logWarning("It hasn't been possible to convert some " +
+            App.log.warning("It hasn't been possible to convert some " +
                                             "links to archlinux.org/packages")
 
         # AUR package links -> AUR template
@@ -142,7 +142,7 @@ class module.exports.ArchWikiFixLinks extends Plugin
         re = /https?:\/\/aur\.archlinux\.org(?!(?:\.|(?:\/?packages)?\/?\s))/ig
 
         if re.test(txt)
-            App.log.logWarning("It hasn't been possible to convert some
+            App.log.warning("It hasn't been possible to convert some
                             links to aur.archlinux.org (try the
                             \"Fix old AUR links\" function, if installed)")
 
@@ -178,7 +178,7 @@ class module.exports.ArchWikiFixLinks extends Plugin
         re = /https?:\/\/bugs\.archlinux\.org\/task/ig
 
         if re.test(txt)
-            App.log.logWarning("It hasn't been possible to convert some " +
+            App.log.warning("It hasn't been possible to convert some " +
                                         "links to bugs.archlinux.org/task")
 
         return txt
@@ -189,9 +189,9 @@ class module.exports.ArchWikiFixLinks extends Plugin
 
         if newtext != source
             WM.Editor.writeSource(newtext)
-            App.log.logInfo("Fixed links")
+            App.log.info("Fixed links")
         else
-            App.log.logInfo("No fixable links found")
+            App.log.info("No fixable links found")
 
         if callNext
             callNext()

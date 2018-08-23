@@ -44,7 +44,7 @@ class module.exports.ArchWikiNPFilter extends Plugin
             if language != @conf.default_language
                 @moveArticle(contentDiv, li, language)
 
-        App.log.logInfo("Grouped articles by language")
+        App.log.info("Grouped articles by language")
 
     moveArticle: (contentDiv, li, language) ->
         langHs = contentDiv.children('h5')

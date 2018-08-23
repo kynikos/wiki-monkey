@@ -16,25 +16,26 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-WM = require('../modules')
-App = require('../app')
-{Plugin} = require('./_Plugin')
+{Vuex, moment} = require('../../../modules/libs')
 
+module.exports = {
+    name: 'Export'
 
-class module.exports.MultipleLineBreaks extends Plugin
-    @conf_default:
-        enabled: true
-        editor_menu: ["Text plugins", "Squash multiple line breaks"]
+    methods: Vuex.mapGetters('main/log', [
+        'composeSaveLogText'
+    ])
 
-    main_editor: (callNext) ->
-        source = WM.Editor.readSource()
-        newtext = source
-
-        newtext = newtext.replace(/[\n]{3,}/g, '\n\n')
-
-        if newtext != source
-            WM.Editor.writeSource(newtext)
-            App.log.info("Removed multiple line breaks")
-
-        if callNext
-            callNext()
+    render: (h) ->
+        h('a', {
+            domProps: {
+                href: '#'
+                download: 'WikiMonkey.log'
+            }
+            on: {
+                click: (event) =>
+                    event.target.href = @composeSaveLogText()
+                    event.target.download = "WikiMonkey-#{
+                        moment().format('YYYYMMDDTHHmmssZZ')}.log"
+            }
+        }, '[save log]')
+}

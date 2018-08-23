@@ -17,10 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-WM = require('../../modules')
+WM = require('../../../modules')
 
 
-module.exports.linkToWikiPage = (title, anchor) ->
+module.exports.WikiLink = (title, anchor) ->
     # Must return a string, not a DOM element
     # Use an absolute (full) URL so it will be usable in the downloadable
     #   version of the log

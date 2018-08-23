@@ -99,9 +99,9 @@ class module.exports.FixFragments extends Plugin
                     escHeading = WM.Parser.dotEncodeLinkBreakingFragmentCharacters(heading)
                     return "[[#" + escHeading + (if lalt then "|" + lalt else "") + "]]"
 
-        # It's not easy to use App.log.linkToWikiPage because pure fragments
+        # It's not easy to use App.log.WikiLink because pure fragments
         #   are not supported yet
-        App.log.logWarning("Cannot fix broken section link: " + rawlink)
+        App.log.warning("Cannot fix broken section link: " + rawlink)
         return rawlink
 
     main_editor: (callNext) ->
@@ -110,9 +110,9 @@ class module.exports.FixFragments extends Plugin
 
         if newtext != source
             WM.Editor.writeSource(newtext)
-            App.log.logInfo("Fixed section links")
+            App.log.info("Fixed section links")
         else
-            App.log.logInfo("No fixable section links found")
+            App.log.info("No fixable section links found")
 
         if callNext
             callNext()

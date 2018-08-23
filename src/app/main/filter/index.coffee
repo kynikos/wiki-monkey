@@ -16,28 +16,28 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{Vuex, styled} = require('../../modules/libs')
-store = require('../store')
-WM = require('../../modules')
+{Vuex, styled} = require('../../../modules/libs')
+store = require('../../store')
+WM = require('../../../modules')
 
-Commands = styled.div(
+Commands = styled.div({
     display: 'flex'
     alignItems: 'center'
     justifyContent: 'space-between'
-)
+})
 
-Select = styled.select(
+Select = styled.select({
     flex: 'auto'
     marginRight: '1em'
-)
+})
 
-Button = styled.button(
+Button = styled.button({
     marginRight: '1em'
-)
+})
 
-Checkbox = styled.input(
+Checkbox = styled.input({
     marginRight: '0.4em'
-)
+})
 
 
 module.exports = (page_type, Plugins) -> {
@@ -45,10 +45,10 @@ module.exports = (page_type, Plugins) -> {
     name: 'Filters'
 
     computed: {
-        Vuex.mapState('log', {
+        Vuex.mapState('main/log', {
             logShown: 'display'
         })...
-        Vuex.mapState('filter', [
+        Vuex.mapState('main/filter', [
             'selectedPluginIndex'
             'selectedPluginInstance'
             'enabled'
@@ -56,14 +56,14 @@ module.exports = (page_type, Plugins) -> {
     }
 
     methods: {
-        Vuex.mapMutations(
+        Vuex.mapMutations('main', {
             hideUI: 'hide'
-        )...
-        Vuex.mapMutations('log',
+        })...
+        Vuex.mapMutations('main/log', {
             showLog: 'show'
             hideLog: 'hide'
-        )...
-        Vuex.mapMutations('filter', [
+        })...
+        Vuex.mapMutations('main/filter', [
             'selectPlugin'
             'disable'
         ])...
@@ -84,34 +84,41 @@ module.exports = (page_type, Plugins) -> {
     render: (h) ->
         selectFilter = h(Select
             {
-                attrs:
+                attrs: {
                     disabled: not @enabled
-                on:
+                }
+                on: {
                     change: (event) =>
                         index = event.target.selectedIndex
                         @selectPlugin([index, new Plugins[index]()])
+                }
             }
             for Plugin, index in Plugins
                 h('option', {
-                    attrs:
+                    attrs: {
                         selected: index is @selectedPluginIndex
+                    }
                 }, [Plugin::conf.filter_label])
         )
 
         applyFilter = h(Button, {
-            attrs:
+            attrs: {
                 disabled: not @enabled
-            on:
+            }
+            on: {
                 click: @executePlugin
+            }
         }, ['Apply filter'])
 
         toggleLog = h(Checkbox, {
-            attrs:
+            attrs: {
                 type: 'checkbox'
                 checked: @logShown
-            on:
+            }
+            on: {
                 change: =>
                     if @logShown then @hideLog() else @showLog()
+            }
         })
 
         commandsFilterDiv = h(Commands, [

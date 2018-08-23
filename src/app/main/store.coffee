@@ -16,18 +16,27 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-module.exports =
+log = require('./log/store')
+filter = require('./filter/store')
+
+module.exports = {
     namespaced: true
 
-    state:
-        selectedPluginIndex: 0
-        selectedPluginInstance: null
-        enabled: true
+    state: {
+        display: true
+    }
+    mutations: {
+        show: (state, show = true) ->
+            state.display = show
 
-    mutations:
-        selectPlugin: (state, [index, instance]) ->
-            state.selectedPluginIndex = index
-            state.selectedPluginInstance = instance
+        hide: (state) ->
+            state.display = false
 
-        disable: (state) ->
-            state.enabled = false
+        toggle: (state) ->
+            state.display = not state.display
+    }
+    modules: {
+        log
+        filter
+    }
+}

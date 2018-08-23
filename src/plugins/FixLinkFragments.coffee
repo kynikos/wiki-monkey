@@ -33,8 +33,8 @@ class module.exports.FixLinkFragments extends Plugin
             rawfragment = link.fragment
 
             if not (link.namespace? and link.namespace.toLowerCase() in iwprefixes) and rawfragment
-                App.log.logInfo("Processing " +
-                    App.log.linkToWikiPage(link.link, link.rawLink) + " ...")
+                App.log.info("Processing " +
+                    App.log.WikiLink(link.link, link.rawLink) + " ...")
 
                 target = (if link.namespace then link.namespace + ":" else "") +
                                                                     link.title
@@ -101,8 +101,8 @@ class module.exports.FixLinkFragments extends Plugin
                 newText += "[[" + target + "#" + fixedFragment  +
                             (if link.anchor then "|" + link.anchor else "") + "]]"
             else
-                App.log.logWarning("Cannot fix broken link fragment: " +
-                            App.log.linkToWikiPage(link.link, link.rawLink))
+                App.log.warning("Cannot fix broken link fragment: " +
+                            App.log.WikiLink(link.link, link.rawLink))
                 newText += link.rawLink
 
             prevId = link.index + link.length
@@ -186,8 +186,8 @@ class module.exports.FixLinkFragments extends Plugin
                         #   liberal link syntaxes (e.g. spaces around the
                         #   colon)
                         if not WM.Parser.compareArticleTitles(target, title)
-                            App.log.logInfo("Processing " +
-                                        App.log.linkToWikiPage(link,
+                            App.log.info("Processing " +
+                                        App.log.WikiLink(link,
                                         template.rawTransclusion) + " ...")
 
                             params =
@@ -218,7 +218,7 @@ class module.exports.FixLinkFragments extends Plugin
                                         templates, expectedArgs, index, source,
                                         newText, prevId, call, callArgs)
             else
-                App.log.logWarning("Template:" + template.title +
+                App.log.warning("Template:" + template.title +
                         " must have " + expectedArgs + " and only " +
                         expectedArgs +
                         (if expectedArgs > 1 then " arguments: " else " argument: ") +
@@ -265,8 +265,8 @@ class module.exports.FixLinkFragments extends Plugin
                 anchor = if template.arguments[1] then ("|" + template.arguments[1].value) else ""
                 newText += "{{" + template.title + "|" + target + "#" + fixedFragment  + anchor + "}}"
             else
-                App.log.logWarning("Cannot fix broken link fragment: " +
-                    App.log.linkToWikiPage(target, template.rawTransclusion))
+                App.log.warning("Cannot fix broken link fragment: " +
+                    App.log.WikiLink(target, template.rawTransclusion))
                 newText += template.rawTransclusion
 
             prevId = template.index + template.length
@@ -277,7 +277,7 @@ class module.exports.FixLinkFragments extends Plugin
 
     main_editor: (callNext) ->
         source = WM.Editor.readSource()
-        App.log.logInfo("Fixing links to sections of other articles ...")
+        App.log.info("Fixing links to sections of other articles ...")
         title = WM.Editor.getTitle()
         res = await WM.MW.getInterwikiMap(title)
         iwprefixes = (iw.prefix for iw in res.query.interwikimap)
@@ -297,9 +297,9 @@ class module.exports.FixLinkFragments extends Plugin
 
         if newText != source
             WM.Editor.writeSource(newText)
-            App.log.logInfo("Replaced links to sections of other articles")
+            App.log.info("Replaced links to sections of other articles")
         else
-            App.log.logInfo("No fixable links to sections of other articles " +
+            App.log.info("No fixable links to sections of other articles " +
                                                                     "found")
 
         if callNext

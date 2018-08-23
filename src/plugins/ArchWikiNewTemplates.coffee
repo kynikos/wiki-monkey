@@ -59,7 +59,7 @@ class module.exports.ArchWikiNewTemplates extends Plugin
 
         if newtext != source
             WM.Editor.writeSource(newtext)
-            App.log.logInfo("Turned HTML tags into proper templates")
+            App.log.info("Turned HTML tags into proper templates")
 
         tests = [
             ['&lt;pre>', newtext.match(/<pre/ig)],
@@ -69,7 +69,7 @@ class module.exports.ArchWikiNewTemplates extends Plugin
 
         for test in tests
             if test[1]
-                App.log.logWarning(test[1].length + ' ' +
+                App.log.warning(test[1].length + ' ' +
                     test[0] + ' instances require manual intervention')
 
         if callNext
