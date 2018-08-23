@@ -31,9 +31,9 @@ class module.exports.UpdateCategoryTree extends Plugin
         pages: []
     @wiki_to_conf_default:
         ArchWiki:
-            pages: ["ar", "cs", "cs", "da", "el", "en", "es", "he", "hr", "hu",
-                    "id", "it", "ko", "lt", "nl", "pl", "pt", "ru", "sk", "sr",
-                    "th", "tr", "uk", "zh-hans", "zh-hant"]
+            pages: ["ar", "bg", "cs", "da", "el", "en", "es", "fi", "he", "hr",
+                    "hu", "id", "it", "ko", "lt", "nl", "pl", "pt", "ru", "sk",
+                    "sr", "sv", "th", "tr", "uk", "zh-hans", "zh-hant"]
         Wikipedia: {}
 
     main_special: (callNext) ->

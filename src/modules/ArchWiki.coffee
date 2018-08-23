@@ -78,7 +78,6 @@ class module.exports
             "Magyar",
             "Indonesia",
             "Italiano",
-            "日本語",
             "한국어",
             "Lietuviškai",
             "Norsk Bokmål",
@@ -88,6 +87,7 @@ class module.exports
             "Русский",
             "Slovenský",
             "Српски",
+            "Svenska",
             "ไทย",
             "Türkçe",
             "Українська",
@@ -95,7 +95,7 @@ class module.exports
             "正體中文"
         ],
         interlanguage: {
-            external: ["de", "fa", "fr", "ja", "ro"],
+            external: ["de", "fa", "fr", "ja"],
             internal: ["ar", "bg", "cs", "da", "el", "en", "es", "fi", "he",
                        "hr", "hu", "id", "it", "ko", "lt", "nl", "pl", "pt",
                        "ru", "sk", "sr", "sv", "th", "tr", "uk", "zh-hans",
@@ -170,6 +170,16 @@ class module.exports
             "alsoIn": "también en",
             "indentType": ":",
             "replace": ["[ _]\\(Español\\)", "", ""],
+            "keepAltName": true,
+            "showIndices": true,
+            "rightToLeft": false
+        },
+        "fi": {
+            "page": "Table of contents (Suomi)",
+            "root": "Category:Suomi",
+            "alsoIn": "also in",  # TODO: Untranslated
+            "indentType": ":",
+            "replace": ["[ _]\\(Suomi\\)", "", ""],
             "keepAltName": true,
             "showIndices": true,
             "rightToLeft": false
@@ -300,6 +310,16 @@ class module.exports
             "alsoIn": "такође у",  # Unconfirmed
             "indentType": ":",
             "replace": ["[ _]\\(Српски\\)", "", ""],
+            "keepAltName": true,
+            "showIndices": true,
+            "rightToLeft": false
+        },
+        "sv": {
+            "page": "Table of contents (Svenska)",
+            "root": "Category:Svenska",
+            "alsoIn": "also in",  # TODO: Untranslated
+            "indentType": ":",
+            "replace": ["[ _]\\(Svenska\\)", "", ""],
             "keepAltName": true,
             "showIndices": true,
             "rightToLeft": false
