@@ -29,7 +29,6 @@ new WikiMonkey(
     require("./plugins/ArchWikiNewTemplates"),
     require("./plugins/ArchWikiNPFilter"),
     require("./plugins/ArchWikiRCFilter"),
-    require("./plugins/ArchWikiSaveTalk"),
     require("./plugins/ArchWikiSortContacts"),
     # The ArchPackages module is currently unusable
     #require("./plugins/ArchWikiUpdatePackageTemplates"),
