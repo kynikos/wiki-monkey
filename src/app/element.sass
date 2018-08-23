@@ -1,0 +1,17 @@
+// Theming guide: http://element.eleme.io/#/en-US/component/custom-theme
+
+// Defining $--font-path is required
+$--font-path: "https://rawcdn.githack.com/ElemeFE/element/v2.3.7/packages/theme-chalk/src/fonts"
+
+// Supported variables must be defined *before* loading the index.sass
+// All defaults are in element-ui/packages/theme-chalk/src/common/var.scss
+
+$--font-size-base: 12px
+$--size-base: 12px
+
+@import "../../node_modules/element-ui/packages/theme-chalk/src/index"
+
+// Override hardcoded values:
+
+.el-table
+    font-size: 12px

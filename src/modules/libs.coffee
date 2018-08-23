@@ -46,3 +46,12 @@ module.exports.init = ->
     module.exports.styled = require('@kynikos/vue-styled-jss')(jss, jssopts)
 
     module.exports.ClipboardJS = require('clipboard')
+
+    language = require('element-ui/lib/locale/lang/en').default
+    locale = require('element-ui/lib/locale').default
+    locale.use(language)
+    require('../app/element.sass')
+    Vue.use(require('element-ui/lib/option').default)
+    Vue.use(require('element-ui/lib/select').default)
+    Vue.use(require('element-ui/lib/table').default)
+    Vue.use(require('element-ui/lib/table-column').default)

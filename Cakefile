@@ -70,6 +70,10 @@ buildScript = ({
 
     console.log("Compiling #{distfile} ...")
     await jspack(srcfile, distfile, {
+        # Note how it's necessary to use scssify, not sassify, since the latter
+        # seems to have problems with escaped characters such as those used as
+        # icons in Element UI
+        scssify: true
         coffeeify: true
         envify
         debug: true
@@ -80,6 +84,7 @@ buildScript = ({
         distfile_min = path.join(distdir, "WikiMonkey-#{wikiname}.min.js")
         console.log("Compiling #{distfile_min} ...")
         await jspack(srcfile, distfile_min, {
+            scssify: true
             coffeeify: true
             envify
             licensify: true

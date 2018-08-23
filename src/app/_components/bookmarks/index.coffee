@@ -16,31 +16,25 @@
 # You should have received a copy of the GNU General Public License
 # along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-{Vuex} = require('../modules/libs')
-bookmarks = require('./_components/bookmarks/store')
-fieldset = require('./_components/fieldset/store')
-log = require('./_components/log/store')
-main = require('./main/store')
-bot = require('./bot/store')
-filter = require('./filter/store')
-menu = require('./menu/store')
+{Vue, Vuex} = require('../../../modules/libs')
+{FieldSelect} = require('./FieldSelect')
+{Table} = require('./Table')
 
-module.exports = new Vuex.Store({
-    actions: {
-        hideContent: ->
-            $('#bodyContent').hide()
 
-        showContent: ->
-            $('#bodyContent').show()
+module.exports.Bookmarks = {
+    name: 'Bookmarks'
+
+    methods: {
+        Vuex.mapActions('bookmarks', [
+            'queryBookmarks'
+        ])...
     }
 
-    modules: {
-        bookmarks
-        fieldset
-        log
-        main
-        bot
-        filter
-        menu
-    }
-})
+    created: ->
+        @queryBookmarks()
+
+    render: (h) -> h('div', [
+        h(Table)
+        h(FieldSelect)
+    ])
+}

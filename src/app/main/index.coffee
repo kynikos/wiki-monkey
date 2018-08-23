@@ -19,6 +19,7 @@
 WM = require('../../modules')
 {Vue, Vuex} = require('../../modules/libs')
 store = require('../store')
+{Bookmarks} = require('../_components/bookmarks')
 
 
 module.exports = (bodyContent) ->

@@ -78,6 +78,47 @@ module.exports.PageCommands = (container) ->
                     }
                     ref: 'copyArticleWikiLink'
                 }, ['c'])
+                ' | '
+                h('a', {
+                    attrs: {
+                        href: '#save'
+                        title: 'Bookmark this page'
+                    }
+                    on: {
+                        click: (event) ->
+                            event.preventDefault()
+
+                            data = [
+                                'wgArticleId'
+                                'wgPageName'
+                                'wgRelevantPageName'
+                                'wgCanonicalSpecialPageName'
+                                'wgCanonicalNamespace'
+                                'wgNamespaceNumber'
+                                'wgTitle'
+                                'wgRevisionId'
+                                'wgCurRevisionId'
+                                'wgDiffOldId'
+                                'wgDiffNewId'
+                                'wgAction'
+                                'wgIsArticle'
+                                'wgIsProbablyEditable'
+                                'wgRelevantPageIsProbablyEditable'
+                                'wgPageContentLanguage'
+                                'wgPageContentModel'
+                            ].reduce((acc, item) ->
+                                acc[item] = mw.config.get(item)
+                                return acc
+                            , {})
+                            data.url = location.href
+
+                            WM.DB.put('bookmark', data).done((data) ->
+                                console.debug("RESPONSE:", data)
+                            ).fail((data) ->
+                                console.debug("ERROR:", data)
+                            )
+                    }
+                }, ['b'])
                 ' ]'
             ])
 
