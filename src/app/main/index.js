@@ -22,7 +22,7 @@ const store = require('../store')
 const {Bookmarks} = require('../_components/bookmarks')
 
 
-module.exports = function (bodyContent) {
+module.exports = function (bodyContent) { // eslint-disable-line max-lines-per-function
   const root = document.createElement('div')
   bodyContent.before(root)
 
@@ -43,7 +43,7 @@ module.exports = function (bodyContent) {
       }),
     },
 
-    render(h) {
+    render(h) { // eslint-disable-line max-lines-per-function
       if (!this.shown) { return h('div') }
 
       return h('div', {

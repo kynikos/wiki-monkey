@@ -74,7 +74,6 @@ buildScript = ({
         # seems to have problems with escaped characters such as those used as
         # icons in Element UI
         scssify: true
-        coffeeify: true
         envify
         debug: true
         licensify: true
@@ -85,7 +84,6 @@ buildScript = ({
         console.log("Compiling #{distfile_min} ...")
         await jspack(srcfile, distfile_min, {
             scssify: true
-            coffeeify: true
             envify
             licensify: true
             # This application relies on the plugin constructor names, so use

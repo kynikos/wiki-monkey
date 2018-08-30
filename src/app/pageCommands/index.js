@@ -115,7 +115,11 @@ Wiki Monkey interface`,
               )
               data.url = location.href
 
-              return WM.DB.put('bookmark', data).done((data) => console.debug('RESPONSE:', data)).fail((data) => console.debug('ERROR:', data))
+              return WM.DB.put('bookmark', data).done((data) => {
+                console.debug('RESPONSE:', data)
+              }).fail((data) => {
+                console.debug('ERROR:', data)
+              })
             },
           },
         }, ['b']),
