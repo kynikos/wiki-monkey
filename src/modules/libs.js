@@ -47,7 +47,10 @@ module.exports.init = function () { // eslint-disable-line max-statements
 
   module.exports.styled = require('@kynikos/vue-styled-jss')(jss, jssopts)
 
-  module.exports.ClipboardJS = require('clipboard')
+  // Clipboard.js doesn't import well with Browserify
+  // https://github.com/zenorocha/clipboard.js/issues/535
+  // module.exports.ClipboardJS = require('clipboard')
+  module.exports.ClipboardJS = require('clipboard/dist/clipboard.min')
 
   const language = require('element-ui/lib/locale/lang/en').default
   const locale = require('element-ui/lib/locale').default
