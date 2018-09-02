@@ -146,7 +146,7 @@ class Bot {
 
     const ffunctions = []
 
-    for (const Plugin of Array.from(functions)) {
+    for (const Plugin of functions) {
       plugin = new Plugin()
       const pluginInst = plugin.conf.bot_label
 
@@ -187,7 +187,7 @@ class Bot {
           )
         }
         self.configuration.plugin_name = plugin.constructor.name
-        return self.configuration.function_ = (
+        self.configuration.function_ = (
           title,
           callContinue, chainArgs
         ) => plugin.main_bot(title, callContinue, chainArgs)
@@ -224,7 +224,7 @@ class Bot {
     selectLists.id = 'WikiMonkeyBot-ListSelect'
     selectLists.className = classes.listSelect
 
-    for (const list of Array.from(lists)) {
+    for (const list of lists) {
       if (list[0]) {
         const option = document.createElement('option')
         option.innerHTML = list[2]
@@ -244,7 +244,7 @@ class Bot {
                                             self.configuration.list.current
       // [2] Note that this must also be executed immediately,
       //   see [1]
-      return self.configuration.list.current = lss[id]
+      self.configuration.list.current = lss[id]
     }
     )(lists), false)
 
@@ -281,7 +281,7 @@ class Bot {
 
     const elems = [filter, duplicates, inverse]
 
-    for (const elem of Array.from(elems)) {
+    for (const elem of elems) {
       elem.addEventListener(
         'change', () => self._disableStartBot('Filters have changed, preview the selection')
 
@@ -330,8 +330,8 @@ class Bot {
     forceStartCB.disabled = true
 
     const forceStartLabel = document.createElement('span')
-    forceStartLabel.innerHTML = 'Force start, stopping any other \
-currently running bots'
+    forceStartLabel.innerHTML = `Force start, stopping any other
+currently running bots`
 
     forceStart.style.display = 'none'
     forceStart.appendChild(forceStartCB)
@@ -374,7 +374,7 @@ currently running bots'
 
     const start = document.getElementById('WikiMonkeyBotStart')
     start.parentNode.insertBefore(stop, start)
-    return start.style.display = 'none'
+    start.style.display = 'none'
   }
 
   _disableStopBot() {
@@ -394,7 +394,7 @@ currently running bots'
   _setEnableControls(flag) {
     const fsets = document.getElementById('WikiMonkeyBot')
       .getElementsByTagName('fieldset')
-    return Array.from(fsets).map((fset) => fset.disabled = flag)
+    return fsets.map((fset) => fset.disabled = flag)
   }
 
   _enableForceStart() {
@@ -420,7 +420,7 @@ currently running bots'
     const filters = document.getElementById('WikiMonkeyBotFilter')
       .value.split('\n')
 
-    for (const filter of Array.from(filters)) {
+    for (const filter of filters) {
       // Filter could be an empty string
       if (filter) {
         var regexp
@@ -463,7 +463,7 @@ currently running bots'
           .checked
 
         if (filters.length > 0) {
-          for (const filter of Array.from(filters)) {
+          for (const filter of filters) {
             const regexp = filter[0]
             const negative = filter[1]
             const test = regexp.test(title)
@@ -487,7 +487,7 @@ currently running bots'
     const elclasses = className.split(' ')
     const newClasses = []
 
-    for (const cls of Array.from(elclasses)) {
+    for (const cls of elclasses) {
       if (cls.indexOf('WikiMonkey') < 0) {
         newClasses.push(cls)
       }
@@ -504,7 +504,7 @@ currently running bots'
     const elclasses = className.split(' ')
     const origClasses = []
 
-    for (const cls of Array.from(elclasses)) {
+    for (const cls of elclasses) {
       if (cls.indexOf('WikiMonkey') < 0) {
         origClasses.push(cls)
       }
@@ -528,7 +528,7 @@ currently running bots'
       }
       linkId = this.configuration.list.previous[1]
 
-      for (item of Array.from(items)) {
+      for (item of items) {
         link = item.getElementsByTagName('a')[linkId]
 
         // The list item could refer to an invalid title, represented
@@ -555,7 +555,7 @@ currently running bots'
                     this.configuration.list.current[0].getElementsByTagName('li')
       }
 
-      for (item of Array.from(items)) {
+      for (item of items) {
         link = item.getElementsByTagName('a')[linkId]
 
         // Also test 'link' itself, because the list item could refer
@@ -586,13 +586,13 @@ currently running bots'
     const date = new Date()
     const token = `${date.getTime()}`
     this.botToken = token
-    return localStorage.setItem('WikiMonkeyBotToken', token)
+    localStorage.setItem('WikiMonkeyBotToken', token)
   }
 
   _resetBotToken(reset) {
     this.botToken = '0'
     if (reset) {
-      return localStorage.setItem('WikiMonkeyBotToken', '0')
+      localStorage.setItem('WikiMonkeyBotToken', '0')
     }
   }
 
@@ -609,15 +609,15 @@ currently running bots'
 
   _startAutomatic() { // eslint-disable-line max-statements
     if (this._checkOtherBotsRunning() && !this._canForceStart()) {
-      App.log.error('It\'s not possible to start the bot (without \
-forcing it) for one of the following reasons:<br> \
-* another bot instance is currently running<br> \
-* a previously running bot has stopped due to a \
-page processing error<br> \
-* a previously running bot has stopped due to a \
-Javascript error<br> \
-* a previously running bot has been interrupted by \
-a browser page refresh')
+      App.log.error(`It's not possible to start the bot (without
+forcing it) for one of the following reasons:<br>
+* another bot instance is currently running<br>
+* a previously running bot has stopped due to a
+page processing error<br>
+* a previously running bot has stopped due to a
+Javascript error<br>
+* a previously running bot has been interrupted by
+a browser page refresh`)
       return this._enableForceStart()
     } else if (this.makeFilters()) {
       let itemsDOM
@@ -633,7 +633,7 @@ a browser page refresh')
       //   causing it to be lost in an apparently random manner
       const items = []
 
-      for (const item of Array.from(itemsDOM)) {
+      for (const item of itemsDOM) {
         items.push(item)
       }
 

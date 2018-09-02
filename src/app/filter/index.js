@@ -98,7 +98,6 @@ module.exports = function ({pageType, Plugins, display, displayLog, nextNode}) {
 
     render(h) { // eslint-disable-line max-lines-per-function
       let pluginUI
-      let index
       const selectFilter = h(
         Select,
         {
@@ -107,23 +106,18 @@ module.exports = function ({pageType, Plugins, display, displayLog, nextNode}) {
           },
           on: {
             change: (event) => {
-              index = event.target.selectedIndex
+              const index = event.target.selectedIndex
               return this.selectPlugin([index, new Plugins[index]()])
             },
           },
         },
-        (() => {
-          const result = []
-          for (index = 0; index < Plugins.length; index++) {
-            const Plugin = Plugins[index]
-            result.push(h('option', {
-              attrs: {
-                selected: index === this.selectedPluginIndex,
-              },
-            }, [Plugin.prototype.conf.filter_label]))
-          }
-          return result
-        })()
+        Plugins.map((Plugin, ii) => {
+          return h('option', {
+            attrs: {
+              selected: ii === this.selectedPluginIndex,
+            },
+          }, [Plugin.prototype.conf.filter_label])
+        })
       )
 
       const applyFilter = h(Button, {
@@ -172,7 +166,7 @@ module.exports = function ({pageType, Plugins, display, displayLog, nextNode}) {
         this.executePlugin()
 
         if (!this.$refs.pluginUI) {
-          return this.hideUI()
+          this.hideUI()
         }
       }
     },

@@ -100,8 +100,9 @@ var Menu = (function () { // eslint-disable-line vars-on-top,no-var
       this.mainDiv = $('<div>')
       const groupActions = {}
 
-      for (const Plugin of Array.from(plugins)) {
-        var currMenu; var groupAction
+      for (const Plugin of plugins) {
+        var currMenu
+        var groupAction
         const plugin = new Plugin()
         const pluginInst = plugin.conf[`${this.pageType}_menu`].slice()
 
@@ -122,14 +123,15 @@ var Menu = (function () { // eslint-disable-line vars-on-top,no-var
 
         for (let m = 0, end = pluginInst.length - 1, asc = end >= 0; asc ? m < end : m > end; asc ? m++ : m--) {
           const parentId = currId
-          currId = pluginInst.slice(0, m + 1).join('-')
-            .replace(/ /g, '_')
+          currId = pluginInst.slice(0, m + 1).join('-').replace(/ /g, '_')
 
           // I can't simply do $("#" + currId) because @mainDiv
           // hasn't been added to the DOM tree yet
           const menuSel = this.mainDiv.children(`div[id='${currId}']`)
 
-          if (!menuSel.length) {
+          if (menuSel.length) {
+            currMenu = menuSel.first()
+          } else {
             currMenu = $('<div/>')
               .attr('id', currId)
               .hide()
@@ -162,8 +164,6 @@ var Menu = (function () { // eslint-disable-line vars-on-top,no-var
                 .click(makeChangeMenu(parentMenu, currMenu))
                 .appendTo(parentMenu)
             }
-          } else {
-            currMenu = menuSel.first()
           }
 
           groupActions[currId].push(groupAction)
@@ -240,8 +240,8 @@ var Menu = (function () { // eslint-disable-line vars-on-top,no-var
     }
 
     warnInputNeeded(plugin, callNext) {
-      App.log.warning(`Plugin ${plugin.constructor.name}` +
-                ' was not executed because it requires input from its interface.')
+      App.log.warning(`Plugin ${plugin.constructor.name}
+        was not executed because it requires input from its interface.`)
 
       if (callNext) {
         return callNext()

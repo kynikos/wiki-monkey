@@ -38,7 +38,7 @@ module.exports = {
 
   getters: {
     composeSaveLogText(state) {
-      const text = Array.from(state.messages).map((message) => `${moment(message.tstamp).format('HH:mm:ss')}\t${
+      const text = state.messages.map((message) => `${moment(message.tstamp).format('HH:mm:ss')}\t${
         LEVEL_TO_TAG[message.level]}\t${message.text}`).join('\n')
       return `data:text/plain;charset=utf-8,${encodeURIComponent(text)}`
     },

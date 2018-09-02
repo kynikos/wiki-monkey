@@ -21,7 +21,7 @@ const {Vue, Vuex, styled} = require('../../modules/libs')
 const store = require('../store')
 
 
-module.exports.SectionCommands = (editsections) => Array.from(editsections).map((editsection) => SectionCommands_(editsection))
+module.exports.SectionCommands = (editsections) => editsections.map((editsection) => SectionCommands_(editsection))
 
 
 var SectionCommands_ = function (editsection) { // eslint-disable-line vars-on-top,no-var,max-lines-per-function
