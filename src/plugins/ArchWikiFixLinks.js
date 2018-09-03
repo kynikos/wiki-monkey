@@ -21,9 +21,9 @@ const App = require('../app')
 const {Plugin} = require('./_Plugin')
 
 
-const Cls = module.exports.ArchWikiFixLinks = class ArchWikiFixLinks extends Plugin {
-  static initClass() {
-    this.conf_default = {
+module.exports.ArchWikiFixLinks = class ArchWikiFixLinks extends Plugin {
+  static get conf_default() {
+    return {
       enabled: true,
       editor_menu: ['Text plugins', 'Fix external links'],
     }
@@ -218,7 +218,6 @@ links to aur.archlinux.org (try the \
     }
   }
 }
-Cls.initClass()
 
 // Note that it's too dangerous to use this plugin with the bot, in fact
 // some full URLs are correctly used in code blocks (e.g. wget lines)

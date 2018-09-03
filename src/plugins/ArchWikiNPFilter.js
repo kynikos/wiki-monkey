@@ -22,9 +22,9 @@ const App = require('../app')
 const {Plugin} = require('./_Plugin')
 
 
-const Cls = module.exports.ArchWikiNPFilter = class ArchWikiNPFilter extends Plugin {
-  static initClass() {
-    this.conf_default = {
+module.exports.ArchWikiNPFilter = class ArchWikiNPFilter extends Plugin {
+  static get conf_default() {
+    return {
       enabled: true,
       filter_label: 'Default filter',
       default_language: 'English',
@@ -42,7 +42,7 @@ const Cls = module.exports.ArchWikiNPFilter = class ArchWikiNPFilter extends Plu
     const ul = contentDiv.find('ul').first()
     const liList = ul.children('li')
 
-    for (const li of Array.from(liList)) {
+    for (const li of liList) {
       const link = $(li).find('a.mw-newpages-pagename').first()
       const [pureTitle, language] = WM.ArchWiki.detectLanguage(link[0].title)
       if (language !== this.conf.default_language) {
@@ -56,7 +56,7 @@ const Cls = module.exports.ArchWikiNPFilter = class ArchWikiNPFilter extends Plu
   moveArticle(contentDiv, li, language) {
     const langHs = contentDiv.children('h5')
     let langFound = false
-    for (const HLang of Array.from(langHs)) {
+    for (const HLang of langHs) {
       if (HLang.innerHTML === language) {
         const ul = $(HLang).next().append(li)
         langFound = true
@@ -72,4 +72,3 @@ const Cls = module.exports.ArchWikiNPFilter = class ArchWikiNPFilter extends Plu
     }
   }
 }
-Cls.initClass()

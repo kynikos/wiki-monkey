@@ -21,9 +21,9 @@ const App = require('../app')
 const {Plugin} = require('./_Plugin')
 
 
-const Cls = module.exports.ArchWikiNewTemplates = class ArchWikiNewTemplates extends Plugin {
-  static initClass() {
-    this.conf_default = {
+module.exports.ArchWikiNewTemplates = class ArchWikiNewTemplates extends Plugin {
+  static get conf_default() {
+    return {
       enabled: true,
       editor_menu: ['Text plugins', 'Use code templates'],
     }
@@ -77,7 +77,7 @@ const Cls = module.exports.ArchWikiNewTemplates = class ArchWikiNewTemplates ext
       ['&lt;tt>', newtext.match(/<tt/ig)],
     ]
 
-    for (const test of Array.from(tests)) {
+    for (const test of tests) {
       if (test[1]) {
         App.log.warning(`${test[1].length} ${
           test[0]} instances require manual intervention`)
@@ -89,4 +89,3 @@ const Cls = module.exports.ArchWikiNewTemplates = class ArchWikiNewTemplates ext
     }
   }
 }
-Cls.initClass()

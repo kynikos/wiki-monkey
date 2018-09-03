@@ -21,9 +21,9 @@ const App = require('../app')
 const {Plugin} = require('./_Plugin')
 
 
-const Cls = module.exports.ArchWikiFixHeader = class ArchWikiFixHeader extends Plugin {
-  static initClass() {
-    this.conf_default = {
+module.exports.ArchWikiFixHeader = class ArchWikiFixHeader extends Plugin {
+  static get conf_default() {
+    return {
       enabled: true,
       editor_menu: ['Text plugins', 'Fix header'],
     }
@@ -50,7 +50,7 @@ const Cls = module.exports.ArchWikiFixHeader = class ArchWikiFixHeader extends P
     titlemods.sort((a, b) => a.index - b.index)
     let tempcontent = ''
     let contentId = 0
-    for (const titlemod of Array.from(titlemods)) {
+    for (const titlemod of titlemods) {
       tempcontent += content.substring(contentId, titlemod.index)
       contentId = titlemod.index + titlemod.length
     }
@@ -83,7 +83,7 @@ one has been used, the others have been deleted')
       if (['TOC', 'START', 'END'].includes(bswitch.match[1])) {
         behaviorswitches.splice(b, 1)
       } else {
-        if (!Array.from(bslist).includes(bswitch.match[0])) {
+        if (!bslist.includes(bswitch.match[0])) {
           bslist.push(bswitch.match[0])
         } else {
           App.log.warning(`Removed duplicate of \
@@ -111,7 +111,7 @@ ${bswitch.match[0]}`)
     const catlinks = []
     tempcontent = ''
     contentId = 0
-    for (const cat of Array.from(categories)) {
+    for (const cat of categories) {
       if (cat.fragment) {
         App.log.warning(`${App.log.WikiLink(
           cat.link,
@@ -159,7 +159,7 @@ language than the one of the title (${language})`)
     const iwlinks = []
     tempcontent = ''
     contentId = 0
-    for (const link of Array.from(interlanguage)) {
+    for (const link of interlanguage) {
       if (link.anchor) {
         // Cannot use App.log.WikiLink because local interlanguage
         //   links would not resolved correctly; PageLink would need
@@ -214,4 +214,3 @@ interlanguage links and will be removed`)
     }
   }
 }
-Cls.initClass()

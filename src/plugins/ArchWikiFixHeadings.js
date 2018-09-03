@@ -21,9 +21,9 @@ const App = require('../app')
 const {Plugin} = require('./_Plugin')
 
 
-const Cls = module.exports.ArchWikiFixHeadings = class ArchWikiFixHeadings extends Plugin {
-  static initClass() {
-    this.conf_default = {
+module.exports.ArchWikiFixHeadings = class ArchWikiFixHeadings extends Plugin {
+  static get conf_default() {
+    return {
       enabled: true,
       editor_menu: ['Text plugins', 'Fix headings'],
     }
@@ -49,7 +49,7 @@ although usually it is suggested to start from level 2')
     let newtext = ''
     let prevId = 0
 
-    for (const section of Array.from(info.sections)) {
+    for (const section of info.sections) {
       newtext += source.substring(prevId, section.index)
       newtext += new Array(section.tocLevel + increaseLevel + 1).join('=')
       newtext += section.rawheading
@@ -69,4 +69,3 @@ although usually it is suggested to start from level 2')
     }
   }
 }
-Cls.initClass()

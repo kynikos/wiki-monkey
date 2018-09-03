@@ -18,6 +18,11 @@
 
 
 const Cls = module.exports.Plugin = class Plugin {
+  // Don't create default objects here, or they'll be shared among the
+  // subclasses unless overridden
+  // conf_default = {}
+  // wiki_to_conf_default = {}
+  // conf = {}
   static initClass() {
     this.prototype.main_bot = null
     this.prototype.main_diff = null
@@ -26,11 +31,6 @@ const Cls = module.exports.Plugin = class Plugin {
     this.prototype.main_recentchanges = null
     this.prototype.main_special = null
   }
-  // Don't create default objects here, or they'll be shared among the
-  // subclasses unless overridden
-  // @conf_default: {}
-  // @wiki_to_conf_default: {}
-  // conf: {}
 
   static __configure(wiki_name, user_config) {
     // Do generate a new object for each plugin
