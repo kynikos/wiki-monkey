@@ -21,27 +21,9 @@ const App = require('../app')
 const {Plugin} = require('./_Plugin')
 
 
-const Cls = module.exports.SynchronizeInterlanguageLinks = class SynchronizeInterlanguageLinks extends Plugin {
-  constructor(...args) {
-    {
-      // Hack: trick Babel/TypeScript into allowing this before super.
-      if (false) { super() }
-      const thisFn = (() => { return this }).toString()
-      const thisName = thisFn.slice(thisFn.indexOf('return') + 6 + 1, thisFn.indexOf(';')).trim()
-      eval(`${thisName} = this;`)
-    }
-    this.detectLang = this.detectLang.bind(this)
-    this.computeWhiteList = this.computeWhiteList.bind(this)
-    this.computeSupportedLangs = this.computeSupportedLangs.bind(this)
-    this.mainContinue = this.mainContinue.bind(this)
-    this.mainEnd = this.mainEnd.bind(this)
-    this.mainAutoWrite = this.mainAutoWrite.bind(this)
-    this.mainAutoEnd = this.mainAutoEnd.bind(this)
-    super(...args)
-  }
-
-  static initClass() {
-    this.conf_default = {
+module.exports.SynchronizeInterlanguageLinks = class SynchronizeInterlanguageLinks extends Plugin {
+  static get conf_default() {
+    return {
       enabled: true,
       editor_menu: ['Query plugins', 'Sync interlanguage links'],
       bot_label: 'Synchronize interlanguage links',
@@ -50,7 +32,10 @@ const Cls = module.exports.SynchronizeInterlanguageLinks = class SynchronizeInte
       supported_tags: ['en'],
       edit_summary: 'synchronized interlanguage links with the other wikis',
     }
-    this.wiki_to_conf_default = {
+  }
+
+  static get wiki_to_conf_default() {
+    return {
       ArchWiki: {
         language_tag: 'ArchWiki',
         tag_whitelist: 'ArchWiki',
@@ -138,7 +123,7 @@ const Cls = module.exports.SynchronizeInterlanguageLinks = class SynchronizeInte
                                                                     ' ...')
 
     if (langlinks) {
-      for (const link of Array.from(langlinks)) {
+      for (const link of langlinks) {
         const nlink = newlinks[link.lang.toLowerCase()]
         const vlink = visitedlinks[link.lang.toLowerCase()]
 
@@ -290,4 +275,3 @@ const Cls = module.exports.SynchronizeInterlanguageLinks = class SynchronizeInte
     return callBot(false, null)
   }
 }
-Cls.initClass()

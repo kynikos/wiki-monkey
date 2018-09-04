@@ -21,44 +21,9 @@ const App = require('../app')
 const {Plugin} = require('./_Plugin')
 
 
-const Cls = module.exports.ArchWikiUpdatePackageTemplates = class ArchWikiUpdatePackageTemplates extends Plugin {
-  constructor(...args) {
-    {
-      // Hack: trick Babel/TypeScript into allowing this before super.
-      if (false) { super() }
-      const thisFn = (() => { return this }).toString()
-      const thisName = thisFn.slice(thisFn.indexOf('return') + 6 + 1, thisFn.indexOf(';')).trim()
-      eval(`${thisName} = this;`)
-    }
-    this.doUpdate = this.doUpdate.bind(this)
-    this.doUpdateContinue = this.doUpdateContinue.bind(this)
-    this.doUpdateContinue2 = this.doUpdateContinue2.bind(this)
-    this.checkOfficial = this.checkOfficial.bind(this)
-    this.checkOfficiallc = this.checkOfficiallc.bind(this)
-    this.checkAUR = this.checkAUR.bind(this)
-    this.checkAURlc = this.checkAURlc.bind(this)
-    this.checkGroup64 = this.checkGroup64.bind(this)
-    this.checkGroup64lc = this.checkGroup64lc.bind(this)
-    this.checkGroup32 = this.checkGroup32.bind(this)
-    this.checkGroup32lc = this.checkGroup32lc.bind(this)
-    this.checkOfficial2 = this.checkOfficial2.bind(this)
-    this.checkOfficiallc2 = this.checkOfficiallc2.bind(this)
-    this.checkAUR2 = this.checkAUR2.bind(this)
-    this.checkAURlc2 = this.checkAURlc2.bind(this)
-    this.checkGroup64_2 = this.checkGroup64_2.bind(this)
-    this.checkGroup64lc2 = this.checkGroup64lc2.bind(this)
-    this.checkGroup32_2 = this.checkGroup32_2.bind(this)
-    this.checkGroup32lc2 = this.checkGroup32lc2.bind(this)
-    this.doUpdateContinue3 = this.doUpdateContinue3.bind(this)
-    this.mainEnd = this.mainEnd.bind(this)
-    this.mainAutoReplace = this.mainAutoReplace.bind(this)
-    this.mainAutoWrite = this.mainAutoWrite.bind(this)
-    this.mainAutoEnd = this.mainAutoEnd.bind(this)
-    super(...args)
-  }
-
-  static initClass() {
-    this.conf_default = {
+module.exports.ArchWikiUpdatePackageTemplates = class ArchWikiUpdatePackageTemplates extends Plugin {
+  static get conf_default() {
+    return {
       // TODO: Disabled because the ArchPackages module is currently unusable
       enabled: false,
       editor_menu: ['Query plugins', 'Update package templates'],
@@ -658,4 +623,3 @@ possibly update them',
     return callBot(false, null)
   }
 }
-Cls.initClass()

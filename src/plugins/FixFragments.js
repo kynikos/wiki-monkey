@@ -21,9 +21,9 @@ const App = require('../app')
 const {Plugin} = require('./_Plugin')
 
 
-const Cls = module.exports.FixFragments = class FixFragments extends Plugin {
-  static initClass() {
-    this.conf_default = {
+module.exports.FixFragments = class FixFragments extends Plugin {
+  static get conf_default() {
+    return {
       enabled: true,
       editor_menu: ['Text plugins', 'Fix section links'],
     }
@@ -37,7 +37,7 @@ const Cls = module.exports.FixFragments = class FixFragments extends Plugin {
     let newtext1 = ''
     let prevId = 0
 
-    for (var link of Array.from(slinks)) {
+    for (var link of slinks) {
       newtext1 += source.substring(prevId, link.index)
       newtext1 += this.fixLink(
         source, sections, link.rawLink, link.fragment,
@@ -58,7 +58,7 @@ const Cls = module.exports.FixFragments = class FixFragments extends Plugin {
     let newtext2 = ''
     prevId = 0
 
-    for (link of Array.from(ilinks)) {
+    for (link of ilinks) {
       newtext2 += newtext1.substring(prevId, link.index)
       const rawfragment = link.fragment
 
@@ -82,7 +82,7 @@ const Cls = module.exports.FixFragments = class FixFragments extends Plugin {
   fixLink(source, sections, rawlink, rawfragment, lalt) {
     const fragment = WM.Parser.squashContiguousWhitespace(rawfragment).trim()
 
-    for (const section of Array.from(sections)) {
+    for (const section of sections) {
       const heading = section.cleanheading
       const dotHeading = WM.Parser.dotEncode(heading)
       const dotFragment = WM.Parser.dotEncode(fragment)
@@ -134,4 +134,3 @@ const Cls = module.exports.FixFragments = class FixFragments extends Plugin {
     }
   }
 }
-Cls.initClass()

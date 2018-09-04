@@ -21,9 +21,9 @@ const App = require('../app')
 const {Plugin} = require('./_Plugin')
 
 
-const Cls = module.exports.MultipleLineBreaks = class MultipleLineBreaks extends Plugin {
-  static initClass() {
-    this.conf_default = {
+module.exports.MultipleLineBreaks = class MultipleLineBreaks extends Plugin {
+  static get conf_default() {
+    return {
       enabled: true,
       editor_menu: ['Text plugins', 'Squash multiple line breaks'],
     }
@@ -45,4 +45,3 @@ const Cls = module.exports.MultipleLineBreaks = class MultipleLineBreaks extends
     }
   }
 }
-Cls.initClass()

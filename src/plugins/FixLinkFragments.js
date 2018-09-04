@@ -21,29 +21,9 @@ const App = require('../app')
 const {Plugin} = require('./_Plugin')
 
 
-const Cls = module.exports.FixLinkFragments = class FixLinkFragments extends Plugin {
-  constructor(...args) {
-    {
-      // Hack: trick Babel/TypeScript into allowing this before super.
-      if (false) { super() }
-      const thisFn = (() => { return this }).toString()
-      const thisName = thisFn.slice(thisFn.indexOf('return') + 6 + 1, thisFn.indexOf(';')).trim()
-      eval(`${thisName} = this;`)
-    }
-    this.processLink = this.processLink.bind(this)
-    this.processLinkContinue = this.processLinkContinue.bind(this)
-    this.fixFragment = this.fixFragment.bind(this)
-    this.findArchWikiLinks = this.findArchWikiLinks.bind(this)
-    this.findArchWikiLinks2 = this.findArchWikiLinks2.bind(this)
-    this.processArchWikiLink = this.processArchWikiLink.bind(this)
-    this.processArchWikiLinkContinue = this.processArchWikiLinkContinue.bind(this)
-    this.mainContinue = this.mainContinue.bind(this)
-    this.mainEnd = this.mainEnd.bind(this)
-    super(...args)
-  }
-
-  static initClass() {
-    this.conf_default = {
+module.exports.FixLinkFragments = class FixLinkFragments extends Plugin {
+  static get conf_default() {
+    return {
       enabled: true,
       editor_menu: ['Query plugins', 'Fix external section links'],
     }
@@ -58,7 +38,7 @@ const Cls = module.exports.FixLinkFragments = class FixLinkFragments extends Plu
       const link = links[index]
       const rawfragment = link.fragment
 
-      if (!(link.namespace != null && (needle = link.namespace.toLowerCase(), Array.from(iwprefixes).includes(needle))) && rawfragment) {
+      if (!(link.namespace != null && (needle = link.namespace.toLowerCase(), iwprefixes.includes(needle))) && rawfragment) {
         App.log.info(`Processing ${
           App.log.WikiLink(link.link, link.rawLink) } ...`)
 
@@ -121,7 +101,7 @@ const Cls = module.exports.FixLinkFragments = class FixLinkFragments extends Plu
     if (res.parse) {
       const sections = []
 
-      for (const section of Array.from(res.parse.sections)) {
+      for (const section of res.parse.sections) {
         sections.push(WM.Parser.squashContiguousWhitespace(section.line).trim())
       }
 
@@ -154,7 +134,7 @@ const Cls = module.exports.FixLinkFragments = class FixLinkFragments extends Plu
     const fragment = WM.Parser.squashContiguousWhitespace(rawfragment).trim()
 
     if (sections.indexOf(fragment) < 0) {
-      for (const section of Array.from(sections)) {
+      for (const section of sections) {
         const dotSection = WM.Parser.dotEncode(section)
         const dotFragment = WM.Parser.dotEncode(fragment)
 
@@ -318,7 +298,7 @@ title, iwprefixes,
     if (res.parse) {
       const sections = []
 
-      for (const section of Array.from(res.parse.sections)) {
+      for (const section of res.parse.sections) {
         sections.push(WM.Parser.squashContiguousWhitespace(section.line).trim())
       }
 
@@ -352,7 +332,7 @@ title, iwprefixes,
     App.log.info('Fixing links to sections of other articles ...')
     const title = WM.Editor.getTitle()
     const res = await WM.MW.getInterwikiMap(title)
-    const iwprefixes = Array.from(res.query.interwikimap).map((iw) => iw.prefix)
+    const iwprefixes = res.query.interwikimap.map((iw) => iw.prefix)
     const links = WM.Parser.findInternalLinks(source, null, null)
     return this.processLink(
       title, iwprefixes, links, 0, source, '', 0,
@@ -385,4 +365,3 @@ title, iwprefixes,
     }
   }
 }
-Cls.initClass()

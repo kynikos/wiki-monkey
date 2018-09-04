@@ -21,9 +21,9 @@ const App = require('../app')
 const {Plugin} = require('./_Plugin')
 
 
-const Cls = module.exports.ArchWikiWantedCategories = class ArchWikiWantedCategories extends Plugin {
-  static initClass() {
-    this.conf_default = {
+module.exports.ArchWikiWantedCategories = class ArchWikiWantedCategories extends Plugin {
+  static get conf_default() {
+    return {
       enabled: false,
       bot_label: 'Create wanted categories',
     }
@@ -84,4 +84,3 @@ const Cls = module.exports.ArchWikiWantedCategories = class ArchWikiWantedCatego
     return callBot(false, null)
   }
 }
-Cls.initClass()

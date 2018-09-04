@@ -21,9 +21,9 @@ const App = require('../app')
 const {Plugin} = require('./_Plugin')
 
 
-const Cls = module.exports.ExpandContractions = class ExpandContractions extends Plugin {
-  static initClass() {
-    this.conf_default = {
+module.exports.ExpandContractions = class ExpandContractions extends Plugin {
+  static get conf_default() {
+    return {
       enabled: true,
       editor_menu: ['Text plugins', 'Expand contractions'],
     }
@@ -104,4 +104,3 @@ instead`)
     }
   }
 }
-Cls.initClass()

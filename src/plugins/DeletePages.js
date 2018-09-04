@@ -21,9 +21,9 @@ const App = require('../app')
 const {Plugin} = require('./_Plugin')
 
 
-const Cls = module.exports.DeletePages = class DeletePages extends Plugin {
-  static initClass() {
-    this.conf_default = {
+module.exports.DeletePages = class DeletePages extends Plugin {
+  static get conf_default() {
+    return {
       enabled: false,
       bot_label: 'Delete pages',
       edit_summary: 'delete page',
@@ -82,4 +82,3 @@ has not been deleted!\n${res.error.info} \
     return callBot(1, null)
   }
 }
-Cls.initClass()

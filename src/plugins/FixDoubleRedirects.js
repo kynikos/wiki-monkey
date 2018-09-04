@@ -22,9 +22,9 @@ const {Plugin} = require('./_Plugin')
 const Str = require('@kynikos/misc/dist/Str')
 
 
-const Cls = module.exports.FixDoubleRedirects = class FixDoubleRedirects extends Plugin {
-  static initClass() {
-    this.conf_default = {
+module.exports.FixDoubleRedirects = class FixDoubleRedirects extends Plugin {
+  static get conf_default() {
+    return {
       enabled: true,
       special_menu: ['Fix double redirects'],
       edit_summary: 'fix double redirect',
@@ -41,7 +41,7 @@ const Cls = module.exports.FixDoubleRedirects = class FixDoubleRedirects extends
     results.reverse()
 
     try {
-      for (const doubleRedirect of Array.from(results)) {
+      for (const doubleRedirect of results) {
         await this.process_redirect(doubleRedirect, namespaces)
       }
     } catch (error1) {
@@ -139,4 +139,3 @@ const Cls = module.exports.FixDoubleRedirects = class FixDoubleRedirects extends
     }
   }
 }
-Cls.initClass()

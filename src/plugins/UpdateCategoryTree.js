@@ -22,36 +22,19 @@ const {Plugin} = require('./_Plugin')
 const Str = require('@kynikos/misc/dist/Str')
 
 
-const Cls = module.exports.UpdateCategoryTree = class UpdateCategoryTree extends Plugin {
-  constructor(...args) {
-    {
-      // Hack: trick Babel/TypeScript into allowing this before super.
-      if (false) { super() }
-      const thisFn = (() => { return this }).toString()
-      const thisName = thisFn.slice(thisFn.indexOf('return') + 6 + 1, thisFn.indexOf(';')).trim()
-      eval(`${thisName} = this;`)
-    }
-    this.readToC = this.readToC.bind(this)
-    this.processToC = this.processToC.bind(this)
-    this.storeAlternativeNames = this.storeAlternativeNames.bind(this)
-    this.processCategory = this.processCategory.bind(this)
-    this.processCategoryAddSuffix = this.processCategoryAddSuffix.bind(this)
-    this.processCategoryEnd = this.processCategoryEnd.bind(this)
-    this.createCatLink = this.createCatLink.bind(this)
-    this.writeToC = this.writeToC.bind(this)
-    this.checkWrite = this.checkWrite.bind(this)
-    super(...args)
-  }
-
-  static initClass() {
-    this.conf_default = {
+module.exports.UpdateCategoryTree = class UpdateCategoryTree extends Plugin {
+  static get conf_default() {
+    return {
       enabled: false,
       special_menu: ['Update category trees'],
       edit_summary: 'automatic update',
       show_root_also_in: false,
       pages: [],
     }
-    this.wiki_to_conf_default = {
+  }
+
+  static get wiki_to_conf_default() {
+    return {
       ArchWiki: {
         pages: ['ar', 'bg', 'cs', 'da', 'el', 'en', 'es', 'fi', 'he', 'hr',
           'hu', 'id', 'it', 'ko', 'lt', 'nl', 'pl', 'pt', 'ru', 'sk',
@@ -222,15 +205,15 @@ const Cls = module.exports.UpdateCategoryTree = class UpdateCategoryTree extends
     // the root item, since the root's parent category would be displayed
     // there
     if (currParent || args.showRootAlsoIn) {
-      for (const par of Array.from(parents)) {
-        if (currParent !== par.title && !Array.from(par).includes('hidden')) {
+      for (const par of parents) {
+        if (currParent !== par.title && !par.includes('hidden')) {
           alsoParents.push(par)
         }
       }
 
       if (alsoParents.length) {
         const parentTitles = []
-        for (const i of Array.from(alsoParents)) {
+        for (const i of alsoParents) {
           altName = args.altNames[alsoParents[i].title.toLowerCase()] ? args.altNames[alsoParents[i].title.toLowerCase()] : null
           parentTitles.push(this.createCatLink(
             alsoParents[i].title,
@@ -319,4 +302,3 @@ const Cls = module.exports.UpdateCategoryTree = class UpdateCategoryTree extends
       res.error.info} (${res.error.code})`)
   }
 }
-Cls.initClass()

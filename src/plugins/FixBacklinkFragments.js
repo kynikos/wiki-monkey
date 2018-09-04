@@ -19,240 +19,218 @@
 const {jssc} = require('../modules/libs')
 const WM = require('../modules')
 const App = require('../app')
-const {Plugin} = require('./_Plugin');
+const {Plugin} = require('./_Plugin')
+
+const readTarget = () => document.getElementById('WikiMonkey-FixBacklinkFragments-Target').value
 
 
-(function () {
-  let readTarget
-  const Cls = module.exports.FixBacklinkFragments = class FixBacklinkFragments extends Plugin {
-    constructor(...args) {
-      {
-        // Hack: trick Babel/TypeScript into allowing this before super.
-        if (false) { super() }
-        const thisFn = (() => { return this }).toString()
-        const thisName = thisFn.slice(thisFn.indexOf('return') + 6 + 1, thisFn.indexOf(';')).trim()
-        eval(`${thisName} = this;`)
-      }
-      this.makeBotUI = this.makeBotUI.bind(this)
-      this.fixLinks = this.fixLinks.bind(this)
-      this.fixArchWikiLinks = this.fixArchWikiLinks.bind(this)
-      this.fixArchWikiLink = this.fixArchWikiLink.bind(this)
-      this.fixFragment = this.fixFragment.bind(this)
-      this.mainAutoFindSections = this.mainAutoFindSections.bind(this)
-      this.mainAutoRead = this.mainAutoRead.bind(this)
-      this.mainAutoWrite = this.mainAutoWrite.bind(this)
-      this.mainAutoEnd = this.mainAutoEnd.bind(this)
-      super(...args)
+module.exports.FixBacklinkFragments = class FixBacklinkFragments extends Plugin {
+  static get conf_default() {
+    return {
+      enabled: true,
+      bot_label: 'Fix links to specific sections of a target page',
+      edit_summary: 'fix links to specific sections',
     }
+  }
 
-    static initClass() {
-      this.conf_default = {
-        enabled: true,
-        bot_label: 'Fix links to specific sections of a target page',
-        edit_summary: 'fix links to specific sections',
-      }
-
-      readTarget = () => document.getElementById('WikiMonkey-FixBacklinkFragments-Target').value
-    }
-
-    makeBotUI() {
-      const {classes} = jssc({
-        fixBacklinkFragments: {
-          '& input[type=\'text\']': {
-            marginLeft: '0.33em',
-          },
+  makeBotUI() {
+    const {classes} = jssc({
+      fixBacklinkFragments: {
+        '& input[type=\'text\']': {
+          marginLeft: '0.33em',
         },
-      })
+      },
+    })
 
-      const divMain = document.createElement('div')
-      divMain.id = 'WikiMonkey-FixBacklinkFragments'
-      divMain.className = classes.fixBacklinkFragments
+    const divMain = document.createElement('div')
+    divMain.id = 'WikiMonkey-FixBacklinkFragments'
+    divMain.className = classes.fixBacklinkFragments
 
-      const label = document.createElement('span')
-      label.innerHTML = 'Target page:'
-      divMain.appendChild(label)
+    const label = document.createElement('span')
+    label.innerHTML = 'Target page:'
+    divMain.appendChild(label)
 
-      const target = document.createElement('input')
-      target.setAttribute('type', 'text')
-      target.id = 'WikiMonkey-FixBacklinkFragments-Target'
+    const target = document.createElement('input')
+    target.setAttribute('type', 'text')
+    target.id = 'WikiMonkey-FixBacklinkFragments-Target'
 
-      if (WM.WhatLinksHere.isWhatLinksHerePage()) {
-        target.value = WM.WhatLinksHere.getTitle()
-      }
-
-      divMain.appendChild(target)
-
-      return divMain
+    if (WM.WhatLinksHere.isWhatLinksHerePage()) {
+      target.value = WM.WhatLinksHere.getTitle()
     }
 
-    fixLinks(source, target, sections) {
-      // Note that it's impossible to recognize any namespaces in the title
-      //   without querying the server
-      // Alternatively, a list of the known namespaces could be maintained
-      //   for each wiki
-      // Recognizing namespaces would let recognize more liberal link
-      //   syntaxes (e.g. spaces around the colon)
-      const links = WM.Parser.findInternalLinks(source, null, target)
+    divMain.appendChild(target)
 
-      let newText = ''
-      let prevId = 0
+    return divMain
+  }
 
-      for (const link of Array.from(links)) {
-        newText += source.substring(prevId, link.index)
-        let newlink = link.rawLink
+  fixLinks(source, target, sections) {
+    // Note that it's impossible to recognize any namespaces in the title
+    //   without querying the server
+    // Alternatively, a list of the known namespaces could be maintained
+    //   for each wiki
+    // Recognizing namespaces would let recognize more liberal link
+    //   syntaxes (e.g. spaces around the colon)
+    const links = WM.Parser.findInternalLinks(source, null, target)
 
-        const rawfragment = link.fragment
+    let newText = ''
+    let prevId = 0
 
-        if (rawfragment) {
+    for (const link of links) {
+      newText += source.substring(prevId, link.index)
+      let newlink = link.rawLink
+
+      const rawfragment = link.fragment
+
+      if (rawfragment) {
+        const fixedFragment = this.fixFragment(rawfragment, sections)
+
+        if (fixedFragment === true) {
+          null
+        } else if (fixedFragment) {
+          const oldlink = newlink
+          newlink = `[[${target}#${fixedFragment}${
+            link.anchor ? `|${link.anchor}` : ''}]]`
+          App.log.info(`${`Fixed broken link fragment: ${oldlink}` +
+                          ' -> '}${App.log.WikiLink(link.link, newlink)}`)
+        } else {
+          App.log.warning(`Cannot fix broken link fragment: ${
+            App.log.WikiLink(link.link, newlink)}`)
+        }
+      }
+
+      newText += newlink
+      prevId = link.index + link.length
+    }
+
+    newText += source.substr(prevId)
+
+    // Without this check this plugin would be specific to ArchWiki
+    if (location.hostname === 'wiki.archlinux.org') {
+      newText = this.fixArchWikiLinks(newText, target, sections)
+    }
+
+    return newText
+  }
+
+  fixArchWikiLinks(source, target, sections) {
+    const links = WM.Parser.findTemplates(source, 'Related')
+
+    let newText1 = ''
+    let prevId = 0
+
+    for (const link of links) {
+      newText1 += source.substring(prevId, link.index)
+      newText1 += this.fixArchWikiLink(target, sections, link, 1)
+      prevId = link.index + link.length
+    }
+
+    newText1 += source.substr(prevId)
+
+    const links2 = WM.Parser.findTemplates(newText1, 'Related2')
+
+    let newText2 = ''
+    prevId = 0
+
+    for (const link2 of links2) {
+      newText2 += newText1.substring(prevId, link2.index)
+      newText2 += this.fixArchWikiLink(target, sections, link2, 2)
+      prevId = link2.index + link2.length
+    }
+
+    newText2 += newText1.substr(prevId)
+
+    return newText2
+  }
+
+  fixArchWikiLink(target, sections, template, expectedArgs) {
+    const args = template.arguments
+
+    // Don't crash in case of malformed templates
+    if (args.length === expectedArgs) {
+      const link = args[0].value
+      const fragId = link.indexOf('#')
+
+      if (fragId > -1) {
+        const ltitle = link.substring(0, fragId)
+
+        // Note that it's impossible to recognize any namespaces in the
+        //   title without querying the server
+        // Alternatively, a list of the known namespaces could be
+        //   maintained for each wiki
+        // Recognizing namespaces would let recognize more liberal link
+        //   syntaxes (e.g. spaces around the colon)
+        if (WM.Parser.compareArticleTitles(ltitle, target)) {
+          const rawfragment = link.substr(fragId + 1)
           const fixedFragment = this.fixFragment(rawfragment, sections)
 
           if (fixedFragment === true) {
             null
           } else if (fixedFragment) {
-            const oldlink = newlink
-            newlink = `[[${target}#${fixedFragment}${
-              link.anchor ? `|${link.anchor}` : ''}]]`
-            App.log.info(`${`Fixed broken link fragment: ${oldlink}` +
-                            ' -> '}${App.log.WikiLink(link.link, newlink)}`)
+            const anchor = args[1] ? `|${args[1].value}` : ''
+            const newlink = `${`{{${template.title}|${target}` +
+                                          '#'}${fixedFragment}${anchor}}}`
+            App.log.info(`Fixed broken link fragment: ${
+              template.rawTransclusion} -> ${
+              App.log.WikiLink(link, newlink)}`)
+            return newlink
           } else {
             App.log.warning(`Cannot fix broken link fragment: ${
-              App.log.WikiLink(link.link, newlink)}`)
+              App.log.WikiLink(
+                link,
+                template.rawTransclusion
+              )}`)
+          }
+        }
+      }
+    } else {
+      App.log.warning(`Template:${template.title} must have ${
+        expectedArgs} and only ${expectedArgs
+      }${expectedArgs > 1 ? ' arguments: ' : ' argument: '
+      }${template.rawTransclusion}`)
+    }
+
+    return template.rawTransclusion
+  }
+
+  fixFragment(rawfragment, sections) {
+    if (rawfragment) {
+      const fragment = WM.Parser.squashContiguousWhitespace(rawfragment)
+        .trim()
+
+      if (sections.indexOf(fragment) < 0) {
+        for (const section of sections) {
+          // The FixFragments and FixLinkFragments plugins also try
+          // to fix dot-encoded fragments however it's too dangerous
+          // to do it with this bot plugin, have the user fix
+          // fragments manually
+          if (section.toLowerCase() === fragment.toLowerCase()) {
+            return section
           }
         }
 
-        newText += newlink
-        prevId = link.index + link.length
-      }
-
-      newText += source.substr(prevId)
-
-      // Without this check this plugin would be specific to ArchWiki
-      if (location.hostname === 'wiki.archlinux.org') {
-        newText = this.fixArchWikiLinks(newText, target, sections)
-      }
-
-      return newText
-    }
-
-    fixArchWikiLinks(source, target, sections) {
-      const links = WM.Parser.findTemplates(source, 'Related')
-
-      let newText1 = ''
-      let prevId = 0
-
-      for (const link of Array.from(links)) {
-        newText1 += source.substring(prevId, link.index)
-        newText1 += this.fixArchWikiLink(target, sections, link, 1)
-        prevId = link.index + link.length
-      }
-
-      newText1 += source.substr(prevId)
-
-      const links2 = WM.Parser.findTemplates(newText1, 'Related2')
-
-      let newText2 = ''
-      prevId = 0
-
-      for (const link2 of Array.from(links2)) {
-        newText2 += newText1.substring(prevId, link2.index)
-        newText2 += this.fixArchWikiLink(target, sections, link2, 2)
-        prevId = link2.index + link2.length
-      }
-
-      newText2 += newText1.substr(prevId)
-
-      return newText2
-    }
-
-    fixArchWikiLink(target, sections, template, expectedArgs) {
-      const args = template.arguments
-
-      // Don't crash in case of malformed templates
-      if (args.length === expectedArgs) {
-        const link = args[0].value
-        const fragId = link.indexOf('#')
-
-        if (fragId > -1) {
-          const ltitle = link.substring(0, fragId)
-
-          // Note that it's impossible to recognize any namespaces in the
-          //   title without querying the server
-          // Alternatively, a list of the known namespaces could be
-          //   maintained for each wiki
-          // Recognizing namespaces would let recognize more liberal link
-          //   syntaxes (e.g. spaces around the colon)
-          if (WM.Parser.compareArticleTitles(ltitle, target)) {
-            const rawfragment = link.substr(fragId + 1)
-            const fixedFragment = this.fixFragment(rawfragment, sections)
-
-            if (fixedFragment === true) {
-              null
-            } else if (fixedFragment) {
-              const anchor = args[1] ? `|${args[1].value}` : ''
-              const newlink = `${`{{${template.title}|${target}` +
-                                            '#'}${fixedFragment}${anchor}}}`
-              App.log.info(`Fixed broken link fragment: ${
-                template.rawTransclusion} -> ${
-                App.log.WikiLink(link, newlink)}`)
-              return newlink
-            } else {
-              App.log.warning(`Cannot fix broken link fragment: ${
-                App.log.WikiLink(
-                  link,
-                  template.rawTransclusion
-                )}`)
-            }
-          }
-        }
-      } else {
-        App.log.warning(`Template:${template.title} must have ${
-          expectedArgs} and only ${expectedArgs
-        }${expectedArgs > 1 ? ' arguments: ' : ' argument: '
-        }${template.rawTransclusion}`)
-      }
-
-      return template.rawTransclusion
-    }
-
-    fixFragment(rawfragment, sections) {
-      if (rawfragment) {
-        const fragment = WM.Parser.squashContiguousWhitespace(rawfragment)
-          .trim()
-
-        if (sections.indexOf(fragment) < 0) {
-          for (const section of Array.from(sections)) {
-            // The FixFragments and FixLinkFragments plugins also try
-            // to fix dot-encoded fragments however it's too dangerous
-            // to do it with this bot plugin, have the user fix
-            // fragments manually
-            if (section.toLowerCase() === fragment.toLowerCase()) {
-              return section
-            }
-          }
-
-          return false
-        }
-        return true
+        return false
       }
       return true
     }
+    return true
+  }
 
-    main_bot(title, callBot, chainArgs) {
-      const summary = this.conf.edit_summary
+  main_bot(title, callBot, chainArgs) {
+    const summary = this.conf.edit_summary
 
-      const target = readTarget()
-      App.log.hidden(`Target page: ${target}`)
+    const target = readTarget()
+    App.log.hidden(`Target page: ${target}`)
 
-      if (target) {
-        if (chainArgs === null) {
-          const params = {
-            action: 'parse',
-            prop: 'sections',
-            page: target,
-            redirects: 1,
-          }
+    if (target) {
+      if (chainArgs === null) {
+        const params = {
+          action: 'parse',
+          prop: 'sections',
+          page: target,
+          redirects: 1,
+        }
 
-          App.log.warning('If some articles in the list are \
+        App.log.warning('If some articles in the list are \
 linking to the target article \
 through a redirect, you should process the backlinks \
 of that redirect page separately through its \
@@ -262,90 +240,87 @@ article.\nIn order to save time you are advised to \
 hide the redirects in the page lists that allow to do \
 so.')
 
-          return WM.MW.callAPIGet(
-            params,
-            this.mainAutoFindSections,
-            [title, target, summary, callBot],
-            null
-          )
-        }
-        return this.mainAutoRead(target, chainArgs, title, summary, callBot)
-      }
-      App.log.error('The target page cannot be empty')
-      return callBot(false, null)
-    }
-
-    mainAutoFindSections(res, args) {
-      const title = args[0]
-      const target = args[1]
-      const summary = args[2]
-      const callBot = args[3]
-      const sections = []
-
-      if (res.parse) {
-        for (const section of Array.from(res.parse.sections)) {
-          sections.push(WM.Parser.squashContiguousWhitespace(section.line).trim())
-        }
-
-        return this.mainAutoRead(target, sections, title, summary, callBot)
-      }
-      App.log.error(`The set target page, ${target}` +
-                                                        ', seems not to exist')
-
-      if (res.error) {
-        return callBot(res.error.code, sections)
-      }
-      return callBot(false, sections)
-    }
-
-    mainAutoRead(target, sections, title, summary, callBot) {
-      return WM.MW.callQueryEdit(
-        title,
-        this.mainAutoWrite,
-        [target, summary, callBot, sections]
-      )
-    }
-
-    mainAutoWrite(title, source, timestamp, edittoken, args) {
-      const target = args[0]
-      const summary = args[1]
-      const callBot = args[2]
-      const sections = args[3]
-
-      const newtext = this.fixLinks(source, target, sections)
-
-      if (newtext !== source) {
-        return WM.MW.callAPIPost(
-          {
-            action: 'edit',
-            bot: '1',
-            title,
-            summary,
-            text: newtext,
-            basetimestamp: timestamp,
-            token: edittoken,
-          },
-          this.mainAutoEnd,
-          [callBot, sections],
+        return WM.MW.callAPIGet(
+          params,
+          this.mainAutoFindSections,
+          [title, target, summary, callBot],
           null
         )
       }
-      return callBot(0, sections)
+      return this.mainAutoRead(target, chainArgs, title, summary, callBot)
     }
-
-    mainAutoEnd(res, args) {
-      const callBot = args[0]
-      const sections = args[1]
-
-      if (res.edit && res.edit.result === 'Success') {
-        return callBot(1, sections)
-      } else if (res.error) {
-        App.log.error(`${res.error.info} (${res.error.code})`)
-        return callBot(res.error.code, sections)
-      }
-      return callBot(false, sections)
-    }
+    App.log.error('The target page cannot be empty')
+    return callBot(false, null)
   }
-  Cls.initClass()
-  return Cls
-}())
+
+  mainAutoFindSections(res, args) {
+    const title = args[0]
+    const target = args[1]
+    const summary = args[2]
+    const callBot = args[3]
+    const sections = []
+
+    if (res.parse) {
+      for (const section of res.parse.sections) {
+        sections.push(WM.Parser.squashContiguousWhitespace(section.line).trim())
+      }
+
+      return this.mainAutoRead(target, sections, title, summary, callBot)
+    }
+    App.log.error(`The set target page, ${target}` +
+                                                      ', seems not to exist')
+
+    if (res.error) {
+      return callBot(res.error.code, sections)
+    }
+    return callBot(false, sections)
+  }
+
+  mainAutoRead(target, sections, title, summary, callBot) {
+    return WM.MW.callQueryEdit(
+      title,
+      this.mainAutoWrite,
+      [target, summary, callBot, sections]
+    )
+  }
+
+  mainAutoWrite(title, source, timestamp, edittoken, args) {
+    const target = args[0]
+    const summary = args[1]
+    const callBot = args[2]
+    const sections = args[3]
+
+    const newtext = this.fixLinks(source, target, sections)
+
+    if (newtext !== source) {
+      return WM.MW.callAPIPost(
+        {
+          action: 'edit',
+          bot: '1',
+          title,
+          summary,
+          text: newtext,
+          basetimestamp: timestamp,
+          token: edittoken,
+        },
+        this.mainAutoEnd,
+        [callBot, sections],
+        null
+      )
+    }
+    return callBot(0, sections)
+  }
+
+  mainAutoEnd(res, args) {
+    const callBot = args[0]
+    const sections = args[1]
+
+    if (res.edit && res.edit.result === 'Success') {
+      return callBot(1, sections)
+    } else if (res.error) {
+      App.log.error(`${res.error.info} (${res.error.code})`)
+      return callBot(res.error.code, sections)
+    }
+    return callBot(false, sections)
+  }
+}
