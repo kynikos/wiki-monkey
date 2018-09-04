@@ -22,16 +22,16 @@ const App = require('../app')
 const {Plugin} = require('./_Plugin')
 
 
-const Cls = module.exports.ArchWikiRCFilter = class ArchWikiRCFilter extends Plugin {
-  static initClass() {
-    this.conf_default = {
+module.exports.ArchWikiRCFilter = class ArchWikiRCFilter extends Plugin {
+  static get conf_default() {
+    return {
       enabled: true,
       filter_label: 'Default filter',
       default_language: 'English',
     }
   }
 
-  main_recentchanges() {
+  main_recentchanges() { // eslint-disable-line max-statements
     const h4s = $('#mw-content-text .mw-changeslist > h4')
 
     if (h4s.eq(0).next()[0].localName.toLowerCase() !== 'div') {
@@ -52,9 +52,9 @@ enable in your user preferences.')
       },
     })
 
-    for (const h4 of Array.from(h4s)) {
+    for (const h4 of h4s) {
       const groupDiv = $(h4).next()
-      for (const articleTable of Array.from(groupDiv.children('table'))) {
+      for (const articleTable of groupDiv.children('table')) {
         const link = $(articleTable).find('a.mw-changeslist-title')
           .first()
         if (link[0]) {
@@ -69,7 +69,7 @@ enable in your user preferences.')
     return App.log.info('Grouped articles by language')
   }
 
-  moveArticle(groupDiv, articleTable, language) {
+  moveArticle(groupDiv, articleTable, language) { // eslint-disable-line max-statements
     const langHs = groupDiv.children('h5')
     let langFound = false
     for (let i = 0; i < langHs.length; i++) {
@@ -93,4 +93,3 @@ enable in your user preferences.')
     }
   }
 }
-Cls.initClass()

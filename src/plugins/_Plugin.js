@@ -17,22 +17,26 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 
-const Cls = module.exports.Plugin = class Plugin {
+module.exports.Plugin = class Plugin {
   // Don't create default objects here, or they'll be shared among the
   // subclasses unless overridden
   // conf_default = {}
   // wiki_to_conf_default = {}
   // conf = {}
-  static initClass() {
-    this.prototype.main_bot = null
-    this.prototype.main_diff = null
-    this.prototype.main_editor = null
-    this.prototype.main_newpages = null
-    this.prototype.main_recentchanges = null
-    this.prototype.main_special = null
-  }
 
-  static __configure(wiki_name, user_config) {
+  static main_bot() {}
+
+  static main_diff() {}
+
+  static main_editor() {}
+
+  static main_newpages() {}
+
+  static main_recentchanges() {}
+
+  static main_special() {}
+
+  static __configure(wiki_name, user_config) { // eslint-disable-line max-statements
     // Do generate a new object for each plugin
     this.prototype.conf = {}
 
@@ -67,7 +71,4 @@ const Cls = module.exports.Plugin = class Plugin {
       return delete user_config[this.name]
     }
   }
-
-  constructor() {}
 }
-Cls.initClass()

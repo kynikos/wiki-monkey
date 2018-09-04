@@ -20,20 +20,20 @@ const RegEx = require('@kynikos/misc/dist/RegEx')
 const Str = require('@kynikos/misc/dist/Str')
 const App = require('../app')
 
+const prepareRegexpWhitespace = (title) => title.replace(/[_ ]+/gu, '[_ ]+')
+
+const prepareTitleCasing = function (pattern) {
+  const firstChar = pattern.charAt(0)
+  const fcUpper = firstChar.toUpperCase()
+  const fcLower = firstChar.toLowerCase()
+  if (fcUpper !== fcLower) {
+    pattern = `[${fcUpper}${fcLower}]${pattern.substr(1)}`
+  }
+  return pattern
+}
+
 
 module.exports = class exports {
-  prepareRegexpWhitespace = (title) => title.replace(/[_ ]+/g, '[_ ]+')
-
-  prepareTitleCasing = function (pattern) {
-    const firstChar = pattern.charAt(0)
-    const fcUpper = firstChar.toUpperCase()
-    const fcLower = firstChar.toLowerCase()
-    if (fcUpper !== fcLower) {
-      pattern = `[${fcUpper}${fcLower}]${pattern.substr(1)}`
-    }
-    return pattern
-  }
-
   squashContiguousWhitespace(title) {
     // MediaWiki treats consecutive whitespace characters in titles and
     //   section names as one

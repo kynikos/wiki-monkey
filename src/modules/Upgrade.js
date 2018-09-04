@@ -21,10 +21,10 @@ const {A, Br, Div} = hh
 const {version} = require('../../package.json')
 const WM = require('.')
 
+const REPO_RAW_URL = 'https://raw.githubusercontent.com/kynikos/wiki-monkey'
+
 
 module.exports = class exports {
-  REPO_RAW_URL = 'https://raw.githubusercontent.com/kynikos/wiki-monkey'
-
   constructor() {
     this.check_obsolete_config()
     if (WM.conf.update_check_wdays) {

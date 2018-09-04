@@ -21,14 +21,16 @@ const {Vue, Vuex, styled} = require('../../modules/libs')
 const store = require('../store')
 
 
-module.exports.SectionCommands = (editsections) => editsections.map((editsection) => SectionCommands_(editsection))
+module.exports.SectionCommands = ($editsections) => {
+  $editsections.each(function () { SectionCommands_($(this)) })
+}
 
 
-var SectionCommands_ = function (editsection) { // eslint-disable-line vars-on-top,no-var,max-lines-per-function
+const SectionCommands_ = function ($editsection) { // eslint-disable-line vars-on-top,no-var,max-lines-per-function
   const root = document.createElement('span')
-  $(editsection).children().first().after(' ', root, ' | ')
-  $(editsection).children().last().before(' ')
-  const section = $(editsection).closest(':header')
+  $editsection.children().first().after(' ', root, ' | ')
+  $editsection.children().last().before(' ')
+  const section = $editsection.closest(':header')
   const headline = section.find('.mw-headline')
   const sectionLink = WM.Parser.squashContiguousWhitespace(`[[#${headline[0].id}]]`)
   const articleLink = WM.Parser.squashContiguousWhitespace(`[[${mw.config.get('wgPageName')}#${headline[0].id}]]`)
