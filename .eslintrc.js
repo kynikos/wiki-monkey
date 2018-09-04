@@ -12,6 +12,10 @@ module.exports = {
         'shared-node-browser': true,
         'es6': true,
         'commonjs': true,
+        'jquery': true,
+    },
+    'globals': {
+        'mw': true,
     },
     'rules': {
         'array-bracket-newline': ['error', 'consistent'],
@@ -68,7 +72,7 @@ module.exports = {
         'one-var': ['error', 'never'],
         'padded-blocks': ['error', 'never'],
         'quote-props': ['error', 'as-needed'],
-        'quotes': ['error', 'single'],
+        'quotes': ['error', 'single', {'avoidEscape': true}],
         'semi': ['error', 'never'],
         'sort-keys': 'off',
         'space-before-function-paren': ['error', {
