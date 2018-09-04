@@ -1,4 +1,5 @@
 module.exports = {
+    'parser': 'babel-eslint',
     'extends': 'eslint:all',
     'parserOptions': {
         'ecmaVersion': 2017,
