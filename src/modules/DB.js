@@ -16,72 +16,65 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const WM = require('./index');
+const WM = require('./index')
 
 
-(function () {
-  let logError
-  const Cls = module.exports = class exports {
-    static initClass() {
-      logError = (error) => console.error('ERROR!!!', error)
-    }
+module.exports = class exports {
+  logError = (error) => console.error('ERROR!!!', error)
 
-    constructor() {
-      this.dburl = WM.conf.database_server
-      if (!this.dburl.endsWith('/')) {
-        this.dburl += '/'
-      }
-    }
-
-    _sendString(method, resource, data) {
-      if (data == null) { data = {} }
-      return $.ajax({
-        method,
-        url: this.dburl + resource,
-        data,
-        dataType: 'json',
-      }).fail(logError)
-    }
-
-    _sendJson(method, resource, data) {
-      if (data == null) { data = {} }
-      return $.ajax({
-        method,
-        url: this.dburl + resource,
-        data: JSON.stringify(data),
-        contentType: 'application/json',
-        dataType: 'json',
-      }).fail(logError)
-    }
-
-    delete(resource, data) {
-      return this._sendString('DELETE', resource, data)
-    }
-
-    get(resource, data) {
-      return this._sendString('GET', resource, data)
-    }
-
-    head(resource, data) {
-      return this._sendString('HEAD', resource, data)
-    }
-
-    options(resource, data) {
-      return this._sendString('OPTIONS', resource, data)
-    }
-
-    patch(resource, data) {
-      return this._sendJson('PATCH', resource, data)
-    }
-
-    post(resource, data) {
-      return this._sendJson('POST', resource, data)
-    }
-
-    put(resource, data) {
-      return this._sendJson('PUT', resource, data)
+  constructor() {
+    this.dburl = WM.conf.database_server
+    if (!this.dburl.endsWith('/')) {
+      this.dburl += '/'
     }
   }
-  Cls.initClass()
-  return Cls
-}())
+
+  _sendString(method, resource, data) {
+    if (data == null) { data = {} }
+    return $.ajax({
+      method,
+      url: this.dburl + resource,
+      data,
+      dataType: 'json',
+    }).fail(logError)
+  }
+
+  _sendJson(method, resource, data) {
+    if (data == null) { data = {} }
+    return $.ajax({
+      method,
+      url: this.dburl + resource,
+      data: JSON.stringify(data),
+      contentType: 'application/json',
+      dataType: 'json',
+    }).fail(logError)
+  }
+
+  delete(resource, data) {
+    return this._sendString('DELETE', resource, data)
+  }
+
+  get(resource, data) {
+    return this._sendString('GET', resource, data)
+  }
+
+  head(resource, data) {
+    return this._sendString('HEAD', resource, data)
+  }
+
+  options(resource, data) {
+    return this._sendString('OPTIONS', resource, data)
+  }
+
+  patch(resource, data) {
+    return this._sendJson('PATCH', resource, data)
+  }
+
+  post(resource, data) {
+    return this._sendJson('POST', resource, data)
+  }
+
+  put(resource, data) {
+    return this._sendJson('PUT', resource, data)
+  }
+}

@@ -18,625 +18,614 @@
 
 const RegEx = require('@kynikos/misc/dist/RegEx')
 const Str = require('@kynikos/misc/dist/Str')
-const App = require('../app');
+const App = require('../app')
 
 
-(function () {
-  let prepareRegexpWhitespace
-  let prepareTitleCasing
-  const Cls = module.exports = class exports {
-    static initClass() {
-      prepareRegexpWhitespace = (title) => title.replace(/[_ ]+/g, '[_ ]+')
+module.exports = class exports {
+  prepareRegexpWhitespace = (title) => title.replace(/[_ ]+/g, '[_ ]+')
 
-
-      prepareTitleCasing = function (pattern) {
-        const firstChar = pattern.charAt(0)
-        const fcUpper = firstChar.toUpperCase()
-        const fcLower = firstChar.toLowerCase()
-        if (fcUpper !== fcLower) {
-          pattern = `[${fcUpper}${fcLower}]${pattern.substr(1)}`
-        }
-        return pattern
-      }
+  prepareTitleCasing = function (pattern) {
+    const firstChar = pattern.charAt(0)
+    const fcUpper = firstChar.toUpperCase()
+    const fcLower = firstChar.toLowerCase()
+    if (fcUpper !== fcLower) {
+      pattern = `[${fcUpper}${fcLower}]${pattern.substr(1)}`
     }
+    return pattern
+  }
 
-    constructor() {}
+  squashContiguousWhitespace(title) {
+    // MediaWiki treats consecutive whitespace characters in titles and
+    //   section names as one
+    // For example [[Main __ Page#First _ _section]] is the same as
+    //   [[Main Page#First section]]
+    // Consider trimming the returned text
+    return title.replace(/[_ ]+/g, ' ')
+  }
 
-    squashContiguousWhitespace(title) {
-      // MediaWiki treats consecutive whitespace characters in titles and
-      //   section names as one
-      // For example [[Main __ Page#First _ _section]] is the same as
-      //   [[Main Page#First section]]
-      // Consider trimming the returned text
-      return title.replace(/[_ ]+/g, ' ')
-    }
+  neutralizeNowikiTags(source) {
+    // Empty nowiki tags (<nowiki></nowiki>) must be neutralized as well,
+    //   otherwise Tampermonkey will hang, see also
+    //   https://github.com/kynikos/wiki-monkey/issues/133
+    // Note that the concept of "nesting" doesn't make sense with <nowiki>
+    //   tags, so do *not* use Str.findNestedEnclosures
+    const OPENLENGTH = 8
+    const CLOSELENGTH = 9
+    const tags = Str.findSimpleEnclosures(
+      source, /<nowiki>/i,
+      OPENLENGTH, /<\/nowiki>/i, CLOSELENGTH
+    )
+    let maskedText = ''
+    let prevId = 0
 
-    neutralizeNowikiTags(source) {
-      // Empty nowiki tags (<nowiki></nowiki>) must be neutralized as well,
-      //   otherwise Tampermonkey will hang, see also
-      //   https://github.com/kynikos/wiki-monkey/issues/133
-      // Note that the concept of "nesting" doesn't make sense with <nowiki>
-      //   tags, so do *not* use Str.findNestedEnclosures
-      const OPENLENGTH = 8
-      const CLOSELENGTH = 9
-      const tags = Str.findSimpleEnclosures(
-        source, /<nowiki>/i,
-        OPENLENGTH, /<\/nowiki>/i, CLOSELENGTH
-      )
-      let maskedText = ''
-      let prevId = 0
-
-      for (const tag of Array.from(tags)) {
-        var maskLength; var maskString
-        if (tag[1]) {
-          maskLength = tag[1] - tag[0] + CLOSELENGTH
-          maskString = Str.padRight('', 'x', maskLength)
-          maskedText += source.substring(prevId, tag[0]) + maskString
-          prevId = tag[1] + CLOSELENGTH
-          continue
-        } else {
-          // If a <nowiki> tag is left open (no closing tag is found), it
-          //   does its job until the end of the text
-          // This also neutralizes the final \n, but it shouldn't matter
-          maskLength = source.substr(tag[0]).length
-          maskString = Str.padRight('', 'x', maskLength)
-          maskedText += source.substring(prevId, tag[0]) + maskString
-          prevId = source.length
-          break
-        }
-      }
-
-      maskedText += source.substring(prevId)
-
-      return maskedText
-    }
-
-    dotEncode(text) {
-      return encodeURIComponent(text).replace(/%/g, '.')
-    }
-
-    dotEncodeLinkBreakingFragmentCharacters(fragment) {
-      // These characters are known to break internal links if found in
-      //   fragments
-      // This function is not tested on link paths or anchors!
-      fragment = fragment.replace(/\[/g, '.5B')
-      fragment = fragment.replace(/\]/g, '.5D')
-      fragment = fragment.replace(/\{/g, '.7B')
-      fragment = fragment.replace(/\}/g, '.7D')
-      fragment = fragment.replace(/\|/g, '.7C')
-      return fragment
-    }
-
-    compareArticleTitles(title1, title2) {
-      // Actually also namespaces should be kept into account,
-      // e.g. 'Help:Title' and 'Help:title' should return true
-      const t1 = prepareTitleCasing(this.squashContiguousWhitespace(title1)
-        .trim())
-      const t2 = prepareTitleCasing(this.squashContiguousWhitespace(title2)
-        .trim())
-      return t1 === t2
-    }
-
-    findBehaviorSwitches(source, word) {
-      let regExp
-      source = this.neutralizeNowikiTags(source)
-      regExp
-      if (word) {
-        // Behavior switches aren't case-sensitive
-        regExp = new RegExp(`__${mw.RegExp.escape(word)}__`, 'gi')
+    for (const tag of tags) {
+      var maskLength; var maskString
+      if (tag[1]) {
+        maskLength = tag[1] - tag[0] + CLOSELENGTH
+        maskString = Str.padRight('', 'x', maskLength)
+        maskedText += source.substring(prevId, tag[0]) + maskString
+        prevId = tag[1] + CLOSELENGTH
+        continue
       } else {
-        // Behavior switches aren't case-sensitive
-        regExp = new RegExp('__(TOC|NOTOC|FORCETOC|NOEDITSECTION|' +
-                        'NEWSECTIONLINK|NONEWSECTIONLINK|NOGALLERY|HIDDENCAT|' +
-                        'NOCONTENTCONVERT|NOCC|NOTITLECONVERT|NOTC|INDEX|' +
-                        'NOINDEX|STATICREDIRECT|START|END)__', 'gi')
+        // If a <nowiki> tag is left open (no closing tag is found), it
+        //   does its job until the end of the text
+        // This also neutralizes the final \n, but it shouldn't matter
+        maskLength = source.substr(tag[0]).length
+        maskString = Str.padRight('', 'x', maskLength)
+        maskedText += source.substring(prevId, tag[0]) + maskString
+        prevId = source.length
+        break
       }
-      return RegEx.matchAll(source, regExp)
     }
 
-    findLinksEngine(source, titlePattern, specialOnly, caseSensitive) {
-      // Links cannot contain other links, not even in the alternative text
-      //   (only the innermost links are valid)
-      // Make sure to prepare whitespace in titlePattern like in
-      //   prepareRegexpWhitespace
-      // Do *not* use the g flag, or when using RegExp.exec the index will
-      //   have to be reset at every loop
-      const flags = caseSensitive ? '' : 'i'
-      // The following colon/space combinations are valid
-      //   "[[a:b#c|d]]"
-      //   "[[ a:b#c|d]]"
-      //   "[[ :a:b#c|d]]"
-      //   "[[ : a:b#c|d]]"
-      //   "[[:a:b#c|d]]"
-      //   "[[: a:b#c|d]]"
-      //   "[[::a:b#c|d]]"
-      //   "[[: :a:b#c|d]]"
-      //   "[[:: a:b#c|d]]"
-      //   "[[: : a:b#c|d]]"
-      // A link like "[[ ::a:b#c|d]]" isn't valid, but it would still be
-      //   found when specialOnly is false (bug #166)
-      const special = specialOnly ? '(?:[ _]+:)?[ _]*' : '(?:\\:?[ _]*){0,2}'
-      const regExp = new RegExp(`^${special}(${titlePattern})` +
-                        '[ _]*(?:\\|[_\\s]*([\\s\\S]+?)[_\\s]*)?[_\\s]*$', flags)
-      const nSource = this.neutralizeNowikiTags(source)
-      const links = []
-      const dbraces = Str.findInnermostEnclosures(nSource, '[[', ']]')
+    maskedText += source.substring(prevId)
 
-      for (const dbrace of Array.from(dbraces)) {
-        const inText = source.substring(dbrace[0] + 2, dbrace[1])
-        const match = regExp.exec(inText)
+    return maskedText
+  }
 
-        if (match) {
-          let push = true
+  dotEncode(text) {
+    return encodeURIComponent(text).replace(/%/g, '.')
+  }
 
-          if (match[6]) {
-            // Incomplete templates in the alternative text have an
-            //   apparently weird behaviour, hard to reverse-engineer,
-            //   so issue a warning when one is found
-            //   See also the examples in @findTransclusionArguments
-            // Note that the title already doesn't allow "{" or "}"
-            const nText = this.neutralizeNowikiTags(match[6])
-            const maskedText = Str.findNestedEnclosures(
-              nText, '{{',
-              '}}', 'x'
-            )[1]
+  dotEncodeLinkBreakingFragmentCharacters(fragment) {
+    // These characters are known to break internal links if found in
+    //   fragments
+    // This function is not tested on link paths or anchors!
+    fragment = fragment.replace(/\[/g, '.5B')
+    fragment = fragment.replace(/\]/g, '.5D')
+    fragment = fragment.replace(/\{/g, '.7B')
+    fragment = fragment.replace(/\}/g, '.7D')
+    fragment = fragment.replace(/\|/g, '.7C')
+    return fragment
+  }
 
-            if (maskedText.search(/(\{\{|\}\})/) > -1) {
-              App.log.warning(`[[${match[0]}` + ']] seems to \
+  compareArticleTitles(title1, title2) {
+    // Actually also namespaces should be kept into account,
+    // e.g. 'Help:Title' and 'Help:title' should return true
+    const t1 = prepareTitleCasing(this.squashContiguousWhitespace(title1)
+      .trim())
+    const t2 = prepareTitleCasing(this.squashContiguousWhitespace(title2)
+      .trim())
+    return t1 === t2
+  }
+
+  findBehaviorSwitches(source, word) {
+    let regExp
+    source = this.neutralizeNowikiTags(source)
+    regExp
+    if (word) {
+      // Behavior switches aren't case-sensitive
+      regExp = new RegExp(`__${mw.RegExp.escape(word)}__`, 'gi')
+    } else {
+      // Behavior switches aren't case-sensitive
+      regExp = new RegExp('__(TOC|NOTOC|FORCETOC|NOEDITSECTION|' +
+                      'NEWSECTIONLINK|NONEWSECTIONLINK|NOGALLERY|HIDDENCAT|' +
+                      'NOCONTENTCONVERT|NOCC|NOTITLECONVERT|NOTC|INDEX|' +
+                      'NOINDEX|STATICREDIRECT|START|END)__', 'gi')
+    }
+    return RegEx.matchAll(source, regExp)
+  }
+
+  findLinksEngine(source, titlePattern, specialOnly, caseSensitive) {
+    // Links cannot contain other links, not even in the alternative text
+    //   (only the innermost links are valid)
+    // Make sure to prepare whitespace in titlePattern like in
+    //   prepareRegexpWhitespace
+    // Do *not* use the g flag, or when using RegExp.exec the index will
+    //   have to be reset at every loop
+    const flags = caseSensitive ? '' : 'i'
+    // The following colon/space combinations are valid
+    //   "[[a:b#c|d]]"
+    //   "[[ a:b#c|d]]"
+    //   "[[ :a:b#c|d]]"
+    //   "[[ : a:b#c|d]]"
+    //   "[[:a:b#c|d]]"
+    //   "[[: a:b#c|d]]"
+    //   "[[::a:b#c|d]]"
+    //   "[[: :a:b#c|d]]"
+    //   "[[:: a:b#c|d]]"
+    //   "[[: : a:b#c|d]]"
+    // A link like "[[ ::a:b#c|d]]" isn't valid, but it would still be
+    //   found when specialOnly is false (bug #166)
+    const special = specialOnly ? '(?:[ _]+:)?[ _]*' : '(?:\\:?[ _]*){0,2}'
+    const regExp = new RegExp(`^${special}(${titlePattern})` +
+                      '[ _]*(?:\\|[_\\s]*([\\s\\S]+?)[_\\s]*)?[_\\s]*$', flags)
+    const nSource = this.neutralizeNowikiTags(source)
+    const links = []
+    const dbraces = Str.findInnermostEnclosures(nSource, '[[', ']]')
+
+    for (const dbrace of dbraces) {
+      const inText = source.substring(dbrace[0] + 2, dbrace[1])
+      const match = regExp.exec(inText)
+
+      if (match) {
+        let push = true
+
+        if (match[6]) {
+          // Incomplete templates in the alternative text have an
+          //   apparently weird behaviour, hard to reverse-engineer,
+          //   so issue a warning when one is found
+          //   See also the examples in @findTransclusionArguments
+          // Note that the title already doesn't allow "{" or "}"
+          const nText = this.neutralizeNowikiTags(match[6])
+          const maskedText = Str.findNestedEnclosures(
+            nText, '{{',
+            '}}', 'x'
+          )[1]
+
+          if (maskedText.search(/(\{\{|\}\})/) > -1) {
+            App.log.warning(`[[${match[0]}` + ']] seems to \
 contain part of a template, and the resulting \
 behaviour cannot be predicted by this \
 function, so the link will be ignored \
 altogether')
-              push = false
-            }
+            push = false
           }
+        }
 
-          if (push) {
-            links.push({
-              rawLink: `[[${match[0]}]]`,
-              link: match[1],
-              rawTitle: match[2],
-              namespace: match[3],
-              title: match[4],
-              fragment: match[5],
-              anchor: match[6],
-              index: dbrace[0],
-              length: dbrace[1] + 2 - dbrace[0]})
-          }
+        if (push) {
+          links.push({
+            rawLink: `[[${match[0]}]]`,
+            link: match[1],
+            rawTitle: match[2],
+            namespace: match[3],
+            title: match[4],
+            fragment: match[5],
+            anchor: match[6],
+            index: dbrace[0],
+            length: dbrace[1] + 2 - dbrace[0]})
         }
       }
-
-      return links
     }
 
-    findSectionLinks(source) {
-      // Keep the capturing groups as required by @findLinksEngine
-      const fragmentChars = '[^\\n\\{\\}\\[\\]\\|]*?'
-      const titlePattern = `(()())#(${fragmentChars})`
-      return this.findLinksEngine(source, titlePattern, false, true)
-    }
+    return links
+  }
 
-    findInternalLinks(source, namespace, title) {
-      // Keep the capturing groups as required by @findLinksEngine
-      let caseSensitive; let retitle; let titlePattern
-      const namespaceChars = '[^\\n\\{\\}\\[\\]\\|\\:\\#]+?'
-      const titleChars = '[^\\n\\{\\}\\[\\]\\|\\#]+?'
-      const fragmentChars = '[^\\n\\{\\}\\[\\]\\|]*?'
+  findSectionLinks(source) {
+    // Keep the capturing groups as required by @findLinksEngine
+    const fragmentChars = '[^\\n\\{\\}\\[\\]\\|]*?'
+    const titlePattern = `(()())#(${fragmentChars})`
+    return this.findLinksEngine(source, titlePattern, false, true)
+  }
 
-      if (namespace) {
-        const rens = prepareRegexpWhitespace(mw.RegExp.escape(namespace))
+  findInternalLinks(source, namespace, title) {
+    // Keep the capturing groups as required by @findLinksEngine
+    let caseSensitive; let retitle; let titlePattern
+    const namespaceChars = '[^\\n\\{\\}\\[\\]\\|\\:\\#]+?'
+    const titleChars = '[^\\n\\{\\}\\[\\]\\|\\#]+?'
+    const fragmentChars = '[^\\n\\{\\}\\[\\]\\|]*?'
 
-        if (title) {
-          retitle = prepareRegexpWhitespace(mw.RegExp.escape(title))
-          titlePattern = `${`((${rens})[ _]*:[ _]*` +
-                                            '('}${retitle}))` +
-                                            `(?:[ _]*#(${fragmentChars}))?`
+    if (namespace) {
+      const rens = prepareRegexpWhitespace(mw.RegExp.escape(namespace))
 
-          // Namespaces wouldn't be case-sensitive, but titles are, so be
-          //   safe and don't use the i flag
-          caseSensitive = true
-        } else {
-          titlePattern = `${`((${rens})[ _]*:[ _]*` +
-                                            '('}${titleChars}))` +
-                                            `(?:[ _]*#(${fragmentChars}))?`
-
-          // Namespaces aren't case-sensitive
-          caseSensitive = false
-        }
-      } else if (title) {
+      if (title) {
         retitle = prepareRegexpWhitespace(mw.RegExp.escape(title))
+        titlePattern = `${`((${rens})[ _]*:[ _]*` +
+                                          '('}${retitle}))` +
+                                          `(?:[ _]*#(${fragmentChars}))?`
 
-        // Keep the capturing groups as required by @findLinksEngine
-        titlePattern = `${`(()(${retitle}))` +
-                                            '(?:[ _]*#('}${fragmentChars}))?`
-
-        // Titles are case-sensitive
+        // Namespaces wouldn't be case-sensitive, but titles are, so be
+        //   safe and don't use the i flag
         caseSensitive = true
       } else {
-        titlePattern = `${`((?:(${namespaceChars})[ _]*:[ _]*)?` +
-                                            '('}${titleChars}))` +
-                                            `(?:[ _]*#(${fragmentChars}))?`
-        caseSensitive = true
+        titlePattern = `${`((${rens})[ _]*:[ _]*` +
+                                          '('}${titleChars}))` +
+                                          `(?:[ _]*#(${fragmentChars}))?`
+
+        // Namespaces aren't case-sensitive
+        caseSensitive = false
       }
+    } else if (title) {
+      retitle = prepareRegexpWhitespace(mw.RegExp.escape(title))
 
-      return this.findLinksEngine(source, titlePattern, false, caseSensitive)
-    }
-
-    findInterwikiLinks(source, wiki) {
-      return this.findInternalLinks(source, wiki)
-    }
-
-    findSpecialLinks(source, pattern) {
-      // Make sure to prepare whitespace in pattern like in
-      //   prepareRegexpWhitespace
       // Keep the capturing groups as required by @findLinksEngine
-      // See also WM.ArchWiki.findAllInterlanguageLinks
-      const titleChars = '[^\\n\\{\\}\\[\\]\\|\\#]+?'
-      const fragmentChars = '[^\\n\\{\\}\\[\\]\\|]*?'
-      const titlePattern = `${`((${pattern})[ _]*:[ _]*` +
-                                            '('}${titleChars}))` +
-                                            `(?:[ _]*#(${fragmentChars}))?`
-      // Categories and language tags aren't case-sensitive
-      return this.findLinksEngine(source, titlePattern, true, false)
+      titlePattern = `${`(()(${retitle}))` +
+                                          '(?:[ _]*#('}${fragmentChars}))?`
+
+      // Titles are case-sensitive
+      caseSensitive = true
+    } else {
+      titlePattern = `${`((?:(${namespaceChars})[ _]*:[ _]*)?` +
+                                          '('}${titleChars}))` +
+                                          `(?:[ _]*#(${fragmentChars}))?`
+      caseSensitive = true
     }
 
-    findCategories(source) {
-      return this.findSpecialLinks(source, 'Category')
-    }
+    return this.findLinksEngine(source, titlePattern, false, caseSensitive)
+  }
 
-    findInterlanguageLinks(source, language) {
-      // See also WM.ArchWiki.findAllInterlanguageLinks
-      return this.findSpecialLinks(source, mw.RegExp.escape(language))
-    }
+  findInterwikiLinks(source, wiki) {
+    return this.findInternalLinks(source, wiki)
+  }
 
-    findVariables(source, variable) {
-      // There don't seem to exist variable names with whitespace, applying
-      //   prepareRegexpWhitespace could be dangerous in this case
-      const pattern = mw.RegExp.escape(variable)
-      return this.findVariablesPattern(source, pattern)
-    }
+  findSpecialLinks(source, pattern) {
+    // Make sure to prepare whitespace in pattern like in
+    //   prepareRegexpWhitespace
+    // Keep the capturing groups as required by @findLinksEngine
+    // See also WM.ArchWiki.findAllInterlanguageLinks
+    const titleChars = '[^\\n\\{\\}\\[\\]\\|\\#]+?'
+    const fragmentChars = '[^\\n\\{\\}\\[\\]\\|]*?'
+    const titlePattern = `${`((${pattern})[ _]*:[ _]*` +
+                                          '('}${titleChars}))` +
+                                          `(?:[ _]*#(${fragmentChars}))?`
+    // Categories and language tags aren't case-sensitive
+    return this.findLinksEngine(source, titlePattern, true, false)
+  }
 
-    findVariablesPattern(source, pattern) {
-      // Pattern must be a string and IT MUST NOT HAVE ANY CAPTURING
-      //   GROUPS
-      // There can't be an underscore before the variable name
-      // There can't be a whitespace between the variable name and the colon
-      const nSource = this.neutralizeNowikiTags(source)
-      const results = []
-      const dbrackets = Str.findNestedEnclosures(nSource, '{{', '}}', 'x')[0]
+  findCategories(source) {
+    return this.findSpecialLinks(source, 'Category')
+  }
 
-      for (const dbracket of Array.from(dbrackets)) {
-        const inText = source.substring(dbracket[0] + 2, dbracket[1])
+  findInterlanguageLinks(source, language) {
+    // See also WM.ArchWiki.findAllInterlanguageLinks
+    return this.findSpecialLinks(source, mw.RegExp.escape(language))
+  }
 
-        // Variables are case-sensitive
-        // Do *not* use the g flag, or when using RegExp.exec the index
-        //   will have to be reset at every loop
-        const regExp = new RegExp(`^\\s*(${pattern})` +
-                                            '(?:\\:\\s*([\\s\\S]*?))?\\s*$', '')
-        const match = regExp.exec(inText)
+  findVariables(source, variable) {
+    // There don't seem to exist variable names with whitespace, applying
+    //   prepareRegexpWhitespace could be dangerous in this case
+    const pattern = mw.RegExp.escape(variable)
+    return this.findVariablesPattern(source, pattern)
+  }
 
-        if (match) {
-          results.push({
-            rawVariable: `{{${match[0]}}}`,
-            name: match[1],
-            value: match[2],
-            index: dbracket[0],
-            length: dbracket[1] + 2 - dbracket[0]})
-        }
+  findVariablesPattern(source, pattern) {
+    // Pattern must be a string and IT MUST NOT HAVE ANY CAPTURING
+    //   GROUPS
+    // There can't be an underscore before the variable name
+    // There can't be a whitespace between the variable name and the colon
+    const nSource = this.neutralizeNowikiTags(source)
+    const results = []
+    const dbrackets = Str.findNestedEnclosures(nSource, '{{', '}}', 'x')[0]
+
+    for (const dbracket of dbrackets) {
+      const inText = source.substring(dbracket[0] + 2, dbracket[1])
+
+      // Variables are case-sensitive
+      // Do *not* use the g flag, or when using RegExp.exec the index
+      //   will have to be reset at every loop
+      const regExp = new RegExp(`^\\s*(${pattern})` +
+                                          '(?:\\:\\s*([\\s\\S]*?))?\\s*$', '')
+      const match = regExp.exec(inText)
+
+      if (match) {
+        results.push({
+          rawVariable: `{{${match[0]}}}`,
+          name: match[1],
+          value: match[2],
+          index: dbracket[0],
+          length: dbracket[1] + 2 - dbracket[0]})
       }
-
-      return results
     }
 
-    findTransclusionsEngine(source, pattern, templatesOnly) {
-      // Pattern must be a string and IT MUST NOT HAVE ANY CAPTURING
-      //   GROUPS
-      // Make sure to prepare whitespace in pattern like in
-      //   prepareRegexpWhitespace
-      // The difference between generic transclusions and templates is the
-      //   possibility of a colon before the title which forces the
-      //   transclusion of a page instead of a template
-      // There can't be an underscore before the colon
-      // The title must not be broken by new line characters; any underscores
-      //   must be in the same line as the title, even though then they are
-      //   considered as whitespace
-      // Template names are case-sensitive, just make sure to prepare them
-      //   with prepareTitleCasing
-      // Do *not* use the g flag, or when using RegExp.exec the index will
-      //   have to be reset at every loop
-      const regExp = new RegExp(`${`^(\\s*${templatesOnly ? '' : ':?'}` +
-                                            '[_ ]*('}${pattern})[_ ]*\\s*)` +
-                                            '(?:\\|([\\s\\S]*))?$', '')
+    return results
+  }
 
-      const nSource = this.neutralizeNowikiTags(source)
-      const transclusions = []
-      const dbrackets = Str.findNestedEnclosures(nSource, '{{', '}}', 'x')[0]
+  findTransclusionsEngine(source, pattern, templatesOnly) {
+    // Pattern must be a string and IT MUST NOT HAVE ANY CAPTURING
+    //   GROUPS
+    // Make sure to prepare whitespace in pattern like in
+    //   prepareRegexpWhitespace
+    // The difference between generic transclusions and templates is the
+    //   possibility of a colon before the title which forces the
+    //   transclusion of a page instead of a template
+    // There can't be an underscore before the colon
+    // The title must not be broken by new line characters; any underscores
+    //   must be in the same line as the title, even though then they are
+    //   considered as whitespace
+    // Template names are case-sensitive, just make sure to prepare them
+    //   with prepareTitleCasing
+    // Do *not* use the g flag, or when using RegExp.exec the index will
+    //   have to be reset at every loop
+    const regExp = new RegExp(`${`^(\\s*${templatesOnly ? '' : ':?'}` +
+                                          '[_ ]*('}${pattern})[_ ]*\\s*)` +
+                                          '(?:\\|([\\s\\S]*))?$', '')
 
-      for (const dbracket of Array.from(dbrackets)) {
-        const inText = source.substring(dbracket[0] + 2, dbracket[1])
-        const match = regExp.exec(inText)
+    const nSource = this.neutralizeNowikiTags(source)
+    const transclusions = []
+    const dbrackets = Str.findNestedEnclosures(nSource, '{{', '}}', 'x')[0]
 
-        if (match) {
-          // 3 is the length of "{{" + the first "|"
-          const argIndex = dbracket[0] + match[1].length + 3
+    for (const dbracket of dbrackets) {
+      const inText = source.substring(dbracket[0] + 2, dbracket[1])
+      const match = regExp.exec(inText)
 
-          transclusions.push({
-            rawTransclusion: `{{${match[0]}}}`,
-            title: match[2],
-            index: dbracket[0],
-            length: dbracket[1] - dbracket[0] + 2,
-            arguments: this.findTransclusionArguments(match, argIndex),
-          })
-        }
+      if (match) {
+        // 3 is the length of "{{" + the first "|"
+        const argIndex = dbracket[0] + match[1].length + 3
+
+        transclusions.push({
+          rawTransclusion: `{{${match[0]}}}`,
+          title: match[2],
+          index: dbracket[0],
+          length: dbracket[1] - dbracket[0] + 2,
+          arguments: this.findTransclusionArguments(match, argIndex),
+        })
       }
-
-      return transclusions
     }
 
-    findTransclusionArguments(match, argIndex) {
-      const rawArguments = match[3]
-      const args = []
+    return transclusions
+  }
 
-      if (rawArguments) {
-        const nArgs = this.neutralizeNowikiTags(rawArguments)
+  findTransclusionArguments(match, argIndex) {
+    const rawArguments = match[3]
+    const args = []
 
-        // Mask any inner links, so that their "|" characters won't be
-        //   interpreted as belonging to the template
-        //   Note that double braces ("[[]]") "escape" a pipe in a template
-        //   argument even if a link is not correctly formed, e.g. [[|]] or
-        //   using unallowed characters etc.
-        let maskedArgs = Str.findNestedEnclosures(nArgs, '[[', ']]', 'x')[1]
+    if (rawArguments) {
+      const nArgs = this.neutralizeNowikiTags(rawArguments)
 
-        // Mask any inner templates, so that their "|" characters won't be
-        //   interpreted as belonging to the outer template
-        maskedArgs = Str.findNestedEnclosures(
-          maskedArgs, '{{', '}}',
-          'x'
-        )[1]
+      // Mask any inner links, so that their "|" characters won't be
+      //   interpreted as belonging to the template
+      //   Note that double braces ("[[]]") "escape" a pipe in a template
+      //   argument even if a link is not correctly formed, e.g. [[|]] or
+      //   using unallowed characters etc.
+      let maskedArgs = Str.findNestedEnclosures(nArgs, '[[', ']]', 'x')[1]
 
-        // Also tables would have pipes, but using tables inside templates
-        //   doesn't seem to be supported by MediaWiki, except if enclosing
-        //   them in special parser functions, e.g.
-        //   http://www.mediawiki.org/wiki/Extension:Pipe_Escape which
-        //   would then be safely masked by the function above
+      // Mask any inner templates, so that their "|" characters won't be
+      //   interpreted as belonging to the outer template
+      maskedArgs = Str.findNestedEnclosures(
+        maskedArgs, '{{', '}}',
+        'x'
+      )[1]
 
-        // Incomplete links and templates in the arguments text have an
-        //   apparently weird behaviour, hard to reverse-engineer, so issue
-        //   a warning when one is found
-        //   Try for example the following cases:
-        //     000{{hc|BBB[[AAA|ZZZ}}CCC]]111
-        //     000{{hc|BBB[[AAA}}CCC|ZZZ]]111
-        //     000[[BBB{{hc|AAA|ZZZ]]CCC}}111
-        //     000{{hc|BBB[[AAA|ZZZ}}[[KKK]]111000{{hc|AAA|BBB}}111
-        //     {{bc|{{Accuracy|[[test}}]]}}
-        //     {{bc|{{Accuracy|[[test|}}]]}}
-        //     {{Accuracy|[[}}]]
-        //     {{Accuracy|[[test|}}]]
-        //     [[{{Accuracy|]]}}
-        //     [[test|{{Accuracy|]]}}
-        //     [[test|{{Accuracy|]]
-        //     [[test|{{ic|aaa]]}}
-        //   Note that the title already doesn't allow "{", "}", "[" nor
-        //     "]"
-        if (maskedArgs.search(/(\{\{|\}\}|\[\[|\]\])/) > -1) {
-          App.log.warning(`{{${match[0]}` + '}} seems to \
+      // Also tables would have pipes, but using tables inside templates
+      //   doesn't seem to be supported by MediaWiki, except if enclosing
+      //   them in special parser functions, e.g.
+      //   http://www.mediawiki.org/wiki/Extension:Pipe_Escape which
+      //   would then be safely masked by the function above
+
+      // Incomplete links and templates in the arguments text have an
+      //   apparently weird behaviour, hard to reverse-engineer, so issue
+      //   a warning when one is found
+      //   Try for example the following cases:
+      //     000{{hc|BBB[[AAA|ZZZ}}CCC]]111
+      //     000{{hc|BBB[[AAA}}CCC|ZZZ]]111
+      //     000[[BBB{{hc|AAA|ZZZ]]CCC}}111
+      //     000{{hc|BBB[[AAA|ZZZ}}[[KKK]]111000{{hc|AAA|BBB}}111
+      //     {{bc|{{Accuracy|[[test}}]]}}
+      //     {{bc|{{Accuracy|[[test|}}]]}}
+      //     {{Accuracy|[[}}]]
+      //     {{Accuracy|[[test|}}]]
+      //     [[{{Accuracy|]]}}
+      //     [[test|{{Accuracy|]]}}
+      //     [[test|{{Accuracy|]]
+      //     [[test|{{ic|aaa]]}}
+      //   Note that the title already doesn't allow "{", "}", "[" nor
+      //     "]"
+      if (maskedArgs.search(/(\{\{|\}\}|\[\[|\]\])/) > -1) {
+        App.log.warning(`{{${match[0]}` + '}} seems to \
 contain part of a link or template, and the resulting \
 behaviour cannot be predicted by this function, so \
 the whole template will be ignored altogether')
-        } else {
-          const mArgs = maskedArgs.split('|')
-          let relIndex = 0
-
-          for (const mArgument of Array.from(mArgs)) {
-            var key; var keyIndex; var value; var valueIndex
-            const argL = mArgument.length
-            const argument = rawArguments.substr(relIndex, argL)
-            const eqIndex = mArgument.indexOf('=')
-
-            // EqIndex must be > 0, not -1, in fact the key must not be
-            //   empty
-            if (eqIndex > 0) {
-              const rawKey = argument.substring(0, eqIndex)
-              const reKey = /^(\s*)(.+?)\s*$/
-              const keyMatches = reKey.exec(rawKey)
-              key = keyMatches[2]
-              keyIndex = argIndex + (keyMatches[1] ? keyMatches[1].length : 0)
-
-              // 1 is the length of "="
-              value = argument.substr(eqIndex + 1)
-              valueIndex = argIndex + keyMatches[0].length + 1
-            } else {
-              key = null
-              keyIndex = null
-              value = argument
-              valueIndex = argIndex
-            }
-
-            args.push({
-              key,
-              key_index: keyIndex,
-              value,
-              value_index: valueIndex,
-            })
-
-            // 1 is the length of "|"
-            relIndex += argL + 1
-          }
-        }
-      }
-
-      return args
-    }
-
-    findTemplates(source, template) {
-      let pattern
-      if (template) {
-        pattern = mw.RegExp.escape(template)
-        pattern = prepareRegexpWhitespace(pattern)
-        pattern = prepareTitleCasing(pattern)
       } else {
-        pattern = '[^\\n\\{\\}\\[\\]\\||\\#]+?'
-      }
+        const mArgs = maskedArgs.split('|')
+        let relIndex = 0
 
-      return this.findTemplatesPattern(source, pattern)
-    }
+        for (const mArgument of mArgs) {
+          var key; var keyIndex; var value; var valueIndex
+          const argL = mArgument.length
+          const argument = rawArguments.substr(relIndex, argL)
+          const eqIndex = mArgument.indexOf('=')
 
-    findTemplatesPattern(source, pattern) {
-      // Pattern must be a string and IT MUST NOT HAVE ANY CAPTURING
-      //   GROUPS
-      // Make sure to prepare whitespace in pattern like in
-      //   prepareRegexpWhitespace
-      // Templates can't be transcluded with a colon before the title
-      // The title must not be broken by new line characters; any underscores
-      //   must be in the same line as the title, even though then they are
-      //   considered as whitespace
-      return this.findTransclusionsEngine(source, pattern, true)
-    }
+          // EqIndex must be > 0, not -1, in fact the key must not be
+          //   empty
+          if (eqIndex > 0) {
+            const rawKey = argument.substring(0, eqIndex)
+            const reKey = /^(\s*)(.+?)\s*$/
+            const keyMatches = reKey.exec(rawKey)
+            key = keyMatches[2]
+            keyIndex = argIndex + (keyMatches[1] ? keyMatches[1].length : 0)
 
-    findTransclusions(source, namespace, title) {
-      // The difference from templates is the possibility of a colon before
-      //   the title which forces the transclusion of a page instead of a
-      //   template
-      // There can't be an underscore before the colon
-      // The title must not be broken by new line characters; any underscores
-      //   must be in the same line as the title, even though then they are
-      //   considered as whitespace
-      let namespacePattern; let pattern; let titlePattern
-      const titleChars = '[^\\n\\{\\}\\[\\]\\||\\#]+?'
-
-      if (namespace) {
-        namespacePattern = mw.RegExp.escape(namespace)
-        namespacePattern = prepareRegexpWhitespace(namespacePattern)
-        namespacePattern = prepareTitleCasing(namespacePattern)
-      }
-
-      if (title) {
-        titlePattern = mw.RegExp.escape(title)
-        titlePattern = prepareRegexpWhitespace(titlePattern)
-        titlePattern = prepareTitleCasing(titlePattern)
-      }
-
-      if (namespacePattern && titlePattern) {
-        pattern = `${namespacePattern}[ _]*:[ _]*${titlePattern}`
-      } else if (!namespacePattern && titlePattern) {
-        pattern = titlePattern
-      } else if (namespacePattern && !titlePattern) {
-        pattern = `${namespacePattern}[ _]*:${titleChars}`
-      } else {
-        pattern = titleChars
-      }
-
-      return this.findTransclusionsEngine(source, pattern, false)
-    }
-
-    findSectionHeadings(source) {
-      // ======Title====== is the deepest level supported
-      const MAXLEVEL = 6
-
-      const sections = []
-      let minLevel = MAXLEVEL
-      let maxTocLevel = 0
-      let tocLevel = 1
-      const regExp = /^(\=+([ _]*(.+?)[ _]*)\=+)[ \t]*$/gm
-
-      while (true) {
-        const match = regExp.exec(source)
-
-        if (match) {
-          var prevLevels
-          const L0 = match[0].length
-          const line = match[1]
-          const rawheading = match[2]
-          const heading = match[3]
-          const cleanheading = this.squashContiguousWhitespace(heading)
-          const L1 = line.length
-          let level = 1
-          let start = '='
-          let end = '='
-
-          // ==Title=== and ===Title== are both 2nd levels and so on
-          // (the shortest sequence of = between the two sides is
-          //  considered)
-
-          // = and == are not titles
-          // === is read as =(=)=, ==== is read as =(==)= (both 1st
-          //                                               levels)
-          // ===== is read as ==(=)== (2nd level) and so on
-
-          while (true) {
-            start = line.substr(level, 1)
-            end = line.substr(L1 - level - 1, 1)
-
-            if (L1 - level * 2 > 2 && start === '=' && end === '=') {
-              level++
-            } else {
-              if (level > MAXLEVEL) {
-                level = MAXLEVEL
-              } else if (level < minLevel) {
-                minLevel = level
-              }
-              break
-            }
+            // 1 is the length of "="
+            value = argument.substr(eqIndex + 1)
+            valueIndex = argIndex + keyMatches[0].length + 1
+          } else {
+            key = null
+            keyIndex = null
+            value = argument
+            valueIndex = argIndex
           }
 
-          if (level === minLevel) {
-            tocLevel = 1
-            prevLevels = {}
-            prevLevels[level] = 1
-            prevLevels.relMax = level
-            if (maxTocLevel === 0) {
-              maxTocLevel = tocLevel
-            }
-          } else if (level > prevLevels.relMax) {
-            tocLevel++
-            prevLevels[level] = tocLevel
-            prevLevels.relMax = level
-            if (tocLevel > maxTocLevel) {
-              maxTocLevel = tocLevel
-            }
-          } else if (level < prevLevels.relMax) {
-            if (prevLevels[level]) {
-              tocLevel = prevLevels[level]
-            } else {
-              // TocPeer is the level immediately greater than the
-              // current one, and it should have the same tocLevel
-              // I must reset tocPeer here to the relative maximum
-              let tocPeer = prevLevels.relMax
-              for (const pLevel of Array.from(prevLevels)) {
-                if (pLevel > level && pLevel < tocPeer) {
-                  tocPeer = pLevel
-                }
-              }
-              tocLevel = prevLevels[tocPeer]
-              prevLevels[level] = tocLevel
-            }
-            prevLevels.relMax = level
-          }
-
-          sections.push({
-            line,
-            rawheading,
-            heading,
-            cleanheading,
-            level,
-            tocLevel,
-            index: regExp.lastIndex - L0,
-            length0: L0,
-            length1: L1,
+          args.push({
+            key,
+            key_index: keyIndex,
+            value,
+            value_index: valueIndex,
           })
-        } else {
-          break
+
+          // 1 is the length of "|"
+          relIndex += argL + 1
         }
       }
-
-      // Articles without sections
-      if (maxTocLevel === 0) {
-        minLevel = 0
-      }
-
-      return {sections, minLevel, maxTocLevel}
     }
+
+    return args
   }
-  Cls.initClass()
-  return Cls
-}())
+
+  findTemplates(source, template) {
+    let pattern
+    if (template) {
+      pattern = mw.RegExp.escape(template)
+      pattern = prepareRegexpWhitespace(pattern)
+      pattern = prepareTitleCasing(pattern)
+    } else {
+      pattern = '[^\\n\\{\\}\\[\\]\\||\\#]+?'
+    }
+
+    return this.findTemplatesPattern(source, pattern)
+  }
+
+  findTemplatesPattern(source, pattern) {
+    // Pattern must be a string and IT MUST NOT HAVE ANY CAPTURING
+    //   GROUPS
+    // Make sure to prepare whitespace in pattern like in
+    //   prepareRegexpWhitespace
+    // Templates can't be transcluded with a colon before the title
+    // The title must not be broken by new line characters; any underscores
+    //   must be in the same line as the title, even though then they are
+    //   considered as whitespace
+    return this.findTransclusionsEngine(source, pattern, true)
+  }
+
+  findTransclusions(source, namespace, title) {
+    // The difference from templates is the possibility of a colon before
+    //   the title which forces the transclusion of a page instead of a
+    //   template
+    // There can't be an underscore before the colon
+    // The title must not be broken by new line characters; any underscores
+    //   must be in the same line as the title, even though then they are
+    //   considered as whitespace
+    let namespacePattern; let pattern; let titlePattern
+    const titleChars = '[^\\n\\{\\}\\[\\]\\||\\#]+?'
+
+    if (namespace) {
+      namespacePattern = mw.RegExp.escape(namespace)
+      namespacePattern = prepareRegexpWhitespace(namespacePattern)
+      namespacePattern = prepareTitleCasing(namespacePattern)
+    }
+
+    if (title) {
+      titlePattern = mw.RegExp.escape(title)
+      titlePattern = prepareRegexpWhitespace(titlePattern)
+      titlePattern = prepareTitleCasing(titlePattern)
+    }
+
+    if (namespacePattern && titlePattern) {
+      pattern = `${namespacePattern}[ _]*:[ _]*${titlePattern}`
+    } else if (!namespacePattern && titlePattern) {
+      pattern = titlePattern
+    } else if (namespacePattern && !titlePattern) {
+      pattern = `${namespacePattern}[ _]*:${titleChars}`
+    } else {
+      pattern = titleChars
+    }
+
+    return this.findTransclusionsEngine(source, pattern, false)
+  }
+
+  findSectionHeadings(source) {
+    // ======Title====== is the deepest level supported
+    const MAXLEVEL = 6
+
+    const sections = []
+    let minLevel = MAXLEVEL
+    let maxTocLevel = 0
+    let tocLevel = 1
+    const regExp = /^(\=+([ _]*(.+?)[ _]*)\=+)[ \t]*$/gm
+
+    while (true) {
+      const match = regExp.exec(source)
+
+      if (match) {
+        var prevLevels
+        const L0 = match[0].length
+        const line = match[1]
+        const rawheading = match[2]
+        const heading = match[3]
+        const cleanheading = this.squashContiguousWhitespace(heading)
+        const L1 = line.length
+        let level = 1
+        let start = '='
+        let end = '='
+
+        // ==Title=== and ===Title== are both 2nd levels and so on
+        // (the shortest sequence of = between the two sides is
+        //  considered)
+
+        // = and == are not titles
+        // === is read as =(=)=, ==== is read as =(==)= (both 1st
+        //                                               levels)
+        // ===== is read as ==(=)== (2nd level) and so on
+
+        while (true) {
+          start = line.substr(level, 1)
+          end = line.substr(L1 - level - 1, 1)
+
+          if (L1 - level * 2 > 2 && start === '=' && end === '=') {
+            level++
+          } else {
+            if (level > MAXLEVEL) {
+              level = MAXLEVEL
+            } else if (level < minLevel) {
+              minLevel = level
+            }
+            break
+          }
+        }
+
+        if (level === minLevel) {
+          tocLevel = 1
+          prevLevels = {}
+          prevLevels[level] = 1
+          prevLevels.relMax = level
+          if (maxTocLevel === 0) {
+            maxTocLevel = tocLevel
+          }
+        } else if (level > prevLevels.relMax) {
+          tocLevel++
+          prevLevels[level] = tocLevel
+          prevLevels.relMax = level
+          if (tocLevel > maxTocLevel) {
+            maxTocLevel = tocLevel
+          }
+        } else if (level < prevLevels.relMax) {
+          if (prevLevels[level]) {
+            tocLevel = prevLevels[level]
+          } else {
+            // TocPeer is the level immediately greater than the
+            // current one, and it should have the same tocLevel
+            // I must reset tocPeer here to the relative maximum
+            let tocPeer = prevLevels.relMax
+            for (const pLevel of prevLevels) {
+              if (pLevel > level && pLevel < tocPeer) {
+                tocPeer = pLevel
+              }
+            }
+            tocLevel = prevLevels[tocPeer]
+            prevLevels[level] = tocLevel
+          }
+          prevLevels.relMax = level
+        }
+
+        sections.push({
+          line,
+          rawheading,
+          heading,
+          cleanheading,
+          level,
+          tocLevel,
+          index: regExp.lastIndex - L0,
+          length0: L0,
+          length1: L1,
+        })
+      } else {
+        break
+      }
+    }
+
+    // Articles without sections
+    if (maxTocLevel === 0) {
+      minLevel = 0
+    }
+
+    return {sections, minLevel, maxTocLevel}
+  }
+}

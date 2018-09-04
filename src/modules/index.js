@@ -43,30 +43,28 @@ const WhatLinksHere = require('./WhatLinksHere')
 const {Plugin} = require('../plugins/_Plugin')
 
 
-const Cls = module.exports.WikiMonkey = class WikiMonkey {
-  static initClass() {
-    this.prototype.conf = {
-      default_bot_plugin: 'SimpleReplace',
-      default_recentchanges_plugin: 'ArchWikiRCFilter',
-      default_recentchanges_plugin_autoexecute: true,
-      default_newpages_plugin: 'ArchWikiNPFilter',
-      default_newpages_plugin_autoexecute: true,
-      update_check_wdays: [6],
-      update_check_branch: 'master',
-      hide_rollback_links: true,
-      disable_edit_summary_submit_on_enter: true,
-      scroll_to_first_heading: false,
-      database_server: 'https://localhost:13502/',
-    }
+module.exports.WikiMonkey = class WikiMonkey {
+  conf = {
+    default_bot_plugin: 'SimpleReplace',
+    default_recentchanges_plugin: 'ArchWikiRCFilter',
+    default_recentchanges_plugin_autoexecute: true,
+    default_newpages_plugin: 'ArchWikiNPFilter',
+    default_newpages_plugin_autoexecute: true,
+    update_check_wdays: [6],
+    update_check_branch: 'master',
+    hide_rollback_links: true,
+    disable_edit_summary_submit_on_enter: true,
+    scroll_to_first_heading: false,
+    database_server: 'https://localhost:13502/',
+  }
 
-    this.prototype.Plugins = {
-      bot: [],
-      diff: [],
-      editor: [],
-      newpages: [],
-      recentchanges: [],
-      special: [],
-    }
+  Plugins = {
+    bot: [],
+    diff: [],
+    editor: [],
+    newpages: [],
+    recentchanges: [],
+    special: [],
   }
 
   constructor(wiki_name, ...rest) {
@@ -77,7 +75,7 @@ const Cls = module.exports.WikiMonkey = class WikiMonkey {
     $.when(mwmodpromise, $.ready).done(this.init)
   }
 
-  setup() {
+  setup() { // eslint-disable-line max-statements,max-lines-per-function
     // Mw.loader.load() doesn't return a promise nor support callbacks
     // mw.loader.using() only supports MW modules
     // $.getScript() ignores the cache by default
@@ -94,7 +92,7 @@ const Cls = module.exports.WikiMonkey = class WikiMonkey {
       }
     }
 
-    for (const pmod of Array.from(this.installed_plugins_temp)) {
+    for (const pmod of this.installed_plugins_temp) {
       for (const pname in pmod) {
         const PluginSub = pmod[pname]
         if (PluginSub.prototype instanceof Plugin) {
@@ -151,4 +149,3 @@ const Cls = module.exports.WikiMonkey = class WikiMonkey {
     return App()
   }
 }
-Cls.initClass()

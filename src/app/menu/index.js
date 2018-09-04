@@ -67,187 +67,178 @@ module.exports = function ({pageType, plugins, display, displayLog, nextNode}) {
   })
 }
 
+const makeChangeMenu = (currentMenu, changeMenu) => function (event) {
+  currentMenu.hide()
+  return changeMenu.show()
+}
 
-var Menu = (function () { // eslint-disable-line vars-on-top,no-var
-  let makeChangeMenu
-  let makeGroupAction
-  let executeGroupAction
-  Menu = class Menu {
-    static initClass() {
-      makeChangeMenu = (currentMenu, changeMenu) => function (event) {
-        currentMenu.hide()
-        return changeMenu.show()
-      }
-      makeGroupAction = (subGroupActions) => (event) => executeGroupAction(subGroupActions, -1)
+const makeGroupAction = (subGroupActions) => (event) => executeGroupAction(subGroupActions, -1)
 
-
-      executeGroupAction = function (subGroupActions, id) {
-        id++
-        if (subGroupActions[id]) {
-          const fid = subGroupActions[id]
-          const callContinue = () => {
-            return executeGroupAction(subGroupActions, id)
-          }
-          return fid[0](fid[1], callContinue)
-        }
-      }
+const executeGroupAction = function (subGroupActions, id) {
+  id++
+  if (subGroupActions[id]) {
+    const fid = subGroupActions[id]
+    const callContinue = () => {
+      return executeGroupAction(subGroupActions, id)
     }
+    return fid[0](fid[1], callContinue)
+  }
+}
 
-    constructor(pageType, plugins) { // eslint-disable-line max-lines-per-function,max-statements
-      this.executeEntryAction = this.executeEntryAction.bind(this)
-      this.warnInputNeeded = this.warnInputNeeded.bind(this)
-      this.pageType = pageType
-      this.mainDiv = $('<div>')
-      const groupActions = {}
 
-      for (const Plugin of plugins) {
-        var currMenu
-        var groupAction
-        const plugin = new Plugin()
-        const pluginInst = plugin.conf[`${this.pageType}_menu`].slice()
+class Menu {
+  constructor(pageType, plugins) { // eslint-disable-line max-lines-per-function,max-statements
+    this.executeEntryAction = this.executeEntryAction.bind(this)
+    this.warnInputNeeded = this.warnInputNeeded.bind(this)
+    this.pageType = pageType
+    this.mainDiv = $('<div>')
+    const groupActions = {}
 
-        // This allows to disable an entry by giving it a menu_entry
-        // parameter that evaluates to false
-        if (!pluginInst || !pluginInst.length) {
-          continue
-        }
+    for (const Plugin of plugins) {
+      var currMenu
+      var groupAction
+      const plugin = new Plugin()
+      const pluginInst = plugin.conf[`${this.pageType}_menu`].slice()
 
-        if (plugin.makeUI) {
-          groupAction = [this.warnInputNeeded, plugin]
-        } else {
-          groupAction = [this.executeEntryAction, plugin]
-        }
-
-        pluginInst.unshift('WikiMonkeyMenuRoot')
-        let currId = false
-
-        for (let m = 0, end = pluginInst.length - 1, asc = end >= 0; asc ? m < end : m > end; asc ? m++ : m--) {
-          const parentId = currId
-          currId = pluginInst.slice(0, m + 1).join('-').replace(/ /g, '_')
-
-          // I can't simply do $("#" + currId) because @mainDiv
-          // hasn't been added to the DOM tree yet
-          const menuSel = this.mainDiv.children(`div[id='${currId}']`)
-
-          if (menuSel.length) {
-            currMenu = menuSel.first()
-          } else {
-            currMenu = $('<div/>')
-              .attr('id', currId)
-              .hide()
-              .appendTo(this.mainDiv)
-
-            groupActions[currId] = []
-
-            if (m > 0) {
-              // I can't simply do $("#" + currId) because @mainDiv
-              // hasn't been added to the DOM tree yet
-              const parentMenu = this.mainDiv.children(`div[id='${parentId}']`)
-
-              $('<input/>')
-                .attr('type', 'button')
-                .val('<')
-                .addClass('margin')
-                .click(makeChangeMenu(currMenu, parentMenu))
-                .appendTo(currMenu)
-
-              $('<input/>')
-                .attr('type', 'button')
-                .val(pluginInst[m])
-                .click(makeGroupAction(groupActions[currId]))
-                .appendTo(parentMenu)
-
-              $('<input/>')
-                .attr('type', 'button')
-                .val('>')
-                .addClass('margin')
-                .click(makeChangeMenu(parentMenu, currMenu))
-                .appendTo(parentMenu)
-            }
-          }
-
-          groupActions[currId].push(groupAction)
-        }
-
-        const entry = $('<input/>')
-          .attr('type', 'button')
-          .val(pluginInst[pluginInst.length - 1])
-          .addClass('margin')
-          .appendTo(currMenu)
-
-        if (plugin.makeUI) {
-          entry.click(this.makeEntryUI(currMenu, plugin))
-        } else {
-          entry.click(this.makeEntryAction(plugin))
-        }
+      // This allows to disable an entry by giving it a menu_entry
+      // parameter that evaluates to false
+      if (!pluginInst || !pluginInst.length) {
+        continue
       }
 
-      const menus = this.mainDiv.children()
+      if (plugin.makeUI) {
+        groupAction = [this.warnInputNeeded, plugin]
+      } else {
+        groupAction = [this.executeEntryAction, plugin]
+      }
 
-      if (menus.length) {
-        const execAll = $('<input/>')
-          .attr('type', 'button')
-          .val('*')
-          .addClass('margin')
-          .click(makeGroupAction(groupActions.WikiMonkeyMenuRoot))
+      pluginInst.unshift('WikiMonkeyMenuRoot')
+      let currId = false
+
+      for (let m = 0, end = pluginInst.length - 1, asc = end >= 0; asc ? m < end : m > end; asc ? m++ : m--) {
+        const parentId = currId
+        currId = pluginInst.slice(0, m + 1).join('-').replace(/ /g, '_')
 
         // I can't simply do $("#" + currId) because @mainDiv
         // hasn't been added to the DOM tree yet
-        this.mainDiv
-          .children('div[id=\'WikiMonkeyMenuRoot\']')
-          .first()
-          .prepend(execAll)
+        const menuSel = this.mainDiv.children(`div[id='${currId}']`)
 
-        menus.first().show()
+        if (menuSel.length) {
+          currMenu = menuSel.first()
+        } else {
+          currMenu = $('<div/>')
+            .attr('id', currId)
+            .hide()
+            .appendTo(this.mainDiv)
+
+          groupActions[currId] = []
+
+          if (m > 0) {
+            // I can't simply do $("#" + currId) because @mainDiv
+            // hasn't been added to the DOM tree yet
+            const parentMenu = this.mainDiv.children(`div[id='${parentId}']`)
+
+            $('<input/>')
+              .attr('type', 'button')
+              .val('<')
+              .addClass('margin')
+              .click(makeChangeMenu(currMenu, parentMenu))
+              .appendTo(currMenu)
+
+            $('<input/>')
+              .attr('type', 'button')
+              .val(pluginInst[m])
+              .click(makeGroupAction(groupActions[currId]))
+              .appendTo(parentMenu)
+
+            $('<input/>')
+              .attr('type', 'button')
+              .val('>')
+              .addClass('margin')
+              .click(makeChangeMenu(parentMenu, currMenu))
+              .appendTo(parentMenu)
+          }
+        }
+
+        groupActions[currId].push(groupAction)
+      }
+
+      const entry = $('<input/>')
+        .attr('type', 'button')
+        .val(pluginInst[pluginInst.length - 1])
+        .addClass('margin')
+        .appendTo(currMenu)
+
+      if (plugin.makeUI) {
+        entry.click(this.makeEntryUI(currMenu, plugin))
+      } else {
+        entry.click(this.makeEntryAction(plugin))
       }
     }
 
-    makeEntryUI(currMenu, plugin) {
-      return (event) => {
-        currMenu.hide()
-        const UIdiv = $('<div/>')
+    const menus = this.mainDiv.children()
 
-        $('<input/>')
-          .attr('type', 'button')
-          .val('<')
-          .addClass('margin')
-          .click((event) => {
-            UIdiv.remove()
-            return currMenu.show()
-          })
-          .appendTo(UIdiv)
+    if (menus.length) {
+      const execAll = $('<input/>')
+        .attr('type', 'button')
+        .val('*')
+        .addClass('margin')
+        .click(makeGroupAction(groupActions.WikiMonkeyMenuRoot))
 
-        $('<input/>')
-          .attr('type', 'button')
-          .val('Execute')
-          .click(this.makeEntryAction(plugin))
-          .appendTo(UIdiv)
+      // I can't simply do $("#" + currId) because @mainDiv
+      // hasn't been added to the DOM tree yet
+      this.mainDiv
+        .children('div[id=\'WikiMonkeyMenuRoot\']')
+        .first()
+        .prepend(execAll)
 
-        const UI = plugin.makeUI()
-        return UIdiv.append(UI).insertAfter(currMenu)
-      }
-    }
-
-    makeEntryAction(plugin) {
-      return (event) => {
-        return this.executeEntryAction(plugin, null)
-      }
-    }
-
-    executeEntryAction(plugin, callNext) {
-      App.log.hidden(`Plugin: ${plugin.constructor.name}`)
-      return plugin[`main_${this.pageType}`](callNext)
-    }
-
-    warnInputNeeded(plugin, callNext) {
-      App.log.warning(`Plugin ${plugin.constructor.name}
-        was not executed because it requires input from its interface.`)
-
-      if (callNext) {
-        return callNext()
-      }
+      menus.first().show()
     }
   }
-  Menu.initClass()
-  return Menu
-}())
+
+  makeEntryUI(currMenu, plugin) {
+    return (event) => {
+      currMenu.hide()
+      const UIdiv = $('<div/>')
+
+      $('<input/>')
+        .attr('type', 'button')
+        .val('<')
+        .addClass('margin')
+        .click((event) => {
+          UIdiv.remove()
+          return currMenu.show()
+        })
+        .appendTo(UIdiv)
+
+      $('<input/>')
+        .attr('type', 'button')
+        .val('Execute')
+        .click(this.makeEntryAction(plugin))
+        .appendTo(UIdiv)
+
+      const UI = plugin.makeUI()
+      return UIdiv.append(UI).insertAfter(currMenu)
+    }
+  }
+
+  makeEntryAction(plugin) {
+    return (event) => {
+      return this.executeEntryAction(plugin, null)
+    }
+  }
+
+  executeEntryAction(plugin, callNext) {
+    App.log.hidden(`Plugin: ${plugin.constructor.name}`)
+    return plugin[`main_${this.pageType}`](callNext)
+  }
+
+  warnInputNeeded(plugin, callNext) {
+    App.log.warning(`Plugin ${plugin.constructor.name}
+      was not executed because it requires input from its interface.`)
+
+    if (callNext) {
+      return callNext()
+    }
+  }
+}
