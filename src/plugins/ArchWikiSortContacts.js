@@ -18,277 +18,252 @@
 
 const WM = require('../modules')
 const App = require('../app')
-const {Plugin} = require('./_Plugin');
+const {Plugin} = require('./_Plugin')
+
+const startMark = 'START AUTO LIST - DO NOT REMOVE OR MODIFY THIS MARK-->'
+const endMark = '<!--END AUTO LIST - DO NOT REMOVE OR MODIFY THIS MARK'
+// Don't do "(?: <!-- associated bot: (.+?) -->)?.*$"
+const regExp = /^\*.*?\[\[User:(.+?)\|.+?(?: <!-- associated bot: (.+?) -->.*)?$/u
 
 
-(function () {
-  let startMark
-  let endMark
-  let regExp
-  const Cls = module.exports.ArchWikiSortContacts = class ArchWikiSortContacts extends Plugin {
-    constructor(...args) {
-      {
-        // Hack: trick Babel/TypeScript into allowing this before super.
-        if (false) { super() }
-        const thisFn = (() => { return this }).toString()
-        const thisName = thisFn.slice(thisFn.indexOf('return') + 6 + 1, thisFn.indexOf(';')).trim()
-        eval(`${thisName} = this;`)
-      }
-      this.parseList = this.parseList.bind(this)
-      this.iterateUsers = this.iterateUsers.bind(this)
-      this.storeUserContribs = this.storeUserContribs.bind(this)
-      this.updateList = this.updateList.bind(this)
-      this.writePage = this.writePage.bind(this)
-      super(...args)
-    }
+module.exports.ArchWikiSortContacts = class ArchWikiSortContacts extends Plugin {
+  // This plugin was originally based on list=allusers, but because of bug
+  //  #208 it can't rely on that anymore, so it was rewritten with
+  //  60bb2ac2a2dcd0b15b7aac80725c83151173eeb3
+  // See also https://bbs.archlinux.org/viewtopic.php?id=192389 and
+  //  https://lists.wikimedia.org/pipermail/mediawiki-l/2015-January/043850.html
 
-    static initClass() {
-      // This plugin was originally based on list=allusers, but because of bug
-      //  #208 it can't rely on that anymore, so it was rewritten with
-      //  60bb2ac2a2dcd0b15b7aac80725c83151173eeb3
-      // See also https://bbs.archlinux.org/viewtopic.php?id=192389 and
-      //  https://lists.wikimedia.org/pipermail/mediawiki-l/2015-January/043850.html
-
-      startMark = 'START AUTO LIST - DO NOT REMOVE OR MODIFY THIS MARK-->'
-      endMark = '<!--END AUTO LIST - DO NOT REMOVE OR MODIFY THIS MARK'
-      // Don't do "(?: \\<!-- associated bot: (.+?) -->)?.*$"
-      regExp = new RegExp('^\\*.*?\\[\\[User:(.+?)\\|.+?' +
-                            '(?: \\<!-- associated bot: (.+?) -->.*)?$', '')
-
-      this.conf_default = {
-        enabled: false,
-        special_menu: ['Sort staff contacts'],
-        edit_summary: 'automatically sort list according to recent activity',
-        pages: [{
-          title: 'ArchWiki:Administrators',
-          recent_days: 30,
-          inactive_limit: 30,
-          inactive_message: 'The following Administrators are currently \
+  static get conf_default() {
+    return {
+      enabled: false,
+      special_menu: ['Sort staff contacts'],
+      edit_summary: 'automatically sort list according to recent activity',
+      pages: [{
+        title: 'ArchWiki:Administrators',
+        recent_days: 30,
+        inactive_limit: 30,
+        inactive_message: 'The following Administrators are currently \
 inactive (less than 30 edits in the last 30 days):',
-        },
-        {
-          title: 'ArchWiki:Maintainers',
-          recent_days: 30,
-          inactive_limit: 10,
-          inactive_message: 'The following Maintainers are currently \
+      },
+      {
+        title: 'ArchWiki:Maintainers',
+        recent_days: 30,
+        inactive_limit: 10,
+        inactive_message: 'The following Maintainers are currently \
 inactive (less than 10 edits in the last 30 days):',
-        }],
-      }
+      }],
     }
+  }
 
-    main_special(callNext) {
-      return this.iteratePages(-1, callNext)
-    }
+  main_special(callNext) {
+    return this.iteratePages(-1, callNext)
+  }
 
-    iteratePages(pageid, callNext) {
-      pageid++
-      const pconf = this.conf.pages[pageid]
-      if (pconf) {
-        const page = pconf.title
-        const recentDays = pconf.recent_days
-        const inactiveLimit = pconf.inactive_limit
-        const inactiveIntro = pconf.inactive_message
-        const summary = this.conf.edit_summary
+  iteratePages = (pageid, callNext) => { // eslint-disable-line max-statements
+    pageid++
+    const pconf = this.conf.pages[pageid]
+    if (pconf) {
+      const page = pconf.title
+      const recentDays = pconf.recent_days
+      const inactiveLimit = pconf.inactive_limit
+      const inactiveIntro = pconf.inactive_message
+      const summary = this.conf.edit_summary
 
-        App.log.info(`Sorting ${App.log.WikiLink(page, page)}` +
-                                                                            ' ...')
+      App.log.info(`Sorting ${App.log.WikiLink(page, page)} ...`)
 
-        return WM.MW.callQueryEdit(
-          page,
-          this.parseList,
-          [recentDays, inactiveLimit, inactiveIntro,
-            summary, callNext, pageid]
-        )
-      } else if (callNext) {
-        return callNext()
-      }
-    }
-
-    parseList(title, source, timestamp, edittoken, args) {
-      const recentDays = args[0]
-      const inactiveLimit = args[1]
-      const inactiveIntro = args[2]
-      const summary = args[3]
-      const callNext = args[4]
-      const pageid = args[5]
-
-      let startList = source.indexOf(startMark)
-      const endList = source.indexOf(endMark)
-
-      if (startList > -1 && endList > -1) {
-        startList += startMark.length
-        const date = new Date()
-        const ucstart = Math.floor(Date.now() / 1000)
-        const ucend = ucstart - 86400 * recentDays
-        const users = {
-          active: [],
-          inactive: [],
-        }
-
-        const usersArray = source.substring(startList, endList).split('\n')
-        return this.iterateUsers(
-          usersArray, -1, ucstart, ucend, users, title, source,
-          startList, endList, timestamp, edittoken,
-          inactiveLimit, inactiveIntro, summary, callNext, pageid
-        )
-      }
-      return App.log.error('Cannot find the needed marks')
-    }
-
-    iterateUsers(
-      usersArray, index, ucstart, ucend, users,
-      title, source, startList, endList, timestamp, edittoken,
-      inactiveLimit, inactiveIntro, summary, callNext, pageid
-    ) {
-      index++
-
-      if (index < usersArray.length) {
-        const userString = usersArray[index]
-        const match = regExp.exec(userString)
-
-        if (match) {
-          let ucuser = match[1].charAt(0).toUpperCase() + match[1].substr(1)
-
-          if (match[2]) {
-            ucuser += `|${match[2].charAt(0).toUpperCase()}${
-              match[2].substr(1)}`
-          }
-
-          App.log.info(`Querying ${ucuser} ...`)
-
-          return WM.MW.getUserContribs(
-            ucuser, ucstart, ucend,
-            this.storeUserContribs,
-            [usersArray, index, ucstart, ucend, users, title, source,
-              startList, endList, timestamp, edittoken, inactiveLimit,
-              inactiveIntro, summary, callNext, pageid]
-          )
-        } else if (userString !== '' &&
-                                        userString.indexOf(inactiveIntro) !== 0) {
-          return App.log.error('An entry in the list may not be correctly ' +
-                                                                    'formatted')
-        }
-        return this.iterateUsers(
-          usersArray, index, ucstart, ucend, users, title,
-          source, startList, endList, timestamp, edittoken,
-          inactiveLimit, inactiveIntro, summary, callNext, pageid
-        )
-      }
-      return this.updateList(
-        users, title, source, startList, endList, timestamp,
-        edittoken, inactiveIntro, summary, callNext, pageid
+      return WM.MW.callQueryEdit(
+        page,
+        this.parseList,
+        [recentDays, inactiveLimit, inactiveIntro,
+          summary, callNext, pageid]
       )
+    } else if (callNext) {
+      return callNext()
     }
+  }
 
-    storeUserContribs(results, args) {
-      const usersArray = args[0]
-      const index = args[1]
-      const ucstart = args[2]
-      const ucend = args[3]
-      const users = args[4]
-      const title = args[5]
-      const source = args[6]
-      const startList = args[7]
-      const endList = args[8]
-      const timestamp = args[9]
-      const edittoken = args[10]
-      const inactiveLimit = args[11]
-      const inactiveIntro = args[12]
-      const summary = args[13]
-      const callNext = args[14]
-      const pageid = args[15]
+  parseList(title, source, timestamp, edittoken, args) { // eslint-disable-line max-statements,max-params
+    const recentDays = args[0]
+    const inactiveLimit = args[1]
+    const inactiveIntro = args[2]
+    const summary = args[3]
+    const callNext = args[4]
+    const pageid = args[5]
 
-      const edits = results.length
+    let startList = source.indexOf(startMark)
+    const endList = source.indexOf(endMark)
 
-      if (edits < inactiveLimit) {
-        users.inactive.push({
-          text: usersArray[index],
-          edits,
-        })
-      } else {
-        users.active.push({
-          text: usersArray[index],
-          edits,
-        })
+    if (startList > -1 && endList > -1) {
+      startList += startMark.length
+      const date = new Date()
+      const ucstart = Math.floor(Date.now() / 1000)
+      const ucend = ucstart - 86400 * recentDays
+      const users = {
+        active: [],
+        inactive: [],
       }
 
+      const usersArray = source.substring(startList, endList).split('\n')
       return this.iterateUsers(
-        usersArray, index, ucstart, ucend, users, title, source,
+        usersArray, -1, ucstart, ucend, users, title, source,
         startList, endList, timestamp, edittoken,
         inactiveLimit, inactiveIntro, summary, callNext, pageid
       )
     }
+    return App.log.error('Cannot find the needed marks')
+  }
 
-    updateList(
-      users, title, source, startList, endList,
-      timestamp, edittoken, inactiveIntro, summary, callNext, pageid
-    ) {
-      const sorter = function (a, b) {
-        // Users must be sorted in descending order
-        if (a.edits < b.edits) {
-          return 1
-        } else if (a.edits > b.edits) {
-          return -1
+  iterateUsers( // eslint-disable-line max-statements,max-params
+    usersArray, index, ucstart, ucend, users,
+    title, source, startList, endList, timestamp, edittoken,
+    inactiveLimit, inactiveIntro, summary, callNext, pageid
+  ) {
+    index++
+
+    if (index < usersArray.length) {
+      const userString = usersArray[index]
+      const match = regExp.exec(userString)
+
+      if (match) {
+        let ucuser = match[1].charAt(0).toUpperCase() + match[1].substr(1)
+
+        if (match[2]) {
+          ucuser += `|${match[2].charAt(0).toUpperCase()}${
+            match[2].substr(1)}`
         }
-        return 0
+
+        App.log.info(`Querying ${ucuser} ...`)
+
+        return WM.MW.getUserContribs(
+          ucuser, ucstart, ucend,
+          this.storeUserContribs,
+          [usersArray, index, ucstart, ucend, users, title, source,
+            startList, endList, timestamp, edittoken, inactiveLimit,
+            inactiveIntro, summary, callNext, pageid]
+        )
+      } else if (userString !== '' &&
+                                      userString.indexOf(inactiveIntro) !== 0) {
+        return App.log.error('An entry in the list may not be correctly ' +
+                                                                  'formatted')
       }
+      return this.iterateUsers(
+        usersArray, index, ucstart, ucend, users, title,
+        source, startList, endList, timestamp, edittoken,
+        inactiveLimit, inactiveIntro, summary, callNext, pageid
+      )
+    }
+    return this.updateList(
+      users, title, source, startList, endList, timestamp,
+      edittoken, inactiveIntro, summary, callNext, pageid
+    )
+  }
 
-      users.active.sort(sorter)
-      users.inactive.sort(sorter)
+  storeUserContribs(results, args) { // eslint-disable-line max-statements
+    const usersArray = args[0]
+    const index = args[1]
+    const ucstart = args[2]
+    const ucend = args[3]
+    const users = args[4]
+    const title = args[5]
+    const source = args[6]
+    const startList = args[7]
+    const endList = args[8]
+    const timestamp = args[9]
+    const edittoken = args[10]
+    const inactiveLimit = args[11]
+    const inactiveIntro = args[12]
+    const summary = args[13]
+    const callNext = args[14]
+    const pageid = args[15]
 
-      let newList = '\n'
+    const edits = results.length
 
-      for (var user of Array.from(users.active)) {
+    if (edits < inactiveLimit) {
+      users.inactive.push({
+        text: usersArray[index],
+        edits,
+      })
+    } else {
+      users.active.push({
+        text: usersArray[index],
+        edits,
+      })
+    }
+
+    return this.iterateUsers(
+      usersArray, index, ucstart, ucend, users, title, source,
+      startList, endList, timestamp, edittoken,
+      inactiveLimit, inactiveIntro, summary, callNext, pageid
+    )
+  }
+
+  updateList( // eslint-disable-line max-params,max-statements,max-lines-per-function
+    users, title, source, startList, endList,
+    timestamp, edittoken, inactiveIntro, summary, callNext, pageid
+  ) {
+    const sorter = function (a, b) {
+      // Users must be sorted in descending order
+      if (a.edits < b.edits) {
+        return 1
+      } else if (a.edits > b.edits) {
+        return -1
+      }
+      return 0
+    }
+
+    users.active.sort(sorter)
+    users.inactive.sort(sorter)
+
+    let newList = '\n'
+
+    for (var user of users.active) {
+      newList += `${user.text}\n`
+    }
+
+    if (users.inactive.length > 0) {
+      newList += `\n${inactiveIntro}\n\n`
+
+      for (user of users.inactive) {
         newList += `${user.text}\n`
       }
+    }
 
-      if (users.inactive.length > 0) {
-        newList += `\n${inactiveIntro}\n\n`
+    const newText = source.substring(0, startList) + newList +
+                                                      source.substring(endList)
 
-        for (user of Array.from(users.inactive)) {
-          newList += `${user.text}\n`
-        }
-      }
+    if (newText !== source) {
+      return WM.MW.callAPIPost(
+        {
+          action: 'edit',
+          bot: '1',
+          minor: '1',
+          title,
+          summary,
+          text: newText,
+          b1asetimestamp: timestamp,
+          token: edittoken,
+        },
+        this.writePage,
+        [title, callNext, pageid],
+        null
+      )
+    }
+    App.log.info(`${App.log.WikiLink(title, title)
+    } was already up to date`)
+    return this.iteratePages(pageid, callNext)
+  }
 
-      const newText = source.substring(0, startList) + newList +
-                                                        source.substring(endList)
+  writePage(res, args) {
+    const title = args[0]
+    const callNext = args[1]
+    const pageid = args[2]
 
-      if (newText !== source) {
-        return WM.MW.callAPIPost(
-          {
-            action: 'edit',
-            bot: '1',
-            minor: '1',
-            title,
-            summary,
-            text: newText,
-            b1asetimestamp: timestamp,
-            token: edittoken,
-          },
-          this.writePage,
-          [title, callNext, pageid],
-          null
-        )
-      }
+    if (res.edit && res.edit.result === 'Success') {
       App.log.info(`${App.log.WikiLink(title, title)
-      } was already up to date`)
+      } was correctly updated`)
       return this.iteratePages(pageid, callNext)
     }
-
-    writePage(res, args) {
-      const title = args[0]
-      const callNext = args[1]
-      const pageid = args[2]
-
-      if (res.edit && res.edit.result === 'Success') {
-        App.log.info(`${App.log.WikiLink(title, title)
-        } was correctly updated`)
-        return this.iteratePages(pageid, callNext)
-      }
-      return App.log.error(`${res.error.info
-      } (${res.error.code})`)
-    }
+    return App.log.error(`${res.error.info
+    } (${res.error.code})`)
   }
-  Cls.initClass()
-  return Cls
-}())
+}
