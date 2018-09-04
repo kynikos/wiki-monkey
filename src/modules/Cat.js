@@ -40,7 +40,7 @@ module.exports = class exports {
   }
 
   _recurseTreeCallChildrenContinue(subCats, params) {
-    for (const subCat of Array.from(subCats)) {
+    for (const subCat of subCats) {
       params.children.push(subCat.title)
     }
     return Async.recurseTreeAsync(params)

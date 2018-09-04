@@ -38,13 +38,13 @@ module.exports = class exports {
     )
 
     const langlinks = []
-    for (const link of Array.from(parsedLinks)) {
+    for (const link of parsedLinks) {
       // Do not store the tag lowercased, since it should be kept as
       // original
       var lurl
       const ltag = link.namespace
       const ltitle = link.title + (link.fragment ? `#${link.fragment}` : '')
-      for (const iw of Array.from(iwmap)) {
+      for (const iw of iwmap) {
         if (iw.prefix.toLowerCase() === ltag.toLowerCase()) {
           // Fix the url _before_ replacing $1
           lurl = WM.MW.fixInterwikiUrl(iw.url)
@@ -172,7 +172,7 @@ module.exports = class exports {
       links: [],
     }
 
-    for (const link of Array.from(links)) {
+    for (const link of links) {
       entry.links.push(link)
     }
 
@@ -308,7 +308,7 @@ in the configuration`)
         timestamp, edittoken, langlinks
       )
 
-      for (const link of Array.from(langlinks)) {
+      for (const link of langlinks) {
         const nlink = newlinks[link.lang.toLowerCase()]
         const vlink = visitedlinks[link.lang.toLowerCase()]
 
@@ -365,7 +365,7 @@ links: ${App.log.PageLink(link.url, `[[${
         // "iwmap" attribute false, "timestamp" and "edittoken" null
         // and "links" as an empty array
         // Note the difference between 'iwmap' and 'link.iwmap'
-        for (const iw of Array.from(iwmap)) {
+        for (const iw of iwmap) {
           if (iw.prefix.toLowerCase() === tag.toLowerCase()) {
             linkList.push(`[[${link.origTag}:${
               link.title}]]`)
@@ -397,7 +397,7 @@ supported in ${App.log.PageLink(url, `[[${
     let cleanText = ''
     let textId = 0
 
-    for (link of Array.from(oldlinks)) {
+    for (link of oldlinks) {
       cleanText += source.substring(textId, link.index)
       textId = link.index + link.length
     }

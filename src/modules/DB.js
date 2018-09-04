@@ -18,10 +18,10 @@
 
 const WM = require('./index')
 
+const logError = (error) => console.error('ERROR!!!', error)
+
 
 module.exports = class exports {
-  logError = (error) => console.error('ERROR!!!', error)
-
   constructor() {
     this.dburl = WM.conf.database_server
     if (!this.dburl.endsWith('/')) {
