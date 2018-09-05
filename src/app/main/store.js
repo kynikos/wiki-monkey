@@ -25,27 +25,27 @@ module.exports = {
 
   mutations: {
     show(state) {
-      return state.shown = true
+      state.shown = true
     },
 
     hide(state) {
-      return state.shown = false
+      state.shown = false
     },
   },
 
   actions: {
     openAlone({commit, dispatch}) {
       dispatch('hideContent', null, {root: true})
-      return commit('show')
+      commit('show')
     },
 
     closeAlone({commit, dispatch}) {
       commit('hide')
-      return dispatch('showContent', null, {root: true})
+      dispatch('showContent', null, {root: true})
     },
 
     toggleAlone({state, dispatch}) {
-      return dispatch(state.shown && 'closeAlone' || 'openAlone')
+      dispatch(state.shown && 'closeAlone' || 'openAlone')
     },
   },
 }
