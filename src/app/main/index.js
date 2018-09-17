@@ -16,10 +16,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const WM = require('../../modules')
 const {Vue, Vuex} = require('../../modules/libs')
 const store = require('../store')
 const {Bookmarks} = require('../_components/bookmarks')
+const {Maintenance} = require('../_components/maintenance')
 
 
 module.exports = function (bodyContent) { // eslint-disable-line max-lines-per-function
@@ -34,10 +34,14 @@ module.exports = function (bodyContent) { // eslint-disable-line max-lines-per-f
     computed: {
       ...Vuex.mapState('main', [
         'shown',
+        'selectedTab',
       ]),
     },
 
     methods: {
+      ...Vuex.mapMutations('main', [
+        'selectTab',
+      ]),
       ...Vuex.mapActions('main', {
         closeMain: 'closeAlone',
       }),
@@ -50,7 +54,47 @@ module.exports = function (bodyContent) { // eslint-disable-line max-lines-per-f
         class: {
           'mw-body-content': true,
         },
-      }, [])
+      }, [
+        h('div', [
+          '[ ',
+          h('a', {
+            attrs: {
+              href: '#bookmarks',
+              title: 'Show the bookmarks interface',
+            },
+            on: {
+              click: (event) => {
+                event.preventDefault()
+                this.selectTab('bookmarks')
+              },
+            },
+          }, ['bookmarks']),
+          ' | ',
+          h('a', {
+            attrs: {
+              href: '#maintenance',
+              title: 'Show the maintenance interface',
+            },
+            on: {
+              click: (event) => {
+                event.preventDefault()
+                this.selectTab('maintenance')
+              },
+            },
+          }, ['maintenance']),
+          ' ]',
+        ]),
+        h('div', [(() => {
+          switch (this.selectedTab) {
+          case 'bookmarks':
+            return h(Bookmarks)
+          case 'maintenance':
+            return h(Maintenance)
+          default:
+            return h(Bookmarks)
+          }
+        })()]),
+      ])
     },
   })
 }

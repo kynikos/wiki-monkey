@@ -36,8 +36,8 @@ module.exports.Bookmarks = {
 
   render(h) {
     return h('div', [
-      h(Table),
       h(FieldSelect),
+      h(Table),
     ])
   },
 }

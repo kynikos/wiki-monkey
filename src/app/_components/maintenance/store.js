@@ -16,41 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+const WM = require('../../../modules')
+
 module.exports = {
   namespaced: true,
-
-  state: {
-    shown: false,
-    selectedTab: null,
-  },
-
-  mutations: {
-    show(state) {
-      state.shown = true
-    },
-
-    hide(state) {
-      state.shown = false
-    },
-
-    selectTab(state, tab) {
-      state.selectedTab = tab
-    },
-  },
-
-  actions: {
-    openAlone({commit, dispatch}) {
-      dispatch('hideContent', null, {root: true})
-      commit('show')
-    },
-
-    closeAlone({commit, dispatch}) {
-      commit('hide')
-      dispatch('showContent', null, {root: true})
-    },
-
-    toggleAlone({state, dispatch}) {
-      dispatch(state.shown && 'closeAlone' || 'openAlone')
-    },
-  },
 }
