@@ -48,9 +48,10 @@ module.exports.init = function () { // eslint-disable-line max-statements
   const locale = require('element-ui/lib/locale').default
   locale.use(language)
   require('../app/element.sass')
+  Vue.use(require('element-ui/lib/loading').default)
   Vue.use(require('element-ui/lib/option').default)
   Vue.use(require('element-ui/lib/select').default)
   Vue.use(require('element-ui/lib/table').default)
-  return Vue.use(require('element-ui/lib/table-column').default)
+  Vue.use(require('element-ui/lib/table-column').default)
   /* eslint-enable global-require */
 }

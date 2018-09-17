@@ -32,14 +32,22 @@ module.exports.Table = {
 
   render(h) { // eslint-disable-line max-lines-per-function,complexity
     return h('div', [h('ElTable', {
+      ref: 'table',
       props: {
         data: this.bookmarks,
         stripe: true,
         border: true,
         maxHeight: 1000, // Fixed header
-        vLoading: this.bookmarks.length && true || false,
-        elementLoadingText: 'Loading...',
       },
+      attrs: {
+        'element-loading-text': 'Loading...',
+      },
+      directives: [
+        {
+          name: 'loading',
+          value: !this.bookmarks.length,
+        },
+      ],
     }, [
       h('ElTableColumn', {
         props: {type: 'expand'},
