@@ -22,17 +22,21 @@ module.exports = {
   state: {
     selectedPluginIndex: 0,
     selectedPluginInstance: null,
+    selectedPluginRun: null,
+    selectedPluginMakeUI: null,
     enabled: true,
   },
 
   mutations: {
-    selectPlugin(state, [index, instance]) {
+    selectPlugin(state, [index, instance, run, makeUI]) {
       state.selectedPluginIndex = index
-      return state.selectedPluginInstance = instance
+      state.selectedPluginInstance = instance
+      state.selectedPluginRun = run
+      state.selectedPluginMakeUI = makeUI
     },
 
     disable(state) {
-      return state.enabled = false
+      state.enabled = false
     },
   },
 }

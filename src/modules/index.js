@@ -16,15 +16,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const mwmodpromise = mw.loader.using(['mediawiki.api.edit',
+const mwmodpromise = mw.loader.using([
+  'mediawiki.api.edit',
   'mediawiki.notification',
-  'mediawiki.Uri'])
+  'mediawiki.Uri',
+])
 
 // Initialize the libraries immediately (especially babel-polyfill)
 require('./libs').init()
 
 const Upgrade = require('./Upgrade')
 const {App} = require('../app')
+const Menu = require('../app/menu')
+const Filter = require('../app/filter')
+const Bot = require('../app/bot')
 
 // The ArchPackages module is currently unusable
 // ArchPackages = require('./ArchPackages')
@@ -40,7 +45,7 @@ const Parser = require('./Parser')
 const Tables = require('./Tables')
 const WhatLinksHere = require('./WhatLinksHere')
 
-const {Plugin} = require('../plugins/_Plugin')
+const {_Plugin} = require('../plugins/_Plugin')
 
 
 module.exports.WikiMonkey = class WikiMonkey {
@@ -58,74 +63,67 @@ module.exports.WikiMonkey = class WikiMonkey {
     database_server: 'https://localhost:13502/',
   }
 
-  Plugins = {
-    bot: [],
-    diff: [],
-    editor: [],
-    newpages: [],
-    recentchanges: [],
-    special: [],
-  }
-
-  constructor(wiki_name, ...rest) {
-    this.init = this.init.bind(this)
-    this.wiki_name = wiki_name;
-    [...this.installed_plugins_temp] = rest
+  constructor(wikiName, ...installedPluginsTemp) {
+    this.wikiName = wikiName
+    this.installedPluginsTemp = installedPluginsTemp
     this.setup()
-    $.when(mwmodpromise, $.ready).done(this.init)
+    Promise.all([mwmodpromise, $.ready]).then(() => this.init())
   }
 
   setup() { // eslint-disable-line max-statements,max-lines-per-function
-    // Mw.loader.load() doesn't return a promise nor support callbacks
+    // mw.loader.load() doesn't return a promise nor support callbacks
     // mw.loader.using() only supports MW modules
     // $.getScript() ignores the cache by default
     // In the end using $.ajax() with setup parameters would be the only
     // option to configure WM in a callback, therefore use a global
     // configuration object for simplicity
-    const user_config = window.wikiMonkeyConfig || window.wikimonkey_config || {}
+    const userConfig = window.wikiMonkeyConfig || window.wikimonkey_config || {}
 
-    for (const option in user_config) {
-      const value = user_config[option]
+    for (const option in userConfig) {
+      const value = userConfig[option]
       if (option in this.conf) {
         this.conf[option] = value
-        delete user_config[option]
+        delete userConfig[option]
       }
     }
 
-    for (const pmod of this.installed_plugins_temp) {
-      for (const pname in pmod) {
-        const PluginSub = pmod[pname]
-        if (PluginSub.prototype instanceof Plugin) {
-          try {
-            PluginSub.__configure(this.wiki_name, user_config)
-          } catch (error) {
-            // TODO: Properly extend Error, but beware that Babel
-            //       doesn't like it without specific plugins
-            if (error.message === 'Plugin disabled') {
-              continue
-            }
-            throw error
-          }
+    for (const Plugin of this.installedPluginsTemp) {
+      if (!(Plugin.prototype instanceof _Plugin)) {
+        throw new Error('Plugins must extend _Plugin')
+      }
 
-          for (const interface_ in this.Plugins) {
-            if (PluginSub.prototype[`main_${interface_}`]) {
-              this.Plugins[interface_].push(PluginSub)
-            }
-          }
+      let plugin
+      try {
+        plugin = new Plugin({
+          wikiName: this.wikiName,
+          userConfig,
+        })
+      } catch (error) {
+        // TODO: Properly extend Error, but beware that Babel
+        //       doesn't like it without specific plugins
+        if (error.message === 'Plugin disabled') {
+          continue
         }
+        throw error
       }
+
+      plugin.install({
+        editor: Menu.installEditorPlugin.bind(Menu, plugin),
+        diff: Menu.installDiffPlugin.bind(Menu, plugin),
+        special: Menu.installSpecialPlugin.bind(Menu, plugin),
+        recentChanges: Filter.installRecentChangesPlugin.bind(Filter, plugin),
+        newPages: Filter.installNewPagesPlugin.bind(Filter, plugin),
+        bot: Bot.installPlugin.bind(Bot, plugin),
+      })
     }
 
-    if (!$.isEmptyObject(user_config)) {
-      console.warn('Unkown configuration options', user_config)
+    if (!$.isEmptyObject(userConfig)) {
+      console.warn('Unkown configuration options', userConfig)
     }
 
-    delete this.installed_plugins_temp
+    delete this.installedPluginsTemp
 
-    return Object.assign(module.exports, {
-      conf: this.conf,
-      Plugins: this.Plugins,
-    })
+    module.exports.conf = this.conf
   }
 
   init() {
@@ -145,7 +143,10 @@ module.exports.WikiMonkey = class WikiMonkey {
       WhatLinksHere: new WhatLinksHere(),
     })
 
-    new Upgrade()
-    return App()
+    Upgrade()
+
+    const app = new App()
+    module.exports.App = app
+    app.run()
   }
 }

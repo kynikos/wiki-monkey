@@ -17,7 +17,6 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const WM = require('./index')
-const App = require('../app')
 
 // References:
 // - https://wiki.archlinux.org/index.php/Official_Repositories_Web_Interface
@@ -49,7 +48,7 @@ module.exports = class exports {
       if (jqXHR.status === 404) {
         return call(false, callArgs)
       }
-      return App.log.error(WM.MW.failedQueryError(url))
+      return WM.App.log.error(WM.MW.failedQueryError(url))
     })
   }
 
@@ -69,14 +68,14 @@ module.exports = class exports {
       },
     }).done((data, textStatus, jqXHR) => {
       if (!(data instanceof Object)) {
-        App.log.error('The Official Repositories web \
+        WM.App.log.error('The Official Repositories web \
 interface returned an unexpected object')
       }
 
       if (data) {
         return call(data, callArgs)
       }
-    }).fail((jqXHR, textStatus, errorThrown) => App.log.error(WM.MW.failedQueryError(url)))
+    }).fail((jqXHR, textStatus, errorThrown) => WM.App.log.error(WM.MW.failedQueryError(url)))
   }
 
   isOfficialPackage(pkg, call, callArgs) {
@@ -104,7 +103,7 @@ interface returned an unexpected object')
       },
     }).done((data, textStatus, jqXHR) => {
       if (!(data instanceof Object)) {
-        App.log.error('The AUR\'s RPC interface returned an \
+        WM.App.log.error('The AUR\'s RPC interface returned an \
 unexpected object')
       }
 
@@ -112,14 +111,14 @@ unexpected object')
         return call(data, callArgs)
       }
     }).fail((jqXHR, textStatus, errorThrown) => {
-      return App.log.error(WM.MW.failedQueryError(url))
+      return WM.App.log.error(WM.MW.failedQueryError(url))
     })
   }
 
   isAURPackage(pkg, call, callArgs) {
     const call2 = function (res, args) {
       if (res.type === 'error') {
-        return App.log.error(`The AUR's RPC interface returned an error: ${
+        return WM.App.log.error(`The AUR's RPC interface returned an error: ${
           res.results}`)
       }
       if (res.resultcount > 0) {

@@ -18,11 +18,12 @@
 
 const WM = require('../../modules')
 const {Vue, Vuex, styled} = require('../../modules/libs')
-const store = require('../store')
 
 
-module.exports.SectionCommands = ($editsections) => {
-  $editsections.each(function () { SectionCommands_($(this)) })
+module.exports.SectionCommands = class {
+  constructor($editsections) {
+    $editsections.each(function () { SectionCommands_($(this)) })
+  }
 }
 
 
@@ -38,7 +39,7 @@ const SectionCommands_ = function ($editsection) { // eslint-disable-line vars-o
   return new Vue({
     el: root,
 
-    store,
+    store: WM.App.store,
 
     render(h) { // eslint-disable-line max-lines-per-function
       return h('span', [

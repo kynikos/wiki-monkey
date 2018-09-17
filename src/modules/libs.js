@@ -22,20 +22,12 @@ require('babel-polyfill')
 
 module.exports.init = function () { // eslint-disable-line max-statements
   /* eslint-disable global-require */
-  let hh
   const Vue = require('vue')
   const Vuex = require('vuex')
   Vue.use(Vuex)
   module.exports = {Vue, Vuex}
 
-  module.exports.hh = hh = require('hyperscript-helpers')(require('hyperscript'))
-  for (const tag in hh) {
-    // TODO: This can be simplified after
-    //       https://github.com/ohanhi/hyperscript-helpers/pull/46
-    //       is released
-    const helper = hh[tag]
-    hh[tag.charAt(0).toUpperCase() + tag.slice(1)] = helper
-  }
+  module.exports.h = require('hyperscript')
 
   module.exports.moment = require('moment')
 

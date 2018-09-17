@@ -16,9 +16,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+const WM = require('../modules')
 const RegEx = require('@kynikos/misc/dist/RegEx')
 const Str = require('@kynikos/misc/dist/Str')
-const App = require('../app')
 
 const prepareRegexpWhitespace = (title) => title.replace(/[_ ]+/gu, '[_ ]+')
 
@@ -165,7 +165,7 @@ module.exports = class exports {
           // Incomplete templates in the alternative text have an
           //   apparently weird behaviour, hard to reverse-engineer,
           //   so issue a warning when one is found
-          //   See also the examples in @findTransclusionArguments
+          //   See also the examples in findTransclusionArguments
           // Note that the title already doesn't allow "{" or "}"
           const nText = this.neutralizeNowikiTags(match[6])
           const maskedText = Str.findNestedEnclosures(
@@ -174,7 +174,7 @@ module.exports = class exports {
           )[1]
 
           if (maskedText.search(/(\{\{|\}\})/) > -1) {
-            App.log.warning(`[[${match[0]}` + ']] seems to \
+            WM.App.log.warning(`[[${match[0]}` + ']] seems to \
 contain part of a template, and the resulting \
 behaviour cannot be predicted by this \
 function, so the link will be ignored \
@@ -202,14 +202,14 @@ altogether')
   }
 
   findSectionLinks(source) {
-    // Keep the capturing groups as required by @findLinksEngine
+    // Keep the capturing groups as required by findLinksEngine
     const fragmentChars = '[^\\n\\{\\}\\[\\]\\|]*?'
     const titlePattern = `(()())#(${fragmentChars})`
     return this.findLinksEngine(source, titlePattern, false, true)
   }
 
   findInternalLinks(source, namespace, title) {
-    // Keep the capturing groups as required by @findLinksEngine
+    // Keep the capturing groups as required by findLinksEngine
     let caseSensitive; let retitle; let titlePattern
     const namespaceChars = '[^\\n\\{\\}\\[\\]\\|\\:\\#]+?'
     const titleChars = '[^\\n\\{\\}\\[\\]\\|\\#]+?'
@@ -238,7 +238,7 @@ altogether')
     } else if (title) {
       retitle = prepareRegexpWhitespace(mw.RegExp.escape(title))
 
-      // Keep the capturing groups as required by @findLinksEngine
+      // Keep the capturing groups as required by findLinksEngine
       titlePattern = `${`(()(${retitle}))` +
                                           '(?:[ _]*#('}${fragmentChars}))?`
 
@@ -261,7 +261,7 @@ altogether')
   findSpecialLinks(source, pattern) {
     // Make sure to prepare whitespace in pattern like in
     //   prepareRegexpWhitespace
-    // Keep the capturing groups as required by @findLinksEngine
+    // Keep the capturing groups as required by findLinksEngine
     // See also WM.ArchWiki.findAllInterlanguageLinks
     const titleChars = '[^\\n\\{\\}\\[\\]\\|\\#]+?'
     const fragmentChars = '[^\\n\\{\\}\\[\\]\\|]*?'
@@ -411,7 +411,7 @@ altogether')
       //   Note that the title already doesn't allow "{", "}", "[" nor
       //     "]"
       if (maskedArgs.search(/(\{\{|\}\}|\[\[|\]\])/) > -1) {
-        App.log.warning(`{{${match[0]}` + '}} seems to \
+        WM.App.log.warning(`{{${match[0]}` + '}} seems to \
 contain part of a link or template, and the resulting \
 behaviour cannot be predicted by this function, so \
 the whole template will be ignored altogether')

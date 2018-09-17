@@ -18,7 +18,6 @@
     "clipboard": "^2.0.1",
     "element-ui": "^2.4.6",
     "hyperscript": "^2.0.2",
-    "hyperscript-helpers": "^3.0.3",
     "jss": "^9.8.7",
     "jss-preset-default": "^4.5.0",
     "moment": "^2.22.2",

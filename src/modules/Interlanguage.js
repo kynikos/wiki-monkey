@@ -17,7 +17,6 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const WM = require('.')
-const App = require('../app')
 
 
 module.exports = class exports {
@@ -209,8 +208,8 @@ module.exports = class exports {
         //   language whose language tag is not in the white list
         // tag is already lower-cased
         if (firstPage || whitelist.indexOf(tag) > -1) {
-          App.log.info(`Reading ${
-            App.log.PageLink(url, `[[${origTag}:${
+          WM.App.log.info(`Reading ${
+            WM.App.log.PageLink(url, `[[${origTag}:${
               title}]]`)} ...`)
 
           return this.queryLinks(
@@ -239,8 +238,8 @@ module.exports = class exports {
             callArgs]
         )
       }
-      App.log.warning(`Cannot extract the page title from ${
-        App.log.PageLink(url, decodeURI(url))
+      WM.App.log.warning(`Cannot extract the page title from ${
+        WM.App.log.PageLink(url, decodeURI(url))
       }, removing it if it \
 was linked from the processed article`)
       return this.collectLinks(
@@ -270,7 +269,7 @@ was linked from the processed article`)
     const callArgs = args[6]
 
     if (error === 'nonexisting') {
-      App.log.warning(`${App.log.PageLink(
+      WM.App.log.warning(`${WM.App.log.PageLink(
         url,
         `[[${origTag}:${title}]]`
       )
@@ -279,21 +278,21 @@ to a non-existing article: removing it if \
 it was linked from the processed article`)
     } else {
       if (error === 'unsolvedredirect') {
-        App.log.warning(`${App.log.PageLink(
+        WM.App.log.warning(`${WM.App.log.PageLink(
           url,
           `[[${origTag}:${title}]]`
         )
         } will not be checked because it points to \
 an external redirect`)
       } else if (error === 'unknown') {
-        App.log.warning(`${App.log.PageLink(
+        WM.App.log.warning(`${WM.App.log.PageLink(
           url,
           `[[${origTag}:${title}]]`
         )
         } will not be checked because of an \
 unspecified problem`)
       } else if (error === 'notinwhitelist') {
-        App.log.warning(`${App.log.PageLink(
+        WM.App.log.warning(`${WM.App.log.PageLink(
           url,
           `[[${origTag}:${title}]]`
         )
@@ -322,19 +321,19 @@ in the configuration`)
           // Just ignore any conflicting links and warn the user:
           // if it's a real conflict, the user will investigate it,
           // otherwise the user will ignore it
-          App.log.warning(`Possibly conflicting interlanguage \
-links: ${App.log.PageLink(link.url, `[[${
+          WM.App.log.warning(`Possibly conflicting interlanguage \
+links: ${WM.App.log.PageLink(link.url, `[[${
     link.lang}:${link.title}]]`)} and ${
-  App.log.PageLink(vlink.url, `[[${link.lang}:${
+  WM.App.log.PageLink(vlink.url, `[[${link.lang}:${
     visitedlinks[link.lang.toLowerCase()].title}]]`)}`)
         } else if (nlink && nlink.url !== link.url) {
           // Just ignore any conflicting links and warn the user:
           // if it's a real conflict, the user will investigate it,
           // otherwise the user will ignore it
-          App.log.warning(`Possibly conflicting interlanguage \
-links: ${App.log.PageLink(link.url, `[[${
+          WM.App.log.warning(`Possibly conflicting interlanguage \
+links: ${WM.App.log.PageLink(link.url, `[[${
     link.lang}:${link.title}]]`)} and ${
-  App.log.PageLink(nlink.url, `[[${link.lang}:${
+  WM.App.log.PageLink(nlink.url, `[[${link.lang}:${
     newlinks[link.lang.toLowerCase()].title}]]`)}`)
         }
       }
@@ -375,8 +374,8 @@ links: ${App.log.PageLink(link.url, `[[${
         }
 
         if (!tagFound) {
-          App.log.warning(`${tag} interlanguage links are not \
-supported in ${App.log.PageLink(url, `[[${
+          WM.App.log.warning(`${tag} interlanguage links are not \
+supported in ${WM.App.log.PageLink(url, `[[${
     link.origTag}:${link.title}]]`)
 } , ignoring them`)
         }

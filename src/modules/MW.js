@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const {A} = require('./libs').hh
-const App = require('../app')
+const WM = require('../modules')
+const {h} = require('./libs')
 
 const wikiPaths = {
   known: {
@@ -126,7 +126,7 @@ module.exports = class exports {
   }
 
   linkArticle(page, label) {
-    return A({href: mw.util.getUrl(page)}, label || page)
+    return h('a', {href: mw.util.getUrl(page)}, label || page)
   }
 
   getWikiUrls(href) {
@@ -185,7 +185,7 @@ module.exports = class exports {
 
   failedQueryError(url) {
     if (url) {
-      return `Failed query: ${App.log.PageLink(url, url)}`
+      return `Failed query: ${WM.App.log.PageLink(url, url)}`
     }
     return 'Failed query'
   }
@@ -200,10 +200,10 @@ module.exports = class exports {
         }
       }).fail((jqXHR, textStatus, errorThrown) => {
         console.error(jqXHR, textStatus, errorThrown)
-        App.log.error(this.failedQueryError())
+        WM.App.log.error(this.failedQueryError())
         if (confirm('Wiki Monkey error: Failed query\n\nDo you want ' +
                                                               'to retry?')) {
-          App.log.info('Retrying ...')
+          WM.App.log.info('Retrying ...')
           return this.callAPIGet(params, call, callArgs, callError)
         } else if (callError) {
           return callError(callArgs)
@@ -221,10 +221,10 @@ module.exports = class exports {
         }
       }).fail((jqXHR, textStatus, errorThrown) => {
         console.error(jqXHR, textStatus, errorThrown)
-        App.log.error(this.failedQueryError())
+        WM.App.log.error(this.failedQueryError())
         if (confirm('Wiki Monkey error: Failed query\n\nDo you want ' +
                                                               'to retry?')) {
-          App.log.info('Retrying ...')
+          WM.App.log.info('Retrying ...')
           return this.callAPIPost(params, call, callArgs, callError)
         } else if (callError) {
           return callError(callArgs)

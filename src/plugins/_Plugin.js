@@ -17,58 +17,53 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 
-module.exports.Plugin = class Plugin {
+module.exports._Plugin = class _Plugin {
   // Don't create default objects here, or they'll be shared among the
   // subclasses unless overridden
-  // conf_default = {}
-  // wiki_to_conf_default = {}
+  // static confDefault = {}
+  // static wikiToConfDefault = {}
   // conf = {}
 
-  static main_bot() {}
+  install(install) { // eslint-disable-line class-methods-use-this
+    throw Error('Not implemented')
+  }
 
-  static main_diff() {}
-
-  static main_editor() {}
-
-  static main_newpages() {}
-
-  static main_recentchanges() {}
-
-  static main_special() {}
-
-  static __configure(wiki_name, user_config) { // eslint-disable-line max-statements
+  constructor({wikiName, userConfig}) { // eslint-disable-line max-statements
     // Do generate a new object for each plugin
-    this.prototype.conf = {}
+    this.conf = {}
 
-    if (this.conf_default != null) {
-      $.extend(this.prototype.conf, this.conf_default)
+    if (this.constructor.confDefault != null) {
+      $.extend(this.conf, this.constructor.confDefault)
     }
 
-    if (this.wiki_to_conf_default != null && wiki_name in this.wiki_to_conf_default) {
-      $.extend(this.prototype.conf, this.wiki_to_conf_default[wiki_name])
+    if (
+      this.constructor.wikiToConfDefault != null &&
+      wikiName in this.constructor.wikiToConfDefault
+    ) {
+      $.extend(this.conf, this.constructor.wikiToConfDefault[wikiName])
     }
 
-    if (this.name in user_config) {
+    if (this.constructor.name in userConfig) {
       // Don't just use $.extend() so it's possible to see if there are
       // unknown options and possibly warn the user
-      for (const option in user_config[this.name]) {
-        const value = user_config[this.name][option]
-        if (option in this.prototype.conf) {
-          this.prototype.conf[option] = value
-          delete user_config[this.name][option]
+      for (const option in userConfig[this.constructor.name]) {
+        const value = userConfig[this.constructor.name][option]
+        if (option in this.conf) {
+          this.conf[option] = value
+          delete userConfig[this.constructor.name][option]
         }
       }
     }
 
-    if (!this.prototype.conf.enabled) {
-      delete user_config[this.name]
+    if (!this.conf.enabled) {
+      delete userConfig[this.constructor.name]
       // TODO: Properly extend Error, but beware that Babel doesn't like
       //       it without specific plugins
       throw new Error('Plugin disabled')
     }
 
-    if ($.isEmptyObject(user_config[this.name])) {
-      return delete user_config[this.name]
+    if ($.isEmptyObject(userConfig[this.constructor.name])) {
+      delete userConfig[this.constructor.name]
     }
   }
 }

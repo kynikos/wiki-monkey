@@ -18,7 +18,6 @@
 
 const WM = require('../../modules')
 const {Vue, Vuex, styled} = require('../../modules/libs')
-const store = require('../store')
 const Fieldset = require('../_components/fieldset')
 
 const Commands = styled.div({
@@ -41,134 +40,160 @@ const Checkbox = styled.input({
 })
 
 
-module.exports = function ({pageType, Plugins, display, displayLog, nextNode}) { // eslint-disable-line max-lines-per-function
-  store.commit('fieldset/show', display)
-  store.commit('log/show', displayLog)
+module.exports = class {
+  static pluginsRecentChanges = []
 
-  const root = document.createElement('div')
-  $(nextNode).before(root)
+  static pluginsNewPages = []
 
-  return new Vue({
-    el: root,
+  static installRecentChangesPlugin(plugin, run, makeUI) {
+    this.pluginsRecentChanges.push([plugin, run, makeUI])
+  }
 
-    store,
+  static installNewPagesPlugin(plugin, run, makeUI) {
+    this.pluginsNewPages.push([plugin, run, makeUI])
+  }
 
-    computed: {
-      ...Vuex.mapState('log', {
-        logShown: 'display',
-      }),
-      ...Vuex.mapState('filter', [
-        'selectedPluginIndex',
-        'selectedPluginInstance',
-        'enabled',
-      ]),
-    },
+  constructor({pageType, display, displayLog, nextNode}) { // eslint-disable-line max-lines-per-function
+    WM.App.store.commit('fieldset/show', display)
+    WM.App.store.commit('log/show', displayLog)
 
-    methods: {
-      ...Vuex.mapMutations('fieldset', {
-        hideUI: 'hide',
-      }),
-      ...Vuex.mapMutations('log', {
-        showLog: 'show',
-        hideLog: 'hide',
-      }),
-      ...Vuex.mapMutations('filter', [
-        'selectPlugin',
-        'disable',
-      ]),
-      executePlugin() {
-        this.disable()
-        return this.selectedPluginInstance[`main_${pageType}`]()
+    const plugins = {
+      recentchanges: this.constructor.pluginsRecentChanges,
+      newpages: this.constructor.pluginsNewPages,
+    }[pageType]
+
+    const defaultPlugin = WM.conf[{
+      recentchanges: 'default_recentchanges_plugin',
+      newpages: 'default_newpages_plugin',
+    }[pageType]]
+
+    const pluginAutoexecute = WM.conf[{
+      recentchanges: 'default_recentchanges_plugin_autoexecute',
+      newpages: 'default_newpages_plugin_autoexecute',
+    }[pageType]]
+
+    const root = document.createElement('div')
+    $(nextNode).before(root)
+
+    return new Vue({
+      el: root,
+
+      store: WM.App.store,
+
+      computed: {
+        ...Vuex.mapState('log', {
+          logShown: 'display',
+        }),
+        ...Vuex.mapState('filter', [
+          'selectedPluginIndex',
+          'selectedPluginInstance',
+          'selectedPluginRun',
+          'selectedPluginMakeUI',
+          'enabled',
+        ]),
       },
-    },
 
-    created() {
-      for (let index = 0; index < Plugins.length; index++) {
-        const Plugin = Plugins[index]
-        if (Plugin.constructor.name ===
-                        WM.conf[`default_${pageType}_plugin`]) {
-          this.selectPlugin([index, new Plugin()])
-          break
-        }
-      }
-      if (!this.selectedPluginInstance) {
-        return this.selectPlugin([0, new Plugins[0]()])
-      }
-    },
+      methods: {
+        ...Vuex.mapMutations('fieldset', {
+          hideUI: 'hide',
+        }),
+        ...Vuex.mapMutations('log', {
+          showLog: 'show',
+          hideLog: 'hide',
+        }),
+        ...Vuex.mapMutations('filter', [
+          'selectPlugin',
+          'disable',
+        ]),
+        executePlugin() {
+          this.disable()
+          this.selectedPluginRun()
+        },
+      },
 
-    render(h) { // eslint-disable-line max-lines-per-function
-      let pluginUI
-      const selectFilter = h(
-        Select,
-        {
+      created() {
+        plugins.some(([plugin, run, makeUI], index) => {
+          if (plugin.constructor.name === defaultPlugin) {
+            return this.selectPlugin([index, plugin, run, makeUI])
+          }
+          return false
+        }) || this.selectPlugin([0, ...plugins[0]])
+      },
+
+      render(h) { // eslint-disable-line max-lines-per-function
+        let pluginUI
+        const selectFilter = h(
+          Select,
+          {
+            attrs: {
+              disabled: !this.enabled,
+            },
+            on: {
+              change: (event) => {
+                const index = event.target.selectedIndex
+                this.selectPlugin([index, ...plugins[index]])
+              },
+            },
+          },
+          plugins.map((plugin, ii) => {
+            return h('option', {
+              attrs: {
+                selected: ii === this.selectedPluginIndex,
+              },
+            }, [plugin[0].conf.filter_label])
+          })
+        )
+
+        const applyFilter = h(Button, {
           attrs: {
             disabled: !this.enabled,
           },
           on: {
-            change: (event) => {
-              const index = event.target.selectedIndex
-              return this.selectPlugin([index, new Plugins[index]()])
+            click: this.executePlugin,
+          },
+        }, ['Apply filter'])
+
+        const toggleLog = h(Checkbox, {
+          attrs: {
+            type: 'checkbox',
+            checked: this.logShown,
+          },
+          on: {
+            change: () => {
+              return this.logShown ? this.hideLog() : this.showLog()
             },
           },
-        },
-        Plugins.map((Plugin, ii) => {
-          return h('option', {
-            attrs: {
-              selected: ii === this.selectedPluginIndex,
-            },
-          }, [Plugin.prototype.conf.filter_label])
         })
-      )
 
-      const applyFilter = h(Button, {
-        attrs: {
-          disabled: !this.enabled,
-        },
-        on: {
-          click: this.executePlugin,
-        },
-      }, ['Apply filter'])
+        const commandsFilterDiv = h(Commands, [
+          selectFilter,
+          applyFilter,
+          toggleLog,
+          h('span', ['Show log']),
+        ])
 
-      const toggleLog = h(Checkbox, {
-        attrs: {
-          type: 'checkbox',
-          checked: this.logShown,
-        },
-        on: {
-          change: () => {
-            if (this.logShown) { return this.hideLog() } return this.showLog()
-          },
-        },
-      })
-
-      const commandsFilterDiv = h(Commands, [
-        selectFilter,
-        applyFilter,
-        toggleLog,
-        h('span', ['Show log']),
-      ])
-
-      const {makeUI} = this.selectedPluginInstance
-      if (makeUI instanceof Function) {
-        pluginUI = h('div', {ref: 'pluginUI'}, [h(makeUI())])
-      }
-
-      return h(Fieldset, [
-        h('div', [commandsFilterDiv, pluginUI]),
-      ])
-    },
-
-    mounted() {
-      // The component is remounted if the interface is hidden and then
-      // shown again, but the plugin shouldn't be executed again if it's
-      // disabled
-      if (this.enabled && WM.conf[`default_${pageType}_plugin_autoexecute`]) {
-        this.executePlugin()
-
-        if (!this.$refs.pluginUI) {
-          this.hideUI()
+        const makeUI = this.selectedPluginMakeUI
+        if (makeUI instanceof Function) {
+          pluginUI = h('div', {ref: 'pluginUI'}, [h(makeUI())])
         }
-      }
-    },
-  })
+
+        return h(Fieldset, [
+          h('div', [commandsFilterDiv, pluginUI]),
+        ])
+      },
+
+      mounted() {
+        // The component is remounted if the interface is hidden and then
+        // shown again, but the plugin shouldn't be executed again if it's
+        // disabled
+        if (this.enabled && pluginAutoexecute) {
+          this.executePlugin()
+
+          if (!this.$refs.pluginUI) {
+            this.hideUI()
+          }
+        }
+      },
+    })
+  }
 }

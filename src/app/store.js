@@ -20,12 +20,12 @@ const {Vuex} = require('../modules/libs')
 const bookmarks = require('./_components/bookmarks/store')
 const fieldset = require('./_components/fieldset/store')
 const log = require('./_components/log/store')
-const main = require('./main/store')
+const main = require('./mainTabs/store')
 const bot = require('./bot/store')
 const filter = require('./filter/store')
 const menu = require('./menu/store')
 
-module.exports = new Vuex.Store({
+module.exports.init = () => new Vuex.Store({
   actions: {
     hideContent() {
       return $('#bodyContent').hide()
