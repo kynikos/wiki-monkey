@@ -82,14 +82,10 @@ inactive (less than 10 edits in the last 30 days):',
     }
   }
 
-  parseList(title, source, timestamp, edittoken, args) { // eslint-disable-line max-statements,max-params
-    const recentDays = args[0]
-    const inactiveLimit = args[1]
-    const inactiveIntro = args[2]
-    const summary = args[3]
-    const callNext = args[4]
-    const pageid = args[5]
-
+  parseList = ( // eslint-disable-line max-statements,max-params
+    title, source, timestamp, edittoken,
+    [recentDays, inactiveLimit, inactiveIntro, summary, callNext, pageid],
+  ) => {
     let startList = source.indexOf(startMark)
     const endList = source.indexOf(endMark)
 
@@ -158,7 +154,7 @@ inactive (less than 10 edits in the last 30 days):',
     )
   }
 
-  storeUserContribs(results, args) { // eslint-disable-line max-statements
+  storeUserContribs = (results, args) => { // eslint-disable-line max-statements
     const usersArray = args[0]
     const index = args[1]
     const ucstart = args[2]
@@ -253,11 +249,7 @@ inactive (less than 10 edits in the last 30 days):',
     return this.iteratePages(pageid, callNext)
   }
 
-  writePage(res, args) {
-    const title = args[0]
-    const callNext = args[1]
-    const pageid = args[2]
-
+  writePage = (res, [title, callNext, pageid]) => {
     if (res.edit && res.edit.result === 'Success') {
       App.log.info(`${App.log.WikiLink(title, title)
       } was correctly updated`)
