@@ -20,7 +20,7 @@ const WM = require('../../../modules')
 const {Vue, Vuex} = require('../../../modules/libs')
 
 
-module.exports.Maintenance = {
+module.exports = {
   name: 'Maintenance',
 
   render(h) {

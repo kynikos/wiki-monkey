@@ -21,13 +21,21 @@ const {Vue, Vuex, styled} = require('../../modules/libs')
 
 
 module.exports.SectionCommands = class {
+  static plugins = []
+
+  static installPlugin(plugin, component) {
+    this.plugins.push([plugin, component])
+  }
+
   constructor($editsections) {
-    $editsections.each(function () { SectionCommands_($(this)) })
+    const {plugins} = this.constructor
+    $editsections.each(function () { SectionCommands_(this, plugins) })
   }
 }
 
 
-const SectionCommands_ = function ($editsection) { // eslint-disable-line vars-on-top,no-var,max-lines-per-function
+const SectionCommands_ = function (editsection, plugins) { // eslint-disable-line vars-on-top,no-var,max-lines-per-function,max-statements
+  const $editsection = $(editsection)
   const root = document.createElement('span')
   $editsection.children().first().after(' ', root, ' | ')
   $editsection.children().last().before(' ')
@@ -90,6 +98,9 @@ const SectionCommands_ = function ($editsection) { // eslint-disable-line vars-o
           },
           ref: 'copySectionWikiLink',
         }, ['c#']),
+        ...plugins.reduce((acc, [plugin, component]) => {
+          return acc.concat([' | ', h(component, {props: {section, headline}})])
+        }, []),
       ])
     },
 

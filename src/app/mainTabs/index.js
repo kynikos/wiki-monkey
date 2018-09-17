@@ -18,12 +18,30 @@
 
 const {Vue, Vuex} = require('../../modules/libs')
 const WM = require('../../modules')
-const {Bookmarks} = require('../_components/bookmarks')
-const {Maintenance} = require('../_components/maintenance')
+const Maintenance = require('../_components/maintenance')
 
 
 module.exports = class {
+  static plugins = {}
+
+  static installPlugin(plugin, {name, tabTitle, tabComponent, page}) {
+    if (name in this.plugins) {
+      throw new Error(`Duplicated tab plugin: ${name}`)
+    }
+    this.plugins[name] = {plugin, tabTitle, tabComponent, page}
+  }
+
   constructor(bodyContent) { // eslint-disable-line max-lines-per-function
+    const plugins = {
+      ...this.constructor.plugins,
+      maintenance: {
+        plugin: null,
+        tabTitle: 'Show the maintenance interface',
+        tabComponent: 'maintenance',
+        page: Maintenance,
+      },
+    }
+
     const root = document.createElement('div')
     bodyContent.before(root)
 
@@ -48,6 +66,10 @@ module.exports = class {
         }),
       },
 
+      created() {
+        this.selectTab(Object.keys(plugins)[0])
+      },
+
       render(h) { // eslint-disable-line max-lines-per-function
         if (!this.shown) { return h('div') }
 
@@ -58,43 +80,23 @@ module.exports = class {
         }, [
           h('div', [
             '[ ',
-            h('a', {
-              attrs: {
-                href: '#bookmarks',
-                title: 'Show the bookmarks interface',
-              },
-              on: {
-                click: (event) => {
-                  event.preventDefault()
-                  this.selectTab('bookmarks')
+            ...Object.entries(plugins).reduce((acc, [name, plugin]) => {
+              return acc.concat([' | ', h('a', {
+                attrs: {
+                  href: `#${name}`,
+                  title: plugin.tabTitle,
                 },
-              },
-            }, ['bookmarks']),
-            ' | ',
-            h('a', {
-              attrs: {
-                href: '#maintenance',
-                title: 'Show the maintenance interface',
-              },
-              on: {
-                click: (event) => {
-                  event.preventDefault()
-                  this.selectTab('maintenance')
+                on: {
+                  click: (event) => {
+                    event.preventDefault()
+                    this.selectTab(name)
+                  },
                 },
-              },
-            }, ['maintenance']),
+              }, [plugin.tabComponent])])
+            }, []).slice(1),
             ' ]',
           ]),
-          h('div', [(() => {
-            switch (this.selectedTab) {
-            case 'bookmarks':
-              return h(Bookmarks)
-            case 'maintenance':
-              return h(Maintenance)
-            default:
-              return h(Bookmarks)
-            }
-          })()]),
+          h('div', [h(plugins[this.selectedTab].page)]),
         ])
       },
     })

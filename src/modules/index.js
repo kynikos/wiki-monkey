@@ -27,6 +27,10 @@ require('./libs').init()
 
 const Upgrade = require('./Upgrade')
 const {App} = require('../app')
+const Store = require('../app/store')
+const {PageCommands} = require('../app/pageCommands')
+const {SectionCommands} = require('../app/sectionCommands')
+const MainTabs = require('../app/mainTabs')
 const Menu = require('../app/menu')
 const Filter = require('../app/filter')
 const Bot = require('../app/bot')
@@ -108,6 +112,11 @@ module.exports.WikiMonkey = class WikiMonkey {
       }
 
       plugin.install({
+        store: Store.installPlugin.bind(Store),
+        pageCommands: PageCommands.installPlugin.bind(PageCommands, plugin),
+        sectionCommands:
+          SectionCommands.installPlugin.bind(SectionCommands, plugin),
+        mainTabs: MainTabs.installPlugin.bind(MainTabs, plugin),
         editor: Menu.installEditorPlugin.bind(Menu, plugin),
         diff: Menu.installDiffPlugin.bind(Menu, plugin),
         special: Menu.installSpecialPlugin.bind(Menu, plugin),

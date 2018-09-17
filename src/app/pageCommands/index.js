@@ -21,9 +21,17 @@ const {Vue, Vuex, styled} = require('../../modules/libs')
 
 
 module.exports.PageCommands = class {
+  static plugins = []
+
+  static installPlugin(plugin, component) {
+    this.plugins.push([plugin, component])
+  }
+
   constructor(container) { // eslint-disable-line max-lines-per-function
     // Add as a "page status indicator"
     // https://www.mediawiki.org/wiki/Help:Page_status_indicators
+
+    const {plugins} = this.constructor
 
     const root = document.createElement('div')
     $(container).prepend(root)
@@ -38,6 +46,10 @@ module.exports.PageCommands = class {
         ...Vuex.mapState('main', {
           mainIsShown: 'shown',
         }),
+      },
+
+      mounted() {
+        return WM.Clipboard.enable(this.$refs.copyArticleWikiLink)
       },
 
       methods: {
@@ -78,57 +90,11 @@ module.exports.PageCommands = class {
             },
             ref: 'copyArticleWikiLink',
           }, ['c']),
-          ' | ',
-          h('a', {
-            attrs: {
-              href: '#save',
-              title: 'Bookmark this page',
-            },
-            on: {
-              click(event) {
-                event.preventDefault()
-
-                const data = [
-                  'wgArticleId',
-                  'wgPageName',
-                  'wgRelevantPageName',
-                  'wgCanonicalSpecialPageName',
-                  'wgCanonicalNamespace',
-                  'wgNamespaceNumber',
-                  'wgTitle',
-                  'wgRevisionId',
-                  'wgCurRevisionId',
-                  'wgDiffOldId',
-                  'wgDiffNewId',
-                  'wgAction',
-                  'wgIsArticle',
-                  'wgIsProbablyEditable',
-                  'wgRelevantPageIsProbablyEditable',
-                  'wgPageContentLanguage',
-                  'wgPageContentModel',
-                ].reduce(
-                  (acc, item) => {
-                    acc[item] = mw.config.get(item)
-                    return acc
-                  }
-                  , {}
-                )
-                data.url = location.href
-
-                return WM.DB.put('bookmark', data).done((data) => {
-                  console.debug('RESPONSE:', data)
-                }).fail((data) => {
-                  console.debug('ERROR:', data)
-                })
-              },
-            },
-          }, ['b']),
+          ...plugins.reduce((acc, [plugin, component]) => {
+            return acc.concat([' | ', h(component)])
+          }, []),
           ' ]',
         ])
-      },
-
-      mounted() {
-        return WM.Clipboard.enable(this.$refs.copyArticleWikiLink)
       },
     })
   }

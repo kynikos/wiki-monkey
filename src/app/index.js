@@ -19,7 +19,7 @@
 const {moment} = require('../modules/libs')
 const {version} = require('../../package.json')
 
-const {init: initStore} = require('./store')
+const Store = require('./store')
 const {WikiLink} = require('./_components/log/WikiLink')
 const {PageLink} = require('./_components/log/PageLink')
 const mods = require('./mods')
@@ -64,7 +64,7 @@ const initTempLog = (store) => ({
 
 module.exports.App = class {
   constructor() {
-    this.store = initStore()
+    this.store = (new Store()).vstore
     this.log = initTempLog(this.store)
   }
 

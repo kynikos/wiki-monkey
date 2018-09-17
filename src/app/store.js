@@ -25,24 +25,41 @@ const bot = require('./bot/store')
 const filter = require('./filter/store')
 const menu = require('./menu/store')
 
-module.exports.init = () => new Vuex.Store({
-  actions: {
-    hideContent() {
-      return $('#bodyContent').hide()
-    },
+module.exports = class Store {
+  static plugins = {}
 
-    showContent() {
-      return $('#bodyContent').show()
-    },
-  },
+  static installPlugin(pluginName, pluginStore) {
+    if (pluginName in this.plugins) {
+      throw new Error(`Duplicated store module: ${pluginName}`)
+    }
+    this.plugins[pluginName] = pluginStore
+  }
 
-  modules: {
-    bookmarks,
-    fieldset,
-    log,
-    main,
-    bot,
-    filter,
-    menu,
-  },
-})
+  constructor() {
+    this.vstore = new Vuex.Store({
+      actions: {
+        hideContent() {
+          return $('#bodyContent').hide()
+        },
+
+        showContent() {
+          return $('#bodyContent').show()
+        },
+      },
+
+      modules: {
+        bookmarks,
+        fieldset,
+        log,
+        main,
+        bot,
+        filter,
+        menu,
+        plugins: {
+          namespaced: true,
+          modules: this.constructor.plugins,
+        },
+      },
+    })
+  }
+}
