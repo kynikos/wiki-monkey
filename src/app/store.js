@@ -17,7 +17,6 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const {Vuex} = require('../modules/libs')
-const bookmarks = require('./_components/bookmarks/store')
 const fieldset = require('./_components/fieldset/store')
 const log = require('./_components/log/store')
 const main = require('./mainTabs/store')
@@ -48,7 +47,6 @@ module.exports = class Store {
       },
 
       modules: {
-        bookmarks,
         fieldset,
         log,
         main,

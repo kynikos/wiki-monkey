@@ -31,6 +31,7 @@ new WikiMonkey( // eslint-disable-line no-new
   require('./plugins/ArchWikiNPFilter'),
   require('./plugins/ArchWikiRCFilter'),
   require('./plugins/ArchWikiSortContacts'),
+  require('./plugins/Bookmarks'),
   require('./plugins/ExpandContractions'),
   require('./plugins/FixBacklinkFragments'),
   require('./plugins/FixDoubleRedirects'),

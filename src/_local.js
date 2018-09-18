@@ -34,6 +34,7 @@ new WikiMonkey( // eslint-disable-line no-new
   // The ArchPackages module is currently unusable
   // require("./plugins/ArchWikiUpdatePackageTemplates"),
   require('./plugins/ArchWikiWantedCategories'),
+  require('./plugins/Bookmarks'),
   require('./plugins/DeletePages'),
   require('./plugins/ExpandContractions'),
   require('./plugins/FixBacklinkFragments'),

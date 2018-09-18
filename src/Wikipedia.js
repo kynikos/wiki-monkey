@@ -24,6 +24,7 @@ new WikiMonkey( // eslint-disable-line no-new
   // The require paths can't be constructed dynamically, or browserify won't
   // understand and import them
   /* eslint-disable global-require */
+  require('./plugins/Bookmarks'),
   require('./plugins/ExpandContractions'),
   require('./plugins/FixBacklinkFragments'),
   require('./plugins/FixDoubleRedirects'),
