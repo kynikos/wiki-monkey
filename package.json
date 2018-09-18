@@ -33,6 +33,8 @@
     "coffeescript": "^2.3.1",
     "envify": "^4.1.0",
     "eslint": "^5.5.0",
+    "eslint-plugin-babel": "^5.2.0",
+    "eslint-plugin-vue": "^5.0.0-beta.3",
     "http-server": "^0.11.1",
     "licensify": "^3.1.3",
     "scssify": "^3.0.1"

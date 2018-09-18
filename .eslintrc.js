@@ -1,13 +1,21 @@
 module.exports = {
-    'parser': 'babel-eslint',
-    'extends': 'eslint:all',
+    'extends': [
+        'eslint:all',
+        'plugin:vue/recommended',
+    ],
     'parserOptions': {
+        // eslint-plugin-vue needs babel-eslint inside parserOptions
+        // https://github.com/vuejs/eslint-plugin-vue#what-is-the-use-the-latest-vue-eslint-parser-error
+        'parser': 'babel-eslint',
         'ecmaVersion': 2017,
         'sourceType': 'module',
         'ecmaFeatures': {
             'experimentalObjectRestSpread': true,
         }
     },
+    'plugins': [
+        'babel', // https://github.com/babel/eslint-plugin-babel
+    ],
     'env': {
         'browser': true,
         'shared-node-browser': true,
@@ -44,6 +52,7 @@ module.exports = {
         'multiline-comment-style': ['error', 'separate-lines'],
         'multiline-ternary': ['error', 'always-multiline'],
         'new-cap': 'off',
+        // 'babel/new-cap': 1,
         'newline-per-chained-call': 'off',
         'no-alert': 'warn',
         'no-confusing-arrow': 'off',
@@ -52,6 +61,8 @@ module.exports = {
         'no-eq-null': 'off',
         'no-extra-semi': 'error',
         'no-inline-comments': 'off',
+        'babel/no-invalid-this': 2,
+        'no-invalid-this': 'off',
         'no-magic-numbers': 'off',
         'no-mixed-operators': 'off',
         'no-multi-assign': 'off',
@@ -61,6 +72,7 @@ module.exports = {
         'no-prototype-builtins': 'off',
         'no-ternary': 'off',
         'no-underscore-dangle': 'off',
+        // 'babel/no-unused-expressions': 1,
         'no-unused-expressions': ['error', {
             'allowShortCircuit': true,
             'allowTernary': true,
@@ -70,6 +82,7 @@ module.exports = {
         'no-use-before-define': 'warn',
         'no-warning-comments': 'warn',
         'object-curly-newline': 'off',
+        // 'babel/object-curly-spacing': 1,
         'object-property-newline': ['error', {
             'allowAllPropertiesOnSameLine': true,
         }],
@@ -77,7 +90,9 @@ module.exports = {
         'padded-blocks': ['error', 'never'],
         'prefer-destructuring': 'warn',
         'quote-props': ['error', 'as-needed'],
+        // 'babel/quotes': 1,
         'quotes': ['error', 'single', {'avoidEscape': true}],
+        // 'babel/semi': 1,
         'semi': ['error', 'never'],
         'sort-keys': 'off',
         'space-before-function-paren': ['error', {
@@ -85,5 +100,6 @@ module.exports = {
             'named': 'never',
             'asyncArrow': 'always',
         }],
+        // 'babel/valid-typeof': 1
     },
 }
