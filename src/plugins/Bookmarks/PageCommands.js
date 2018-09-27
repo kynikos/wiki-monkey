@@ -60,10 +60,10 @@ module.exports = function (conf) { // eslint-disable-line max-lines-per-function
             )
             data.url = location.href
 
-            return WM.DB.put('bookmark', data).done((data2) => {
-              console.debug('RESPONSE:', data2)
+            return WM.DB.post('bookmark', data).done((data2) => {
+              console.debug('RESPONSE:', data2) // TODO
             }).fail((data2) => {
-              console.debug('ERROR:', data2)
+              console.debug('ERROR:', data2) // TODO
             })
           },
         },
