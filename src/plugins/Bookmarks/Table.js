@@ -30,6 +30,12 @@ module.exports.Table = {
     ]),
   },
 
+  methods: {
+    ...Vuex.mapActions('plugins/bookmarks', [
+      'deleteBookmark',
+    ]),
+  },
+
   render(h) { // eslint-disable-line max-lines-per-function,complexity
     return h('div', [h('ElTable', {
       ref: 'table',
@@ -172,6 +178,14 @@ module.exports.Table = {
         sortable: true,
         formatter(row, column, cellValue, index) { // eslint-disable-line max-params
           return moment(cellValue).toISOString()
+        },
+      }}),
+      h('ElTableColumn', {props: {
+        formatter: (row, column, cellValue, index) => { // eslint-disable-line max-params
+          return h('ElButton', {
+            props: {icon: 'el-icon-delete', size: 'mini'},
+            on: {click: this.deleteBookmark},
+          })
         },
       }}),
     ])])

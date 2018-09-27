@@ -96,5 +96,8 @@ module.exports = {
         console.debug('ERROR:', data2) // TODO
       })
     },
+    deleteBookmark() {
+      console.debug('DELETE') // TODO
+    },
   },
 }
