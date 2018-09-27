@@ -62,5 +62,39 @@ module.exports = {
       const res = await WM.DB.get('bookmark')
       return commit('storeBookmarks', res)
     },
+    saveBookmark() {
+      const data = [
+        'wgArticleId',
+        'wgPageName',
+        'wgRelevantPageName',
+        'wgCanonicalSpecialPageName',
+        'wgCanonicalNamespace',
+        'wgNamespaceNumber',
+        'wgTitle',
+        'wgRevisionId',
+        'wgCurRevisionId',
+        'wgDiffOldId',
+        'wgDiffNewId',
+        'wgAction',
+        'wgIsArticle',
+        'wgIsProbablyEditable',
+        'wgRelevantPageIsProbablyEditable',
+        'wgPageContentLanguage',
+        'wgPageContentModel',
+        // 'wgCategories'  # TODO
+        // TODO: possibly save section/heading
+      ].reduce((acc, item) => {
+        acc[item] = mw.config.get(item)
+        return acc
+      }, {})
+      // TODO: Don't rely on the fact that the url has the right fragment
+      data.url = location.href
+
+      WM.DB.post('bookmark', data).done((data2) => {
+        console.debug('RESPONSE:', data2) // TODO
+      }).fail((data2) => {
+        console.debug('ERROR:', data2) // TODO
+      })
+    },
   },
 }

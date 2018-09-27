@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const {Vue, Vuex} = require('../../modules/libs')
+const {Vuex} = require('../../modules/libs')
 const {FieldSelect} = require('./FieldSelect')
 const {Table} = require('./Table')
 

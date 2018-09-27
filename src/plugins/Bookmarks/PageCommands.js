@@ -16,12 +16,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const WM = require('../../modules')
+const {Vuex} = require('../../modules/libs')
 
 
 module.exports = function (conf) { // eslint-disable-line max-lines-per-function
   return {
     name: 'BookmarksPageCommands',
+
+    methods: {
+      ...Vuex.mapActions('plugins/bookmarks', [
+        'saveBookmark',
+      ]),
+    },
 
     render(h) {
       return h('a', {
@@ -30,41 +36,9 @@ module.exports = function (conf) { // eslint-disable-line max-lines-per-function
           title: 'Bookmark this page',
         },
         on: {
-          click(event) {
+          click: (event) => {
             event.preventDefault()
-
-            const data = [
-              'wgArticleId',
-              'wgPageName',
-              'wgRelevantPageName',
-              'wgCanonicalSpecialPageName',
-              'wgCanonicalNamespace',
-              'wgNamespaceNumber',
-              'wgTitle',
-              'wgRevisionId',
-              'wgCurRevisionId',
-              'wgDiffOldId',
-              'wgDiffNewId',
-              'wgAction',
-              'wgIsArticle',
-              'wgIsProbablyEditable',
-              'wgRelevantPageIsProbablyEditable',
-              'wgPageContentLanguage',
-              'wgPageContentModel',
-            ].reduce(
-              (acc, item) => {
-                acc[item] = mw.config.get(item)
-                return acc
-              }
-              , {}
-            )
-            data.url = location.href
-
-            return WM.DB.post('bookmark', data).done((data2) => {
-              console.debug('RESPONSE:', data2) // TODO
-            }).fail((data2) => {
-              console.debug('ERROR:', data2) // TODO
-            })
+            this.saveBookmark()
           },
         },
       }, ['b'])
