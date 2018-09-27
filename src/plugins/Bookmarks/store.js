@@ -92,8 +92,6 @@ module.exports = {
 
       WM.DB.post('bookmark', data).done((data2) => {
         console.debug('RESPONSE:', data2) // TODO
-      }).fail((data2) => {
-        console.debug('ERROR:', data2) // TODO
       })
     },
     deleteBookmark() {

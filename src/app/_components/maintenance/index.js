@@ -37,8 +37,6 @@ module.exports = {
 
               WM.DB.post('maintenance/upgrade_database').done((data) => {
                 console.debug('RESPONSE:', data) // TODO
-              }).fail((data) => {
-                console.debug('ERROR:', data) // TODO
               })
             },
           },
@@ -56,8 +54,6 @@ module.exports = {
 
               WM.DB.get('maintenance/database_info').done((data) => {
                 console.debug('RESPONSE:', data) // TODO
-              }).fail((data) => {
-                console.debug('ERROR:', data) // TODO
               })
             },
           },
