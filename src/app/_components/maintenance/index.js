@@ -28,21 +28,21 @@ module.exports = {
       h('li', [
         h('a', {
           attrs: {
-            href: '#init',
-            title: 'Force the initialization of the database',
+            href: '#force-upgrade-database',
+            title: 'Force database upgrade',
           },
           on: {
             click: (event) => {
               event.preventDefault()
 
-              WM.DB.post('maintenance/force_init_database').done((data) => {
-                console.debug('RESPONSE:', data)
+              WM.DB.post('maintenance/upgrade_database').done((data) => {
+                console.debug('RESPONSE:', data) // TODO
               }).fail((data) => {
-                console.debug('ERROR:', data)
+                console.debug('ERROR:', data) // TODO
               })
             },
           },
-        }, ['Initialize database']),
+        }, ['Force database upgrade']),
       ]),
       h('li', [
         h('a', {
@@ -55,9 +55,9 @@ module.exports = {
               event.preventDefault()
 
               WM.DB.get('maintenance/database_info').done((data) => {
-                console.debug('RESPONSE:', data)
+                console.debug('RESPONSE:', data) // TODO
               }).fail((data) => {
-                console.debug('ERROR:', data)
+                console.debug('ERROR:', data) // TODO
               })
             },
           },
