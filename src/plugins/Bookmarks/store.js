@@ -70,7 +70,7 @@ module.exports = {
       const res = await WM.DB.get('bookmark')
       commit('storeBookmarks', res)
     },
-    saveBookmark() {
+    async saveBookmark() {
       const data = [
         'wgArticleId',
         'wgPageName',
@@ -98,9 +98,8 @@ module.exports = {
       // TODO: Don't rely on the fact that the url has the right fragment
       data.url = location.href
 
-      WM.DB.post('bookmark', data).done((data2) => {
-        console.debug('RESPONSE:', data2) // TODO
-      })
+      const res = await WM.DB.post('bookmark', data)
+      console.debug('RESPONSE:', res) // TODO
     },
     deleteBookmark() {
       console.debug('DELETE') // TODO
