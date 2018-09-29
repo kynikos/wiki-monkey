@@ -44,8 +44,7 @@ module.exports = class exports {
     if (data == null) { data = {} }
     return $.ajax({
       method,
-      url: this.dburl + resource,
-      data,
+      url: `${this.dburl}${resource}?${$.param(data)}`,
       dataType: 'json',
     }).fail(logError)
   }
