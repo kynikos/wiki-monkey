@@ -51,6 +51,7 @@ module.exports.init = function () { // eslint-disable-line max-statements
   Vue.use(require('element-ui/lib/button').default)
   Vue.use(require('element-ui/lib/loading').default)
   Vue.use(require('element-ui/lib/option').default)
+  Vue.use(require('element-ui/lib/popover').default)
   Vue.use(require('element-ui/lib/select').default)
   Vue.use(require('element-ui/lib/table').default)
   Vue.use(require('element-ui/lib/table-column').default)

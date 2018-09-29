@@ -17,6 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const {Vuex, moment} = require('../../modules/libs')
+const {popoverConfirm} = require('../../app/_components/popoverConfirm')
 const {ExpandedCell} = require('./ExpandedCell')
 
 
@@ -183,9 +184,18 @@ module.exports.Table = {
       }}),
       h('ElTableColumn', {props: {
         formatter: (row, column, cellValue, index) => { // eslint-disable-line max-params
-          return h('ElButton', {
-            props: {icon: 'el-icon-delete', size: 'mini'},
-            on: {click: this.deleteBookmark},
+          return h(popoverConfirm, {
+            props: {
+              question: 'Really delete this bookmark?',
+              textConfirm: 'delete',
+              onConfirm: this.deleteBookmark,
+              textCancel: 'cancel',
+              buttonProps: {
+                icon: 'el-icon-delete',
+                size: 'mini',
+                type: 'text',
+              },
+            },
           })
         },
       }}),
