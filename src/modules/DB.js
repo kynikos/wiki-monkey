@@ -19,7 +19,6 @@
 const WM = require('./index')
 
 const logError = (error) => {
-  console.error(error)
   mw.notification.notify(
     "The request to the wiki-snake server failed, try again or inspect the \
 error data in the browser's console.",
