@@ -184,7 +184,7 @@ module.exports.Table = {
         label: 'time_updated',
         sortable: true,
         formatter(row, column, cellValue, index) { // eslint-disable-line max-params
-          return moment(cellValue).toISOString()
+          return moment(cellValue).format('YYYY-MM-DD dd HH:mm')
         },
       }}),
       h('ElTableColumn', {props: {
