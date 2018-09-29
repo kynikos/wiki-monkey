@@ -45,6 +45,7 @@ module.exports = {
       'time_updated',
     ],
     bookmarks: [],
+    loading: false,
   },
 
   mutations: {
@@ -52,15 +53,21 @@ module.exports = {
       state.shownFields = shownFields
     },
 
+    setLoading(state) {
+      state.loading = true
+    },
+
     storeBookmarks(state, bookmarks) {
       state.bookmarks = bookmarks
+      state.loading = false
     },
   },
 
   actions: {
     async queryBookmarks({commit}) {
+      commit('setLoading')
       const res = await WM.DB.get('bookmark')
-      return commit('storeBookmarks', res)
+      commit('storeBookmarks', res)
     },
     saveBookmark() {
       const data = [

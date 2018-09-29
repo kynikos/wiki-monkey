@@ -26,6 +26,7 @@ module.exports.Table = {
   computed: {
     ...Vuex.mapState('plugins/bookmarks', [
       'shownFields',
+      'loading',
       'bookmarks',
     ]),
   },
@@ -51,7 +52,7 @@ module.exports.Table = {
       directives: [
         {
           name: 'loading',
-          value: !this.bookmarks.length,
+          value: this.loading,
         },
       ],
     }, [
