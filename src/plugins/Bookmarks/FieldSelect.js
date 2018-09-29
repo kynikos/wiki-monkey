@@ -50,6 +50,13 @@ module.exports.FieldSelect = {
     }, [
       h('ElOption', {
         props: {
+          key: 'id',
+          label: 'id',
+          value: 'id',
+        },
+      }),
+      h('ElOption', {
+        props: {
           key: 'url',
           label: 'url',
           value: 'url',

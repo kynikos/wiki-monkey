@@ -65,6 +65,11 @@ module.exports.Table = {
           },
         },
       }),
+      this.shownFields.includes('id') && h('ElTableColumn', {props: {
+        prop: 'id',
+        label: 'id',
+        sortable: true,
+      }}),
       this.shownFields.includes('url') && h('ElTableColumn', {props: {
         prop: 'url',
         label: 'url',

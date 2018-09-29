@@ -37,6 +37,10 @@ module.exports.ExpandedCell = {
 
   render(h) { // eslint-disable-line max-lines-per-function,complexity
     return h('div', [
+      !this.shownFields.includes('id') && h('div', [
+        'id: ',
+        this.row.id,
+      ]),
       !this.shownFields.includes('url') && h('div', [
         'url: ',
         this.row.url,

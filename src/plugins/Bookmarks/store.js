@@ -23,6 +23,7 @@ module.exports = {
 
   state: {
     shownFields: [
+      // 'id',
       'url',
       'wgPageName',
       // 'wgRelevantPageName'
