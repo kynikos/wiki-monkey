@@ -101,8 +101,9 @@ module.exports = {
       const res = await WM.DB.post('bookmark', data)
       console.debug('RESPONSE:', res) // TODO
     },
-    deleteBookmark() {
-      console.debug('DELETE') // TODO
+    async deleteBookmark({commit}, id) {
+      const res = await WM.DB.delete('bookmark', {id})
+      console.debug('RESPONSE:', res) // TODO
     },
   },
 }

@@ -193,7 +193,7 @@ module.exports.Table = {
             props: {
               question: 'Really delete this bookmark?',
               textConfirm: 'delete',
-              onConfirm: this.deleteBookmark,
+              onConfirm: () => { this.deleteBookmark(row.id) },
               textCancel: 'cancel',
               buttonProps: {
                 icon: 'el-icon-delete',
