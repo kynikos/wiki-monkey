@@ -17,7 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const WM = require('../../modules')
-const {Vue, Vuex, styled} = require('../../modules/libs')
+const {Vue} = require('../../modules/libs')
 
 
 module.exports.SectionCommands = class {
@@ -34,13 +34,13 @@ module.exports.SectionCommands = class {
 }
 
 
-const SectionCommands_ = function (editsection, plugins) { // eslint-disable-line vars-on-top,no-var,max-lines-per-function,max-statements
+function SectionCommands_(editsection, plugins) { // eslint-disable-line vars-on-top,no-var,max-lines-per-function,max-statements
   const $editsection = $(editsection)
   const root = document.createElement('span')
   $editsection.children().first().after(' ', root, ' | ')
   $editsection.children().last().before(' ')
-  const section = $editsection.closest(':header')
-  const headline = section.find('.mw-headline')
+  const header = $editsection.closest(':header')
+  const headline = header.find('.mw-headline')
   const sectionLink = WM.Parser.squashContiguousWhitespace(`[[#${headline[0].id}]]`)
   const articleLink = WM.Parser.squashContiguousWhitespace(`[[${mw.config.get('wgPageName')}#${headline[0].id}]]`)
 
@@ -48,6 +48,11 @@ const SectionCommands_ = function (editsection, plugins) { // eslint-disable-lin
     el: root,
 
     store: WM.App.store,
+
+    mounted() {
+      WM.Clipboard.enable(this.$refs.copyArticleWikiLink)
+      return WM.Clipboard.enable(this.$refs.copySectionWikiLink)
+    },
 
     render(h) { // eslint-disable-line max-lines-per-function
       return h('span', [
@@ -74,7 +79,7 @@ const SectionCommands_ = function (editsection, plugins) { // eslint-disable-lin
         h('a', {
           attrs: {
             href: '#copy-article-wiki-link',
-            title: `Copy \"${articleLink}\" to the clipboard`,
+            title: `Copy "${articleLink}" to the clipboard`,
             'data-clipboard-text': articleLink,
           },
           on: {
@@ -88,7 +93,7 @@ const SectionCommands_ = function (editsection, plugins) { // eslint-disable-lin
         h('a', {
           attrs: {
             href: '#copy-section-wiki-link',
-            title: `Copy \"${sectionLink}\" to the clipboard`,
+            title: `Copy "${sectionLink}" to the clipboard`,
             'data-clipboard-text': sectionLink,
           },
           on: {
@@ -102,11 +107,6 @@ const SectionCommands_ = function (editsection, plugins) { // eslint-disable-lin
           return acc.concat([' | ', h(component, {props: {section, headline}})])
         }, []),
       ])
-    },
-
-    mounted() {
-      WM.Clipboard.enable(this.$refs.copyArticleWikiLink)
-      return WM.Clipboard.enable(this.$refs.copySectionWikiLink)
     },
   })
 }
