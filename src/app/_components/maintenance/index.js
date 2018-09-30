@@ -29,7 +29,8 @@ module.exports = {
         h('a', {
           attrs: {
             href: '#force-upgrade-database',
-            title: 'Force database upgrade',
+            title: 'Force upgrading the database to the latest revision, if \
+needed',
           },
           on: {
             click: (event) => {
@@ -46,7 +47,7 @@ module.exports = {
         h('a', {
           attrs: {
             href: '#info',
-            title: 'Read some database metadata',
+            title: 'Display some database metadata',
           },
           on: {
             click: (event) => {

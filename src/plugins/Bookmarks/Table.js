@@ -191,10 +191,11 @@ module.exports.Table = {
         formatter: (row, column, cellValue, index) => { // eslint-disable-line max-params
           return h(popoverConfirm, {
             props: {
+              tooltip: 'Delete',
               question: 'Really delete this bookmark?',
-              textConfirm: 'delete',
+              textConfirm: 'Delete',
               onConfirm: () => { this.deleteBookmark(row.id) },
-              textCancel: 'cancel',
+              textCancel: 'Cancel',
               buttonProps: {
                 icon: 'el-icon-delete',
                 size: 'mini',

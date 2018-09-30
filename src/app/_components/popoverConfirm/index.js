@@ -37,6 +37,10 @@ module.exports.popoverConfirm = {
   },
 
   props: {
+    tooltip: {
+      type: String,
+      required: true,
+    },
     question: {
       type: String,
       required: true,
@@ -92,12 +96,13 @@ module.exports.popoverConfirm = {
         }, [this.textConfirm]),
       ]),
       h('ElButton', {
+        slot: 'reference',
+        attrs: {title: this.tooltip},
         props: {
           icon: 'el-icon-delete',
           size: 'mini',
           type: 'text',
         },
-        slot: 'reference',
         on: {click: this.showPopper},
       }),
     ])

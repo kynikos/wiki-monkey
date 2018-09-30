@@ -67,7 +67,7 @@ module.exports.PageCommands = class {
             attrs: {
               href: '#wiki-monkey',
               title: `${this.mainIsShown && 'Close' || 'Open'} the main \
-  Wiki Monkey interface`,
+Wiki Monkey interface`,
             },
             on: {
               click: (event) => {
