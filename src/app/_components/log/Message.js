@@ -17,6 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const {jssc, styled, moment} = require('../../../modules/libs')
+const {Flex} = require('../styled')
 const colors = require('../styled/colors')
 
 const LEVEL_TO_CLASS = {
@@ -27,9 +28,6 @@ const LEVEL_TO_CLASS = {
   30: 'warning',
   40: 'error',
 }
-const Line = styled.div({
-  display: 'flex',
-})
 
 const divmixin = {
   fontFamily: 'monospace',
@@ -96,7 +94,7 @@ module.exports = {
   },
 
   render(h) {
-    return h(Line, {
+    return h(Flex, {
       key: this.index,
     }, [
       h(

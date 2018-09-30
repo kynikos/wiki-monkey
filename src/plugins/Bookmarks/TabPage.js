@@ -17,6 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const {Vuex} = require('../../modules/libs')
+const {SpacedVertical} = require('../../app/_components/styled')
 const {FieldSelect} = require('./FieldSelect')
 const {Table} = require('./Table')
 
@@ -36,7 +37,7 @@ module.exports = function (conf) {
     },
 
     render(h) {
-      return h('div', [
+      return h(SpacedVertical, [
         h(FieldSelect),
         h(Table),
       ])

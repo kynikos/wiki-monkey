@@ -19,6 +19,7 @@
 const {Vue, Vuex} = require('../../modules/libs')
 const WM = require('../../modules')
 const Maintenance = require('../_components/maintenance')
+const {SpacedVertical} = require('../_components/styled')
 
 
 module.exports = class {
@@ -73,7 +74,7 @@ module.exports = class {
       render(h) { // eslint-disable-line max-lines-per-function
         if (!this.shown) { return h('div') }
 
-        return h('div', {
+        return h(SpacedVertical, {
           class: {
             'mw-body-content': true,
           },
