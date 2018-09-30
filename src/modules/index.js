@@ -25,7 +25,7 @@ const mwmodpromise = mw.loader.using([
 // Initialize the libraries immediately (especially babel-polyfill)
 require('./libs').init()
 
-const Upgrade = require('./Upgrade')
+const {upgradePeriodical} = require('./Upgrade')
 const {App} = require('../app')
 const Store = require('../app/store')
 const {PageCommands} = require('../app/pageCommands')
@@ -152,7 +152,7 @@ module.exports.WikiMonkey = class WikiMonkey {
       WhatLinksHere: new WhatLinksHere(),
     })
 
-    Upgrade()
+    upgradePeriodical()
 
     const app = new App()
     module.exports.App = app

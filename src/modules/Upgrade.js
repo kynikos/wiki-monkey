@@ -23,43 +23,53 @@ const WM = require('.')
 const REPO_RAW_URL = 'https://raw.githubusercontent.com/kynikos/wiki-monkey'
 
 
-module.exports = () => {
+module.exports.upgradePeriodical = function () {
   checkObsoleteConfig()
-  if (WM.conf.update_check_wdays) {
-    checkAndNotify()
+  if (shouldCheck()) {
+    checkAndNotify(false)
   }
 }
 
-const checkAndNotify = async () => {
-  if (shouldCheck()) {
-    const upstreamPackage = await $.getJSON(`${REPO_RAW_URL}/${WM.conf.update_check_branch}/package.json`)
-    // Well, ok, this is assuming that if the versions are
-    // different, upstream has the latest
-    if (version !== upstreamPackage.version) {
-      return displayNotification([
-        `Version ${upstreamPackage.version} is available.`,
-        h('br'),
-        h(
-          'a',
-          {href: 'https://github.com/kynikos/wiki-monkey/wiki/Changelog'}, // Noqa
-          'Changelog'
-        ),
-        h('br'),
-        h('a', 'Run upgrade', {onclick: () => {
-          return upgrade(upstreamPackage.version)
-        },
-        }),
-      ])
-    }
-    return mw.storage.set(
+
+module.exports.upgradeNow = function () {
+  checkAndNotify(true)
+}
+
+async function checkAndNotify(alwaysNotify) {
+  const upstreamPackage = await $.getJSON(`${REPO_RAW_URL}/${WM.conf.update_check_branch}/package.json`)
+  // Well, ok, this is assuming that if the versions are
+  // different, upstream has the latest
+  if (version === upstreamPackage.version) {
+    mw.storage.set(
       'WikiMonkey-last-update-check',
       moment().format('YYYY-MM-DD')
     )
+    if (alwaysNotify) {
+      displayNotification([
+        `Up to date (version ${version}).`,
+      ])
+    }
+  } else {
+    displayNotification([
+      `Version ${upstreamPackage.version} is available.`,
+      h('br'),
+      h(
+        'a',
+        {href: 'https://github.com/kynikos/wiki-monkey/wiki/Changelog'},
+        'Changelog'
+      ),
+      h('br'),
+      h('a', 'Run upgrade', {onclick: () => {
+        upgrade(upstreamPackage.version)
+      },
+      }),
+    ])
   }
 }
 
-const shouldCheck = () => {
-  let needle
+function shouldCheck() {
+  if (!WM.conf.update_check_wdays) return false
+
   const lastupdcheck = mw.storage.get('WikiMonkey-last-update-check')
   if (!lastupdcheck) {
     return true
@@ -68,13 +78,13 @@ const shouldCheck = () => {
   const diff = moment().diff(moment(lastupdcheck), 'days')
   // Preferably check on the configured day of the week, but don't let
   // more than 7 days pass without checking in any case
-  if (diff >= 1 && (needle = moment().day(), WM.conf.update_check_wdays.includes(needle)) || diff >= 7) {
+  if (diff >= 1 && WM.conf.update_check_wdays.includes(moment().day()) || diff >= 7) {
     return true
   }
   return false
 }
 
-const displayNotification = (content, optionsoverride) => {
+function displayNotification(content, optionsoverride) {
   const options = {
     autoHide: false,
     tag: 'WikiMonkey-upgrade',
@@ -85,7 +95,7 @@ const displayNotification = (content, optionsoverride) => {
   return mw.notification.notify(content, options)
 }
 
-const upgrade = (upstreamVersion) => { // eslint-disable-line max-lines-per-function
+function upgrade(upstreamVersion) { // eslint-disable-line max-lines-per-function
   const page = `User:${mw.user.getName()}/common.js`
   const pagelink = WM.MW.linkArticle(page)
 
@@ -152,13 +162,13 @@ to verify.',
   })
 }
 
-const checkObsoleteConfig = () => {
+function checkObsoleteConfig() {
   // TODO: Remove in a later version
   const oldconf = localStorage.getItem('WikiMonkey')
   if (oldconf !== null) {
     const blob = new Blob([oldconf], {type: 'application/json'})
     const confhref = window.URL.createObjectURL(blob)
-    return displayNotification([
+    displayNotification([
       'Wiki Monkey 4.0.0 uses a completely rewritten configuration \
 system. After updating, your old configuration was not \
 automatically imported, but it is still saved in your browser\'s \
@@ -168,7 +178,7 @@ options.',
       h('br'),
       h(
         'a',
-        {href: 'https://github.com/kynikos/wiki-monkey/wiki/Configuration'}, // Noqa
+        {href: 'https://github.com/kynikos/wiki-monkey/wiki/Configuration'},
         'New configuration instructions'
       ),
       h('br'),
@@ -182,7 +192,7 @@ options.',
       h('br'),
       h('a', {onclick: () => {
         localStorage.removeItem('WikiMonkey')
-        return displayNotification(
+        displayNotification(
           'The old configuration was successfully removed.',
           {autoHide: true}
         )

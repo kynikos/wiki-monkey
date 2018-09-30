@@ -17,14 +17,30 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const WM = require('../../../modules')
-const {Vue, Vuex} = require('../../../modules/libs')
+const {upgradeNow} = require('../../../modules/Upgrade')
 
 
 module.exports = {
   name: 'Maintenance',
 
-  render(h) {
+  render(h) { // eslint-disable-line max-lines-per-function
     return h('ul', [
+      h('li', [
+        h('a', {
+          attrs: {
+            href: '#force-check-updates',
+            title: 'Force checking for Wiki Monkey updates and possibly \
+prompt to install them (Wiki Monkey checks for updates \
+regularly as specified in its configuration)',
+          },
+          on: {
+            click: (event) => {
+              event.preventDefault()
+              upgradeNow()
+            },
+          },
+        }, ['Force Wiki Monkey update']),
+      ]),
       h('li', [
         h('a', {
           attrs: {
