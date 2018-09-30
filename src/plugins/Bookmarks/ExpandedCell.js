@@ -17,6 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const {Vuex} = require('../../modules/libs')
+const {Grid2C} = require('../../app/_components/styled')
 
 
 module.exports.ExpandedCell = {
@@ -36,7 +37,7 @@ module.exports.ExpandedCell = {
   },
 
   render(h) { // eslint-disable-line max-lines-per-function,complexity
-    return h('div', [
+    return h(Grid2C, [
       ['id', this.row.id],
       ['url', this.row.url],
       ['section_id', this.row.section_id],
@@ -61,8 +62,11 @@ module.exports.ExpandedCell = {
       ['wgDiffNewId', this.row.wgDiffNewId],
       ['time_created', this.row.time_created],
       ['time_updated', this.row.time_updated],
-    ].map(([name, value]) => {
-      return h('div', [`${name}: ${value}`])
-    }))
+    ].reduce((acc, [name, value]) => {
+      return acc.concat([
+        h('div', [name]),
+        h('div', [value]),
+      ])
+    }, []))
   },
 }

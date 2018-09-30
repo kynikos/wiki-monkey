@@ -1,5 +1,6 @@
 module.exports = {
   whiteText: '#eee',
+  greyBorder: '#ccc',
   blackBackground: '#111',
 
   redText: 'red',
