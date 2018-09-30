@@ -25,6 +25,9 @@ module.exports = {
     shownFields: [
       // 'id',
       'url',
+      // 'section_id',
+      // 'section_number',
+      'section_title',
       'wgPageName',
       // 'wgRelevantPageName'
       // 'wgCanonicalSpecialPageName'
@@ -70,7 +73,7 @@ module.exports = {
       const res = await WM.DB.get('bookmark')
       commit('storeBookmarks', res)
     },
-    async saveBookmark() {
+    async saveBookmark({commit}, {sectionId, sectionNumber, sectionTitle}) { // eslint-disable-line max-statements
       const data = [
         'wgArticleId',
         'wgPageName',
@@ -90,13 +93,23 @@ module.exports = {
         'wgPageContentLanguage',
         'wgPageContentModel',
         // 'wgCategories'  # TODO
-        // TODO: possibly save section/heading
       ].reduce((acc, item) => {
         acc[item] = mw.config.get(item)
         return acc
       }, {})
-      // TODO: Don't rely on the fact that the url has the right fragment
-      data.url = location.href
+
+      // Don't rely on the current url's fragment
+      const uri = new mw.Uri().clone()
+      if (sectionId) {
+        uri.fragment = sectionId
+      } else {
+        uri.fragment = null
+      }
+      data.url = uri.toString()
+
+      data.section_id = sectionId
+      data.section_number = sectionNumber
+      data.section_title = sectionTitle
 
       const res = await WM.DB.post('bookmark', data)
       console.debug('RESPONSE:', res) // TODO

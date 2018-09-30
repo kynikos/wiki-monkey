@@ -66,6 +66,27 @@ remaining ones will be listed in each row's expanded panel)"},
       }),
       h('ElOption', {
         props: {
+          key: 'section_id',
+          label: 'section_id',
+          value: 'section_id',
+        },
+      }),
+      h('ElOption', {
+        props: {
+          key: 'section_number',
+          label: 'section_number',
+          value: 'section_number',
+        },
+      }),
+      h('ElOption', {
+        props: {
+          key: 'section_title',
+          label: 'section_title',
+          value: 'section_title',
+        },
+      }),
+      h('ElOption', {
+        props: {
           key: 'wgPageName',
           label: 'wgPageName',
           value: 'wgPageName',

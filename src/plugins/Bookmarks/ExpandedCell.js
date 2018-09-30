@@ -45,6 +45,18 @@ module.exports.ExpandedCell = {
         'url: ',
         this.row.url,
       ]),
+      !this.shownFields.includes('section_id') && h('div', [
+        'section_id: ',
+        this.row.section_id,
+      ]),
+      !this.shownFields.includes('section_number') && h('div', [
+        'section_number: ',
+        this.row.section_number,
+      ]),
+      !this.shownFields.includes('section_title') && h('div', [
+        'section_title: ',
+        this.row.section_title,
+      ]),
       !this.shownFields.includes('wgPageName') && h('div', [
         'wgPageName: ',
         this.row.wgPageName,

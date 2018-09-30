@@ -104,7 +104,7 @@ function SectionCommands_(editsection, plugins) { // eslint-disable-line vars-on
           ref: 'copySectionWikiLink',
         }, ['c#']),
         ...plugins.reduce((acc, [plugin, component]) => {
-          return acc.concat([' | ', h(component, {props: {section, headline}})])
+          return acc.concat([' | ', h(component, {props: {headline}})])
         }, []),
       ])
     },

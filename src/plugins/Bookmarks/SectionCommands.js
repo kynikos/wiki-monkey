@@ -24,10 +24,6 @@ module.exports = function (conf) { // eslint-disable-line max-lines-per-function
     name: 'BookmarksSectionCommands',
 
     props: {
-      section: {
-        type: Object,
-        required: true,
-      },
       headline: {
         type: Object,
         required: true,
@@ -49,7 +45,11 @@ module.exports = function (conf) { // eslint-disable-line max-lines-per-function
         on: {
           click: (event) => {
             event.preventDefault()
-            this.saveBookmark()
+            this.saveBookmark({
+              sectionId: this.headline[0].id,
+              sectionNumber: this.headline.children().first().text(),
+              sectionTitle: this.headline.contents().last().text().trim(),
+            })
           },
         },
       }, ['b'])

@@ -78,6 +78,21 @@ module.exports.Table = {
           return h('a', {attrs: {href: cellValue}}, ['link'])
         },
       }}),
+      this.shownFields.includes('section_id') && h('ElTableColumn', {props: {
+        prop: 'section_id',
+        label: 'section_id',
+        sortable: true,
+      }}),
+      this.shownFields.includes('section_number') && h('ElTableColumn', {props: {
+        prop: 'section_number',
+        label: 'section_number',
+        sortable: true,
+      }}),
+      this.shownFields.includes('section_title') && h('ElTableColumn', {props: {
+        prop: 'section_title',
+        label: 'section_title',
+        sortable: true,
+      }}),
       this.shownFields.includes('wgPageName') && h('ElTableColumn', {props: {
         prop: 'wgPageName',
         label: 'wgPageName',

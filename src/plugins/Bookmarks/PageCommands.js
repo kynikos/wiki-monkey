@@ -38,7 +38,7 @@ module.exports = function (conf) { // eslint-disable-line max-lines-per-function
         on: {
           click: (event) => {
             event.preventDefault()
-            this.saveBookmark()
+            this.saveBookmark({})
           },
         },
       }, ['b'])
