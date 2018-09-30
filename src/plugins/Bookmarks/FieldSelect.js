@@ -50,174 +50,38 @@ remaining ones will be listed in each row's expanded panel)"},
         },
       },
     }, [
-      h('ElOption', {
+      ['id', 'id'],
+      ['url', 'url'],
+      ['section_id', 'section_id'],
+      ['section_number', 'section_number'],
+      ['section_title', 'section_title'],
+      ['wgPageName', 'wgPageName'],
+      ['wgRelevantPageName', 'wgRelevantPageName'],
+      ['wgCanonicalSpecialPageName', 'wgCanonicalSpecialPageName'],
+      ['wgCanonicalNamespace', 'wgCanonicalNamespace'],
+      ['wgTitle', 'wgTitle'],
+      ['wgAction', 'wgAction'],
+      ['wgIsArticle', 'wgIsArticle'],
+      ['wgIsProbablyEditable', 'wgIsProbablyEditable'],
+      ['wgRelevantPageIsProbablyEditable', 'wgRelevantPageIsProbablyEditable'],
+      ['wgPageContentLanguage', 'wgPageContentLanguage'],
+      ['wgPageContentModel', 'wgPageContentModel'],
+      ['wgArticleId', 'wgArticleId'],
+      ['wgNamespaceNumber', 'wgNamespaceNumber'],
+      ['wgRevisionId', 'wgRevisionId'],
+      ['wgCurRevisionId', 'wgCurRevisionId'],
+      ['wgDiffOldId', 'wgDiffOldId'],
+      ['wgDiffNewId', 'wgDiffNewId'],
+      ['time_created', 'time_created'],
+      ['time_updated', 'time_updated'],
+    ].map(([key, label]) => {
+      return h('ElOption', {
         props: {
-          key: 'id',
-          label: 'id',
-          value: 'id',
+          key,
+          label,
+          value: key,
         },
-      }),
-      h('ElOption', {
-        props: {
-          key: 'url',
-          label: 'url',
-          value: 'url',
-        },
-      }),
-      h('ElOption', {
-        props: {
-          key: 'section_id',
-          label: 'section_id',
-          value: 'section_id',
-        },
-      }),
-      h('ElOption', {
-        props: {
-          key: 'section_number',
-          label: 'section_number',
-          value: 'section_number',
-        },
-      }),
-      h('ElOption', {
-        props: {
-          key: 'section_title',
-          label: 'section_title',
-          value: 'section_title',
-        },
-      }),
-      h('ElOption', {
-        props: {
-          key: 'wgPageName',
-          label: 'wgPageName',
-          value: 'wgPageName',
-        },
-      }),
-      h('ElOption', {
-        props: {
-          key: 'wgRelevantPageName',
-          label: 'wgRelevantPageName',
-          value: 'wgRelevantPageName',
-        },
-      }),
-      h('ElOption', {
-        props: {
-          key: 'wgCanonicalSpecialPageName',
-          label: 'wgCanonicalSpecialPageName',
-          value: 'wgCanonicalSpecialPageName',
-        },
-      }),
-      h('ElOption', {
-        props: {
-          key: 'wgCanonicalNamespace',
-          label: 'wgCanonicalNamespace',
-          value: 'wgCanonicalNamespace',
-        },
-      }),
-      h('ElOption', {
-        props: {
-          key: 'wgTitle',
-          label: 'wgTitle',
-          value: 'wgTitle',
-        },
-      }),
-      h('ElOption', {
-        props: {
-          key: 'wgAction',
-          label: 'wgAction',
-          value: 'wgAction',
-        },
-      }),
-      h('ElOption', {
-        props: {
-          key: 'wgIsArticle',
-          label: 'wgIsArticle',
-          value: 'wgIsArticle',
-        },
-      }),
-      h('ElOption', {
-        props: {
-          key: 'wgIsProbablyEditable',
-          label: 'wgIsProbablyEditable',
-          value: 'wgIsProbablyEditable',
-        },
-      }),
-      h('ElOption', {
-        props: {
-          key: 'wgRelevantPageIsProbablyEditable',
-          label: 'wgRelevantPageIsProbablyEditable',
-          value: 'wgRelevantPageIsProbablyEditable',
-        },
-      }),
-      h('ElOption', {
-        props: {
-          key: 'wgPageContentLanguage',
-          label: 'wgPageContentLanguage',
-          value: 'wgPageContentLanguage',
-        },
-      }),
-      h('ElOption', {
-        props: {
-          key: 'wgPageContentModel',
-          label: 'wgPageContentModel',
-          value: 'wgPageContentModel',
-        },
-      }),
-      h('ElOption', {
-        props: {
-          key: 'wgArticleId',
-          label: 'wgArticleId',
-          value: 'wgArticleId',
-        },
-      }),
-      h('ElOption', {
-        props: {
-          key: 'wgNamespaceNumber',
-          label: 'wgNamespaceNumber',
-          value: 'wgNamespaceNumber',
-        },
-      }),
-      h('ElOption', {
-        props: {
-          key: 'wgRevisionId',
-          label: 'wgRevisionId',
-          value: 'wgRevisionId',
-        },
-      }),
-      h('ElOption', {
-        props: {
-          key: 'wgCurRevisionId',
-          label: 'wgCurRevisionId',
-          value: 'wgCurRevisionId',
-        },
-      }),
-      h('ElOption', {
-        props: {
-          key: 'wgDiffOldId',
-          label: 'wgDiffOldId',
-          value: 'wgDiffOldId',
-        },
-      }),
-      h('ElOption', {
-        props: {
-          key: 'wgDiffNewId',
-          label: 'wgDiffNewId',
-          value: 'wgDiffNewId',
-        },
-      }),
-      h('ElOption', {
-        props: {
-          key: 'time_created',
-          label: 'time_created',
-          value: 'time_created',
-        },
-      }),
-      h('ElOption', {
-        props: {
-          key: 'time_updated',
-          label: 'time_updated',
-          value: 'time_updated',
-        },
-      }),
-    ])])
+      })
+    }))])
   },
 }

@@ -17,7 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const WM = require('../../modules')
-const {Vue, Vuex, styled} = require('../../modules/libs')
+const {Vue, Vuex} = require('../../modules/libs')
 
 
 module.exports.PageCommands = class {
