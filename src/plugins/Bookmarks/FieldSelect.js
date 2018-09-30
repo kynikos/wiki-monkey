@@ -41,8 +41,13 @@ remaining ones will be listed in each row's expanded panel)"},
       props: {
         size: 'mini',
         multiple: true,
-        collapseTags: true,
+        // Re-enable collapseTags if width is no longer 100%
+        // collapseTags: true,
         value: this.shownFields,
+      },
+      style: {
+        // Re-enable collapseTags if width is no longer 100%
+        width: '100%',
       },
       on: {
         change: (values) => {
