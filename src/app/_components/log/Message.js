@@ -17,6 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const {jssc, styled, moment} = require('../../../modules/libs')
+const colors = require('../styled/colors')
 
 const LEVEL_TO_CLASS = {
   5: 'hidden',
@@ -32,7 +33,7 @@ const Line = styled.div({
 
 const divmixin = {
   fontFamily: 'monospace',
-  color: '#eee',
+  color: colors.whiteText,
 }
 const Timestamp = styled.div({
   ...divmixin,
@@ -55,17 +56,17 @@ const {classes} = jssc({
   json: {},
 
   debug: {
-    color: 'cyan',
+    color: colors.blueText,
   },
 
   info: {},
 
   warning: {
-    color: 'gold',
+    color: colors.yellowText,
   },
 
   error: {
-    color: 'red',
+    color: colors.redText,
   },
 })
 

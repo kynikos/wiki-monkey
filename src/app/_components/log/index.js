@@ -17,6 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const {Vuex, styled} = require('../../../modules/libs')
+const colors = require('../../_components/styled/colors')
 
 const LogFilter = require('./LogFilter')
 const Export = require('./Export')
@@ -24,11 +25,11 @@ const Message = require('./Message')
 
 const MessageContainer = styled.div({
   height: '10em',
-  border: '2px solid #07b',
+  border: `2px solid ${colors.blueBorder}`,
   padding: '0.5em',
   overflow: 'auto',
   resize: 'vertical',
-  backgroundColor: '#111',
+  backgroundColor: colors.blackBackground,
 })
 
 module.exports = {
