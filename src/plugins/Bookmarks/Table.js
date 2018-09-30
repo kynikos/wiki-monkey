@@ -46,6 +46,10 @@ module.exports.Table = {
         stripe: true,
         border: true,
         maxHeight: 1000, // Fixed header
+        defaultSort: {
+          prop: 'time_updated',
+          order: 'descending',
+        },
       },
       attrs: {
         'element-loading-text': 'Loading...',
