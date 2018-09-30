@@ -26,6 +26,7 @@ const TabPage = require('./TabPage')
 module.exports = class Bookmarks extends _Plugin {
   static confDefault = {
     enabled: false,
+    // TODO: Only enable if the server is enabled
   }
 
   install({store, pageCommands, sectionCommands, mainTabs}) {

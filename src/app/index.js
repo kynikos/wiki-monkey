@@ -31,6 +31,9 @@ const Bot = require('./bot')
 const Filter = require('./filter')
 const Menu = require('./menu')
 
+// TODO: Document that the Wiki Snake (and for testing also the Wiki Monkey)
+//       server certificates have to be added
+
 
 const initTempLog = (store) => ({
   hidden(text) {

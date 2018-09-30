@@ -18,6 +18,9 @@
 
 const {Vue, Vuex} = require('../../modules/libs')
 
+// TODO: Even better would be to have a small button/icon to add/select the
+//       fields to show, and each column header would have a button to hide it
+
 
 module.exports.FieldSelect = {
   name: 'FieldSelect',

@@ -43,6 +43,7 @@ module.exports.Table = {
       ref: 'table',
       props: {
         data: this.bookmarks,
+        // TODO: The default style is quite poor...
         stripe: true,
         border: true,
         maxHeight: 1000, // Fixed header
@@ -61,6 +62,9 @@ module.exports.Table = {
         },
       ],
     }, [
+      // TODO: Also enable select checkboxes to delete/move multiple rows at
+      //       once? In that case remove the individual deleve/move controls
+      //       per row
       h('ElTableColumn', {
         props: {type: 'expand'},
         scopedSlots: {
@@ -208,6 +212,7 @@ module.exports.Table = {
       }}),
       h('ElTableColumn', {props: {
         formatter: (row, column, cellValue, index) => { // eslint-disable-line max-params
+          // TODO: Allow moving bookmarks up/down
           return h(popoverConfirm, {
             props: {
               tooltip: 'Delete',
