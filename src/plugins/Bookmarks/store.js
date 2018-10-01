@@ -65,6 +65,12 @@ module.exports = {
       state.bookmarks = bookmarks
       state.loading = false
     },
+
+    addBookmark(state, bookmark) {
+      // BUG: Possibly update the existing id if already in the table
+      state.bookmarks = [bookmark].concat(state.bookmarks)
+      state.loading = false
+    },
   },
 
   actions: {
@@ -73,11 +79,13 @@ module.exports = {
       const res = await WM.DB.get('bookmark')
       commit('storeBookmarks', res)
     },
-    async saveBookmark({commit}, { // eslint-disable-line max-statements
+    async saveBookmark({commit}, { // eslint-disable-line max-statements,max-lines-per-function
       sectionId = null,
       sectionNumber = null,
       sectionTitle = null,
     }) { // eslint-disable-line max-statements
+      commit('setLoading')
+
       const data = [
         'wgArticleId',
         'wgPageName',
@@ -116,7 +124,14 @@ module.exports = {
       data.section_title = sectionTitle
 
       const res = await WM.DB.post('bookmark', data)
-      console.debug('RESPONSE:', res) // TODO
+
+      commit('addBookmark', res.bookmark)
+
+      mw.notification.notify('Bookmark successfully saved.', {
+        tag: 'WikiMonkey-Bookmarks',
+        title: 'Wiki Monkey',
+        type: 'info',
+      })
     },
     async deleteBookmark({commit}, id) {
       const res = await WM.DB.delete('bookmark', {id})
