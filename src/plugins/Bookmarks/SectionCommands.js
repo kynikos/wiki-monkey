@@ -52,6 +52,7 @@ module.exports = function (conf) { // eslint-disable-line max-lines-per-function
             })
           },
         },
+        // TODO: Show if the section has bookmarks
       }, ['b'])
     },
   }

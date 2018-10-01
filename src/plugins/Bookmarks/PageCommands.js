@@ -41,6 +41,7 @@ module.exports = function (conf) { // eslint-disable-line max-lines-per-function
             this.saveBookmark({})
           },
         },
+        // TODO: Show if the page has bookmarks
       }, ['b'])
     },
   }

@@ -31,6 +31,8 @@ error data in the browser's console.",
   )
 }
 
+// TODO: Always send the client version to the server to check for compatibility?
+
 
 module.exports = class exports {
   constructor() {

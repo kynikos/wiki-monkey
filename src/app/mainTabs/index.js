@@ -94,6 +94,7 @@ module.exports = class {
                   },
                 },
               }, [plugin.tabComponent])])
+                // TODO: Highlight the currently selected tab label
             }, []).slice(1),
             ' ]',
           ]),

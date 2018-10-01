@@ -75,6 +75,7 @@ Wiki Monkey interface`,
                 return this.toggleMain()
               },
             },
+            // TODO: Change the style depending on whether the main page is shown
           }, ['WM']),
           ' | ',
           h('a', {
