@@ -27,20 +27,31 @@ module.exports.SectionCommands = class {
     this.plugins.push([plugin, component])
   }
 
-  constructor($editsections) {
+  constructor(editSections) {
     const {plugins} = this.constructor
-    $editsections.each(function () { SectionCommands_(this, plugins) })
+    editSections.each(function () { SectionCommands_(this, plugins) })
   }
 }
 
 
-function SectionCommands_(editsection, plugins) { // eslint-disable-line vars-on-top,no-var,max-lines-per-function,max-statements
-  const $editsection = $(editsection)
-  const root = document.createElement('span')
-  $editsection.children().first().after(' ', root, ' | ')
-  $editsection.children().last().before(' ')
-  const header = $editsection.closest(':header')
+function SectionCommands_(editSection0, plugins) { // eslint-disable-line vars-on-top,no-var,max-lines-per-function,max-statements
+  const editSection = $(editSection0)
+  const header = editSection.closest(':header')
   const headline = header.find('.mw-headline')
+  const editLink = new mw.Uri(editSection.children("a:contains('edit')")
+    .first().attr('href'))
+
+  // Retrieve section's id, number and title now to make sure that their values
+  // aren't affected by the following changes to the DOM
+  const sectionId = headline[0].id
+  const sectionNumber = parseInt(editLink.query.section, 10)
+  const sectionTitle = headline.contents().last().text().trim()
+
+  const root = document.createElement('span')
+
+  editSection.children().first().after(' ', root, ' | ')
+  editSection.children().last().before(' ')
+
   const sectionLink = WM.Parser.squashContiguousWhitespace(`[[#${headline[0].id}]]`)
   const articleLink = WM.Parser.squashContiguousWhitespace(`[[${mw.config.get('wgPageName')}#${headline[0].id}]]`)
 
@@ -104,7 +115,14 @@ function SectionCommands_(editsection, plugins) { // eslint-disable-line vars-on
           ref: 'copySectionWikiLink',
         }, ['c#']),
         ...plugins.reduce((acc, [plugin, component]) => {
-          return acc.concat([' | ', h(component, {props: {headline}})])
+          return acc.concat([' | ', h(component, {props: {
+            editSection,
+            header,
+            headline,
+            sectionId,
+            sectionNumber,
+            sectionTitle,
+          }})])
         }, []),
       ])
     },
