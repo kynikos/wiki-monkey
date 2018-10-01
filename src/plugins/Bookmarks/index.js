@@ -36,7 +36,7 @@ module.exports = class Bookmarks extends _Plugin {
     mainTabs({
       name: 'bookmarks',
       tabTitle: 'Show the bookmarks interface',
-      tabComponent: 'bookmarks',
+      tabLabel: 'bookmarks',
       page: TabPage(this.conf),
     })
   }

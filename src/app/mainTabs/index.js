@@ -25,11 +25,11 @@ const {SpacedVertical} = require('../_components/styled')
 module.exports = class {
   static plugins = {}
 
-  static installPlugin(plugin, {name, tabTitle, tabComponent, page}) {
+  static installPlugin(plugin, {name, tabTitle, tabLabel, page}) {
     if (name in this.plugins) {
       throw new Error(`Duplicated tab plugin: ${name}`)
     }
-    this.plugins[name] = {plugin, tabTitle, tabComponent, page}
+    this.plugins[name] = {plugin, tabTitle, tabLabel, page}
   }
 
   constructor(bodyContent) { // eslint-disable-line max-lines-per-function
@@ -38,7 +38,7 @@ module.exports = class {
       maintenance: {
         plugin: null,
         tabTitle: 'Show the maintenance interface',
-        tabComponent: 'maintenance',
+        tabLabel: 'maintenance',
         page: Maintenance,
       },
     }
@@ -93,8 +93,8 @@ module.exports = class {
                     this.selectTab(name)
                   },
                 },
-              }, [plugin.tabComponent])])
                 // TODO: Highlight the currently selected tab label
+              }, [plugin.tabLabel])])
             }, []).slice(1),
             ' ]',
           ]),
