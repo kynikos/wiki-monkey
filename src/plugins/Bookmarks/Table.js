@@ -42,6 +42,7 @@ module.exports.Table = {
     return h('div', [h('ElTable', {
       ref: 'table',
       props: {
+        rowKey: 'id',
         data: this.bookmarks,
         // TODO: The default style is quite poor...
         stripe: true,
