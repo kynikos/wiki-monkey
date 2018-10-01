@@ -71,6 +71,12 @@ module.exports = {
       state.bookmarks = [bookmark].concat(state.bookmarks)
       state.loading = false
     },
+
+    removeBookmark(state, index) {
+      state.bookmarks =
+        state.bookmarks.slice(0, index).concat(state.bookmarks.slice(index + 1))
+      state.loading = false
+    },
   },
 
   actions: {
@@ -133,9 +139,18 @@ module.exports = {
         type: 'info',
       })
     },
-    async deleteBookmark({commit}, id) {
-      const res = await WM.DB.delete('bookmark', {id})
-      console.debug('RESPONSE:', res) // TODO
+    async deleteBookmark({commit}, {id, index}) {
+      commit('setLoading')
+
+      await WM.DB.delete('bookmark', {id})
+
+      commit('removeBookmark', index)
+
+      mw.notification.notify('Bookmark successfully deleted.', {
+        tag: 'WikiMonkey-Bookmarks',
+        title: 'Wiki Monkey',
+        type: 'info',
+      })
     },
   },
 }

@@ -219,7 +219,7 @@ module.exports.Table = {
               tooltip: 'Delete',
               question: 'Really delete this bookmark?',
               textConfirm: 'Delete',
-              onConfirm: () => { this.deleteBookmark(row.id) },
+              onConfirm: () => { this.deleteBookmark({id: row.id, index}) },
               textCancel: 'Cancel',
               buttonProps: {
                 icon: 'el-icon-delete',
