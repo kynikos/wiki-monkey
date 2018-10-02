@@ -34,7 +34,7 @@ module.exports.SectionCommands = class {
 }
 
 
-function SectionCommands_(editSection0, plugins) { // eslint-disable-line vars-on-top,no-var,max-lines-per-function,max-statements
+function SectionCommands_(editSection0, plugins) { // eslint-disable-line vars-on-top,no-var
   const editSection = $(editSection0)
   const header = editSection.closest(':header')
   const headline = header.find('.mw-headline')
@@ -65,7 +65,7 @@ function SectionCommands_(editSection0, plugins) { // eslint-disable-line vars-o
       return WM.Clipboard.enable(this.$refs.copySectionWikiLink)
     },
 
-    render(h) { // eslint-disable-line max-lines-per-function
+    render(h) {
       return h('span', [
         h('a', {
           attrs: {

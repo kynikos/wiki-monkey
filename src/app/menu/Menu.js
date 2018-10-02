@@ -42,7 +42,7 @@ const makeGroupAction = (subGroupActions) => function (event) {
 
 
 module.exports = class {
-  constructor(plugins, confMenu) { // eslint-disable-line max-lines-per-function,max-statements
+  constructor(plugins, confMenu) {
     this.mainDiv = $('<div>')
     const groupActions = {}
 
@@ -69,7 +69,7 @@ module.exports = class {
 
       let currMenu
 
-      pluginInst.slice(0, -1).forEach((label, m) => { // eslint-disable-line max-statements
+      pluginInst.slice(0, -1).forEach((label, m) => {
         const parentId = currId
         currId = pluginInst.slice(0, m + 1).join('-').replace(/ /gu, '_')
 

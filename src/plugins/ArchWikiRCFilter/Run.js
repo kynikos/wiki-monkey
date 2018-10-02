@@ -21,7 +21,7 @@ const WM = require('../../modules')
 
 
 module.exports = class {
-  constructor(conf) { // eslint-disable-line max-statements
+  constructor(conf) {
     this.conf = conf
 
     const h4s = $('#mw-content-text .mw-changeslist > h4')
@@ -61,7 +61,7 @@ enable in your user preferences.')
     return WM.App.log.info('Grouped articles by language')
   }
 
-  moveArticle(groupDiv, articleTable, language) { // eslint-disable-line max-statements
+  moveArticle(groupDiv, articleTable, language) {
     const langHs = groupDiv.children('h5')
     let langFound = false
     for (let i = 0; i < langHs.length; i++) {

@@ -23,7 +23,7 @@ const {upgradeNow} = require('../../../modules/Upgrade')
 module.exports = {
   name: 'Maintenance',
 
-  render(h) { // eslint-disable-line max-lines-per-function
+  render(h) {
     return h('ul', [
       h('li', [
         h('a', {

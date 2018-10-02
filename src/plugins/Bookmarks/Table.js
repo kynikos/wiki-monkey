@@ -38,7 +38,7 @@ module.exports.Table = {
     ]),
   },
 
-  render(h) { // eslint-disable-line max-lines-per-function,complexity
+  render(h) { // eslint-disable-line complexity
     return h('div', [h('ElTable', {
       ref: 'table',
       props: {

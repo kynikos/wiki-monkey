@@ -20,7 +20,7 @@ const WM = require('../../modules')
 
 
 module.exports = class {
-  constructor(conf, callNext) { // eslint-disable-line max-statements,max-lines-per-function,complexity
+  constructor(conf, callNext) { // eslint-disable-line complexity
     const source = WM.Editor.readSource()
 
     const language = WM.ArchWiki.detectLanguage(WM.Editor.getTitle())[1]

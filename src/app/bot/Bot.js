@@ -86,7 +86,7 @@ module.exports = class {
     this.elems = fdiv ? [fdiv, this.makeConfUI(lists)] : []
   }
 
-  makeFunctionUI(plugins) { // eslint-disable-line max-lines-per-function,max-statements
+  makeFunctionUI(plugins) {
     const self = this
     const fieldset = document.createElement('fieldset')
 
@@ -169,7 +169,7 @@ module.exports = class {
     return false
   }
 
-  makeListSelector(lists) { // eslint-disable-line max-statements
+  makeListSelector(lists) {
     const self = this
     const selectLists = document.createElement('select')
     selectLists.id = 'WikiMonkeyBot-ListSelect'
@@ -200,7 +200,7 @@ module.exports = class {
     return selectLists
   }
 
-  makeConfUI(lists) { // eslint-disable-line max-lines-per-function,max-statements
+  makeConfUI(lists) {
     const self = this
     const bot = document.createElement('div')
 
@@ -363,7 +363,7 @@ module.exports = class {
       .getElementsByTagName('input')[0].checked
   }
 
-  makeFilters() { // eslint-disable-line max-statements
+  makeFilters() {
     this.configuration.filters = []
     const filters = document.getElementById('WikiMonkeyBotFilter')
       .value.split('\n')
@@ -394,7 +394,7 @@ module.exports = class {
     return true
   }
 
-  canProcessPage(link) { // eslint-disable-line max-statements
+  canProcessPage(link) {
     // Exclude red links (they can be found in some special pages)
     if (link.className.split(' ').indexOf('new') < 0) {
       // Don't use link.title because for example in Category pages all
@@ -461,7 +461,7 @@ module.exports = class {
     return origClasses.join(' ')
   }
 
-  _previewFilter() { // eslint-disable-line max-lines-per-function,max-statements
+  _previewFilter() {
     let item; let items; let link; let linkId
     WM.App.log.info('Updating filter preview, please wait ...')
     this._disableStartBot('Updating filter preview ...')
@@ -553,7 +553,7 @@ module.exports = class {
     return value && value !== '0' && value !== this._getBotToken()
   }
 
-  _startAutomatic() { // eslint-disable-line max-statements
+  _startAutomatic() {
     if (this._checkOtherBotsRunning() && !this._canForceStart()) {
       WM.App.log.error(`It's not possible to start the bot (without
   forcing it) for one of the following reasons:<br>
@@ -642,7 +642,7 @@ module.exports = class {
     }
   }
 
-  _processItem(status, items, index, linkId, chainArgs) { // eslint-disable-line max-lines-per-function,max-statements,max-params
+  _processItem(status, items, index, linkId, chainArgs) { // eslint-disable-line max-params
     const self = this
     if (items[index]) {
       const link = items[index].getElementsByTagName('a')[linkId]

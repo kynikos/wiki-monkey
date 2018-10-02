@@ -28,7 +28,7 @@ module.exports._Plugin = class _Plugin {
     throw Error('Not implemented')
   }
 
-  constructor({wikiName, userConfig}) { // eslint-disable-line max-statements
+  constructor({wikiName, userConfig}) {
     // Do generate a new object for each plugin
     this.conf = {}
 

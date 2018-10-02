@@ -85,11 +85,11 @@ module.exports = {
       const res = await WM.DB.get('bookmark')
       commit('storeBookmarks', res)
     },
-    async saveBookmark({commit}, { // eslint-disable-line max-statements,max-lines-per-function
+    async saveBookmark({commit}, {
       sectionId = null,
       sectionNumber = null,
       sectionTitle = null,
-    }) { // eslint-disable-line max-statements
+    }) {
       commit('setLoading')
 
       const data = [

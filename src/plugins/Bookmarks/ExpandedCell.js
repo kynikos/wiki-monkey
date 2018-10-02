@@ -36,7 +36,7 @@ module.exports.ExpandedCell = {
     },
   },
 
-  render(h) { // eslint-disable-line max-lines-per-function,complexity
+  render(h) { // eslint-disable-line complexity
     return h(Grid2C, [
       ['id', this.row.id],
       ['url', this.row.url],

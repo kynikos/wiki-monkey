@@ -49,6 +49,8 @@ module.exports = {
         'linebreak-style': ['error', 'unix'],
         'lines-around-comment': 'off',
         'max-len': ['warn', {'ignoreTrailingComments': true}],
+        'max-lines-per-function': 'off',
+        'max-statements': 'off',
         'max-statements-per-line': 'off',
         'multiline-comment-style': ['error', 'separate-lines'],
         'multiline-ternary': ['error', 'always-multiline'],

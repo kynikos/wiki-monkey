@@ -30,7 +30,7 @@ module.exports = class {
     return this.iteratePages(-1, callNext)
   }
 
-  iteratePages = (pageid, callNext) => { // eslint-disable-line max-statements
+  iteratePages = (pageid, callNext) => {
     pageid++
     const pconf = this.conf.pages[pageid]
     if (pconf) {
@@ -53,7 +53,7 @@ module.exports = class {
     }
   }
 
-  parseList = ( // eslint-disable-line max-statements,max-params
+  parseList = ( // eslint-disable-line max-params
     title, source, timestamp, edittoken,
     [recentDays, inactiveLimit, inactiveIntro, summary, callNext, pageid],
   ) => {
@@ -80,7 +80,7 @@ module.exports = class {
     return WM.App.log.error('Cannot find the needed marks')
   }
 
-  iterateUsers( // eslint-disable-line max-statements,max-params
+  iterateUsers( // eslint-disable-line max-params
     usersArray, index, ucstart, ucend, users,
     title, source, startList, endList, timestamp, edittoken,
     inactiveLimit, inactiveIntro, summary, callNext, pageid
@@ -125,7 +125,7 @@ module.exports = class {
     )
   }
 
-  storeUserContribs = (results, args) => { // eslint-disable-line max-statements
+  storeUserContribs = (results, args) => {
     const usersArray = args[0]
     const index = args[1]
     const ucstart = args[2]
@@ -164,7 +164,7 @@ module.exports = class {
     )
   }
 
-  updateList( // eslint-disable-line max-params,max-statements,max-lines-per-function
+  updateList( // eslint-disable-line max-params
     users, title, source, startList, endList,
     timestamp, edittoken, inactiveIntro, summary, callNext, pageid
   ) {

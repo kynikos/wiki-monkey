@@ -27,7 +27,7 @@ module.exports.PageCommands = class {
     this.plugins.push([plugin, component])
   }
 
-  constructor(container) { // eslint-disable-line max-lines-per-function
+  constructor(container) {
     // Add as a "page status indicator"
     // https://www.mediawiki.org/wiki/Help:Page_status_indicators
 
@@ -58,7 +58,7 @@ module.exports.PageCommands = class {
         }),
       },
 
-      render(h) { // eslint-disable-line max-lines-per-function
+      render(h) {
         return h('div', {
           class: {'mw-indicator': true},
         }, [

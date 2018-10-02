@@ -71,7 +71,7 @@ module.exports.App = class {
     this.log = initTempLog(this.store)
   }
 
-  run() { // eslint-disable-line max-statements,max-lines-per-function,complexity
+  run() { // eslint-disable-line complexity
     const bodyContent = $('#bodyContent')
     if (bodyContent) new MainTabs(bodyContent)
 

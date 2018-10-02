@@ -37,7 +37,7 @@ module.exports.FieldSelect = {
     ]),
   },
 
-  render(h) { // eslint-disable-line max-lines-per-function
+  render(h) {
     return h('div', [h('ElSelect', {
       attrs: {title: "Select which fields to show in the table (the \
 remaining ones will be listed in each row's expanded panel)"},

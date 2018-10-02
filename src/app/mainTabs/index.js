@@ -32,7 +32,7 @@ module.exports = class {
     this.plugins[name] = {plugin, tabTitle, tabLabel, page}
   }
 
-  constructor(bodyContent) { // eslint-disable-line max-lines-per-function
+  constructor(bodyContent) {
     const plugins = {
       ...this.constructor.plugins,
       maintenance: {
@@ -71,7 +71,7 @@ module.exports = class {
         this.selectTab(Object.keys(plugins)[0])
       },
 
-      render(h) { // eslint-disable-line max-lines-per-function
+      render(h) {
         if (!this.shown) { return h('div') }
 
         return h(SpacedVertical, {

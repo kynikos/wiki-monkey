@@ -53,7 +53,7 @@ module.exports = class {
     this.pluginsNewPages.push([plugin, run, makeUI])
   }
 
-  constructor({pageType, display, displayLog, nextNode}) { // eslint-disable-line max-lines-per-function
+  constructor({pageType, display, displayLog, nextNode}) {
     WM.App.store.commit('fieldset/show', display)
     WM.App.store.commit('log/show', displayLog)
 
@@ -120,7 +120,7 @@ module.exports = class {
         }) || this.selectPlugin([0, ...plugins[0]])
       },
 
-      render(h) { // eslint-disable-line max-lines-per-function
+      render(h) {
         let pluginUI
         const selectFilter = h(
           Select,

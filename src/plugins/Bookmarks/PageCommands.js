@@ -19,7 +19,7 @@
 const {Vuex} = require('../../modules/libs')
 
 
-module.exports = function (conf) { // eslint-disable-line max-lines-per-function
+module.exports = function (conf) {
   return {
     name: 'BookmarksPageCommands',
 

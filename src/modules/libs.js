@@ -20,7 +20,7 @@ require('babel-polyfill')
 
 // JQuery is provided globally by MediaWiki
 
-module.exports.init = function () { // eslint-disable-line max-statements
+module.exports.init = function () {
   /* eslint-disable global-require */
   const Vue = require('vue')
   const Vuex = require('vuex')

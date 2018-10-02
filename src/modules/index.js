@@ -75,7 +75,7 @@ module.exports.WikiMonkey = class WikiMonkey {
     Promise.all([mwmodpromise, $.ready]).then(() => this.init())
   }
 
-  setup() { // eslint-disable-line max-statements,max-lines-per-function
+  setup() {
     // mw.loader.load() doesn't return a promise nor support callbacks
     // mw.loader.using() only supports MW modules
     // $.getScript() ignores the cache by default

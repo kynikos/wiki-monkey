@@ -20,7 +20,7 @@ const WM = require('../../modules')
 
 
 module.exports = class {
-  constructor(conf, callNext) { // eslint-disable-line max-statements
+  constructor(conf, callNext) {
     let increaseLevel
     const source = WM.Editor.readSource()
 

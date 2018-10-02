@@ -95,7 +95,7 @@ function displayNotification(content, optionsoverride) {
   return mw.notification.notify(content, options)
 }
 
-function upgrade(upstreamVersion) { // eslint-disable-line max-lines-per-function
+function upgrade(upstreamVersion) {
   const page = `User:${mw.user.getName()}/common.js`
   const pagelink = WM.MW.linkArticle(page)
 
