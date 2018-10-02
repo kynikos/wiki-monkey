@@ -219,7 +219,11 @@ module.exports.Table = {
               tooltip: 'Delete',
               question: 'Really delete this bookmark?',
               textConfirm: 'Delete',
-              onConfirm: () => { this.deleteBookmark({id: row.id, index}) },
+              // Do *not* use the index from the table's field formatter
+              // function, since in general it's different from the bookmark's
+              // index in the bookmarks array, which is never resorted and
+              // keeps the original sort order
+              onConfirm: () => { this.deleteBookmark(row.id) },
               textCancel: 'Cancel',
               buttonProps: {
                 icon: 'el-icon-delete',

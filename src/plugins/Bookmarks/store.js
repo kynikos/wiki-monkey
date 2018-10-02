@@ -18,6 +18,13 @@
 
 const WM = require('../../modules')
 
+function mapIdToIndex(bookmarks) {
+  return bookmarks.reduce((acc, bm, index) => {
+    acc[bm.id] = index
+    return acc
+  }, {})
+}
+
 module.exports = {
   namespaced: true,
 
@@ -49,6 +56,13 @@ module.exports = {
       'time_updated',
     ],
     bookmarks: [],
+    // NOTE how the bookmarks array is left with the original sorting even
+    // after sorting of filtering the table rows; this has also the consequence
+    // that the index passed to the table's field formatter functions is
+    // different in general from the bookmark indexes in the bookmarks array
+    // Also don't use a computed value in the component because it could
+    // generate race bugs
+    bookmarkIdToIndex: {},
     loading: false,
   },
 
@@ -63,18 +77,45 @@ module.exports = {
 
     storeBookmarks(state, bookmarks) {
       state.bookmarks = bookmarks
+      state.bookmarkIdToIndex = mapIdToIndex(bookmarks)
       state.loading = false
     },
 
-    addBookmark(state, bookmark) {
-      // BUG: Possibly update the existing id if already in the table
-      state.bookmarks = [bookmark].concat(state.bookmarks)
+    addBookmark(state, newBookmark) {
+      const index = state.bookmarkIdToIndex[newBookmark.id]
+
+      if (index == null) {
+        // Just append the new bookmark and let the table's sorter functions
+        // visualize its row where it should be; note that the bookmarks array
+        // always keeps the original sorting
+        state.bookmarks = state.bookmarks.concat(newBookmark)
+        // Because the new bookmark has only been appended, I can just add the
+        // new index to the mapping object, without having to update any others
+        state.bookmarkIdToIndex = {
+          ...state.bookmarkIdToIndex,
+          [newBookmark.id]: state.bookmarks.length - 1,
+        }
+      } else {
+        state.bookmarks = state.bookmarks.slice(0, index)
+          .concat(newBookmark)
+          .concat(state.bookmarks.slice(index + 1))
+      }
+
       state.loading = false
     },
 
-    removeBookmark(state, index) {
-      state.bookmarks =
-        state.bookmarks.slice(0, index).concat(state.bookmarks.slice(index + 1))
+    // Do *not* use the index from the table's field formatter function, since
+    // in general it's different from the bookmark's index in the bookmarks
+    // array, which is never resorted and keeps the original sort order
+    removeBookmark(state, id) {
+      const index = state.bookmarkIdToIndex[id]
+      const bookmarks = state.bookmarks.slice(0, index)
+        .concat(state.bookmarks.slice(index + 1))
+      state.bookmarks = bookmarks
+      // Of course don't just remove the key from bookmarkIdToIndex, since all
+      // the subsequent indices must be updated too, so just keep it simple and
+      // update them all
+      state.bookmarkIdToIndex = mapIdToIndex(bookmarks)
       state.loading = false
     },
   },
@@ -139,12 +180,15 @@ module.exports = {
         type: 'info',
       })
     },
-    async deleteBookmark({commit}, {id, index}) {
+    // Do *not* use the index from the table's field formatter function, since
+    // in general it's different from the bookmark's index in the bookmarks
+    // array, which is never resorted and keeps the original sort order
+    async deleteBookmark({commit}, id) {
       commit('setLoading')
 
       await WM.DB.delete('bookmark', {id})
 
-      commit('removeBookmark', index)
+      commit('removeBookmark', id)
 
       mw.notification.notify('Bookmark successfully deleted.', {
         tag: 'WikiMonkey-Bookmarks',
