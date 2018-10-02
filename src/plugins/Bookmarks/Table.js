@@ -214,6 +214,18 @@ module.exports.Table = {
       h('ElTableColumn', {props: {
         formatter: (row, column, cellValue, index) => { // eslint-disable-line max-params
           // TODO: Allow moving bookmarks up/down
+          //       Maybe each row has a button to start a "move" operation;
+          //       After selecting the row to be moved, all the other rows
+          //       receive "move above" and "move below" options
+          //       Maybe even better, allow "tagging" bookmarks with the next
+          //       action to do on it, e.g. "reply", "check for replies",
+          //       "explain idea", "review", "fix" etc., and allow setting a
+          //       time delay to do it, e.g. 1 hour, 6 hours, 1 day, 1 week etc.
+          //       so that the bookmarks are easily sortable in the table by
+          //       "due date"
+          //       Also allow saving liberal notes for each bookmark
+          //       The best thing is if these actions can be done not (only)
+          //       from the table, but directly from the bookmarked pages/sections
           return h(popoverConfirm, {
             props: {
               tooltip: 'Delete',
