@@ -158,12 +158,8 @@ module.exports = {
       }, {})
 
       // Don't rely on the current url's fragment
-      const uri = new mw.Uri().clone()
-      if (sectionId) {
-        uri.fragment = sectionId
-      } else {
-        uri.fragment = null
-      }
+      const uri = new mw.Uri()
+      uri.fragment = sectionId || null
       data.url = uri.toString()
 
       data.section_id = sectionId
