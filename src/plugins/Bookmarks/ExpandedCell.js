@@ -62,6 +62,9 @@ module.exports.ExpandedCell = {
       ['wgDiffNewId', this.row.wgDiffNewId],
       ['time_created', this.row.time_created],
       ['time_updated', this.row.time_updated],
+      ['action_due', this.row.action_due],
+      ['time_due', this.row.time_due],
+      ['notes', this.row.notes],
     ].reduce((acc, [name, value]) => {
       return acc.concat([
         h('div', [name]),

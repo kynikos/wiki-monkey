@@ -49,8 +49,8 @@ module.exports.Table = {
         border: true,
         maxHeight: 1000, // Fixed header
         defaultSort: {
-          prop: 'time_updated',
-          order: 'descending',
+          prop: 'time_due',
+          order: 'ascending',
         },
       },
       attrs: {
@@ -210,6 +210,24 @@ module.exports.Table = {
         formatter(row, column, cellValue, index) { // eslint-disable-line max-params
           return moment(cellValue).format('YYYY-MM-DD dd HH:mm')
         },
+      }}),
+      this.shownFields.includes('action_due') && h('ElTableColumn', {props: {
+        prop: 'action_due',
+        label: 'action_due',
+        sortable: true,
+      }}),
+      this.shownFields.includes('time_due') && h('ElTableColumn', {props: {
+        prop: 'time_due',
+        label: 'time_due',
+        sortable: true,
+        formatter(row, column, cellValue, index) { // eslint-disable-line max-params
+          return moment(cellValue).format('YYYY-MM-DD dd HH:mm')
+        },
+      }}),
+      this.shownFields.includes('notes') && h('ElTableColumn', {props: {
+        prop: 'notes',
+        label: 'notes',
+        sortable: true,
       }}),
       h('ElTableColumn', {props: {
         formatter: (row, column, cellValue, index) => { // eslint-disable-line max-params

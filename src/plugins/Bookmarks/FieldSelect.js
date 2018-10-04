@@ -82,6 +82,9 @@ remaining ones will be listed in each row's expanded panel)"},
       ['wgDiffNewId', 'wgDiffNewId'],
       ['time_created', 'time_created'],
       ['time_updated', 'time_updated'],
+      ['action_due', 'action_due'],
+      ['time_due', 'time_due'],
+      ['notes', 'notes'],
     ].map(([key, label]) => {
       return h('ElOption', {
         props: {

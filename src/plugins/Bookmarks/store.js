@@ -17,6 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const WM = require('../../modules')
+const {moment} = require('../../modules/libs')
 
 function mapIdToIndex(bookmarks) {
   return bookmarks.reduce((acc, bm, index) => {
@@ -52,8 +53,11 @@ module.exports = {
       // 'wgCurRevisionId'
       // 'wgDiffOldId'
       // 'wgDiffNewId'
-      'time_created',
-      'time_updated',
+      // 'time_created',
+      // 'time_updated',
+      'action_due',
+      'time_due',
+      // 'notes',
     ],
     bookmarks: [],
     // NOTE how the bookmarks array is left with the original sorting even
@@ -165,6 +169,11 @@ module.exports = {
       data.section_id = sectionId
       data.section_number = sectionNumber
       data.section_title = sectionTitle
+
+      // TODO
+      data.action_due = 'TODO'
+      data.time_due = moment().toISOString()
+      data.notes = null
 
       const res = await WM.DB.post('bookmark', data)
 
