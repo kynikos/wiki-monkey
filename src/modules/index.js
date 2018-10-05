@@ -52,6 +52,10 @@ const WhatLinksHere = require('./WhatLinksHere')
 
 const {_Plugin} = require('../plugins/_Plugin')
 
+// TODO: Allow the user to start WM manually with a button instead of loading
+//       it automatically at every page load; currently WM can only be
+//       enabled/disabled by editing the User's common.js page
+
 
 module.exports.WikiMonkey = class WikiMonkey {
   conf = {

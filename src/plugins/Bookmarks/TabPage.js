@@ -21,6 +21,8 @@ const {SpacedVertical} = require('../../app/_components/styled')
 const {FieldSelect} = require('./FieldSelect')
 const {Table} = require('./Table')
 
+// TODO: Show how many bookmarks are due in the next hour, day etc.
+
 
 module.exports = function (conf) {
   return {
