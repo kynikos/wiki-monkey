@@ -59,15 +59,18 @@ module.exports = {
       'time_due',
       // 'notes',
     ],
-    bookmarks: [],
+    allBookmarks: [],
+    pageBookmarks: [],
     // NOTE how the bookmarks array is left with the original sorting even
     // after sorting of filtering the table rows; this has also the consequence
     // that the index passed to the table's field formatter functions is
     // different in general from the bookmark indexes in the bookmarks array
     // Also don't use a computed value in the component because it could
     // generate race bugs
-    bookmarkIdToIndex: {},
-    loading: false,
+    allBookmarkIdToIndex: {},
+    pageBookmarkIdToIndex: {},
+    tableLoading: false,
+    pageLoading: false,
   },
 
   mutations: {
@@ -75,67 +78,83 @@ module.exports = {
       state.shownFields = shownFields
     },
 
-    setLoading(state) {
-      state.loading = true
+    setTableLoading(state) {
+      state.tableLoading = true
     },
 
-    storeBookmarks(state, bookmarks) {
-      state.bookmarks = bookmarks
-      state.bookmarkIdToIndex = mapIdToIndex(bookmarks)
-      state.loading = false
+    setPageLoading(state) {
+      state.pageLoading = true
+    },
+
+    storeAllBookmarks(state, allBookmarks) {
+      state.allBookmarks = allBookmarks
+      state.allBookmarkIdToIndex = mapIdToIndex(allBookmarks)
+      state.tableLoading = false
+    },
+
+    storePageBookmarks(state, pageBookmarks) {
+      state.pageBookmarks = pageBookmarks
+      state.pageBookmarkIdToIndex = mapIdToIndex(pageBookmarks)
+      state.pageLoading = false
     },
 
     addBookmark(state, newBookmark) {
-      const index = state.bookmarkIdToIndex[newBookmark.id]
+      const index = state.allBookmarkIdToIndex[newBookmark.id]
 
       if (index == null) {
         // Just append the new bookmark and let the table's sorter functions
         // visualize its row where it should be; note that the bookmarks array
         // always keeps the original sorting
-        state.bookmarks = state.bookmarks.concat(newBookmark)
+        state.allBookmarks = state.allBookmarks.concat(newBookmark)
         // Because the new bookmark has only been appended, I can just add the
         // new index to the mapping object, without having to update any others
-        state.bookmarkIdToIndex = {
-          ...state.bookmarkIdToIndex,
-          [newBookmark.id]: state.bookmarks.length - 1,
+        state.allBookmarkIdToIndex = {
+          ...state.allBookmarkIdToIndex,
+          [newBookmark.id]: state.allBookmarks.length - 1,
         }
       } else {
-        state.bookmarks = state.bookmarks.slice(0, index)
+        state.allBookmarks = state.allBookmarks.slice(0, index)
           .concat(newBookmark)
-          .concat(state.bookmarks.slice(index + 1))
+          .concat(state.allBookmarks.slice(index + 1))
       }
 
-      state.loading = false
+      state.tableLoading = false
     },
 
     // Do *not* use the index from the table's field formatter function, since
     // in general it's different from the bookmark's index in the bookmarks
     // array, which is never resorted and keeps the original sort order
     removeBookmark(state, id) {
-      const index = state.bookmarkIdToIndex[id]
-      const bookmarks = state.bookmarks.slice(0, index)
-        .concat(state.bookmarks.slice(index + 1))
-      state.bookmarks = bookmarks
-      // Of course don't just remove the key from bookmarkIdToIndex, since all
-      // the subsequent indices must be updated too, so just keep it simple and
-      // update them all
-      state.bookmarkIdToIndex = mapIdToIndex(bookmarks)
-      state.loading = false
+      const index = state.allBookmarkIdToIndex[id]
+      const allBookmarks = state.allBookmarks.slice(0, index)
+        .concat(state.allBookmarks.slice(index + 1))
+      state.allBookmarks = allBookmarks
+      // Of course don't just remove the key from allBookmarkIdToIndex, since
+      // all the subsequent indices must be updated too, so just keep it simple
+      // and update them all
+      state.allBookmarkIdToIndex = mapIdToIndex(allBookmarks)
+      state.tableLoading = false
     },
   },
 
   actions: {
-    async queryBookmarks({commit}) {
-      commit('setLoading')
+    async queryAllBookmarks({commit}) {
+      commit('setTableLoading')
       const res = await WM.DB.get('bookmark')
-      commit('storeBookmarks', res)
+      commit('storeAllBookmarks', res)
+    },
+    async queryPageBookmarks({commit}) {
+      commit('setPageLoading')
+      // TODO
+      const res = await WM.DB.get('bookmark')
+      commit('storePageBookmarks', res)
     },
     async saveBookmark({commit}, {
       sectionId = null,
       sectionNumber = null,
       sectionTitle = null,
     }) {
-      commit('setLoading')
+      commit('setTableLoading')
 
       const data = [
         'wgArticleId',
@@ -189,7 +208,7 @@ module.exports = {
     // in general it's different from the bookmark's index in the bookmarks
     // array, which is never resorted and keeps the original sort order
     async deleteBookmark({commit}, id) {
-      commit('setLoading')
+      commit('setTableLoading')
 
       await WM.DB.delete('bookmark', {id})
 

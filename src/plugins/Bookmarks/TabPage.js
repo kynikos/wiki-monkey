@@ -28,12 +28,12 @@ module.exports = function (conf) {
 
     methods: {
       ...Vuex.mapActions('plugins/bookmarks', [
-        'queryBookmarks',
+        'queryAllBookmarks',
       ]),
     },
 
     created() {
-      this.queryBookmarks()
+      this.queryAllBookmarks()
     },
 
     render(h) {

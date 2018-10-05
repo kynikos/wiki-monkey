@@ -17,19 +17,33 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const {Vuex} = require('../../modules/libs')
+const {asciiSpinner} = require('../../app/_components/asciiSpinner')
 
 
 module.exports = function (conf) {
   return {
     name: 'BookmarksPageCommands',
 
+    computed: {
+      ...Vuex.mapState('plugins/bookmarks', [
+        'pageLoading',
+      ]),
+    },
+
     methods: {
       ...Vuex.mapActions('plugins/bookmarks', [
+        'queryPageBookmarks',
         'saveBookmark',
       ]),
     },
 
+    created() {
+      this.queryPageBookmarks()
+    },
+
     render(h) {
+      if (this.pageLoading) return h(asciiSpinner)
+
       return h('a', {
         attrs: {
           href: '#save',

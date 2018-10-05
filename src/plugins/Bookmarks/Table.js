@@ -27,8 +27,8 @@ module.exports.Table = {
   computed: {
     ...Vuex.mapState('plugins/bookmarks', [
       'shownFields',
-      'loading',
-      'bookmarks',
+      'tableLoading',
+      'allBookmarks',
     ]),
   },
 
@@ -43,8 +43,11 @@ module.exports.Table = {
       ref: 'table',
       props: {
         rowKey: 'id',
-        data: this.bookmarks,
+        data: this.allBookmarks,
         // TODO: The default style is quite poor...
+        //       All columns are equally sized
+        //       Words are wrapped
+        //       Stripes are barely visible
         stripe: true,
         border: true,
         maxHeight: 1000, // Fixed header
@@ -59,7 +62,7 @@ module.exports.Table = {
       directives: [
         {
           name: 'loading',
-          value: this.loading,
+          value: this.tableLoading,
         },
       ],
     }, [
