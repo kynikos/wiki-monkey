@@ -17,7 +17,18 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const WM = require('../../modules')
-const {Vue, Vuex} = require('../../modules/libs')
+const {Vue, Vuex, styled} = require('../../modules/libs')
+
+const sCommands = styled.div({
+  '& a': {
+    // Make sure that links are in normal weight
+    fontWeight: 'normal',
+  },
+})
+
+const ActiveWM = styled.a({
+  fontWeight: 'bold !important',
+})
 
 
 module.exports.PageCommands = class {
@@ -59,11 +70,11 @@ module.exports.PageCommands = class {
       },
 
       render(h) {
-        return h('div', {
+        return h(sCommands, {
           class: {'mw-indicator': true},
         }, [
           '[ ',
-          h('a', {
+          h(this.mainIsShown ? ActiveWM : 'a', {
             attrs: {
               href: '#wiki-monkey',
               title: `${this.mainIsShown && 'Close' || 'Open'} the main \
@@ -75,7 +86,6 @@ Wiki Monkey interface`,
                 return this.toggleMain()
               },
             },
-            // TODO: Change the style depending on whether the main page is shown
           }, ['WM']),
           ' | ',
           h('a', {
