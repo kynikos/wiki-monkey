@@ -46,7 +46,7 @@ module.exports = function (conf) {
 
       return h('a', {
         attrs: {
-          href: '#save',
+          href: '#bookmark-page',
           title: 'Bookmark this page',
         },
         on: {

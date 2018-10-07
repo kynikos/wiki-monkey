@@ -53,23 +53,28 @@ module.exports = function (conf) {
 
     computed: {
       ...Vuex.mapState('plugins/bookmarks', [
-        'pageLoading',
+        'sectionLoading',
       ]),
     },
 
     methods: {
       ...Vuex.mapActions('plugins/bookmarks', [
+        'querySectionBookmarks',
         'saveBookmark',
       ]),
     },
 
+    created() {
+      this.querySectionBookmarks(this.sectionId)
+    },
+
     render(h) {
-      if (this.pageLoading) return h(asciiSpinner)
+      if (this.sectionLoading[this.sectionId]) return h(asciiSpinner)
 
       return h('a', {
         attrs: {
-          href: '#save',
-          title: 'Bookmark this page',
+          href: '#bookmark-section',
+          title: 'Bookmark this section',
         },
         on: {
           click: (event) => {

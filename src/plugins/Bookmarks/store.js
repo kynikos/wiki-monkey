@@ -61,6 +61,7 @@ module.exports = {
     ],
     allBookmarks: [],
     pageBookmarks: [],
+    sectionBookmarks: {},
     // NOTE how the bookmarks array is left with the original sorting even
     // after sorting of filtering the table rows; this has also the consequence
     // that the index passed to the table's field formatter functions is
@@ -69,8 +70,10 @@ module.exports = {
     // generate race bugs
     allBookmarkIdToIndex: {},
     pageBookmarkIdToIndex: {},
+    sectionBookmarkIdToIndex: {},
     tableLoading: false,
     pageLoading: false,
+    sectionLoading: {},
   },
 
   mutations: {
@@ -86,6 +89,13 @@ module.exports = {
       state.pageLoading = true
     },
 
+    setSectionLoading(state, sectionId) {
+      state.sectionLoading = {
+        ...state.sectionLoading,
+        [sectionId]: true,
+      }
+    },
+
     storeAllBookmarks(state, allBookmarks) {
       state.allBookmarks = allBookmarks
       state.allBookmarkIdToIndex = mapIdToIndex(allBookmarks)
@@ -98,7 +108,23 @@ module.exports = {
       state.pageLoading = false
     },
 
+    storeSectionBookmarks(state, {sectionId, bookmarks}) {
+      state.sectionBookmarks = {
+        ...state.sectionBookmarks,
+        [sectionId]: bookmarks,
+      }
+      state.sectionBookmarkIdToIndex = {
+        ...state.sectionBookmarkIdToIndex,
+        [sectionId]: mapIdToIndex(bookmarks),
+      }
+      state.sectionLoading = {
+        ...state.sectionLoading,
+        [sectionId]: false,
+      }
+    },
+
     addBookmark(state, newBookmark) {
+      // TODO: Also update stored page and section bookmarks
       const index = state.allBookmarkIdToIndex[newBookmark.id]
 
       if (index == null) {
@@ -125,6 +151,7 @@ module.exports = {
     // in general it's different from the bookmark's index in the bookmarks
     // array, which is never resorted and keeps the original sort order
     removeBookmark(state, id) {
+      // TODO: Also update stored page and section bookmarks
       const index = state.allBookmarkIdToIndex[id]
       const allBookmarks = state.allBookmarks.slice(0, index)
         .concat(state.allBookmarks.slice(index + 1))
@@ -145,9 +172,20 @@ module.exports = {
     },
     async queryPageBookmarks({commit}) {
       commit('setPageLoading')
-      // TODO
-      const res = await WM.DB.get('bookmark')
+      const res = await WM.DB.get('bookmark/page', {
+        wgArticleId: mw.config.get('wgArticleId'),
+        wgPageName: mw.config.get('wgPageName'),
+      })
       commit('storePageBookmarks', res)
+    },
+    async querySectionBookmarks({commit}, sectionId) {
+      commit('setSectionLoading', sectionId)
+      const res = await WM.DB.get('bookmark/section', {
+        wgArticleId: mw.config.get('wgArticleId'),
+        wgPageName: mw.config.get('wgPageName'),
+        section_id: sectionId,
+      })
+      commit('storeSectionBookmarks', {sectionId, bookmarks: res})
     },
     async saveBookmark({commit}, {
       sectionId = null,
