@@ -16,10 +16,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const {Vue, Vuex} = require('../../modules/libs')
+const {Vue, Vuex, styled} = require('../../modules/libs')
 const WM = require('../../modules')
 const Maintenance = require('../_components/maintenance')
 const {SpacedVertical} = require('../_components/styled')
+
+// TODO: Derive style from SpacedVertical
+const sTabs = styled.div({
+  '& > *+*': {
+    marginTop: '1em',
+  },
+
+  '& a': {
+    // Make sure that links are in normal weight
+    fontWeight: 'normal',
+  },
+})
+
+const SelectedTab = styled.a({
+  fontWeight: 'bold !important',
+})
 
 
 module.exports = class {
@@ -74,7 +90,7 @@ module.exports = class {
       render(h) {
         if (!this.shown) { return h('div') }
 
-        return h(SpacedVertical, {
+        return h(sTabs, {
           class: {
             'mw-body-content': true,
           },
@@ -82,19 +98,25 @@ module.exports = class {
           h('div', [
             '[ ',
             ...Object.entries(plugins).reduce((acc, [name, plugin]) => {
-              return acc.concat([' | ', h('a', {
-                attrs: {
-                  href: `#${name}`,
-                  title: plugin.tabTitle,
-                },
-                on: {
-                  click: (event) => {
-                    event.preventDefault()
-                    this.selectTab(name)
+              return acc.concat([
+                ' | ',
+                h(
+                  name === this.selectedTab ? SelectedTab : 'a',
+                  {
+                    attrs: {
+                      href: `#${name}`,
+                      title: plugin.tabTitle,
+                    },
+                    on: {
+                      click: (event) => {
+                        event.preventDefault()
+                        this.selectTab(name)
+                      },
+                    },
                   },
-                },
-                // TODO: Highlight the currently selected tab label
-              }, [plugin.tabLabel])])
+                  [plugin.tabLabel],
+                ),
+              ])
             }, []).slice(1),
             ' ]',
           ]),
