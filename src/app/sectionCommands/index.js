@@ -17,7 +17,15 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const WM = require('../../modules')
-const {Vue} = require('../../modules/libs')
+const {Vue, jssc} = require('../../modules/libs')
+
+jssc({
+  // Keep editsection links styled consistently with the pageCommands
+  // Also, bold is conventionally used to highlight links if needed
+  '@global #bodyContent .mw-editsection a': {
+    fontWeight: 'normal !important',
+  },
+})
 
 
 module.exports.SectionCommands = class {
