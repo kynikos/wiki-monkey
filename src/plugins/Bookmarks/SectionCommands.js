@@ -54,6 +54,7 @@ module.exports = function (conf) {
     computed: {
       ...Vuex.mapState('plugins/bookmarks', [
         'sectionLoading',
+        'sectionBookmarks',
       ]),
     },
 
@@ -86,8 +87,12 @@ module.exports = function (conf) {
             })
           },
         },
-        // TODO: Show if the section has bookmarks
-      }, ['b'])
+      }, [
+        'b',
+        this.sectionBookmarks[this.sectionId].length
+          ? h('sup', [this.sectionBookmarks[this.sectionId].length])
+          : null,
+      ])
     },
   }
 }

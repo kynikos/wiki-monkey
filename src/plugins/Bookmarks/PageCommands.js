@@ -27,6 +27,7 @@ module.exports = function (conf) {
     computed: {
       ...Vuex.mapState('plugins/bookmarks', [
         'pageLoading',
+        'pageBookmarks',
       ]),
     },
 
@@ -55,8 +56,12 @@ module.exports = function (conf) {
             this.saveBookmark({})
           },
         },
-        // TODO: Show if the page has bookmarks
-      }, ['b'])
+      }, [
+        'b',
+        this.pageBookmarks.length
+          ? h('sup', [this.pageBookmarks.length])
+          : null,
+      ])
     },
   }
 }
