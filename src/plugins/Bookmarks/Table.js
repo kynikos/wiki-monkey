@@ -27,7 +27,7 @@ module.exports.Table = {
   computed: {
     ...Vuex.mapState('plugins/bookmarks', [
       'shownFields',
-      'tableLoading',
+      'loading',
       'allBookmarks',
     ]),
   },
@@ -62,7 +62,7 @@ module.exports.Table = {
       directives: [
         {
           name: 'loading',
-          value: this.tableLoading,
+          value: this.loading,
         },
       ],
     }, [
@@ -259,7 +259,7 @@ module.exports.Table = {
               // function, since in general it's different from the bookmark's
               // index in the bookmarks array, which is never resorted and
               // keeps the original sort order
-              onConfirm: () => { this.deleteBookmark(row.id) },
+              onConfirm: () => { this.deleteBookmark(row) },
               textCancel: 'Cancel',
               buttonProps: {
                 icon: 'el-icon-delete',

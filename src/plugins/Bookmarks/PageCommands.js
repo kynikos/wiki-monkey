@@ -26,7 +26,7 @@ module.exports = function (conf) {
 
     computed: {
       ...Vuex.mapState('plugins/bookmarks', [
-        'pageLoading',
+        'loading',
         'pageBookmarks',
       ]),
     },
@@ -43,7 +43,7 @@ module.exports = function (conf) {
     },
 
     render(h) {
-      if (this.pageLoading) return h(asciiSpinner)
+      if (this.loading) return h(asciiSpinner)
 
       return h('a', {
         attrs: {

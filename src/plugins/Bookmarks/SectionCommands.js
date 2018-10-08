@@ -53,7 +53,7 @@ module.exports = function (conf) {
 
     computed: {
       ...Vuex.mapState('plugins/bookmarks', [
-        'sectionLoading',
+        'loading',
         'sectionBookmarks',
       ]),
     },
@@ -70,7 +70,7 @@ module.exports = function (conf) {
     },
 
     render(h) {
-      if (this.sectionLoading[this.sectionId]) return h(asciiSpinner)
+      if (this.loading[this.sectionId]) return h(asciiSpinner)
 
       return h('a', {
         attrs: {
@@ -89,6 +89,7 @@ module.exports = function (conf) {
         },
       }, [
         'b',
+        this.sectionId in this.sectionBookmarks &&
         this.sectionBookmarks[this.sectionId].length
           ? h('sup', [this.sectionBookmarks[this.sectionId].length])
           : null,
