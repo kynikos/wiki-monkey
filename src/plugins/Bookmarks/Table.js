@@ -247,6 +247,9 @@ module.exports.Table = {
           //       Also allow saving liberal notes for each bookmark
           //       The best thing is if these actions can be done not (only)
           //       from the table, but directly from the bookmarked pages/sections
+          // TODO: Allow changing the page/section that a bookmark refers to e.g.
+          //       by pasting a new url; this is useful to update bookmarks to
+          //       pages/sections that have been moved
           return h(popoverConfirm, {
             props: {
               tooltip: 'Delete',
