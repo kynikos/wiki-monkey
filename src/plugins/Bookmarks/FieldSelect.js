@@ -25,16 +25,15 @@ const {Vue, Vuex} = require('../../modules/libs')
 module.exports.FieldSelect = {
   name: 'FieldSelect',
 
-  computed: {
-    ...Vuex.mapState('plugins/bookmarks', [
-      'shownFields',
-    ]),
-  },
-
-  methods: {
-    ...Vuex.mapMutations('plugins/bookmarks', [
-      'updateShownFields',
-    ]),
+  props: {
+    shownFields: {
+      type: Array,
+      required: true,
+    },
+    updateShownFields: {
+      type: Function,
+      required: true,
+    },
   },
 
   render(h) {

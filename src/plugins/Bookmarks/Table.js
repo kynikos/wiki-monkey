@@ -24,11 +24,20 @@ const {ExpandedCell} = require('./ExpandedCell')
 module.exports.Table = {
   name: 'Table',
 
+  props: {
+    shownFields: {
+      type: Array,
+      required: true,
+    },
+    bookmarks: {
+      type: Array,
+      required: true,
+    },
+  },
+
   computed: {
     ...Vuex.mapState('plugins/bookmarks', [
-      'shownFields',
       'loading',
-      'allBookmarks',
     ]),
   },
 
@@ -43,7 +52,7 @@ module.exports.Table = {
       ref: 'table',
       props: {
         rowKey: 'id',
-        data: this.allBookmarks,
+        data: this.bookmarks,
         // TODO: The default style is quite poor...
         //       All columns are equally sized
         //       Words are wrapped

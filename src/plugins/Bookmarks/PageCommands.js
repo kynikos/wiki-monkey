@@ -26,11 +26,15 @@ module.exports = function (conf) {
 
     computed: {
       ...Vuex.mapState('plugins/bookmarks', [
+        'pageShownFields',
         'pageBookmarks',
       ]),
     },
 
     methods: {
+      ...Vuex.mapMutations('plugins/bookmarks', [
+        'updatePageShownFields',
+      ]),
       ...Vuex.mapActions('plugins/bookmarks', [
         'queryPageBookmarks',
       ]),
@@ -46,6 +50,8 @@ module.exports = function (conf) {
           href: '#page-bookmarks',
           title: "Manage this page's bookmarks",
           bookmarks: this.pageBookmarks,
+          shownFields: this.pageShownFields,
+          updateShownFields: this.updatePageShownFields,
         },
       })
     },

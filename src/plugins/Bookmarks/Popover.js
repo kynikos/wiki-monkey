@@ -18,16 +18,11 @@
 
 const {Vue, Vuex} = require('../../modules/libs')
 const {asciiSpinner} = require('../../app/_components/asciiSpinner')
+const {Manager} = require('./Manager')
 
 
 module.exports.Popover = {
   name: 'Popover',
-
-  computed: {
-    ...Vuex.mapState('plugins/bookmarks', [
-      'loading',
-    ]),
-  },
 
   props: {
     sectionId: {
@@ -54,6 +49,20 @@ module.exports.Popover = {
       type: Array,
       required: true,
     },
+    shownFields: {
+      type: Array,
+      required: true,
+    },
+    updateShownFields: {
+      type: Function,
+      required: true,
+    },
+  },
+
+  computed: {
+    ...Vuex.mapState('plugins/bookmarks', [
+      'loading',
+    ]),
   },
 
   methods: {
@@ -79,6 +88,13 @@ module.exports.Popover = {
             },
           },
         }, ['Save']),
+        h(Manager, {
+          props: {
+            shownFields: this.shownFields,
+            bookmarks: this.bookmarks,
+            updateShownFields: this.updateShownFields,
+          },
+        }),
       ]),
       h('a', {
         slot: 'reference',

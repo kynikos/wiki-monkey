@@ -23,12 +23,6 @@ const {Grid2C} = require('../../app/_components/styled')
 module.exports.ExpandedCell = {
   name: 'ExpandedCell',
 
-  computed: {
-    ...Vuex.mapState('plugins/bookmarks', [
-      'shownFields',
-    ]),
-  },
-
   props: {
     row: {
       type: Object,

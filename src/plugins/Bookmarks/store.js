@@ -30,7 +30,7 @@ module.exports = {
   namespaced: true,
 
   state: {
-    shownFields: [
+    allShownFields: [
       // 'id',
       'url',
       // 'section_id',
@@ -40,6 +40,64 @@ module.exports = {
       // 'wgRelevantPageName'
       // 'wgCanonicalSpecialPageName'
       'wgCanonicalNamespace',
+      // 'wgTitle'
+      // 'wgAction'
+      // 'wgIsArticle'
+      // 'wgIsProbablyEditable'
+      // 'wgRelevantPageIsProbablyEditable'
+      // 'wgPageContentLanguage'
+      // 'wgPageContentModel'
+      // 'wgArticleId'
+      // 'wgNamespaceNumber'
+      // 'wgRevisionId'
+      // 'wgCurRevisionId'
+      // 'wgDiffOldId'
+      // 'wgDiffNewId'
+      // 'time_created',
+      // 'time_updated',
+      'action_due',
+      'time_due',
+      // 'notes',
+    ],
+    pageShownFields: [
+      // 'id',
+      'url',
+      // 'section_id',
+      // 'section_number',
+      'section_title',
+      // 'wgPageName',
+      // 'wgRelevantPageName'
+      // 'wgCanonicalSpecialPageName'
+      // 'wgCanonicalNamespace',
+      // 'wgTitle'
+      // 'wgAction'
+      // 'wgIsArticle'
+      // 'wgIsProbablyEditable'
+      // 'wgRelevantPageIsProbablyEditable'
+      // 'wgPageContentLanguage'
+      // 'wgPageContentModel'
+      // 'wgArticleId'
+      // 'wgNamespaceNumber'
+      // 'wgRevisionId'
+      // 'wgCurRevisionId'
+      // 'wgDiffOldId'
+      // 'wgDiffNewId'
+      // 'time_created',
+      // 'time_updated',
+      'action_due',
+      'time_due',
+      // 'notes',
+    ],
+    sectionShownFields: [
+      // 'id',
+      'url',
+      // 'section_id',
+      // 'section_number',
+      // 'section_title',
+      // 'wgPageName',
+      // 'wgRelevantPageName'
+      // 'wgCanonicalSpecialPageName'
+      // 'wgCanonicalNamespace',
       // 'wgTitle'
       // 'wgAction'
       // 'wgIsArticle'
@@ -75,8 +133,16 @@ module.exports = {
   },
 
   mutations: {
-    updateShownFields(state, shownFields) {
-      state.shownFields = shownFields
+    updateAllShownFields(state, shownFields) {
+      state.allShownFields = shownFields
+    },
+
+    updatePageShownFields(state, shownFields) {
+      state.pageShownFields = shownFields
+    },
+
+    updateSectionShownFields(state, shownFields) {
+      state.sectionShownFields = shownFields
     },
 
     setLoading(state) {

@@ -53,11 +53,15 @@ module.exports = function (conf) {
 
     computed: {
       ...Vuex.mapState('plugins/bookmarks', [
+        'sectionShownFields',
         'sectionBookmarks',
       ]),
     },
 
     methods: {
+      ...Vuex.mapMutations('plugins/bookmarks', [
+        'updateSectionShownFields',
+      ]),
       ...Vuex.mapActions('plugins/bookmarks', [
         'querySectionBookmarks',
       ]),
@@ -78,6 +82,8 @@ module.exports = function (conf) {
           bookmarks: this.sectionId in this.sectionBookmarks
             ? this.sectionBookmarks[this.sectionId]
             : [],
+          shownFields: this.sectionShownFields,
+          updateShownFields: this.updateSectionShownFields,
         },
       })
     },

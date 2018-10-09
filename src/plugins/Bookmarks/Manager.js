@@ -17,41 +17,45 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const {Vuex} = require('../../modules/libs')
-const {Manager} = require('./Manager')
+const {SpacedVertical} = require('../../app/_components/styled')
+const {FieldSelect} = require('./FieldSelect')
+const {Table} = require('./Table')
+
+// TODO: Show how many bookmarks are due in the next hour, day etc.
 
 
-module.exports = function (conf) {
-  return {
-    name: 'Bookmarks',
+module.exports.Manager = {
+  name: 'Bookmarks',
 
-    computed: {
-      ...Vuex.mapState('plugins/bookmarks', [
-        'allShownFields',
-        'allBookmarks',
-      ]),
+  props: {
+    shownFields: {
+      type: Array,
+      required: true,
     },
-
-    methods: {
-      ...Vuex.mapMutations('plugins/bookmarks', [
-        'updateAllShownFields',
-      ]),
-      ...Vuex.mapActions('plugins/bookmarks', [
-        'queryAllBookmarks',
-      ]),
+    bookmarks: {
+      type: Array,
+      required: true,
     },
-
-    created() {
-      this.queryAllBookmarks()
+    updateShownFields: {
+      type: Function,
+      required: true,
     },
+  },
 
-    render(h) {
-      return h(Manager, {
+  render(h) {
+    return h(SpacedVertical, [
+      h(FieldSelect, {
         props: {
-          shownFields: this.allShownFields,
-          bookmarks: this.allBookmarks,
-          updateShownFields: this.updateAllShownFields,
+          shownFields: this.shownFields,
+          updateShownFields: this.updateShownFields,
         },
-      })
-    },
-  }
+      }),
+      h(Table, {
+        props: {
+          shownFields: this.shownFields,
+          bookmarks: this.bookmarks,
+        },
+      }),
+    ])
+  },
 }
