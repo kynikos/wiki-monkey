@@ -86,7 +86,7 @@ module.exports = {
       // 'time_updated',
       'action_due',
       'time_due',
-      // 'notes',
+      'notes',
     ],
     sectionShownFields: [
       // 'id',
@@ -115,7 +115,7 @@ module.exports = {
       // 'time_updated',
       'action_due',
       'time_due',
-      // 'notes',
+      'notes',
     ],
     allBookmarks: [],
     pageBookmarks: [],
