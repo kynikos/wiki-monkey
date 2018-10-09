@@ -17,7 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const {Vuex} = require('../../modules/libs')
-const {asciiSpinner} = require('../../app/_components/asciiSpinner')
+const {Popover} = require('./Popover')
 
 
 module.exports = function (conf) {
@@ -53,7 +53,6 @@ module.exports = function (conf) {
 
     computed: {
       ...Vuex.mapState('plugins/bookmarks', [
-        'loading',
         'sectionBookmarks',
       ]),
     },
@@ -61,7 +60,6 @@ module.exports = function (conf) {
     methods: {
       ...Vuex.mapActions('plugins/bookmarks', [
         'querySectionBookmarks',
-        'saveBookmark',
       ]),
     },
 
@@ -70,30 +68,18 @@ module.exports = function (conf) {
     },
 
     render(h) {
-      if (this.loading[this.sectionId]) return h(asciiSpinner)
-
-      return h('a', {
-        attrs: {
-          href: '#bookmark-section',
-          title: 'Bookmark this section',
+      return h(Popover, {
+        props: {
+          sectionId: this.sectionId,
+          sectionNumber: this.sectionNumber,
+          sectionTitle: this.sectionTitle,
+          href: '#section-bookmarks',
+          title: "Manage this section's bookmarks",
+          bookmarks: this.sectionId in this.sectionBookmarks
+            ? this.sectionBookmarks[this.sectionId]
+            : [],
         },
-        on: {
-          click: (event) => {
-            event.preventDefault()
-            this.saveBookmark({
-              sectionId: this.sectionId,
-              sectionNumber: this.sectionNumber,
-              sectionTitle: this.sectionTitle,
-            })
-          },
-        },
-      }, [
-        'b',
-        this.sectionId in this.sectionBookmarks &&
-        this.sectionBookmarks[this.sectionId].length
-          ? h('sup', [this.sectionBookmarks[this.sectionId].length])
-          : null,
-      ])
+      })
     },
   }
 }

@@ -17,7 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const {Vuex} = require('../../modules/libs')
-const {asciiSpinner} = require('../../app/_components/asciiSpinner')
+const {Popover} = require('./Popover')
 
 
 module.exports = function (conf) {
@@ -26,7 +26,6 @@ module.exports = function (conf) {
 
     computed: {
       ...Vuex.mapState('plugins/bookmarks', [
-        'loading',
         'pageBookmarks',
       ]),
     },
@@ -34,7 +33,6 @@ module.exports = function (conf) {
     methods: {
       ...Vuex.mapActions('plugins/bookmarks', [
         'queryPageBookmarks',
-        'saveBookmark',
       ]),
     },
 
@@ -43,25 +41,13 @@ module.exports = function (conf) {
     },
 
     render(h) {
-      if (this.loading) return h(asciiSpinner)
-
-      return h('a', {
-        attrs: {
-          href: '#bookmark-page',
-          title: 'Bookmark this page',
+      return h(Popover, {
+        props: {
+          href: '#page-bookmarks',
+          title: "Manage this page's bookmarks",
+          bookmarks: this.pageBookmarks,
         },
-        on: {
-          click: (event) => {
-            event.preventDefault()
-            this.saveBookmark({})
-          },
-        },
-      }, [
-        'b',
-        this.pageBookmarks.length
-          ? h('sup', [this.pageBookmarks.length])
-          : null,
-      ])
+      })
     },
   }
 }
