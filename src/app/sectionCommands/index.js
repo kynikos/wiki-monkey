@@ -79,7 +79,10 @@ function SectionCommands_(editSection0, plugins) { // eslint-disable-line vars-o
       return h('span', [
         h('a', {
           attrs: {
-            href: '#scroll-to-top',
+            // Don't use a fragment such as #scroll-to-top so that the link can
+            // also be used to copy the link to the current page from any
+            // section
+            href: '',
             title: 'Scroll to the top of the page',
           },
           on: {
@@ -123,7 +126,7 @@ function SectionCommands_(editSection0, plugins) { // eslint-disable-line vars-o
             },
           },
           ref: 'copySectionWikiLink',
-        }, ['c#']),
+        }, ['#c']),
         ...plugins.reduce((acc, [plugin, component]) => {
           return acc.concat([' | ', h(component, {props: {
             editSection,
