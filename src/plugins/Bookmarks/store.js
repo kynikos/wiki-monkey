@@ -61,7 +61,7 @@ module.exports = {
     ],
     pageShownFields: [
       // 'id',
-      'url',
+      // 'url',
       // 'section_id',
       // 'section_number',
       'section_title',
@@ -90,7 +90,7 @@ module.exports = {
     ],
     sectionShownFields: [
       // 'id',
-      'url',
+      // 'url',
       // 'section_id',
       // 'section_number',
       // 'section_title',
