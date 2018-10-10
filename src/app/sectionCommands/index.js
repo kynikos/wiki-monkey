@@ -46,16 +46,18 @@ function SectionCommands_(editSection0, plugins) { // eslint-disable-line vars-o
   const editSection = $(editSection0)
   const header = editSection.closest(':header')
   const headline = header.find('.mw-headline')
-  const editLink = new mw.Uri(editSection.children("a:contains('edit')")
-    .first().attr('href'))
+  const editLink = editSection.children("a:contains('edit')").first()
+  const editUri = new mw.Uri(editLink.attr('href'))
 
   // Retrieve section's id, number and title now to make sure that their values
   // aren't affected by the following changes to the DOM
   const sectionId = headline[0].id
-  const sectionNumber = parseInt(editLink.query.section, 10)
+  const sectionNumber = parseInt(editUri.query.section, 10)
   const sectionTitle = headline.contents().last().text().trim()
 
   const root = document.createElement('span')
+
+  editLink.text('e')
 
   editSection.children().first().after(' ', root, ' | ')
   editSection.children().last().before(' ')
