@@ -21,22 +21,10 @@ const {asciiSpinner} = require('../../app/_components/asciiSpinner')
 const {Manager} = require('./Manager')
 
 
-module.exports.Popover = {
-  name: 'Popover',
+module.exports.PopoverManager = {
+  name: 'BookmarksPopoverManager',
 
   props: {
-    sectionId: {
-      type: String,
-      required: false,
-    },
-    sectionNumber: {
-      type: Number,
-      required: false,
-    },
-    sectionTitle: {
-      type: String,
-      required: false,
-    },
     href: {
       type: String,
       required: true,
@@ -65,37 +53,17 @@ module.exports.Popover = {
     ]),
   },
 
-  methods: {
-    ...Vuex.mapActions('plugins/bookmarks', [
-      'saveBookmark',
-    ]),
-  },
-
   render(h) {
     if (this.loading) return h(asciiSpinner)
 
     return h('ElPopover', [
-      h('div', [
-        h('a', {
-          on: {
-            click: (event) => {
-              event.preventDefault()
-              this.saveBookmark({
-                sectionId: this.sectionId,
-                sectionNumber: this.sectionNumber,
-                sectionTitle: this.sectionTitle,
-              })
-            },
-          },
-        }, ['Save']),
-        h(Manager, {
-          props: {
-            shownFields: this.shownFields,
-            bookmarks: this.bookmarks,
-            updateShownFields: this.updateShownFields,
-          },
-        }),
-      ]),
+      h(Manager, {
+        props: {
+          shownFields: this.shownFields,
+          bookmarks: this.bookmarks,
+          updateShownFields: this.updateShownFields,
+        },
+      }),
       h('a', {
         slot: 'reference',
         attrs: {

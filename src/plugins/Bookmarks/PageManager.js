@@ -17,12 +17,12 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const {Vuex} = require('../../modules/libs')
-const {Popover} = require('./Popover')
+const {PopoverManager} = require('./PopoverManager')
 
 
-module.exports = function (conf) {
+module.exports.PageManager = function (conf) {
   return {
-    name: 'BookmarksPageCommands',
+    name: 'BookmarksPageManager',
 
     computed: {
       ...Vuex.mapState('plugins/bookmarks', [
@@ -45,9 +45,9 @@ module.exports = function (conf) {
     },
 
     render(h) {
-      return h(Popover, {
+      return h(PopoverManager, {
         props: {
-          href: '#page-bookmarks',
+          href: '#manage-page-bookmarks',
           title: "Manage this page's bookmarks",
           bookmarks: this.pageBookmarks,
           shownFields: this.pageShownFields,

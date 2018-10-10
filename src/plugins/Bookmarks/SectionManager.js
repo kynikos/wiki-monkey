@@ -17,12 +17,12 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const {Vuex} = require('../../modules/libs')
-const {Popover} = require('./Popover')
+const {PopoverManager} = require('./PopoverManager')
 
 
-module.exports = function (conf) {
+module.exports.SectionManager = function (conf) {
   return {
-    name: 'BookmarksSectionCommands',
+    name: 'BookmarksSectionManager',
 
     props: {
       editSection: {
@@ -72,12 +72,9 @@ module.exports = function (conf) {
     },
 
     render(h) {
-      return h(Popover, {
+      return h(PopoverManager, {
         props: {
-          sectionId: this.sectionId,
-          sectionNumber: this.sectionNumber,
-          sectionTitle: this.sectionTitle,
-          href: '#section-bookmarks',
+          href: '#manage-section-bookmarks',
           title: "Manage this section's bookmarks",
           bookmarks: this.sectionId in this.sectionBookmarks
             ? this.sectionBookmarks[this.sectionId]

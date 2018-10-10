@@ -18,8 +18,10 @@
 
 const {_Plugin} = require('../_Plugin')
 const storeModule = require('./store')
-const PageCommands = require('./PageCommands')
-const SectionCommands = require('./SectionCommands')
+const {PageNew} = require('./PageNew')
+const {PageManager} = require('./PageManager')
+const {SectionNew} = require('./SectionNew')
+const {SectionManager} = require('./SectionManager')
 const {TabPage} = require('./TabPage')
 
 
@@ -31,8 +33,10 @@ module.exports = class Bookmarks extends _Plugin {
 
   install({store, pageCommands, sectionCommands, mainTabs}) {
     store('bookmarks', storeModule)
-    pageCommands(PageCommands(this.conf))
-    sectionCommands(SectionCommands(this.conf))
+    pageCommands(PageManager(this.conf))
+    pageCommands(PageNew(this.conf))
+    sectionCommands(SectionManager(this.conf))
+    sectionCommands(SectionNew(this.conf))
     mainTabs({
       name: 'bookmarks',
       tabTitle: 'Show the bookmarks interface',
