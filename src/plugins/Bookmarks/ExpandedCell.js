@@ -21,7 +21,7 @@ const {Grid2C} = require('../../app/_components/styled')
 
 
 module.exports.ExpandedCell = {
-  name: 'ExpandedCell',
+  name: 'BookmarksExpandedCell',
 
   props: {
     row: {

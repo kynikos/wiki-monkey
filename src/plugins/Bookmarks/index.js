@@ -20,7 +20,7 @@ const {_Plugin} = require('../_Plugin')
 const storeModule = require('./store')
 const PageCommands = require('./PageCommands')
 const SectionCommands = require('./SectionCommands')
-const TabPage = require('./TabPage')
+const {TabPage} = require('./TabPage')
 
 
 module.exports = class Bookmarks extends _Plugin {

@@ -23,7 +23,7 @@ const {Vue, Vuex} = require('../../modules/libs')
 
 
 module.exports.FieldSelect = {
-  name: 'FieldSelect',
+  name: 'BookmarksFieldSelect',
 
   props: {
     shownFields: {

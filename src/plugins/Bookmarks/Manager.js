@@ -25,7 +25,7 @@ const {Table} = require('./Table')
 
 
 module.exports.Manager = {
-  name: 'Bookmarks',
+  name: 'BookmarksManager',
 
   props: {
     shownFields: {

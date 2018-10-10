@@ -22,7 +22,7 @@ const {ExpandedCell} = require('./ExpandedCell')
 
 
 module.exports.Table = {
-  name: 'Table',
+  name: 'BookmarksTable',
 
   props: {
     shownFields: {

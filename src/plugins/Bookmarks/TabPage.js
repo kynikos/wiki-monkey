@@ -20,9 +20,9 @@ const {Vuex} = require('../../modules/libs')
 const {Manager} = require('./Manager')
 
 
-module.exports = function (conf) {
+module.exports.TabPage = function (conf) {
   return {
-    name: 'Bookmarks',
+    name: 'BookmarksTabPage',
 
     computed: {
       ...Vuex.mapState('plugins/bookmarks', [
