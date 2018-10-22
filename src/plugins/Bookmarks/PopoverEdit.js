@@ -45,6 +45,18 @@ module.exports.PopoverEdit = {
       type: String,
       required: true,
     },
+    bookmarkId: {
+      type: Number,
+      required: false,
+    },
+    bookmarkActionDue: {
+      type: String,
+      required: false,
+    },
+    bookmarkNotes: {
+      type: String,
+      required: false,
+    },
   },
 
   computed: {
@@ -62,6 +74,9 @@ module.exports.PopoverEdit = {
           sectionId: this.sectionId,
           sectionNumber: this.sectionNumber,
           sectionTitle: this.sectionTitle,
+          bookmarkId: this.bookmarkId,
+          bookmarkActionDue: this.bookmarkActionDue,
+          bookmarkNotes: this.bookmarkNotes,
         },
       }),
       h('a', {

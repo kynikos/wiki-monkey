@@ -23,14 +23,6 @@ const {FlexColumn} = require('../../app/_components/styled')
 module.exports.Editor = {
   name: 'BookmarksEditor',
 
-  data() {
-    return {
-      action: 'reply',
-      delay: '1 day',
-      notes: null,
-    }
-  },
-
   props: {
     sectionId: {
       type: String,
@@ -44,6 +36,26 @@ module.exports.Editor = {
       type: String,
       required: false,
     },
+    bookmarkId: {
+      type: Number,
+      required: false,
+    },
+    bookmarkActionDue: {
+      type: String,
+      required: false,
+    },
+    bookmarkNotes: {
+      type: String,
+      required: false,
+    },
+  },
+
+  data() {
+    return {
+      action: this.bookmarkActionDue || 'reply',
+      delay: '1 day',
+      notes: this.bookmarkNotes,
+    }
   },
 
   methods: {
@@ -139,6 +151,7 @@ module.exports.Editor = {
                 sectionId: this.sectionId,
                 sectionNumber: this.sectionNumber,
                 sectionTitle: this.sectionTitle,
+                bookmarkId: this.bookmarkId,
                 action: this.action,
                 delay: this.delay,
                 notes: this.notes,

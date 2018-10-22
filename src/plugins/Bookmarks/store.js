@@ -361,6 +361,7 @@ module.exports = {
       sectionId = null,
       sectionNumber = null,
       sectionTitle = null,
+      bookmarkId = null,
       action = null,
       delay = null,
       notes = null,

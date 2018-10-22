@@ -295,6 +295,19 @@ module.exports.Table = {
           //       pages/sections that have been moved
           return [
             '[ ',
+            h(PopoverEdit, {
+              props: {
+                sectionId: this.sectionId,
+                sectionNumber: this.sectionNumber,
+                sectionTitle: this.sectionTitle,
+                href: '#edit-bookmark',
+                title: 'Edit bookmark',
+                bookmarkId: row.id,
+                bookmarkActionDue: row.action_due,
+                bookmarkNotes: row.notes,
+              },
+            }, ['e']),
+            ' | ',
             h(popoverConfirm, {
               props: {
                 question: 'Really delete this bookmark?',
