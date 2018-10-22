@@ -246,7 +246,11 @@ module.exports.Table = {
         label: 'time_due',
         sortable: true,
         formatter(row, column, cellValue, index) { // eslint-disable-line max-params
-          return moment(cellValue).format('YYYY-MM-DD dd HH:mm')
+          return h('span', {
+            attrs: {title: moment(cellValue).format('YYYY-MM-DD dd HH:mm')},
+          }, [
+            moment(cellValue).fromNow(),
+          ])
         },
       }}),
       this.shownFields.includes('notes') && h('ElTableColumn', {props: {
