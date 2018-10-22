@@ -85,6 +85,11 @@ module.exports.PopoverManager = {
           href: this.href,
           title: this.title,
         },
+        on: {
+          click: (event) => {
+            event.preventDefault()
+          },
+        },
       }, [
         'b',
         this.bookmarks.length

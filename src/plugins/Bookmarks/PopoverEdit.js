@@ -70,6 +70,11 @@ module.exports.PopoverEdit = {
           href: this.href,
           title: this.title,
         },
+        on: {
+          click: (event) => {
+            event.preventDefault()
+          },
+        },
       }, this.$slots.default),
     ])
   },

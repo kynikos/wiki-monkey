@@ -256,15 +256,21 @@ module.exports.Table = {
       }}),
       h('ElTableColumn', {props: {
         renderHeader: (hh, {column, index}) => {
-          return hh(PopoverEdit, {
-            props: {
-              sectionId: this.sectionId,
-              sectionNumber: this.sectionNumber,
-              sectionTitle: this.sectionTitle,
-              href: '#new-section-bookmark',
-              title: 'Bookmark this section',
-            },
-          }, ['+'])
+          return [
+            '[ ',
+            hh(PopoverEdit, {
+              props: {
+                sectionId: this.sectionId,
+                sectionNumber: this.sectionNumber,
+                sectionTitle: this.sectionTitle,
+                href: '#new-section-bookmark',
+                title: this.sectionId == null
+                  ? 'Add a bookmark for this page'
+                  : 'Add a bookmark for this section',
+              },
+            }, ['+']),
+            ' ]',
+          ]
         },
         formatter: (row, column, cellValue, index) => { // eslint-disable-line max-params
           // TODO: Allow moving bookmarks up/down
@@ -283,24 +289,31 @@ module.exports.Table = {
           // TODO: Allow changing the page/section that a bookmark refers to e.g.
           //       by pasting a new url; this is useful to update bookmarks to
           //       pages/sections that have been moved
-          return h(popoverConfirm, {
-            props: {
-              tooltip: 'Delete',
-              question: 'Really delete this bookmark?',
-              textConfirm: 'Delete',
-              // Do *not* use the index from the table's field formatter
-              // function, since in general it's different from the bookmark's
-              // index in the bookmarks array, which is never resorted and
-              // keeps the original sort order
-              onConfirm: () => { this.deleteBookmark(row) },
-              textCancel: 'Cancel',
-              buttonProps: {
-                icon: 'el-icon-delete',
-                size: 'mini',
-                type: 'text',
+          return [
+            '[ ',
+            h(popoverConfirm, {
+              props: {
+                question: 'Really delete this bookmark?',
+                textConfirm: 'delete',
+                // Do *not* use the index from the table's field formatter
+                // function, since in general it's different from the bookmark's
+                // index in the bookmarks array, which is never resorted and
+                // keeps the original sort order
+                onConfirm: () => { this.deleteBookmark(row) },
               },
-            },
-          })
+            }, [h('a', {
+              attrs: {
+                href: '#delete-bookmark',
+                title: 'Delete bookmark',
+              },
+              on: {
+                click: (event) => {
+                  event.preventDefault()
+                },
+              },
+            }, ['d'])]),
+            ' ]',
+          ]
         },
       }}),
     ])])

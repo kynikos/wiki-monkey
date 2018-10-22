@@ -18,29 +18,28 @@
 
 const {Vue, Vuex} = require('../../../modules/libs')
 
+// TODO: Adding a "cancel" button, waiting to close the popover until the
+//       async operation has completed, and in general managing the 'visible'
+//       state of the popover manually using the 'trigger:manual' prop is
+//       tricky, especially because it breaks the default behavior of making
+//       the popover disappear if clicking outside of it because I'm not using
+//       the Vue templates, so I should reimplement the functionality by myself
+//       https://github.com/ElemeFE/element/blob/dev/packages/popover/src/main.vue
+//       https://vuejs.org/v2/guide/render-function.html#v-model
+//       https://stackoverflow.com/questions/152975/how-do-i-detect-a-click-outside-an-element
+
 
 module.exports.popoverConfirm = {
   name: 'popoverConfirm',
 
-  data() {
-    return {
-      // TODO: Besides after clicking on the "cancel" or "confirm" buttons,
-      //       the popper should disappear also when clicking anywhere else on
-      //       the screen, and that would be the default behavior with the
-      //       'trigger:click' prop of ElPopover, however I have to use
-      //       'trigger:manual', and since I'm not using the Vue templates,
-      //       I'd have to reimplement the functionality by myself
-      //       https://github.com/ElemeFE/element/blob/dev/packages/popover/src/main.vue
-      //       https://vuejs.org/v2/guide/render-function.html#v-model
-      visible: false,
-    }
-  },
+  // TODO: See note at the top of the file
+  // data() {
+  //   return {
+  //     visible: false,
+  //   }
+  // },
 
   props: {
-    tooltip: {
-      type: String,
-      required: true,
-    },
     question: {
       type: String,
       required: true,
@@ -53,58 +52,60 @@ module.exports.popoverConfirm = {
       type: Function,
       required: true,
     },
-    textCancel: {
-      type: String,
-      required: true,
-    },
+    // TODO: See note at the top of the file
+    // textCancel: {
+    //   type: String,
+    //   required: true,
+    // },
   },
 
-  methods: {
-    showPopper() {
-      this.visible = true
-    },
-    hidePopper() {
-      this.visible = false
-    },
-  },
+  // TODO: See note at the top of the file
+  // methods: {
+  //   showPopper() {
+  //     this.visible = true
+  //   },
+  //   hidePopper() {
+  //     this.visible = false
+  //   },
+  // },
 
   render(h) {
     return h('ElPopover', {
-      props: {
-        value: this.visible,
-        trigger: 'manual',
-      },
+      // TODO: See note at the top of the file
+      // props: {
+      //   value: this.visible,
+      //   trigger: 'manual',
+      // },
     }, [
-      h('p', [this.question]),
+      h('div', [this.question]),
       h('div', [
-        h('ElButton', {
-          props: {
-            size: 'mini',
-            type: 'text',
-          },
-          on: {click: this.hidePopper},
-        }, [this.textCancel]),
-        h('ElButton', {
-          props: {
-            type: 'primary',
-            size: 'mini',
-          },
-          on: {click: async (event) => {
-            await this.onConfirm()
-            this.hidePopper(event)
+        '[ ',
+        h('a', {
+          attrs: {href: '#'},
+          on: {click: (event) => {
+            event.preventDefault()
+            this.onConfirm()
+            // TODO: See note at the top of the file
+            // await this.onConfirm()
+            // this.hidePopper(event)
           }},
         }, [this.textConfirm]),
+        // TODO: See note at the top of the file
+        // ' | ',
+        // h('a', {
+        //   attrs: {href: '#'},
+        //   on: {click: (event) => {
+        //     event.preventDefault()
+        //     this.hidePopper()
+        //   }},
+        // }, [this.textCancel]),
+        ' ]',
       ]),
-      h('ElButton', {
+      h('span', {
         slot: 'reference',
-        attrs: {title: this.tooltip},
-        props: {
-          icon: 'el-icon-delete',
-          size: 'mini',
-          type: 'text',
-        },
-        on: {click: this.showPopper},
-      }),
+        // TODO: See note at the top of the file
+        // on: {click: this.showPopper},
+      }, this.$slots.default),
     ])
   },
 }

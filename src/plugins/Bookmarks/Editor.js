@@ -129,21 +129,25 @@ module.exports.Editor = {
           change: (value) => { this.notes = value },
         },
       }),
-      h('a', {
-        on: {
-          click: (event) => {
-            event.preventDefault()
-            this.saveBookmark({
-              sectionId: this.sectionId,
-              sectionNumber: this.sectionNumber,
-              sectionTitle: this.sectionTitle,
-              action: this.action,
-              delay: this.delay,
-              notes: this.notes,
-            })
+      h('div', [
+        '[ ',
+        h('a', {
+          on: {
+            click: (event) => {
+              event.preventDefault()
+              this.saveBookmark({
+                sectionId: this.sectionId,
+                sectionNumber: this.sectionNumber,
+                sectionTitle: this.sectionTitle,
+                action: this.action,
+                delay: this.delay,
+                notes: this.notes,
+              })
+            },
           },
-        },
-      }, ['Save']),
+        }, ['save']),
+        ' ]',
+      ]),
     ])
   },
 }
