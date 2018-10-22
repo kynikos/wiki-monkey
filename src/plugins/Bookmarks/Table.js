@@ -19,6 +19,7 @@
 const {Vuex, moment} = require('../../modules/libs')
 const {popoverConfirm} = require('../../app/_components/popoverConfirm')
 const {ExpandedCell} = require('./ExpandedCell')
+const {PopoverEdit} = require('./PopoverEdit')
 
 
 module.exports.Table = {
@@ -32,6 +33,18 @@ module.exports.Table = {
     bookmarks: {
       type: Array,
       required: true,
+    },
+    sectionId: {
+      type: String,
+      required: false,
+    },
+    sectionNumber: {
+      type: Number,
+      required: false,
+    },
+    sectionTitle: {
+      type: String,
+      required: false,
     },
   },
 
@@ -242,6 +255,17 @@ module.exports.Table = {
         sortable: true,
       }}),
       h('ElTableColumn', {props: {
+        renderHeader: (hh, {column, index}) => {
+          return hh(PopoverEdit, {
+            props: {
+              sectionId: this.sectionId,
+              sectionNumber: this.sectionNumber,
+              sectionTitle: this.sectionTitle,
+              href: '#new-section-bookmark',
+              title: 'Bookmark this section',
+            },
+          }, ['+'])
+        },
         formatter: (row, column, cellValue, index) => { // eslint-disable-line max-params
           // TODO: Allow moving bookmarks up/down
           //       Maybe each row has a button to start a "move" operation;

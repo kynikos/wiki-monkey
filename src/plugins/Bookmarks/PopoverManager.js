@@ -45,6 +45,18 @@ module.exports.PopoverManager = {
       type: Function,
       required: true,
     },
+    sectionId: {
+      type: String,
+      required: false,
+    },
+    sectionNumber: {
+      type: Number,
+      required: false,
+    },
+    sectionTitle: {
+      type: String,
+      required: false,
+    },
   },
 
   computed: {
@@ -62,6 +74,9 @@ module.exports.PopoverManager = {
           shownFields: this.shownFields,
           bookmarks: this.bookmarks,
           updateShownFields: this.updateShownFields,
+          sectionId: this.sectionId,
+          sectionNumber: this.sectionNumber,
+          sectionTitle: this.sectionTitle,
         },
       }),
       h('a', {

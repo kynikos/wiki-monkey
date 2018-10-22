@@ -17,60 +17,51 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const {Vuex} = require('../../modules/libs')
+const {PopoverManager} = require('./PopoverManager')
 const {PopoverEdit} = require('./PopoverEdit')
 
 
-module.exports.SectionNew = function (conf) {
+module.exports.PageCommand = function (conf) {
   return {
-    name: 'BookmarksSectionNew',
+    name: 'BookmarksPageCommand',
 
-    props: {
-      editSection: {
-        type: Object,
-        required: true,
-      },
-      header: {
-        type: Object,
-        required: true,
-      },
-      headline: {
-        type: Object,
-        required: true,
-      },
-      sectionId: {
-        type: String,
-        required: true,
-      },
-      sectionNumber: {
-        type: Number,
-        required: true,
-      },
-      sectionTitle: {
-        type: String,
-        required: true,
-      },
+    computed: {
+      ...Vuex.mapState('plugins/bookmarks', [
+        'pageShownFields',
+        'pageBookmarks',
+      ]),
     },
 
     methods: {
+      ...Vuex.mapMutations('plugins/bookmarks', [
+        'updatePageShownFields',
+      ]),
       ...Vuex.mapActions('plugins/bookmarks', [
-        'querySectionBookmarks',
+        'queryPageBookmarks',
       ]),
     },
 
     created() {
-      this.querySectionBookmarks(this.sectionId)
+      this.queryPageBookmarks()
     },
 
     render(h) {
-      return h(PopoverEdit, {
-        props: {
-          sectionId: this.sectionId,
-          sectionNumber: this.sectionNumber,
-          sectionTitle: this.sectionTitle,
-          href: '#new-section-bookmark',
-          title: 'Bookmark this section',
-        },
-      }, ['b+'])
+      return this.pageBookmarks.length
+        ? h(PopoverManager, {
+          props: {
+            href: '#manage-page-bookmarks',
+            title: "Manage this page's bookmarks",
+            bookmarks: this.pageBookmarks,
+            shownFields: this.pageShownFields,
+            updateShownFields: this.updatePageShownFields,
+          },
+        })
+        : h(PopoverEdit, {
+          props: {
+            href: '#new-page-bookmark',
+            title: 'Bookmark this page',
+          },
+        }, ['b'])
     },
   }
 }

@@ -18,11 +18,12 @@
 
 const {Vuex} = require('../../modules/libs')
 const {PopoverManager} = require('./PopoverManager')
+const {PopoverEdit} = require('./PopoverEdit')
 
 
-module.exports.SectionManager = function (conf) {
+module.exports.SectionCommand = function (conf) {
   return {
-    name: 'BookmarksSectionManager',
+    name: 'BookmarksSectionCommand',
 
     props: {
       editSection: {
@@ -72,17 +73,29 @@ module.exports.SectionManager = function (conf) {
     },
 
     render(h) {
-      return h(PopoverManager, {
-        props: {
-          href: '#manage-section-bookmarks',
-          title: "Manage this section's bookmarks",
-          bookmarks: this.sectionId in this.sectionBookmarks
-            ? this.sectionBookmarks[this.sectionId]
-            : [],
-          shownFields: this.sectionShownFields,
-          updateShownFields: this.updateSectionShownFields,
-        },
-      })
+      return this.sectionId in this.sectionBookmarks &&
+        this.sectionBookmarks[this.sectionId].length
+        ? h(PopoverManager, {
+          props: {
+            href: '#manage-section-bookmarks',
+            title: "Manage this section's bookmarks",
+            bookmarks: this.sectionBookmarks[this.sectionId],
+            shownFields: this.sectionShownFields,
+            updateShownFields: this.updateSectionShownFields,
+            sectionId: this.sectionId,
+            sectionNumber: this.sectionNumber,
+            sectionTitle: this.sectionTitle,
+          },
+        })
+        : h(PopoverEdit, {
+          props: {
+            sectionId: this.sectionId,
+            sectionNumber: this.sectionNumber,
+            sectionTitle: this.sectionTitle,
+            href: '#new-section-bookmark',
+            title: 'Bookmark this section',
+          },
+        }, ['b'])
     },
   }
 }

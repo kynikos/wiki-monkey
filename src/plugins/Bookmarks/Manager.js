@@ -40,6 +40,18 @@ module.exports.Manager = {
       type: Function,
       required: true,
     },
+    sectionId: {
+      type: String,
+      required: false,
+    },
+    sectionNumber: {
+      type: Number,
+      required: false,
+    },
+    sectionTitle: {
+      type: String,
+      required: false,
+    },
   },
 
   render(h) {
@@ -54,6 +66,9 @@ module.exports.Manager = {
         props: {
           shownFields: this.shownFields,
           bookmarks: this.bookmarks,
+          sectionId: this.sectionId,
+          sectionNumber: this.sectionNumber,
+          sectionTitle: this.sectionTitle,
         },
       }),
     ])
