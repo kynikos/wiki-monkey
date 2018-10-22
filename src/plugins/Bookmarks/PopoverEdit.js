@@ -21,8 +21,8 @@ const {asciiSpinner} = require('../../app/_components/asciiSpinner')
 const {Editor} = require('./Editor')
 
 
-module.exports.PopoverNew = {
-  name: 'BookmarksPopoverNew',
+module.exports.PopoverEdit = {
+  name: 'BookmarksPopoverEdit',
 
   props: {
     sectionId: {
@@ -70,7 +70,7 @@ module.exports.PopoverNew = {
           href: this.href,
           title: this.title,
         },
-      }, ['b+']),
+      }, this.$slots.default),
     ])
   },
 }

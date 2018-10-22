@@ -17,7 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const {Vuex} = require('../../modules/libs')
-const {PopoverNew} = require('./PopoverNew')
+const {PopoverEdit} = require('./PopoverEdit')
 
 
 module.exports.SectionNew = function (conf) {
@@ -62,7 +62,7 @@ module.exports.SectionNew = function (conf) {
     },
 
     render(h) {
-      return h(PopoverNew, {
+      return h(PopoverEdit, {
         props: {
           sectionId: this.sectionId,
           sectionNumber: this.sectionNumber,
@@ -70,7 +70,7 @@ module.exports.SectionNew = function (conf) {
           href: '#new-section-bookmark',
           title: 'Bookmark this section',
         },
-      })
+      }, ['b+'])
     },
   }
 }
