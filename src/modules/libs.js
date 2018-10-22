@@ -48,7 +48,9 @@ module.exports.init = function () {
   const locale = require('element-ui/lib/locale').default
   locale.use(language)
   require('../app/element.sass')
+  Vue.use(require('element-ui/lib/autocomplete').default)
   Vue.use(require('element-ui/lib/button').default)
+  Vue.use(require('element-ui/lib/input').default)
   Vue.use(require('element-ui/lib/loading').default)
   Vue.use(require('element-ui/lib/option').default)
   Vue.use(require('element-ui/lib/popover').default)

@@ -17,10 +17,19 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const {Vue, Vuex} = require('../../modules/libs')
+const {FlexColumn} = require('../../app/_components/styled')
 
 
 module.exports.Editor = {
   name: 'BookmarksEditor',
+
+  data() {
+    return {
+      action: 'reply',
+      delay: '1 day',
+      notes: null,
+    }
+  },
 
   props: {
     sectionId: {
@@ -44,7 +53,82 @@ module.exports.Editor = {
   },
 
   render(h) {
-    return h('div', [
+    return h(FlexColumn, [
+      // TODO: I haven't been able to make fetchSuggestions work yet...
+      // h('ElAutocomplete', {
+      //   props: {
+      //     placeholder: 'action',
+      //     autocomplete: 'on',
+      //     fetchSuggestions: (queryString, callback) => {
+      //       console.debug('ElAutocomplete queryString:', queryString)
+      //       callback(['abcde', 'fghij', 'klmno'])
+      //     },
+      //   },
+      //   on: {
+      //     change: (value) => console.debug('ElAutocomplete onChange:', value),
+      //     select: (value) => console.debug('ElAutocomplete onSelect', value),
+      //   },
+      // }),
+      h('ElSelect', {
+        props: {
+          placeholder: 'action',
+          value: this.action,
+          filterable: true,
+          allowCreate: true,
+          defaultFirstOption: true,
+        },
+        on: {
+          change: (value) => { this.action = value },
+        },
+      }, [
+        'reply',
+        'check for reply',
+        'watch abuse',
+        'review edit',
+        'fix style',
+        'fix content',
+      ].map((value) => h('ElOption', {props: {value, label: value}}))),
+      h('ElSelect', {
+        props: {
+          placeholder: 'delay',
+          value: this.delay,
+          filterable: true,
+          allowCreate: true,
+          defaultFirstOption: true,
+        },
+        on: {
+          change: (value) => { this.delay = value },
+        },
+      }, [
+        '5 minutes',
+        '10 minutes',
+        '15 minutes',
+        '30 minutes',
+        '1 hour',
+        '2 hours',
+        '3 hours',
+        '4 hours',
+        '6 hours',
+        '8 hours',
+        '12 hours',
+        '1 day',
+        '2 days',
+        '3 days',
+        '1 week',
+        '2 weeks',
+        '1 month',
+      ].map((value) => h('ElOption', {props: {value, label: value}}))),
+      h('ElInput', {
+        props: {
+          placeholder: 'notes',
+          value: this.notes,
+          type: 'textarea',
+          autosize: {minRows: 2},
+        },
+        on: {
+          change: (value) => { this.notes = value },
+        },
+      }),
       h('a', {
         on: {
           click: (event) => {
@@ -53,6 +137,9 @@ module.exports.Editor = {
               sectionId: this.sectionId,
               sectionNumber: this.sectionNumber,
               sectionTitle: this.sectionTitle,
+              action: this.action,
+              delay: this.delay,
+              notes: this.notes,
             })
           },
         },

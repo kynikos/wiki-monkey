@@ -361,6 +361,9 @@ module.exports = {
       sectionId = null,
       sectionNumber = null,
       sectionTitle = null,
+      action = null,
+      delay = null,
+      notes = null,
     }) {
       commit('setLoading')
 
@@ -397,10 +400,13 @@ module.exports = {
       data.section_number = sectionNumber
       data.section_title = sectionTitle
 
-      // TODO
-      data.action_due = 'TODO'
-      data.time_due = moment().toISOString()
-      data.notes = null
+      data.action_due = action
+      // Duration units must comply with https://momentjs.com/docs/#/durations/
+      // TODO: Return an error for invalid strings
+      const [_, durationNumber, durationUnit] = delay.match(/(\d+) ?(.+)/u)
+      data.time_due = moment().add(parseInt(durationNumber, 10), durationUnit)
+        .toISOString()
+      data.notes = notes
 
       const res = await WM.DB.post('bookmark', data)
 

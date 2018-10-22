@@ -14,6 +14,11 @@ module.exports.FlexSpaced = styled.div({
   },
 })
 
+module.exports.FlexColumn = styled.div({
+  display: 'flex',
+  flexDirection: 'column',
+})
+
 module.exports.Grid2C = styled.div({
   display: 'grid',
   gridTemplateColumns: 'auto auto',
