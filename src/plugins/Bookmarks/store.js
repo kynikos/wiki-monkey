@@ -173,29 +173,29 @@ module.exports = {
       state.loading = false
     },
 
-    addBookmark(state, newBookmark) {
-      const allIndex = state.allBookmarkIdToIndex[newBookmark.id]
+    upsertBookmark(state, bookmark) {
+      const allIndex = state.allBookmarkIdToIndex[bookmark.id]
 
       if (allIndex == null) {
-        // The new bookmark is not in allBookmarks
+        // The bookmark is not in allBookmarks (it's new)
 
         // Just append the new bookmark and let the table's sorter functions
         // visualize its row where it should be; note that the bookmarks array
         // always keeps the original sorting
-        state.allBookmarks = state.allBookmarks.concat(newBookmark)
+        state.allBookmarks = state.allBookmarks.concat(bookmark)
 
         // Because the new bookmark has only been appended, I can just add the
         // new index to the mapping object, without having to update any others
         state.allBookmarkIdToIndex = {
           ...state.allBookmarkIdToIndex,
-          [newBookmark.id]: state.allBookmarks.length - 1,
+          [bookmark.id]: state.allBookmarks.length - 1,
         }
       } else {
-        // The new bookmark is already in allBookmarks, no need to update
+        // The bookmark is already in allBookmarks, no need to update
         // allBookmarkIdToIndex
 
         state.allBookmarks = state.allBookmarks.slice(0, allIndex)
-          .concat(newBookmark)
+          .concat(bookmark)
           .concat(state.allBookmarks.slice(allIndex + 1))
       }
 
@@ -206,78 +206,78 @@ module.exports = {
       const wgArticleId = mw.config.get('wgArticleId')
       const wgPageName = mw.config.get('wgPageName')
 
-      const pageIndex = state.pageBookmarkIdToIndex[newBookmark.id]
+      const pageIndex = state.pageBookmarkIdToIndex[bookmark.id]
 
       if (pageIndex == null) {
-        // The new bookmark is not in pageBookmarks (nor in sectionBookmarks,
+        // The bookmark is not in pageBookmarks (nor in sectionBookmarks,
         // but deal with it separately for clarity, don't optimize for the
         // sake of it)
 
         if (
-          newBookmark.wgArticleId === wgArticleId ||
-          newBookmark.wgPageName === wgPageName
+          bookmark.wgArticleId === wgArticleId ||
+          bookmark.wgPageName === wgPageName
         ) {
-          // The new bookmark does refer to this page
+          // The bookmark does refer to this page
 
           // [analogous comment as for allBookmarks above]
-          state.pageBookmarks = state.pageBookmarks.concat(newBookmark)
+          state.pageBookmarks = state.pageBookmarks.concat(bookmark)
 
           // [analogous comment as for allBookmarkIdToIndex above]
           state.pageBookmarkIdToIndex = {
             ...state.pageBookmarkIdToIndex,
-            [newBookmark.id]: state.pageBookmarks.length - 1,
+            [bookmark.id]: state.pageBookmarks.length - 1,
           }
         }
       } else {
-        // The new bookmark is already in pageBookmarks (so it's already proved
+        // The bookmark is already in pageBookmarks (so it's already proved
         // that it refers to this page), no need to update
         // pageBookmarkIdToIndex
 
         state.pageBookmarks = state.pageBookmarks.slice(0, pageIndex)
-          .concat(newBookmark)
+          .concat(bookmark)
           .concat(state.pageBookmarks.slice(pageIndex + 1))
       }
 
-      if (newBookmark.section_id in state.sectionBookmarkIdToIndex) {
+      if (bookmark.section_id in state.sectionBookmarkIdToIndex) {
         // The section ID is in sectionBookmarks (so it's already proved that
         // the bookmark refers to this page)
 
         const sectionIndex = state.sectionBookmarkIdToIndex[
-          newBookmark.section_id][newBookmark.id]
+          bookmark.section_id][bookmark.id]
 
         if (sectionIndex == null) {
-          // The new bookmark is not in sectionBookmarks
+          // The bookmark is not in sectionBookmarks
 
           // [analogous comment as for allBookmarks above]
-          state.sectionBookmarks[newBookmark.section_id] =
-            state.sectionBookmarks[newBookmark.section_id].concat(newBookmark)
+          state.sectionBookmarks[bookmark.section_id] =
+            state.sectionBookmarks[bookmark.section_id].concat(bookmark)
 
           // [analogous comment as for allBookmarkIdToIndex above]
-          state.sectionBookmarkIdToIndex[newBookmark.section_id] = {
-            ...state.sectionBookmarkIdToIndex[newBookmark.section_id],
-            [newBookmark.id]: state.sectionBookmarks[newBookmark.section_id].length - 1,
+          state.sectionBookmarkIdToIndex[bookmark.section_id] = {
+            ...state.sectionBookmarkIdToIndex[bookmark.section_id],
+            [bookmark.id]: state.sectionBookmarks[bookmark.section_id].length - 1,
           }
         } else {
-          // The new bookmark is already in sectionBookmarks, no need to update
+          // The bookmark is already in sectionBookmarks, no need to update
           // sectionBookmarkIdToIndex
 
-          state.sectionBookmarks[newBookmark.section_id] =
-            state.sectionBookmarks[newBookmark.section_id]
+          state.sectionBookmarks[bookmark.section_id] =
+            state.sectionBookmarks[bookmark.section_id]
               .slice(0, sectionIndex)
-              .concat(newBookmark)
-              .concat(state.sectionBookmarks[newBookmark.section_id]
+              .concat(bookmark)
+              .concat(state.sectionBookmarks[bookmark.section_id]
                 .slice(sectionIndex + 1))
         }
       } else if (
-        newBookmark.wgArticleId === wgArticleId ||
-        newBookmark.wgPageName === wgPageName
+        bookmark.wgArticleId === wgArticleId ||
+        bookmark.wgPageName === wgPageName
       ) {
-        // Neither the section ID nor the new bookmark are in sectionBookmarks
-        // The new bookmark does refer to this page
+        // Neither the section ID nor the bookmark are in sectionBookmarks
+        // The bookmark does refer to this page
 
-        state.sectionBookmarks[newBookmark.section_id] = [newBookmark]
-        state.sectionBookmarkIdToIndex[newBookmark.section_id] = {
-          [newBookmark.id]: 0,
+        state.sectionBookmarks[bookmark.section_id] = [bookmark]
+        state.sectionBookmarkIdToIndex[bookmark.section_id] = {
+          [bookmark.id]: 0,
         }
       }
 
@@ -337,7 +337,7 @@ module.exports = {
         // Currently the criterion to identify bookmarks belonging to the page
         // is to match the wgArticleId or the wgPageName (see also on the
         // server); if changing this, also the criteria in the mutations must
-        // be changed accordingly, e.g. in addBookmark and removeBookmark
+        // be changed accordingly, e.g. in upsertBookmark and removeBookmark
         wgArticleId: mw.config.get('wgArticleId'),
         wgPageName: mw.config.get('wgPageName'),
       })
@@ -350,7 +350,7 @@ module.exports = {
         // section is to match the wgArticleId or the wgPageName, and the
         // section_id (see also on the server); if changing this, also the
         // criteria in the mutations must be changed accordingly, e.g. in
-        // addBookmark and removeBookmark
+        // upsertBookmark and removeBookmark
         wgArticleId: mw.config.get('wgArticleId'),
         wgPageName: mw.config.get('wgPageName'),
         section_id: sectionId,
@@ -411,7 +411,7 @@ module.exports = {
 
       const res = await WM.DB.post('bookmark', data)
 
-      commit('addBookmark', res.bookmark)
+      commit('upsertBookmark', res.bookmark)
 
       mw.notification.notify('Bookmark successfully saved.', {
         tag: 'WikiMonkey-Bookmarks',
