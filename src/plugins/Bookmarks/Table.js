@@ -277,22 +277,14 @@ module.exports.Table = {
           ]
         },
         formatter: (row, column, cellValue, index) => { // eslint-disable-line max-params
-          // TODO: Allow moving bookmarks up/down
+          // TODO: Besides the due date, introduce a numeric priority and allow
+          //       moving bookmarks up/down?
           //       Maybe each row has a button to start a "move" operation;
           //       After selecting the row to be moved, all the other rows
           //       receive "move above" and "move below" options
-          //       Maybe even better, allow "tagging" bookmarks with the next
-          //       action to do on it, e.g. "reply", "check for replies",
-          //       "explain idea", "review", "fix" etc., and allow setting a
-          //       time delay to do it, e.g. 1 hour, 6 hours, 1 day, 1 week etc.
-          //       so that the bookmarks are easily sortable in the table by
-          //       "due date"
-          //       Also allow saving liberal notes for each bookmark
-          //       The best thing is if these actions can be done not (only)
-          //       from the table, but directly from the bookmarked pages/sections
           // TODO: Allow changing the page/section that a bookmark refers to e.g.
-          //       by pasting a new url; this is useful to update bookmarks to
-          //       pages/sections that have been moved
+          //       by copy-pasting its ID (or the new url?); this is useful to
+          //       update bookmarks to pages/sections that have been moved
           return [
             '[ ',
             h(PopoverEdit, {
