@@ -368,38 +368,44 @@ module.exports = {
     }) {
       commit('setLoading')
 
-      const data = [
-        'wgArticleId',
-        'wgPageName',
-        'wgRelevantPageName',
-        'wgCanonicalSpecialPageName',
-        'wgCanonicalNamespace',
-        'wgNamespaceNumber',
-        'wgTitle',
-        'wgRevisionId',
-        'wgCurRevisionId',
-        'wgDiffOldId',
-        'wgDiffNewId',
-        'wgAction',
-        'wgIsArticle',
-        'wgIsProbablyEditable',
-        'wgRelevantPageIsProbablyEditable',
-        'wgPageContentLanguage',
-        'wgPageContentModel',
-        // 'wgCategories'  # TODO
-      ].reduce((acc, item) => {
-        acc[item] = mw.config.get(item)
-        return acc
-      }, {})
+      let data
 
-      // Don't rely on the current url's fragment
-      const uri = new mw.Uri()
-      uri.fragment = sectionId || null
-      data.url = uri.toString()
+      if (bookmarkId == null) {
+        data = [
+          'wgArticleId',
+          'wgPageName',
+          'wgRelevantPageName',
+          'wgCanonicalSpecialPageName',
+          'wgCanonicalNamespace',
+          'wgNamespaceNumber',
+          'wgTitle',
+          'wgRevisionId',
+          'wgCurRevisionId',
+          'wgDiffOldId',
+          'wgDiffNewId',
+          'wgAction',
+          'wgIsArticle',
+          'wgIsProbablyEditable',
+          'wgRelevantPageIsProbablyEditable',
+          'wgPageContentLanguage',
+          'wgPageContentModel',
+          // 'wgCategories'  # TODO
+        ].reduce((acc, item) => {
+          acc[item] = mw.config.get(item)
+          return acc
+        }, {})
 
-      data.section_id = sectionId
-      data.section_number = sectionNumber
-      data.section_title = sectionTitle
+        // Don't rely on the current url's fragment
+        const uri = new mw.Uri()
+        uri.fragment = sectionId || null
+        data.url = uri.toString()
+
+        data.section_id = sectionId
+        data.section_number = sectionNumber
+        data.section_title = sectionTitle
+      } else {
+        data = {id: bookmarkId}
+      }
 
       data.action_due = action
       // Duration units must comply with https://momentjs.com/docs/#/durations/
@@ -409,7 +415,13 @@ module.exports = {
         .toISOString()
       data.notes = notes
 
-      const res = await WM.DB.post('bookmark', data)
+      let res
+
+      if (bookmarkId == null) {
+        res = await WM.DB.post('bookmark', data)
+      } else {
+        res = await WM.DB.patch('bookmark', data)
+      }
 
       commit('upsertBookmark', res.bookmark)
 
