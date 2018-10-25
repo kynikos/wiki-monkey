@@ -28,7 +28,7 @@ module.exports._Plugin = class _Plugin {
     throw Error('Not implemented')
   }
 
-  constructor({wikiName, userConfig}) {
+  constructor({wikiName, userConfigs}) {
     // Do generate a new object for each plugin
     this.conf = {}
 
@@ -43,27 +43,33 @@ module.exports._Plugin = class _Plugin {
       $.extend(this.conf, this.constructor.wikiToConfDefault[wikiName])
     }
 
-    if (this.constructor.name in userConfig) {
-      // Don't just use $.extend() so it's possible to see if there are
-      // unknown options and possibly warn the user
-      for (const option in userConfig[this.constructor.name]) {
-        const value = userConfig[this.constructor.name][option]
-        if (option in this.conf) {
-          this.conf[option] = value
-          delete userConfig[this.constructor.name][option]
+    for (const userConfig of userConfigs) {
+      if (this.constructor.name in userConfig) {
+        // Don't just use $.extend() so it's possible to see if there are
+        // unknown options and possibly warn the user
+        for (const option in userConfig[this.constructor.name]) {
+          const value = userConfig[this.constructor.name][option]
+          if (option in this.conf) {
+            this.conf[option] = value
+            delete userConfig[this.constructor.name][option]
+          }
         }
       }
     }
 
     if (!this.conf.enabled) {
-      delete userConfig[this.constructor.name]
+      for (const userConfig of userConfigs) {
+        delete userConfig[this.constructor.name]
+      }
       // TODO: Properly extend Error, but beware that Babel doesn't like
       //       it without specific plugins
       throw new Error('Plugin disabled')
     }
 
-    if ($.isEmptyObject(userConfig[this.constructor.name])) {
-      delete userConfig[this.constructor.name]
+    for (const userConfig of userConfigs) {
+      if ($.isEmptyObject(userConfig[this.constructor.name])) {
+        delete userConfig[this.constructor.name]
+      }
     }
   }
 }

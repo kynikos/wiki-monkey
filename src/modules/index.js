@@ -55,6 +55,8 @@ const {_Plugin} = require('../plugins/_Plugin')
 // TODO: Allow the user to start WM manually with a button instead of loading
 //       it automatically at every page load; currently WM can only be
 //       enabled/disabled by editing the User's common.js page
+// TODO: Support an option do disable all plugins by default (thus allowing
+//       to specify the wanted plugins explicitly one by one)
 
 
 module.exports.WikiMonkey = class WikiMonkey {
@@ -79,20 +81,61 @@ module.exports.WikiMonkey = class WikiMonkey {
     Promise.all([mwmodpromise, $.ready]).then(() => this.init())
   }
 
-  setup() {
-    // mw.loader.load() doesn't return a promise nor support callbacks
-    // mw.loader.using() only supports MW modules
-    // $.getScript() ignores the cache by default
-    // In the end using $.ajax() with setup parameters would be the only
-    // option to configure WM in a callback, therefore use a global
-    // configuration object for simplicity
-    const userConfig = window.wikiMonkeyConfig || window.wikimonkey_config || {}
+  makeLocalConfig() {
+    // I need to abstract this method because it's also used to generate a
+    // basic configuration to export from the maintenance screen
 
-    for (const option in userConfig) {
-      const value = userConfig[option]
-      if (option in this.conf) {
-        this.conf[option] = value
-        delete userConfig[option]
+    let localConfig = {
+      // Use '#' in front of 'default' so also a possible user explicitly named
+      // 'Default' is supported ('#' isn't allowed in user names)
+      '#default': {},
+      [mw.config.get('wgUserGroups')]: {},
+    }
+
+    const localConfigRaw = localStorage.getItem('wikiMonkeyUserConfig')
+
+    if (localConfigRaw) {
+      localConfig = {
+        ...localConfig,
+        ...JSON.parse(localConfigRaw),
+      }
+    }
+
+    return localConfig
+  }
+
+  setup() {
+    const localConfig = this.makeLocalConfig()
+
+    const nameToUserConfig = {
+      localDefault: localConfig['#default'],
+      localUser: localConfig[mw.config.get('wgUserGroups')],
+      // mw.loader.load() doesn't return a promise nor support callbacks
+      // mw.loader.using() only supports MW modules
+      // $.getScript() ignores the cache by default
+      // In the end using $.ajax() with setup parameters would be the only
+      // option to configure WM in a callback, therefore use a global
+      // configuration object for simplicity
+      userScript: window.wikiMonkeyConfig || window.wikimonkey_config || {},
+    }
+
+    const userConfigs = [
+      // The configuration in localStorage is less "noticeable" and may be
+      // "forgotten", so to prevent unexpected behavior it's better if the
+      // configuration in the User's common.js page overrides the localStorage
+      // one, i.e. process the localStorage configuration first
+      nameToUserConfig.localDefault,
+      nameToUserConfig.localUser,
+      nameToUserConfig.userScript,
+    ]
+
+    for (const userConfig of userConfigs) {
+      for (const option in userConfig) {
+        const value = userConfig[option]
+        if (option in this.conf) {
+          this.conf[option] = value
+          delete userConfig[option]
+        }
       }
     }
 
@@ -105,7 +148,7 @@ module.exports.WikiMonkey = class WikiMonkey {
       try {
         plugin = new Plugin({
           wikiName: this.wikiName,
-          userConfig,
+          userConfigs,
         })
       } catch (error) {
         // TODO: Properly extend Error, but beware that Babel
@@ -131,8 +174,10 @@ module.exports.WikiMonkey = class WikiMonkey {
       })
     }
 
-    if (!$.isEmptyObject(userConfig)) {
-      console.warn('Unkown configuration options', userConfig)
+    for (const [configName, userConfig] of Object.entries(nameToUserConfig)) {
+      if (!$.isEmptyObject(userConfig)) {
+        console.warn(`Unkown ${configName} configuration options`, userConfig)
+      }
     }
 
     delete this.installedPluginsTemp

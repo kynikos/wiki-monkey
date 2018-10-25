@@ -28,6 +28,58 @@ module.exports = {
       h('li', [
         h('a', {
           attrs: {
+            href: '#import-local-config',
+            title: "Import configuration options (in JSON format) into the \
+browser's localStorage; these options override the default ones, but may be \
+in turn overridden by any more options specified in the User's common.js page",
+          },
+          on: {
+            // TODO (Possibly validate the file, e.g. check that it has
+            //      the root #default or UserName keys)
+            click: (event) => {
+              event.preventDefault()
+              console.debug('TODO')
+            },
+          },
+        }, ['Import local user configuration']),
+      ]),
+      h('li', [
+        h('a', {
+          attrs: {
+            href: '#view-local-config',
+            title: "View, and possibly download/export/save, the \
+configuration options (in JSON format) that may have been imported and saved \
+in the browser's localStorage",
+          },
+          on: {
+            // TODO (Use WikiMonkey.makeLocalConfig())
+            click: (event) => {
+              event.preventDefault()
+              console.debug('TODO')
+            },
+          },
+        }, ['View local user configuration']),
+      ]),
+      h('li', [
+        h('a', {
+          attrs: {
+            href: '#view-computed-config',
+            title: 'View, and possibly download/export/save, the \
+configuration options (in JSON format) in the final, used form, as they are \
+computed after parsing all the progressively overriding configuration sources',
+          },
+          on: {
+            // TODO
+            click: (event) => {
+              event.preventDefault()
+              console.debug('TODO')
+            },
+          },
+        }, ['View computed configuration']),
+      ]),
+      h('li', [
+        h('a', {
+          attrs: {
             href: '#force-check-updates',
             title: 'Force checking for Wiki Monkey updates and possibly \
 prompt to install them (Wiki Monkey checks for updates \
@@ -42,6 +94,7 @@ regularly as specified in its configuration)',
         }, ['Force Wiki Monkey update']),
       ]),
       h('li', [
+        // TODO: Only show if the server is enabled
         h('a', {
           attrs: {
             href: '#force-upgrade-database',
@@ -60,6 +113,7 @@ needed',
         }, ['Force database upgrade']),
       ]),
       h('li', [
+        // TODO: Only show if the server is enabled
         h('a', {
           attrs: {
             href: '#info',
