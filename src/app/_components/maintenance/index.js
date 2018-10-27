@@ -18,6 +18,7 @@
 
 const WM = require('../../../modules')
 const {upgradeNow} = require('../../../modules/Upgrade')
+const {ServerInfo} = require('./ServerInfo')
 
 
 module.exports = {
@@ -112,24 +113,7 @@ needed',
           },
         }, ['Force database upgrade']),
       ]),
-      h('li', [
-        // TODO: Only show if the server is enabled
-        h('a', {
-          attrs: {
-            href: '#info',
-            title: 'Display some database metadata',
-          },
-          on: {
-            click: (event) => {
-              event.preventDefault()
-
-              WM.DB.get('maintenance/database_info').done((data) => {
-                console.debug('RESPONSE:', data) // TODO
-              })
-            },
-          },
-        }, ['Database information']),
-      ]),
+      h(ServerInfo),
     ])
   },
 }
