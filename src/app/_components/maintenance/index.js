@@ -16,6 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+const {Version} = require('./Version')
 const WM = require('../../../modules')
 const {upgradeNow} = require('../../../modules/Upgrade')
 const {ServerInfo} = require('./ServerInfo')
@@ -27,6 +28,7 @@ module.exports = {
 
   render(h) {
     return h('ul', [
+      h(Version),
       h('li', [
         h('a', {
           attrs: {
@@ -78,22 +80,6 @@ computed after parsing all the progressively overriding configuration sources',
             },
           },
         }, ['View computed configuration']),
-      ]),
-      h('li', [
-        h('a', {
-          attrs: {
-            href: '#force-check-updates',
-            title: 'Force checking for Wiki Monkey updates and possibly \
-prompt to install them (Wiki Monkey checks for updates \
-regularly as specified in its configuration)',
-          },
-          on: {
-            click: (event) => {
-              event.preventDefault()
-              upgradeNow()
-            },
-          },
-        }, ['Force Wiki Monkey update']),
       ]),
       h(ServerInfo),
       h(ServerUpgrade),
