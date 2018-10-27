@@ -19,6 +19,7 @@
 const WM = require('../../../modules')
 const {upgradeNow} = require('../../../modules/Upgrade')
 const {ServerInfo} = require('./ServerInfo')
+const {ServerUpgrade} = require('./ServerUpgrade')
 
 
 module.exports = {
@@ -94,26 +95,8 @@ regularly as specified in its configuration)',
           },
         }, ['Force Wiki Monkey update']),
       ]),
-      h('li', [
-        // TODO: Only show if the server is enabled
-        h('a', {
-          attrs: {
-            href: '#force-upgrade-database',
-            title: 'Force upgrading the database to the latest revision, if \
-needed',
-          },
-          on: {
-            click: (event) => {
-              event.preventDefault()
-
-              WM.DB.post('maintenance/upgrade_database').done((data) => {
-                console.debug('RESPONSE:', data) // TODO
-              })
-            },
-          },
-        }, ['Force database upgrade']),
-      ]),
       h(ServerInfo),
+      h(ServerUpgrade),
     ])
   },
 }
