@@ -18,6 +18,7 @@
 
 const {Version} = require('./Version')
 const {ConfigLocal} = require('./ConfigLocal')
+const {ConfigComputed} = require('./ConfigComputed')
 const WM = require('../../../modules')
 const {upgradeNow} = require('../../../modules/Upgrade')
 const {ServerInfo} = require('./ServerInfo')
@@ -48,24 +49,8 @@ in turn overridden by any more options specified in the User's common.js page",
           },
         }, ['Import local user configuration']),
       ]),
-      h('li', [
-        h('a', {
-          attrs: {
-            href: '#view-computed-config',
-            title: 'View, and possibly download/export/save, the \
-configuration options (in JSON format) in the final, used form, as they are \
-computed after parsing all the progressively overriding configuration sources',
-          },
-          on: {
-            // TODO
-            click: (event) => {
-              event.preventDefault()
-              console.debug('TODO')
-            },
-          },
-        }, ['View computed configuration']),
-      ]),
       h(ConfigLocal),
+      h(ConfigComputed),
       h(ServerInfo),
       h(ServerUpgrade),
     ])
