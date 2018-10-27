@@ -81,7 +81,7 @@ module.exports.WikiMonkey = class WikiMonkey {
     Promise.all([mwmodpromise, $.ready]).then(() => this.init())
   }
 
-  makeLocalConfig() {
+  makeLocalConfig() { // eslint-disable-line class-methods-use-this
     // I need to abstract this method because it's also used to generate a
     // basic configuration to export from the maintenance screen
 
@@ -89,7 +89,7 @@ module.exports.WikiMonkey = class WikiMonkey {
       // Use '#' in front of 'default' so also a possible user explicitly named
       // 'Default' is supported ('#' isn't allowed in user names)
       '#default': {},
-      [mw.config.get('wgUserGroups')]: {},
+      [mw.config.get('wgUserName')]: {},
     }
 
     const localConfigRaw = localStorage.getItem('wikiMonkeyUserConfig')
@@ -109,7 +109,7 @@ module.exports.WikiMonkey = class WikiMonkey {
 
     const nameToUserConfig = {
       localDefault: localConfig['#default'],
-      localUser: localConfig[mw.config.get('wgUserGroups')],
+      localUser: localConfig[mw.config.get('wgUserName')],
       // mw.loader.load() doesn't return a promise nor support callbacks
       // mw.loader.using() only supports MW modules
       // $.getScript() ignores the cache by default
@@ -182,6 +182,7 @@ module.exports.WikiMonkey = class WikiMonkey {
 
     delete this.installedPluginsTemp
 
+    module.exports.makeLocalConfig = this.makeLocalConfig
     module.exports.conf = this.conf
   }
 
