@@ -19,8 +19,7 @@
 const {Version} = require('./Version')
 const {ConfigLocal} = require('./ConfigLocal')
 const {ConfigComputed} = require('./ConfigComputed')
-const WM = require('../../../modules')
-const {upgradeNow} = require('../../../modules/Upgrade')
+const {ConfigImport} = require('./ConfigImport')
 const {ServerInfo} = require('./ServerInfo')
 const {ServerUpgrade} = require('./ServerUpgrade')
 
@@ -31,26 +30,9 @@ module.exports = {
   render(h) {
     return h('ul', [
       h(Version),
-      h('li', [
-        h('a', {
-          attrs: {
-            href: '#import-local-config',
-            title: "Import configuration options (in JSON format) into the \
-browser's localStorage; these options override the default ones, but may be \
-in turn overridden by any more options specified in the User's common.js page",
-          },
-          on: {
-            // TODO (Possibly validate the file, e.g. check that it has
-            //      the root #default or UserName keys)
-            click: (event) => {
-              event.preventDefault()
-              console.debug('TODO')
-            },
-          },
-        }, ['Import local user configuration']),
-      ]),
       h(ConfigLocal),
       h(ConfigComputed),
+      h(ConfigImport),
       h(ServerInfo),
       h(ServerUpgrade),
     ])

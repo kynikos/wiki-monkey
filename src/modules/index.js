@@ -25,6 +25,7 @@ const mwmodpromise = mw.loader.using([
 
 // Initialize the libraries immediately (especially babel-polyfill)
 require('./libs').init()
+const {h: hh} = require('./libs')
 
 const {upgradePeriodical} = require('./Upgrade')
 const {App} = require('../app')
@@ -102,6 +103,35 @@ module.exports.WikiMonkey = class WikiMonkey {
     }
 
     return localConfig
+  }
+
+  importLocalConfig(config) { // eslint-disable-line class-methods-use-this
+    // TODO Validate the file, especially check that it has the root #default
+    //      or UserName keys
+    localStorage.setItem('wikiMonkeyUserConfig', JSON.stringify(config))
+
+    mw.notification.notify(
+      [
+        'The configurtaion was imported successfully, but it will be loaded \
+only the next time that this page is ',
+        hh('a', {
+          // Using "href: '.'" sends to the Main page
+          href: '#reload-page',
+          title: 'Reload this page',
+          onclick: (event) => {
+            event.preventDefault()
+            location.reload()
+          },
+        }, 'reloaded'),
+        ' (same for any other open wiki pages).',
+      ],
+      {
+        autoHide: false,
+        tag: 'WikiMonkey-config-import',
+        title: 'Wiki Monkey import configuration.',
+        type: 'info',
+      },
+    )
   }
 
   setup() {
@@ -182,8 +212,11 @@ module.exports.WikiMonkey = class WikiMonkey {
 
     delete this.installedPluginsTemp
 
-    module.exports.makeLocalConfig = this.makeLocalConfig
-    module.exports.conf = this.conf
+    Object.assign(module.exports, {
+      makeLocalConfig: this.makeLocalConfig,
+      importLocalConfig: this.importLocalConfig,
+      conf: this.conf,
+    })
   }
 
   init() {
