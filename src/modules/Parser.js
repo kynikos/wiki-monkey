@@ -17,8 +17,8 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const WM = require('../modules')
-const RegEx = require('@kynikos/misc/dist/RegEx')
-const Str = require('@kynikos/misc/dist/Str')
+const RegEx = require('@kynikos/misc/dist/regexp')
+const Str = require('@kynikos/misc/dist/str')
 
 const prepareRegexpWhitespace = (title) => title.replace(/[_ ]+/gu, '[_ ]+')
 

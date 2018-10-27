@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const Str = require('@kynikos/misc/dist/Str')
+const Str = require('@kynikos/misc/dist/str')
 
 
 module.exports = class exports {

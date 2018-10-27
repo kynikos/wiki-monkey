@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const Async = require('@kynikos/misc/dist/Async')
+const Async = require('@kynikos/misc/dist/async')
 const WM = require('./index')
 
 

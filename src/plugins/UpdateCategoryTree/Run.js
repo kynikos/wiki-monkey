@@ -17,7 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const WM = require('../../modules')
-const Str = require('@kynikos/misc/dist/Str')
+const Str = require('@kynikos/misc/dist/str')
 
 
 module.exports = class {
