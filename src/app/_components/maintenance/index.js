@@ -17,6 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const {Version} = require('./Version')
+const {ConfigLocal} = require('./ConfigLocal')
 const WM = require('../../../modules')
 const {upgradeNow} = require('../../../modules/Upgrade')
 const {ServerInfo} = require('./ServerInfo')
@@ -50,23 +51,6 @@ in turn overridden by any more options specified in the User's common.js page",
       h('li', [
         h('a', {
           attrs: {
-            href: '#view-local-config',
-            title: "View, and possibly download/export/save, the \
-configuration options (in JSON format) that may have been imported and saved \
-in the browser's localStorage",
-          },
-          on: {
-            // TODO (Use WikiMonkey.makeLocalConfig())
-            click: (event) => {
-              event.preventDefault()
-              console.debug('TODO')
-            },
-          },
-        }, ['View local user configuration']),
-      ]),
-      h('li', [
-        h('a', {
-          attrs: {
             href: '#view-computed-config',
             title: 'View, and possibly download/export/save, the \
 configuration options (in JSON format) in the final, used form, as they are \
@@ -81,6 +65,7 @@ computed after parsing all the progressively overriding configuration sources',
           },
         }, ['View computed configuration']),
       ]),
+      h(ConfigLocal),
       h(ServerInfo),
       h(ServerUpgrade),
     ])
