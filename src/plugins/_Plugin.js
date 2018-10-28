@@ -51,6 +51,8 @@ module.exports._Plugin = class _Plugin {
           const value = userConfig[this.constructor.name][option]
           if (option in this.conf) {
             this.conf[option] = value
+            // Remove the option from userConfig so at the end it's possible to
+            // list the unused/unknown configuration options
             delete userConfig[this.constructor.name][option]
           }
         }
@@ -59,6 +61,8 @@ module.exports._Plugin = class _Plugin {
 
     if (!this.conf.enabled) {
       for (const userConfig of userConfigs) {
+        // Remove the option from userConfig so at the end it's possible to
+        // list the unused/unknown configuration options
         delete userConfig[this.constructor.name]
       }
       // TODO: Properly extend Error, but beware that Babel doesn't like
@@ -68,6 +72,8 @@ module.exports._Plugin = class _Plugin {
 
     for (const userConfig of userConfigs) {
       if ($.isEmptyObject(userConfig[this.constructor.name])) {
+        // Remove the plugin from userConfig so at the end it's possible to
+        // list the unused/unknown configuration options
         delete userConfig[this.constructor.name]
       }
     }

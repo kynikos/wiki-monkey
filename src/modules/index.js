@@ -163,6 +163,8 @@ only the next time that this page is ',
         const value = userConfig[option]
         if (option in this.conf) {
           this.conf[option] = value
+          // Remove the option from userConfig so at the end it's possible to
+          // list the unused/unknown configuration options
           delete userConfig[option]
         }
       }
