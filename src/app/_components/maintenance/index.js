@@ -17,6 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const {Version} = require('./Version')
+const {Plugins} = require('./Plugins')
 const {ConfigLocal} = require('./ConfigLocal')
 const {ConfigComputed} = require('./ConfigComputed')
 const {ConfigImport} = require('./ConfigImport')
@@ -30,6 +31,7 @@ module.exports = {
   render(h) {
     return h('ul', [
       h(Version),
+      h(Plugins),
       h(ConfigLocal),
       h(ConfigComputed),
       h(ConfigImport),

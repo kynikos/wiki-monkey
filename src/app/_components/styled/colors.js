@@ -5,6 +5,8 @@ module.exports = {
 
   redText: 'red',
 
+  greenText: 'green',
+
   blueBorder: '#07b',
   blueText: 'cyan',
 

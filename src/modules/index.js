@@ -170,6 +170,9 @@ only the next time that this page is ',
       }
     }
 
+    const enabledPlugins = []
+    const disabledPlugins = []
+
     for (const Plugin of installedPlugins) {
       if (!(Plugin.prototype instanceof _Plugin)) {
         throw new Error('Plugins must extend _Plugin')
@@ -185,6 +188,7 @@ only the next time that this page is ',
         // TODO: Properly extend Error, but beware that Babel
         //       doesn't like it without specific plugins
         if (error.message === 'Plugin disabled') {
+          disabledPlugins.push(Plugin)
           continue
         }
         throw error
@@ -203,6 +207,8 @@ only the next time that this page is ',
         newPages: Filter.installNewPagesPlugin.bind(Filter, plugin),
         bot: Bot.installPlugin.bind(Bot, plugin),
       })
+
+      enabledPlugins.push(plugin)
     }
 
     for (const [configName, userConfig] of Object.entries(nameToUserConfig)) {
@@ -215,6 +221,8 @@ only the next time that this page is ',
       makeLocalConfig: this.makeLocalConfig,
       importLocalConfig: this.importLocalConfig,
       conf: this.conf,
+      enabledPlugins,
+      disabledPlugins,
     })
   }
 
