@@ -133,6 +133,16 @@ only the next time that this page is ',
     )
   }
 
+  makeComputedConfig() {
+    return {
+      ...this.conf,
+      ...this.enabledPlugins.reduce((acc, plugin) => {
+        acc[plugin.constructor.name] = plugin.conf
+        return acc
+      }, {}),
+    }
+  }
+
   setup(installedPlugins) {
     const localConfig = this.makeLocalConfig()
 
@@ -220,6 +230,7 @@ only the next time that this page is ',
     Object.assign(module.exports, {
       makeLocalConfig: this.makeLocalConfig,
       importLocalConfig: this.importLocalConfig,
+      makeComputedConfig: this.makeComputedConfig,
       conf: this.conf,
       enabledPlugins,
       disabledPlugins,

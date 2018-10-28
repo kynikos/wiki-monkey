@@ -31,7 +31,7 @@ module.exports.ConfigComputed = {
           title: 'View the configuration options (in JSON format) in the \
 final, used form, as they are computed after parsing all the progressively \
 overriding configuration sources.',
-          content: JSON.stringify(WM.conf, null, 2),
+          content: JSON.stringify(WM.makeComputedConfig(), null, 2),
           mimeType: 'application/json',
         },
       }, ['View']),
@@ -42,7 +42,7 @@ overriding configuration sources.',
           title: 'Download the configuration options (in JSON format) in \
 the final, used form, as they are computed after parsing all the \
 progressively overriding configuration sources.',
-          content: JSON.stringify(WM.conf, null, 2),
+          content: JSON.stringify(WM.makeComputedConfig(), null, 2),
           mimeType: 'application/json',
           downloadName: 'WikiMonkeyConfig.json',
         },
