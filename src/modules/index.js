@@ -75,10 +75,9 @@ module.exports.WikiMonkey = class WikiMonkey {
     database_server: 'https://localhost:13502/',
   }
 
-  constructor(wikiName, ...installedPluginsTemp) {
+  constructor(wikiName, ...installedPlugins) {
     this.wikiName = wikiName
-    this.installedPluginsTemp = installedPluginsTemp
-    this.setup()
+    this.setup(installedPlugins)
     Promise.all([mwmodpromise, $.ready]).then(() => this.init())
   }
 
@@ -134,7 +133,7 @@ only the next time that this page is ',
     )
   }
 
-  setup() {
+  setup(installedPlugins) {
     const localConfig = this.makeLocalConfig()
 
     const nameToUserConfig = {
@@ -169,7 +168,7 @@ only the next time that this page is ',
       }
     }
 
-    for (const Plugin of this.installedPluginsTemp) {
+    for (const Plugin of installedPlugins) {
       if (!(Plugin.prototype instanceof _Plugin)) {
         throw new Error('Plugins must extend _Plugin')
       }
@@ -209,8 +208,6 @@ only the next time that this page is ',
         console.warn(`Unkown ${configName} configuration options`, userConfig)
       }
     }
-
-    delete this.installedPluginsTemp
 
     Object.assign(module.exports, {
       makeLocalConfig: this.makeLocalConfig,
