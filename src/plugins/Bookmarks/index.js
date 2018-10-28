@@ -25,12 +25,51 @@ const {TabPage} = require('./TabPage')
 
 module.exports = class Bookmarks extends _Plugin {
   static confDefault = {
-    enabled: false,
     // TODO: Only enable if the server is enabled
+    enabled: true, // false, // TODO
+    bookmarkActionChoices: [
+      'reply',
+      'check for reply',
+      'watch abuse',
+      'review edit',
+      'fix style',
+      'fix content',
+    ],
+    defaultBookmarkDelay: '1 day',
+    bookmarkDelayChoices: [
+      '15 minutes',
+      '1 hour',
+      '6 hours',
+      '1 day',
+      '2 days',
+      '3 days',
+      '1 week',
+      '2 weeks',
+      '1 month',
+    ],
+    allTableShownFields: [
+      'url',
+      'section_title',
+      'wgPageName',
+      'wgCanonicalNamespace',
+      'action_due',
+      'time_due',
+    ],
+    pageTableShownFields: [
+      'section_title',
+      'action_due',
+      'time_due',
+      'notes',
+    ],
+    sectionTableShownFields: [
+      'action_due',
+      'time_due',
+      'notes',
+    ],
   }
 
   install({store, pageCommands, sectionCommands, mainTabs}) {
-    store('bookmarks', storeModule)
+    store('bookmarks', storeModule(this.conf))
     pageCommands(PageCommand(this.conf))
     sectionCommands(SectionCommand(this.conf))
     mainTabs({

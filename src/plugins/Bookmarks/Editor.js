@@ -53,15 +53,26 @@ module.exports.Editor = {
   data() {
     return {
       action: this.bookmarkActionDue || 'reply',
-      delay: '1 day',
+      // 'delay' is initialized in created()
+      delay: null,
       notes: this.bookmarkNotes,
     }
+  },
+
+  computed: {
+    ...Vuex.mapState('plugins/bookmarks', [
+      'conf',
+    ]),
   },
 
   methods: {
     ...Vuex.mapActions('plugins/bookmarks', [
       'saveBookmark',
     ]),
+  },
+
+  created() {
+    this.delay = this.conf.defaultBookmarkDelay
   },
 
   render(h) {
@@ -92,14 +103,9 @@ module.exports.Editor = {
         on: {
           change: (value) => { this.action = value },
         },
-      }, [
-        'reply',
-        'check for reply',
-        'watch abuse',
-        'review edit',
-        'fix style',
-        'fix content',
-      ].map((value) => h('ElOption', {props: {value, label: value}}))),
+      }, this.conf.bookmarkActionChoices.map((value) => {
+        return h('ElOption', {props: {value, label: value}})
+      })),
       h('ElSelect', {
         props: {
           placeholder: 'delay',
@@ -111,25 +117,9 @@ module.exports.Editor = {
         on: {
           change: (value) => { this.delay = value },
         },
-      }, [
-        '5 minutes',
-        '10 minutes',
-        '15 minutes',
-        '30 minutes',
-        '1 hour',
-        '2 hours',
-        '3 hours',
-        '4 hours',
-        '6 hours',
-        '8 hours',
-        '12 hours',
-        '1 day',
-        '2 days',
-        '3 days',
-        '1 week',
-        '2 weeks',
-        '1 month',
-      ].map((value) => h('ElOption', {props: {value, label: value}}))),
+      }, this.conf.bookmarkDelayChoices.map((value) => {
+        return h('ElOption', {props: {value, label: value}})
+      })),
       h('ElInput', {
         props: {
           placeholder: 'notes',
