@@ -19,6 +19,9 @@
 const {moment} = require('../modules/libs')
 const {version} = require('../../package.json')
 
+// Make sure to initialize the global style
+require('./_components/styled')
+
 const Store = require('./store')
 const {WikiLink} = require('./_components/log/WikiLink')
 const {PageLink} = require('./_components/log/PageLink')

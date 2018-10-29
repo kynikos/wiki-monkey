@@ -1,5 +1,13 @@
-const {styled} = require('../../../modules/libs')
+const {jssc, styled} = require('../../../modules/libs')
 const colors = require('./colors')
+
+jssc({
+  // Keep editsection links styled consistently with the pageCommands
+  // Also, bold is conventionally used to highlight links if needed
+  '@global #bodyContent .mw-editsection a': {
+    fontWeight: 'normal !important',
+  },
+})
 
 module.exports.Flex = styled.div({
   display: 'flex',
