@@ -68,7 +68,12 @@ module.exports.PopoverManager = {
   render(h) {
     if (this.loading) return h(asciiSpinner)
 
-    return h('ElPopover', [
+    return h('ElPopover', {
+      attrs: {
+        // TODO: Only absolute values are accepted apparently, make it more
+        //       responsive
+        width: 800,
+      }}, [
       h(Manager, {
         props: {
           shownFields: this.shownFields,

@@ -7,11 +7,30 @@ $--font-path: "https://rawcdn.githack.com/ElemeFE/element/v2.3.7/packages/theme-
 // All defaults are in element-ui/packages/theme-chalk/src/common/var.scss
 
 $--font-size-base: 12px
-$--size-base: 12px
+$--size-base: $--font-size-base
+
+$--color-primary: #08c
+
+$--popover-border-color: $--color-primary
 
 @import "../../node_modules/element-ui/packages/theme-chalk/src/index"
+
+$--background-color-dark: darken($--background-color-base, 8%)
 
 // Override hardcoded values:
 
 .el-table
-    font-size: 12px
+    font-size: $--font-size-base
+
+    tr
+        td
+            background-color: $--background-color-dark !important
+
+        &.el-table__row--striped td
+            background-color: $--background-color-base !important
+
+        &:hover > td
+            background-color: $--color-primary-light-7 !important
+
+    .cell
+        word-break: normal

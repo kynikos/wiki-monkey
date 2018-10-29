@@ -61,18 +61,16 @@ module.exports.Table = {
   },
 
   render(h) { // eslint-disable-line complexity
+    // TODO: The thead and tbody are put in separate tables, so columns are
+    //       given static sizes and it feels too weird...
     return h('div', [h('ElTable', {
       ref: 'table',
       props: {
         rowKey: 'id',
         data: this.bookmarks,
-        // TODO: The default style is quite poor...
-        //       All columns are equally sized
-        //       Words are wrapped
-        //       Stripes are barely visible
         stripe: true,
         border: true,
-        maxHeight: 1000, // Fixed header
+        // maxHeight: 1000, // TODO: Fixed header?
         defaultSort: {
           prop: 'time_due',
           order: 'ascending',
@@ -92,7 +90,10 @@ module.exports.Table = {
       //       once? In that case remove the individual deleve/move controls
       //       per row
       h('ElTableColumn', {
-        props: {type: 'expand'},
+        props: {
+          type: 'expand',
+          minWidth: '10px',
+        },
         scopedSlots: {
           default(props) {
             return h(ExpandedCell, {props: {row: props.row}})
@@ -102,127 +103,162 @@ module.exports.Table = {
       this.shownFields.includes('id') && h('ElTableColumn', {props: {
         prop: 'id',
         label: 'id',
+        minWidth: '10px',
         sortable: true,
       }}),
       this.shownFields.includes('url') && h('ElTableColumn', {props: {
         prop: 'url',
         label: 'url',
+        minWidth: '60px',
         sortable: true,
         formatter(row, column, cellValue, index) { // eslint-disable-line max-params
-          return h('a', {attrs: {href: cellValue}}, ['link'])
-        },
-      }}),
-      this.shownFields.includes('section_id') && h('ElTableColumn', {props: {
-        prop: 'section_id',
-        label: 'section_id',
-        sortable: true,
-      }}),
-      this.shownFields.includes('section_number') && h('ElTableColumn', {props: {
-        prop: 'section_number',
-        label: 'section_number',
-        sortable: true,
-      }}),
-      this.shownFields.includes('section_title') && h('ElTableColumn', {props: {
-        prop: 'section_title',
-        label: 'section_title',
-        sortable: true,
-      }}),
-      this.shownFields.includes('wgPageName') && h('ElTableColumn', {props: {
-        prop: 'wgPageName',
-        label: 'wgPageName',
-        sortable: true,
-        formatter(row, column, cellValue, index) { // eslint-disable-line max-params
-          const title = new mw.Title(cellValue)
-          return title.toText()
-        },
-      }}),
-      this.shownFields.includes('wgRelevantPageName') && h('ElTableColumn', {props: {
-        prop: 'wgRelevantPageName',
-        label: 'wgRelevantPageName',
-        sortable: true,
-        formatter(row, column, cellValue, index) { // eslint-disable-line max-params
-          const title = new mw.Title(cellValue)
-          return title.toText()
+          return h('a', {attrs: {href: cellValue}}, [cellValue])
         },
       }}),
       this.shownFields.includes('wgCanonicalSpecialPageName') && h('ElTableColumn', {props: {
         prop: 'wgCanonicalSpecialPageName',
         label: 'wgCanonicalSpecialPageName',
+        minWidth: '20px',
         sortable: true,
       }}),
       this.shownFields.includes('wgCanonicalNamespace') && h('ElTableColumn', {props: {
         prop: 'wgCanonicalNamespace',
         label: 'wgCanonicalNamespace',
+        minWidth: '20px',
         sortable: true,
+      }}),
+      this.shownFields.includes('wgPageName') && h('ElTableColumn', {props: {
+        prop: 'wgPageName',
+        label: 'wgPageName',
+        minWidth: '20px',
+        sortable: true,
+        formatter(row, column, cellValue, index) { // eslint-disable-line max-params
+          const title = new mw.Title(cellValue)
+          return h('a', {attrs: {href: row.url}}, [title.toText()])
+        },
+      }}),
+      this.shownFields.includes('wgRelevantPageName') && h('ElTableColumn', {props: {
+        prop: 'wgRelevantPageName',
+        label: 'wgRelevantPageName',
+        minWidth: '20px',
+        sortable: true,
+        formatter(row, column, cellValue, index) { // eslint-disable-line max-params
+          const title = new mw.Title(cellValue)
+          return h('a', {attrs: {href: row.url}}, [title.toText()])
+        },
       }}),
       this.shownFields.includes('wgTitle') && h('ElTableColumn', {props: {
         prop: 'wgTitle',
         label: 'wgTitle',
+        minWidth: '20px',
         sortable: true,
+        formatter(row, column, cellValue, index) { // eslint-disable-line max-params
+          return h('a', {attrs: {href: row.url}}, [cellValue])
+        },
       }}),
       this.shownFields.includes('wgAction') && h('ElTableColumn', {props: {
         prop: 'wgAction',
         label: 'wgAction',
+        minWidth: '20px',
         sortable: true,
       }}),
       this.shownFields.includes('wgIsArticle') && h('ElTableColumn', {props: {
         prop: 'wgIsArticle',
         label: 'wgIsArticle',
+        minWidth: '10px',
         sortable: true,
       }}),
       this.shownFields.includes('wgIsProbablyEditable') && h('ElTableColumn', {props: {
         prop: 'wgIsProbablyEditable',
         label: 'wgIsProbablyEditable',
+        minWidth: '20px',
         sortable: true,
       }}),
       this.shownFields.includes('wgRelevantPageIsProbablyEditable') && h('ElTableColumn', {props: {
         prop: 'wgRelevantPageIsProbablyEditable',
         label: 'wgRelevantPageIsProbablyEditable',
+        minWidth: '20px',
         sortable: true,
       }}),
       this.shownFields.includes('wgPageContentLanguage') && h('ElTableColumn', {props: {
         prop: 'wgPageContentLanguage',
         label: 'wgPageContentLanguage',
+        minWidth: '20px',
         sortable: true,
       }}),
       this.shownFields.includes('wgPageContentModel') && h('ElTableColumn', {props: {
         prop: 'wgPageContentModel',
         label: 'wgPageContentModel',
+        minWidth: '20px',
         sortable: true,
       }}),
       this.shownFields.includes('wgArticleId') && h('ElTableColumn', {props: {
         prop: 'wgArticleId',
         label: 'wgArticleId',
+        minWidth: '10px',
         sortable: true,
       }}),
       this.shownFields.includes('wgNamespaceNumber') && h('ElTableColumn', {props: {
         prop: 'wgNamespaceNumber',
         label: 'wgNamespaceNumber',
+        minWidth: '10px',
         sortable: true,
       }}),
       this.shownFields.includes('wgRevisionId') && h('ElTableColumn', {props: {
         prop: 'wgRevisionId',
         label: 'wgRevisionId',
+        minWidth: '10px',
         sortable: true,
       }}),
       this.shownFields.includes('wgCurRevisionId') && h('ElTableColumn', {props: {
         prop: 'wgCurRevisionId',
         label: 'wgCurRevisionId',
+        minWidth: '10px',
         sortable: true,
       }}),
       this.shownFields.includes('wgDiffOldId') && h('ElTableColumn', {props: {
         prop: 'wgDiffOldId',
         label: 'wgDiffOldId',
+        minWidth: '10px',
         sortable: true,
       }}),
       this.shownFields.includes('wgDiffNewId') && h('ElTableColumn', {props: {
         prop: 'wgDiffNewId',
         label: 'wgDiffNewId',
+        minWidth: '10px',
         sortable: true,
+      }}),
+      this.shownFields.includes('section_id') && h('ElTableColumn', {props: {
+        prop: 'section_id',
+        label: 'section_id',
+        minWidth: '20px',
+        sortable: true,
+        formatter(row, column, cellValue, index) { // eslint-disable-line max-params
+          return h('a', {attrs: {href: `#${cellValue}`}}, [cellValue])
+        },
+      }}),
+      this.shownFields.includes('section_number') && h('ElTableColumn', {props: {
+        prop: 'section_number',
+        label: 'section_number',
+        minWidth: '20px',
+        sortable: true,
+        formatter(row, column, cellValue, index) { // eslint-disable-line max-params
+          return h('a', {attrs: {href: `#${row.section_id}`}}, [cellValue])
+        },
+      }}),
+      this.shownFields.includes('section_title') && h('ElTableColumn', {props: {
+        prop: 'section_title',
+        label: 'section_title',
+        minWidth: '60px',
+        sortable: true,
+        formatter(row, column, cellValue, index) { // eslint-disable-line max-params
+          return h('a', {attrs: {href: `#${row.section_id}`}}, [cellValue])
+        },
       }}),
       this.shownFields.includes('time_created') && h('ElTableColumn', {props: {
         prop: 'time_created',
         label: 'time_created',
+        minWidth: '20px',
         sortable: true,
         formatter(row, column, cellValue, index) { // eslint-disable-line max-params
           return moment(cellValue).format('YYYY-MM-DD dd HH:mm')
@@ -231,6 +267,7 @@ module.exports.Table = {
       this.shownFields.includes('time_updated') && h('ElTableColumn', {props: {
         prop: 'time_updated',
         label: 'time_updated',
+        minWidth: '20px',
         sortable: true,
         formatter(row, column, cellValue, index) { // eslint-disable-line max-params
           return moment(cellValue).format('YYYY-MM-DD dd HH:mm')
@@ -239,11 +276,13 @@ module.exports.Table = {
       this.shownFields.includes('action_due') && h('ElTableColumn', {props: {
         prop: 'action_due',
         label: 'action_due',
+        minWidth: '20px',
         sortable: true,
       }}),
       this.shownFields.includes('time_due') && h('ElTableColumn', {props: {
         prop: 'time_due',
         label: 'time_due',
+        minWidth: '20px',
         sortable: true,
         formatter(row, column, cellValue, index) { // eslint-disable-line max-params
           return h('span', {
@@ -256,9 +295,11 @@ module.exports.Table = {
       this.shownFields.includes('notes') && h('ElTableColumn', {props: {
         prop: 'notes',
         label: 'notes',
+        minWidth: '60px',
         sortable: true,
       }}),
       h('ElTableColumn', {props: {
+        minWidth: '20px',
         renderHeader: (hh, {column, index}) => {
           return [
             '[ ',
@@ -286,7 +327,7 @@ module.exports.Table = {
           //       by copy-pasting its ID (or the new url?); this is useful to
           //       update bookmarks to pages/sections that have been moved
           return [
-            '[ ',
+            '[\xa0',
             h(PopoverEdit, {
               props: {
                 sectionId: this.sectionId,
@@ -299,7 +340,7 @@ module.exports.Table = {
                 bookmarkNotes: row.notes,
               },
             }, ['e']),
-            ' | ',
+            '\xa0|\xa0',
             h(popoverConfirm, {
               props: {
                 question: 'Really delete this bookmark?',
@@ -321,7 +362,7 @@ module.exports.Table = {
                 },
               },
             }, ['d'])]),
-            ' ]',
+            '\xa0]',
           ]
         },
       }}),

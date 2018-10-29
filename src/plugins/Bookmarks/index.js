@@ -48,10 +48,9 @@ module.exports = class Bookmarks extends _Plugin {
       '1 month',
     ],
     allTableShownFields: [
-      'url',
-      'section_title',
-      'wgPageName',
       'wgCanonicalNamespace',
+      'wgTitle',
+      'section_title',
       'action_due',
       'time_due',
     ],
