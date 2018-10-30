@@ -11,8 +11,6 @@ const {jspack} = require('@kynikos/browserify-helpers')
 const SRCDIR = './src/'
 const DISTDIR = './dist/'
 const AUXDIR = './auxiliary/'
-// TODO: ./VERSION isn't used anymore, remove in a future version
-const VERSIONFILE = './VERSION'
 
 commander
   .command('build')
@@ -109,9 +107,6 @@ async function build(version) {
     spawnSync('npm', ['--allow-same-version',
       '--no-git-tag-version',
       'version', version])
-
-    // TODO: ./VERSION isn't used anymore, remove in a future version
-    fs.writeFileSync(VERSIONFILE, version)
   }
 
   for (const fname of fs.readdirSync(SRCDIR)) {
