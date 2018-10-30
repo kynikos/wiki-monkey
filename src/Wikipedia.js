@@ -16,23 +16,31 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const {WikiMonkey} = require('./index')
+if (window.wikiMonkeyNoAuto || window.wikimonkey_noauto) {
+  require('./lib/Noauto')(initWM)
+} else {
+  initWM()
+}
 
-new WikiMonkey( // eslint-disable-line no-new
-  'Wikipedia',
+function initWM() {
+  const {WikiMonkey} = require('./index')
 
-  // The require paths can't be constructed dynamically, or browserify won't
-  // understand and import them
-  /* eslint-disable global-require */
-  require('./plugins/Bookmarks'),
-  require('./plugins/ExpandContractions'),
-  require('./plugins/FixBacklinkFragments'),
-  require('./plugins/FixDoubleRedirects'),
-  require('./plugins/FixFragments'),
-  require('./plugins/FixLinkFragments'),
-  require('./plugins/MultipleLineBreaks'),
-  require('./plugins/SimpleReplace'),
-  require('./plugins/SynchronizeInterlanguageLinks'),
-  require('./plugins/UpdateCategoryTree')
-  /* eslint-enable global-require */
-)
+  new WikiMonkey( // eslint-disable-line no-new
+    'Wikipedia',
+
+    // The require paths can't be constructed dynamically, or browserify won't
+    // understand and import them
+    /* eslint-disable global-require */
+    require('./plugins/Bookmarks'),
+    require('./plugins/ExpandContractions'),
+    require('./plugins/FixBacklinkFragments'),
+    require('./plugins/FixDoubleRedirects'),
+    require('./plugins/FixFragments'),
+    require('./plugins/FixLinkFragments'),
+    require('./plugins/MultipleLineBreaks'),
+    require('./plugins/SimpleReplace'),
+    require('./plugins/SynchronizeInterlanguageLinks'),
+    require('./plugins/UpdateCategoryTree')
+    /* eslint-enable global-require */
+  )
+}
