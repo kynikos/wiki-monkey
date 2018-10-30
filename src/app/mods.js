@@ -17,7 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const {jssc} = require('../modules/libs')
-const WM = require('../modules')
+const WM = require('../index')
 
 
 const disableEditSummarySubmitOnEnter = () => $('#wpSummary').keydown((event) => {

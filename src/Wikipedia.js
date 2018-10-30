@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const {WikiMonkey} = require('./modules')
+const {WikiMonkey} = require('./index')
 
 new WikiMonkey( // eslint-disable-line no-new
   'Wikipedia',

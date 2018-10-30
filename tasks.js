@@ -128,7 +128,7 @@ async function build(version) {
           minified: false,
           production: false,
         })
-      } else if (version) {
+      } else if (fname !== 'index.js' && version) {
         await buildScript({
           srcfile,
           wikiname: name,

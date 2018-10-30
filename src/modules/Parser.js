@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const WM = require('../modules')
+const WM = require('../index')
 const RegEx = require('@kynikos/misc/dist/regexp')
 const Str = require('@kynikos/misc/dist/str')
 

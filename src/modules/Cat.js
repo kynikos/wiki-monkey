@@ -17,7 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const Async = require('@kynikos/misc/dist/async')
-const WM = require('./index')
+const WM = require('../index')
 
 
 module.exports = class exports {

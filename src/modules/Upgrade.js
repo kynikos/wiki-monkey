@@ -18,7 +18,7 @@
 
 const {moment, h} = require('./libs')
 const {version} = require('../../package.json')
-const WM = require('.')
+const WM = require('../index')
 
 const REPO_RAW_URL = 'https://raw.githubusercontent.com/kynikos/wiki-monkey'
 
