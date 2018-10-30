@@ -56,8 +56,6 @@ const {_Plugin} = require('../plugins/_Plugin')
 // TODO: Allow the user to start WM manually with a button instead of loading
 //       it automatically at every page load; currently WM can only be
 //       enabled/disabled by editing the User's common.js page
-// TODO: Support an option do disable all plugins by default (thus allowing
-//       to specify the wanted plugins explicitly one by one)
 
 
 module.exports.WikiMonkey = class WikiMonkey {
@@ -67,6 +65,7 @@ module.exports.WikiMonkey = class WikiMonkey {
     default_recentchanges_plugin_autoexecute: true,
     default_newpages_plugin: 'ArchWikiNPFilter',
     default_newpages_plugin_autoexecute: true,
+    default_all_plugins_disabled: false,
     update_check_wdays: [6],
     update_check_branch: 'master',
     hide_rollback_links: true,
@@ -193,6 +192,7 @@ only the next time that this page is ',
         plugin = new Plugin({
           wikiName: this.wikiName,
           userConfigs,
+          defaultAllPluginsDisabled: this.conf.default_all_plugins_disabled,
         })
       } catch (error) {
         // TODO: Properly extend Error, but beware that Babel

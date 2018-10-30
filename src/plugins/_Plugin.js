@@ -28,7 +28,7 @@ module.exports._Plugin = class _Plugin {
     throw Error('Not implemented')
   }
 
-  constructor({wikiName, userConfigs}) {
+  constructor({wikiName, userConfigs, defaultAllPluginsDisabled}) {
     // Do generate a new object for each plugin
     this.conf = {}
 
@@ -41,6 +41,10 @@ module.exports._Plugin = class _Plugin {
       wikiName in this.constructor.wikiToConfDefault
     ) {
       $.extend(this.conf, this.constructor.wikiToConfDefault[wikiName])
+    }
+
+    if (defaultAllPluginsDisabled) {
+      this.conf.enabled = false
     }
 
     for (const userConfig of userConfigs) {
