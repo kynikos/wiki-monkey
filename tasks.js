@@ -56,8 +56,6 @@ async function buildScript({
   wikiname,
   distdir,
   minified = true,
-  // TODO: Deprecate legacy versions in a future version
-  legacy = false,
   production = true,
 }) {
   const distfile = path.join(distdir, `WikiMonkey-${wikiname}.js`)
@@ -90,15 +88,6 @@ async function buildScript({
       uglify: {keep_fnames: true},
     })
   }
-
-  if (legacy) {
-    // Previous versions were using this file name
-    // TODO: Deprecate in a future version
-    const distfileBwcompat =
-      path.join(distdir, `WikiMonkey-${wikiname}-mw.user.js`)
-    console.log(`Creating ${distfileBwcompat} ...`)
-    fs.copyFileSync(distfile, distfileBwcompat)
-  }
 }
 
 
@@ -128,7 +117,6 @@ async function build(version) {
           srcfile,
           wikiname: name,
           distdir: DISTDIR,
-          legacy: true,
         })
       }
     }
