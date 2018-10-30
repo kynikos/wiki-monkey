@@ -373,7 +373,7 @@ const tablesOfContents = {
 }
 
 
-module.exports = class exports {
+module.exports = class ArchWiki {
   getLocalLanguage() {
     return languages.local
   }

@@ -20,7 +20,7 @@ const Async = require('@kynikos/misc/dist/async')
 const WM = require('../index')
 
 
-module.exports = class exports {
+module.exports = class Cat {
   constructor() {}
 
   recurseTree(params) {

@@ -33,7 +33,7 @@ const prepareTitleCasing = function (pattern) {
 }
 
 
-module.exports = class exports {
+module.exports = class Parser {
   squashContiguousWhitespace(title) {
     // MediaWiki treats consecutive whitespace characters in titles and
     //   section names as one

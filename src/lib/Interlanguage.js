@@ -19,7 +19,7 @@
 const WM = require('../index')
 
 
-module.exports = class exports {
+module.exports = class Interlanguage {
   constructor() {
     this.parseLinks = this.parseLinks.bind(this)
     this.queryLinks = this.queryLinks.bind(this)

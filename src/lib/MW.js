@@ -70,7 +70,7 @@ const interwikiFixes = [
 ]
 
 
-module.exports = class exports {
+module.exports = class MW {
   constructor() {
     this.api = new mw.Api()
 

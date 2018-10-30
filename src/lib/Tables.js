@@ -19,7 +19,7 @@
 const Str = require('@kynikos/misc/dist/str')
 
 
-module.exports = class exports {
+module.exports = class Tables {
   constructor() {}
 
   appendRow(source, mark, values) {

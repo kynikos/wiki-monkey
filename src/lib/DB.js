@@ -39,7 +39,7 @@ error data in the browser's console.",
 //       also from a dotfile
 
 
-module.exports = class exports {
+module.exports = class DB {
   constructor() {
     this.dburl = WM.conf.database_server
     if (!this.dburl.endsWith('/')) {

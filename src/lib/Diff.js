@@ -19,7 +19,7 @@
 const WM = require('../index')
 
 
-module.exports = class exports {
+module.exports = class Diff {
   constructor() {}
 
   getEndTimestamp(call, callArgs) {

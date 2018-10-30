@@ -23,7 +23,7 @@ const WM = require('../index')
 // - https://wiki.archlinux.org/index.php/AurJson
 
 
-module.exports = class exports {
+module.exports = class ArchPackages {
   isPackageGroup = function (arch, grp, call, callArgs) { // eslint-disable-line max-params
     const url = `https://www.archlinux.org/groups/${
       encodeURIComponent(arch)}/${encodeURIComponent(grp)}`
