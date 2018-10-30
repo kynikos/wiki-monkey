@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const {Vue, Vuex} = require('../../modules/libs')
+const {Vue, Vuex} = require('../../lib/index')
 const {asciiSpinner} = require('../../app/_components/asciiSpinner')
 const {Manager} = require('./Manager')
 

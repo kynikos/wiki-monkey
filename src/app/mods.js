@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const {jssc} = require('../modules/libs')
+const {jssc} = require('../lib/index')
 const WM = require('../index')
 
 

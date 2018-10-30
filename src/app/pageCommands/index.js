@@ -17,7 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const WM = require('../../index')
-const {Vue, Vuex, styled} = require('../../modules/libs')
+const {Vue, Vuex, styled} = require('../../lib/index')
 
 const sCommands = styled.div({
   '& a': {

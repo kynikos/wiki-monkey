@@ -17,7 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const WM = require('../../index')
-const {moment} = require('../../modules/libs')
+const {moment} = require('../../lib/index')
 
 function mapIdToIndex(bookmarks) {
   return bookmarks.reduce((acc, bm, index) => {

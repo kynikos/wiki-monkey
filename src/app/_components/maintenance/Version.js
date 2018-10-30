@@ -17,7 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const {version} = require('../../../../package.json')
-const {upgradeNow} = require('../../../modules/Upgrade')
+const {upgradeNow} = require('../../../lib/Upgrade')
 
 
 module.exports.Version = {

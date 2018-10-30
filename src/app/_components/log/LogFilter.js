@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const {Vuex} = require('../../../modules/libs')
+const {Vuex} = require('../../../lib/index')
 
 module.exports = {
   name: 'LogFilter',

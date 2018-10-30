@@ -17,7 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const WM = require('../../index')
-const {Vue} = require('../../modules/libs')
+const {Vue} = require('../../lib/index')
 
 
 module.exports.SectionCommands = class {

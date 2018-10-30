@@ -17,7 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const WM = require('../../index')
-const {Vue, Vuex} = require('../../modules/libs')
+const {Vue, Vuex} = require('../../lib/index')
 const Fieldset = require('../_components/fieldset')
 const Bot = require('./Bot')
 

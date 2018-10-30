@@ -17,7 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const WM = require('../index')
-const {h} = require('./libs')
+const {h} = require('./index')
 
 const wikiPaths = {
   known: {

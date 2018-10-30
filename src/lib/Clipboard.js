@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const {ClipboardJS} = require('./libs')
+const {ClipboardJS} = require('./index')
 
 
 module.exports.enable = function (element) {
