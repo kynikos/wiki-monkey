@@ -21,6 +21,7 @@ const {Plugins} = require('./Plugins')
 const {ConfigLocal} = require('./ConfigLocal')
 const {ConfigComputed} = require('./ConfigComputed')
 const {ConfigImport} = require('./ConfigImport')
+const {NoAuto} = require('./NoAuto')
 const {ServerInfo} = require('./ServerInfo')
 const {ServerUpgrade} = require('./ServerUpgrade')
 
@@ -35,6 +36,7 @@ module.exports = {
       h(ConfigLocal),
       h(ConfigComputed),
       h(ConfigImport),
+      h(NoAuto),
       h(ServerInfo),
       h(ServerUpgrade),
     ])

@@ -17,15 +17,24 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 
-module.exports = function Noauto(initWM) {
-  const noAuto = $('<div>').append(
-    '[ ',
-    $('<a href="#" title="Launch Wiki Monkey">WM</a>').click((event) => {
-      event.preventDefault()
-      noAuto.remove()
-      initWM()
-    }),
-    ' ]',
-  )
-  $('.mw-indicators:first').prepend(noAuto)
+module.exports = function PreInit(wikiName, installPlugins) {
+  if (localStorage.getItem('wikiMonkeyNoAuto') === 'true') {
+    const noAuto = $('<div>').append(
+      '[ ',
+      $('<a href="#" title="Launch Wiki Monkey">WM</a>').click((event) => {
+        event.preventDefault()
+        noAuto.remove()
+        initWM(wikiName, installPlugins)
+      }),
+      ' ]',
+    )
+    $('.mw-indicators:first').prepend(noAuto)
+  } else {
+    initWM(wikiName, installPlugins)
+  }
+}
+
+function initWM(wikiName, installPlugins) {
+  const {WikiMonkey} = require('../index') // eslint-disable-line global-require
+  new WikiMonkey(wikiName, installPlugins()) // eslint-disable-line no-new
 }

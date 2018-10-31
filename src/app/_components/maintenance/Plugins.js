@@ -55,7 +55,7 @@ they are enabled or disabled.',
       }, ['Installed plugins']),
       this.listShown && h('ul', [
         h('li', [
-          h('span', {style: {color: colors.greenText}}, ['[enabled]']),
+          h('span', {style: {color: colors.greenText}}, ['enabled']),
           h('ul', [
             WM.enabledPlugins.map((plugin) => {
               return h('li', [plugin.constructor.name])
@@ -63,7 +63,7 @@ they are enabled or disabled.',
           ]),
         ]),
         h('li', [
-          h('span', {style: {color: colors.redText}}, ['[disabled]']),
+          h('span', {style: {color: colors.redText}}, ['disabled']),
           h('ul', [
             WM.disabledPlugins.map((plugin) => {
               return h('li', [plugin.name])

@@ -70,7 +70,7 @@ module.exports.WikiMonkey = class WikiMonkey {
     database_server: 'https://localhost:13502/',
   }
 
-  constructor(wikiName, ...installedPlugins) {
+  constructor(wikiName, installedPlugins) {
     this.wikiName = wikiName
     this.setup(installedPlugins)
     Promise.all([mwmodpromise, $.ready]).then(() => this.init())
