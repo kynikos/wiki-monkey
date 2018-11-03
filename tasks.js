@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-/* eslint-disable no-sync,no-await-in-loop */
+/* eslint-disable no-sync */
 const path = require('path')
 const fs = require('fs')
 const process = require('process')
@@ -9,6 +9,8 @@ const {spawnSync} = require('child_process')
 const {jspack} = require('@kynikos/browserify-helpers')
 
 const SRCDIR = './src/'
+const SRCLOCAL = ['local.js']
+const SRCSTALONE = ['ArchWiki.js', 'Wikipedia.js']
 const DISTDIR = './dist/'
 const AUXDIR = './auxiliary/'
 
@@ -51,19 +53,20 @@ function run(command, ...rest) {
 }
 
 
-async function buildScript({
-  srcfile,
-  wikiname,
+function buildScript({
+  fname,
   distdir,
   minified = true,
   production = true,
 }) {
-  const distfile = path.join(distdir, `WikiMonkey-${wikiname}.js`)
+  const srcfile = path.join(SRCDIR, fname)
+  const {name, ext} = path.parse(fname)
+  const distfile = path.join(distdir, `WikiMonkey-${name}.js`)
 
   const envify = production ? {NODE_ENV: 'production'} : false
 
   console.log(`Compiling ${distfile} ...`)
-  await jspack(srcfile, distfile, {
+  jspack(srcfile, distfile, {
     // Note how it's necessary to use scssify, not sassify, since the latter
     // seems to have problems with escaped characters such as those used as
     // icons in Element UI
@@ -74,9 +77,9 @@ async function buildScript({
   })
 
   if (minified) {
-    const distfileMin = path.join(distdir, `WikiMonkey-${wikiname}.min.js`)
+    const distfileMin = path.join(distdir, `WikiMonkey-${name}.min.js`)
     console.log(`Compiling ${distfileMin} ...`)
-    await jspack(srcfile, distfileMin, {
+    jspack(srcfile, distfileMin, {
       scssify: true,
       envify,
       licensify: true,
@@ -91,34 +94,28 @@ async function buildScript({
 }
 
 
-async function build(version) {
+function build(version) {
   if (version) {
     spawnSync('npm', ['--allow-same-version',
       '--no-git-tag-version',
       'version', version])
   }
 
-  for (const fname of fs.readdirSync(SRCDIR)) {
-    const srcfile = path.join(SRCDIR, fname)
+  for (const fname of SRCLOCAL) {
+    buildScript({
+      fname,
+      distdir: AUXDIR,
+      minified: false,
+      production: false,
+    })
+  }
 
-    if (fs.statSync(srcfile).isFile()) {
-      const {name, ext} = path.parse(fname)
-
-      if (name.startsWith('_')) {
-        await buildScript({
-          srcfile,
-          wikiname: name.slice(1),
-          distdir: AUXDIR,
-          minified: false,
-          production: false,
-        })
-      } else if (fname !== 'index.js' && version) {
-        await buildScript({
-          srcfile,
-          wikiname: name,
-          distdir: DISTDIR,
-        })
-      }
+  if (version) {
+    for (const fname of SRCSTALONE) {
+      buildScript({
+        fname,
+        distdir: DISTDIR,
+      })
     }
   }
 }
