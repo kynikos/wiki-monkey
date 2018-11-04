@@ -10,7 +10,7 @@ const {jspack} = require('@kynikos/browserify-helpers')
 
 const SRCDIR = './src/'
 const SRCLOCAL = ['local.js']
-const SRCSTALONE = ['ArchWiki.js', 'Wikipedia.js']
+const SRCPRODUCTION = ['ArchWiki.js', 'Wikipedia.js']
 const DISTDIR = './dist/'
 const AUXDIR = './auxiliary/'
 
@@ -111,7 +111,7 @@ function build(version) {
   }
 
   if (version) {
-    for (const fname of SRCSTALONE) {
+    for (const fname of SRCPRODUCTION) {
       buildScript({
         fname,
         distdir: DISTDIR,

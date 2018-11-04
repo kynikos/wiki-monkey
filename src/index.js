@@ -67,11 +67,16 @@ module.exports.WikiMonkey = class WikiMonkey {
     hide_rollback_links: true,
     disable_edit_summary_submit_on_enter: true,
     scroll_to_first_heading: false,
-    database_server: 'https://localhost:13502/',
   }
 
   constructor(wikiName, installedPlugins) {
     this.wikiName = wikiName
+
+    // If this version of Wiki Monkey was downloaded from a wiki-snake server,
+    // it will have been served patched with a _WIKI_MONKEY_SERVER_URL global
+    // variable
+    this.serverUrl = window._WIKI_MONKEY_SERVER_URL || false
+
     this.setup(installedPlugins)
     Promise.all([mwmodpromise, $.ready]).then(() => this.init())
   }
@@ -142,6 +147,8 @@ only the next time that this page is ',
     const localConfig = this.makeLocalConfig()
 
     const nameToUserConfig = {
+      // TODO: If the wiki-snake server is enabled, allow loading configuration
+      //       also from a dotfile
       localDefault: localConfig['#default'],
       localUser: localConfig[mw.config.get('wgUserName')],
       // mw.loader.load() doesn't return a promise nor support callbacks
@@ -240,7 +247,7 @@ only the next time that this page is ',
       ArchWiki: new ArchWiki(),
       Cat: new Cat(),
       Clipboard,
-      DB: this.conf.database_server && new DB() || null,
+      DB: this.serverUrl && new DB(this.serverUrl) || null,
       Diff: new Diff(),
       Editor: new Editor(),
       Interlanguage: new Interlanguage(),

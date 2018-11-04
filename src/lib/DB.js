@@ -31,17 +31,10 @@ error data in the browser's console.",
   )
 }
 
-// TODO: Always send the client version to the server to check for compatibility?
-//       ...or serve the user script directly from wiki-snake, and only allow
-//       that version to connect to the server; also adapt the auto-upgrade
-//       system to remind updating the server (probably through the AUR package)
-//       At that point it would also make sense to allow loading configuration
-//       also from a dotfile
-
 
 module.exports = class DB {
-  constructor() {
-    this.dburl = WM.conf.database_server
+  constructor(serverUrl) {
+    this.dburl = serverUrl
     if (!this.dburl.endsWith('/')) {
       this.dburl += '/'
     }
