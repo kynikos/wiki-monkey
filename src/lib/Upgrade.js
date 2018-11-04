@@ -59,10 +59,23 @@ async function checkAndNotify(alwaysNotify) {
         'Changelog'
       ),
       h('br'),
-      h('a', 'Run upgrade', {onclick: () => {
-        upgrade(upstreamPackage.version)
-      },
-      }),
+      ...WM.serverUrl
+        ? [
+          'This version of Wiki Monkey is provided by a server installed on \
+the local machine; upgrade the server according to how it is installed/run; \
+consult the ',
+          h(
+            'a',
+            {href: 'https://github.com/kynikos/wiki-monkey/wiki'},
+            'documentation'
+          ),
+          ' for more information.',
+        ]
+        : [
+          h('a', 'Run upgrade', {onclick: () => {
+            upgrade(upstreamPackage.version)
+          }}),
+        ],
     ])
   }
 }
