@@ -21,6 +21,8 @@ const Run = require('./Run')
 
 
 module.exports = class DeletePages extends _Plugin {
+  static requiresServer = false
+
   static confDefault = {
     enabled: false,
     bot_label: 'Delete pages',

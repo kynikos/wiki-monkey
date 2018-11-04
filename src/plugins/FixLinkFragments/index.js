@@ -21,6 +21,8 @@ const Run = require('./Run')
 
 
 module.exports = class FixLinkFragments extends _Plugin {
+  static requiresServer = false
+
   static confDefault = {
     enabled: true,
     editor_menu: ['Query plugins', 'Fix external section links'],

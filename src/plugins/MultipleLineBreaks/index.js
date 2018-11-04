@@ -21,6 +21,8 @@ const Run = require('./Run')
 
 
 module.exports = class MultipleLineBreaks extends _Plugin {
+  static requiresServer = false
+
   static confDefault = {
     enabled: true,
     editor_menu: ['Text plugins', 'Squash multiple line breaks'],

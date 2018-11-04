@@ -66,7 +66,12 @@ they are enabled or disabled.',
           h('span', {style: {color: colors.redText}}, ['disabled']),
           h('ul', [
             WM.disabledPlugins.map((plugin) => {
-              return h('li', [plugin.name])
+              return h('li', [
+                plugin.name,
+                plugin.requiresServer && h('span', {
+                  style: {color: colors.greyText},
+                }, [' (requires server)']),
+              ])
             }),
           ]),
         ]),

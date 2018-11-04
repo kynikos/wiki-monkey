@@ -22,6 +22,8 @@ const RunBot = require('./RunBot')
 
 
 module.exports = class SynchronizeInterlanguageLinks extends _Plugin {
+  static requiresServer = false
+
   static confDefault = {
     enabled: true,
     editor_menu: ['Query plugins', 'Sync interlanguage links'],

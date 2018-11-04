@@ -24,6 +24,8 @@ module.exports.ServerInfo = {
   name: 'ServerInfo',
 
   render(h) {
+    if (!WM.serverUrl) return null
+
     return h('li', [
       h('a', {
         attrs: {

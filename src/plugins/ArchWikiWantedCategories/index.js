@@ -21,6 +21,8 @@ const Run = require('./Run')
 
 
 module.exports = class ArchWikiWantedCategories extends _Plugin {
+  static requiresServer = false
+
   static confDefault = {
     enabled: false,
     bot_label: 'Create wanted categories',

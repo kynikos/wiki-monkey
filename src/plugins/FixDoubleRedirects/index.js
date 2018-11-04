@@ -21,6 +21,8 @@ const Run = require('./Run')
 
 
 module.exports = class FixDoubleRedirects extends _Plugin {
+  static requiresServer = false
+
   static confDefault = {
     enabled: true,
     special_menu: ['Fix double redirects'],

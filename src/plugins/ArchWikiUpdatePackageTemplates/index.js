@@ -22,6 +22,8 @@ const RunBot = require('./RunBot')
 
 
 module.exports = class ArchWikiUpdatePackageTemplates extends _Plugin {
+  static requiresServer = false
+
   static confDefault = {
     // TODO: Disabled because the ArchPackages module is currently unusable
     enabled: false,

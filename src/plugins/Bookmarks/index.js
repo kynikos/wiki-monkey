@@ -24,9 +24,10 @@ const {TabPage} = require('./TabPage')
 
 
 module.exports = class Bookmarks extends _Plugin {
+  static requiresServer = true
+
   static confDefault = {
-    // TODO: Only enable if the server is enabled
-    enabled: true, // false, // TODO
+    enabled: true,
     bookmarkActionChoices: [
       'reply',
       'check for reply',

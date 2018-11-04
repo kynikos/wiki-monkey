@@ -21,6 +21,8 @@ const Run = require('./Run')
 
 
 module.exports = class ArchWikiNewTemplates extends _Plugin {
+  static requiresServer = false
+
   static confDefault = {
     enabled: true,
     editor_menu: ['Text plugins', 'Use code templates'],

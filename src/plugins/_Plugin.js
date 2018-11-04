@@ -18,6 +18,7 @@
 
 
 module.exports._Plugin = class _Plugin {
+  static requiresServer = null
   // Don't create default objects here, or they'll be shared among the
   // subclasses unless overridden
   // static confDefault = {}
@@ -28,7 +29,14 @@ module.exports._Plugin = class _Plugin {
     throw Error('Not implemented')
   }
 
-  constructor({wikiName, userConfigs, defaultAllPluginsDisabled}) {
+  constructor({wikiName, serverUrl, userConfigs, defaultAllPluginsDisabled}) {
+    // requiresServer must be explicitly defined as true or false by each
+    // plugin
+    if (this.constructor.requiresServer == null) {
+      throw new Error(`Plugin ${this.constructor.name} does not define \
+'requiresServer'.`)
+    }
+
     // Do generate a new object for each plugin
     this.conf = {}
 
@@ -63,7 +71,7 @@ module.exports._Plugin = class _Plugin {
       }
     }
 
-    if (!this.conf.enabled) {
+    if (!this.conf.enabled || !serverUrl && this.constructor.requiresServer) {
       for (const userConfig of userConfigs) {
         // Remove the option from userConfig so at the end it's possible to
         // list the unused/unknown configuration options

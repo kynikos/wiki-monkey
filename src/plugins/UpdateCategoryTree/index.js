@@ -21,6 +21,8 @@ const Run = require('./Run')
 
 
 module.exports = class UpdateCategoryTree extends _Plugin {
+  static requiresServer = false
+
   static confDefault = {
     enabled: false,
     special_menu: ['Update category trees'],

@@ -27,6 +27,8 @@ module.exports = class ArchWikiSortContacts extends _Plugin {
   // See also https://bbs.archlinux.org/viewtopic.php?id=192389 and
   //  https://lists.wikimedia.org/pipermail/mediawiki-l/2015-January/043850.html
 
+  static requiresServer = false
+
   static confDefault = {
     enabled: false,
     special_menu: ['Sort staff contacts'],

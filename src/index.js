@@ -194,6 +194,7 @@ only the next time that this page is ',
       try {
         plugin = new Plugin({
           wikiName: this.wikiName,
+          serverUrl: this.serverUrl,
           userConfigs,
           defaultAllPluginsDisabled: this.conf.default_all_plugins_disabled,
         })
@@ -231,6 +232,8 @@ only the next time that this page is ',
     }
 
     Object.assign(module.exports, {
+      wikiName: this.wikiName,
+      serverUrl: this.serverUrl,
       makeLocalConfig: this.makeLocalConfig,
       importLocalConfig: this.importLocalConfig,
       makeComputedConfig: this.makeComputedConfig,

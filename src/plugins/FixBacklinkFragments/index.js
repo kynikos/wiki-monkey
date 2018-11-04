@@ -22,6 +22,8 @@ const UI = require('./UI')
 
 
 module.exports = class FixBacklinkFragments extends _Plugin {
+  static requiresServer = false
+
   static confDefault = {
     enabled: true,
     bot_label: 'Fix links to specific sections of a target page',

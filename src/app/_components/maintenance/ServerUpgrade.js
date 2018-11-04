@@ -24,6 +24,8 @@ module.exports.ServerUpgrade = {
   name: 'ServerUpgrade',
 
   render(h) {
+    if (!WM.serverUrl) return null
+
     return h('li', [
       h('a', {
         attrs: {
