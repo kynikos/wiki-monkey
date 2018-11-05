@@ -1,7 +1,7 @@
 // Theming guide: http://element.eleme.io/#/en-US/component/custom-theme
 
 // Defining $--font-path is required
-$--font-path: "https://rawcdn.githack.com/ElemeFE/element/v2.3.7/packages/theme-chalk/src/fonts"
+$--font-path: "https://rawcdn.githack.com/ElemeFE/element/v2.4.9/packages/theme-chalk/src/fonts"
 
 // Supported variables must be defined *before* loading the index.sass
 // All defaults are in element-ui/packages/theme-chalk/src/common/var.scss
@@ -15,9 +15,11 @@ $--popover-border-color: $--color-primary
 
 @import "../../node_modules/element-ui/packages/theme-chalk/src/index"
 
+// Custom additional variables
+
 $--background-color-dark: darken($--background-color-base, 8%)
 
-// Override hardcoded values:
+// Override hardcoded values
 
 .el-table
     font-size: $--font-size-base
