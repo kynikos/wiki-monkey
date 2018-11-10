@@ -30,7 +30,7 @@ module.exports.ServerInfo = {
       h('a', {
         attrs: {
           href: '#server-info',
-          title: 'Display some server (wiki-snake) and database metadata.',
+          title: 'Display some server and database metadata.',
         },
         on: {
           click: (event) => {
@@ -49,7 +49,7 @@ module.exports.ServerInfo = {
                 {
                   autoHide: false,
                   tag: 'WikiMonkey-server-info',
-                  title: 'Wiki Monkey server (wiki-snake) information.',
+                  title: 'Wiki Monkey server information.',
                   type: 'info',
                 },
               )
