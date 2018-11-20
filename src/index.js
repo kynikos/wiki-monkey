@@ -77,8 +77,61 @@ module.exports.WikiMonkey = class WikiMonkey {
     // variable
     this.serverUrl = window._WIKI_MONKEY_SERVER_URL || false
 
-    this.setup(installedPlugins)
-    Promise.all([mwmodpromise, $.ready]).then(() => this.init())
+    // Retrieving config.json separately from the main script allows to more
+    // safely make up for problems such as malformed JSON
+    const setup = (this.serverUrl
+      ? this.storeServerConfig()
+      : Promise.resolve()
+    ).then(() => {
+      this.setup(installedPlugins)
+    })
+
+    Promise.all([
+      mwmodpromise,
+      $.ready,
+      setup,
+    ]).then(() => this.init())
+  }
+
+  async storeServerConfig() {
+    let data
+
+    try {
+      data = await $.getJSON(`${this.serverUrl}config.json`)
+        // Unfortunately $.getJSON() doesn't rethrow JSON-parsing error
+        // messages, so I can't handle them in the catch block
+        .fail((jqxhr, textStatus, error) => {
+          console.warn('It was not possible to load the configuration from \
+the server:', error)
+        })
+    } catch (error) {
+      data = false
+    }
+
+    this.configFromServer = data
+  }
+
+  makeServerConfig() { // eslint-disable-line class-methods-use-this
+    // I need to abstract this method because it's also used to generate a
+    // basic configuration to export from the maintenance screen
+
+    let serverConfig = {
+      // Use '#' in front of 'default' so also a possible user explicitly named
+      // 'Default' is supported ('#' isn't allowed in user names)
+      '#default': {},
+      [mw.config.get('wgUserName')]: {},
+    }
+
+    if (this.configFromServer) {
+      serverConfig = {
+        ...serverConfig,
+        // TODO: Validate the this.configFromServer, especially check that it
+        //       has the root #default or UserName keys
+        ...this.configFromServer,
+      }
+    }
+
+    return serverConfig
   }
 
   makeLocalConfig() { // eslint-disable-line class-methods-use-this
@@ -88,6 +141,8 @@ module.exports.WikiMonkey = class WikiMonkey {
     let localConfig = {
       // Use '#' in front of 'default' so also a possible user explicitly named
       // 'Default' is supported ('#' isn't allowed in user names)
+      // Note that this is a convention also used on the server (wiki-snake)
+      // to initialize the default client.json file
       '#default': {},
       [mw.config.get('wgUserName')]: {},
     }
@@ -105,8 +160,8 @@ module.exports.WikiMonkey = class WikiMonkey {
   }
 
   importLocalConfig(config) { // eslint-disable-line class-methods-use-this
-    // TODO Validate the file, especially check that it has the root #default
-    //      or UserName keys
+    // TODO: Validate the file, especially check that it has the root #default
+    //       or UserName keys
     localStorage.setItem('wikiMonkeyUserConfig', JSON.stringify(config))
 
     mw.notification.notify(
@@ -144,11 +199,12 @@ only the next time that this page is ',
   }
 
   setup(installedPlugins) {
+    const serverConfig = this.makeServerConfig()
     const localConfig = this.makeLocalConfig()
 
     const nameToUserConfig = {
-      // TODO: If the wiki-snake server is enabled, allow loading configuration
-      //       also from a dotfile
+      serverDefault: serverConfig['#default'],
+      serverUser: serverConfig[mw.config.get('wgUserName')],
       localDefault: localConfig['#default'],
       localUser: localConfig[mw.config.get('wgUserName')],
       // mw.loader.load() doesn't return a promise nor support callbacks
@@ -161,6 +217,8 @@ only the next time that this page is ',
     }
 
     const userConfigs = [
+      nameToUserConfig.serverDefault,
+      nameToUserConfig.serverUser,
       // The configuration in localStorage is less "noticeable" and may be
       // "forgotten", so to prevent unexpected behavior it's better if the
       // configuration in the User's common.js page overrides the localStorage
@@ -234,6 +292,7 @@ only the next time that this page is ',
     Object.assign(module.exports, {
       wikiName: this.wikiName,
       serverUrl: this.serverUrl,
+      makeServerConfig: this.makeServerConfig,
       makeLocalConfig: this.makeLocalConfig,
       importLocalConfig: this.importLocalConfig,
       makeComputedConfig: this.makeComputedConfig,
