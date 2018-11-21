@@ -18,9 +18,7 @@
 
 const {Version} = require('./Version')
 const {Plugins} = require('./Plugins')
-const {ConfigLocal} = require('./ConfigLocal')
-const {ConfigComputed} = require('./ConfigComputed')
-const {ConfigImport} = require('./ConfigImport')
+const {Config} = require('./Config')
 const {NoAuto} = require('./NoAuto')
 const {ServerInfo} = require('./ServerInfo')
 
@@ -33,9 +31,7 @@ module.exports = {
       h(Version),
       h(ServerInfo),
       h(Plugins),
-      h(ConfigLocal),
-      h(ConfigComputed),
-      h(ConfigImport),
+      h(Config),
       h(NoAuto),
     ])
   },

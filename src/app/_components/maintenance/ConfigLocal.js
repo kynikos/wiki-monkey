@@ -18,6 +18,7 @@
 
 const WM = require('../../../index')
 const {blobLink} = require('../blobLink')
+const {ConfigImport} = require('./ConfigImport')
 
 
 module.exports.ConfigLocal = {
@@ -25,6 +26,7 @@ module.exports.ConfigLocal = {
 
   render(h) {
     return h('li', [
+      'localStorage [ ',
       h(blobLink, {
         props: {
           href: '#view-local-config',
@@ -33,8 +35,8 @@ have been imported and saved in the browser's localStorage.",
           content: JSON.stringify(WM.makeLocalConfig(), null, 2),
           mimeType: 'application/json',
         },
-      }, ['View']),
-      ' or ',
+      }, ['view']),
+      ' | ',
       h(blobLink, {
         props: {
           href: '#view-local-config',
@@ -45,7 +47,9 @@ may have been imported and saved in the browser's localStorage.",
           downloadName: 'WikiMonkeyConfig.json',
         },
       }, ['download']),
-      ' local user configuration',
+      ' | ',
+      h(ConfigImport),
+      ' ]',
     ])
   },
 }

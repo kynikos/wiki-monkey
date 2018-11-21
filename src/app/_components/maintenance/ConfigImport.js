@@ -23,7 +23,7 @@ module.exports.ConfigImport = {
   name: 'ConfigImport',
 
   render(h) {
-    return h('li', [
+    return h('span', [
       h('a', {
         attrs: {
           href: '#import-local-config',
@@ -40,7 +40,7 @@ configuration and use it as a template.",
             this.$refs.input.click()
           },
         },
-      }, ['Import local user configuration']),
+      }, ['import']),
       h('input', {
         ref: 'input',
         attrs: {

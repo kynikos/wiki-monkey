@@ -25,6 +25,7 @@ module.exports.ConfigComputed = {
 
   render(h) {
     return h('li', [
+      'Final computed [ ',
       h(blobLink, {
         props: {
           href: '#view-computed-config',
@@ -34,8 +35,8 @@ overriding configuration sources.',
           content: JSON.stringify(WM.makeComputedConfig(), null, 2),
           mimeType: 'application/json',
         },
-      }, ['View']),
-      ' or ',
+      }, ['view']),
+      ' | ',
       h(blobLink, {
         props: {
           href: '#view-computed-config',
@@ -47,7 +48,7 @@ progressively overriding configuration sources.',
           downloadName: 'WikiMonkeyConfig.json',
         },
       }, ['download']),
-      ' computed configuration',
+      ' ]',
     ])
   },
 }
