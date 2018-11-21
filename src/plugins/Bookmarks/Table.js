@@ -300,23 +300,29 @@ module.exports.Table = {
       }}),
       h('ElTableColumn', {props: {
         minWidth: '20px',
-        renderHeader: (hh, {column, index}) => {
-          return [
-            '[ ',
-            hh(PopoverEdit, {
-              props: {
-                sectionId: this.sectionId,
-                sectionNumber: this.sectionNumber,
-                sectionTitle: this.sectionTitle,
-                href: '#new-section-bookmark',
-                title: this.sectionId == null
-                  ? 'Add a bookmark for this page'
-                  : 'Add a bookmark for this section',
-              },
-            }, ['+']),
-            ' ]',
-          ]
-        },
+        // Element UI complains that renderHeader is deprecated in favor of
+        // the 'header' scoped slot, but I couldn't make it work...
+        // https://element.eleme.io/#/en-US/component/table#table-with-custom-header
+        // https://github.com/ElemeFE/element/blob/9c32f55892bf15a7287a57b9ec78fe1f138ef64a/packages/table/src/table-column.js#L299
+        // scopedSlots: {
+        //   header: (props) => [
+        renderHeader: (hh, {column, index}) => [
+          '[ ',
+          // h(PopoverEdit, {
+          hh(PopoverEdit, {
+            props: {
+              sectionId: this.sectionId,
+              sectionNumber: this.sectionNumber,
+              sectionTitle: this.sectionTitle,
+              href: '#new-section-bookmark',
+              title: this.sectionId == null
+                ? 'Add a bookmark for this page'
+                : 'Add a bookmark for this section',
+            },
+          }, ['+']),
+          ' ]',
+        // ]},
+        ],
         formatter: (row, column, cellValue, index) => { // eslint-disable-line max-params
           // TODO: Besides the due date, introduce a numeric priority and allow
           //       moving bookmarks up/down?
