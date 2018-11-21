@@ -26,53 +26,51 @@ module.exports.ServerUpgrade = {
   render(h) {
     if (!WM.serverUrl) return null
 
-    return h('li', [
-      h('a', {
-        attrs: {
-          href: '#force-upgrade-database',
-          title: 'Force upgrading the database to the latest revision, if \
+    return h('a', {
+      attrs: {
+        href: '#force-upgrade-database',
+        title: 'Force upgrading the database to the latest revision, if \
 needed.',
-        },
-        on: {
-          click: (event) => {
-            event.preventDefault()
+      },
+      on: {
+        click: (event) => {
+          event.preventDefault()
 
-            WM.DB.post('maintenance/upgrade_database').done((data) => {
-              let content
-              let notificationType
-              if (!data.success) {
-                content = [hh('p', 'An error happened during the upgrade.')]
-                notificationType = 'error'
-              } else if (data.noop) {
-                content = [
-                  hh('p', `The database was already at the latest revision
+          WM.DB.post('maintenance/upgrade_database').done((data) => {
+            let content
+            let notificationType
+            if (!data.success) {
+              content = [hh('p', 'An error happened during the upgrade.')]
+              notificationType = 'error'
+            } else if (data.noop) {
+              content = [
+                hh('p', `The database was already at the latest revision
 (${data.new_revision}).`),
-                ]
-              } else {
-                content = [
-                  hh('p', 'Database successfully upgraded.'),
-                  hh('p', {
-                    style: {'white-space': 'nowrap'},
-                  }, `Old revision: ${data.old_revision}`),
-                  hh('p', {
-                    style: {'white-space': 'nowrap'},
-                  }, `New revision: ${data.new_revision}`),
-                ]
-              }
+              ]
+            } else {
+              content = [
+                hh('p', 'Database successfully upgraded.'),
+                hh('p', {
+                  style: {'white-space': 'nowrap'},
+                }, `Old revision: ${data.old_revision}`),
+                hh('p', {
+                  style: {'white-space': 'nowrap'},
+                }, `New revision: ${data.new_revision}`),
+              ]
+            }
 
-              return mw.notification.notify(
-                content,
-                {
-                  autoHide: false,
-                  tag: 'WikiMonkey-database-upgrade',
-                  title: 'Wiki Monkey database upgrade.',
-                  type: notificationType,
-                },
-              )
-            })
-          },
+            return mw.notification.notify(
+              content,
+              {
+                autoHide: false,
+                tag: 'WikiMonkey-database-upgrade',
+                title: 'Wiki Monkey database upgrade.',
+                type: notificationType,
+              },
+            )
+          })
         },
-      }, ['Force database upgrade']),
-    ])
+      },
+    }, ['force upgrade'])
   },
 }

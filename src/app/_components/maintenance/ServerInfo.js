@@ -17,11 +17,35 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const WM = require('../../../index')
-const {h: hh} = require('../../../lib/index')
+const {ServerUpgrade} = require('./ServerUpgrade')
 
 
 module.exports.ServerInfo = {
   name: 'ServerInfo',
+
+  data() {
+    return {
+      expanded: false,
+      version: null,
+      databaseRevision: null,
+    }
+  },
+
+  methods: {
+    getInfo() {
+      return WM.DB.get('maintenance/info').done((data) => {
+        this.version = data.version
+        this.databaseRevision = data.database_revision
+        this.expand()
+      })
+    },
+    expand() {
+      this.expanded = true
+    },
+    collapse() {
+      this.expanded = false
+    },
+  },
 
   render(h) {
     if (!WM.serverUrl) return null
@@ -30,33 +54,44 @@ module.exports.ServerInfo = {
       h('a', {
         attrs: {
           href: '#server-info',
-          title: 'Display some server and database metadata.',
+          title: this.expanded
+            ? 'Hide server and database metadata.'
+            : 'Display some server and database metadata.',
         },
         on: {
           click: (event) => {
             event.preventDefault()
-
-            WM.DB.get('maintenance/info').done((data) => {
-              return mw.notification.notify(
-                [
-                  hh('p', {
-                    style: {'white-space': 'nowrap'},
-                  }, `Server version: ${data.version}`),
-                  hh('p', {
-                    style: {'white-space': 'nowrap'},
-                  }, `Database revision: ${data.database_revision}`),
-                ],
-                {
-                  autoHide: false,
-                  tag: 'WikiMonkey-server-info',
-                  title: 'Wiki Monkey server information.',
-                  type: 'info',
-                },
-              )
-            })
+            if (this.expanded) {
+              this.collapse()
+            } else {
+              this.version == null ? this.getInfo() : this.expand()
+            }
           },
         },
       }, ['Server information']),
+      ...this.expanded && [
+        ' (',
+        h('a', {
+          attrs: {
+            href: '#server-info-refresh',
+            title: 'Refresh server and database metadata.',
+          },
+          on: {
+            click: (event) => {
+              event.preventDefault()
+              this.getInfo()
+            },
+          },
+        }, ['refresh']),
+        ')',
+        h('ul', [
+          h('li', ['Version: ', this.version]),
+          h('li', [
+            'Database revision: ', this.databaseRevision,
+            ' (', h(ServerUpgrade), ')',
+          ]),
+        ]),
+      ],
     ])
   },
 }
