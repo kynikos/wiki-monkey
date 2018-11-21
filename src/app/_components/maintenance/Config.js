@@ -16,6 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+const {ConfigServer} = require('./ConfigServer')
 const {ConfigLocal} = require('./ConfigLocal')
 const {ConfigComputed} = require('./ConfigComputed')
 
@@ -57,6 +58,7 @@ module.exports.Config = {
       ...this.expanded && [
         ' (in cascading order)',
         h('ul', [
+          h(ConfigServer),
           h(ConfigLocal),
           h(ConfigComputed),
         ]),
