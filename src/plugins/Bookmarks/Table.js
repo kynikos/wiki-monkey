@@ -332,6 +332,7 @@ module.exports.Table = {
           // TODO: Allow changing the page/section that a bookmark refers to e.g.
           //       by copy-pasting its ID (or the new url?); this is useful to
           //       update bookmarks to pages/sections that have been moved
+          // TODO: Support searching and filtering
           return [
             '[\xa0',
             h(PopoverEdit, {
