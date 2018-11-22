@@ -23,9 +23,14 @@ const {h: hh} = require('../../../lib/index')
 module.exports.ServerUpgrade = {
   name: 'ServerUpgrade',
 
-  render(h) {
-    if (!WM.serverUrl) return null
+  props: {
+    setDatabaseRevision: {
+      type: Function,
+      required: true,
+    },
+  },
 
+  render(h) {
     return h('a', {
       attrs: {
         href: '#force-upgrade-database',
@@ -59,7 +64,7 @@ needed.',
               ]
             }
 
-            return mw.notification.notify(
+            mw.notification.notify(
               content,
               {
                 autoHide: false,
@@ -68,6 +73,8 @@ needed.',
                 type: notificationType,
               },
             )
+
+            return this.setDatabaseRevision(data.new_revision)
           })
         },
       },

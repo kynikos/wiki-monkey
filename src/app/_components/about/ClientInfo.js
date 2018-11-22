@@ -16,24 +16,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const {ClientInfo} = require('./ClientInfo')
-const {ServerInfo} = require('./ServerInfo')
+const {Version} = require('./Version')
+const {Plugins} = require('./Plugins')
+const {Config} = require('./Config')
+const {NoAuto} = require('./NoAuto')
 
 
-module.exports = {
-  name: 'About',
+module.exports.ClientInfo = {
+  name: 'ClientInfo',
 
   render(h) {
-    return h('div', [
-      h('p', [
-        h('a', {attrs: {
-          href: 'https://github.com/kynikos/wiki-monkey/wiki',
-        }}, ['Documentation']),
-      ]),
-      h('h2', ['Client (Wiki Monkey)']),
-      h(ClientInfo),
-      h('h2', ['Server (wiki-snake)']),
-      h(ServerInfo),
+    return h('ul', [
+      h(Version),
+      h('li', [h('a', {attrs: {
+        href: 'https://github.com/kynikos/wiki-monkey',
+      }}, 'GitHub')]),
+      h(Plugins),
+      h(Config),
+      h(NoAuto),
     ])
   },
 }

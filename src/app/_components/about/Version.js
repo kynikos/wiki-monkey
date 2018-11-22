@@ -18,28 +18,46 @@
 
 const {version} = require('../../../../package.json')
 const {upgradeNow} = require('../../../lib/Upgrade')
+const {asciiSpinner} = require('../asciiSpinner')
 
 
 module.exports.Version = {
   name: 'Version',
 
+  data() {
+    return {
+      checking: false,
+    }
+  },
+
+  methods: {
+    setChecking(checking) {
+      this.checking = checking
+    },
+  },
+
+
   render(h) {
     return h('li', [
-      `Wiki Monkey version ${version} (`,
+      'Version: ',
+      version,
+      ' (',
       h('a', {
         attrs: {
           href: '#force-check-updates',
           title: 'Force checking for Wiki Monkey updates and possibly \
-prompt to install them (Wiki Monkey checks for updates \
-regularly as specified in its configuration).',
+prompt to install them (Wiki Monkey checks for updates regularly as specified \
+in its configuration).',
         },
         on: {
-          click: (event) => {
+          click: async (event) => {
             event.preventDefault()
-            upgradeNow()
+            this.setChecking(true)
+            await upgradeNow()
+            this.setChecking(false)
           },
         },
-      }, ['force update']),
+      }, [this.checking ? h(asciiSpinner) : 'check updates']),
       ')',
     ])
   },

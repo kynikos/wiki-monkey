@@ -32,7 +32,7 @@ module.exports.upgradePeriodical = function () {
 
 
 module.exports.upgradeNow = function () {
-  checkAndNotify(true)
+  return checkAndNotify(true)
 }
 
 async function checkAndNotify(alwaysNotify) {

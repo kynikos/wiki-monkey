@@ -17,6 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const WM = require('../../../index')
+const {asciiSpinner} = require('../asciiSpinner')
 const {ServerUpgrade} = require('./ServerUpgrade')
 
 
@@ -25,7 +26,6 @@ module.exports.ServerInfo = {
 
   data() {
     return {
-      expanded: false,
       version: null,
       databaseRevision: null,
     }
@@ -33,65 +33,75 @@ module.exports.ServerInfo = {
 
   methods: {
     getInfo() {
+      // Show the spinner in place of the current values
+      this.version = null
+      this.databaseRevision = null
+
       return WM.DB.get('maintenance/info').done((data) => {
         this.version = data.version
         this.databaseRevision = data.database_revision
-        this.expand()
       })
     },
-    expand() {
-      this.expanded = true
-    },
-    collapse() {
-      this.expanded = false
+    setDatabaseRevision(databaseRevision) {
+      this.databaseRevision = databaseRevision
     },
   },
 
-  render(h) {
-    if (!WM.serverUrl) return null
+  created() {
+    this.getInfo()
+  },
 
-    return h('li', [
-      h('a', {
-        attrs: {
-          href: '#server-info',
-          title: this.expanded
-            ? 'Hide server and database metadata.'
-            : 'Display some server and database metadata.',
-        },
-        on: {
-          click: (event) => {
-            event.preventDefault()
-            if (this.expanded) {
-              this.collapse()
-            } else {
-              this.version == null ? this.getInfo() : this.expand()
-            }
-          },
-        },
-      }, ['Server information']),
-      ...this.expanded && [
-        ' (',
-        h('a', {
-          attrs: {
-            href: '#server-info-refresh',
-            title: 'Refresh server and database metadata.',
-          },
-          on: {
-            click: (event) => {
-              event.preventDefault()
-              this.getInfo()
-            },
-          },
-        }, ['refresh']),
-        ')',
-        h('ul', [
-          h('li', ['Version: ', this.version]),
+  render(h) {
+    return h('ul', [
+      ...WM.serverUrl
+        ? [
           h('li', [
-            'Database revision: ', this.databaseRevision,
-            ' (', h(ServerUpgrade), ')',
+            'Version: ',
+            this.version
+              ? [
+                this.version,
+                ' (',
+                h('a', {
+                  attrs: {
+                    href: '#server-info-refresh',
+                    title: 'Refresh server and database metadata.',
+                  },
+                  on: {
+                    click: (event) => {
+                      event.preventDefault()
+                      this.getInfo()
+                    },
+                  },
+                }, ['refresh']),
+                ')',
+              ]
+              : [
+                h(asciiSpinner),
+              ],
           ]),
-        ]),
-      ],
+          h('li', [
+            'Database revision: ',
+            this.databaseRevision
+              ? [
+                this.databaseRevision,
+                ' (',
+                h(ServerUpgrade, {props: {
+                  setDatabaseRevision: this.setDatabaseRevision,
+                }}),
+                ')',
+              ]
+              : [
+                h(asciiSpinner),
+              ],
+          ]),
+        ]
+        : [
+          h('li', ['Currently running the standalone (serverless) version \
+of Wiki Monkey.']),
+        ],
+      h('li', [h('a', {attrs: {
+        href: 'https://github.com/kynikos/wiki-snake',
+      }}, 'GitHub')]),
     ])
   },
 }
