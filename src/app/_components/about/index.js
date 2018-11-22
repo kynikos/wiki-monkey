@@ -24,7 +24,7 @@ const {ServerInfo} = require('./ServerInfo')
 
 
 module.exports = {
-  name: 'Maintenance',
+  name: 'About',
 
   render(h) {
     return h('ul', [

@@ -113,7 +113,7 @@ the server:', error)
 
   makeServerConfig() { // eslint-disable-line class-methods-use-this
     // I need to abstract this method because it's also used to generate a
-    // basic configuration to export from the maintenance screen
+    // basic configuration to export from the about screen
 
     let serverConfig = {
       // Use '#' in front of 'default' so also a possible user explicitly named
@@ -136,7 +136,7 @@ the server:', error)
 
   makeLocalConfig() { // eslint-disable-line class-methods-use-this
     // I need to abstract this method because it's also used to generate a
-    // basic configuration to export from the maintenance screen
+    // basic configuration to export from the about screen
 
     let localConfig = {
       // Use '#' in front of 'default' so also a possible user explicitly named

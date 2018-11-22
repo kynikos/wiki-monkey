@@ -18,7 +18,7 @@
 
 const {Vue, Vuex, styled} = require('../../lib/index')
 const WM = require('../../index')
-const Maintenance = require('../_components/maintenance')
+const About = require('../_components/about')
 const {SpacedVertical} = require('../_components/styled')
 
 // TODO: Derive style from SpacedVertical
@@ -51,11 +51,11 @@ module.exports = class {
   constructor(bodyContent) {
     const plugins = {
       ...this.constructor.plugins,
-      maintenance: {
+      about: {
         plugin: null,
-        tabTitle: 'Show the maintenance interface',
-        tabLabel: 'maintenance',
-        page: Maintenance,
+        tabTitle: 'Show the about interface',
+        tabLabel: 'about',
+        page: About,
       },
     }
 
