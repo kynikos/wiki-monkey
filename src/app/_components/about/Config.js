@@ -16,6 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+const WM = require('../../../index')
+const {blobLink} = require('../blobLink')
 const {ConfigServer} = require('./ConfigServer')
 const {ConfigLocal} = require('./ConfigLocal')
 const {ConfigComputed} = require('./ConfigComputed')
@@ -61,6 +63,19 @@ module.exports.Config = {
           h(ConfigServer),
           h(ConfigLocal),
           h(ConfigComputed),
+          Object.values(WM.unknownConfig).some((userConfig) => {
+            return !$.isEmptyObject(userConfig)
+          }) && h('li', [
+            h(blobLink, {
+              props: {
+                href: '#view-server-downloaded-uknown-config',
+                title: 'View the configuration options that were not \
+understood by this version of Wiki Monkey.',
+                content: JSON.stringify(WM.unknownConfig, null, 2),
+                mimeType: 'application/json',
+              },
+            }, ['Unknown options']),
+          ]),
         ]),
       ],
     ])
