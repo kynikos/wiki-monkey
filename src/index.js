@@ -285,7 +285,7 @@ only the next time that this page is ',
 
     for (const [configName, userConfig] of Object.entries(nameToUserConfig)) {
       if (!$.isEmptyObject(userConfig)) {
-        console.warn(`Unkown ${configName} configuration options`, userConfig)
+        console.warn(`Unknown ${configName} configuration options`, userConfig)
       }
     }
 
