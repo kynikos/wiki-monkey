@@ -34,9 +34,6 @@ const Bot = require('./bot')
 const Filter = require('./filter')
 const Menu = require('./menu')
 
-// TODO: Document that the server's (and for testing also the client's)
-//       server certificates have to be added
-
 
 const initTempLog = (store) => ({
   hidden(text) {
