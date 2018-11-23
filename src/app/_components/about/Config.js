@@ -60,8 +60,41 @@ module.exports.Config = {
       ...this.expanded && [
         ' (in cascading order)',
         h('ul', [
+          h('li', [
+            'Defaults [ ',
+            h('a', {attrs: {
+              href: 'https://github.com/kynikos/wiki-monkey/wiki',
+            }}, 'wiki'),
+            ' | ',
+            h('a', {attrs: {
+              href: 'https://github.com/kynikos/wiki-monkey',
+            }}, 'source'),
+            ' ]',
+          ]),
           h(ConfigServer),
           h(ConfigLocal),
+          h('li', [
+            h('a', {attrs: {
+              href: 'https://www.mediawiki.org/wiki/Manual:Interface/JavaScript#Personal_scripts',
+            }}, 'User script'),
+            ' [ ',
+            ...(() => {
+              const userName = mw.config.get('wgUserName')
+              const skin = mw.config.get('skin')
+              const commonJs = new mw.Title(`User:${userName}/common.js`)
+              const skinJs = new mw.Title(`User:${userName}/${skin}.js`)
+              return [
+                h('a', {attrs: {
+                  href: commonJs.getUrl(),
+                }}, 'common.js'),
+                ' | ',
+                h('a', {attrs: {
+                  href: skinJs.getUrl(),
+                }}, `${skin}.js`),
+              ]
+            })(),
+            ' ]',
+          ]),
           h(ConfigComputed),
           Object.values(WM.unknownConfig).some((userConfig) => {
             return !$.isEmptyObject(userConfig)
