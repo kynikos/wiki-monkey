@@ -15,39 +15,47 @@ Prechecks:
   from the remote repository
 
 Repeat the following block increasing # until everything works:
-* [client] Create and checkout a 'v5.x.x-rc#' branch
-  Do not omit the "-rc#" suffix (or similar) in order to prevent CDN services
+* [client] Create and checkout a 'v5.x.xrc#' branch (better not use a hyphen to
+  avoid package-naming problems/incompatibilities)
+  Do not omit the "rc#" suffix (or similar) in order to prevent CDN services
   from caching the wrong version of the files in case further changes are
   needed
-* [client] Run `./tasks.js build -v 5.x.x-rc#`
+* [client] Run `./tasks.js build -v 5.x.xrc#`
   Do *not* prepend the 'v' here to the version number
 * [client] Commit
 * [client] Reset the develop branch to the new rc# branch
 * [client] Push the develop and rc# branches to the remote repository
 * [client] Test that the automated upgrade works
   (possibly delete the 'WikiMonkey-last-update-check' key in the localStorage)
-* [client] Test the application at least in Firefox and Chromium
+* [client] Test the application on ArchWiki and Wikipedia at least in Firefox
+  and Chromium
   Also make sure to check the effects of any changes to the configuration
   object
 
-On the server:
-* [server] Change version numbers to 5.x.x-rc# (or 5.x.x_rc#)
-* [server] Generate PyPI package (setup.py)
+On the server (needs the client scripts to have been generated):
+* [server] Change version numbers to 5.x.xrc# (better not use a hyphen to avoid
+  package-naming problems/incompatibilities)
+* [server] Generate PyPI package (python setup.py sdist bdist_wheel)
 * [server] Update PKGBUILD's sha256sums
-* [server] Use the local PyPI package to generate the Pacman package (makepkg)
+* [server] Copy the local PyPI package to the PKGBUILD folder and generate the
+  Pacman package (makepkg)
 * [server] Install and test the server package
 
 If everything works:
-* [client] Reset 'develop' to the commit before the working rc# branch was
-  built
-* [client] Checkout 'develop'
-* [client] Run `./tasks.js build -v 5.x.x`
-* [server] Change version numbers to 5.x.x
-* [client|server] Commit and tag with the v5.x.x version number
-* [client|server] Merge 'develop' into 'master'
+* [client] Checkout and reset 'develop' to the commit before the working rc#
+  branch was built
 * [client] Remove the rc# branches, also remotely
   To delete a remote branch: `git push origin :tmpbranch`
    or `git push origin :refs/heads/tmpbranch`
+* [client] Run `./tasks.js build -v 5.x.x`
+* [server] Change version numbers to 5.x.x
+* [server] Generate PyPI package (python setup.py sdist bdist_wheel) (needs
+  the client scripts to have been generated)
+* [server] Update PKGBUILD's sha256sums
+* [server] Copy the local PyPI package to the PKGBUILD folder and generate the
+  Pacman package (makepkg)
+* [client|server] Commit and tag with the v5.x.x version number
+* [client|server] Merge 'develop' into 'master'
 
 Release:
 * [client|server] Update the GitHub wiki (also update version numbers in
