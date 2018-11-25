@@ -1,38 +1,59 @@
-Prechecks
-* Ensure that no backward-incompatible configuration changes have been made
-* Make sure to be on the 'develop' branch, which in turn is on the correct
-  commit to be released
-  The following steps assume that the update_check_branch option is set to
-  'develop' and the test User in the wiki is loading the latest script from the
-  remote repository
+This procedure involves both the Wiki Monkey [client] and the wiki-snake
+[server].
 
-Repeat the following block increasing # until everything works
-* Create and checkout a 'v4.x.x-rc#' branch
+Prechecks:
+* [client|server] Ensure that no backward-incompatible configuration
+  changes have been made;
+* [client|server] Make sure to be on the 'develop' branch, which in
+  turn is on the correct commit to be released;
+* [client|server] Search for references to the current/previous version number
+  and update them
+* [client] Update the Node dependencies
+* [server] Update the virtual environment dependencies and requirements.txt
+* [client] The following steps assume that the update_check_branch option is
+  set to 'develop' and the test User in the wiki is loading the latest script
+  from the remote repository
+
+Repeat the following block increasing # until everything works:
+* [client] Create and checkout a 'v5.x.x-rc#' branch
   Do not omit the "-rc#" suffix (or similar) in order to prevent CDN services
   from caching the wrong version of the files in case further changes are
   needed
-* Run `cake -v 4.x.x-rc# build`
+* [client] Run `./tasks.js build -v 5.x.x-rc#`
   Do *not* prepend the 'v' here to the version number
-* Commit
-* Reset the develop branch to the new rc# branch
-* Push the develop and rc# branches to the remote repository
-* Test that the automated upgrade works
+* [client] Commit
+* [client] Reset the develop branch to the new rc# branch
+* [client] Push the develop and rc# branches to the remote repository
+* [client] Test that the automated upgrade works
   (possibly delete the 'WikiMonkey-last-update-check' key in the localStorage)
-* Test the application at least in Firefox and Chromium
+* [client] Test the application at least in Firefox and Chromium
   Also make sure to check the effects of any changes to the configuration
   object
 
-If everything works
-* Reset 'develop' to the commit before the working rc# branch was built
-* Checkout 'develop'
-* Run `cake -v 4.x.x build`
-* Commit and tag with the v4.x.x version number
-* Remove the rc# branches, also remotely
+On the server:
+* [server] Change version numbers to 5.x.x-rc# (or 5.x.x_rc#)
+* [server] Generate PyPI package (setup.py)
+* [server] Update PKGBUILD's sha256sums
+* [server] Use the local PyPI package to generate the Pacman package (makepkg)
+* [server] Install and test the server package
+
+If everything works:
+* [client] Reset 'develop' to the commit before the working rc# branch was
+  built
+* [client] Checkout 'develop'
+* [client] Run `./tasks.js build -v 5.x.x`
+* [server] Change version numbers to 5.x.x
+* [client|server] Commit and tag with the v5.x.x version number
+* [client|server] Merge 'develop' into 'master'
+* [client] Remove the rc# branches, also remotely
   To delete a remote branch: `git push origin :tmpbranch`
    or `git push origin :refs/heads/tmpbranch`
-* Merge 'develop' into 'master'
 
-* Update the GitHub wiki (also update version numbers in examples)
-* Check that the milestone is closed on GitHub
-* Push 'master', 'develop' and the new tag to origin
-* Publish on npm
+Release:
+* [client|server] Update the GitHub wiki (also update version numbers in
+  examples)
+* [client|server] Check that the milestone is closed on GitHub
+* [server] Publish on PyPI (twine)
+* [server] Publish on AUR
+* [client|server] Push 'master', 'develop' and the new tag to origin
+* [client] Publish on npm
