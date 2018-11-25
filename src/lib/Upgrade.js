@@ -182,8 +182,8 @@ function checkObsoleteConfig() {
     const blob = new Blob([oldconf], {type: 'application/json'})
     const confhref = window.URL.createObjectURL(blob)
     displayNotification([
-      'Wiki Monkey 4.0.0 uses a completely rewritten configuration \
-system. After updating, your old configuration was not \
+      'Since version 4.0.0, Wiki Monkey uses a completely rewritten \
+configuration system. After updating, your old configuration was not \
 automatically imported, but it is still saved in your browser\'s \
 localStorage. You can decide to export it and then merge it \
 manually, or simply remove it and use the default configuration \
