@@ -50,7 +50,7 @@ async function checkAndNotify(alwaysNotify) {
       ])
     }
   } else {
-    displayNotification([
+    const notification = displayNotification([
       `Version ${upstreamPackage.version} is available.`,
       h('br'),
       h(
@@ -70,6 +70,14 @@ consult the ',
             'documentation'
           ),
           ' for more information.',
+          h('br'),
+          h('a', 'Remind later', {onclick: () => {
+            mw.storage.set(
+              'WikiMonkey-last-update-check',
+              moment().format('YYYY-MM-DD')
+            )
+            notification.close()
+          }}),
         ]
         : [
           h('a', 'Run upgrade', {onclick: () => {
