@@ -72,7 +72,7 @@ module.exports.WikiMonkey = class WikiMonkey {
   constructor(wikiName, installedPlugins) {
     this.wikiName = wikiName
 
-    // If this version of Wiki Monkey was downloaded from a wiki-snake server,
+    // If this version of the client was downloaded from a Wiki Monkey server,
     // it will have been served patched with a _WIKI_MONKEY_SERVER_URL global
     // variable
     this.serverUrl = window._WIKI_MONKEY_SERVER_URL || false
@@ -141,8 +141,8 @@ the server:', error)
     let localConfig = {
       // Use '#' in front of 'default' so also a possible user explicitly named
       // 'Default' is supported ('#' isn't allowed in user names)
-      // Note that this is a convention also used on the server (wiki-snake)
-      // to initialize the default client.json file
+      // Note that this is a convention also used on the database server to
+      // initialize the default client.json file
       '#default': {},
       [mw.config.get('wgUserName')]: {},
     }

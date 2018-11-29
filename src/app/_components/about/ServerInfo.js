@@ -100,7 +100,7 @@ module.exports.ServerInfo = {
 of Wiki Monkey.']),
         ],
       h('li', [h('a', {attrs: {
-        href: 'https://github.com/kynikos/wiki-snake',
+        href: 'https://github.com/kynikos/wiki-monkey-server',
       }}, 'GitHub')]),
     ])
   },

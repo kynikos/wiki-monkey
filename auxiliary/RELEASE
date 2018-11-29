@@ -1,5 +1,4 @@
-This procedure involves both the Wiki Monkey [client] and the wiki-snake
-[server].
+This procedure involves both the Wiki Monkey [client] and [server].
 
 Prechecks:
 * [client|server] Ensure that no backward-incompatible configuration

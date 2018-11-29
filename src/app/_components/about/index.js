@@ -26,13 +26,20 @@ module.exports = {
   render(h) {
     return h('div', [
       h('p', [
+        'Wiki Monkey is distributed under the ',
+        h('a', {attrs: {
+          href: 'https://www.gnu.org/licenses/gpl-3.0.en.html',
+        }}, ['GNU General Public License version 3']),
+        '.',
+      ]),
+      h('p', [
         h('a', {attrs: {
           href: 'https://github.com/kynikos/wiki-monkey/wiki',
         }}, ['Documentation']),
       ]),
-      h('h2', ['Client (Wiki Monkey)']),
+      h('h2', ['Client']),
       h(ClientInfo),
-      h('h2', ['Server (wiki-snake)']),
+      h('h2', ['Server']),
       h(ServerInfo),
     ])
   },
