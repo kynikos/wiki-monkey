@@ -14,12 +14,13 @@ Prechecks:
   from the remote repository
 
 Repeat the following block increasing # until everything works:
-* [client] Create and checkout a 'v5.x.xrc#' branch (better not use a hyphen to
-  avoid package-naming problems/incompatibilities)
-  Do not omit the "rc#" suffix (or similar) in order to prevent CDN services
+* [client] Create and checkout a 'v5.x.x-rc#' branch
+  Do not omit the "-rc#" suffix (or similar) in order to prevent CDN services
   from caching the wrong version of the files in case further changes are
   needed
-* [client] Run `./tasks.js build -v 5.x.xrc#`
+  Contrary to PKGBUILD, npm follows https://semver.org/ and needs the hyphen
+  before 'rc'
+* [client] Run `./tasks.js build -v 5.x.x-rc#`
   Do *not* prepend the 'v' here to the version number
 * [client] Commit
 * [client] Reset the develop branch to the new rc# branch
@@ -32,8 +33,11 @@ Repeat the following block increasing # until everything works:
   object
 
 On the server (needs the client scripts to have been generated):
-* [server] Change version numbers to 5.x.xrc# (better not use a hyphen to avoid
-  package-naming problems/incompatibilities)
+* [server] Change version numbers to 5.x.xrc#
+  Contrary to npm, do not use a hyphen to avoid package-naming
+  problems/incompatibilities, for example hyphens aren't allowed in PKGBUILD
+  version
+  https://packaging.python.org/guides/distributing-packages-using-setuptools/#choosing-a-versioning-scheme
 * [server] Generate PyPI package (python setup.py sdist bdist_wheel)
 * [server] Update PKGBUILD's sha256sums
 * [server] Copy the local PyPI package to the PKGBUILD folder and generate the
