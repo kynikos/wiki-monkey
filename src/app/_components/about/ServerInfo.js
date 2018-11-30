@@ -26,19 +26,16 @@ module.exports.ServerInfo = {
 
   data() {
     return {
-      version: null,
       databaseRevision: null,
     }
   },
 
   methods: {
     getInfo() {
-      // Show the spinner in place of the current values
-      this.version = null
+      // Show the spinner in place of the current value
       this.databaseRevision = null
 
       return WM.DB.get('maintenance/info').done((data) => {
-        this.version = data.version
         this.databaseRevision = data.database_revision
       })
     },
@@ -48,60 +45,39 @@ module.exports.ServerInfo = {
   },
 
   created() {
-    this.getInfo()
+    WM.serverUrl && this.getInfo()
   },
 
   render(h) {
-    return h('ul', [
-      ...WM.serverUrl
-        ? [
-          h('li', [
-            'Version: ',
-            this.version
-              ? [
-                this.version,
-                ' (',
-                h('a', {
-                  attrs: {
-                    href: '#server-info-refresh',
-                    title: 'Refresh server and database metadata.',
-                  },
-                  on: {
-                    click: (event) => {
-                      event.preventDefault()
-                      this.getInfo()
-                    },
-                  },
-                }, ['refresh']),
-                ')',
-              ]
-              : [
-                h(asciiSpinner),
-              ],
-          ]),
-          h('li', [
-            'Database revision: ',
-            this.databaseRevision
-              ? [
-                this.databaseRevision,
-                ' (',
-                h(ServerUpgrade, {props: {
-                  setDatabaseRevision: this.setDatabaseRevision,
-                }}),
-                ')',
-              ]
-              : [
-                h(asciiSpinner),
-              ],
-          ]),
-        ]
-        : [
-          h('li', ['Currently running the standalone (serverless) version \
-of Wiki Monkey.']),
-        ],
-      h('li', [h('a', {attrs: {
-        href: 'https://github.com/kynikos/wiki-monkey-server',
-      }}, 'GitHub')]),
-    ])
+    return WM.serverUrl
+      ? h('li', [
+        'Database revision: ',
+        this.databaseRevision
+          ? [
+            this.databaseRevision,
+            ' (',
+            // For the moment it's pointless to also offer a refresh link
+            // h('a', {
+            //   attrs: {
+            //     href: '#server-info-refresh',
+            //     title: 'Refresh server and database metadata.',
+            //   },
+            //   on: {
+            //     click: (event) => {
+            //       event.preventDefault()
+            //       this.getInfo()
+            //     },
+            //   },
+            // }, ['refresh']),
+            h(ServerUpgrade, {props: {
+              setDatabaseRevision: this.setDatabaseRevision,
+            }}),
+            ')',
+          ]
+          : [
+            h(asciiSpinner),
+          ],
+      ])
+      : null
   },
 }

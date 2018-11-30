@@ -16,7 +16,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const {ClientInfo} = require('./ClientInfo')
+const {Version} = require('./Version')
+const {Plugins} = require('./Plugins')
+const {Config} = require('./Config')
+const {AutoLaunch} = require('./AutoLaunch')
 const {ServerInfo} = require('./ServerInfo')
 
 
@@ -32,15 +35,28 @@ module.exports = {
         }}, ['GNU General Public License version 3']),
         '.',
       ]),
-      h('p', [
-        h('a', {attrs: {
-          href: 'https://github.com/kynikos/wiki-monkey/wiki',
-        }}, ['Documentation']),
+      h('ul', [
+        h(Version),
+        h(ServerInfo),
+        h('li', [
+          h('a', {attrs: {
+            href: 'https://github.com/kynikos/wiki-monkey/wiki',
+          }}, ['Documentation']),
+        ]),
+        h('li', [
+          'GitHub: ',
+          h('a', {attrs: {
+            href: 'https://github.com/kynikos/wiki-monkey',
+          }}, 'client'),
+          ', ',
+          h('a', {attrs: {
+            href: 'https://github.com/kynikos/wiki-monkey-server',
+          }}, 'server'),
+        ]),
+        h(Plugins),
+        h(Config),
+        h(AutoLaunch),
       ]),
-      h('h2', ['Client']),
-      h(ClientInfo),
-      h('h2', ['Server']),
-      h(ServerInfo),
     ])
   },
 }

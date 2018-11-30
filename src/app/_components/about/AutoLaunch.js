@@ -17,8 +17,8 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 
-module.exports.NoAuto = {
-  name: 'NoAuto',
+module.exports.AutoLaunch = {
+  name: 'AutoLaunch',
 
   data() {
     return {

@@ -34,12 +34,17 @@ module.exports.ServerUpgrade = {
     return h('a', {
       attrs: {
         href: '#force-upgrade-database',
-        title: 'Force upgrading the database to the latest revision, if \
-needed.',
+        title: 'Force trying to upgrade the database to the latest revision, \
+if needed; this safely does nothing if the database is already at the latest \
+revision.',
       },
       on: {
         click: (event) => {
           event.preventDefault()
+
+          // Setting the revision to null shows the spinner while the query is
+          // executed
+          this.setDatabaseRevision(null)
 
           WM.DB.post('maintenance/upgrade_database').done((data) => {
             let content
