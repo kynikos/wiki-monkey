@@ -74,7 +74,8 @@ module.exports.WikiMonkey = class WikiMonkey {
 
     // If this version of the client was downloaded from a Wiki Monkey server,
     // it will have been served patched with a _WIKI_MONKEY_SERVER_URL global
-    // variable
+    // variable; for this same reason there's no need to check that the client
+    // and server versions correspond
     this.serverUrl = window._WIKI_MONKEY_SERVER_URL || false
 
     // Retrieving config.json separately from the main script allows to more
