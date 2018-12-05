@@ -31,20 +31,21 @@ Repeat the following block increasing # until everything works:
   and Chromium
   Also make sure to check the effects of any changes to the configuration
   object
-
-On the server (needs the client scripts to have been generated):
 * [server] Change version numbers to 5.x.xrc#
   Contrary to npm, do not use a hyphen to avoid package-naming
   problems/incompatibilities, for example hyphens aren't allowed in PKGBUILD
   version
   https://packaging.python.org/guides/distributing-packages-using-setuptools/#choosing-a-versioning-scheme
 * [server] Generate PyPI package (python setup.py sdist bdist_wheel)
+  The [client] scripts must have been regenerated
 * [server] Update PKGBUILD's sha256sums
 * [server] Copy the local PyPI package to the PKGBUILD folder and generate the
   Pacman package (makepkg)
 * [server] Install and test the server package
 
 If everything works:
+* [client|server] Relase the latest version of Python and npm dependencies
+  if needed
 * [client] Checkout and reset 'develop' to the commit before the working rc#
   branch was built
 * [client] Remove the rc# branches, also remotely
@@ -52,11 +53,9 @@ If everything works:
    or `git push origin :refs/heads/tmpbranch`
 * [client] Run `./tasks.js build -v 5.x.x`
 * [server] Change version numbers to 5.x.x
-* [server] Generate PyPI package (python setup.py sdist bdist_wheel) (needs
-  the client scripts to have been generated)
+* [server] Generate PyPI package (python setup.py sdist bdist_wheel)
+  The [client] scripts must have been regenerated
 * [server] Update PKGBUILD's sha256sums
-* [server] Copy the local PyPI package to the PKGBUILD folder and generate the
-  Pacman package (makepkg)
 * [client|server] Commit and tag with the v5.x.x version number
 * [client|server] Merge 'develop' into 'master'
 
@@ -65,6 +64,6 @@ Release:
   examples)
 * [client|server] Check that the milestone is closed on GitHub
 * [server] Publish on PyPI (twine)
-* [server] Publish on AUR
+* [server] Publish on AUR (also regenerate .SRCINFO)
 * [client|server] Push 'master', 'develop' and the new tag to origin
 * [client] Publish on npm
