@@ -91,7 +91,7 @@ Wiki Monkey interface`,
           h('a', {
             attrs: {
               href: '#copy-article-wiki-link',
-              title: `Copy \"${articleLink}\" to the clipboard`,
+              title: `Copy "${articleLink}" to the clipboard`,
               'data-clipboard-text': articleLink,
             },
             on: {
