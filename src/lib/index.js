@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-require('babel-polyfill')
+require('@babel/polyfill')
 
 // JQuery is provided globally by MediaWiki
 
