@@ -9,6 +9,11 @@ Prechecks:
   and update them
 * [client] Update the Node dependencies
 * [server] Update the virtual environment dependencies and requirements.txt
+  For example use pur https://github.com/alanhamlett/pip-update-requirements
+  $ source venv/bin/activate
+  $ pip list -o
+  $ pur -r requirements.txt
+  $ pip install -r requirements.txt
 * [client] The following steps assume that the update_check_branch option is
   set to 'develop' and the test User in the wiki is loading the latest script
   from the remote repository
@@ -41,10 +46,12 @@ Repeat the following block increasing # until everything works:
 * [server] Update PKGBUILD's sha256sums
 * [server] Copy the local PyPI package to the PKGBUILD folder and generate the
   Pacman package (makepkg)
+  Make sure that the venv is *not* activated, or e.g. the console_scripts won't
+  be generated
 * [server] Install and test the server package
 
 If everything works:
-* [client|server] Relase the latest version of Python and npm dependencies
+* [client|server] Release the latest version of Python and npm dependencies
   if needed
 * [client] Checkout and reset 'develop' to the commit before the working rc#
   branch was built
