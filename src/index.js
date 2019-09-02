@@ -17,7 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const mwmodpromise = mw.loader.using([
-  'mediawiki.api.edit',
+  'mediawiki.api',
   'mediawiki.notification',
   'mediawiki.Title',
   'mediawiki.Uri',
