@@ -19,6 +19,7 @@
 const mwmodpromise = mw.loader.using([
   'mediawiki.api',
   'mediawiki.notification',
+  'mediawiki.storage',
   'mediawiki.Title',
   'mediawiki.Uri',
 ])
