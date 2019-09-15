@@ -22,6 +22,7 @@ const languages = {
   local: 'English',
   names: {
     العربية: {subtag: 'ar', english: 'Arabic'},
+    Bosanski: {subtag: 'bs', english: 'Bosnian'},
     Български: {subtag: 'bg', english: 'Bulgarian'},
     Català: {subtag: 'ca', english: 'Catalan'},
     Česky: {subtag: 'cs', english: 'Czech'},
@@ -60,6 +61,7 @@ const languages = {
   },
   categories: [
     'العربية',
+    'Bosanski',
     'Български',
     'Català',
     'Česky',
@@ -92,7 +94,7 @@ const languages = {
   ],
   interlanguage: {
     external: ['de', 'fa', 'fr', 'ja'],
-    internal: ['ar', 'bg', 'cs', 'da', 'el', 'en', 'es', 'fi', 'he',
+    internal: ['ar', 'bg', 'bs', 'cs', 'da', 'el', 'en', 'es', 'fi', 'he',
       'hr', 'hu', 'id', 'it', 'ko', 'lt', 'nl', 'pl', 'pt',
       'ru', 'sk', 'sr', 'sv', 'th', 'tr', 'uk', 'zh-hans',
       'zh-hant'],
@@ -116,6 +118,16 @@ const tablesOfContents = {
     alsoIn: 'също в', // Unconfirmed
     indentType: ':',
     replace: ['[ _]\\(Български\\)', '', ''],
+    keepAltName: true,
+    showIndices: true,
+    rightToLeft: false,
+  },
+  bs: {
+    page: 'Table of contents (Bosanski)',
+    root: 'Category:Bosanski',
+    alsoIn: 'also in', // TODO: Untranslated
+    indentType: ':',
+    replace: ['[ _]\\(Bosanski\\)', '', ''],
     keepAltName: true,
     showIndices: true,
     rightToLeft: false,
