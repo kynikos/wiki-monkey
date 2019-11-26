@@ -5,25 +5,51 @@ const path = require('path')
 const fs = require('fs')
 const process = require('process')
 const commander = require('commander')
-const {spawnSync} = require('child_process')
-const {jspack} = require('@kynikos/browserify-helpers')
-
-const SRCDIR = './src/'
-const SRCLOCAL = ['local.js']
-const SRCPRODUCTION = ['ArchWiki.js', 'Wikipedia.js']
-const DISTDIR = './dist/'
-const AUXDIR = './auxiliary/'
+const {
+  runSync,
+  spawnInteractive,
+  npmInteractive,
+  npxInteractive,
+  webpackInteractive,
+  gcloudJson,
+  gcloudInteractive,
+  firebaseInteractive,
+} = require('@kynikos/tasks/subprocess')
+const {
+  linkDependencies,
+  maintainPackageDependencies,
+} = require('@kynikos/tasks/dependencies')
+// I can't define these constants directly in this script because they're also
+// required by webpack.config.js, which in turn can't require this whole script
+// because commander.js eats all the command-line arguments and the webpack-cli
+// command wouldn't be able to read its own arguments
+const {SRCDIR, SRCLOCAL, SRCPRODUCTION, DISTDIR, AUXDIR} =
+  require('./tasks-const')
 
 commander
-  .command('build')
-  .description('recompile user scripts')
-  // Note that --version is reserved by commander.js; I could override it but
-  // it gets assigned the default value if I don't specify it
-  .option('-v, --release-version <STRING>', 'assign a version string to the build; \
-if not given, only the testing script is recompiled')
-  .action(({releaseVersion}) => {
-    build(releaseVersion)
-  })
+  .command('deps')
+  .description('run semi-automated dependency maintenance operations')
+  .action(() => maintainDependencies())
+
+commander
+  .command('build [VERSION]')
+  .description('recompile user scripts; optionally assign a version string to \
+the build; if not given, only the testing script is recompiled')
+  .option('-n, --no-links', "do not create npm links to my dependencies \
+(relies on having run the 'deps --no-links' command first)")
+  .action((version, {links}) => build(version, links))
+
+commander
+  .command('lint')
+  .description('lint the source code')
+  .action(() => lint())
+
+commander
+  .command('test [REGEX]')
+  .description('run the automated tests; optionally only run tests with a name \
+that matches REGEX')
+  // eslint-disable-next-line jest/require-top-level-describe,jest/no-disabled-tests,jest/expect-expect,jest/valid-title
+  .action((regex) => test(regex))
 
 commander
   .command('gencert')
@@ -38,110 +64,120 @@ commander
 commander.parse(process.argv)
 
 
-function run(command, ...rest) {
-  const adjustedLength = Math.max(rest.length, 1)
-
-
-  const args = rest.slice(0, adjustedLength - 1)
-
-
-  const options = rest[adjustedLength - 1]
-  spawnSync(command, args, {
-    stdio: [process.stdin, process.stdout, process.stderr],
-    ...options,
-  })
+function maintainDependencies() {
+  maintainPackageDependencies(
+    __dirname,
+    ['@kynikos'],
+    true,
+  )
 }
 
 
-function buildScript({
-  fname,
-  distdir,
-  minified = true,
-  production = true,
-}) {
-  const srcfile = path.join(SRCDIR, fname)
-  const {name, ext} = path.parse(fname)
-  const distfile = path.join(distdir, `WikiMonkey-${name}.js`)
-
-  const envify = production ? {NODE_ENV: 'production'} : false
-
-  console.log(`Compiling ${distfile} ...`)
-  jspack(srcfile, distfile, {
-    // Note how it's necessary to use scssify, not sassify, since the latter
-    // seems to have problems with escaped characters such as those used as
-    // icons in Element UI
-    scssify: true,
-    envify,
-    debug: true,
-    licensify: true,
-  })
-
-  if (minified) {
-    const distfileMin = path.join(distdir, `WikiMonkey-${name}.min.js`)
-    console.log(`Compiling ${distfileMin} ...`)
-    jspack(srcfile, distfileMin, {
-      scssify: true,
-      envify,
-      licensify: true,
-      // This application relies on the plugin constructor names, so use
-      // UglifyJS' keep_fnames option (a bug from not using this option
-      // would be that the default plugin in the bot's select widget is
-      // not correctly selected because its name isn't recognized in the
-      // minified version)
-      uglify: {keep_fnames: true},
+function build(version, links) {
+  if (links) {
+    linkDependencies({
+      cwd: __dirname,
+      prefixes: ['@kynikos'],
+      ask: false,
+      recurse: true,
     })
-  }
-}
-
-
-function build(version) {
-  if (version) {
-    spawnSync('npm', ['--allow-same-version',
-      '--no-git-tag-version',
-      'version', version])
   }
 
   for (const fname of SRCLOCAL) {
-    buildScript({
+    webpackInteractive([
+      '--env.entry',
       fname,
-      distdir: AUXDIR,
-      minified: false,
-      production: false,
-    })
+    ])
   }
 
   if (version) {
     for (const fname of SRCPRODUCTION) {
-      buildScript({
+      webpackInteractive([
+        '--env.entry',
         fname,
-        distdir: DISTDIR,
-      })
+        '--env.production',
+      ])
+      webpackInteractive([
+        '--env.entry',
+        fname,
+        '--env.production',
+        '--env.minified',
+      ])
     }
+  }
+
+  if (version) {
+    npmInteractive([
+      '--allow-same-version',
+      '--no-git-tag-version',
+      'version',
+      version,
+    ])
   }
 }
 
 
+function lint() {
+  // See also the .eslintignore file
+  return npxInteractive(['eslint', __dirname])
+}
+
+
+function test(testNameRegex) {
+  npxInteractive([
+    'jest',
+    ...testNameRegex ? ['--testNamePattern', testNameRegex] : [],
+  ])
+}
+
+
 function genCert() {
-  run('openssl', 'genrsa', '-out', 'dev-key.pem', '2048', {cwd: AUXDIR})
-  run(
-    'openssl', 'req', '-new', '-key', 'dev-key.pem', '-out', 'dev.csr',
-    {cwd: AUXDIR}
-  )
-  run(
-    'openssl', 'x509', '-req', '-in', 'dev.csr', '-signkey',
-    'dev-key.pem', '-out', 'dev-cert.pem', {cwd: AUXDIR}
-  )
+  spawnInteractive({
+    command: 'openssl',
+    args: [
+      'genrsa',
+      '-out',
+      'dev-key.pem',
+      '2048',
+    ],
+    options: {cwd: AUXDIR},
+  })
+  spawnInteractive({
+    command: 'openssl',
+    args: [
+      'req',
+      '-new',
+      '-key',
+      'dev-key.pem',
+      '-out',
+      'dev.csr',
+    ],
+    options: {cwd: AUXDIR},
+  })
+  spawnInteractive({
+    command: 'openssl',
+    args: [
+      'x509',
+      '-req',
+      '-in',
+      'dev.csr',
+      '-signkey',
+      'dev-key.pem',
+      '-out',
+      'dev-cert.pem',
+    ],
+    options: {cwd: AUXDIR},
+  })
   fs.unlinkSync(path.join(AUXDIR, 'dev.csr'))
 }
 
 
 function serve() {
-  run(
-    './node_modules/.bin/http-server',
+  npxInteractive([
+    'http-server',
     '--cors',
     '--ssl',
     '--cert', path.join(AUXDIR, 'dev-cert.pem'),
     '--key', path.join(AUXDIR, 'dev-key.pem'),
-    {},
-  )
+  ])
 }

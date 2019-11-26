@@ -16,14 +16,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-require('@babel/polyfill')
+// These replace the obsolete @babel/polyfill
+// https://babeljs.io/docs/en/babel-polyfill
+require('core-js/stable')
+require('regenerator-runtime/runtime')
 
 // JQuery is provided globally by MediaWiki
 
 module.exports.init = function () {
   /* eslint-disable global-require */
-  const Vue = require('vue')
-  const Vuex = require('vuex')
+  const Vue = require('vue').default
+  const Vuex = require('vuex').default
   Vue.use(Vuex)
   module.exports = {Vue, Vuex}
 

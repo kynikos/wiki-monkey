@@ -24,7 +24,8 @@ const mwmodpromise = mw.loader.using([
   'mediawiki.Uri',
 ])
 
-// Initialize the libraries immediately (especially @babel/polyfill)
+// Initialize the libraries immediately (especially core-js and
+// regenerator-runtime)
 require('./lib/index').init()
 const {h: hh} = require('./lib/index')
 

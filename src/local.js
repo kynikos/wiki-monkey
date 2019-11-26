@@ -30,7 +30,7 @@ require('./lib/PreInit')(
     require('./plugins/ArchWikiRCFilter'),
     require('./plugins/ArchWikiSortContacts'),
     // The ArchPackages module is currently unusable
-    // require("./plugins/ArchWikiUpdatePackageTemplates"),
+    // require('./plugins/ArchWikiUpdatePackageTemplates'),
     require('./plugins/ArchWikiWantedCategories'),
     require('./plugins/Bookmarks'),
     require('./plugins/DeletePages'),
