@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const WM = require('../../index')
+const WM = require('%/index')
 
 const startMark = 'START AUTO LIST - DO NOT REMOVE OR MODIFY THIS MARK-->'
 const endMark = '<!--END AUTO LIST - DO NOT REMOVE OR MODIFY THIS MARK'

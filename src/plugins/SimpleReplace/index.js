@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const {_Plugin} = require('../_Plugin')
+const {_Plugin} = require('%/plugins/_Plugin')
 const EditorUI = require('./EditorUI')
 const BotUI = require('./BotUI')
 const RunEditor = require('./RunEditor')

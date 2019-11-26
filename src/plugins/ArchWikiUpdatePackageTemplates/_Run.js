@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const WM = require('../../index')
-const {_Plugin} = require('../_Plugin')
+const WM = require('%/index')
+const {_Plugin} = require('%/plugins/_Plugin')
 
 
 module.exports = class extends _Plugin {

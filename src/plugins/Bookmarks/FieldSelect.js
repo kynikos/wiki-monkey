@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const {Vue, Vuex} = require('../../lib/index')
+const {Vue, Vuex} = require('%/lib/index')
 
 // TODO: Even better would be to have a small button/icon to add/select the
 //       fields to show, and each column header would have a button to hide it

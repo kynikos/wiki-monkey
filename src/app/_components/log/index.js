@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const {Vuex, styled} = require('../../../lib/index')
-const colors = require('../../_components/styled/colors')
+const {Vuex, styled} = require('%/lib/index')
+const colors = require('%/app/_components/styled/colors')
 
 const LogFilter = require('./LogFilter')
 const Export = require('./Export')

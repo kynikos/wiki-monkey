@@ -16,9 +16,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const WM = require('../../index')
-const {Vue, Vuex, styled} = require('../../lib/index')
-const Fieldset = require('../_components/fieldset')
+const WM = require('%/index')
+const {Vue, Vuex, styled} = require('%/lib/index')
+const Fieldset = require('%/app/_components/fieldset')
 
 const Commands = styled.div({
   display: 'flex',

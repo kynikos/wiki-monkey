@@ -16,9 +16,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const {Vuex} = require('../lib/index')
-const fieldset = require('./_components/fieldset/store')
-const log = require('./_components/log/store')
+const {Vuex} = require('%/lib/index')
+const fieldset = require('%/app/_components/fieldset/store')
+const log = require('%/app/_components/log/store')
 const main = require('./mainTabs/store')
 const bot = require('./bot/store')
 const filter = require('./filter/store')

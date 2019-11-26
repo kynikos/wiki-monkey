@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const WM = require('../../index')
-const {moment} = require('../../lib/index')
+const WM = require('%/index')
+const {moment} = require('%/lib/index')
 
 function mapIdToIndex(bookmarks) {
   return bookmarks.reduce((acc, bm, index) => {

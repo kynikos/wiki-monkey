@@ -16,10 +16,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const {Vue, Vuex, styled} = require('../../lib/index')
-const WM = require('../../index')
-const About = require('../_components/about')
-const {SpacedVertical} = require('../_components/styled')
+const {Vue, Vuex, styled} = require('%/lib/index')
+const WM = require('%/index')
+const About = require('%/app/_components/about')
+const {SpacedVertical} = require('%/app/_components/styled')
 
 // TODO: Derive style from SpacedVertical
 const sTabs = styled.div({

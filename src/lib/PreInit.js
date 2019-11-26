@@ -35,6 +35,6 @@ module.exports = function PreInit(wikiName, installPlugins) {
 }
 
 function initWM(wikiName, installPlugins) {
-  const {WikiMonkey} = require('../index') // eslint-disable-line global-require
+  const {WikiMonkey} = require('%/index') // eslint-disable-line global-require
   new WikiMonkey(wikiName, installPlugins()) // eslint-disable-line no-new
 }

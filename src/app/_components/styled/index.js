@@ -1,4 +1,4 @@
-const {jssc, styled} = require('../../../lib/index')
+const {jssc, styled} = require('%/lib/index')
 const colors = require('./colors')
 
 jssc({

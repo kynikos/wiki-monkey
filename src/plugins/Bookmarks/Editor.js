@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const {Vue, Vuex} = require('../../lib/index')
-const {FlexColumn} = require('../../app/_components/styled')
+const {Vue, Vuex} = require('%/lib/index')
+const {FlexColumn} = require('%/app/_components/styled')
 
 
 module.exports.Editor = {

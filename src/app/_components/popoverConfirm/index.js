@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const {Vue, Vuex} = require('../../../lib/index')
+const {Vue, Vuex} = require('%/lib/index')
 
 // TODO: Adding a "cancel" button, waiting to close the popover until the
 //       async operation has completed, and in general managing the 'visible'

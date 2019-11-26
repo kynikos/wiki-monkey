@@ -16,15 +16,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const {moment} = require('../lib/index')
-const {version} = require('../../package.json')
+const {moment} = require('%/lib/index')
+const {version} = require('%/../package.json')
 
 // Make sure to initialize the global style
-require('./_components/styled')
+require('%/app/_components/styled')
 
 const Store = require('./store')
-const {WikiLink} = require('./_components/log/WikiLink')
-const {PageLink} = require('./_components/log/PageLink')
+const {WikiLink} = require('%/app/_components/log/WikiLink')
+const {PageLink} = require('%/app/_components/log/PageLink')
 const mods = require('./mods')
 
 const {PageCommands} = require('./pageCommands')

@@ -26,18 +26,18 @@ const mwmodpromise = mw.loader.using([
 
 // Initialize the libraries immediately (especially core-js and
 // regenerator-runtime)
-require('./lib/index').init()
-const {h: hh} = require('./lib/index')
+require('%/lib/index').init()
+const {h: hh} = require('%/lib/index')
 
 const {upgradePeriodical} = require('./lib/Upgrade')
-const {App} = require('./app')
-const Store = require('./app/store')
-const {PageCommands} = require('./app/pageCommands')
-const {SectionCommands} = require('./app/sectionCommands')
-const MainTabs = require('./app/mainTabs')
-const Menu = require('./app/menu')
-const Filter = require('./app/filter')
-const Bot = require('./app/bot')
+const {App} = require('%/app')
+const Store = require('%/app/store')
+const {PageCommands} = require('%/app/pageCommands')
+const {SectionCommands} = require('%/app/sectionCommands')
+const MainTabs = require('%/app/mainTabs')
+const Menu = require('%/app/menu')
+const Filter = require('%/app/filter')
+const Bot = require('%/app/bot')
 
 // The ArchPackages module is currently unusable
 // ArchPackages = require('./ArchPackages')

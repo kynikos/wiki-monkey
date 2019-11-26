@@ -16,9 +16,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const WM = require('../../../index')
-const {version} = require('../../../../package.json')
-const {upgradeNow} = require('../../../lib/Upgrade')
+const WM = require('%/index')
+const {version} = require('%/../package.json')
+const {upgradeNow} = require('%/lib/Upgrade')
 const {asciiSpinner} = require('../asciiSpinner')
 
 

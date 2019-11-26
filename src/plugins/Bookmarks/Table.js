@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const {Vuex, moment} = require('../../lib/index')
-const {popoverConfirm} = require('../../app/_components/popoverConfirm')
+const {Vuex, moment} = require('%/lib/index')
+const {popoverConfirm} = require('%/app/_components/popoverConfirm')
 const {ExpandedCell} = require('./ExpandedCell')
 const {PopoverEdit} = require('./PopoverEdit')
 
