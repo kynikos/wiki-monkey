@@ -90,6 +90,7 @@ module.exports = {
     'require-jsdoc': 'off',
     // 'babel/semi': 1,
     'semi': ['error', 'never'],
+    'sort-imports': 'off',
     'sort-keys': 'off',
     'space-before-function-paren': ['error', {
       'anonymous': 'always',
