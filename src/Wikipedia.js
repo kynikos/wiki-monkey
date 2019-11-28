@@ -27,7 +27,7 @@ require('./lib/PreInit')(
     require('./plugins/FixBacklinkFragments'),
     require('./plugins/FixDoubleRedirects'),
     require('./plugins/FixFragments'),
-    require('./plugins/FixLinkFragments'),
+    require('./plugins/FixLinkFragments').default,
     require('./plugins/MultipleLineBreaks'),
     require('./plugins/SimpleReplace'),
     require('./plugins/SynchronizeInterlanguageLinks'),

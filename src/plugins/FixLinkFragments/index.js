@@ -16,11 +16,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const {_Plugin} = require('%/plugins/_Plugin')
-const Run = require('./Run')
+import {_Plugin} from '%/plugins/_Plugin'
+import run from './run'
 
 
-module.exports = class FixLinkFragments extends _Plugin {
+export default class FixLinkFragments extends _Plugin {
   static requiresServer = false
 
   static confDefault = {
@@ -29,6 +29,6 @@ module.exports = class FixLinkFragments extends _Plugin {
   }
 
   install({editor}) {
-    editor((callNext) => new Run(this.conf, callNext))
+    editor((callNext) => run(this.conf, callNext))
   }
 }
