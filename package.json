@@ -1,6 +1,6 @@
 {
   "name": "@kynikos/wiki-monkey",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "author": "Dario Giovannetti",
   "description": "MediaWiki bot and editor-assistant user script.",
   "license": "GPL-3.0",
