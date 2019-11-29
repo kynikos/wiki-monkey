@@ -22,6 +22,7 @@ const mwmodpromise = mw.loader.using([
   'mediawiki.storage',
   'mediawiki.Title',
   'mediawiki.Uri',
+  'mediawiki.user',
 ])
 
 // Initialize the libraries immediately (especially core-js and
