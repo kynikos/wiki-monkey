@@ -25,7 +25,7 @@ Repeat the following block increasing # until everything works:
   needed
   Contrary to PKGBUILD, npm follows https://semver.org/ and needs the hyphen
   before 'rc'
-* [client] Run `./tasks.js build -v 5.x.x-rc#`
+* [client] Run `./tasks.js build 5.x.x-rc#`
   Do *not* prepend the 'v' here to the version number
 * [client] Commit
 * [client] Reset the develop branch to the new rc# branch
@@ -58,7 +58,7 @@ If everything works:
 * [client] Remove the rc# branches, also remotely
   To delete a remote branch: `git push origin :tmpbranch`
    or `git push origin :refs/heads/tmpbranch`
-* [client] Run `./tasks.js build -v 5.x.x`
+* [client] Run `./tasks.js build 5.x.x`
 * [server] Change version numbers to 5.x.x
 * [server] Generate PyPI package (python setup.py sdist bdist_wheel)
   The [client] scripts must have been regenerated
