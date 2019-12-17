@@ -66,6 +66,7 @@ module.exports = class SynchronizeInterlanguageLinks extends _Run {
 
     const newlinks = {}
 
+    // BUG[log]: "Reading edited article" looks quite weird in the log
     WM.App.log.info(`Reading ${WM.App.log.PageLink(url, 'edited article')}` +
                                                                     ' ...')
 
