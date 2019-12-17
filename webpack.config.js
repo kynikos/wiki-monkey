@@ -1,6 +1,7 @@
 /* eslint-env node */
 const path = require('path')
 const webpack = require('webpack')
+const TerserPlugin = require('terser-webpack-plugin')
 const {LicenseWebpackPlugin} = require('license-webpack-plugin')
 // I can't define these constants in tasks.js because if I required tasks.js
 // directly here, commander.js would eat all the command-line arguments and the
@@ -38,6 +39,17 @@ module.exports = function ({entry, production, minified}) {
     optimization: {
       // If 'minified' is undefined, it defaults to true
       minimize: minified || false,
+      minimizer: [
+        new TerserPlugin({
+          terserOptions: {
+            // For the moment I rely on constructor.name calls to get plugin
+            // class' names
+            // TODO[setup]: Find a better way, or note that it's also possible
+            //   to just pass an explicit list of names to not mangle
+            keep_classnames: true,
+          },
+        }),
+      ],
     },
     module: {
       rules: [
