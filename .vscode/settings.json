@@ -1,0 +1,6 @@
+{
+    "files.exclude": {
+        "auxiliary/WikiMonkey-local.js": true,
+        "dist/*.js": true
+    }
+}
