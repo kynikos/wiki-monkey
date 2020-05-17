@@ -21,6 +21,8 @@ import run from './run'
 
 
 export default class FixLinkFragments extends _Plugin {
+  static pluginName = 'FixLinkFragments'
+
   static requiresServer = false
 
   static confDefault = {

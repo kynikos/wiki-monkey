@@ -22,6 +22,8 @@ const RunBot = require('./RunBot')
 
 
 module.exports = class ArchWikiUpdatePackageTemplates extends _Plugin {
+  static pluginName = 'ArchWikiUpdatePackageTemplates'
+
   static requiresServer = false
 
   static confDefault = {

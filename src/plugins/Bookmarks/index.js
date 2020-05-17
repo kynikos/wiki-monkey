@@ -24,6 +24,8 @@ const {TabPage} = require('./TabPage')
 
 
 module.exports = class Bookmarks extends _Plugin {
+  static pluginName = 'Bookmarks'
+
   static requiresServer = true
 
   static confDefault = {

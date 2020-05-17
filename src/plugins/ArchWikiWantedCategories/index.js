@@ -21,6 +21,8 @@ const Run = require('./Run')
 
 
 module.exports = class ArchWikiWantedCategories extends _Plugin {
+  static pluginName = 'ArchWikiWantedCategories'
+
   static requiresServer = false
 
   static confDefault = {

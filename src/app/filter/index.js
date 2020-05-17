@@ -113,7 +113,7 @@ module.exports = class {
 
       created() {
         plugins.some(([plugin, run, makeUI], index) => {
-          if (plugin.constructor.name === defaultPlugin) {
+          if (plugin.constructor.pluginName === defaultPlugin) {
             return this.selectPlugin([index, plugin, run, makeUI])
           }
           return false

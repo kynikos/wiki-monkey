@@ -112,7 +112,7 @@ module.exports = class {
       const option = document.createElement('option')
       option.innerHTML = pluginInst
 
-      if (pplugin.constructor.name === WM.conf.default_bot_plugin) {
+      if (pplugin.constructor.pluginName === WM.conf.default_bot_plugin) {
         option.selected = true
       }
 
@@ -136,7 +136,7 @@ module.exports = class {
             UI.firstChild
           )
         }
-        self.configuration.pluginName = plugin.constructor.name
+        self.configuration.pluginName = plugin.constructor.pluginName
         self.configuration.function_ = (
           title,
           callContinue, chainArgs
@@ -155,7 +155,7 @@ module.exports = class {
       } else {
         divFunction.appendChild(document.createElement('div'))
       }
-      this.configuration.pluginName = plugin.constructor.name
+      this.configuration.pluginName = plugin.constructor.pluginName
       this.configuration.function_ = (title, callContinue, chainArgs) => {
         pluginRun(title, callContinue, chainArgs)
       }

@@ -21,6 +21,8 @@ const Run = require('./Run')
 
 
 module.exports = class UpdateCategoryTree extends _Plugin {
+  static pluginName = 'UpdateCategoryTree'
+
   static requiresServer = false
 
   static confDefault = {

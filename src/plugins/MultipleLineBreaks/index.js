@@ -21,6 +21,8 @@ const Run = require('./Run')
 
 
 module.exports = class MultipleLineBreaks extends _Plugin {
+  static pluginName = 'MultipleLineBreaks'
+
   static requiresServer = false
 
   static confDefault = {

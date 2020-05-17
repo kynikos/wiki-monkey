@@ -22,6 +22,8 @@ const RunBot = require('./RunBot')
 
 
 module.exports = class SynchronizeInterlanguageLinks extends _Plugin {
+  static pluginName = 'SynchronizeInterlanguageLinks'
+
   static requiresServer = false
 
   static confDefault = {

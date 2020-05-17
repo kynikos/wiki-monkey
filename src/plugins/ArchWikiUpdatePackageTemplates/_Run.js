@@ -17,10 +17,9 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const WM = require('%/index')
-const {_Plugin} = require('%/plugins/_Plugin')
 
 
-module.exports = class extends _Plugin {
+module.exports = class _Run {
   doUpdate(source, call, callArgs) {
     // Note that findTemplatesPattern puts the pattern in a capturing group
     //   (parentheses) by itself

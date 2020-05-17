@@ -55,7 +55,7 @@ module.exports = class {
         continue
       }
 
-      const pluginName = plugin.constructor.name
+      const pluginName = plugin.constructor.pluginName
 
       let groupAction
       if (pluginMakeUI) {

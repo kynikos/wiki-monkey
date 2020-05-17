@@ -21,6 +21,8 @@ const Run = require('./Run')
 
 
 module.exports = class ArchWikiNPFilter extends _Plugin {
+  static pluginName = 'ArchWikiNPFilter'
+
   static requiresServer = false
 
   static confDefault = {

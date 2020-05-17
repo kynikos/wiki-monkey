@@ -196,7 +196,7 @@ only the next time that this page is ',
     return {
       ...this.conf,
       ...this.enabledPlugins.reduce((acc, plugin) => {
-        acc[plugin.constructor.name] = plugin.conf
+        acc[plugin.constructor.pluginName] = plugin.conf
         return acc
       }, {}),
     }

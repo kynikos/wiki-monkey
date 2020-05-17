@@ -21,6 +21,8 @@ const Run = require('./Run')
 
 
 module.exports = class ArchWikiFixHeadings extends _Plugin {
+  static pluginName = 'ArchWikiFixHeadings'
+
   static requiresServer = false
 
   static confDefault = {

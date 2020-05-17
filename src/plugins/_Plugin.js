@@ -18,7 +18,12 @@
 
 
 module.exports._Plugin = class _Plugin {
+  // I can't rely on the class name because it gets mangled when building and
+  // minifying
+  static pluginName = null
+
   static requiresServer = null
+
   // Don't create default objects here, or they'll be shared among the
   // subclasses unless overridden
   // static confDefault = {}
@@ -33,7 +38,7 @@ module.exports._Plugin = class _Plugin {
     // requiresServer must be explicitly defined as true or false by each
     // plugin
     if (this.constructor.requiresServer == null) {
-      throw new Error(`Plugin ${this.constructor.name} does not define \
+      throw new Error(`Plugin ${this.constructor.pluginName} does not define \
 'requiresServer'.`)
     }
 
@@ -56,16 +61,16 @@ module.exports._Plugin = class _Plugin {
     }
 
     for (const userConfig of userConfigs) {
-      if (this.constructor.name in userConfig) {
+      if (this.constructor.pluginName in userConfig) {
         // Don't just use $.extend() so it's possible to see if there are
         // unknown options and possibly warn the user
-        for (const option in userConfig[this.constructor.name]) {
-          const value = userConfig[this.constructor.name][option]
+        for (const option in userConfig[this.constructor.pluginName]) {
+          const value = userConfig[this.constructor.pluginName][option]
           if (option in this.conf) {
             this.conf[option] = value
             // Remove the option from userConfig so at the end it's possible to
             // list the unused/unknown configuration options
-            delete userConfig[this.constructor.name][option]
+            delete userConfig[this.constructor.pluginName][option]
           }
         }
       }
@@ -75,7 +80,7 @@ module.exports._Plugin = class _Plugin {
       for (const userConfig of userConfigs) {
         // Remove the option from userConfig so at the end it's possible to
         // list the unused/unknown configuration options
-        delete userConfig[this.constructor.name]
+        delete userConfig[this.constructor.pluginName]
       }
       // TODO: Properly extend Error, but beware that Babel doesn't like
       //       it without specific plugins
@@ -83,10 +88,10 @@ module.exports._Plugin = class _Plugin {
     }
 
     for (const userConfig of userConfigs) {
-      if ($.isEmptyObject(userConfig[this.constructor.name])) {
+      if ($.isEmptyObject(userConfig[this.constructor.pluginName])) {
         // Remove the plugin from userConfig so at the end it's possible to
         // list the unused/unknown configuration options
-        delete userConfig[this.constructor.name]
+        delete userConfig[this.constructor.pluginName]
       }
     }
   }

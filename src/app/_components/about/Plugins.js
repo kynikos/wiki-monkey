@@ -58,7 +58,7 @@ they are enabled or disabled.',
           h('span', {style: {color: colors.greenText}}, ['enabled']),
           h('ul', [
             WM.enabledPlugins.map((plugin) => {
-              return h('li', [plugin.constructor.name])
+              return h('li', [plugin.constructor.pluginName])
             }),
           ]),
         ]),
@@ -67,7 +67,7 @@ they are enabled or disabled.',
           h('ul', [
             WM.disabledPlugins.map((plugin) => {
               return h('li', [
-                plugin.name,
+                plugin.pluginName,
                 plugin.requiresServer && h('span', {
                   style: {color: colors.greyText},
                 }, [' (requires server)']),

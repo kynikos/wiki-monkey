@@ -21,6 +21,8 @@ const Run = require('./Run')
 
 
 module.exports = class FixFragments extends _Plugin {
+  static pluginName = 'FixFragments'
+
   static requiresServer = false
 
   static confDefault = {

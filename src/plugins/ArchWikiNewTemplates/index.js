@@ -21,6 +21,8 @@ const Run = require('./Run')
 
 
 module.exports = class ArchWikiNewTemplates extends _Plugin {
+  static pluginName = 'ArchWikiNewTemplates'
+
   static requiresServer = false
 
   static confDefault = {

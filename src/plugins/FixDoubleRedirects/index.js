@@ -21,6 +21,8 @@ const Run = require('./Run')
 
 
 module.exports = class FixDoubleRedirects extends _Plugin {
+  static pluginName = 'FixDoubleRedirects'
+
   static requiresServer = false
 
   static confDefault = {

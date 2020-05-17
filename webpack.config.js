@@ -40,15 +40,7 @@ module.exports = function ({entry, production, minified}) {
       // If 'minified' is undefined, it defaults to true
       minimize: minified || false,
       minimizer: [
-        new TerserPlugin({
-          terserOptions: {
-            // For the moment I rely on constructor.name calls to get plugin
-            // class' names
-            // TODO[setup]: Find a better way, or note that it's also possible
-            //   to just pass an explicit list of names to not mangle
-            keep_classnames: true,
-          },
-        }),
+        new TerserPlugin(),
       ],
     },
     module: {

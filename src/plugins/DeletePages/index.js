@@ -21,6 +21,8 @@ const Run = require('./Run')
 
 
 module.exports = class DeletePages extends _Plugin {
+  static pluginName = 'DeletePages'
+
   static requiresServer = false
 
   static confDefault = {

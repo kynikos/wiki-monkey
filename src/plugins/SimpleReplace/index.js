@@ -24,6 +24,8 @@ const RunBot = require('./RunBot')
 
 
 module.exports = class SimpleReplace extends _Plugin {
+  static pluginName = 'SimpleReplace'
+
   static requiresServer = false
 
   static confDefault = {

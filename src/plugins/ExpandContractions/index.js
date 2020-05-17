@@ -21,6 +21,8 @@ const Run = require('./Run')
 
 
 module.exports = class ExpandContractions extends _Plugin {
+  static pluginName = 'ExpandContractions'
+
   static requiresServer = false
 
   static confDefault = {

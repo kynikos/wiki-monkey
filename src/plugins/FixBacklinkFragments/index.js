@@ -22,6 +22,8 @@ const UI = require('./UI')
 
 
 module.exports = class FixBacklinkFragments extends _Plugin {
+  static pluginName = 'FixBacklinkFragments'
+
   static requiresServer = false
 
   static confDefault = {
