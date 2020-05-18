@@ -67,8 +67,10 @@ commander.parse(process.argv)
 function maintainDependencies() {
   maintainPackageDependencies(
     __dirname,
-    ['@kynikos'],
-    true,
+    {
+      regExpsToLink: [/^@kynikos\//u],
+      recursiveLinks: true,
+    }
   )
 }
 
@@ -77,7 +79,7 @@ function build(version, links) {
   if (links) {
     linkDependencies({
       cwd: __dirname,
-      prefixes: ['@kynikos'],
+      regExps: [/^@kynikos\//u],
       ask: false,
       recurse: true,
     })
@@ -87,7 +89,7 @@ function build(version, links) {
     webpackInteractive([
       '--env.entry',
       fname,
-    ])
+    ], {})
   }
 
   if (version) {
@@ -96,23 +98,23 @@ function build(version, links) {
         '--env.entry',
         fname,
         '--env.production',
-      ])
+      ], {})
       webpackInteractive([
         '--env.entry',
         fname,
         '--env.production',
         '--env.minified',
-      ])
+      ], {})
     }
   }
 
   if (version) {
-    npmInteractive([
+    npmInteractive({args: [
       '--allow-same-version',
       '--no-git-tag-version',
       'version',
       version,
-    ])
+    ]})
   }
 }
 
