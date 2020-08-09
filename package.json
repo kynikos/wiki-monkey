@@ -26,7 +26,7 @@
     "vuex": "^3.5.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.11.0",
+    "@babel/core": "^7.11.1",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/plugin-proposal-decorators": "^7.10.5",
     "@babel/plugin-proposal-object-rest-spread": "^7.11.0",
@@ -37,7 +37,7 @@
     "babel-jest": "^26.2.2",
     "babel-loader": "^8.1.0",
     "commander": "^6.0.0",
-    "css-loader": "^4.2.0",
+    "css-loader": "^4.2.1",
     "eslint": "^7.6.0",
     "eslint-plugin-babel": "^5.3.1",
     "eslint-plugin-jest": "^23.20.0",
@@ -49,9 +49,9 @@
     "license-webpack-plugin": "^2.3.0",
     "node-sass": "^4.14.1",
     "readline-sync": "^1.4.10",
-    "sass-loader": "^9.0.2",
+    "sass-loader": "^9.0.3",
     "style-loader": "^1.2.1",
-    "terser-webpack-plugin": "^3.0.8",
+    "terser-webpack-plugin": "^3.1.0",
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12"
   }
