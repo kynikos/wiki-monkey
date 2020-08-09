@@ -32,6 +32,7 @@ Repeat the following block increasing # until everything works:
 * [client] Push the develop and rc# branches to the remote repository
 * [client] Test that the automated upgrade works
   (possibly delete the 'WikiMonkey-last-update-check' key in the localStorage)
+  (possibly stop the [server])
 * [client] Test the application on ArchWiki and Wikipedia at least in Firefox
   and Chromium
   Also make sure to check the effects of any changes to the configuration
