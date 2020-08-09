@@ -27,6 +27,7 @@ const {WikiLink} = require('%/app/_components/log/WikiLink')
 const {PageLink} = require('%/app/_components/log/PageLink')
 const mods = require('./mods')
 
+const {PersonalToolsCommands} = require('./personalToolsCommands')
 const {PageCommands} = require('./pageCommands')
 const {SectionCommands} = require('./sectionCommands')
 const MainTabs = require('./mainTabs')
@@ -74,6 +75,9 @@ module.exports.App = class {
   run() { // eslint-disable-line complexity
     const bodyContent = $('#bodyContent')
     if (bodyContent) new MainTabs(bodyContent)
+
+    const personalTools = $('#p-personal')
+    if (personalTools) new PersonalToolsCommands(personalTools)
 
     const indicators = $('.mw-indicators:first')
     if (indicators) new PageCommands(indicators)

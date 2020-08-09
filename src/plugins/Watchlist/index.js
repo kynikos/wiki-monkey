@@ -16,23 +16,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-require('./lib/PreInit')(
-  'Wikipedia',
-  // The require paths can't be constructed dynamically in PreInit,
-  // or browserify won't understand and import them
-  () => [
-    /* eslint-disable global-require */
-    require('./plugins/Bookmarks'),
-    require('./plugins/ExpandContractions'),
-    require('./plugins/FixBacklinkFragments'),
-    require('./plugins/FixDoubleRedirects'),
-    require('./plugins/FixFragments'),
-    require('./plugins/FixLinkFragments').default,
-    require('./plugins/MultipleLineBreaks'),
-    require('./plugins/SimpleReplace'),
-    require('./plugins/SynchronizeInterlanguageLinks'),
-    require('./plugins/UpdateCategoryTree'),
-    require('./plugins/Watchlist'),
-    /* eslint-enable global-require */
-  ],
-)
+const {_Plugin} = require('%/plugins/_Plugin')
+const storeModule = require('./store')
+const {PersonalToolsCommand} = require('./PersonalToolsCommand')
+
+
+module.exports = class Watchlist extends _Plugin {
+  static pluginName = 'Watchlist'
+
+  static requiresServer = false
+
+  static confDefault = {
+    enabled: true,
+    minQueryInterval: 1800, // 30 minutes
+  }
+
+  install({store, personalToolsCommands}) {
+    store('watchlist', storeModule(this.conf))
+    personalToolsCommands(PersonalToolsCommand(this.conf))
+  }
+}

@@ -33,6 +33,7 @@ const {h: hh} = require('%/lib/index')
 const {upgradePeriodical} = require('./lib/Upgrade')
 const {App} = require('%/app')
 const Store = require('%/app/store')
+const {PersonalToolsCommands} = require('%/app/personalToolsCommands')
 const {PageCommands} = require('%/app/pageCommands')
 const {SectionCommands} = require('%/app/sectionCommands')
 const MainTabs = require('%/app/mainTabs')
@@ -272,6 +273,8 @@ only the next time that this page is ',
 
       plugin.install({
         store: Store.installPlugin.bind(Store),
+        personalToolsCommands: PersonalToolsCommands.installPlugin.bind(
+          PersonalToolsCommands, plugin),
         pageCommands: PageCommands.installPlugin.bind(PageCommands, plugin),
         sectionCommands:
           SectionCommands.installPlugin.bind(SectionCommands, plugin),

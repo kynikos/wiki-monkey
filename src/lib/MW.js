@@ -232,6 +232,14 @@ module.exports = class MW {
       })
   }
 
+  async getCsrfToken() {
+    return (await this.callAPIGet({
+      action: 'query',
+      meta: 'tokens',
+      type: 'csrf',
+    })).query.tokens.csrftoken
+  }
+
   async callQuery(params, call, callArgs, callError) {
     let res
     params.action = 'query'

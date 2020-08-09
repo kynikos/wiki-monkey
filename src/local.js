@@ -43,6 +43,7 @@ require('./lib/PreInit')(
     require('./plugins/SimpleReplace'),
     require('./plugins/SynchronizeInterlanguageLinks'),
     require('./plugins/UpdateCategoryTree'),
+    require('./plugins/Watchlist'),
     /* eslint-enable global-require */
   ],
 )
