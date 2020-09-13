@@ -6968,8 +6968,8 @@ module.exports = function (METHOD_NAME, options) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global, setImmediate) {/*!
- * Vue.js v2.6.11
- * (c) 2014-2019 Evan You
+ * Vue.js v2.6.12
+ * (c) 2014-2020 Evan You
  * Released under the MIT License.
  */
 /*  */
@@ -11894,7 +11894,7 @@ Object.defineProperty(Vue, 'FunctionalRenderContext', {
   value: FunctionalRenderContext
 });
 
-Vue.version = '2.6.11';
+Vue.version = '2.6.12';
 
 /*  */
 
@@ -13416,7 +13416,7 @@ function updateDOMProps (oldVnode, vnode) {
       // skip the update if old and new VDOM state is the same.
       // `value` is handled separately because the DOM value may be temporarily
       // out of sync with VDOM state due to focus, composition and modifiers.
-      // This  #4521 by skipping the unnecesarry `checked` update.
+      // This  #4521 by skipping the unnecessary `checked` update.
       cur !== oldProps[key]
     ) {
       // some property updates can throw
@@ -15701,7 +15701,9 @@ function () {
       Renderer: Renderer,
       generateId: generateId,
       scoped: scoped,
-      name: name
+      name: name,
+      keyframes: this.keyframes,
+      selector: undefined
     }, ruleOptions); // When user uses .createStyleSheet(), duplicate names are not possible, but
     // `sheet.addRule()` opens the door for any duplicate rule name. When this happens
     // we need to make the key unique within this RuleList instance scope.
@@ -16834,7 +16836,7 @@ var jss_esm_Jss =
 function () {
   function Jss(options) {
     this.id = instanceCounter++;
-    this.version = "10.3.0";
+    this.version = "10.4.0";
     this.plugins = new PluginsRegistry();
     this.options = {
       id: {
@@ -16946,8 +16948,10 @@ function () {
 
     // Enable rule without name for inline styles.
     if (typeof name === 'object') {
+      // $FlowIgnore
       return this.createRule(undefined, name, style);
-    }
+    } // $FlowIgnore
+
 
     var ruleOptions = Object(esm_extends["a" /* default */])({}, options, {
       name: name,
@@ -23308,7 +23312,7 @@ exports.PopupManager = _popupManager2.default;
 /* 138 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"@kynikos/wiki-monkey\",\"version\":\"5.2.1\",\"author\":\"Dario Giovannetti\",\"description\":\"MediaWiki bot and editor-assistant user script.\",\"license\":\"GPL-3.0\",\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/kynikos/wiki-monkey.git\"},\"keywords\":[\"wiki mediawiki bot\"],\"dependencies\":{\"@kynikos/misc\":\"^0.4.3\",\"@kynikos/vue-styled-jss\":\"^1.0.0\",\"clipboard\":\"^2.0.6\",\"core-js\":\"^3.6.5\",\"element-ui\":\"^2.13.2\",\"hyperscript\":\"^2.0.2\",\"jss\":\"^10.3.0\",\"jss-preset-default\":\"^10.3.0\",\"moment\":\"^2.27.0\",\"regenerator-runtime\":\"^0.13.7\",\"vue\":\"^2.6.11\",\"vuex\":\"^3.5.1\"},\"devDependencies\":{\"@babel/core\":\"^7.11.1\",\"@babel/plugin-proposal-class-properties\":\"^7.10.4\",\"@babel/plugin-proposal-decorators\":\"^7.10.5\",\"@babel/plugin-proposal-object-rest-spread\":\"^7.11.0\",\"@babel/plugin-syntax-dynamic-import\":\"^7.8.3\",\"@babel/preset-env\":\"^7.11.0\",\"@kynikos/tasks\":\"^1.2.1\",\"babel-eslint\":\"^10.1.0\",\"babel-jest\":\"^26.2.2\",\"babel-loader\":\"^8.1.0\",\"commander\":\"^6.0.0\",\"css-loader\":\"^4.2.1\",\"eslint\":\"^7.6.0\",\"eslint-plugin-babel\":\"^5.3.1\",\"eslint-plugin-jest\":\"^23.20.0\",\"eslint-plugin-promise\":\"^4.2.1\",\"eslint-plugin-vue\":\"^6.2.2\",\"fs-extra\":\"^9.0.1\",\"http-server\":\"^0.12.3\",\"jest\":\"^26.2.2\",\"license-webpack-plugin\":\"^2.3.0\",\"node-sass\":\"^4.14.1\",\"readline-sync\":\"^1.4.10\",\"sass-loader\":\"^9.0.3\",\"style-loader\":\"^1.2.1\",\"terser-webpack-plugin\":\"^3.1.0\",\"webpack\":\"^4.44.1\",\"webpack-cli\":\"^3.3.12\"}}");
+module.exports = JSON.parse("{\"name\":\"@kynikos/wiki-monkey\",\"version\":\"5.2.2\",\"author\":\"Dario Giovannetti\",\"description\":\"MediaWiki bot and editor-assistant user script.\",\"license\":\"GPL-3.0\",\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/kynikos/wiki-monkey.git\"},\"keywords\":[\"wiki mediawiki bot\"],\"dependencies\":{\"@kynikos/misc\":\"^0.4.3\",\"@kynikos/vue-styled-jss\":\"^1.0.0\",\"clipboard\":\"^2.0.6\",\"core-js\":\"^3.6.5\",\"element-ui\":\"^2.13.2\",\"hyperscript\":\"^2.0.2\",\"jss\":\"^10.4.0\",\"jss-preset-default\":\"^10.4.0\",\"moment\":\"^2.27.0\",\"regenerator-runtime\":\"^0.13.7\",\"vue\":\"^2.6.12\",\"vuex\":\"^3.5.1\"},\"devDependencies\":{\"@babel/core\":\"^7.11.6\",\"@babel/plugin-proposal-class-properties\":\"^7.10.4\",\"@babel/plugin-proposal-decorators\":\"^7.10.5\",\"@babel/plugin-proposal-object-rest-spread\":\"^7.11.0\",\"@babel/plugin-syntax-dynamic-import\":\"^7.8.3\",\"@babel/preset-env\":\"^7.11.5\",\"@kynikos/tasks\":\"^1.2.1\",\"babel-eslint\":\"^10.1.0\",\"babel-jest\":\"^26.3.0\",\"babel-loader\":\"^8.1.0\",\"commander\":\"^6.1.0\",\"css-loader\":\"^4.3.0\",\"eslint\":\"^7.9.0\",\"eslint-plugin-babel\":\"^5.3.1\",\"eslint-plugin-jest\":\"^24.0.1\",\"eslint-plugin-promise\":\"^4.2.1\",\"eslint-plugin-vue\":\"^6.2.2\",\"fs-extra\":\"^9.0.1\",\"http-server\":\"^0.12.3\",\"jest\":\"^26.4.2\",\"license-webpack-plugin\":\"^2.3.0\",\"node-sass\":\"^4.14.1\",\"readline-sync\":\"^1.4.10\",\"sass-loader\":\"^10.0.2\",\"style-loader\":\"^1.2.1\",\"terser-webpack-plugin\":\"^4.2.0\",\"webpack\":\"^4.44.1\",\"webpack-cli\":\"^3.3.12\"}}");
 
 /***/ }),
 /* 139 */
@@ -40846,21 +40850,21 @@ module.exports.PersonalToolsCommands = (_temp = _class = /*#__PURE__*/function (
     //    watchlist link, keep it simple until more flexibility is needed
 
     var root = document.createElement('span');
-    $('#pt-watchlist').append(root); // eslint-disable-next-line no-new
+    $('#pt-watchlist').append(' ', root); // eslint-disable-next-line no-new
 
     new Vue({
       el: root,
       store: WM.App.store,
       render: function render(h) {
-        // TODO[skin]: The default ArchWiki skin doesn't support using <sup>
-        //    here
-        return h('sub', _toConsumableArray(plugins.reduce(function (acc, _ref) {
+        // Note the default ArchWiki skin doesn't support using <sup> here
+        // The bracket style was discussed in https://github.com/kynikos/wiki-monkey/issues/238
+        return h('span', ['['].concat(_toConsumableArray(plugins.reduce(function (acc, _ref) {
           var _ref2 = _slicedToArray(_ref, 2),
               plugin = _ref2[0],
               component = _ref2[1];
 
-          return acc.concat([' | ', h(component)]);
-        }, []).slice(1)));
+          return acc.concat(['|', h(component)]);
+        }, []).slice(1)), [']']));
       }
     });
   }
@@ -79785,7 +79789,7 @@ module.exports.PersonalToolsCommand = function (conf) {
             _this.markWatchlistAllRead();
           }
         }
-      }, ['mark all visited'])])]), h('a', {
+      }, ['mark all read'])])]), h('a', {
         slot: 'reference',
         attrs: {
           href: '#watchlist-commands',
@@ -80168,7 +80172,6 @@ function jssGlobal() {
 // CONCATENATED MODULE: ./node_modules/jss-plugin-extend/dist/jss-plugin-extend.esm.js
 
 
-/* eslint-disable no-use-before-define */
 
 var isObject = function isObject(obj) {
   return obj && typeof obj === 'object' && !Array.isArray(obj);
@@ -80197,12 +80200,16 @@ function mergeExtend(style, rule, sheet, newStyle) {
     }
 
     return;
-  } // Extend using an array of objects.
+  } // Extend using an array.
 
 
   if (Array.isArray(style.extend)) {
     for (var index = 0; index < style.extend.length; index++) {
-      extend(style.extend[index], rule, sheet, newStyle);
+      var singleExtend = style.extend[index];
+      var singleStyle = typeof singleExtend === 'string' ? Object(esm_extends["a" /* default */])({}, style, {
+        extend: singleExtend
+      }) : style.extend[index];
+      extend(singleStyle, rule, sheet, newStyle);
     }
 
     return;
@@ -80288,6 +80295,7 @@ function jssExtend() {
     if (typeof value === 'object') {
       // $FlowFixMe: This will be an object
       for (var _key in value) {
+        // $FlowFixMe: This will be an object
         rule.prop(_key, value[_key]);
       } // $FlowFixMe: Flow complains because there is no indexer property in StyleRule
 
@@ -81909,7 +81917,7 @@ function jssPropsSort() {
 
 
 
-var index = (function (options) {
+var jss_preset_default_esm_index = (function (options) {
   if (options === void 0) {
     options = {};
   }
@@ -81919,7 +81927,7 @@ var index = (function (options) {
   };
 });
 
-/* harmony default export */ var jss_preset_default_esm = __webpack_exports__["default"] = (index);
+/* harmony default export */ var jss_preset_default_esm = __webpack_exports__["default"] = (jss_preset_default_esm_index);
 
 
 /***/ }),
