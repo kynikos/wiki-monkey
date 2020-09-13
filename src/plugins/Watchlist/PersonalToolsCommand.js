@@ -74,7 +74,7 @@ module.exports.PersonalToolsCommand = function (conf) {
                 },
               },
             }, [
-              'mark all visited',
+              'mark all read',
             ]),
           ]),
         ]),
