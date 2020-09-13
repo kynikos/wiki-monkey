@@ -33,7 +33,7 @@ module.exports.PersonalToolsCommands = class {
     // TODO[plugins]: For the moment this is hardcoded to work only on the
     //    watchlist link, keep it simple until more flexibility is needed
     const root = document.createElement('span')
-    $('#pt-watchlist').append(root)
+    $('#pt-watchlist').append(' ', root)
 
     // eslint-disable-next-line no-new
     new Vue({
@@ -42,12 +42,14 @@ module.exports.PersonalToolsCommands = class {
       store: WM.App.store,
 
       render(h) {
-        // TODO[skin]: The default ArchWiki skin doesn't support using <sup>
-        //    here
-        return h('sub', [
+        // Note the default ArchWiki skin doesn't support using <sup> here
+        // The bracket style was discussed in https://github.com/kynikos/wiki-monkey/issues/238
+        return h('span', [
+          '[',
           ...plugins.reduce((acc, [plugin, component]) => {
-            return acc.concat([' | ', h(component)])
+            return acc.concat(['|', h(component)])
           }, []).slice(1),
+          ']',
         ])
       },
     })
