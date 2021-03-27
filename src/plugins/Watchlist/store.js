@@ -65,7 +65,7 @@ module.exports = function storeModule(conf) {
         if (count == null) {
           count = (await WM.MW.callAPIGet({
             list: 'watchlist',
-            wlimit: 'max',
+            wllimit: 'max',
             wlnamespace: '*',
             wlprop: 'ids',
             wlshow: 'unread',
