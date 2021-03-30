@@ -5,12 +5,13 @@ const path = require('path')
 const fs = require('fs')
 const process = require('process')
 const commander = require('commander')
+const webpack = require('webpack')
+const webpackConfig = require('./webpack.config')
 const {
   runSync,
   spawnInteractive,
   npmInteractive,
   npxInteractive,
-  webpackInteractive,
   gcloudJson,
   gcloudInteractive,
   firebaseInteractive,
@@ -86,25 +87,23 @@ function build(version, links) {
   }
 
   for (const fname of SRCLOCAL) {
-    webpackInteractive([
-      '--env.entry',
-      fname,
-    ], {})
+    const compiler = webpack(webpackConfig({entry: fname}))
+    compiler.run()
   }
 
   if (version) {
     for (const fname of SRCPRODUCTION) {
-      webpackInteractive([
-        '--env.entry',
-        fname,
-        '--env.production',
-      ], {})
-      webpackInteractive([
-        '--env.entry',
-        fname,
-        '--env.production',
-        '--env.minified',
-      ], {})
+      const compiler1 = webpack(webpackConfig({
+        entry: fname,
+        production: true,
+      }))
+      compiler1.run()
+      const compiler2 = webpack(webpackConfig({
+        entry: fname,
+        production: true,
+        minified: true,
+      }))
+      compiler2.run()
     }
   }
 
