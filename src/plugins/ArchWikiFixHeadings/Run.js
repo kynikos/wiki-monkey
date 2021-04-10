@@ -41,14 +41,17 @@ although usually it is suggested to start from level 2')
     let prevId = 0
 
     for (const section of info.sections) {
-      newtext += source.substring(prevId, section.index)
-      newtext += new Array(section.tocLevel + increaseLevel + 1).join('=')
-      newtext += section.rawheading
-      newtext += new Array(section.tocLevel + increaseLevel + 1).join('=')
+      newtext += `${source.substring(prevId, section.index).trim()}
+
+${new Array(section.tocLevel + increaseLevel + 1).join('=')} ${
+  section.rawheading.trim()
+} ${new Array(section.tocLevel + increaseLevel + 1).join('=')}
+
+`
       prevId = section.index + section.length0
     }
 
-    newtext += source.substr(prevId)
+    newtext += source.substr(prevId).trimStart()
 
     if (newtext !== source) {
       WM.Editor.writeSource(newtext)
