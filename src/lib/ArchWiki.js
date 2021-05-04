@@ -22,8 +22,9 @@ const languages = {
   local: 'English',
   names: {
     العربية: {subtag: 'ar', english: 'Arabic'},
-    Bosanski: {subtag: 'bs', english: 'Bosnian'},
     Български: {subtag: 'bg', english: 'Bulgarian'},
+    বাংলা: {subtag: 'bn', english: 'Bengali'},
+    Bosanski: {subtag: 'bs', english: 'Bosnian'},
     Català: {subtag: 'ca', english: 'Catalan'},
     Čeština: {subtag: 'cs', english: 'Czech'},
     Dansk: {subtag: 'da', english: 'Danish'},
@@ -43,6 +44,7 @@ const languages = {
     日本語: {subtag: 'ja', english: 'Japanese'},
     한국어: {subtag: 'ko', english: 'Korean'},
     Lietuvių: {subtag: 'lt', english: 'Lithuanian'},
+    'Bahasa Melayu': {subtag: 'ms', english: 'Malaysian'},
     'Norsk Bokmål': {subtag: 'nb', english: 'Norwegian (Bokmål)'},
     Nederlands: {subtag: 'nl', english: 'Dutch'},
     Polski: {subtag: 'pl', english: 'Polish'},
@@ -56,13 +58,16 @@ const languages = {
     Türkçe: {subtag: 'tr', english: 'Turkish'},
     Українська: {subtag: 'uk', english: 'Ukrainian'},
     'Tiếng Việt': {subtag: 'vi', english: 'Vietnamese'},
+    粵語: {subtag: 'yue', english: 'Cantonese'},
+    文言文: {subtag: 'lzh', english: 'Chinese (Classical)'},
     简体中文: {subtag: 'zh-hans', english: 'Chinese (Simplified)'},
     正體中文: {subtag: 'zh-hant', english: 'Chinese (Traditional)'},
   },
   categories: [
     'العربية',
-    'Bosanski',
     'Български',
+    'বাংলা',
+    'Bosanski',
     'Català',
     'Čeština',
     'Dansk',
@@ -78,10 +83,12 @@ const languages = {
     'Italiano',
     '한국어',
     'Lietuvių',
+    'Bahasa Melayu',
     'Norsk Bokmål',
     'Nederlands',
     'Polski',
     'Português',
+    'Română',
     'Русский',
     'Slovenčina',
     'Српски',
@@ -89,15 +96,16 @@ const languages = {
     'ไทย',
     'Türkçe',
     'Українська',
+    '粵語',
+    '文言文',
     '简体中文',
     '正體中文',
   ],
   interlanguage: {
     external: ['de', 'fa', 'fr', 'ja'],
     internal: ['ar', 'bg', 'bs', 'cs', 'da', 'el', 'en', 'es', 'fi', 'he',
-      'hr', 'hu', 'id', 'it', 'ko', 'lt', 'nl', 'pl', 'pt',
-      'ru', 'sk', 'sr', 'sv', 'th', 'tr', 'uk', 'zh-hans',
-      'zh-hant'],
+      'hr', 'hu', 'id', 'it', 'ko', 'lt', 'nl', 'pl', 'pt', 'ru', 'sk', 'sr',
+      'sv', 'th', 'tr', 'uk', 'zh-hans', 'zh-hant'],
   },
 }
 
@@ -115,9 +123,19 @@ const tablesOfContents = {
   bg: {
     page: 'Table of contents (Български)',
     root: 'Category:Български',
-    alsoIn: 'също в', // Unconfirmed
+    alsoIn: 'също в', // TODO: Unconfirmed
     indentType: ':',
     replace: ['[ _]\\(Български\\)', '', ''],
+    keepAltName: true,
+    showIndices: true,
+    rightToLeft: false,
+  },
+  bn: {
+    page: 'Table of contents (বাংলা)',
+    root: 'Category:বাংলা',
+    alsoIn: 'also in', // TODO: Untranslated
+    indentType: ':',
+    replace: ['[ _]\\(বাংলা\\)', '', ''],
     keepAltName: true,
     showIndices: true,
     rightToLeft: false,
@@ -145,7 +163,7 @@ const tablesOfContents = {
   da: {
     page: 'Table of contents (Dansk)',
     root: 'Category:Dansk',
-    alsoIn: 'også i', // Unconfirmed
+    alsoIn: 'også i', // TODO: Unconfirmed
     indentType: ':',
     replace: ['[ _]\\(Dansk\\)', '', ''],
     keepAltName: true,
@@ -155,7 +173,7 @@ const tablesOfContents = {
   el: {
     page: 'Table of contents (Ελληνικά)',
     root: 'Category:Ελληνικά',
-    alsoIn: 'επίσης σε', // Unconfirmed
+    alsoIn: 'επίσης σε', // TODO: Unconfirmed
     indentType: ':',
     replace: ['[ _]\\(Ελληνικά\\)', '', ''],
     keepAltName: true,
@@ -205,7 +223,7 @@ const tablesOfContents = {
   hr: {
     page: 'Table of contents (Hrvatski)',
     root: 'Category:Hrvatski',
-    alsoIn: 'također u', // Unconfirmed
+    alsoIn: 'također u', // TODO: Unconfirmed
     indentType: ':',
     replace: ['[ _]\\(Hrvatski\\)', '', ''],
     keepAltName: true,
@@ -215,7 +233,7 @@ const tablesOfContents = {
   hu: {
     page: 'Table of contents (Magyar)',
     root: 'Category:Magyar',
-    alsoIn: 'is', // Unconfirmed
+    alsoIn: 'is', // TODO: Unconfirmed
     indentType: ':',
     replace: ['[ _]\\(Magyar\\)', '', ''],
     keepAltName: true,
@@ -225,7 +243,7 @@ const tablesOfContents = {
   id: {
     page: 'Table of contents (Bahasa Indonesia)',
     root: 'Category:Bahasa Indonesia',
-    alsoIn: 'juga di', // Unconfirmed
+    alsoIn: 'juga di', // TODO: Unconfirmed
     indentType: ':',
     replace: ['[ _]\\(Bahasa Indonesia\\)', '', ''],
     keepAltName: true,
@@ -245,7 +263,7 @@ const tablesOfContents = {
   ko: {
     page: 'Table of contents (한국어)',
     root: 'Category:한국어',
-    alsoIn: '또한 에', // Unconfirmed
+    alsoIn: '또한 에', // TODO: Unconfirmed
     indentType: ':',
     replace: ['[ _]\\(한국어\\)', '', ''],
     keepAltName: true,
@@ -255,9 +273,19 @@ const tablesOfContents = {
   lt: {
     page: 'Table of contents (Lietuvių)',
     root: 'Category:Lietuvių',
-    alsoIn: 'taip pat ir', // Unconfirmed
+    alsoIn: 'taip pat ir', // TODO: Unconfirmed
     indentType: ':',
     replace: ['[ _]\\(Lietuvių\\)', '', ''],
+    keepAltName: true,
+    showIndices: true,
+    rightToLeft: false,
+  },
+  ms: {
+    page: 'Table of contents (Bahasa Melayu)',
+    root: 'Category:Bahasa Melayu',
+    alsoIn: 'juga di', // TODO: Unconfirmed
+    indentType: ':',
+    replace: ['[ _]\\(Bahasa Melayu\\)', '', ''],
     keepAltName: true,
     showIndices: true,
     rightToLeft: false,
@@ -265,7 +293,7 @@ const tablesOfContents = {
   nl: {
     page: 'Table of contents (Nederlands)',
     root: 'Category:Nederlands',
-    alsoIn: 'ook in', // Unconfirmed
+    alsoIn: 'ook in', // TODO: Unconfirmed
     indentType: ':',
     replace: ['[ _]\\(Nederlands\\)', '', ''],
     keepAltName: true,
@@ -275,7 +303,7 @@ const tablesOfContents = {
   pl: {
     page: 'Table of contents (Polski)',
     root: 'Category:Polski',
-    alsoIn: 'również w', // Unconfirmed
+    alsoIn: 'również w', // TODO: Unconfirmed
     indentType: ':',
     replace: ['[ _]\\(Polski\\)', '', ''],
     keepAltName: true,
@@ -315,7 +343,7 @@ const tablesOfContents = {
   sr: {
     page: 'Table of contents (Српски)',
     root: 'Category:Српски',
-    alsoIn: 'такође у', // Unconfirmed
+    alsoIn: 'такође у', // TODO: Unconfirmed
     indentType: ':',
     replace: ['[ _]\\(Српски\\)', '', ''],
     keepAltName: true,
@@ -335,7 +363,7 @@ const tablesOfContents = {
   th: {
     page: 'Table of contents (ไทย)',
     root: 'Category:ไทย',
-    alsoIn: 'ยังอยู่ใน', // Unconfirmed
+    alsoIn: 'ยังอยู่ใน', // TODO: Unconfirmed
     indentType: ':',
     replace: ['[ _]\\(ไทย\\)', '', ''],
     keepAltName: true,
@@ -345,7 +373,7 @@ const tablesOfContents = {
   tr: {
     page: 'Table of contents (Türkçe)',
     root: 'Category:Türkçe',
-    alsoIn: 'ayrıca', // Unconfirmed
+    alsoIn: 'ayrıca', // TODO: Unconfirmed
     indentType: ':',
     replace: ['[ _]\\(Türkçe\\)', '', ''],
     keepAltName: true,
@@ -355,9 +383,29 @@ const tablesOfContents = {
   uk: {
     page: 'Table of contents (Українська)',
     root: 'Category:Українська',
-    alsoIn: 'також в', // Unconfirmed
+    alsoIn: 'також в', // TODO: Unconfirmed
     indentType: ':',
     replace: ['[ _]\\(Українська\\)', '', ''],
+    keepAltName: true,
+    showIndices: true,
+    rightToLeft: false,
+  },
+  'yue': {
+    page: 'Table of contents (粵語)',
+    root: 'Category:粵語',
+    alsoIn: 'also in', // TODO: Untranslated
+    indentType: ':',
+    replace: ['[ _]\\(粵語\\)', '', ''],
+    keepAltName: true,
+    showIndices: true,
+    rightToLeft: false,
+  },
+  'lzh': {
+    page: 'Table of contents (文言文)',
+    root: 'Category:文言文',
+    alsoIn: '也在', // TODO: Unconfirmed
+    indentType: ':',
+    replace: ['[ _]\\(文言文\\)', '', ''],
     keepAltName: true,
     showIndices: true,
     rightToLeft: false,
@@ -375,7 +423,8 @@ const tablesOfContents = {
   'zh-hant': {
     page: 'Table of contents (正體中文)',
     root: 'Category:正體中文',
-    alsoIn: '還在', // Unconfirmed
+    // https://wiki.archlinux.org/index.php?title=Talk:Table_of_contents&diff=prev&oldid=663058
+    alsoIn: '也在',
     indentType: ':',
     replace: ['[ _]\\(正體中文\\)', '', ''],
     keepAltName: true,
