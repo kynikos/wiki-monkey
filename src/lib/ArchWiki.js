@@ -38,7 +38,7 @@ const languages = {
     עברית: {subtag: 'he', english: 'Hebrew'},
     Hrvatski: {subtag: 'hr', english: 'Croatian'},
     Magyar: {subtag: 'hu', english: 'Hungarian'},
-    Bahasa Indonesia: {subtag: 'id', english: 'Indonesian'},
+    'Bahasa Indonesia': {subtag: 'id', english: 'Indonesian'},
     Italiano: {subtag: 'it', english: 'Italian'},
     日本語: {subtag: 'ja', english: 'Japanese'},
     한국어: {subtag: 'ko', english: 'Korean'},
