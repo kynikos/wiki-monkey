@@ -162,9 +162,8 @@ module.exports = class {
     re = /https?:\/\/aur\.archlinux\.org(?!(?:\.|(?:\/?packages)?\/?\s))/ig
 
     if (re.test(txt)) {
-      WM.App.log.warning('It hasn\'t been possible to convert some \
-links to aur.archlinux.org (try the \
-\"Fix old AUR links\" function, if installed)')
+      WM.App.log.warning("It hasn't been possible to convert some " +
+        'links to aur.archlinux.org')
     }
 
     // Bug links -> Bug template
