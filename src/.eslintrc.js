@@ -2,32 +2,32 @@ module.exports = {
   // eslint-plugin-vue needs babel-eslint inside parserOptions
   // https://github.com/vuejs/eslint-plugin-vue#what-is-the-use-the-latest-vue-eslint-parser-error
   // 'parser': 'babel-eslint',
-  'env': {
+  env: {
     // 'node' is inherited from the parent .eslintrc
-    'node': false,
-    'browser': true,
+    node: false,
+    browser: true,
     'shared-node-browser': true,
-    'es6': true,
-    'commonjs': true,
-    'jquery': true,
-    'es2017': true,
+    es6: true,
+    commonjs: true,
+    jquery: true,
+    es2017: true,
   },
-  'parserOptions': {
-      // eslint-plugin-vue needs babel-eslint inside parserOptions
-      // https://github.com/vuejs/eslint-plugin-vue#what-is-the-use-the-latest-vue-eslint-parser-error
-      'parser': 'babel-eslint',
+  parserOptions: {
+    // eslint-plugin-vue needs babel-eslint inside parserOptions
+    // https://github.com/vuejs/eslint-plugin-vue#what-is-the-use-the-latest-vue-eslint-parser-error
+    parser: 'babel-eslint',
   },
-  'globals': {
-    'mw': true,
+  globals: {
+    mw: true,
   },
-  'extends': [
+  extends: [
     'plugin:vue/recommended',
   ],
-  'plugins': [
+  plugins: [
     // eslint-plugin-babel
     'babel',
   ],
-  'rules': {
+  rules: {
     // 'function-paren-newline' disallows the h(Comp, ...) style
     'function-paren-newline': 'off',
     // 'babel/new-cap': 0,
