@@ -34,8 +34,8 @@ module.exports = class ArchPackages {
       // support XrayWrapper well
       // See http://www.oreillynet.com/pub/a/network/2005/11/01/avoid-common-greasemonkey-pitfalls.html?page=3
       // and https://developer.mozilla.org/en/docs/XPConnect_wrappers#XPCNativeWrapper_%28XrayWrapper%29
-      const escgrp = mw.RegExp.escape(grp)
-      const escarch = mw.RegExp.escape(arch)
+      const escgrp = mw.util.escapeRegExp(grp)
+      const escarch = mw.util.escapeRegExp(arch)
 
       const regExp = new RegExp(`<h2>\\s*Group Details -\\s*${
         escgrp}\\s*\\(${escarch}\\)\\s*</h2>`, '')

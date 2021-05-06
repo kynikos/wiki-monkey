@@ -130,7 +130,7 @@ function upgrade(upstreamVersion) {
 (\
 ["']https?://.+?/kynikos/wiki-monkey/v\
 )\
-${mw.RegExp.escape(version)}\
+${mw.util.escapeRegExp(version)}\
 (\
 /dist/WikiMonkey-[^/]+\\.js["']\
 )\

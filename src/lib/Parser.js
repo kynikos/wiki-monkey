@@ -115,7 +115,7 @@ module.exports = class Parser {
     regExp
     if (word) {
       // Behavior switches aren't case-sensitive
-      regExp = new RegExp(`__${mw.RegExp.escape(word)}__`, 'gi')
+      regExp = new RegExp(`__${mw.util.escapeRegExp(word)}__`, 'gi')
     } else {
       // Behavior switches aren't case-sensitive
       regExp = new RegExp('__(TOC|NOTOC|FORCETOC|NOEDITSECTION|' +
@@ -216,10 +216,10 @@ altogether')
     const fragmentChars = '[^\\n\\{\\}\\[\\]\\|]*?'
 
     if (namespace) {
-      const rens = prepareRegexpWhitespace(mw.RegExp.escape(namespace))
+      const rens = prepareRegexpWhitespace(mw.util.escapeRegExp(namespace))
 
       if (title) {
-        retitle = prepareRegexpWhitespace(mw.RegExp.escape(title))
+        retitle = prepareRegexpWhitespace(mw.util.escapeRegExp(title))
         titlePattern = `${`((${rens})[ _]*:[ _]*` +
                                           '('}${retitle}))` +
                                           `(?:[ _]*#(${fragmentChars}))?`
@@ -236,7 +236,7 @@ altogether')
         caseSensitive = false
       }
     } else if (title) {
-      retitle = prepareRegexpWhitespace(mw.RegExp.escape(title))
+      retitle = prepareRegexpWhitespace(mw.util.escapeRegExp(title))
 
       // Keep the capturing groups as required by findLinksEngine
       titlePattern = `${`(()(${retitle}))` +
@@ -278,13 +278,13 @@ altogether')
 
   findInterlanguageLinks(source, language) {
     // See also WM.ArchWiki.findAllInterlanguageLinks
-    return this.findSpecialLinks(source, mw.RegExp.escape(language))
+    return this.findSpecialLinks(source, mw.util.escapeRegExp(language))
   }
 
   findVariables(source, variable) {
     // There don't seem to exist variable names with whitespace, applying
     //   prepareRegexpWhitespace could be dangerous in this case
-    const pattern = mw.RegExp.escape(variable)
+    const pattern = mw.util.escapeRegExp(variable)
     return this.findVariablesPattern(source, pattern)
   }
 
@@ -463,7 +463,7 @@ the whole template will be ignored altogether')
   findTemplates(source, template) {
     let pattern
     if (template) {
-      pattern = mw.RegExp.escape(template)
+      pattern = mw.util.escapeRegExp(template)
       pattern = prepareRegexpWhitespace(pattern)
       pattern = prepareTitleCasing(pattern)
     } else {
@@ -497,13 +497,13 @@ the whole template will be ignored altogether')
     const titleChars = '[^\\n\\{\\}\\[\\]\\||\\#]+?'
 
     if (namespace) {
-      namespacePattern = mw.RegExp.escape(namespace)
+      namespacePattern = mw.util.escapeRegExp(namespace)
       namespacePattern = prepareRegexpWhitespace(namespacePattern)
       namespacePattern = prepareTitleCasing(namespacePattern)
     }
 
     if (title) {
-      titlePattern = mw.RegExp.escape(title)
+      titlePattern = mw.util.escapeRegExp(title)
       titlePattern = prepareRegexpWhitespace(titlePattern)
       titlePattern = prepareTitleCasing(titlePattern)
     }
