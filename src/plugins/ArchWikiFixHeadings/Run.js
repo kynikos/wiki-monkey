@@ -32,26 +32,35 @@ module.exports = class {
       increaseLevel = 1
     } else {
       increaseLevel = 0
-      WM.App.log.warning('There are 6 levels of headings, it has \
-been necessary to start creating them from level 1 \
-although usually it is suggested to start from level 2')
+      WM.App.log.warning('There are 6 levels of headings, it has ' +
+        'been necessary to start creating them from level 1 ' +
+        'although usually it is suggested to start from level 2')
     }
 
+    // Do not trim any white space at the start of the first line that contains
+    // non-white-space characters, as it's meaningful in MediaWiki (a code
+    // block)
+    // eslint-disable-next-line prefer-named-capture-group
+    const trimRe = /^\s*?([^\n\S]*\S[\s\S]*?)\s*$/u
     let newtext = ''
     let prevId = 0
 
     for (const section of info.sections) {
-      newtext += `${source.substring(prevId, section.index).trim()}
+      const content = source.substring(prevId, section.index)
 
-${new Array(section.tocLevel + increaseLevel + 1).join('=')} ${
-  section.rawheading.trim()
-} ${new Array(section.tocLevel + increaseLevel + 1).join('=')}
+      if (!(/^\s*$/u).test(content)) {
+        newtext += `${content.replace(trimRe, '$1')}\n\n`
+      }
 
-`
+      newtext += `${
+        new Array(section.tocLevel + increaseLevel + 1).join('=')} ${
+        section.rawheading.trim()
+      } ${new Array(section.tocLevel + increaseLevel + 1).join('=')}\n\n`
+
       prevId = section.index + section.length0
     }
 
-    newtext += source.substr(prevId).trimStart()
+    newtext += `${source.substr(prevId).replace(trimRe, '$1')}\n`
 
     if (newtext !== source) {
       WM.Editor.writeSource(newtext)
