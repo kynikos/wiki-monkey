@@ -599,34 +599,35 @@ the whole template will be ignored altogether`)
         if (level === minLevel) {
           tocLevel = 1
           prevLevels = {}
-          prevLevels[level] = 1
+          prevLevels[level.toString()] = 1
           prevLevels.relMax = level
           if (maxTocLevel === 0) {
             maxTocLevel = tocLevel
           }
         } else if (level > prevLevels.relMax) {
           tocLevel++
-          prevLevels[level] = tocLevel
+          prevLevels[level.toString()] = tocLevel
           prevLevels.relMax = level
           if (tocLevel > maxTocLevel) {
             maxTocLevel = tocLevel
           }
         } else if (level < prevLevels.relMax) {
-          if (prevLevels[level]) {
-            tocLevel = prevLevels[level]
+          if (prevLevels[level.toString()]) {
+            tocLevel = prevLevels[level.toString()]
           } else {
             // TocPeer is the level immediately greater than the
             // current one, and it should have the same tocLevel
             // I must reset tocPeer here to the relative maximum
             let tocPeer = prevLevels.relMax
-            for (const pLevel of prevLevels) {
+            for (const pLevelStr of Object.keys(prevLevels)) {
+              const pLevel = parseInt(pLevelStr, 10)
               // eslint-disable-next-line max-depth
-              if (pLevel > level && pLevel < tocPeer) {
+              if (pLevel && pLevel > level && pLevel < tocPeer) {
                 tocPeer = pLevel
               }
             }
-            tocLevel = prevLevels[tocPeer]
-            prevLevels[level] = tocLevel
+            tocLevel = prevLevels[tocPeer.toString()]
+            prevLevels[level.toString()] = tocLevel
           }
           prevLevels.relMax = level
         }
