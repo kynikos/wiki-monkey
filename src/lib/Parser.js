@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 // Wiki Monkey - MediaWiki bot and editor-assistant user script
 // Copyright (C) 2011 Dario Giovannetti <dev@dariogiovannetti.net>
 //
@@ -22,27 +23,30 @@ const Str = require('@kynikos/misc/dist/str')
 
 const prepareRegexpWhitespace = (title) => title.replace(/[_ ]+/gu, '[_ ]+')
 
-const prepareTitleCasing = function (pattern) {
+function prepareTitleCasing(pattern) {
   const firstChar = pattern.charAt(0)
   const fcUpper = firstChar.toUpperCase()
   const fcLower = firstChar.toLowerCase()
+  let newPattern = pattern
   if (fcUpper !== fcLower) {
-    pattern = `[${fcUpper}${fcLower}]${pattern.substr(1)}`
+    newPattern = `[${fcUpper}${fcLower}]${pattern.substr(1)}`
   }
-  return pattern
+  return newPattern
 }
 
 
 module.exports = class Parser {
+  // eslint-disable-next-line class-methods-use-this
   squashContiguousWhitespace(title) {
     // MediaWiki treats consecutive whitespace characters in titles and
     //   section names as one
     // For example [[Main __ Page#First _ _section]] is the same as
     //   [[Main Page#First section]]
     // Consider trimming the returned text
-    return title.replace(/[_ ]+/g, ' ')
+    return title.replace(/[_ ]+/gu, ' ')
   }
 
+  // eslint-disable-next-line class-methods-use-this
   neutralizeNowikiTags(source) {
     // Empty nowiki tags (<nowiki></nowiki>) must be neutralized as well,
     //   otherwise Tampermonkey will hang, see also
@@ -52,14 +56,14 @@ module.exports = class Parser {
     const OPENLENGTH = 8
     const CLOSELENGTH = 9
     const tags = Str.findSimpleEnclosures(
-      source, /<nowiki>/i,
-      OPENLENGTH, /<\/nowiki>/i, CLOSELENGTH
+      source, /<nowiki>/iu, OPENLENGTH, /<\/nowiki>/iu, CLOSELENGTH,
     )
     let maskedText = ''
     let prevId = 0
 
     for (const tag of tags) {
-      var maskLength; var maskString
+      let maskLength
+      let maskString
       if (tag[1]) {
         maskLength = tag[1] - tag[0] + CLOSELENGTH
         maskString = Str.padRight('', 'x', maskLength)
@@ -83,20 +87,23 @@ module.exports = class Parser {
     return maskedText
   }
 
+  // eslint-disable-next-line class-methods-use-this
   dotEncode(text) {
-    return encodeURIComponent(text).replace(/%/g, '.')
+    return encodeURIComponent(text).replace(/%/gu, '.')
   }
 
+  // eslint-disable-next-line class-methods-use-this
   dotEncodeLinkBreakingFragmentCharacters(fragment) {
     // These characters are known to break internal links if found in
     //   fragments
     // This function is not tested on link paths or anchors!
-    fragment = fragment.replace(/\[/g, '.5B')
-    fragment = fragment.replace(/\]/g, '.5D')
-    fragment = fragment.replace(/\{/g, '.7B')
-    fragment = fragment.replace(/\}/g, '.7D')
-    fragment = fragment.replace(/\|/g, '.7C')
-    return fragment
+    let newFragment = fragment
+    newFragment = newFragment.replace(/\[/gu, '.5B')
+    newFragment = newFragment.replace(/\]/gu, '.5D')
+    newFragment = newFragment.replace(/\{/gu, '.7B')
+    newFragment = newFragment.replace(/\}/gu, '.7D')
+    newFragment = newFragment.replace(/\|/gu, '.7C')
+    return newFragment
   }
 
   compareArticleTitles(title1, title2) {
@@ -111,21 +118,22 @@ module.exports = class Parser {
 
   findBehaviorSwitches(source, word) {
     let regExp
-    source = this.neutralizeNowikiTags(source)
-    regExp
+    const newSource = this.neutralizeNowikiTags(source)
     if (word) {
       // Behavior switches aren't case-sensitive
-      regExp = new RegExp(`__${mw.util.escapeRegExp(word)}__`, 'gi')
+      regExp = new RegExp(`__${mw.util.escapeRegExp(word)}__`, 'giu')
     } else {
       // Behavior switches aren't case-sensitive
+      // eslint-disable-next-line prefer-named-capture-group
       regExp = new RegExp('__(TOC|NOTOC|FORCETOC|NOEDITSECTION|' +
                       'NEWSECTIONLINK|NONEWSECTIONLINK|NOGALLERY|HIDDENCAT|' +
                       'NOCONTENTCONVERT|NOCC|NOTITLECONVERT|NOTC|INDEX|' +
-                      'NOINDEX|STATICREDIRECT|START|END)__', 'gi')
+                      'NOINDEX|STATICREDIRECT|START|END)__', 'giu')
     }
-    return RegEx.matchAll(source, regExp)
+    return RegEx.matchAll(newSource, regExp)
   }
 
+  // eslint-disable-next-line max-params
   findLinksEngine(source, titlePattern, specialOnly, caseSensitive) {
     // Links cannot contain other links, not even in the alternative text
     //   (only the innermost links are valid)
@@ -168,17 +176,18 @@ module.exports = class Parser {
           //   See also the examples in findTransclusionArguments
           // Note that the title already doesn't allow "{" or "}"
           const nText = this.neutralizeNowikiTags(match[6])
+          // eslint-disable-next-line prefer-destructuring
           const maskedText = Str.findNestedEnclosures(
-            nText, '{{',
-            '}}', 'x'
+            nText, '{{', '}}', 'x',
           )[1]
 
-          if (maskedText.search(/(\{\{|\}\})/) > -1) {
-            WM.App.log.warning(`[[${match[0]}` + ']] seems to \
+          // eslint-disable-next-line prefer-named-capture-group
+          if (maskedText.search(/(\{\{|\}\})/u) > -1) {
+            WM.App.log.warning(`[[${match[0]}]] seems to \
 contain part of a template, and the resulting \
 behaviour cannot be predicted by this \
 function, so the link will be ignored \
-altogether')
+altogether`)
             push = false
           }
         }
@@ -295,7 +304,7 @@ altogether')
     // There can't be a whitespace between the variable name and the colon
     const nSource = this.neutralizeNowikiTags(source)
     const results = []
-    const dbrackets = Str.findNestedEnclosures(nSource, '{{', '}}', 'x')[0]
+    const [dbrackets] = Str.findNestedEnclosures(nSource, '{{', '}}', 'x')
 
     for (const dbracket of dbrackets) {
       const inText = source.substring(dbracket[0] + 2, dbracket[1])
@@ -303,8 +312,8 @@ altogether')
       // Variables are case-sensitive
       // Do *not* use the g flag, or when using RegExp.exec the index
       //   will have to be reset at every loop
-      const regExp = new RegExp(`^\\s*(${pattern})` +
-                                          '(?:\\:\\s*([\\s\\S]*?))?\\s*$', '')
+      const regExp = new RegExp(`^\\s*(${
+        pattern})(?:\\:\\s*([\\s\\S]*?))?\\s*$`, 'u')
       const match = regExp.exec(inText)
 
       if (match) {
@@ -336,13 +345,13 @@ altogether')
     //   with prepareTitleCasing
     // Do *not* use the g flag, or when using RegExp.exec the index will
     //   have to be reset at every loop
-    const regExp = new RegExp(`${`^(\\s*${templatesOnly ? '' : ':?'}` +
-                                          '[_ ]*('}${pattern})[_ ]*\\s*)` +
-                                          '(?:\\|([\\s\\S]*))?$', '')
+    const regExp = new RegExp(`${`^(\\s*${
+      templatesOnly ? '' : ':?'}[_ ]*(`}${
+      pattern})[_ ]*\\s*)(?:\\|([\\s\\S]*))?$`, 'u')
 
     const nSource = this.neutralizeNowikiTags(source)
     const transclusions = []
-    const dbrackets = Str.findNestedEnclosures(nSource, '{{', '}}', 'x')[0]
+    const [dbrackets] = Str.findNestedEnclosures(nSource, '{{', '}}', 'x')
 
     for (const dbracket of dbrackets) {
       const inText = source.substring(dbracket[0] + 2, dbracket[1])
@@ -366,6 +375,7 @@ altogether')
   }
 
   findTransclusionArguments(match, argIndex) {
+    // eslint-disable-next-line prefer-destructuring
     const rawArguments = match[3]
     const args = []
 
@@ -377,13 +387,14 @@ altogether')
       //   Note that double braces ("[[]]") "escape" a pipe in a template
       //   argument even if a link is not correctly formed, e.g. [[|]] or
       //   using unallowed characters etc.
+      // eslint-disable-next-line prefer-destructuring
       let maskedArgs = Str.findNestedEnclosures(nArgs, '[[', ']]', 'x')[1]
 
       // Mask any inner templates, so that their "|" characters won't be
       //   interpreted as belonging to the outer template
+      // eslint-disable-next-line prefer-destructuring
       maskedArgs = Str.findNestedEnclosures(
-        maskedArgs, '{{', '}}',
-        'x'
+        maskedArgs, '{{', '}}', 'x',
       )[1]
 
       // Also tables would have pipes, but using tables inside templates
@@ -410,17 +421,21 @@ altogether')
       //     [[test|{{ic|aaa]]}}
       //   Note that the title already doesn't allow "{", "}", "[" nor
       //     "]"
-      if (maskedArgs.search(/(\{\{|\}\}|\[\[|\]\])/) > -1) {
-        WM.App.log.warning(`{{${match[0]}` + '}} seems to \
+      // eslint-disable-next-line prefer-named-capture-group
+      if (maskedArgs.search(/(\{\{|\}\}|\[\[|\]\])/u) > -1) {
+        WM.App.log.warning(`{{${match[0]}}} seems to \
 contain part of a link or template, and the resulting \
 behaviour cannot be predicted by this function, so \
-the whole template will be ignored altogether')
+the whole template will be ignored altogether`)
       } else {
         const mArgs = maskedArgs.split('|')
         let relIndex = 0
 
         for (const mArgument of mArgs) {
-          var key; var keyIndex; var value; var valueIndex
+          let key
+          let keyIndex
+          let value
+          let valueIndex
           const argL = mArgument.length
           const argument = rawArguments.substr(relIndex, argL)
           const eqIndex = mArgument.indexOf('=')
@@ -429,8 +444,10 @@ the whole template will be ignored altogether')
           //   empty
           if (eqIndex > 0) {
             const rawKey = argument.substring(0, eqIndex)
-            const reKey = /^(\s*)(.+?)\s*$/
+            // eslint-disable-next-line prefer-named-capture-group
+            const reKey = /^(\s*)(.+?)\s*$/u
             const keyMatches = reKey.exec(rawKey)
+            // eslint-disable-next-line prefer-destructuring
             key = keyMatches[2]
             keyIndex = argIndex + (keyMatches[1] ? keyMatches[1].length : 0)
 
@@ -529,16 +546,22 @@ the whole template will be ignored altogether')
     let minLevel = MAXLEVEL
     let maxTocLevel = 0
     let tocLevel = 1
-    const regExp = /^(\=+([ _]*(.+?)[ _]*)\=+)[ \t]*$/gm
+    // eslint-disable-next-line prefer-named-capture-group
+    const regExp = /^(=+([ _]*(.+?)[ _]*)=+)[ \t]*$/gmu
 
+    let prevLevels
+
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       const match = regExp.exec(source)
 
       if (match) {
-        var prevLevels
         const L0 = match[0].length
+        // eslint-disable-next-line prefer-destructuring
         const line = match[1]
+        // eslint-disable-next-line prefer-destructuring
         const rawheading = match[2]
+        // eslint-disable-next-line prefer-destructuring
         const heading = match[3]
         const cleanheading = this.squashContiguousWhitespace(heading)
         const L1 = line.length
@@ -555,6 +578,7 @@ the whole template will be ignored altogether')
         //                                               levels)
         // ===== is read as ==(=)== (2nd level) and so on
 
+        // eslint-disable-next-line no-constant-condition
         while (true) {
           start = line.substr(level, 1)
           end = line.substr(L1 - level - 1, 1)
@@ -562,6 +586,7 @@ the whole template will be ignored altogether')
           if (L1 - level * 2 > 2 && start === '=' && end === '=') {
             level++
           } else {
+            // eslint-disable-next-line max-depth
             if (level > MAXLEVEL) {
               level = MAXLEVEL
             } else if (level < minLevel) {
@@ -595,6 +620,7 @@ the whole template will be ignored altogether')
             // I must reset tocPeer here to the relative maximum
             let tocPeer = prevLevels.relMax
             for (const pLevel of prevLevels) {
+              // eslint-disable-next-line max-depth
               if (pLevel > level && pLevel < tocPeer) {
                 tocPeer = pLevel
               }
