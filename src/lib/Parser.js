@@ -312,8 +312,11 @@ altogether`)
       // Variables are case-sensitive
       // Do *not* use the g flag, or when using RegExp.exec the index
       //   will have to be reset at every loop
+      // BUG[upstream]: As at May 2021 at least Firefox doesn't support the 'u'
+      //    flag here
+      // eslint-disable-next-line require-unicode-regexp
       const regExp = new RegExp(`^\\s*(${
-        pattern})(?:\\:\\s*([\\s\\S]*?))?\\s*$`, 'u')
+        pattern})(?:\\:\\s*([\\s\\S]*?))?\\s*$`, '')
       const match = regExp.exec(inText)
 
       if (match) {
