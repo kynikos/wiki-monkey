@@ -7893,8 +7893,11 @@ module.exports = /*#__PURE__*/function () {
           var inText = source.substring(dbracket[0] + 2, dbracket[1]); // Variables are case-sensitive
           // Do *not* use the g flag, or when using RegExp.exec the index
           //   will have to be reset at every loop
+          // BUG[upstream]: As at May 2021 at least Firefox doesn't support the 'u'
+          //    flag here
+          // eslint-disable-next-line require-unicode-regexp
 
-          var regExp = new RegExp("^\\s*(".concat(pattern, ")(?:\\:\\s*([\\s\\S]*?))?\\s*$"), 'u');
+          var regExp = new RegExp("^\\s*(".concat(pattern, ")(?:\\:\\s*([\\s\\S]*?))?\\s*$"), '');
           var match = regExp.exec(inText);
 
           if (match) {
@@ -85155,7 +85158,7 @@ var index = {
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"@kynikos/wiki-monkey","version":"5.3.1","author":"Dario Giovannetti","description":"MediaWiki bot and editor-assistant user script.","license":"GPL-3.0","repository":{"type":"git","url":"https://github.com/kynikos/wiki-monkey.git"},"keywords":["wiki mediawiki bot"],"dependencies":{"@kynikos/misc":"^0.8.2","@kynikos/vue-styled-jss":"^1.0.0","clipboard":"^2.0.6","core-js":"^3.6.5","element-ui":"^2.13.2","hyperscript":"^2.0.2","jss":"^10.4.0","jss-preset-default":"^10.4.0","moment":"^2.27.0","regenerator-runtime":"^0.13.7","vue":"^2.6.12","vuex":"^3.5.1"},"devDependencies":{"@babel/core":"^7.11.6","@babel/plugin-proposal-class-properties":"^7.10.4","@babel/plugin-proposal-decorators":"^7.10.5","@babel/plugin-proposal-object-rest-spread":"^7.11.0","@babel/plugin-syntax-dynamic-import":"^7.8.3","@babel/preset-env":"^7.11.5","@kynikos/tasks":"^1.2.1","babel-eslint":"^10.1.0","babel-jest":"^26.3.0","babel-loader":"^8.1.0","commander":"^7.2.0","css-loader":"^5.2.0","eslint":"^7.9.0","eslint-plugin-babel":"^5.3.1","eslint-plugin-jest":"^24.0.1","eslint-plugin-promise":"^5.1.0","eslint-plugin-vue":"^7.9.0","fs-extra":"^10.0.0","http-server":"^0.12.3","jest":"^26.4.2","license-webpack-plugin":"^2.3.0","node-sass":"^6.0.0","readline-sync":"^1.4.10","sass":"^1.32.12","sass-loader":"^11.0.1","style-loader":"^2.0.0","terser-webpack-plugin":"^5.1.1","webpack":"^5.28.0","webpack-cli":"^4.6.0"}}');
+module.exports = JSON.parse('{"name":"@kynikos/wiki-monkey","version":"5.3.2","author":"Dario Giovannetti","description":"MediaWiki bot and editor-assistant user script.","license":"GPL-3.0","repository":{"type":"git","url":"https://github.com/kynikos/wiki-monkey.git"},"keywords":["wiki mediawiki bot"],"dependencies":{"@kynikos/misc":"^0.8.2","@kynikos/vue-styled-jss":"^1.0.0","clipboard":"^2.0.6","core-js":"^3.6.5","element-ui":"^2.13.2","hyperscript":"^2.0.2","jss":"^10.4.0","jss-preset-default":"^10.4.0","moment":"^2.27.0","regenerator-runtime":"^0.13.7","vue":"^2.6.12","vuex":"^3.5.1"},"devDependencies":{"@babel/core":"^7.11.6","@babel/plugin-proposal-class-properties":"^7.10.4","@babel/plugin-proposal-decorators":"^7.10.5","@babel/plugin-proposal-object-rest-spread":"^7.11.0","@babel/plugin-syntax-dynamic-import":"^7.8.3","@babel/preset-env":"^7.11.5","@kynikos/tasks":"^1.2.1","babel-eslint":"^10.1.0","babel-jest":"^26.3.0","babel-loader":"^8.1.0","commander":"^7.2.0","css-loader":"^5.2.0","eslint":"^7.9.0","eslint-plugin-babel":"^5.3.1","eslint-plugin-jest":"^24.0.1","eslint-plugin-promise":"^5.1.0","eslint-plugin-vue":"^7.9.0","fs-extra":"^10.0.0","http-server":"^0.12.3","jest":"^26.4.2","license-webpack-plugin":"^2.3.0","node-sass":"^6.0.0","readline-sync":"^1.4.10","sass":"^1.32.12","sass-loader":"^11.0.1","style-loader":"^2.0.0","terser-webpack-plugin":"^5.1.1","webpack":"^5.28.0","webpack-cli":"^4.6.0"}}');
 
 /***/ }),
 
