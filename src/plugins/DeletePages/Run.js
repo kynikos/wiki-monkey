@@ -27,7 +27,6 @@ module.exports = class {
     return WM.MW.callQuery(
       {
         prop: 'info',
-        intoken: 'delete',
         titles: title,
       },
       this.mainAutoWrite,
@@ -36,12 +35,15 @@ module.exports = class {
     )
   }
 
-  mainAutoWrite(page, args) {
+  async mainAutoWrite(page, args) {
     const title = args[0]
     const summary = args[1]
     const callBot = args[2]
 
-    const {deletetoken} = page
+    // TODO: Optimize how/when the token is queried; originally it was
+    //    queried together with the info query above through the deprecated
+    //    intoken:'delete' flag
+    const deletetoken = await WM.MW.getCsrfToken()
 
     return WM.MW.callAPIPost(
       {

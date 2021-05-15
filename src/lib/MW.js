@@ -265,16 +265,20 @@ module.exports = class MW {
   }
 
   async callQueryEdit(title, call, callArgs) {
-    const page = await this.callQuery({
-      prop: 'info|revisions',
-      rvprop: 'content|timestamp',
-      intoken: 'edit',
-      titles: title,
-    })
+    const [page, edittoken] = await Promise.all([
+      this.callQuery({
+        prop: 'info|revisions',
+        rvprop: 'content|timestamp',
+        titles: title,
+      }),
+      // TODO: Optimize how/when the token is queried; originally it was queried
+      //    together with the info|revisions query above through the deprecated
+      //    intoken:'edit' flag
+      WM.MW.getCsrfToken(),
+    ])
 
     const source = page.revisions[0]['*']
     const {timestamp} = page.revisions[0]
-    const {edittoken} = page
 
     if (call) {
       return call(title, source, timestamp, edittoken, callArgs)

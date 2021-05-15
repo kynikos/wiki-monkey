@@ -26,7 +26,6 @@ module.exports = class {
     return WM.MW.callQuery(
       {
         prop: 'info',
-        intoken: 'edit',
         titles: title,
       },
       this.mainAutoWrite,
@@ -35,11 +34,14 @@ module.exports = class {
     )
   }
 
-  mainAutoWrite(page, args) {
+  async mainAutoWrite(page, args) {
     const title = args[0]
     const callBot = args[1]
 
-    const {edittoken} = page
+    // TODO: Optimize how/when the token is queried; originally it was
+    //    queried together with the info query above through the deprecated
+    //    intoken:'edit' flag
+    const edittoken = await WM.MW.getCsrfToken()
 
     const language = WM.ArchWiki.detectLanguage(title)[1]
 

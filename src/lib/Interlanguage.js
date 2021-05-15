@@ -66,7 +66,6 @@ module.exports = class Interlanguage {
       action: 'query',
       prop: 'info|revisions',
       rvprop: 'content|timestamp',
-      intoken: 'edit',
       titles: queryTitle,
       meta: 'siteinfo',
       siprop: 'interwikimap',
@@ -81,7 +80,7 @@ module.exports = class Interlanguage {
 
     return WM.MW.callAPIGet(
       query,
-      (res, args) => {
+      async (res, args) => {
         let edittoken
         let error
         let iwmap
@@ -93,8 +92,11 @@ module.exports = class Interlanguage {
           if (page.revisions) {
             error = null
             source = page.revisions[0]['*'];
-            ({timestamp} = page.revisions[0]);
-            ({edittoken} = page)
+            ({timestamp} = page.revisions[0])
+            // TODO: Optimize how/when the token is queried; originally it was
+            //    queried together with the info|revisions query above through
+            //    the deprecated intoken:'edit' flag
+            edittoken = await WM.MW.getCsrfToken()
             iwmap = res.query.interwikimap
             langlinks = this.parseLinks(supportedLangs, source, iwmap)
           } else {
