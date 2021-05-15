@@ -198,10 +198,7 @@ module.exports = class Interlanguage {
 
       const {url} = link
 
-      // Don't use WM.MW.getTitleFromWikiUrl(decodeURI(url)) because
-      // it wouldn't decode some characters like colons, which are
-      // required to be decoded instead when making an API call
-      const queryTitle = decodeURIComponent(WM.MW.getTitleFromWikiUrl(url))
+      const queryTitle = WM.MW.getTitleFromWikiUrl(url)
 
       if (queryTitle) {
         const {origTag} = link

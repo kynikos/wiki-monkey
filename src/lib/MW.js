@@ -146,7 +146,10 @@ module.exports = class MW {
     return this.localWikiUrls
   }
 
+  // eslint-disable-next-line class-methods-use-this
   getTitleFromWikiUrl(url) {
+    // Don't use decodeURI(url) because it wouldn't decode some characters like
+    // colons, which are required to be decoded instead when making an API call
     const uri = new mw.Uri(url)
     let {title} = uri.query
 
@@ -179,7 +182,7 @@ module.exports = class MW {
       }
     }
 
-    return title
+    return title === false ? title : decodeURIComponent(title)
   }
 
   failedQueryError(url) {
