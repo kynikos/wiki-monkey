@@ -27,7 +27,7 @@ const wikiPaths = {
       api: '/w/api.php',
     },
     '^https?://wiki\.archlinux\.org': {
-      short: '/index.php/',
+      short: '/title/',
       full: '/index.php',
       api: '/api.php',
     },
@@ -36,7 +36,7 @@ const wikiPaths = {
       full: '/index.php',
       api: '/api.php',
     },
-    '^http://wiki\.archlinux\.fr': {
+    '^https?://wiki\.archlinux\.fr': {
       short: '/',
       full: '/index.php',
       api: '/api.php',
@@ -46,12 +46,12 @@ const wikiPaths = {
       full: '/index.php',
       api: '/api.php',
     },
-    '^http://wiki\.archlinux\.ro': {
+    '^https?://wiki\.archlinux\.ro': {
       short: '/index.php/',
       full: '/index.php',
       api: '/api.php',
     },
-    '^http://wiki\.archlinux\.ir': {
+    '^https?://wiki\.archusers\.ir': {
       short: '/index.php/',
       full: '/index.php',
       api: '/api.php',
@@ -156,13 +156,12 @@ module.exports = class MW {
       const pathname = uri.path
 
       for (const r in wikiPaths.known) {
-        const re = new RegExp(r, 'i')
+        const re = new RegExp(r, 'iu')
         const match = re.exec(url)
 
         if (match) {
           if (pathname.indexOf(wikiPaths.known[r].short) === 0) {
-            title = pathname.substr(wikiPaths.known[r]
-              .short.length)
+            title = pathname.substr(wikiPaths.known[r].short.length)
           } else {
             title = false
           }
