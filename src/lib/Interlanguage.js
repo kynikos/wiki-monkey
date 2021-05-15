@@ -82,7 +82,12 @@ module.exports = class Interlanguage {
     return WM.MW.callAPIGet(
       query,
       (res, args) => {
-        let edittoken; let error; let iwmap; let langlinks; let source; let timestamp
+        let edittoken
+        let error
+        let iwmap
+        let langlinks
+        let source
+        let timestamp
         if (res.query.pages) {
           const page = Object.values(res.query.pages)[0]
           if (page.revisions) {
