@@ -6471,6 +6471,10 @@ module.exports = /*#__PURE__*/function () {
 /***/ 75559:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
@@ -6578,7 +6582,6 @@ module.exports = /*#__PURE__*/function () {
         action: 'query',
         prop: 'info|revisions',
         rvprop: 'content|timestamp',
-        intoken: 'edit',
         titles: queryTitle,
         meta: 'siteinfo',
         siprop: 'interwikimap',
@@ -6590,54 +6593,86 @@ module.exports = /*#__PURE__*/function () {
         query.redirects = '1';
       }
 
-      return WM.MW.callAPIGet(query, function (res, args) {
-        var edittoken;
-        var error;
-        var iwmap;
-        var langlinks;
-        var source;
-        var timestamp;
+      return WM.MW.callAPIGet(query, /*#__PURE__*/function () {
+        var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(res, args) {
+          var edittoken, error, iwmap, langlinks, source, timestamp, page;
+          return regeneratorRuntime.wrap(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  if (!res.query.pages) {
+                    _context.next = 21;
+                    break;
+                  }
 
-        if (res.query.pages) {
-          var page = Object.values(res.query.pages)[0];
+                  page = Object.values(res.query.pages)[0];
 
-          if (page.revisions) {
-            error = null;
-            source = page.revisions[0]['*'];
-            timestamp = page.revisions[0].timestamp;
-            edittoken = page.edittoken;
-            iwmap = res.query.interwikimap;
-            langlinks = _this.parseLinks(supportedLangs, source, iwmap);
-          } else {
-            // The requested article doesn't exist
-            error = 'nonexisting';
-            source = false;
-            timestamp = false;
-            edittoken = false;
-            iwmap = res.query.interwikimap;
-            langlinks = false;
-          }
-        } else if (res.query.redirects) {
-          // The requested article is an unsolved redirect
-          // (redirect over interwiki link?)
-          error = 'unsolvedredirect';
-          source = false;
-          timestamp = false;
-          edittoken = false;
-          iwmap = res.query.interwikimap;
-          langlinks = false;
-        } else {
-          // Unknown error
-          error = 'unknown';
-          source = false;
-          timestamp = false;
-          edittoken = false;
-          iwmap = res.query.interwikimap;
-          langlinks = false;
-        }
+                  if (!page.revisions) {
+                    _context.next = 13;
+                    break;
+                  }
 
-        return callEnd(title, supportedLangs, whitelist, false, error, langlinks, iwmap, source, timestamp, edittoken, args);
-      }, callArgs, function (args) {
+                  error = null;
+                  source = page.revisions[0]['*'];
+                  timestamp = page.revisions[0].timestamp;
+                  _context.next = 8;
+                  return WM.MW.getCsrfToken();
+
+                case 8:
+                  edittoken = _context.sent;
+                  iwmap = res.query.interwikimap;
+                  langlinks = _this.parseLinks(supportedLangs, source, iwmap);
+                  _context.next = 19;
+                  break;
+
+                case 13:
+                  // The requested article doesn't exist
+                  error = 'nonexisting';
+                  source = false;
+                  timestamp = false;
+                  edittoken = false;
+                  iwmap = res.query.interwikimap;
+                  langlinks = false;
+
+                case 19:
+                  _context.next = 22;
+                  break;
+
+                case 21:
+                  if (res.query.redirects) {
+                    // The requested article is an unsolved redirect
+                    // (redirect over interwiki link?)
+                    error = 'unsolvedredirect';
+                    source = false;
+                    timestamp = false;
+                    edittoken = false;
+                    iwmap = res.query.interwikimap;
+                    langlinks = false;
+                  } else {
+                    // Unknown error
+                    error = 'unknown';
+                    source = false;
+                    timestamp = false;
+                    edittoken = false;
+                    iwmap = res.query.interwikimap;
+                    langlinks = false;
+                  }
+
+                case 22:
+                  return _context.abrupt("return", callEnd(title, supportedLangs, whitelist, false, error, langlinks, iwmap, source, timestamp, edittoken, args));
+
+                case 23:
+                case "end":
+                  return _context.stop();
+              }
+            }
+          }, _callee);
+        }));
+
+        return function (_x, _x2) {
+          return _ref.apply(this, arguments);
+        };
+      }(), callArgs, function (args) {
         return callEnd(title, supportedLangs, whitelist, false, 'unknown', false, false, false, false, false, args);
       });
     }
@@ -6693,11 +6728,8 @@ module.exports = /*#__PURE__*/function () {
       if (link) {
         delete newlinks[tag];
         var _link = link,
-            url = _link.url; // Don't use WM.MW.getTitleFromWikiUrl(decodeURI(url)) because
-        // it wouldn't decode some characters like colons, which are
-        // required to be decoded instead when making an API call
-
-        var queryTitle = decodeURIComponent(WM.MW.getTitleFromWikiUrl(url));
+            url = _link.url;
+        var queryTitle = WM.MW.getTitleFromWikiUrl(url);
 
         if (queryTitle) {
           var _link2 = link,
@@ -6899,6 +6931,18 @@ module.exports = /*#__PURE__*/function () {
 /***/ 44442:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { var _i = arr && (typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]); if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
@@ -6939,7 +6983,7 @@ var wikiPaths = {
       api: '/w/api.php'
     },
     '^https?://wiki\.archlinux\.org': {
-      "short": '/index.php/',
+      "short": '/title/',
       full: '/index.php',
       api: '/api.php'
     },
@@ -6948,7 +6992,7 @@ var wikiPaths = {
       full: '/index.php',
       api: '/api.php'
     },
-    '^http://wiki\.archlinux\.fr': {
+    '^https?://wiki\.archlinux\.fr': {
       "short": '/',
       full: '/index.php',
       api: '/api.php'
@@ -6958,12 +7002,12 @@ var wikiPaths = {
       full: '/index.php',
       api: '/api.php'
     },
-    '^http://wiki\.archlinux\.ro': {
+    '^https?://wiki\.archlinux\.ro': {
       "short": '/index.php/',
       full: '/index.php',
       api: '/api.php'
     },
-    '^http://wiki\.archlinux\.ir': {
+    '^https?://wiki\.archusers\.ir': {
       "short": '/index.php/',
       full: '/index.php',
       api: '/api.php'
@@ -7065,10 +7109,13 @@ module.exports = /*#__PURE__*/function () {
       }
 
       return this.localWikiUrls;
-    }
+    } // eslint-disable-next-line class-methods-use-this
+
   }, {
     key: "getTitleFromWikiUrl",
     value: function getTitleFromWikiUrl(url) {
+      // Don't use decodeURI(url) because it wouldn't decode some characters like
+      // colons, which are required to be decoded instead when making an API call
       var uri = new mw.Uri(url);
       var title = uri.query.title; // Test this *before* the short paths, in fact a short path may just be
       // the full one with the "title" parameter pre-added
@@ -7077,7 +7124,7 @@ module.exports = /*#__PURE__*/function () {
         var pathname = uri.path;
 
         for (var r in wikiPaths.known) {
-          var re = new RegExp(r, 'i');
+          var re = new RegExp(r, 'iu');
           var match = re.exec(url);
 
           if (match) {
@@ -7100,7 +7147,7 @@ module.exports = /*#__PURE__*/function () {
         }
       }
 
-      return title;
+      return title === false ? title : decodeURIComponent(title);
     }
   }, {
     key: "failedQueryError",
@@ -7252,40 +7299,45 @@ module.exports = /*#__PURE__*/function () {
     key: "callQueryEdit",
     value: function () {
       var _callQueryEdit = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(title, call, callArgs) {
-        var page, source, timestamp, edittoken;
+        var _yield$Promise$all, _yield$Promise$all2, page, edittoken, source, timestamp;
+
         return regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
                 _context3.next = 2;
-                return this.callQuery({
+                return Promise.all([this.callQuery({
                   prop: 'info|revisions',
                   rvprop: 'content|timestamp',
-                  intoken: 'edit',
                   titles: title
-                });
+                }), // TODO: Optimize how/when the token is queried; originally it was queried
+                //    together with the info|revisions query above through the deprecated
+                //    intoken:'edit' flag
+                WM.MW.getCsrfToken()]);
 
               case 2:
-                page = _context3.sent;
+                _yield$Promise$all = _context3.sent;
+                _yield$Promise$all2 = _slicedToArray(_yield$Promise$all, 2);
+                page = _yield$Promise$all2[0];
+                edittoken = _yield$Promise$all2[1];
                 source = page.revisions[0]['*'];
                 timestamp = page.revisions[0].timestamp;
-                edittoken = page.edittoken;
 
                 if (!call) {
-                  _context3.next = 8;
+                  _context3.next = 10;
                   break;
                 }
 
                 return _context3.abrupt("return", call(title, source, timestamp, edittoken, callArgs));
 
-              case 8:
+              case 10:
                 return _context3.abrupt("return", {
                   source: source,
                   timestamp: timestamp,
                   edittoken: edittoken
                 });
 
-              case 9:
+              case 11:
               case "end":
                 return _context3.stop();
             }
@@ -83421,7 +83473,7 @@ var index = {
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"@kynikos/wiki-monkey","version":"5.3.2","author":"Dario Giovannetti","description":"MediaWiki bot and editor-assistant user script.","license":"GPL-3.0","repository":{"type":"git","url":"https://github.com/kynikos/wiki-monkey.git"},"keywords":["wiki mediawiki bot"],"dependencies":{"@kynikos/misc":"^0.8.2","@kynikos/vue-styled-jss":"^1.0.0","clipboard":"^2.0.6","core-js":"^3.6.5","element-ui":"^2.13.2","hyperscript":"^2.0.2","jss":"^10.4.0","jss-preset-default":"^10.4.0","moment":"^2.27.0","regenerator-runtime":"^0.13.7","vue":"^2.6.12","vuex":"^3.5.1"},"devDependencies":{"@babel/core":"^7.11.6","@babel/plugin-proposal-class-properties":"^7.10.4","@babel/plugin-proposal-decorators":"^7.10.5","@babel/plugin-proposal-object-rest-spread":"^7.11.0","@babel/plugin-syntax-dynamic-import":"^7.8.3","@babel/preset-env":"^7.11.5","@kynikos/tasks":"^1.2.1","babel-eslint":"^10.1.0","babel-jest":"^26.3.0","babel-loader":"^8.1.0","commander":"^7.2.0","css-loader":"^5.2.0","eslint":"^7.9.0","eslint-plugin-babel":"^5.3.1","eslint-plugin-jest":"^24.0.1","eslint-plugin-promise":"^5.1.0","eslint-plugin-vue":"^7.9.0","fs-extra":"^10.0.0","http-server":"^0.12.3","jest":"^26.4.2","license-webpack-plugin":"^2.3.0","node-sass":"^6.0.0","readline-sync":"^1.4.10","sass":"^1.32.12","sass-loader":"^11.0.1","style-loader":"^2.0.0","terser-webpack-plugin":"^5.1.1","webpack":"^5.28.0","webpack-cli":"^4.6.0"}}');
+module.exports = JSON.parse('{"name":"@kynikos/wiki-monkey","version":"5.3.3","author":"Dario Giovannetti","description":"MediaWiki bot and editor-assistant user script.","license":"GPL-3.0","repository":{"type":"git","url":"https://github.com/kynikos/wiki-monkey.git"},"keywords":["wiki mediawiki bot"],"dependencies":{"@kynikos/misc":"^0.8.2","@kynikos/vue-styled-jss":"^1.0.0","clipboard":"^2.0.6","core-js":"^3.6.5","element-ui":"^2.13.2","hyperscript":"^2.0.2","jss":"^10.4.0","jss-preset-default":"^10.4.0","moment":"^2.27.0","regenerator-runtime":"^0.13.7","vue":"^2.6.12","vuex":"^3.5.1"},"devDependencies":{"@babel/core":"^7.11.6","@babel/plugin-proposal-class-properties":"^7.10.4","@babel/plugin-proposal-decorators":"^7.10.5","@babel/plugin-proposal-object-rest-spread":"^7.11.0","@babel/plugin-syntax-dynamic-import":"^7.8.3","@babel/preset-env":"^7.11.5","@kynikos/tasks":"^1.2.1","babel-eslint":"^10.1.0","babel-jest":"^26.3.0","babel-loader":"^8.1.0","commander":"^7.2.0","css-loader":"^5.2.0","eslint":"^7.9.0","eslint-plugin-babel":"^5.3.1","eslint-plugin-jest":"^24.0.1","eslint-plugin-promise":"^5.1.0","eslint-plugin-vue":"^7.9.0","fs-extra":"^10.0.0","http-server":"^0.12.3","jest":"^26.4.2","license-webpack-plugin":"^2.3.0","node-sass":"^6.0.0","readline-sync":"^1.4.10","sass":"^1.32.12","sass-loader":"^11.0.1","style-loader":"^2.0.0","terser-webpack-plugin":"^5.1.1","webpack":"^5.28.0","webpack-cli":"^4.6.0"}}');
 
 /***/ }),
 
