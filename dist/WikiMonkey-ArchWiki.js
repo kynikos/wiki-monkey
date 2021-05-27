@@ -3640,20 +3640,12 @@ module.exports.App = /*#__PURE__*/function () {
       if (personalTools) new PersonalToolsCommands(personalTools);
       var indicators = $('.mw-indicators:first');
       if (indicators) new PageCommands(indicators);
-      var editSections = $('.mw-editsection');
-      if (editSections.length) new SectionCommands(editSections); // MW seems a bit unreliable with capitalization, e.g. it's
+      var headlines = $('.mw-headline');
+      if (headlines.length) new SectionCommands(headlines); // MW seems a bit unreliable with capitalization, e.g. it's
       // "SpecialPages" but "Recentchanges"
 
-      var specialPage = function () {
-        var spage = mw.config.get('wgCanonicalSpecialPageName');
-
-        if (spage) {
-          return spage.toLowerCase();
-        }
-
-        return spage;
-      }(); // TODO: Recognize the editor with mw.config.get('wgAction')?
-
+      var spage = mw.config.get('wgCanonicalSpecialPageName');
+      var specialPage = spage && spage.toLowerCase(); // TODO: Recognize the editor with mw.config.get('wgAction')?
 
       if ($('#editform').length) {
         new Menu({
@@ -4737,12 +4729,12 @@ var _require = __webpack_require__(78635),
     Vue = _require.Vue;
 
 module.exports.SectionCommands = (_temp = _class = /*#__PURE__*/function () {
-  function _class(editSections) {
+  function _class(headlines) {
     _classCallCheck(this, _class);
 
     var plugins = this.constructor.plugins;
-    editSections.each(function () {
-      SectionCommands_(this, plugins);
+    headlines.each(function (index) {
+      SectionCommands_(this, index, plugins);
     });
   }
 
@@ -4756,22 +4748,36 @@ module.exports.SectionCommands = (_temp = _class = /*#__PURE__*/function () {
   return _class;
 }(), _defineProperty(_class, "plugins", []), _temp);
 
-function SectionCommands_(editSection0, plugins) {
+function SectionCommands_(headline0, index, plugins) {
   // eslint-disable-line vars-on-top,no-var
-  var editSection = $(editSection0);
-  var header = editSection.closest(':header');
-  var headline = header.find('.mw-headline');
-  var editLink = editSection.children("a:contains('edit')").first();
-  var editUri = new mw.Uri(editLink.attr('href')); // Retrieve section's id, number and title now to make sure that their values
+  var headline = $(headline0);
+  var header = headline.closest(':header'); // Retrieve section's id, number and title now to make sure that their values
   // aren't affected by the following changes to the DOM
 
   var sectionId = headline[0].id;
-  var sectionNumber = parseInt(editUri.query.section, 10);
   var sectionTitle = headline.contents().last().text().trim();
+  var editSection = header.find('.mw-editsection');
+  var sectionNumber;
   var root = document.createElement('span');
-  editLink.text('e');
-  editSection.children().first().after(' ', root, ' | ');
-  editSection.children().last().before(' ');
+
+  if (editSection.length > 0) {
+    var editLink = editSection.children("a:contains('edit')").first();
+    var editUri = new mw.Uri(editLink.attr('href'));
+    sectionNumber = parseInt(editUri.query.section, 10);
+    editLink.text('e');
+    editSection.children().first().after(' ', root, ' | ');
+    editSection.children().last().before(' ');
+  } else {
+    // mw-editsection may not exist in protected pages for users without edit
+    // privileges
+    editSection = $('<span>').addClass('mw-editsection');
+    header.append(editSection); // TODO: Find a more reliable way to number the sections, in absence of a
+    //       native mw-editsection element
+
+    sectionNumber = index + 1;
+    editSection.append($('<span>').addClass('mw-editsection-bracket').text('['), ' ', root, ' ', $('<span>').addClass('mw-editsection-bracket').text(']'));
+  }
+
   var sectionLink = WM.Parser.squashContiguousWhitespace("[[#".concat(headline[0].id, "]]"));
   var articleLink = WM.Parser.squashContiguousWhitespace("[[".concat(mw.config.get('wgPageName'), "#").concat(headline[0].id, "]]"));
   return new Vue({
@@ -85210,7 +85216,7 @@ var index = {
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"@kynikos/wiki-monkey","version":"5.3.3","author":"Dario Giovannetti","description":"MediaWiki bot and editor-assistant user script.","license":"GPL-3.0","repository":{"type":"git","url":"https://github.com/kynikos/wiki-monkey.git"},"keywords":["wiki mediawiki bot"],"dependencies":{"@kynikos/misc":"^0.8.2","@kynikos/vue-styled-jss":"^1.0.0","clipboard":"^2.0.6","core-js":"^3.6.5","element-ui":"^2.13.2","hyperscript":"^2.0.2","jss":"^10.4.0","jss-preset-default":"^10.4.0","moment":"^2.27.0","regenerator-runtime":"^0.13.7","vue":"^2.6.12","vuex":"^3.5.1"},"devDependencies":{"@babel/core":"^7.11.6","@babel/plugin-proposal-class-properties":"^7.10.4","@babel/plugin-proposal-decorators":"^7.10.5","@babel/plugin-proposal-object-rest-spread":"^7.11.0","@babel/plugin-syntax-dynamic-import":"^7.8.3","@babel/preset-env":"^7.11.5","@kynikos/tasks":"^1.2.1","babel-eslint":"^10.1.0","babel-jest":"^26.3.0","babel-loader":"^8.1.0","commander":"^7.2.0","css-loader":"^5.2.0","eslint":"^7.9.0","eslint-plugin-babel":"^5.3.1","eslint-plugin-jest":"^24.0.1","eslint-plugin-promise":"^5.1.0","eslint-plugin-vue":"^7.9.0","fs-extra":"^10.0.0","http-server":"^0.12.3","jest":"^26.4.2","license-webpack-plugin":"^2.3.0","node-sass":"^6.0.0","readline-sync":"^1.4.10","sass":"^1.32.12","sass-loader":"^11.0.1","style-loader":"^2.0.0","terser-webpack-plugin":"^5.1.1","webpack":"^5.28.0","webpack-cli":"^4.6.0"}}');
+module.exports = JSON.parse('{"name":"@kynikos/wiki-monkey","version":"5.3.4","author":"Dario Giovannetti","description":"MediaWiki bot and editor-assistant user script.","license":"GPL-3.0","repository":{"type":"git","url":"https://github.com/kynikos/wiki-monkey.git"},"keywords":["wiki mediawiki bot"],"dependencies":{"@kynikos/misc":"^0.8.2","@kynikos/vue-styled-jss":"^1.0.0","clipboard":"^2.0.6","core-js":"^3.6.5","element-ui":"^2.13.2","hyperscript":"^2.0.2","jss":"^10.4.0","jss-preset-default":"^10.4.0","moment":"^2.27.0","regenerator-runtime":"^0.13.7","vue":"^2.6.12","vuex":"^3.5.1"},"devDependencies":{"@babel/core":"^7.11.6","@babel/plugin-proposal-class-properties":"^7.10.4","@babel/plugin-proposal-decorators":"^7.10.5","@babel/plugin-proposal-object-rest-spread":"^7.11.0","@babel/plugin-syntax-dynamic-import":"^7.8.3","@babel/preset-env":"^7.11.5","@kynikos/tasks":"^1.2.1","babel-eslint":"^10.1.0","babel-jest":"^26.3.0","babel-loader":"^8.1.0","commander":"^7.2.0","css-loader":"^5.2.0","eslint":"^7.9.0","eslint-plugin-babel":"^5.3.1","eslint-plugin-jest":"^24.0.1","eslint-plugin-promise":"^5.1.0","eslint-plugin-vue":"^7.9.0","fs-extra":"^10.0.0","http-server":"^0.12.3","jest":"^26.4.2","license-webpack-plugin":"^2.3.0","node-sass":"^6.0.0","readline-sync":"^1.4.10","sass":"^1.32.12","sass-loader":"^11.0.1","style-loader":"^2.0.0","terser-webpack-plugin":"^5.1.1","webpack":"^5.28.0","webpack-cli":"^4.6.0"}}');
 
 /***/ }),
 
