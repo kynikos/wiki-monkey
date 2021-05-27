@@ -87,13 +87,8 @@ module.exports.App = class {
 
     // MW seems a bit unreliable with capitalization, e.g. it's
     // "SpecialPages" but "Recentchanges"
-    const specialPage = (function () {
-      const spage = mw.config.get('wgCanonicalSpecialPageName')
-      if (spage) {
-        return spage.toLowerCase()
-      }
-      return spage
-    }())
+    const spage = mw.config.get('wgCanonicalSpecialPageName')
+    const specialPage = spage && spage.toLowerCase()
 
     // TODO: Recognize the editor with mw.config.get('wgAction')?
     if ($('#editform').length) {
