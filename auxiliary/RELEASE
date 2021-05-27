@@ -75,3 +75,5 @@ Release:
 * [server] Publish on AUR (also regenerate .SRCINFO)
 * [client|server] Push 'master', 'develop' and the new tag to origin
 * [client] Publish on npm
+* Upgrade the server on the local machine
+* Upgrade the standalone client in the wiki User accounts
