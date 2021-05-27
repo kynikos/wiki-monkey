@@ -82,8 +82,8 @@ module.exports.App = class {
     const indicators = $('.mw-indicators:first')
     if (indicators) new PageCommands(indicators)
 
-    const editSections = $('.mw-editsection')
-    if (editSections.length) new SectionCommands(editSections)
+    const headlines = $('.mw-headline')
+    if (headlines.length) new SectionCommands(headlines)
 
     // MW seems a bit unreliable with capitalization, e.g. it's
     // "SpecialPages" but "Recentchanges"

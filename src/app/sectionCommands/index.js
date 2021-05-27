@@ -27,35 +27,57 @@ module.exports.SectionCommands = class {
     this.plugins.push([plugin, component])
   }
 
-  constructor(editSections) {
+  constructor(headlines) {
     const {plugins} = this.constructor
-    editSections.each(function () { SectionCommands_(this, plugins) })
+    headlines.each(function (index) {
+      SectionCommands_(this, index, plugins)
+    })
   }
 }
 
 
-function SectionCommands_(editSection0, plugins) { // eslint-disable-line vars-on-top,no-var
-  const editSection = $(editSection0)
-  const header = editSection.closest(':header')
-  const headline = header.find('.mw-headline')
-  const editLink = editSection.children("a:contains('edit')").first()
-  const editUri = new mw.Uri(editLink.attr('href'))
+function SectionCommands_(headline0, index, plugins) { // eslint-disable-line vars-on-top,no-var
+  const headline = $(headline0)
+  const header = headline.closest(':header')
 
   // Retrieve section's id, number and title now to make sure that their values
   // aren't affected by the following changes to the DOM
   const sectionId = headline[0].id
-  const sectionNumber = parseInt(editUri.query.section, 10)
   const sectionTitle = headline.contents().last().text().trim()
+
+  let editSection = header.find('.mw-editsection')
+  let sectionNumber
 
   const root = document.createElement('span')
 
-  editLink.text('e')
+  if (editSection.length > 0) {
+    const editLink = editSection.children("a:contains('edit')").first()
+    const editUri = new mw.Uri(editLink.attr('href'))
+    sectionNumber = parseInt(editUri.query.section, 10)
+    editLink.text('e')
+    editSection.children().first().after(' ', root, ' | ')
+    editSection.children().last().before(' ')
+  } else {
+    // mw-editsection may not exist in protected pages for users without edit
+    // privileges
+    editSection = $('<span>').addClass('mw-editsection')
+    header.append(editSection)
+    // TODO: Find a more reliable way to number the sections, in absence of a
+    //       native mw-editsection element
+    sectionNumber = index + 1
+    editSection.append(
+      $('<span>').addClass('mw-editsection-bracket').text('['),
+      ' ',
+      root,
+      ' ',
+      $('<span>').addClass('mw-editsection-bracket').text(']'),
+    )
+  }
 
-  editSection.children().first().after(' ', root, ' | ')
-  editSection.children().last().before(' ')
-
-  const sectionLink = WM.Parser.squashContiguousWhitespace(`[[#${headline[0].id}]]`)
-  const articleLink = WM.Parser.squashContiguousWhitespace(`[[${mw.config.get('wgPageName')}#${headline[0].id}]]`)
+  const sectionLink = WM.Parser.squashContiguousWhitespace(
+    `[[#${headline[0].id}]]`)
+  const articleLink = WM.Parser.squashContiguousWhitespace(
+    `[[${mw.config.get('wgPageName')}#${headline[0].id}]]`)
 
   return new Vue({
     el: root,
