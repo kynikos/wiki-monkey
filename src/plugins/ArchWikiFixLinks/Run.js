@@ -24,24 +24,25 @@ module.exports = class {
     const source = WM.Editor.readSource()
     const newtext = this.doReplace(source)
 
-    if (newtext !== source) {
+    if (newtext === source) {
+      WM.App.log.info('No fixable links found')
+    } else {
       WM.Editor.writeSource(newtext)
       WM.App.log.info('Fixed links')
-    } else {
-      WM.App.log.info('No fixable links found')
     }
 
     if (callNext) {
-      return callNext()
+      callNext()
     }
   }
 
-  doReplace(txt) {
+  // eslint-disable-next-line class-methods-use-this
+  doReplace(txtOrig) {
     // Archlinux.org HTTP -> HTTPS
 
     let L; let match
     let re = /http:\/\/([a-z]+\.)?archlinux\.org(?!\.[a-z])/ig
-    txt = txt.replace(re, 'https://$1archlinux.org')
+    let txt = txtOrig.replace(re, 'https://$1archlinux.org')
 
     // Wiki.archlinux.org -> Internal link
 
@@ -70,16 +71,25 @@ module.exports = class {
                                                 'links to wiki.archlinux.org')
     }
 
-    // Wikipedia -> wikipedia: interlink
+    // Wikipedia -> Wikipedia: interlink
 
     re = /\[https?:\/\/en\.wikipedia\.org\/wiki\/([^\]]+?) (.+?)\]/ig
-    txt = txt.replace(re, '[[wikipedia:$1|$2]]')
+    txt = txt.replace(re, '[[Wikipedia:$1|$2]]')
 
     re = /\[https?:\/\/en\.wikipedia\.org\/wiki\/(.+?)\]/ig
-    txt = txt.replace(re, '[[wikipedia:$1]]')
+    txt = txt.replace(re, '[[Wikipedia:$1]]')
 
     re = /https?:\/\/en\.wikipedia\.org\/wiki\/([^\s]+)/ig
-    txt = txt.replace(re, '[[wikipedia:$1]]')
+    txt = txt.replace(re, '[[Wikipedia:$1]]')
+
+    re = /\[https?:\/\/([a-z]+?)\.wikipedia\.org\/wiki\/([^\]]+?) (.+?)\]/ig
+    txt = txt.replace(re, '[[Wikipedia:$1:$2|$3]]')
+
+    re = /\[https?:\/\/([a-z]+?)\.wikipedia\.org\/wiki\/(.+?)\]/ig
+    txt = txt.replace(re, '[[Wikipedia:$1:$2]]')
+
+    re = /https?:\/\/([a-z]+?)\.wikipedia\.org\/wiki\/([^\s]+)/ig
+    txt = txt.replace(re, '[[Wikipedia:$1:$2]]')
 
     re = /https?:\/\/([a-z]+?)\.wikipedia\.org(?!\.)/ig
 
