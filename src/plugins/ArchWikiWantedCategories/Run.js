@@ -20,17 +20,17 @@ const WM = require('%/index')
 
 
 module.exports = class {
-  constructor(conf, title, callBot, chainArgs) {
-    title = title.replace(' (page does not exist)', '')
+  constructor(conf, title_, callBot, chainArgs) {
+    const title = title_.replace(' (page does not exist)', '')
 
-    return WM.MW.callQuery(
+    WM.MW.callQuery(
       {
         prop: 'info',
         titles: title,
       },
       this.mainAutoWrite,
       [title, callBot],
-      null
+      null,
     )
   }
 
@@ -58,15 +58,17 @@ module.exports = class {
           text,
           createonly: '1',
           token: edittoken,
+          tags: 'wiki-monkey',
         },
         this.mainAutoEnd,
         callBot,
-        null
+        null,
       )
     }
     return callBot(0, null)
   }
 
+  // eslint-disable-next-line class-methods-use-this
   mainAutoEnd(res, callBot) {
     if (res.edit && res.edit.result === 'Success') {
       return callBot(1, null)

@@ -40,7 +40,7 @@ module.exports = class SimpleReplace extends _Run {
       return WM.MW.callQueryEdit(
         title,
         this.mainAutoWrite.bind(this),
-        [summary, callBot]
+        [summary, callBot],
       )
     }
     WM.App.log.error('The edit summary cannot be empty')
@@ -53,7 +53,7 @@ module.exports = class SimpleReplace extends _Run {
 
     const newtext = source.replace(
       this.configuration.regExp,
-      this.configuration.newString
+      this.configuration.newString,
     )
 
     if (newtext !== source) {
@@ -66,15 +66,17 @@ module.exports = class SimpleReplace extends _Run {
           text: newtext,
           basetimestamp: timestamp,
           token: edittoken,
+          tags: 'wiki-monkey',
         },
         this.mainAutoEnd,
         callBot,
-        null
+        null,
       )
     }
     return callBot(0, null)
   }
 
+  // eslint-disable-next-line class-methods-use-this
   mainAutoEnd(res, callBot) {
     if (res.edit && res.edit.result === 'Success') {
       return callBot(1, null)

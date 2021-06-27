@@ -25,10 +25,10 @@ module.exports = class extends _Run {
     super()
     this.conf = conf
     const summary = this.conf.edit_summary
-    return WM.MW.callQueryEdit(
+    WM.MW.callQueryEdit(
       title,
       this.mainAutoReplace,
-      [summary, callBot]
+      [summary, callBot],
     )
   }
 
@@ -39,7 +39,7 @@ module.exports = class extends _Run {
     return this.doUpdate(
       source,
       this.mainAutoWrite,
-      [title, edittoken, timestamp, summary, callBot]
+      [title, edittoken, timestamp, summary, callBot],
     )
   }
 
@@ -60,15 +60,17 @@ module.exports = class extends _Run {
           text: newtext,
           basetimestamp: timestamp,
           token: edittoken,
+          tags: 'wiki-monkey',
         },
         this.mainAutoEnd,
         callBot,
-        null
+        null,
       )
     }
     return callBot(0, null)
   }
 
+  // eslint-disable-next-line class-methods-use-this
   mainAutoEnd(res, callBot) {
     if (res.edit && res.edit.result === 'Success') {
       return callBot(1, null)

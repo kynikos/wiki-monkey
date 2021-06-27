@@ -88,6 +88,7 @@ module.exports = class SynchronizeInterlanguageLinks extends _Run {
           text: newText,
           basetimestamp: timestamp,
           token: edittoken,
+          tags: 'wiki-monkey',
         },
         this.mainAutoEnd,
         callBot,

@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 // Wiki Monkey - MediaWiki bot and editor-assistant user script
 // Copyright (C) 2011 Dario Giovannetti <dev@dariogiovannetti.net>
 //
@@ -678,11 +679,10 @@ module.exports = class {
             return self.configuration.function_(
               article,
               self.makeCallContinue(lis, id, linkId, ln, article),
-              chainArgs
+              chainArgs,
             )
           }
-          WM.App.log.error('Another bot has been ' +
-                                                  'force-started, stopping ...')
+          WM.App.log.error('Another bot has been force-started, stopping ...')
           return self._endAutomatic(false)
         }
         )(items, index, link, title, chainArgs), interval)

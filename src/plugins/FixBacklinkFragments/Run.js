@@ -48,17 +48,19 @@ article.\nIn order to save time you are advised to \
 hide the redirects in the page lists that allow to do \
 so.')
 
-        return WM.MW.callAPIGet(
+        WM.MW.callAPIGet(
           params,
           this.mainAutoFindSections,
           [title, target, summary, callBot],
-          null
+          null,
         )
+      } else {
+        this.mainAutoRead(target, chainArgs, title, summary, callBot)
       }
-      return this.mainAutoRead(target, chainArgs, title, summary, callBot)
+    } else {
+      WM.App.log.error('The target page cannot be empty')
+      callBot(false, null)
     }
-    WM.App.log.error('The target page cannot be empty')
-    return callBot(false, null)
   }
 
   fixLinks(source, target, sections) {
@@ -175,7 +177,7 @@ so.')
             WM.App.log.warning(`Cannot fix broken link fragment: ${
               WM.App.log.WikiLink(
                 link,
-                template.rawTransclusion
+                template.rawTransclusion,
               )}`)
           }
         }
@@ -190,6 +192,7 @@ so.')
     return template.rawTransclusion
   }
 
+  // eslint-disable-next-line class-methods-use-this
   fixFragment(rawfragment, sections) {
     if (rawfragment) {
       const fragment = WM.Parser.squashContiguousWhitespace(rawfragment)
@@ -240,7 +243,7 @@ so.')
     return WM.MW.callQueryEdit(
       title,
       this.mainAutoWrite,
-      [target, summary, callBot, sections]
+      [target, summary, callBot, sections],
     )
   }
 
@@ -262,15 +265,17 @@ so.')
           text: newtext,
           basetimestamp: timestamp,
           token: edittoken,
+          tags: 'wiki-monkey',
         },
         this.mainAutoEnd,
         [callBot, sections],
-        null
+        null,
       )
     }
     return callBot(0, sections)
   }
 
+  // eslint-disable-next-line class-methods-use-this
   mainAutoEnd(res, args) {
     const callBot = args[0]
     const sections = args[1]

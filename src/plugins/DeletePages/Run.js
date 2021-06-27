@@ -24,14 +24,14 @@ module.exports = class {
     this.conf = conf
     const summary = this.conf.edit_summary
 
-    return WM.MW.callQuery(
+    WM.MW.callQuery(
       {
         prop: 'info',
         titles: title,
       },
       this.mainAutoWrite,
       [title, summary, callBot],
-      null
+      null,
     )
   }
 
@@ -52,13 +52,15 @@ module.exports = class {
         title,
         token: deletetoken,
         reason: summary,
+        tags: 'wiki-monkey',
       },
       this.mainAutoEnd,
       [title, callBot],
-      null
+      null,
     )
   }
 
+  // eslint-disable-next-line class-methods-use-this
   mainAutoEnd(res, args) {
     const title = args[0]
     const callBot = args[1]
