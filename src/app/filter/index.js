@@ -75,7 +75,8 @@ module.exports = class {
     const root = document.createElement('div')
     $(nextNode).before(root)
 
-    return new Vue({
+    // eslint-disable-next-line no-new
+    new Vue({
       el: root,
 
       store: WM.App.store,
@@ -91,6 +92,29 @@ module.exports = class {
           'selectedPluginMakeUI',
           'enabled',
         ]),
+      },
+
+      created() {
+        plugins.some(([plugin, run, makeUI], index) => {
+          if (plugin.constructor.pluginName === defaultPlugin) {
+            this.selectPlugin([index, plugin, run, makeUI])
+            return true
+          }
+          return false
+        }) || this.selectPlugin([0, ...plugins[0]])
+      },
+
+      mounted() {
+        // The component is remounted if the interface is hidden and then
+        // shown again, but the plugin shouldn't be executed again if it's
+        // disabled
+        if (this.enabled && pluginAutoexecute) {
+          this.executePlugin()
+
+          if (!this.$refs.pluginUI) {
+            this.hideUI()
+          }
+        }
       },
 
       methods: {
@@ -109,15 +133,6 @@ module.exports = class {
           this.disable()
           this.selectedPluginRun()
         },
-      },
-
-      created() {
-        plugins.some(([plugin, run, makeUI], index) => {
-          if (plugin.constructor.pluginName === defaultPlugin) {
-            return this.selectPlugin([index, plugin, run, makeUI])
-          }
-          return false
-        }) || this.selectPlugin([0, ...plugins[0]])
       },
 
       render(h) {
@@ -180,19 +195,6 @@ module.exports = class {
         return h(Fieldset, [
           h('div', [commandsFilterDiv, pluginUI]),
         ])
-      },
-
-      mounted() {
-        // The component is remounted if the interface is hidden and then
-        // shown again, but the plugin shouldn't be executed again if it's
-        // disabled
-        if (this.enabled && pluginAutoexecute) {
-          this.executePlugin()
-
-          if (!this.$refs.pluginUI) {
-            this.hideUI()
-          }
-        }
       },
     })
   }
