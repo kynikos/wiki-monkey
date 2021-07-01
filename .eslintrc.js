@@ -74,7 +74,7 @@ module.exports = {
       allowTaggedTemplates: true,
     }],
     'no-unused-vars': 'warn',
-    'no-use-before-define': 'warn',
+    'no-use-before-define': 'off',
     'no-warning-comments': 'warn',
     'object-curly-newline': 'off',
     // 'babel/object-curly-spacing': 1,
