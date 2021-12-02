@@ -46,22 +46,22 @@ module.exports = class {
 
     // Wiki.archlinux.org -> Internal link
 
-    re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/Category:([^\]]+?) (.+?)\]/ig
+    re = /\[https?:\/\/wiki\.archlinux\.org\/(index\.php|title)\/Category:([^\]]+?) (.+?)\]/ig
     txt = txt.replace(re, '[[:Category:$1|$2]]')
 
-    re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/Category:(.+?)\]/ig
+    re = /\[https?:\/\/wiki\.archlinux\.org\/(index\.php|title)\/Category:(.+?)\]/ig
     txt = txt.replace(re, '[[:Category:$1]]')
 
-    re = /https?:\/\/wiki\.archlinux\.org\/index\.php\/Category:([^\s]+)/ig
+    re = /https?:\/\/wiki\.archlinux\.org\/(index\.php|title)\/Category:([^\s]+)/ig
     txt = txt.replace(re, '[[:Category:$1]]')
 
-    re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/([^\]]+?) (.+?)\]/ig
+    re = /\[https?:\/\/wiki\.archlinux\.org\/(index\.php|title)\/([^\]]+?) (.+?)\]/ig
     txt = txt.replace(re, '[[$1|$2]]')
 
-    re = /\[https?:\/\/wiki\.archlinux\.org\/index\.php\/(.+?)\]/ig
+    re = /\[https?:\/\/wiki\.archlinux\.org\/(index\.php|title)\/(.+?)\]/ig
     txt = txt.replace(re, '[[$1]]')
 
-    re = /https?:\/\/wiki\.archlinux\.org\/index\.php\/([^\s]+)/ig
+    re = /https?:\/\/wiki\.archlinux\.org\/(index\.php|title)\/([^\s]+)/ig
     txt = txt.replace(re, '[[$1]]')
 
     re = /https?:\/\/wiki\.archlinux\.org(?!\.)/ig
