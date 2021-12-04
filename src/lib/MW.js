@@ -16,6 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+/* eslint-disable max-lines */
+
 const WM = require('%/index')
 const {h} = require('./index')
 
@@ -65,8 +67,10 @@ const wikiPaths = {
 }
 
 const interwikiFixes = [
-  ['https://wiki.archlinux.org/index.php/$1_(',
-    'https://wiki.archlinux.org/index.php/$1%20('],
+  [
+    /https?:\/\/wiki\.archlinux\.org\/(index\.php|title)\/\$1_\(/u,
+    'https://wiki.archlinux.org/$1/$$1%20(',
+  ],
 ]
 
 
@@ -395,8 +399,8 @@ module.exports = class MW {
   }
 
   fixInterwikiUrl(url) {
-    for (let f = 0, end = interwikiFixes.length, asc = end >= 0; asc ? f < end : f > end; asc ? f++ : f--) {
-      const furl = url.replace(interwikiFixes[f][0], interwikiFixes[f][1])
+    for (const [a, b] of interwikiFixes) {
+      const furl = url.replace(a, b)
 
       if (furl !== url) {
         return furl
