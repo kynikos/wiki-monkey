@@ -9285,205 +9285,6 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin2) {
 
 /***/ }),
 
-/***/ 8143:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-// Wiki Monkey - MediaWiki bot and editor-assistant user script
-// Copyright (C) 2011 Dario Giovannetti <dev@dariogiovannetti.net>
-//
-// This file is part of Wiki Monkey.
-//
-// Wiki Monkey is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Wiki Monkey is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
-var WM = __webpack_require__(62352);
-
-module.exports = /*#__PURE__*/function () {
-  function _class(conf, callNext) {
-    _classCallCheck(this, _class);
-
-    var source = WM.Editor.readSource();
-    var newtext = this.doReplace(source);
-
-    if (newtext === source) {
-      WM.App.log.info('No fixable links found');
-    } else {
-      WM.Editor.writeSource(newtext);
-      WM.App.log.info('Fixed links');
-    }
-
-    if (callNext) {
-      callNext();
-    }
-  } // eslint-disable-next-line class-methods-use-this
-
-
-  _createClass(_class, [{
-    key: "doReplace",
-    value: function doReplace(txtOrig) {
-      // Archlinux.org HTTP -> HTTPS
-      var L;
-      var match;
-      var re = /http:\/\/([a-z]+\.)?archlinux\.org(?!\.[a-z])/ig;
-      var txt = txtOrig.replace(re, 'https://$1archlinux.org'); // Wiki.archlinux.org -> Internal link
-
-      re = /\[https?:\/\/wiki\.archlinux\.org\/(index\.php|title)\/Category:([^\]]+?) (.+?)\]/ig;
-      txt = txt.replace(re, '[[:Category:$1|$2]]');
-      re = /\[https?:\/\/wiki\.archlinux\.org\/(index\.php|title)\/Category:(.+?)\]/ig;
-      txt = txt.replace(re, '[[:Category:$1]]');
-      re = /https?:\/\/wiki\.archlinux\.org\/(index\.php|title)\/Category:([^\s]+)/ig;
-      txt = txt.replace(re, '[[:Category:$1]]');
-      re = /\[https?:\/\/wiki\.archlinux\.org\/(index\.php|title)\/([^\]]+?) (.+?)\]/ig;
-      txt = txt.replace(re, '[[$1|$2]]');
-      re = /\[https?:\/\/wiki\.archlinux\.org\/(index\.php|title)\/(.+?)\]/ig;
-      txt = txt.replace(re, '[[$1]]');
-      re = /https?:\/\/wiki\.archlinux\.org\/(index\.php|title)\/([^\s]+)/ig;
-      txt = txt.replace(re, '[[$1]]');
-      re = /https?:\/\/wiki\.archlinux\.org(?!\.)/ig;
-
-      if (re.test(txt)) {
-        WM.App.log.warning('It hasn\'t been possible to convert some ' + 'links to wiki.archlinux.org');
-      } // Wikipedia -> Wikipedia: interlink
-
-
-      re = /\[https?:\/\/en\.wikipedia\.org\/wiki\/([^\]]+?) (.+?)\]/ig;
-      txt = txt.replace(re, '[[Wikipedia:$1|$2]]');
-      re = /\[https?:\/\/en\.wikipedia\.org\/wiki\/(.+?)\]/ig;
-      txt = txt.replace(re, '[[Wikipedia:$1]]');
-      re = /https?:\/\/en\.wikipedia\.org\/wiki\/([^\s]+)/ig;
-      txt = txt.replace(re, '[[Wikipedia:$1]]');
-      re = /\[https?:\/\/([a-z]+?)\.wikipedia\.org\/wiki\/([^\]]+?) (.+?)\]/ig;
-      txt = txt.replace(re, '[[Wikipedia:$1:$2|$3]]');
-      re = /\[https?:\/\/([a-z]+?)\.wikipedia\.org\/wiki\/(.+?)\]/ig;
-      txt = txt.replace(re, '[[Wikipedia:$1:$2]]');
-      re = /https?:\/\/([a-z]+?)\.wikipedia\.org\/wiki\/([^\s]+)/ig;
-      txt = txt.replace(re, '[[Wikipedia:$1:$2]]');
-      re = /https?:\/\/([a-z]+?)\.wikipedia\.org(?!\.)/ig;
-
-      if (re.test(txt)) {
-        WM.App.log.warning('It hasn\'t been possible to convert some ' + 'links to Wikipedia');
-      } // Official package links -> Pkg template
-
-
-      re = /\[https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s]+?)\/? +(.+?)?\]/ig;
-      var newText = '';
-      var prevId = 0;
-
-      while (true) {
-        match = re.exec(txt);
-
-        if (match) {
-          // Don't join these two conditions
-          if (match[1] === match[2]) {
-            L = match[0].length;
-            newText += "".concat(txt.substring(prevId, re.lastIndex - L), "{{Pkg|").concat(match[1], "}}");
-            prevId = re.lastIndex;
-          }
-        } else {
-          break;
-        }
-      }
-
-      newText += txt.substr(prevId);
-      txt = newText;
-      re = /\[https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s]+?)\/?\]/ig;
-      txt = txt.replace(re, '{{Pkg|$1}}');
-      re = /([^\[])https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s\/]+)\/?/ig;
-      txt = txt.replace(re, '$1{{Pkg|$2}}');
-      re = /https?:\/\/(?:www\.)?archlinux\.org\/packages(?!\/?\s)/ig;
-
-      if (re.test(txt)) {
-        WM.App.log.warning('It hasn\'t been possible to convert some ' + 'links to archlinux.org/packages');
-      } // AUR package links -> AUR template
-
-
-      re = /\[https?:\/\/aur\.archlinux\.org\/packages\/([^\s]+?)\/? +(.+?)?\]/ig;
-      newText = '';
-      prevId = 0;
-
-      while (true) {
-        match = re.exec(txt);
-
-        if (match) {
-          // Don't join these two conditions
-          if (match[1] === match[2]) {
-            L = match[0].length;
-            newText += "".concat(txt.substring(prevId, re.lastIndex - L), "{{AUR|").concat(match[1], "}}");
-            prevId = re.lastIndex;
-          }
-        } else {
-          break;
-        }
-      }
-
-      newText += txt.substr(prevId);
-      txt = newText;
-      re = /\[https?:\/\/aur\.archlinux\.org\/packages\/([^\s]+?)\/?\]/ig;
-      txt = txt.replace(re, '{{AUR|$1}}');
-      re = /([^\[])https?:\/\/aur\.archlinux\.org\/packages\/([^\s\/]+)\/?/ig;
-      txt = txt.replace(re, '$1{{AUR|$2}}');
-      re = /https?:\/\/aur\.archlinux\.org(?!(?:\.|(?:\/?packages)?\/?\s))/ig;
-
-      if (re.test(txt)) {
-        WM.App.log.warning("It hasn't been possible to convert some " + 'links to aur.archlinux.org');
-      } // Bug links -> Bug template
-
-
-      re = /\[https?:\/\/bugs\.archlinux\.org\/task\/([^\s]+?)\/? +(.+?)?\]/ig;
-      newText = '';
-      prevId = 0;
-
-      while (true) {
-        match = re.exec(txt);
-
-        if (match) {
-          // Don't join these two conditions
-          if (match[1] === match[2]) {
-            L = match[0].length;
-            newText += "".concat(txt.substring(prevId, re.lastIndex - L), "{{Bug|").concat(match[1], "}}");
-            prevId = re.lastIndex;
-          }
-        } else {
-          break;
-        }
-      }
-
-      newText += txt.substr(prevId);
-      txt = newText;
-      re = /\[https?:\/\/bugs\.archlinux\.org\/task\/([^\s]+?)\/?\]/ig;
-      txt = txt.replace(re, '{{Bug|$1}}');
-      re = /([^\[])https?:\/\/bugs\.archlinux\.org\/task\/([^\s\/]+)\/?/ig;
-      txt = txt.replace(re, '$1{{Bug|$2}}');
-      re = /https?:\/\/bugs\.archlinux\.org\/task/ig;
-
-      if (re.test(txt)) {
-        WM.App.log.warning('It hasn\'t been possible to convert some ' + 'links to bugs.archlinux.org/task');
-      }
-
-      return txt;
-    }
-  }]);
-
-  return _class;
-}();
-
-/***/ }),
-
 /***/ 59174:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -9533,7 +9334,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var _require = __webpack_require__(52313),
     _Plugin = _require._Plugin;
 
-var Run = __webpack_require__(8143);
+var run = __webpack_require__(12427);
 
 module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin2) {
   _inherits(ArchWikiFixLinks, _Plugin2);
@@ -9555,7 +9356,7 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin2) {
 
       var editor = _ref.editor;
       editor(function (callNext) {
-        return new Run(_this.conf, callNext);
+        return run(_this.conf, callNext);
       });
     }
   }]);
@@ -9565,6 +9366,167 @@ module.exports = (_temp = _class = /*#__PURE__*/function (_Plugin2) {
   enabled: true,
   editor_menu: ['Text plugins', 'Fix external links']
 }), _temp);
+
+/***/ }),
+
+/***/ 12427:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+// Wiki Monkey - MediaWiki bot and editor-assistant user script
+// Copyright (C) 2011 Dario Giovannetti <dev@dariogiovannetti.net>
+//
+// This file is part of Wiki Monkey.
+//
+// Wiki Monkey is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Wiki Monkey is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
+var WM = __webpack_require__(62352);
+
+module.exports = function run(conf, callNext) {
+  var source = WM.Editor.readSource();
+  var txtNew = source;
+  txtNew = replaceProtocol(txtNew);
+  txtNew = replaceInternalLinks(txtNew);
+  txtNew = replaceWikipediaLinks(txtNew);
+  txtNew = replacePackageLinks(txtNew);
+  txtNew = replaceAURLinks(txtNew);
+  txtNew = replaceBugLinks(txtNew);
+
+  if (txtNew === source) {
+    WM.App.log.info('No fixable links found');
+  } else {
+    WM.Editor.writeSource(txtNew);
+    WM.App.log.info('Fixed links');
+  }
+
+  return callNext && callNext();
+};
+
+function replaceProtocol(txtOrig) {
+  // Archlinux.org HTTP -> HTTPS
+  return txtOrig.replace(/http:\/\/([a-z]+\.)?archlinux\.org(?!\.[a-z])/ig, 'https://$1archlinux.org');
+}
+
+function replaceInternalLinks(txtOrig) {
+  // Wiki.archlinux.org -> Internal link
+  var txtNew = txtOrig.replace(/\[https?:\/\/wiki\.archlinux\.org\/(?:index\.php|title)\/Category:([^\]]+?) (.+?)\]/ig, '[[:Category:$1|$2]]').replace(/\[https?:\/\/wiki\.archlinux\.org\/(?:index\.php|title)\/Category:(.+?)\]/ig, '[[:Category:$1]]').replace(/https?:\/\/wiki\.archlinux\.org\/(?:index\.php|title)\/Category:([^\s]+)/ig, '[[:Category:$1]]').replace(/\[https?:\/\/wiki\.archlinux\.org\/(?:index\.php|title)\/([^\]]+?) (.+?)\]/ig, '[[$1|$2]]').replace(/\[https?:\/\/wiki\.archlinux\.org\/(?:index\.php|title)\/(.+?)\]/ig, '[[$1]]').replace(/https?:\/\/wiki\.archlinux\.org\/(?:index\.php|title)\/([^\s]+)/ig, '[[$1]]');
+
+  if (/https?:\/\/wiki\.archlinux\.org(?!\.)/ig.test(txtNew)) {
+    WM.App.log.warning('It has not been possible to convert some links to wiki.archlinux.org');
+  }
+
+  return txtNew;
+}
+
+function replaceWikipediaLinks(txtOrig) {
+  // Wikipedia -> Wikipedia: interlink
+  var txtNew = txtOrig.replace(/\[https?:\/\/en\.wikipedia\.org\/wiki\/([^\]]+?) (.+?)\]/ig, '[[Wikipedia:$1|$2]]').replace(/\[https?:\/\/en\.wikipedia\.org\/wiki\/(.+?)\]/ig, '[[Wikipedia:$1]]').replace(/https?:\/\/en\.wikipedia\.org\/wiki\/([^\s]+)/ig, '[[Wikipedia:$1]]').replace(/\[https?:\/\/([a-z]+?)\.wikipedia\.org\/wiki\/([^\]]+?) (.+?)\]/ig, '[[Wikipedia:$1:$2|$3]]').replace(/\[https?:\/\/([a-z]+?)\.wikipedia\.org\/wiki\/(.+?)\]/ig, '[[Wikipedia:$1:$2]]').replace(/https?:\/\/([a-z]+?)\.wikipedia\.org\/wiki\/([^\s]+)/ig, '[[Wikipedia:$1:$2]]');
+
+  if (/https?:\/\/([a-z]+?)\.wikipedia\.org(?!\.)/ig.test(txtNew)) {
+    WM.App.log.warning('It has not been possible to convert some links to Wikipedia');
+  }
+
+  return txtNew;
+}
+
+function replacePackageLinks(txtOrig) {
+  // Official package links -> Pkg template
+  var re = /\[https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s]+?)\/? +(.+?)?\]/ig;
+  var txtNew = '';
+  var prevId = 0;
+
+  while (true) {
+    var match = re.exec(txtOrig);
+
+    if (match) {
+      // Don't join these two conditions
+      if (match[1] === match[2]) {
+        txtNew += "".concat(txtOrig.substring(prevId, re.lastIndex - match[0].length), "{{Pkg|").concat(match[1], "}}");
+        prevId = re.lastIndex;
+      }
+    } else {
+      break;
+    }
+  }
+
+  txtNew += txtOrig.substr(prevId);
+  txtNew = txtNew.replace(/\[https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s]+?)\/?\]/ig, '{{Pkg|$1}}').replace(/([^\[])https?:\/\/(?:www\.)?archlinux\.org\/packages\/(?:community|community-testing|core|extra|multilib|multilib-testing|testing)\/(?:any|i686|x86_64)\/([^\s\/]+)\/?/ig, '$1{{Pkg|$2}}');
+
+  if (/https?:\/\/(?:www\.)?archlinux\.org\/packages(?!\/?\s)/ig.test(txtNew)) {
+    WM.App.log.warning('It has not been possible to convert some links to archlinux.org/packages');
+  }
+
+  return txtNew;
+}
+
+function replaceAURLinks(txtOrig) {
+  // AUR package links -> AUR template
+  var re = /\[https?:\/\/aur\.archlinux\.org\/packages\/([^\s]+?)\/? +(.+?)?\]/ig;
+  var txtNew = '';
+  var prevId = 0;
+
+  while (true) {
+    var match = re.exec(txtOrig);
+
+    if (match) {
+      // Don't join these two conditions
+      if (match[1] === match[2]) {
+        txtNew += "".concat(txtOrig.substring(prevId, re.lastIndex - match[0].length), "{{AUR|").concat(match[1], "}}");
+        prevId = re.lastIndex;
+      }
+    } else {
+      break;
+    }
+  }
+
+  txtNew += txtOrig.substr(prevId);
+  txtNew = txtNew.replace(/\[https?:\/\/aur\.archlinux\.org\/packages\/([^\s]+?)\/?\]/ig, '{{AUR|$1}}').replace(/([^\[])https?:\/\/aur\.archlinux\.org\/packages\/([^\s\/]+)\/?/ig, '$1{{AUR|$2}}');
+
+  if (/https?:\/\/aur\.archlinux\.org(?!(?:\.|(?:\/?packages)?\/?\s))/ig.test(txtNew)) {
+    WM.App.log.warning('It has not been possible to convert some links to aur.archlinux.org');
+  }
+
+  return txtNew;
+}
+
+function replaceBugLinks(txtOrig) {
+  // Bug links -> Bug template
+  var re = /\[https?:\/\/bugs\.archlinux\.org\/task\/([^\s]+?)\/? +(.+?)?\]/ig;
+  var txtNew = '';
+  var prevId = 0;
+
+  while (true) {
+    var match = re.exec(txtOrig);
+
+    if (match) {
+      // Don't join these two conditions
+      if (match[1] === match[2]) {
+        txtNew += "".concat(txtOrig.substring(prevId, re.lastIndex - match[0].length), "{{Bug|").concat(match[1], "}}");
+        prevId = re.lastIndex;
+      }
+    } else {
+      break;
+    }
+  }
+
+  txtNew += txtOrig.substr(prevId);
+  txtNew = txtNew.replace(/\[https?:\/\/bugs\.archlinux\.org\/task\/([^\s]+?)\/?\]/ig, '{{Bug|$1}}').replace(/([^\[])https?:\/\/bugs\.archlinux\.org\/task\/([^\s\/]+)\/?/ig, '$1{{Bug|$2}}');
+
+  if (/https?:\/\/bugs\.archlinux\.org\/task/ig.test(txtNew)) {
+    WM.App.log.warning('It has not been possible to convert some links to bugs.archlinux.org/task');
+  }
+
+  return txtNew;
+}
 
 /***/ }),
 
@@ -87242,7 +87204,7 @@ function _extends() {
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"@kynikos/wiki-monkey","version":"5.5.1","author":"Dario Giovannetti","description":"MediaWiki bot and editor-assistant user script.","license":"GPL-3.0","repository":{"type":"git","url":"https://github.com/kynikos/wiki-monkey.git"},"keywords":["wiki mediawiki bot"],"dependencies":{"@kynikos/misc":"^0.8.2","@kynikos/vue-styled-jss":"^1.0.0","clipboard":"^2.0.6","core-js":"^3.6.5","element-ui":"^2.13.2","hyperscript":"^2.0.2","jss":"^10.4.0","jss-preset-default":"^10.4.0","moment":"^2.27.0","regenerator-runtime":"^0.13.7","vue":"^2.6.12","vuex":"^3.5.1"},"devDependencies":{"@babel/core":"^7.11.6","@babel/plugin-proposal-class-properties":"^7.10.4","@babel/plugin-proposal-decorators":"^7.10.5","@babel/plugin-proposal-object-rest-spread":"^7.11.0","@babel/plugin-syntax-dynamic-import":"^7.8.3","@babel/preset-env":"^7.11.5","@kynikos/tasks":"^1.2.1","babel-eslint":"^10.1.0","babel-jest":"^27.0.2","babel-loader":"^8.1.0","commander":"^8.0.0","css-loader":"^5.2.0","eslint":"^7.9.0","eslint-plugin-babel":"^5.3.1","eslint-plugin-jest":"^24.0.1","eslint-plugin-promise":"^5.1.0","eslint-plugin-vue":"^7.9.0","fs-extra":"^10.0.0","http-server":"^0.12.3","jest":"^27.0.4","license-webpack-plugin":"^2.3.0","node-sass":"^6.0.0","readline-sync":"^1.4.10","sass":"^1.32.12","sass-loader":"^12.0.0","style-loader":"^3.0.0","terser-webpack-plugin":"^5.1.1","webpack":"^5.28.0","webpack-cli":"^4.6.0"}}');
+module.exports = JSON.parse('{"name":"@kynikos/wiki-monkey","version":"5.5.2","author":"Dario Giovannetti","description":"MediaWiki bot and editor-assistant user script.","license":"GPL-3.0","repository":{"type":"git","url":"https://github.com/kynikos/wiki-monkey.git"},"keywords":["wiki mediawiki bot"],"dependencies":{"@kynikos/misc":"^0.8.2","@kynikos/vue-styled-jss":"^1.0.0","clipboard":"^2.0.6","core-js":"^3.6.5","element-ui":"^2.13.2","hyperscript":"^2.0.2","jss":"^10.4.0","jss-preset-default":"^10.4.0","moment":"^2.27.0","regenerator-runtime":"^0.13.7","vue":"^2.6.12","vuex":"^3.5.1"},"devDependencies":{"@babel/core":"^7.11.6","@babel/plugin-proposal-class-properties":"^7.10.4","@babel/plugin-proposal-decorators":"^7.10.5","@babel/plugin-proposal-object-rest-spread":"^7.11.0","@babel/plugin-syntax-dynamic-import":"^7.8.3","@babel/preset-env":"^7.11.5","@kynikos/tasks":"^1.2.1","babel-eslint":"^10.1.0","babel-jest":"^27.0.2","babel-loader":"^8.1.0","commander":"^8.0.0","css-loader":"^5.2.0","eslint":"^7.9.0","eslint-plugin-babel":"^5.3.1","eslint-plugin-jest":"^24.0.1","eslint-plugin-promise":"^5.1.0","eslint-plugin-vue":"^7.9.0","fs-extra":"^10.0.0","http-server":"^0.12.3","jest":"^27.0.4","license-webpack-plugin":"^2.3.0","node-sass":"^6.0.0","readline-sync":"^1.4.10","sass":"^1.32.12","sass-loader":"^12.0.0","style-loader":"^3.0.0","terser-webpack-plugin":"^5.1.1","webpack":"^5.28.0","webpack-cli":"^4.6.0"}}');
 
 /***/ })
 
