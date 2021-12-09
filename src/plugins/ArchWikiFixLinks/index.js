@@ -17,7 +17,7 @@
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
 const {_Plugin} = require('%/plugins/_Plugin')
-const Run = require('./Run')
+const run = require('./run')
 
 
 module.exports = class ArchWikiFixLinks extends _Plugin {
@@ -33,6 +33,6 @@ module.exports = class ArchWikiFixLinks extends _Plugin {
   // Note that it's too dangerous to use this plugin with the bot, in fact
   // some full URLs are correctly used in code blocks (e.g. wget lines)
   install({editor}) {
-    editor((callNext) => new Run(this.conf, callNext))
+    editor((callNext) => run(this.conf, callNext))
   }
 }
