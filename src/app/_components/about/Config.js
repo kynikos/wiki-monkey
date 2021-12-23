@@ -57,7 +57,7 @@ module.exports.Config = {
           },
         },
       }, ['Configuration']),
-      ...this.expanded && [
+      this.expanded && [
         ' (in cascading order)',
         h('ul', [
           h('li', [
