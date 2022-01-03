@@ -16,13 +16,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
+const WM = require('%/index')
 const {Vuex} = require('%/lib/index')
 const {asciiSpinner} = require('%/app/_components/asciiSpinner')
+const {pageLink} = require('%/app/_components/pageLink')
 
 
-module.exports.PersonalToolsCommand = function (conf) {
+module.exports.PageCommand = function (conf) {
   return {
-    name: 'WatchListPersonalToolsCommandCommand',
+    name: 'WatchListPageCommand',
 
     computed: {
       ...Vuex.mapState('plugins/watchlist', [
@@ -45,6 +47,14 @@ module.exports.PersonalToolsCommand = function (conf) {
     render(h) {
       return h('ElPopover', [
         h('div', [
+          h('div', [
+            h(pageLink, {
+              props: {
+                page: 'Special:Watchlist',
+                title: 'Navigate to your Watchlist page',
+              },
+            }, ['visit watchlist']),
+          ]),
           h('div', [
             h('a', {
               attrs: {
@@ -82,7 +92,9 @@ module.exports.PersonalToolsCommand = function (conf) {
           slot: 'reference',
           attrs: {
             href: '#watchlist-commands',
-            title: 'Show watchlist commands',
+            title: this.loading
+              ? 'watchlist commands'
+              : `${this.watchlistUnreadCount} unread changes in the watchlist`,
           },
           on: {
             click: (event) => event.preventDefault(),

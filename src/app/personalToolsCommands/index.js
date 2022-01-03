@@ -20,6 +20,10 @@ const WM = require('%')
 const {Vue, Vuex, styled} = require('%/lib')
 
 
+// BUG[plugins]: This installation mode is broken since the introduction of
+//    MediaWiki's disappearing User menu
+//    https://www.mediawiki.org/wiki/Reading/Web/Desktop_Improvements/Features/User_menu
+//    See also #259
 module.exports.PersonalToolsCommands = class {
   static plugins = []
 
@@ -42,6 +46,8 @@ module.exports.PersonalToolsCommands = class {
       store: WM.App.store,
 
       render(h) {
+        if (!plugins.length) return null
+
         // Note the default ArchWiki skin doesn't support using <sup> here
         // The bracket style was discussed in https://github.com/kynikos/wiki-monkey/issues/238
         return h('span', [

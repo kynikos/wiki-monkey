@@ -16,28 +16,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Wiki Monkey.  If not, see <http://www.gnu.org/licenses/>.
 
-const {_Plugin} = require('%/plugins/_Plugin')
-const storeModule = require('./store')
-const {PageCommand} = require('./PageCommand')
 
+module.exports.pageLink = {
+  name: 'pageLink',
 
-module.exports = class Watchlist extends _Plugin {
-  static pluginName = 'Watchlist'
+  props: {
+    page: {
+      type: String,
+      required: true,
+    },
+    title: {
+      type: String,
+      required: false,
+    },
+  },
 
-  static requiresServer = false
-
-  static confDefault = {
-    enabled: true,
-    minQueryInterval: 1800, // 30 minutes
-  }
-
-  install({store, personalToolsCommands, pageCommands}) {
-    store('watchlist', storeModule(this.conf))
-    // BUG[plugins]: The personalToolsCommands installation mode is broken since
-    //    the introduction of MediaWiki's disappearing User menu
-    //    https://www.mediawiki.org/wiki/Reading/Web/Desktop_Improvements/Features/User_menu
-    //    See also #259
-    // personalToolsCommands(PersonalToolsCommand(this.conf))
-    pageCommands(PageCommand(this.conf))
-  }
+  render(h) {
+    return h('a', {
+      attrs: {
+        href: mw.util.getUrl(this.page),
+        title: this.title,
+      },
+    }, [this.$slots.default || this.page])
+  },
 }
