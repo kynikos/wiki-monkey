@@ -74,6 +74,10 @@ module.exports = function ({entry, production, minified}) {
             'sass-loader',
           ],
         },
+        {
+          test: /\.(?:ttf|woff|woff2)$/ui,
+          type: 'asset/inline',
+        },
       ],
     },
     plugins: [
